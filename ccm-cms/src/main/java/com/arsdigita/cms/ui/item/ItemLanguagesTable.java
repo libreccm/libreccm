@@ -22,27 +22,28 @@ import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.ControlLink;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
-import com.arsdigita.bebop.Link;
 import com.arsdigita.bebop.PageState;
-import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.Table;
+import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.event.TableActionEvent;
 import com.arsdigita.bebop.event.TableActionListener;
+import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.table.TableCellRenderer;
 import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.table.TableColumnModel;
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.ui.ContentItemPage;
 import com.arsdigita.globalization.GlobalizedMessage;
+import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.web.RedirectSignal;
+import com.arsdigita.web.URL;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
-import org.librecms.contentsection.ContentItemL10NManager;
 import org.librecms.util.LanguageUtil;
 
 import java.util.Locale;
-
 
 /**
  * Displays a list of all language instances of an item.
@@ -55,7 +56,8 @@ public class ItemLanguagesTable extends Table {
     public static final int COL_DELETE = 2;
 
     private final ItemSelectionModel itemSelectionModel;
-    private final SingleSelectionModel<String> langSelectionModel;
+//    private final SingleSelectionModel<String> langSelectionModel;
+    private final StringParameter selectedLanguageParam;
 //    private final TableColumn deleteColumn;
 
     /**
@@ -68,12 +70,14 @@ public class ItemLanguagesTable extends Table {
      *                           selected language.
      */
     public ItemLanguagesTable(final ItemSelectionModel itemSelectionModel,
-                              final SingleSelectionModel<String> langSelectionModel) {
+                              //                              final SingleSelectionModel<String> langSelectionModel,
+                              final StringParameter selectedLanguageParam) {
         super();
         setIdAttr("item_languages_table");
 
         this.itemSelectionModel = itemSelectionModel;
-        this.langSelectionModel = langSelectionModel;
+//        this.langSelectionModel = langSelectionModel;
+        this.selectedLanguageParam = selectedLanguageParam;
         setModelBuilder(new ItemLanguagesTableModelBuilder(itemSelectionModel));
 
         final TableColumnModel columnModel = getColumnModel();
@@ -102,6 +106,8 @@ public class ItemLanguagesTable extends Table {
                                           final int column) {
 
                 final Locale locale = new Locale((String) value);
+                final String selectedLanguage = (String) state
+                    .getValue(selectedLanguageParam);
 
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final LanguageUtil langUtil = cdiUtil.findBean(
@@ -109,70 +115,114 @@ public class ItemLanguagesTable extends Table {
 
                 final Label label = new Label(langUtil.getLangFull(locale));
 
-                if (langSelectionModel.getSelectedKey(state).equals(key)) {
+//                if (langSelectionModel.getSelectedKey(state).equals(key)) {
+                if (selectedLanguage.equals(key)) {
                     // Current variant, no link
                     return label;
                 } else {
-                    final String target = ContentItemPage.getItemURL(
-                        itemSelectionModel.getSelectedItem(state),
-                        ContentItemPage.AUTHORING_TAB);
-                    return new Link(label, target);
+                    return new ControlLink(label);
+
+//                    final String target = ContentItemPage.getItemURL(
+//                        itemSelectionModel.getSelectedItem(state),
+//                        ContentItemPage.AUTHORING_TAB);
+//                    return new Link(label, target);
                 }
+
             }
 
         }
         );
-        columnModel.get(COL_DELETE).setCellRenderer(new TableCellRenderer() {
+        columnModel.get(COL_DELETE)
+            .setCellRenderer(new TableCellRenderer() {
 
-            @Override
-            public Component getComponent(final Table table,
-                                          final PageState state,
-                                          final Object value,
-                                          final boolean isSelected,
-                                          final Object key,
-                                          final int row,
-                                          final int column) {
+                @Override
+                public Component getComponent(final Table table,
+                                              final PageState state,
+                                              final Object value,
+                                              final boolean isSelected,
+                                              final Object key,
+                                              final int row,
+                                              final int column
+                ) {
 
-                final ControlLink link = new ControlLink(new Label(
-                    new GlobalizedMessage("cms.ui.delete",
-                                          CmsConstants.CMS_BUNDLE)));
-                link.setConfirmation(new GlobalizedMessage(
-                    "cms.ui.delete.confirmation", CmsConstants.CMS_BUNDLE));
+                    final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                    final ItemLanguagesController controller = cdiUtil
+                        .findBean(ItemLanguagesController.class);
+                    final ContentItem item = itemSelectionModel
+                        .getSelectedItem(state);
 
-                return link;
+                    if (key
+                        .equals(KernelConfig.getConfig().getDefaultLanguage())
+                            || controller.countLanguageVariants(item) <= 1) {
+                        return new Text(" ");
+                    } else {
+                        final ControlLink link = new ControlLink(new Label(
+                            new GlobalizedMessage("cms.ui.delete",
+                                                  CmsConstants.CMS_BUNDLE)));
+                        link.setConfirmation(new GlobalizedMessage(
+                            "cms.ui.delete.confirmation",
+                            CmsConstants.CMS_BUNDLE));
+
+                        return link;
+                    }
+                }
+
             }
+            );
 
-        });
-
-        addTableActionListener(new TableActionListener() {
+        addTableActionListener(
+            new TableActionListener() {
 
             @Override
             public void cellSelected(final TableActionEvent event)
                 throws FormProcessException {
 
-                if (event.getColumn() != COL_DELETE) {
-                    //Nothing to do
-                    return;
-                }
-
                 final PageState state = event.getPageState();
                 final ContentItem item = itemSelectionModel
                     .getSelectedItem(state);
-                final String selectedLang = (String) event.getRowKey();
+                final String selectedLanguage = (String) event.getRowKey();
 
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final ContentItemL10NManager l10nManager = cdiUtil.findBean(
-                    ContentItemL10NManager.class);
+                final ItemLanguagesController controller = cdiUtil
+                    .findBean(ItemLanguagesController.class);
 
-                l10nManager.removeLanguage(item, new Locale(selectedLang));
+                switch (event.getColumn()) {
+                    case COL_LANGUAGE: {
+                        state.setValue(selectedLanguageParam, selectedLanguage);
+                        final String langParam = String
+                            .format("&%s=%s",
+                                    ContentItemPage.SELECTED_LANGUAGE,
+                                    selectedLanguage);
+                        final String target = String.join(
+                            "",
+                            URL.getDispatcherPath(),
+                            controller.getItemEditUrl(item),
+                            langParam);
+                        throw new RedirectSignal(target, true);
+                    }
+                    case COL_DELETE: {
+                        if (selectedLanguage.equals(state.getValue(
+                            selectedLanguageParam))) {
+                            state.setValue(selectedLanguageParam,
+                                           KernelConfig.getConfig()
+                                               .getDefaultLanguage());
+                        }
+                        controller.removeLanguage(item, selectedLanguage);
+                    }
+                    default:
+                        //Nothing to do
+                        return;
+                }
             }
 
             @Override
-            public void headSelected(final TableActionEvent event) {
+            public void headSelected(final TableActionEvent event
+            ) {
                 //Nothing
             }
 
-        });
+        }
+        );
 
     }
 

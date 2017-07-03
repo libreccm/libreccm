@@ -31,10 +31,9 @@ import com.arsdigita.bebop.event.PrintListener;
 import com.arsdigita.bebop.form.Option;
 import com.arsdigita.bebop.form.OptionGroup;
 import com.arsdigita.bebop.form.Submit;
+import com.arsdigita.bebop.parameters.StringParameter;
 
 import org.librecms.contentsection.ContentItem;
-import org.librecms.contentsection.ContentSection;
-import org.librecms.contentsection.ContentType;
 
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.ui.ContentItemPage;
@@ -43,28 +42,21 @@ import com.arsdigita.cms.ui.authoring.LanguageWidget;
 import org.librecms.util.LanguageUtil;
 
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.LayoutPanel;
 import com.arsdigita.toolbox.ui.Section;
-import com.arsdigita.util.Assert;
 import com.arsdigita.util.Pair;
-import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.web.RedirectSignal;
 import com.arsdigita.web.URL;
 
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.workflow.Workflow;
-import org.libreccm.workflow.WorkflowTemplate;
 import org.librecms.contentsection.ContentItemL10NManager;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.TooManyListenersException;
 import java.util.stream.Collectors;
-import org.libreccm.configuration.ConfigurationManager;
+
+import org.libreccm.core.UnexpectedErrorException;
 import org.librecms.CmsConstants;
 
 /**
@@ -77,23 +69,28 @@ import org.librecms.CmsConstants;
 public class ItemLanguages extends LayoutPanel {
 
     private final ItemSelectionModel selectionModel;
-    private final SingleSelectionModel<String> selectedLanguage;
+//    private final SingleSelectionModel<String> selectedLanguage;
     private final LanguageWidget languageWidget;
-    private final Submit changeSubmit;
+    private final StringParameter selectedLanguageParam;
+    //    private final Submit changeSubmit;
     private final Submit createSubmit;
 
     /**
      * Constructs a new <code>ItemLanguages</code>.
      *
-     * @param selectionModel the {@link ItemSelectionModel} which will supply
-     * the current item
-     * @param selectedLanguage {@link SingleSelectionModel} for the selected
-     * language.
+     * @param selectionModel        the {@link ItemSelectionModel} which will
+     *                              supply the current item
+     * @param selectedLanguage      {@link SingleSelectionModel} for the
+     *                              selected language.
+     * @param selectedLanguageParam
      */
     public ItemLanguages(final ItemSelectionModel selectionModel,
-                         final SingleSelectionModel<String> selectedLanguage) {
+                         //                         final SingleSelectionModel<String> selectedLanguage,
+                         final StringParameter selectedLanguageParam) {
+
         this.selectionModel = selectionModel;
-        this.selectedLanguage = selectedLanguage;
+//        this.selectedLanguage = selectedLanguage;
+        this.selectedLanguageParam = selectedLanguageParam;
 
         final Section section = new Section(gz("cms.ui.item.languages"));
         setBody(section);
@@ -102,10 +99,23 @@ public class ItemLanguages extends LayoutPanel {
         section.setBody(group);
 
         group.setSubject(new ItemLanguagesTable(selectionModel,
-                                                selectedLanguage));
+                                                //                                                selectedLanguage,
+                                                selectedLanguageParam));
 
         final Form form = new Form("newLanguage", new BoxPanel(
-                                   BoxPanel.HORIZONTAL));
+                                   BoxPanel.HORIZONTAL)) {
+
+            @Override
+            public boolean isVisible(final PageState state) {
+                final ContentItem item = selectionModel.getSelectedItem(state);
+
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final ContentItemL10NManager l10NManager = cdiUtil.findBean(
+                    ContentItemL10NManager.class);
+                return !l10NManager.creatableLocales(item).isEmpty();
+            }
+
+        };
         group.addAction(form);
 
         form.setRedirecting(true);
@@ -121,12 +131,12 @@ public class ItemLanguages extends LayoutPanel {
         try {
             languageWidget.addPrintListener(new OptionPrinter());
         } catch (TooManyListenersException ex) {
-            throw new UncheckedWrapperException(ex);
+            throw new UnexpectedErrorException(ex);
         }
 
         form.add(languageWidget);
-        changeSubmit = new Submit("change", gz("cms.ui.item.language.change"));
-        form.add(changeSubmit);
+//        changeSubmit = new Submit("change", gz("cms.ui.item.language.change"));
+//        form.add(changeSubmit);
         createSubmit = new Submit("create", gz("cms.ui.item.language.add"));
         form.add(createSubmit);
         form.addProcessListener(new ProcessListener());
@@ -140,28 +150,29 @@ public class ItemLanguages extends LayoutPanel {
         @Override
         public final void prepare(final PrintEvent event) {
             final PageState state = event.getPageState();
-            final OptionGroup optionGroup = (OptionGroup) event.getTarget();
+            final OptionGroup target = (OptionGroup) event.getTarget();
+            target.clearOptions();
             final ContentItem item = selectionModel.getSelectedItem(state);
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final LanguageUtil languageUtil = cdiUtil.findBean(
-                    LanguageUtil.class);
+                LanguageUtil.class);
             final ContentItemL10NManager l10NManager = cdiUtil.findBean(
-                    ContentItemL10NManager.class);
+                ContentItemL10NManager.class);
 
             final List<String> creatableLangs = l10NManager.creatableLocales(
-                    item).stream()
-                    .map(locale -> locale.toString())
-                    .collect(Collectors.toList());
-            final List<Pair> languages = languageUtil.convertToG11N(
-                    creatableLangs);
+                item).stream()
+                .map(locale -> locale.toString())
+                .collect(Collectors.toList());
+            final List<Pair> languages = languageUtil
+                .convertToG11N(creatableLangs);
 
             for (final Pair pair : languages) {
                 final String langCode = (String) pair.getKey();
                 final GlobalizedMessage langName
-                                        = (GlobalizedMessage) pair
-                                .getValue();
-                optionGroup.addOption(new Option(langCode, new Label(langName)));
+                                            = (GlobalizedMessage) pair
+                        .getValue();
+                target.addOption(new Option(langCode, new Label(langName)));
             }
         }
 
@@ -174,40 +185,35 @@ public class ItemLanguages extends LayoutPanel {
 
         @Override
         public final void process(final FormSectionEvent event)
-                throws FormProcessException {
+            throws FormProcessException {
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 
             final PageState state = event.getPageState();
-            final String lang = (String) languageWidget.getValue(state);
-            final ContentItem item = (ContentItem) selectionModel
-                    .getSelectedItem(state);
-
-            final ConfigurationManager confManager = cdiUtil.findBean(
-                    ConfigurationManager.class);
-            final KernelConfig kernelConfig = confManager.findConfiguration(
-                    KernelConfig.class);
-            final Locale defaultLocale = kernelConfig.getDefaultLocale();
-            final String name = item.getName().getValue(defaultLocale);
+            final String language = (String) languageWidget.getValue(state);
+            final ContentItem item = selectionModel.getSelectedItem(state);
 
             if (createSubmit.isSelected(state)) {
-                final ContentSection section = item.getContentType().
-                        getContentSection();
 
-                Assert.exists(section, ContentSection.class);
+                final ItemLanguagesController controller = cdiUtil
+                    .findBean(ItemLanguagesController.class);
 
-                final ContentItemL10NManager l10NManager = cdiUtil.findBean(
-                        ContentItemL10NManager.class);
-                l10NManager.addLanguage(item, new Locale(lang));
+                controller.addLanguage(item, language);
 
                 // redirect to ContentItemPage.AUTHORING_TAB of the new instance
+                state.setValue(selectedLanguageParam, language);
+                final String langParam = String
+                    .format("&%s=%s",
+                            ContentItemPage.SELECTED_LANGUAGE,
+                            language);
                 final String target = String.join(
-                        "", URL.getDispatcherPath(),
-                        ContentItemPage.getItemURL(item,
-                                                   ContentItemPage.AUTHORING_TAB));
-                
+                    "",
+                    URL.getDispatcherPath(),
+                    controller.getItemEditUrl(item),
+                    langParam);
+
                 throw new RedirectSignal(target, true);
-            } 
+            }
         }
 
     }

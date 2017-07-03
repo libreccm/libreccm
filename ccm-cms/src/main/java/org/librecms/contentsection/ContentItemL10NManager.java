@@ -359,7 +359,11 @@ public class ContentItemL10NManager {
      * set with all locales provided by any of the fields. After that the method
      * will iterate over all {@link LocalizedString} fields and check if the
      * {@link LocalizedString} has an entry for every language in the set. If
-     * not an entry for the language is added.
+     * not an entry for the language is added. The initial value is taken from
+     * the variant for default language configured in
+     * {@link KernelConfig#defaultLanguage}. If no value for the default locale
+     * exists the value for the first found language from the list of supported
+     * languages ({@link KernelConfig#supportedLanguages}) is used.
      *
      * @param item The item to normalise. The item <strong>must be</strong> the
      * <strong>draft version</strong> of the item! If a <em>live version</em> or
