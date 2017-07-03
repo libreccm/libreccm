@@ -19,6 +19,7 @@
 package com.arsdigita.cms.ui.item;
 
 import com.arsdigita.bebop.table.RowData;
+import com.arsdigita.cms.ui.ContentItemPage;
 
 import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.contentsection.ContentItem;
@@ -41,49 +42,100 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class ItemLanguagesController {
+class ItemLanguagesController {
 
     @Inject
     private ContentItemRepository itemRepo;
 
     @Inject
     private ContentItemL10NManager itemL10NManager;
-    
+
     @Inject
     private GlobalizationHelper globalizationHelper;
 
-    public List<RowData<String>> retrieveLanguageVariants(final ContentItem item) {
+    protected List<RowData<String>> retrieveLanguageVariants(
+        final ContentItem item) {
         return retrieveLanguageVariants(item.getObjectId());
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<RowData<String>> retrieveLanguageVariants(final long itemId) {
-        final Optional<ContentItem> item = itemRepo.findById(itemId);
+    protected List<RowData<String>> retrieveLanguageVariants(final long itemId) {
 
-        if (!item.isPresent()) {
-            throw new IllegalArgumentException(String.format(
-                "No content item with id %d found.", itemId));
-        }
+        final ContentItem item = itemRepo
+            .findById(itemId)
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No ContentItem with ID %d in the database.", itemId)));
 
         final List<Locale> availableLangs = new ArrayList<>(itemL10NManager
-            .availableLanguages(item.get()));
+            .availableLanguages(item));
         availableLangs.sort((locale1, locale2) -> {
             return locale1.toString().compareTo(locale2.toString());
         });
-        
+
         return availableLangs.stream()
-            .map(lang -> createRow(item.get(), lang))
+            .map(lang -> createRow(item, lang))
             .collect(Collectors.toList());
     }
 
-    private RowData<String> createRow(final ContentItem item, 
+    private RowData<String> createRow(final ContentItem item,
                                       final Locale lang) {
         final RowData<String> row = new RowData<>(2);
         row.setRowKey(lang.toString());
-        row.setColData(0, lang.getDisplayName(globalizationHelper.getNegotiatedLocale()));
+        row.setColData(0, lang.getDisplayName(globalizationHelper
+                       .getNegotiatedLocale()));
         row.setColData(1, item.getTitle().getValue(lang));
-        
+
         return row;
     }
-     
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected int countLanguageVariants(final ContentItem item) {
+
+        final ContentItem contentItem = itemRepo
+            .findById(item.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No ContentItem with ID %d in the database.",
+            item.getObjectId())));
+
+        return itemL10NManager.availableLanguages(contentItem).size();
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void addLanguage(final ContentItem item, final String language) {
+
+        final ContentItem contentItem = itemRepo
+            .findById(item.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No ContentItem with ID %d in the database.",
+            item.getObjectId())));
+
+        itemL10NManager.addLanguage(contentItem, new Locale(language));
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void removeLanguage(final ContentItem item,
+                                  final String language) {
+
+        final ContentItem contentItem = itemRepo
+            .findById(item.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No ContentItem with ID %d in the database.",
+            item.getObjectId())));
+
+        itemL10NManager.removeLanguage(contentItem, new Locale(language));
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected String getItemEditUrl(final ContentItem item) {
+
+        final ContentItem contentItem = itemRepo
+            .findById(item.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No ContentItem with ID %d in the database.",
+            item.getObjectId())));
+
+        return ContentItemPage.getItemURL(contentItem,
+                                          ContentItemPage.AUTHORING_TAB);
+    }
+
 }

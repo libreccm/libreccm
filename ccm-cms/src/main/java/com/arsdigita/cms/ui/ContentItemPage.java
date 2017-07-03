@@ -29,7 +29,6 @@ import com.arsdigita.bebop.Resettable;
 import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.TabbedPane;
-import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
@@ -42,7 +41,6 @@ import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.PageLocations;
-import com.arsdigita.cms.dispatcher.CMSDispatcher;
 import com.arsdigita.cms.dispatcher.CMSPage;
 import com.arsdigita.cms.ui.authoring.WizardSelector;
 import com.arsdigita.cms.ui.item.ContentItemRequestLocal;
@@ -57,7 +55,6 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.kernel.ui.ACSObjectSelectionModel;
 import com.arsdigita.util.Assert;
-import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.xml.Document;
 import com.arsdigita.xml.Element;
 
@@ -71,9 +68,7 @@ import org.librecms.contentsection.ContentItemL10NManager;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentItemVersion;
 import org.librecms.contentsection.ContentSection;
-import org.librecms.contentsection.ContentSectionManager;
 import org.librecms.contentsection.ContentType;
-import org.librecms.dispatcher.ItemResolver;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -149,7 +144,7 @@ public class ContentItemPage extends CMSPage implements ActionListener {
     private final TabbedPane tabbedPane;
     private final StringParameter returnUrlParameter;
     private final ItemSelectionModel itemSelectionModel;
-    private final SingleSelectionModel<String> selectedLanguageModel;
+//    private final SingleSelectionModel<String> selectedLanguageModel;
     private final ACSObjectSelectionModel typeSelectionModel;
     private final ContentItemRequestLocal itemRequestLocal;
     private final Summary summaryPane;
@@ -178,9 +173,9 @@ public class ContentItemPage extends CMSPage implements ActionListener {
 
         @Override
         public final void prepare(final PrintEvent event) {
-            
+
             final PageState state = event.getPageState();
-            
+
             final Label label = (Label) event.getTarget();
             final ContentItem item = itemRequestLocal.getContentItem(event.
                 getPageState());
@@ -214,7 +209,7 @@ public class ContentItemPage extends CMSPage implements ActionListener {
                     .append(language)
                     .append(")");
             }
-            
+
             label.setLabel(title.toString());
         }
 
@@ -238,15 +233,14 @@ public class ContentItemPage extends CMSPage implements ActionListener {
         itemSelectionModel = new ItemSelectionModel(itemId);
 
         // Add the selected item language as parameter
-        selectedLanguageParam = new StringParameter(
-            SELECTED_LANGUAGE);
+        selectedLanguageParam = new StringParameter(SELECTED_LANGUAGE);
         selectedLanguageParam.addParameterListener(
             new NotNullValidationListener(SELECTED_LANGUAGE));
         addGlobalStateParam(selectedLanguageParam);
-        selectedLanguageModel = new ParameterSingleSelectionModel<>(
-            selectedLanguageParam);
-        selectedLanguageParam
-            .setDefaultValue(KernelConfig.getConfig().getDefaultLanguage());
+//        selectedLanguageModel = new ParameterSingleSelectionModel<>(
+//            selectedLanguageParam);
+//        selectedLanguageParam
+//            .setDefaultValue(KernelConfig.getConfig().getDefaultLanguage());
 
         // Add the content type global state parameter
         final LongParameter contentType = new LongParameter(CONTENT_TYPE);
@@ -282,7 +276,8 @@ public class ContentItemPage extends CMSPage implements ActionListener {
         summaryPane = new Summary(itemSelectionModel);
         wizardPane = new WizardSelector(itemSelectionModel, typeSelectionModel);
         languagesPane = new ItemLanguages(itemSelectionModel,
-                                          selectedLanguageModel);
+//                                          selectedLanguageModel,
+                                          selectedLanguageParam);
         workflowPane = new ItemWorkflowAdminPane(itemId); // Make this use m_item XXX
         lifecyclePane = new ItemLifecycleAdminPane(itemRequestLocal);
         revisionsPane = new ItemRevisionAdminPane(itemRequestLocal);
