@@ -28,9 +28,11 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.RadioButtonGroup;
+import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -296,6 +298,8 @@ public class UserEditor extends Window {
             banned.setValue(user.isBanned());
             passwordOptions.setValue(PasswordOptions.DO_NOTHING);
         }
+
+        dataHasChanged = false;
     }
 
     @Override

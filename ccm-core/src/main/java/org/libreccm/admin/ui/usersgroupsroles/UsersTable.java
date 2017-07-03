@@ -58,7 +58,7 @@ public class UsersTable extends Grid<User> {
 
     public UsersTable(final AdminView view,
                       final UsersGroupsRoles usersGroupsRoles) {
-        
+
         super();
 
         final ResourceBundle bundle = ResourceBundle
@@ -99,13 +99,21 @@ public class UsersTable extends Grid<User> {
             .setCaption("Password reset required");
         addColumn(user -> bundle.getString("ui.admin.users.table.edit"),
                   new ButtonRenderer<>(event -> {
-                      final UserEditor editor = new UserEditor(
+//                      final UserEditor editor = new UserEditor(
+//                          event.getItem(),
+//                          usersGroupsRoles,
+//                          view.getUserRepository(),
+//                          view.getUserManager());
+//                      editor.center();
+//                      UI.getCurrent().addWindow(editor);
+                      final UserDetails details = new UserDetails(
                           event.getItem(),
                           usersGroupsRoles,
                           view.getUserRepository(),
                           view.getUserManager());
-                      editor.center();
-                      UI.getCurrent().addWindow(editor);
+                      details.center();
+                      details.setWidth("66.6%");
+                      UI.getCurrent().addWindow(details);
                   }))
             .setId(COL_EDIT);
 
@@ -133,7 +141,7 @@ public class UsersTable extends Grid<User> {
         clearFiltersButton.addClickListener(event -> {
             userNameFilter.setValue("");
         });
-        
+
         createUserButton = new Button("New User");
         createUserButton.addStyleName(ValoTheme.BUTTON_TINY);
         createUserButton.setIcon(VaadinIcons.PLUS);
