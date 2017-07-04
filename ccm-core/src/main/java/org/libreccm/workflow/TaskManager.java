@@ -89,7 +89,7 @@ public class TaskManager {
         task.setWorkflow(null);
 
         workflowRepo.save(workflow);
-        taskRepo.save(task);
+        taskRepo.delete(task);
     }
 
     /**
