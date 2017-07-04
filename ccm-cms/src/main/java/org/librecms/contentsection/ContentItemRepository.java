@@ -513,7 +513,7 @@ public class ContentItemRepository
      *              boundary here to allow usage with all results type used in
      *              this class ({@link ContentItem} and sub classes ,Long)
      */
-    private void setAuthorizationParameters(final TypedQuery<?> query) {
+    protected void setAuthorizationParameters(final TypedQuery<?> query) {
 
         final Optional<User> user = shiro.getUser();
         final List<Role> roles;

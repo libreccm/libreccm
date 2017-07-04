@@ -116,11 +116,11 @@ public class NewsPropertiesStep extends SimpleEditStep {
                   "name");
         sheet.add(new GlobalizedMessage("cms.contenttypes.ui.newsitem.lead",
                                         CmsConstants.CMS_BUNDLE),
-                  "lead");
+                  "description");
 
         // Show news item on homepage?
         sheet.add(new GlobalizedMessage(
-            "cms.contenttypes.ui.newsitem.news_date",
+            "cms.contenttypes.ui.newsitem.date",
             CmsConstants.CMS_BUNDLE),
                   "releaseDate",
                   new NewsItemDateAttributeFormatter());

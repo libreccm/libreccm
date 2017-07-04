@@ -77,7 +77,7 @@ import org.librecms.contentsection.privileges.TypePrivileges;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@RequestScoped
+ @RequestScoped
 public class ContentItemManager {
 
     private static final Logger LOGGER = LogManager.getLogger(
@@ -1338,6 +1338,7 @@ public class ContentItemManager {
         final TypedQuery<ContentItem> query = entityManager.createNamedQuery(
             "ContentItem.findDraftVersion", ContentItem.class);
         query.setParameter("uuid", item.getItemUuid());
+        contentItemRepo.setAuthorizationParameters(query);
 
         return (T) query.getSingleResult();
     }
