@@ -45,13 +45,14 @@ import javax.persistence.TypedQuery;
 
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
-import org.libreccm.security.UserManager;
 import org.libreccm.security.UserRepository;
+import org.libreccm.workflow.Task;
+import org.libreccm.workflow.TaskManager;
+import org.libreccm.workflow.TaskRepository;
 import org.libreccm.workflow.Workflow;
+import org.libreccm.workflow.WorkflowRepository;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -83,11 +84,17 @@ public class ContentItemRepository
     private UserRepository userRepository;
 
     @Inject
-    private UserManager userManager;
-
-    @Inject
     private RoleManager roleManager;
 
+    @Inject
+    private WorkflowRepository workflowRepo;
+    
+    @Inject
+    private TaskRepository taskRepo;
+    
+    @Inject
+    private TaskManager taskManager;
+    
     @Inject
     private PermissionChecker permissionChecker;
 
@@ -491,6 +498,14 @@ public class ContentItemRepository
             final Category category = categorization.getCategory();
 
             removeCategoryFromItem(item, category);
+        }
+       
+        if (draft.getWorkflow() != null) {
+            final Workflow workflow = draft.getWorkflow();
+            for(final Task task : workflow.getTasks()) {
+                taskManager.removeTask(workflow, task);
+            }
+            workflowRepo.delete(workflow);
         }
 
         super.delete(draft);
