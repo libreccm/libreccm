@@ -31,6 +31,7 @@ import com.arsdigita.cms.ui.authoring.BasicPageForm;
 import com.arsdigita.cms.ui.authoring.SimpleEditStep;
 import com.arsdigita.cms.ui.workflow.WorkflowLockedComponentAccess;
 import com.arsdigita.globalization.GlobalizedMessage;
+import com.arsdigita.toolbox.ToolboxConstants;
 import com.arsdigita.toolbox.ui.DomainObjectPropertySheet;
 
 import org.libreccm.cdi.utils.CdiUtil;
@@ -48,6 +49,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -101,7 +103,8 @@ public class EventPropertiesStep extends SimpleEditStep {
      * Returns a component that displays the properties of the Event specified
      * by the ItemSelectionModel passed in.
      *
-     * @param itemSelectionModel The ItemSelectionModel to use
+     * @param itemSelectionModel    The ItemSelectionModel to use
+     * @param selectedLanguageParam
      *
      * @return A component to display the state of the basic properties of the
      *         release
@@ -210,13 +213,13 @@ public class EventPropertiesStep extends SimpleEditStep {
          * @return A String representation of the retrieved boolean attribute of
          *         the domain object.
          */
+        @Override
         public String format(final Object obj,
                              final String attribute,
                              final PageState state) {
 
             if (obj != null && obj instanceof Event) {
 
-                final Event event = (Event) obj;
                 final BeanInfo beanInfo;
                 try {
                     beanInfo = Introspector.getBeanInfo(Event.class);
@@ -246,24 +249,38 @@ public class EventPropertiesStep extends SimpleEditStep {
                         throw new UnexpectedErrorException(ex);
                     }
 
-                    return DateFormat
-                        .getDateTimeInstance(
-                            DateFormat.LONG,
-                            DateFormat.SHORT,
-                            globalizationHelper.getNegotiatedLocale())
-                        .format(result);
+                    if (result == null) {
+                        return (String) new GlobalizedMessage(
+                            "toolbox.ui.na", ToolboxConstants.TOOLBOX_BUNDLE)
+                            .localize();
+                    } else if (result instanceof Date) {
+                        return DateFormat
+                            .getDateTimeInstance(
+                                DateFormat.LONG,
+                                DateFormat.SHORT,
+                                globalizationHelper.getNegotiatedLocale())
+                            .format((Date) result);
+                    } else {
+                        throw new IllegalArgumentException(String
+                            .format(
+                                "Value is not an instance of \"%s\" but is an "
+                                    + "instance of \"%s\".",
+                                Date.class.getName(),
+                                result.getClass().getName()));
+                    }
 
                 } else {
                     return (String) new GlobalizedMessage(
-                        "cms.ui.unknown",
-                        CmsConstants.CMS_BUNDLE)
+                        "toolbox.ui.na",
+                        ToolboxConstants.TOOLBOX_BUNDLE)
                         .localize();
                 }
 
             } else {
 
-                return (String) new GlobalizedMessage("cms.ui.unknown",
-                                                      CmsConstants.CMS_BUNDLE)
+                return (String) new GlobalizedMessage(
+                    "toolbox.ui.na",
+                    ToolboxConstants.TOOLBOX_BUNDLE)
                     .localize();
             }
         }

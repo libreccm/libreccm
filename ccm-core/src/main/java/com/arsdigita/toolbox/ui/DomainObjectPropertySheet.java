@@ -630,7 +630,7 @@ public class DomainObjectPropertySheet extends PropertySheet {
             } catch (IllegalAccessException | InvocationTargetException ex) {
                 throw new UnexpectedErrorException(ex);
             }
-            return Optional.of(value);
+            return Optional.ofNullable(value);
 
         } else {
             return Optional.empty();
