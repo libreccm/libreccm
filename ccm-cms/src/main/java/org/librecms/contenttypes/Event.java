@@ -167,19 +167,35 @@ public class Event extends ContentItem implements Serializable {
     }
 
     public Date getStartDate() {
-        return new Date(startDate.getTime());
+        if (startDate == null) {
+            return null;
+        } else {
+            return new Date(startDate.getTime());
+        }
     }
 
     public void setStartDate(final Date startDate) {
-        this.startDate = new Date(startDate.getTime());
+        if (startDate == null) {
+            this.startDate = null;
+        } else {
+            this.startDate = new Date(startDate.getTime());
+        }
     }
 
     public Date getEndDate() {
-        return new Date(endDate.getTime());
+        if (endDate == null) {
+            return null;
+        } else {
+            return new Date(endDate.getTime());
+        }
     }
 
     public void setEndDate(final Date endDate) {
-        this.endDate = new Date(endDate.getTime());
+        if (endDate == null) {
+            this.endDate = null;
+        } else {
+            this.endDate = new Date(endDate.getTime());
+        }
     }
 
     public LocalizedString getEventDate() {

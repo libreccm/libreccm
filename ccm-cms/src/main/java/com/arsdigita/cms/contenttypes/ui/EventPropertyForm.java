@@ -145,11 +145,11 @@ public class EventPropertyForm
     public EventPropertyForm(final ItemSelectionModel itemSelectionModel,
                              final EventPropertiesStep eventPropertiesStep,
                              final StringParameter selectedLanguageParam) {
-        
+
         super(ID, itemSelectionModel, selectedLanguageParam);
-        
+
         Objects.requireNonNull(selectedLanguageParam);
-        
+
         this.eventPropertiesStep = eventPropertiesStep;
         this.selectedLanguageParam = selectedLanguageParam;
         addSubmissionListener(this);
@@ -442,27 +442,27 @@ public class EventPropertyForm
 
         data.put(LEAD, item.getDescription().getValue(selectedLocale));
         data.put(START_DATE, startDate);
-        data.put(START_TIME, startDate.getTime());
+        data.put(START_TIME, startDate);
         data.put(END_DATE, endDate);
-        data.put(END_TIME, endDate.getTime());
+        data.put(END_TIME, endDate);
         if (!eventConfig.isHideDateDescription()) {
-            data.put(EVENT_DATE, 
+            data.put(EVENT_DATE,
                      item.getEventDate().getValue(selectedLocale));
         }
-        data.put(LOCATION, item.getLocation());
+        data.put(LOCATION, item.getLocation().getValue(selectedLocale));
         if (!eventConfig.isHideMainContributor()) {
-            data.put(MAIN_CONTRIBUTOR, 
+            data.put(MAIN_CONTRIBUTOR,
                      item.getMainContributor().getValue(selectedLocale));
         }
         if (!eventConfig.isHideEventType()) {
-            data.put(EVENT_TYPE, 
+            data.put(EVENT_TYPE,
                      item.getEventType().getValue(selectedLocale));
         }
         if (!eventConfig.isHideLinkToMap()) {
             data.put(MAP_LINK, item.getMapLink());
         }
         if (!eventConfig.isHideCost()) {
-            data.put(COST, 
+            data.put(COST,
                      item.getCost().getValue(selectedLocale));
         }
     }
@@ -489,7 +489,8 @@ public class EventPropertyForm
      */
     @Override
     public void process(final FormSectionEvent event) {
-        FormData data = event.getFormData();
+
+        final FormData data = event.getFormData();
 
         final Event item = (Event) super.processBasicWidgets(event);
 
@@ -498,12 +499,20 @@ public class EventPropertyForm
             .findBean(ConfigurationManager.class);
         final EventConfig eventConfig = confManager
             .findConfiguration(EventConfig.class);
+        final PageState state = event.getPageState();
 
         // save only if save button was pressed
         if (item != null
-                && getSaveCancelSection()
-                .getSaveButton()
-                .isSelected(event.getPageState())) {
+                && getSaveCancelSection().getSaveButton().isSelected(state)) {
+
+            final String selectedLanguage = (String) state
+                .getValue(selectedLanguageParam);
+            final Locale selectedLocale;
+            if (selectedLanguage == null) {
+                selectedLocale = KernelConfig.getConfig().getDefaultLocale();
+            } else {
+                selectedLocale = new Locale(selectedLanguage);
+            }
 
             final java.util.Date startDate = (java.util.Date) data
                 .get(START_DATE);
@@ -516,39 +525,34 @@ public class EventPropertyForm
             item.setEndDate((java.util.Date) data.get(END_DATE));
             //date_description
             if (!eventConfig.isHideDateDescription()) {
-                item.getEventDate().addValue(
-                    KernelConfig.getConfig().getDefaultLocale(),
-                    (String) data.get(EVENT_DATE));
+                item.getEventDate().addValue(selectedLocale,
+                                             (String) data.get(EVENT_DATE));
             }
 
             if (!eventConfig.isHideMainContributor()) {
                 item
                     .getMainContributor()
-                    .addValue(KernelConfig.getConfig().getDefaultLocale(),
+                    .addValue(selectedLocale,
                               (String) data.get(MAIN_CONTRIBUTOR));
             }
             if (!eventConfig.isHideEventType()) {
                 item
                     .getEventType()
-                    .addValue(KernelConfig.getConfig().getDefaultLocale(),
+                    .addValue(selectedLocale,
                               (String) data.get(EVENT_TYPE));
             }
             if (!eventConfig.isHideLinkToMap()) {
                 item.setMapLink((String) data.get(MAP_LINK));
             }
             item
-                .getLocation()
-                .addValue(KernelConfig.getConfig().getDefaultLocale(),
-                          (String) data.get(LOCATION));
+                .getLocation().addValue(selectedLocale,
+                                        (String) data.get(LOCATION));
             item
-                .getDescription()
-                .addValue(KernelConfig.getConfig().getDefaultLocale(),
-                          (String) data.get(LEAD));
+                .getDescription().addValue(selectedLocale,
+                                           (String) data.get(LEAD));
             if (!eventConfig.isHideCost()) {
-                item
-                    .getCost()
-                    .addValue(KernelConfig.getConfig().getDefaultLocale(),
-                              (String) data.get(COST));
+                item.getCost().addValue(selectedLocale,
+                                        (String) data.get(COST));
             }
 
             final ContentItemRepository itemRepo = cdiUtil
