@@ -454,9 +454,9 @@ create schema CCM_CORE;
     );
 
     create table CCM_CMS.EVENTS (
-        END_DATE date,
+        END_DATE timestamp,
         MAP_LINK varchar(255),
-        START_DATE date not null,
+        START_DATE timestamp not null,
         OBJECT_ID int8 not null,
         primary key (OBJECT_ID)
     );
@@ -464,9 +464,9 @@ create schema CCM_CORE;
     create table CCM_CMS.EVENTS_AUD (
         OBJECT_ID int8 not null,
         REV int4 not null,
-        END_DATE date,
+        END_DATE timestamp,
         MAP_LINK varchar(255),
-        START_DATE date,
+        START_DATE timestamp,
         primary key (OBJECT_ID, REV)
     );
 

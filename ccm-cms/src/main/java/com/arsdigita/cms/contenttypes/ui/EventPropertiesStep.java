@@ -133,7 +133,7 @@ public class EventPropertiesStep extends SimpleEditStep {
                   "name");
         sheet.add(new GlobalizedMessage("cms.contenttypes.ui.event.lead",
                                         CmsConstants.CMS_BUNDLE),
-                  "lead");
+                  "description");
 
         sheet.add(new GlobalizedMessage("cms.contenttypes.ui.event.start_time",
                                         CmsConstants.CMS_BUNDLE),
