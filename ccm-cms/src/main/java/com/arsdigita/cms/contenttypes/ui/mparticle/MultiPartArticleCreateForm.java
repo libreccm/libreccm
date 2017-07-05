@@ -28,19 +28,20 @@ import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.FormSubmissionListener;
 import com.arsdigita.bebop.event.FormValidationListener;
+import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.ui.authoring.ApplyWorkflowFormSection;
-import com.arsdigita.cms.ui.authoring.BasicItemForm;
 import com.arsdigita.cms.ui.authoring.CreationComponent;
 import com.arsdigita.cms.ui.authoring.CreationSelector;
 import com.arsdigita.cms.ui.authoring.LanguageWidget;
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.kernel.KernelConfig;
 
 import java.util.Date;
 
 import org.arsdigita.cms.CMSConfig;
+import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.Folder;
 import org.librecms.contenttypes.MultiPartArticle;
@@ -64,9 +65,15 @@ public class MultiPartArticleCreateForm
     private final CreationSelector creationSelector;
     private ApplyWorkflowFormSection workflowSection;
 
-    public MultiPartArticleCreateForm(final ItemSelectionModel itemSelectionModel,
-                                  final CreationSelector creationSelector) {
-        super("MultiPartArticleCreate", itemSelectionModel);
+    public MultiPartArticleCreateForm(
+        final ItemSelectionModel itemSelectionModel,
+        final CreationSelector creationSelector,
+        final StringParameter selectedLanguageParam) {
+
+        super("MultiPartArticleCreate",
+              itemSelectionModel,
+              selectedLanguageParam);
+
         this.creationSelector = creationSelector;
         workflowSection.setCreationSelector(creationSelector);
         workflowSection.setContentType(itemSelectionModel.getContentType());
@@ -92,7 +99,7 @@ public class MultiPartArticleCreateForm
      * CreationComponent.
      *
      * @return the ApplyWorkflowFormSection associated with this
-     * CreationComponent.
+     *         CreationComponent.
      */
     @Override
     public ApplyWorkflowFormSection getWorkflowSection() {
@@ -138,32 +145,37 @@ public class MultiPartArticleCreateForm
     }
 
     @Override
-    public void process(final FormSectionEvent event) throws FormProcessException {
+    public void process(final FormSectionEvent event)
+        throws FormProcessException {
+
         final FormData data = event.getFormData();
         final PageState state = event.getPageState();
         final ContentSection section = creationSelector.getContentSection(state);
         final Folder folder = creationSelector.getFolder(state);
 
-        final Locale locale = new Locale((String) data
-            .get(BasicItemForm.LANGUAGE));
-        
+        final Locale locale = new Locale((String) data.get(LANGUAGE));
+
         final MultiPartArticle article = createArticle(state,
                                                        (String) data.get(NAME),
                                                        section,
                                                        folder,
                                                        locale);
-        article.getTitle().addValue(KernelConfig.getConfig().getDefaultLocale(),
-                                    (String) data.get(TITLE));
+        article.getTitle().addValue(locale, (String) data.get(TITLE));
         if (!CMSConfig.getConfig().isHideLaunchDate()) {
             article.setLaunchDate((Date) data.get(LAUNCH_DATE));
         }
         article
             .getSummary()
-            .addValue(KernelConfig.getConfig().getDefaultLocale(),
-                      (String) data.get(SUMMARY));
+            .addValue(locale, (String) data.get(SUMMARY));
 
         workflowSection.applyWorkflow(state, article);
 
+        final CdiUtil cdiUtil =CdiUtil.createCdiUtil();
+        final ContentItemRepository itemRepo = cdiUtil
+            .findBean(ContentItemRepository.class);
+        itemRepo.save(article);
+        
         creationSelector.editItem(state, article);
     }
+
 }
