@@ -84,12 +84,12 @@ public class Event extends ContentItem implements Serializable {
     private LocalizedString text;
 
     @Column(name = "START_DATE", nullable = false)
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @NotNull
     private Date startDate;
 
     @Column(name = "END_DATE")
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date endDate;
 
     /**

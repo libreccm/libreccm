@@ -71,12 +71,14 @@ public class EventPropertyForm
                FormInitListener,
                FormSubmissionListener {
 
+    private final static Logger LOGGER = LogManager
+        .getLogger(EventPropertyForm.class);
+
     /**
      * Name of this form
      */
     public static final String ID = "event_edit";
-    private final static Logger LOGGER = LogManager
-        .getLogger(EventPropertyForm.class);
+
     private EventPropertiesStep eventPropertiesStep;
     /**
      * event date parameter name
@@ -516,13 +518,52 @@ public class EventPropertyForm
 
             final java.util.Date startDate = (java.util.Date) data
                 .get(START_DATE);
-            startDate.setTime(((java.util.Date) data.get(START_TIME)).getTime());
-            item.setStartDate((java.util.Date) data.get(START_DATE));
+            final java.util.Date startTime = (java.util.Date) data
+                .get(START_TIME);
+            final java.util.Date endDate = (java.util.Date) data.get(END_DATE);
+            final java.util.Date endTime = (java.util.Date) data.get(END_TIME);
+            
+            final Calendar startDateCal = Calendar.getInstance();
+            final Calendar startTimeCal = Calendar.getInstance();
+            final Calendar endDateCal = Calendar.getInstance();
+            final Calendar endTimeCal = Calendar.getInstance();
+            startDateCal.setTime(startDate);
+            startTimeCal.setTime(startTime);
+            endDateCal.setTime(endDate);
+            endTimeCal.setTime(endTime);
+            
+            final int startYear = startDateCal.get(Calendar.YEAR);
+            final int startMonth = startDateCal.get(Calendar.MONTH);
+            final int startDay = startDateCal.get(Calendar.DAY_OF_MONTH);
+            final int startHour = startTimeCal.get(Calendar.HOUR_OF_DAY);
+            final int startMinute = startTimeCal.get(Calendar.MINUTE);
+            
+            final int endYear = endDateCal.get(Calendar.YEAR);
+            final int endMonth = endDateCal.get(Calendar.MONTH);
+            final int endDay = endDateCal.get(Calendar.DAY_OF_MONTH);
+            final int endHour = endTimeCal.get(Calendar.HOUR_OF_DAY);
+            final int endMinute = endTimeCal.get(Calendar.MINUTE);
+            
+            final Calendar startDateTimeCal = Calendar.getInstance();
+            final Calendar endDateTimeCal = Calendar.getInstance();
+            
+            startDateTimeCal.set(Calendar.YEAR, startYear);
+            startDateTimeCal.set(Calendar.MONTH, startMonth);
+            startDateTimeCal.set(Calendar.DAY_OF_MONTH, startDay);
+            startDateTimeCal.set(Calendar.HOUR_OF_DAY, startHour);
+            startDateTimeCal.set(Calendar.MINUTE, startMinute);
+            
+            endDateTimeCal.set(Calendar.YEAR, endYear);
+            endDateTimeCal.set(Calendar.MONTH, endMonth);
+            endDateTimeCal.set(Calendar.DAY_OF_MONTH, endDay);
+            endDateTimeCal.set(Calendar.HOUR_OF_DAY, endHour);
+            endDateTimeCal.set(Calendar.MINUTE, endMinute);
+            
+            final java.util.Date startDateTime = startDateTimeCal.getTime();
+            final java.util.Date endDateTime = endDateTimeCal.getTime();
 
-            final java.util.Date endDate = (java.util.Date) data
-                .get(END_DATE);
-            endDate.setTime(((java.util.Date) data.get(END_TIME)).getTime());
-            item.setEndDate((java.util.Date) data.get(END_DATE));
+            item.setStartDate(startDateTime);
+            item.setEndDate(endDateTime);
             //date_description
             if (!eventConfig.isHideDateDescription()) {
                 item.getEventDate().addValue(selectedLocale,
