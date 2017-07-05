@@ -140,15 +140,15 @@ public class CoreDataImportTest {
         Assert.assertFalse(importHelper.importRoleMemberships());
 
 
-        final String name = "research_Administration_Publisher";
+        /*final String name = "research_Administration_Publisher";
         Group group = groupRepository
                 .findByName(name)
                 .orElseThrow(() -> new IllegalArgumentException(String
                 .format("No Group fount with the name: %s", name)));
-        System.err.println(group.toString());
+        System.err.println(group.toString());*/
 
 
-        //Assert.assertFalse(importHelper.importCategories());
+        Assert.assertFalse(importHelper.importCategories());
 
     }
 
