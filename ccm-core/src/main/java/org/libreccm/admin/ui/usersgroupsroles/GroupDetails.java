@@ -239,8 +239,7 @@ public class GroupDetails extends Window {
 
         rolesGrid.setWidth("100%");
 
-        final RoleRepository roleRepository = cdiUtil
-            .findBean(RoleRepository.class);
+        final RoleRepository roleRepo = cdiUtil.findBean(RoleRepository.class);
 
         final HeaderRow rolesGridHeader = rolesGrid.prependHeaderRow();
         final Button addRoleButton = new Button("Add role");
@@ -251,7 +250,7 @@ public class GroupDetails extends Window {
                 "Select role(s) to add to group",
                 "Add selected role(s) to group",
                 usersGroupsRoles,
-                roleRepository.findByParty(group),
+                roleRepo.findByParty(group),
                 (selectedRoles -> {
                     selectedRoles.forEach(role -> {
                         rolesController.assignRoleToGroup(role, group);

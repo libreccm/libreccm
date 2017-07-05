@@ -20,15 +20,24 @@ package org.libreccm.admin.ui.usersgroupsroles;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
 
+import com.vaadin.cdi.CDIUI;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.ui.Accordion;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
+import com.vaadin.ui.renderers.ButtonRenderer;
+import com.vaadin.ui.themes.ValoTheme;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.security.Role;
+import org.libreccm.security.RoleRepository;
 import org.libreccm.security.User;
 import org.libreccm.security.UserManager;
 import org.libreccm.security.UserRepository;
@@ -42,6 +51,12 @@ import java.util.ResourceBundle;
 public class UserDetails extends Window {
 
     private static final long serialVersionUID = 7852981019990845392L;
+
+    private static final String COL_GROUP_NAME = "group_name";
+    private static final String COL_GROUP_REMOVE = "group_remove";
+
+    private static final String COL_ROLE_NAME = "role_name";
+    private static final String COL_ROLE_REMOVE = "role_remove";
 
     private final UsersGroupsRoles usersGroupsRoles;
     private final User user;
@@ -124,10 +139,64 @@ public class UserDetails extends Window {
         final VerticalLayout layout = new VerticalLayout(formLayout,
                                                          editButton);
 
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+
+        final UserRolesController rolesController = cdiUtil
+            .findBean(UserRolesController.class);
+        final Grid<Role> rolesGrid = new Grid<>();
+        rolesGrid
+            .addColumn(Role::getName)
+            .setId(COL_ROLE_NAME)
+            .setCaption("Role name");
+        rolesGrid
+            .addColumn(role -> bundle
+            .getString("ui.groups.roles.remove"),
+                       new ButtonRenderer<>(event -> {
+                           rolesController
+                               .removeRoleFromUser(event.getItem(), user);
+                           rolesGrid.getDataProvider().refreshAll();
+                       }))
+            .setId(COL_ROLE_REMOVE);
+
+        rolesGrid.setWidth("100%");
+
+        final RoleRepository roleRepo = cdiUtil.findBean(RoleRepository.class);
+
+        final HeaderRow rolesGridHeader = rolesGrid.prependHeaderRow();
+        final Button addRoleButton = new Button("Add role");
+        addRoleButton.setIcon(VaadinIcons.PLUS);
+        addRoleButton.setStyleName(ValoTheme.BUTTON_TINY);
+        addRoleButton.addClickListener(event -> {
+            final RoleSelector roleSelector = new RoleSelector(
+                "Select role(s) to add to group",
+                "Add selected role(s) to group",
+                usersGroupsRoles,
+                roleRepo.findByParty(user),
+                (selectedRoles -> {
+                    selectedRoles.forEach(role -> {
+                        rolesController.assignRoleToUser(role, user);
+                        rolesGrid.getDataProvider().refreshAll();
+                    });
+                }));
+            roleSelector.center();
+            roleSelector.setWidth("80%");
+            UI.getCurrent().addWindow(roleSelector);
+        });
+        final HeaderCell rolesGridHeaderCell = rolesGridHeader
+            .join(COL_ROLE_NAME,
+                  COL_ROLE_REMOVE);
+        rolesGridHeaderCell
+            .setComponent(new HorizontalLayout(addRoleButton));
+
+        final UserRolesTableDataProvider rolesDataProvider = cdiUtil
+            .findBean(UserRolesTableDataProvider.class);
+        rolesDataProvider.setUser(user);
+        rolesGrid.setDataProvider(rolesDataProvider);
+        
         final TabSheet tabs = new TabSheet();
         tabs.addTab(layout, "Details");
         tabs.addTab(layout, "Groups");
-        tabs.addTab(layout, "Roles");
+        tabs.addTab(rolesGrid, "Roles");
 
         setContent(tabs);
     }
