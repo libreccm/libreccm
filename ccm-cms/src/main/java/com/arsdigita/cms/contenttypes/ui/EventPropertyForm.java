@@ -522,7 +522,7 @@ public class EventPropertyForm
                 .get(START_TIME);
             final java.util.Date endDate = (java.util.Date) data.get(END_DATE);
             final java.util.Date endTime = (java.util.Date) data.get(END_TIME);
-            
+
             final Calendar startDateCal = Calendar.getInstance();
             final Calendar startTimeCal = Calendar.getInstance();
             final Calendar endDateCal = Calendar.getInstance();
@@ -531,34 +531,34 @@ public class EventPropertyForm
             startTimeCal.setTime(startTime);
             endDateCal.setTime(endDate);
             endTimeCal.setTime(endTime);
-            
+
             final int startYear = startDateCal.get(Calendar.YEAR);
             final int startMonth = startDateCal.get(Calendar.MONTH);
             final int startDay = startDateCal.get(Calendar.DAY_OF_MONTH);
             final int startHour = startTimeCal.get(Calendar.HOUR_OF_DAY);
             final int startMinute = startTimeCal.get(Calendar.MINUTE);
-            
+
             final int endYear = endDateCal.get(Calendar.YEAR);
             final int endMonth = endDateCal.get(Calendar.MONTH);
             final int endDay = endDateCal.get(Calendar.DAY_OF_MONTH);
             final int endHour = endTimeCal.get(Calendar.HOUR_OF_DAY);
             final int endMinute = endTimeCal.get(Calendar.MINUTE);
-            
+
             final Calendar startDateTimeCal = Calendar.getInstance();
             final Calendar endDateTimeCal = Calendar.getInstance();
-            
+
             startDateTimeCal.set(Calendar.YEAR, startYear);
             startDateTimeCal.set(Calendar.MONTH, startMonth);
             startDateTimeCal.set(Calendar.DAY_OF_MONTH, startDay);
             startDateTimeCal.set(Calendar.HOUR_OF_DAY, startHour);
             startDateTimeCal.set(Calendar.MINUTE, startMinute);
-            
+
             endDateTimeCal.set(Calendar.YEAR, endYear);
             endDateTimeCal.set(Calendar.MONTH, endMonth);
             endDateTimeCal.set(Calendar.DAY_OF_MONTH, endDay);
             endDateTimeCal.set(Calendar.HOUR_OF_DAY, endHour);
             endDateTimeCal.set(Calendar.MINUTE, endMinute);
-            
+
             final java.util.Date startDateTime = startDateTimeCal.getTime();
             final java.util.Date endDateTime = endDateTimeCal.getTime();
 
@@ -585,11 +585,9 @@ public class EventPropertyForm
             if (!eventConfig.isHideLinkToMap()) {
                 item.setMapLink((String) data.get(MAP_LINK));
             }
-            item
-                .getLocation().addValue(selectedLocale,
+            item.getLocation().addValue(selectedLocale,
                                         (String) data.get(LOCATION));
-            item
-                .getDescription().addValue(selectedLocale,
+            item.getDescription().addValue(selectedLocale,
                                            (String) data.get(LEAD));
             if (!eventConfig.isHideCost()) {
                 item.getCost().addValue(selectedLocale,
