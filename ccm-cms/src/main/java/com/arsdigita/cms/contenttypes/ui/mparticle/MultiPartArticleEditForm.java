@@ -23,25 +23,27 @@ import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.FormSubmissionListener;
+import com.arsdigita.bebop.parameters.StringParameter;
 
-import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.Folder;
 
 import com.arsdigita.cms.ItemSelectionModel;
+import com.arsdigita.cms.ui.authoring.BasicPageForm;
 
 import org.librecms.contenttypes.MultiPartArticle;
 
 import com.arsdigita.cms.ui.authoring.SimpleEditStep;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
-import com.arsdigita.util.Assert;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItemManager;
+import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.FolderManager;
 import org.librecms.contentsection.FolderRepository;
 
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -53,20 +55,27 @@ public class MultiPartArticleEditForm extends MultiPartArticleForm
 
     private final ItemSelectionModel itemSelectionModel;
     private final SimpleEditStep editStep;
+    private final StringParameter selectedLanguageParam;
 
     /**
      * Constructor.
      *
      * @param itemSelectionModel
      * @param editStep
+     * @param selectedLanguageParam
      */
     public MultiPartArticleEditForm(final ItemSelectionModel itemSelectionModel,
-                                    final SimpleEditStep editStep) {
+                                    final SimpleEditStep editStep,
+                                    final StringParameter selectedLanguageParam) {
 
-        super("MultiPartArticleEditForm", itemSelectionModel);
+        super("MultiPartArticleEditForm",
+              itemSelectionModel,
+              selectedLanguageParam);
+
         addSubmissionListener(this);
         this.itemSelectionModel = itemSelectionModel;
         this.editStep = editStep;
+        this.selectedLanguageParam = selectedLanguageParam;
     }
 
     @Override
@@ -90,14 +99,27 @@ public class MultiPartArticleEditForm extends MultiPartArticleForm
     }
 
     @Override
-    public void process(final FormSectionEvent event) throws
-        FormProcessException {
+    public void process(final FormSectionEvent event)
+        throws FormProcessException {
+
+        final MultiPartArticle article = super.processBasicWidgets(event);
+
+        final PageState state = event.getPageState();
+
+//        final MultiPartArticle article = (MultiPartArticle) itemSelectionModel
+//            .getSelectedObject(state);
+
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ContentItemRepository itemRepo = cdiUtil
+            .findBean(ContentItemRepository.class);
+        itemRepo.save(article);
+
         editStep.maybeForwardToNextStep(event.getPageState());
     }
 
     @Override
-    public void validate(final FormSectionEvent event) throws
-        FormProcessException {
+    public void validate(final FormSectionEvent event)
+        throws FormProcessException {
 
         final PageState state = event.getPageState();
         final FormData data = event.getFormData();
@@ -105,17 +127,31 @@ public class MultiPartArticleEditForm extends MultiPartArticleForm
         final MultiPartArticle article = (MultiPartArticle) itemSelectionModel
             .getSelectedObject(state);
 
+        final Locale selectedLocale;
+        final String selectedLanguage = (String) state
+            .getValue(selectedLanguageParam);
+        if (selectedLanguage == null) {
+            selectedLocale = KernelConfig.getConfig().getDefaultLocale();
+        } else {
+            selectedLocale = new Locale(selectedLanguage);
+        }
+
         final String newName = (String) data.get(MultiPartArticleForm.NAME);
-        final String oldName = article
-            .getName()
-            .getValue(KernelConfig.getConfig().getDefaultLocale());
+        final String oldName = article.getName().getValue(selectedLocale);
 
         final boolean valid;
         if (newName.equalsIgnoreCase(oldName)) {
             valid = true;
         } else {
-            final Folder parent = getParentFolder(article);
-            valid = validateNameUniqueness(parent, event);
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final MultiPartArticleFormController controller = cdiUtil
+                .findBean(MultiPartArticleFormController.class);
+            final Optional<Folder> folder = controller.getArticleFolder(article);
+            if (folder.isPresent()) {
+                valid = validateNameUniqueness(folder.get(), event);
+            } else {
+                valid = true;
+            }
         }
 
         if (!valid) {

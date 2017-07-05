@@ -19,14 +19,11 @@
 package com.arsdigita.cms.contenttypes.ui.mparticle;
 
 import com.arsdigita.bebop.Component;
-import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.parameters.StringParameter;
 
-import org.librecms.contentsection.ContentSection;
 
 import com.arsdigita.cms.ItemSelectionModel;
 
-import org.librecms.contenttypes.MultiPartArticle;
 
 import com.arsdigita.toolbox.ui.DomainObjectPropertySheet;
 import com.arsdigita.cms.ui.authoring.AuthoringKitWizard;
@@ -39,7 +36,6 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.librecms.CmsConstants;
 
-import java.text.DateFormat;
 
 /**
  * A MultiPartArticle editing component.
@@ -49,6 +45,7 @@ import java.text.DateFormat;
  */
 public class MultiPartArticleEdit extends SimpleEditStep {
 
+    
     /**
      * Constructor.
      *
@@ -64,7 +61,10 @@ public class MultiPartArticleEdit extends SimpleEditStep {
         super(itemSelectionModel, authoringKitWizard, selectedLanguageParam);
 
         setDefaultEditKey("edit");
-        MultiPartArticleForm form = getForm(itemSelectionModel);
+        final MultiPartArticleForm form = new MultiPartArticleEditForm(
+            itemSelectionModel, 
+            this, 
+            selectedLanguageParam);
         add("edit",
             new GlobalizedMessage("cms.ui.edit",
                                   CmsConstants.CMS_BUNDLE),
@@ -75,12 +75,6 @@ public class MultiPartArticleEdit extends SimpleEditStep {
         setDisplayComponent(getMultiPartArticlePropertiesSheet(
             itemSelectionModel,
             selectedLanguageParam));
-    }
-
-    protected MultiPartArticleForm getForm(
-        final ItemSelectionModel itemSelectionModel) {
-
-        return new MultiPartArticleEditForm(itemSelectionModel, this);
     }
 
     public Component getMultiPartArticlePropertiesSheet(
