@@ -19,6 +19,7 @@
 package org.librecms.contenttypes;
 
 import com.arsdigita.cms.contenttypes.ui.EventPropertiesStep;
+import com.arsdigita.cms.ui.authoring.EventTextBody;
 import com.arsdigita.cms.ui.contenttypes.EventCreateForm;
 
 import java.io.Serializable;
@@ -65,6 +66,15 @@ import static org.librecms.CmsConstants.*;
             descriptionKey = "cms.contenttypes.shared.basic_properties"
                                  + ".description",
             order = 1)
+        ,
+        @AuthoringStep(
+            component = EventTextBody.class,
+            labelBundle = "org.librecms.CmsResources",
+            labelKey = "cms.contenttypes.shared.body_text.title",
+            descriptionBundle = "org.librecms.CmsResources",
+            descriptionKey = "cms.contenttypes.shared.body_text.description",
+            order = 2
+        )
     })
 public class Event extends ContentItem implements Serializable {
 
