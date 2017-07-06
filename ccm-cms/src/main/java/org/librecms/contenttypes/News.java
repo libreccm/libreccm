@@ -19,6 +19,7 @@
 package org.librecms.contenttypes;
 
 import com.arsdigita.cms.contenttypes.ui.NewsPropertiesStep;
+import com.arsdigita.cms.ui.authoring.NewsTextBody;
 import com.arsdigita.cms.ui.contenttypes.NewsCreateForm;
 
 import org.hibernate.envers.Audited;
@@ -62,6 +63,15 @@ import static org.librecms.CmsConstants.*;
             descriptionKey = "cms.contenttypes.shared.basic_properties"
                                  + ".description",
             order = 1)
+        ,
+        @AuthoringStep(
+            component = NewsTextBody.class,
+            labelBundle = "org.librecms.CmsResources",
+            labelKey = "cms.contenttypes.shared.body_text.title",
+            descriptionBundle = "org.librecms.CmsResources",
+            descriptionKey = "cms.contenttypes.shared.body_text.description",
+            order = 2
+        )
     })
 public class News extends ContentItem implements Serializable {
 
