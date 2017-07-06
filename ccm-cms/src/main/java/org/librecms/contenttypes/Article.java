@@ -19,6 +19,7 @@
 package org.librecms.contenttypes;
 
 import com.arsdigita.cms.contenttypes.ui.ArticlePropertiesStep;
+import com.arsdigita.cms.ui.authoring.ArticleTextBody;
 import com.arsdigita.cms.ui.authoring.PageCreateForm;
 
 import java.io.Serializable;
@@ -57,7 +58,15 @@ import org.librecms.contentsection.ContentItem;
             descriptionBundle = "org.librecms.CmsResources",
             descriptionKey = "cms.contenttypes.shared.basic_properties"
                                  + ".description",
-            order = 1)
+            order = 1),
+        @AuthoringStep(
+            component = ArticleTextBody.class,
+            labelBundle = "org.librecms.CmsResources",
+            labelKey = "cms.contenttypes.shared.body_text.title",
+            descriptionBundle = "org.librecms.CmsResources",
+            descriptionKey = "cms.contenttypes.shared.body_text.description",
+            order = 2
+        )
     })
 public class Article extends ContentItem implements Serializable {
 

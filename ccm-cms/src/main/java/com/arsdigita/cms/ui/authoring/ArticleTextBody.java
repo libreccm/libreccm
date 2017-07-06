@@ -30,10 +30,13 @@ import com.arsdigita.cms.ItemSelectionModel;
 import org.librecms.contenttypes.Article;
 
 import com.arsdigita.cms.ui.workflow.WorkflowLockedComponentAccess;
+import com.arsdigita.kernel.KernelConfig;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.LocalizedString;
 import org.librecms.contentsection.ContentItemRepository;
+
+import java.util.Locale;
 
 /**
  * Displays the current text body of the article and allows the user to edit it,
@@ -45,29 +48,32 @@ import org.librecms.contentsection.ContentItemRepository;
  * @author Stanislav Freidin (sfreidin@arsdigita.com)
  * @author <a href="jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class GenericArticleBody extends TextAssetBody {
+public class ArticleTextBody extends TextBody {
 
-    protected AuthoringKitWizard authoringKitWizard;
-    protected ItemSelectionModel itemSelectionModel;
+    private final AuthoringKitWizard authoringKitWizard;
+    private final ItemSelectionModel itemSelectionModel;
+    private final StringParameter selectedLanguageParam;
 
     /**
      * Construct a new GenericArticleBody component
      *
-     * @param itemSelectionModel The {@link ItemSelectionModel} which will be
-     *                           responsible for loading the current item
+     * @param itemSelectionModel    The {@link ItemSelectionModel} which will be
+     *                              responsible for loading the current item
      *
-     * @param authoringKitWizard The parent wizard which contains the form. The
-     *                           form may use the wizard's methods, such as
-     *                           stepForward and stepBack, in its process
-     *                           listener.
+     * @param authoringKitWizard    The parent wizard which contains the form.
+     *                              The form may use the wizard's methods, such
+     *                              as stepForward and stepBack, in its process
+     *                              listener.
+     * @param selectedLanguageParam
      */
-    public GenericArticleBody(final ItemSelectionModel itemSelectionModel,
-                              final AuthoringKitWizard authoringKitWizard,
-                              final StringParameter selectedLanguageParam) {
+    public ArticleTextBody(final ItemSelectionModel itemSelectionModel,
+                           final AuthoringKitWizard authoringKitWizard,
+                           final StringParameter selectedLanguageParam) {
 
-        super(new ItemAssetModel(null), selectedLanguageParam);
+        super(itemSelectionModel, selectedLanguageParam);
         this.itemSelectionModel = itemSelectionModel;
         this.authoringKitWizard = authoringKitWizard;
+        this.selectedLanguageParam = selectedLanguageParam;
 
         // Rest the component when it is hidden
         authoringKitWizard
@@ -91,6 +97,7 @@ public class GenericArticleBody extends TextAssetBody {
      * Adds the options for the mime type select widget of
      * <code>GenericArticleForm</code> and sets the default mime type.
      *
+     * @param mimeSelect
      */
     @Override
     protected void setMimeTypeOptions(final SingleSelect mimeSelect) {
@@ -99,39 +106,26 @@ public class GenericArticleBody extends TextAssetBody {
     }
 
     /**
-     * Create a new text asset and associate it with the current item
+     * Updates the text for the currently selected locale.
      *
      * @param state the current page state
-     *
-     * @return a valid TextAsset
+     * @param text  the new text for the currently selected locale
      */
     @Override
-    protected LocalizedString createTextAsset(final PageState state) {
+    protected void updateText(final PageState state,
+                              final String text) {
 
-        final Article article = getGenericArticle(state);
-        final LocalizedString text = article.getText();
+        final Article article = getSelectedArticle(state);
+        final String selectedLanguage = (String) state.getValue(
+            selectedLanguageParam);
+        final Locale selectedLocale;
+        if (selectedLanguage == null) {
+            selectedLocale = KernelConfig.getConfig().getDefaultLocale();
+        } else {
+            selectedLocale = new Locale(selectedLanguage);
+        }
 
-        // no need - cg. Text doesn't need a security context,
-        // and ownership of text is recorded in text_pages
-        // t.setParent(item);
-        return text;
-    }
-
-    /**
-     * Set additional parameters of a brand new text asset, such as the parent
-     * ID, after the asset has been successfully uploaded
-     *
-     * @param state the current page state
-     * @param text  the new <code>TextAsset</code>
-     */
-    @Override
-    protected void updateTextAsset(final PageState state,
-                                   final LocalizedString text) {
-
-        final Article article = getGenericArticle(state);
-
-        //  a.setParent(t);
-        article.setText(text);
+        article.getText().addValue(selectedLocale, text);
         final ContentItemRepository itemRepo = CdiUtil
             .createCdiUtil()
             .findBean(ContentItemRepository.class);
@@ -139,59 +133,37 @@ public class GenericArticleBody extends TextAssetBody {
     }
 
     /**
-     * Get the current GenericArticle
+     * Get the current {@link Article}
      *
-     * @param state
+     * @param state The current page state.
+     *
+     * @return The currently selected article.
      */
-    protected Article getGenericArticle(final PageState state) {
+    protected Article getSelectedArticle(final PageState state) {
 
         return (Article) itemSelectionModel.getSelectedObject(state);
     }
 
     @Override
-    protected String getTextAssetName() {
-       return "text";
+    protected String getTextPropertyName() {
+        return "text";
     }
 
     @Override
-    public LocalizedString getTextAsset(final PageState state) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public String getText(final PageState state) {
 
-    /**
-     * An ACSObjectSelectionModel that selects the current text asset for the
-     * text page
-     */
-    private static class ItemAssetModel extends ItemSelectionModel {
+        final Article article = getSelectedArticle(state);
 
-        private RequestLocal requestLocal;
-
-        public ItemAssetModel(final LongParameter parameter) {
-
-            super(parameter);
-
-            requestLocal = new RequestLocal() {
-
-                @Override
-                protected Object initialValue(final PageState state) {
-//                    final Article t
-//                                       = (Article) ((ItemSelectionModel) getSingleSelectionModel())
-//                            .getSelectedObject(state);
-//                    Assert.exists(t);
-//                    return t.getTextAsset();
-
-                    throw new UnsupportedOperationException("ToDo");
-                }
-
-            };
+        final String selectedLanguage = (String) state
+            .getValue(selectedLanguageParam);
+        final Locale selectedLocale;
+        if (selectedLanguage == null) {
+            selectedLocale = KernelConfig.getConfig().getDefaultLocale();
+        } else {
+            selectedLocale = new Locale(selectedLanguage);
         }
 
-       
-        @Override
-        public boolean isSelected(PageState s) {
-            return (getSelectedObject(s) != null);
-        }
-
+        return article.getText().getValue(selectedLocale);
     }
 
 }

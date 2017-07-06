@@ -42,17 +42,17 @@ import org.libreccm.l10n.LocalizedString;
  * it because it uses so many private inner classes
  *
  */
-public class TextAssetBodyPropertySheet extends DomainObjectPropertySheet {
+public class TextBodyPropertySheet extends DomainObjectPropertySheet {
 
     /**
      * Construct a new TextAssetBodyPropertySheet
      *
-     * @param objModel The selection model which feeds domain objects to this
-     *                 property sheet.
+     * @param objModel              The selection model which feeds domain
+     *                              objects to this property sheet.
      * @param selectedLanguageParam
      *
      */
-    public TextAssetBodyPropertySheet(
+    public TextBodyPropertySheet(
         final ItemSelectionModel objModel,
         final StringParameter selectedLanguageParam) {
 
@@ -62,8 +62,8 @@ public class TextAssetBodyPropertySheet extends DomainObjectPropertySheet {
     }
 
     // Build up the object properties model from the iterator over all properties
-    private static class TextAssetBodyPropertiesModel implements
-        PropertySheetModel {
+    private static class TextAssetBodyPropertiesModel
+        implements PropertySheetModel {
 
 //        public final static String MIME_TYPE_KEY
 //                                   = TextAssetBodyLabelCellRenderer.MIME_TYPE_KEY;
@@ -140,8 +140,8 @@ public class TextAssetBodyPropertySheet extends DomainObjectPropertySheet {
         public PropertySheetModel makeModel(final PropertySheet sheet,
                                             final PageState state) {
 
-            TextAssetBodyPropertySheet propSheet
-                                       = (TextAssetBodyPropertySheet) sheet;
+            TextBodyPropertySheet propSheet
+                                      = (TextBodyPropertySheet) sheet;
             throw new UnsupportedOperationException("ToDo");
         }
 
