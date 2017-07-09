@@ -74,6 +74,15 @@ public class GroupRepository extends AbstractEntityRepository<Long, Group> {
         }
     }
 
+    public List<Group> findByMember(final Party member) {
+
+        final TypedQuery<Group> query = getEntityManager()
+            .createNamedQuery("Group.findByMember", Group.class);
+        query.setParameter("member", member);
+
+        return query.getResultList();
+    }
+
     /**
      * Tries to find a group which name contains a provided token.
      *

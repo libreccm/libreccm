@@ -25,7 +25,6 @@ import org.libreccm.security.Group;
 import org.libreccm.security.GroupMembership;
 import org.libreccm.security.User;
 
-import java.net.URI;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -42,7 +41,7 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ViewScoped
-class UserGroupsDataProvider extends AbstractDataProvider<Group, String> {
+class UserGroupsTableDataProvider extends AbstractDataProvider<Group, String> {
 
     private static final long serialVersionUID = 3321330114174366998L;
 
