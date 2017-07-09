@@ -57,10 +57,10 @@ public class UserSelectorDataProvider extends AbstractDataProvider<User, String>
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public int size(final Query<User, String> query) {
+        
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
         final Root<User> from = criteriaQuery.from(User.class);
-
         criteriaQuery = criteriaQuery.select(builder.count(from));
         criteriaQuery = criteriaQuery.distinct(true);
         
@@ -83,6 +83,7 @@ public class UserSelectorDataProvider extends AbstractDataProvider<User, String>
     @Transactional
     @Override
     public Stream<User> fetch(final Query<User, String> query) {
+        
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<User> criteriaQuery = builder
             .createQuery(User.class);

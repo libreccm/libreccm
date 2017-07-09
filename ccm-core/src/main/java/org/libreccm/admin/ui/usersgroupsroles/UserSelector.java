@@ -49,19 +49,12 @@ public class UserSelector extends Window {
     private static final String COL_FAMILY_NAME = "family_name";
     private static final String COL_EMAIL = "email";
 
-    private final UserRepository userRepo;
-
-    private final UserSelectionAction groupSelectionAction;
 
     public UserSelector(final String caption,
                         final String actionLabel,
                         final UsersGroupsRoles usersGroupsRoles,
                         final List<User> excludedUsers,
                         final UserSelectionAction action) {
-
-        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        userRepo = cdiUtil.findBean(UserRepository.class);
-        this.groupSelectionAction = action;
 
         addWidgets(caption, actionLabel, excludedUsers, action);
     }
@@ -80,13 +73,16 @@ public class UserSelector extends Window {
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 
         final Grid<User> usersGrid = new Grid<>();
-        usersGrid.addColumn(User::getName)
+        usersGrid
+            .addColumn(User::getName)
             .setId(COL_USER_NAME)
             .setCaption("User Name");
-        usersGrid.addColumn(User::getGivenName)
+        usersGrid
+            .addColumn(User::getGivenName)
             .setId(COL_GIVEN_NAME)
             .setCaption("Given name");
-        usersGrid.addColumn(User::getFamilyName)
+        usersGrid
+            .addColumn(User::getFamilyName)
             .setId(COL_FAMILY_NAME)
             .setCaption("Family name");
         usersGrid

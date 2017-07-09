@@ -59,21 +59,31 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
     @NamedQuery(
         name = "Group.findByName",
         query = "SELECT g FROM Group g WHERE g.name = :name "
-                    + "ORDER BY g.name"),
+                    + "ORDER BY g.name")
+    ,
     @NamedQuery(
         name = "Group.searchByName",
         query = "SELECT g FROM Group g "
                     + "WHERE LOWER(g.name) LIKE CONCAT(LOWER(:name), '%') "
-                    + "ORDER BY g.name"),
+                    + "ORDER BY g.name")
+    ,
     @NamedQuery(
         name = "Group.findAllOrderedByGroupName",
         query = "SELECT g FROM Group g ORDER BY g.name")
+    ,
+    @NamedQuery(
+        name = "Group.findByMember",
+        query = "SELECT g FROM Group g "
+                    + "JOIN g.memberships m "
+                    + "WHERE m.member = :member"
+    )
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(
         name = "Group.withMembersAndRoleMemberships",
         attributeNodes = {
-            @NamedAttributeNode(value = "memberships"),
+            @NamedAttributeNode(value = "memberships")
+            ,
             @NamedAttributeNode(value = "roleMemberships",
                                 subgraph = "role")},
         subgraphs = {
@@ -82,7 +92,8 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
                 attributeNodes = {
                     @NamedAttributeNode(value = "role",
                                         subgraph = "permissions")
-                }),
+                })
+            ,
             @NamedSubgraph(
                 name = "permissions",
                 attributeNodes = {

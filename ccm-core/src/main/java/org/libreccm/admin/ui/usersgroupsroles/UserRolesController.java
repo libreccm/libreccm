@@ -67,7 +67,7 @@ class UserRolesController {
             .format("No user with ID %d in the database. ",
                     user.getPartyId())));
 
-        roleManager.assignRoleToParty(role, theUser);
+        roleManager.assignRoleToParty(theRole, theUser);
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
