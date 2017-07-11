@@ -31,8 +31,6 @@ import org.apache.shiro.subject.Subject;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.PermissionChecker;
 
-import java.util.Locale;
-
 import javax.inject.Inject;
 
 /**

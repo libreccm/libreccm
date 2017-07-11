@@ -33,6 +33,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import static org.librecms.CmsConstants.*;
@@ -45,6 +47,17 @@ import static org.librecms.CmsConstants.*;
 @Entity
 @Audited
 @Table(name = "MULTIPART_ARTICLE_SECTIONS", schema = DB_SCHEMA)
+@NamedQueries({
+    @NamedQuery(
+        name = "MultiPartArticleSection.findById",
+        query = "SELECT s FROM MultiPartArticleSection s "
+                    + "WHERE s.sectionId = :sectionId")
+    ,
+    @NamedQuery(
+        name = "MultiPartArticleSection.findArticleOfSection",
+        query = "SELECT a FROM MultiPartArticle a "
+                    + "WHERE :section MEMBER OF a.sections")
+})
 public class MultiPartArticleSection implements Serializable {
 
     private static final long serialVersionUID = 1109186628988745920L;
@@ -53,7 +66,7 @@ public class MultiPartArticleSection implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "SECTION_ID")
     private long sectionId;
-    
+
     @Embedded
     @AssociationOverride(
         name = "values",
@@ -83,11 +96,11 @@ public class MultiPartArticleSection implements Serializable {
     public long getSectionId() {
         return sectionId;
     }
-    
+
     protected void setSectionId(final long sectionId) {
         this.sectionId = sectionId;
     }
-    
+
     public LocalizedString getTitle() {
         return title;
     }
@@ -121,7 +134,6 @@ public class MultiPartArticleSection implements Serializable {
     }
 
     //ToDo: Add image property
-    
     @Override
     public int hashCode() {
         int hash = 5;
