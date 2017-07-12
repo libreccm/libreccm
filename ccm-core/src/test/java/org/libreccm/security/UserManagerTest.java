@@ -176,24 +176,24 @@ public class UserManagerTest {
         assertThat(userManager.verifyPassword(jane2, "foo456"), is(true));
     }
 
-    @Test(expected = ArquillianProxyException.class)
-    @UsingDataSet("datasets/org/libreccm/security/UserManagerTest/data.yml")
-    @ShouldThrowException(ConstraintViolationException.class)
-    @InSequence(400)
-    public void createUserWithInValidName() throws Throwable {
-        try {
-            shiro.getSystemUser().execute(
-                () -> userManager.createUser("Jane",
-                                             "Doe",
-                                             "j#ne",
-                                             "jane.doe@example.org",
-                                             "foo456"));
-        } catch (ExecutionException ex) {
-            throw ex.getCause();
-        }
-        fail();
-    }
-
+//    Temporaily disabled until we decide if we want to limit the valid characters in a user name
+//    @Test(expected = ArquillianProxyException.class)
+//    @UsingDataSet("datasets/org/libreccm/security/UserManagerTest/data.yml")
+//    @ShouldThrowException(ConstraintViolationException.class)
+//    @InSequence(400)
+//    public void createUserWithInValidName() throws Throwable {
+//        try {
+//            shiro.getSystemUser().execute(
+//                () -> userManager.createUser("Jane",
+//                                             "Doe",
+//                                             "j#ne",
+//                                             "jane.doe@example.org",
+//                                             "foo456"));
+//        } catch (ExecutionException ex) {
+//            throw ex.getCause();
+//        }
+//        fail();
+//    }
     @Test
     @UsingDataSet("datasets/org/libreccm/security/UserManagerTest/data.yml")
     @InSequence(500)
