@@ -275,7 +275,7 @@ public class GroupDetails extends Window {
         final TabSheet tabs = new TabSheet();
         tabs.addTab(membersGrid, "Members");
         tabs.addTab(rolesGrid, "Roles");
-
+        
         final VerticalLayout windowLayout = new VerticalLayout(propertiesPanel,
                                                                tabs);
 

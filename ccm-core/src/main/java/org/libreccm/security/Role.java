@@ -299,7 +299,7 @@ public class Role implements Serializable, Portable {
         int hash = 7;
         hash = 53 * hash + (int) (roleId ^ (roleId >>> 32));
         hash = 53 * hash + Objects.hashCode(name);
-        hash = 53 * hash + Objects.hashCode(permissions);
+//        hash = 53 * hash + Objects.hashCode(permissions);
         return hash;
     }
 
@@ -319,10 +319,12 @@ public class Role implements Serializable, Portable {
         if (roleId != other.getRoleId()) {
             return false;
         }
-        if (!Objects.equals(name, other.getName())) {
-            return false;
-        }
-        return Objects.equals(permissions, other.getPermissions());
+        
+        return Objects.equals(name, other.getName());
+//        if (!Objects.equals(name, other.getName())) {
+//            return false;
+//        }
+//        return Objects.equals(permissions, other.getPermissions());
     }
 
     public boolean canEqual(final Object obj) {

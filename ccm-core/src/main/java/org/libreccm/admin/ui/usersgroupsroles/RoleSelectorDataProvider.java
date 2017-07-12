@@ -41,7 +41,7 @@ import javax.transaction.Transactional;
 @ViewScoped
 public class RoleSelectorDataProvider extends AbstractDataProvider<Role, String> {
 
-    private static final long serialVersionUID = 3915041291561733758L;
+    private static final long serialVersionUID = 6142912046579055420L;
 
     @Inject
     private EntityManager entityManager;
@@ -58,25 +58,24 @@ public class RoleSelectorDataProvider extends AbstractDataProvider<Role, String>
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public int size(final Query<Role, String> query) {
+
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<Long> criteriaQuery = builder
             .createQuery(Long.class);
         final Root<Role> from = criteriaQuery.from(Role.class);
-        
-        criteriaQuery
-            .select(builder.count(from))
-            .distinct(true);
-        
+        criteriaQuery.select(builder.count(from));
+        criteriaQuery.distinct(true);
+
         if (roleNameFilter != null && !roleNameFilter.trim().isEmpty()) {
             criteriaQuery
                 .where(builder.like(builder.lower(from.get("name")),
                                     String.format("%s%%", roleNameFilter)));
         }
-        
+
         if (excludedRoles != null && !excludedRoles.isEmpty()) {
             criteriaQuery.where(builder.not(from.in(excludedRoles)));
         }
-        
+
         return entityManager
             .createQuery(criteriaQuery)
             .getSingleResult()
@@ -86,25 +85,25 @@ public class RoleSelectorDataProvider extends AbstractDataProvider<Role, String>
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public Stream<Role> fetch(final Query<Role, String> query) {
+
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<Role> criteriaQuery = builder
-        .createQuery(Role.class);
+            .createQuery(Role.class);
         final Root<Role> from = criteriaQuery.from(Role.class);
-        
         criteriaQuery.distinct(true);
-        
+
         if (roleNameFilter != null && !roleNameFilter.trim().isEmpty()) {
             criteriaQuery
                 .where(builder.like(builder.lower(from.get("name")),
                                     String.format("%s%%", roleNameFilter)));
         }
-        
+
         if (excludedRoles != null && !excludedRoles.isEmpty()) {
             criteriaQuery.where(builder.not(from.in(excludedRoles)));
-        }    
-        
+        }
+
         criteriaQuery.orderBy(builder.asc(from.get("name")));
-        
+
         return entityManager
             .createQuery(criteriaQuery)
             .setMaxResults(query.getLimit())
@@ -112,14 +111,15 @@ public class RoleSelectorDataProvider extends AbstractDataProvider<Role, String>
             .getResultList()
             .stream();
     }
-    
+
     public void setRoleNameFilter(final String roleNameFilter) {
         this.roleNameFilter = roleNameFilter;
-        refreshAll();
+//        refreshAll();
     }
-    
-    public void setExcludedRoles(final List<Role> excluededRoles) {
-        this.excludedRoles = new ArrayList<>(excluededRoles);
-        refreshAll();
+
+    public void setExcludedRoles(final List<Role> excludedRoles) {
+        this.excludedRoles = new ArrayList<>(excludedRoles);
+//        refreshAll();
     }
+
 }
