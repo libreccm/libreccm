@@ -18,7 +18,6 @@
  */
 package com.arsdigita.cms.contenttypes.ui.mparticle;
 
-
 import com.arsdigita.bebop.ColumnPanel;
 import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormProcessException;
@@ -35,7 +34,9 @@ import com.arsdigita.cms.contenttypes.MultiPartArticle;
 import com.arsdigita.cms.contenttypes.util.MPArticleGlobalizationUtil;
 import com.arsdigita.cms.util.GlobalizationUtil;
 import com.arsdigita.util.Assert;
+
 import org.apache.log4j.Logger;
+import org.librecms.contenttypes.MultiPartArticleSection;
 
 /**
  * A form to confirm deletion of a single section of a MultiPartArticle.
@@ -44,36 +45,36 @@ import org.apache.log4j.Logger;
  * @version $Id: SectionDeleteForm.java 287 2005-02-22 00:29:02Z sskracic $
  */
 public class SectionDeleteForm extends Form
-    implements FormInitListener, FormSubmissionListener, FormProcessListener
-{
-    private final static Logger log = Logger.getLogger(SectionDeleteForm.class.getName());
+    implements FormInitListener, FormSubmissionListener, FormProcessListener {
+
+    private final static Logger log = Logger.getLogger(SectionDeleteForm.class
+        .getName());
 
     protected ItemSelectionModel m_selArticle;
     protected ItemSelectionModel m_selSection;
     protected SaveCancelSection m_saveCancelSection;
     private Label m_sectionNameLabel;
 
-
     /**
-     * 
+     *
      * @param selArticle
-     * @param selSection 
+     * @param selSection
      */
-    public SectionDeleteForm 
-        ( ItemSelectionModel selArticle,
-          ItemSelectionModel selSection) {
+    public SectionDeleteForm(
+        final ItemSelectionModel selArticle,
+        final SectionSelectionModel<? extends MultiPartArticleSection> selSection) {
         super("SectionDeleteForm", new ColumnPanel(2));
         m_selArticle = selArticle;
         m_selSection = selSection;
 
-        ColumnPanel panel = (ColumnPanel)getPanel();
+        ColumnPanel panel = (ColumnPanel) getPanel();
         panel.setBorder(false);
         panel.setPadColor("#FFFFFF");
         panel.setColumnWidth(1, "20%");
         panel.setColumnWidth(2, "80%");
         panel.setWidth("100%");
 
-        m_sectionNameLabel = new Label ("Section Name");
+        m_sectionNameLabel = new Label("Section Name");
         add(m_sectionNameLabel, ColumnPanel.FULL_WIDTH | ColumnPanel.LEFT);
         addSaveCancelSection();
 
@@ -83,49 +84,52 @@ public class SectionDeleteForm extends Form
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
-        protected SaveCancelSection addSaveCancelSection () {
+    protected SaveCancelSection addSaveCancelSection() {
         m_saveCancelSection = new SaveCancelSection();
         m_saveCancelSection.getSaveButton().setButtonLabel(
-                GlobalizationUtil.globalize("cms.ui.delete"));
+            GlobalizationUtil.globalize("cms.ui.delete"));
         add(m_saveCancelSection, ColumnPanel.FULL_WIDTH | ColumnPanel.LEFT);
         return m_saveCancelSection;
     }
 
     @Override
-    public void init ( FormSectionEvent event ) throws FormProcessException {
+    public void init(FormSectionEvent event) throws FormProcessException {
         PageState state = event.getPageState();
 
-        ArticleSection section = (ArticleSection)m_selSection.getSelectedObject(state);
+        ArticleSection section = (ArticleSection) m_selSection
+            .getSelectedObject(state);
 
-        if ( section == null ) {
+        if (section == null) {
             log.error("No section selected");
         } else {
-            m_sectionNameLabel.setLabel(section.getTitle(),state);
+            m_sectionNameLabel.setLabel(section.getTitle(), state);
         }
     }
 
     @Override
-    public void submitted ( FormSectionEvent event ) throws FormProcessException {
+    public void submitted(FormSectionEvent event) throws FormProcessException {
         PageState state = event.getPageState();
 
-        if ( m_saveCancelSection.getCancelButton().isSelected(state) ) {
+        if (m_saveCancelSection.getCancelButton().isSelected(state)) {
             throw new FormProcessException(
-                            "Submission cancelled",
-                            MPArticleGlobalizationUtil.globalize(
-                            "cms.contenttypes.ui.mparticle.submission_cancelled")
+                "Submission cancelled",
+                MPArticleGlobalizationUtil.globalize(
+                    "cms.contenttypes.ui.mparticle.submission_cancelled")
             );
         }
     }
 
     @Override
-    public void process ( FormSectionEvent event ) throws FormProcessException {
+    public void process(FormSectionEvent event) throws FormProcessException {
         PageState state = event.getPageState();
 
-        MultiPartArticle article = (MultiPartArticle)m_selArticle.getSelectedObject(state);
-        ArticleSection section = (ArticleSection)m_selSection.getSelectedObject(state);
+        MultiPartArticle article = (MultiPartArticle) m_selArticle
+            .getSelectedObject(state);
+        ArticleSection section = (ArticleSection) m_selSection
+            .getSelectedObject(state);
 
         Assert.exists(article, MultiPartArticle.class);
         Assert.exists(section, ArticleSection.class);
@@ -134,4 +138,5 @@ public class SectionDeleteForm extends Form
 
         log.info("section " + m_selSection.getSelectedKey(state) + " delete");
     }
+
 }
