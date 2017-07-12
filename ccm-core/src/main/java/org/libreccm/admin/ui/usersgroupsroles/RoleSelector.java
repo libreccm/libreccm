@@ -18,23 +18,19 @@
  */
 package org.libreccm.admin.ui.usersgroupsroles;
 
-import com.arsdigita.ui.admin.AdminUiConstants;
-
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Button;
+
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Role;
-import org.libreccm.security.RoleRepository;
 
 import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  *
@@ -42,24 +38,15 @@ import java.util.ResourceBundle;
  */
 public class RoleSelector extends Window {
 
-    private static final long serialVersionUID = -1437536052155383270L;
+    private static final long serialVersionUID = -6893510634359633368L;
 
     private static final String COL_NAME = "rolename";
-    private static final String COL_OTHER = "other";
-
-    private final RoleRepository roleRepo;
-
-    private final RoleSelectionAction roleSelectionAction;
-
+    
     public RoleSelector(final String caption,
                         final String actionLabel,
                         final UsersGroupsRoles usersGroupsRoles,
                         final List<Role> excludedRoles,
                         final RoleSelectionAction action) {
-
-        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        roleRepo = cdiUtil.findBean(RoleRepository.class);
-        this.roleSelectionAction = action;
 
         addWidgets(caption, actionLabel, excludedRoles, action);
     }
@@ -71,9 +58,9 @@ public class RoleSelector extends Window {
 
         setCaption(caption);
 
-        final ResourceBundle bundle = ResourceBundle
-            .getBundle(AdminUiConstants.ADMIN_BUNDLE,
-                       UI.getCurrent().getLocale());
+//        final ResourceBundle bundle = ResourceBundle
+//            .getBundle(AdminUiConstants.ADMIN_BUNDLE,
+//                       UI.getCurrent().getLocale());
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 
@@ -82,10 +69,6 @@ public class RoleSelector extends Window {
             .addColumn(Role::getName)
             .setId(COL_NAME)
             .setCaption("Role");
-        rolesGrid
-            .addColumn(role -> " ")
-            .setId(COL_OTHER)
-            .setCaption(" ");
 
         rolesGrid.setSelectionMode(Grid.SelectionMode.MULTI);
         rolesGrid.setWidth("100%");
@@ -95,7 +78,6 @@ public class RoleSelector extends Window {
             action.action(rolesGrid.getSelectedItems());
             close();
         });
-
         actionButton.setIcon(VaadinIcons.PLUS_CIRCLE_O);
         actionButton.setStyleName(ValoTheme.BUTTON_TINY);
 
@@ -107,14 +89,13 @@ public class RoleSelector extends Window {
         clearButton.setStyleName(ValoTheme.BUTTON_TINY);
 
         final HeaderRow actions = rolesGrid.prependHeaderRow();
-        final HeaderCell actionsCell = actions.join(COL_NAME,
-                                                    COL_OTHER);
+        final HeaderCell actionsCell = actions.getCell(COL_NAME);
         actionsCell.setComponent(new HorizontalLayout(actionButton,
                                                       clearButton));
 
         final RoleSelectorDataProvider dataProvider = cdiUtil
             .findBean(RoleSelectorDataProvider.class);
-
+        
         dataProvider.setExcludedRoles(excludedRoles);
 
         rolesGrid.setDataProvider(dataProvider);
