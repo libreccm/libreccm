@@ -15,6 +15,10 @@
     <groupId>org.libreccm</groupId>
     <artifactId>ccm-bundle-devel-wildfly-swarm</artifactId>
     <packaging>war</packaging>
+    
+    <properties>
+        <failOnMissingWebXml>false</failOnMissingWebXml>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
