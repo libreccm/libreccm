@@ -144,6 +144,8 @@ public class RoleEditor extends Window {
         }
 
         setContent(layout);
+        
+        dataHasChanged = false;
     }
 
     @Override

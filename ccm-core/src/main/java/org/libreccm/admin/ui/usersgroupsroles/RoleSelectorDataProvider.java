@@ -114,12 +114,12 @@ public class RoleSelectorDataProvider extends AbstractDataProvider<Role, String>
 
     public void setRoleNameFilter(final String roleNameFilter) {
         this.roleNameFilter = roleNameFilter;
-//        refreshAll();
+        refreshAll();
     }
 
     public void setExcludedRoles(final List<Role> excludedRoles) {
         this.excludedRoles = new ArrayList<>(excludedRoles);
-//        refreshAll();
+        refreshAll();
     }
 
 }
