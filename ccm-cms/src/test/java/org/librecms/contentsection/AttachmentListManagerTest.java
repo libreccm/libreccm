@@ -370,10 +370,13 @@ public class AttachmentListManagerTest {
                           "list_id",
                           "uuid"})
     public void createAttachmentList() {
-        final Optional<ContentItem> item = itemRepo.findById(-520);
-        assertThat(item.isPresent(), is(true));
 
-        listManager.createAttachmentList(item.get(), "newList");
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-520);
+            assertThat(item.isPresent(), is(true));
+
+            listManager.createAttachmentList(item.get(), "newList");
+        });
     }
 
     /**
@@ -392,9 +395,12 @@ public class AttachmentListManagerTest {
             + "data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void createAttachmentListForItemNull() {
-        final ContentItem item = null;
 
-        listManager.createAttachmentList(item, "newList");
+        shiro.getSystemUser().execute(() -> {
+            final ContentItem item = null;
+
+            listManager.createAttachmentList(item, "newList");
+        });
     }
 
     /**
@@ -412,10 +418,13 @@ public class AttachmentListManagerTest {
         "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
             + "data.xml")
     public void createAttachmentListNameIsNull() {
-        final Optional<ContentItem> item = itemRepo.findById(-520);
-        assertThat(item.isPresent(), is(true));
 
-        listManager.createAttachmentList(item.get(), null);
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-520);
+            assertThat(item.isPresent(), is(true));
+
+            listManager.createAttachmentList(item.get(), null);
+        });
     }
 
     /**
@@ -433,10 +442,13 @@ public class AttachmentListManagerTest {
         "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
             + "data.xml")
     public void createAttachmentListNameIsEmpty() {
-        final Optional<ContentItem> item = itemRepo.findById(-520);
-        assertThat(item.isPresent(), is(true));
 
-        listManager.createAttachmentList(item.get(), "  ");
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-520);
+            assertThat(item.isPresent(), is(true));
+
+            listManager.createAttachmentList(item.get(), "  ");
+        });
     }
 
     /**
@@ -457,10 +469,13 @@ public class AttachmentListManagerTest {
                           "list_id",
                           "uuid"})
     public void createAttachmentListWithPosition() {
-        final Optional<ContentItem> item = itemRepo.findById(-510);
-        assertThat(item.isPresent(), is(true));
 
-        listManager.createAttachmentList(item.get(), "newList", 1);
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-510);
+            assertThat(item.isPresent(), is(true));
+
+            listManager.createAttachmentList(item.get(), "newList", 1);
+        });
     }
 
     /**
@@ -484,10 +499,13 @@ public class AttachmentListManagerTest {
                           "list_id",
                           "uuid"})
     public void createAttachmentListWithNegativePosition() {
-        final Optional<ContentItem> item = itemRepo.findById(-510);
-        assertThat(item.isPresent(), is(true));
 
-        listManager.createAttachmentList(item.get(), "newList", -3);
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-510);
+            assertThat(item.isPresent(), is(true));
+
+            listManager.createAttachmentList(item.get(), "newList", -3);
+        });
     }
 
     /**
@@ -512,10 +530,13 @@ public class AttachmentListManagerTest {
                           "list_id",
                           "uuid"})
     public void createAttachmentListWithPositionAfterLast() {
-        final Optional<ContentItem> item = itemRepo.findById(-510);
-        assertThat(item.isPresent(), is(true));
 
-        listManager.createAttachmentList(item.get(), "newList", 10);
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-510);
+            assertThat(item.isPresent(), is(true));
+
+            listManager.createAttachmentList(item.get(), "newList", 10);
+        });
     }
 
     /**
@@ -534,9 +555,12 @@ public class AttachmentListManagerTest {
             + "data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void createAttachmentListWithPositionForItemNull() {
-        final ContentItem item = null;
 
-        listManager.createAttachmentList(item, "newList", 10);
+        shiro.getSystemUser().execute(() -> {
+            final ContentItem item = null;
+
+            listManager.createAttachmentList(item, "newList", 10);
+        });
     }
 
     /**
@@ -555,10 +579,13 @@ public class AttachmentListManagerTest {
             + "data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void createAttachmentListWithPositionNameIsNull() {
-        final Optional<ContentItem> item = itemRepo.findById(-510);
-        assertThat(item.isPresent(), is(true));
 
-        listManager.createAttachmentList(item.get(), null, 10);
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-510);
+            assertThat(item.isPresent(), is(true));
+
+            listManager.createAttachmentList(item.get(), null, 10);
+        });
     }
 
     /**
@@ -577,10 +604,13 @@ public class AttachmentListManagerTest {
             + "data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void createAttachmentListWithPositionNameIsEmpty() {
-        final Optional<ContentItem> item = itemRepo.findById(-510);
-        assertThat(item.isPresent(), is(true));
 
-        listManager.createAttachmentList(item.get(), "   ", 10);
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-510);
+            assertThat(item.isPresent(), is(true));
+
+            listManager.createAttachmentList(item.get(), "   ", 10);
+        });
     }
 
     /**
@@ -599,11 +629,14 @@ public class AttachmentListManagerTest {
                     + "AttachmentListManagerTest/after-remove.xml",
         excludeColumns = {"timestamp"})
     public void removeAttachmentList() {
-        final Optional<ContentItem> item = itemRepo.findById(-510);
-        assertThat(item.isPresent(), is(true));
-        final AttachmentList list = item.get().getAttachments().get(0);
 
-        listManager.removeAttachmentList(list);
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-510);
+            assertThat(item.isPresent(), is(true));
+            final AttachmentList list = item.get().getAttachments().get(0);
+
+            listManager.removeAttachmentList(list);
+        });
     }
 
     /**
@@ -641,11 +674,14 @@ public class AttachmentListManagerTest {
                     + "AttachmentListManagerTest/after-move-up.xml",
         excludeColumns = {"timestamp"})
     public void moveUp() {
-        final Optional<ContentItem> item = itemRepo.findById(-510);
-        assertThat(item.isPresent(), is(true));
-        final AttachmentList list = item.get().getAttachments().get(0);
 
-        listManager.moveUp(list);
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-510);
+            assertThat(item.isPresent(), is(true));
+            final AttachmentList list = item.get().getAttachments().get(0);
+
+            listManager.moveUp(list);
+        });
     }
 
     /**
@@ -661,11 +697,14 @@ public class AttachmentListManagerTest {
         "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
             + "data.xml")
     public void moveUpLast() {
-        final Optional<ContentItem> item = itemRepo.findById(-510);
-        assertThat(item.isPresent(), is(true));
-        final AttachmentList list = item.get().getAttachments().get(2);
 
-        listManager.moveUp(list);
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-510);
+            assertThat(item.isPresent(), is(true));
+            final AttachmentList list = item.get().getAttachments().get(2);
+
+            listManager.moveUp(list);
+        });
     }
 
     /**
@@ -683,9 +722,12 @@ public class AttachmentListManagerTest {
             + "data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveUpListNull() {
-        final AttachmentList list = null;
 
-        listManager.moveUp(list);
+        shiro.getSystemUser().execute(() -> {
+            final AttachmentList list = null;
+
+            listManager.moveUp(list);
+        });
     }
 
     /**
@@ -702,11 +744,14 @@ public class AttachmentListManagerTest {
                     + "AttachmentListManagerTest/after-move-down.xml",
         excludeColumns = {"timestamp"})
     public void moveDown() {
-        final Optional<ContentItem> item = itemRepo.findById(-510);
-        assertThat(item.isPresent(), is(true));
-        final AttachmentList list = item.get().getAttachments().get(2);
 
-        listManager.moveDown(list);
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-510);
+            assertThat(item.isPresent(), is(true));
+            final AttachmentList list = item.get().getAttachments().get(2);
+
+            listManager.moveDown(list);
+        });
     }
 
     /**
@@ -722,11 +767,14 @@ public class AttachmentListManagerTest {
         "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
             + "data.xml")
     public void moveDownFirst() {
-        final Optional<ContentItem> item = itemRepo.findById(-510);
-        assertThat(item.isPresent(), is(true));
-        final AttachmentList list = item.get().getAttachments().get(0);
 
-        listManager.moveDown(list);
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-510);
+            assertThat(item.isPresent(), is(true));
+            final AttachmentList list = item.get().getAttachments().get(0);
+
+            listManager.moveDown(list);
+        });
     }
 
     /**
@@ -744,9 +792,12 @@ public class AttachmentListManagerTest {
             + "data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveDownListNull() {
-        final AttachmentList list = null;
 
-        listManager.moveDown(list);
+        shiro.getSystemUser().execute(() -> {
+            final AttachmentList list = null;
+
+            listManager.moveDown(list);
+        });
     }
 
 }
