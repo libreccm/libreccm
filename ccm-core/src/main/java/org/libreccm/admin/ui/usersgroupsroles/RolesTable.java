@@ -90,19 +90,26 @@ public class RolesTable extends Grid<Role> {
                     return "";
                 }
             }
-
         })
             .setId(COL_DESCRIPTION)
             .setCaption("Description");
         addColumn(user -> bundle.getString("ui.admin.roles.table.edit"),
                   new ButtonRenderer<>(event -> {
-                      final RoleEditor roleEditor = new RoleEditor(
+                      final RoleDetails roleDetails = new RoleDetails(
                           event.getItem(),
                           usersGroupsRoles,
                           view.getRoleRepository(),
                           view.getRoleManager());
-                      roleEditor.center();
-                      UI.getCurrent().addWindow(roleEditor);
+                      roleDetails.center();
+                      roleDetails.setWidth("80%");
+                      UI.getCurrent().addWindow(roleDetails);
+//                      final RoleEditor roleEditor = new RoleEditor(
+//                          event.getItem(),
+//                          usersGroupsRoles,
+//                          view.getRoleRepository(),
+//                          view.getRoleManager());
+//                      roleEditor.center();
+//                      UI.getCurrent().addWindow(roleEditor);
                   }))
             .setId(COL_EDIT);
         addColumn(user -> bundle.getString("ui.admin.roles.table.delete"),

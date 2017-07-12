@@ -68,6 +68,14 @@ public class PartyRepository extends AbstractEntityRepository<Long, Party> {
         }
     }
 
+    public List<Party> findByRole(final Role role) {
+        final TypedQuery<Party> query = getEntityManager()
+            .createNamedQuery("Party.findByRole", Party.class);
+        query.setParameter("role", role);
+        
+        return query.getResultList();
+    }
+
     public List<Party> searchByName(final String term) {
         final TypedQuery<Party> query = getEntityManager().createNamedQuery(
             "Party.searchByName", Party.class);
@@ -82,7 +90,7 @@ public class PartyRepository extends AbstractEntityRepository<Long, Party> {
     public void save(final Party party) {
         super.save(party);
     }
-    
+
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
@@ -90,4 +98,5 @@ public class PartyRepository extends AbstractEntityRepository<Long, Party> {
     public void delete(final Party party) {
         super.delete(party);
     }
+
 }

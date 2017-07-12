@@ -174,27 +174,26 @@ public class UserDetails extends Window {
                 "Add user to selected groups",
                 usersGroupsRoles,
                 groupRepo.findByMember(user),
-                (selectedGroups -> {
+                selectedGroups -> {
                     selectedGroups.forEach(group -> {
                         groupsController.addUserToGroup(user, group);
                     });
                     groupsGrid.getDataProvider().refreshAll();
-                }));
+                });
             groupSelector.center();
             groupSelector.setWidth("80%");
             UI.getCurrent().addWindow(groupSelector);
         });
         final HeaderCell groupsGridHeaderCell = groupsGridHeader
-            .join(COL_GROUP_NAME,
-                  COL_GROUP_REMOVE);
+            .join(COL_GROUP_NAME, COL_GROUP_REMOVE);
         groupsGridHeaderCell
             .setComponent(new HorizontalLayout(addGroupButton));
-        
+
         final UserGroupsTableDataProvider groupsDataProvider = cdiUtil
-        .findBean(UserGroupsTableDataProvider.class);
+            .findBean(UserGroupsTableDataProvider.class);
         groupsDataProvider.setUser(user);
         groupsGrid.setDataProvider(groupsDataProvider);
-        
+
         final UserRolesController rolesController = cdiUtil
             .findBean(UserRolesController.class);
         final Grid<Role> rolesGrid = new Grid<>();

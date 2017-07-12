@@ -59,10 +59,10 @@ public class UserSelectorDataProvider extends AbstractDataProvider<User, String>
     public int size(final Query<User, String> query) {
         
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+        final CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
         final Root<User> from = criteriaQuery.from(User.class);
-        criteriaQuery = criteriaQuery.select(builder.count(from));
-        criteriaQuery = criteriaQuery.distinct(true);
+        criteriaQuery.select(builder.count(from));
+        criteriaQuery.distinct(true);
         
         if (userNameFilter != null && !userNameFilter.trim().isEmpty()) {
             criteriaQuery

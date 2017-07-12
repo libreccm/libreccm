@@ -21,7 +21,7 @@ package org.libreccm.admin.ui.usersgroupsroles;
 import com.vaadin.cdi.ViewScoped;
 import com.vaadin.data.provider.AbstractDataProvider;
 import com.vaadin.data.provider.Query;
-import org.libreccm.security.Group;
+import org.libreccm.security.Party;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -38,16 +38,16 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ViewScoped
-public class GroupSelectorDataProvider extends AbstractDataProvider<Group, String> {
+public class PartySelectorDataProvider extends AbstractDataProvider<Party, String> {
 
-    private static final long serialVersionUID = 2237927716392108777L;
+    private static final long serialVersionUID = -3271211882810011968L;
 
     @Inject
     private EntityManager entityManager;
 
-    private String groupNameFilter;
+    private String partyNameFilter;
 
-    private List<Group> excludedGroups;
+    private List<Party> excludedParties;
 
     @Override
     public boolean isInMemory() {
@@ -56,25 +56,26 @@ public class GroupSelectorDataProvider extends AbstractDataProvider<Group, Strin
 
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
-    public int size(final Query<Group, String> query) {
+    public int size(final Query<Party, String> query) {
 
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<Long> criteriaQuery = builder
             .createQuery(Long.class);
-        final Root<Group> from = criteriaQuery.from(Group.class);
-        criteriaQuery.select(builder.count(from));
-        criteriaQuery.distinct(true);
-
-        if (groupNameFilter != null && !groupNameFilter.trim().isEmpty()) {
+        final Root<Party> from = criteriaQuery.from(Party.class);
+        criteriaQuery
+            .select(builder.count(from))
+            .distinct(true);
+        
+        if (partyNameFilter != null && !partyNameFilter.trim().isEmpty()) {
             criteriaQuery
                 .where(builder.like(builder.lower(from.get("name")),
-                                    String.format("%s%%", groupNameFilter)));
+                                    String.format("%s%%", partyNameFilter)));
         }
-
-        if (excludedGroups != null && !excludedGroups.isEmpty()) {
-            criteriaQuery.where(builder.not(from.in(excludedGroups)));
+        
+        if (excludedParties != null && !excludedParties.isEmpty()) {
+            criteriaQuery.where(builder.not(from.in(excludedParties)));
         }
-
+        
         return entityManager
             .createQuery(criteriaQuery)
             .getSingleResult()
@@ -83,25 +84,23 @@ public class GroupSelectorDataProvider extends AbstractDataProvider<Group, Strin
 
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
-    public Stream<Group> fetch(final Query<Group, String> query) {
-
+    public Stream<Party> fetch(final Query<Party, String> query) {
+        
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<Group> criteriaQuery = builder
-            .createQuery(Group.class);
-        final Root<Group> from = criteriaQuery.from(Group.class);
+        final CriteriaQuery<Party> criteriaQuery = builder
+        .createQuery(Party.class);
+        final Root<Party> from = criteriaQuery.from(Party.class);
         criteriaQuery.distinct(true);
-
-        if (groupNameFilter != null && !groupNameFilter.trim().isEmpty()) {
+        
+        if (partyNameFilter != null && !partyNameFilter.trim().isEmpty()) {
             criteriaQuery
                 .where(builder.like(builder.lower(from.get("name")),
-                                    String.format("%s%%", groupNameFilter)));
+                                    String.format("%s%%", partyNameFilter)));
         }
-
-        if (excludedGroups != null && !excludedGroups.isEmpty()) {
-            criteriaQuery.where(builder.not(from.in(excludedGroups)));
+        
+        if (excludedParties != null && !excludedParties.isEmpty()) {
+            criteriaQuery.where(builder.not(from.in(excludedParties)));
         }
-
-        criteriaQuery.orderBy(builder.asc(from.get("name")));
         
         return entityManager
             .createQuery(criteriaQuery)
@@ -110,14 +109,14 @@ public class GroupSelectorDataProvider extends AbstractDataProvider<Group, Strin
             .getResultList()
             .stream();
     }
-
-    public void setGroupNameFilter(final String groupNameFilter) {
-        this.groupNameFilter = groupNameFilter;
+    
+    public void setPartyNameFilter(final String partyNameFilter) {
+        this.partyNameFilter = partyNameFilter;
         refreshAll();
     }
-
-    public void setExcludedGroups(final List<Group> excludedGroups) {
-        this.excludedGroups = excludedGroups;
+    
+    public void setExcludedParties(final List<Party> excludedParties) {
+        this.excludedParties = excludedParties;
         refreshAll();
     }
 
