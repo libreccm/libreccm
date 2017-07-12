@@ -24,8 +24,11 @@ import org.librecms.contenttypes.MultiPartArticleSection;
 import org.librecms.contenttypes.MultiPartArticleSectionManager;
 import org.librecms.contenttypes.MultiPartArticleSectionRepository;
 
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 /**
  *
@@ -43,6 +46,21 @@ public class MultiPartArticleSectionStepController {
     @Inject
     private MultiPartArticleSectionManager sectionManager;
 
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<MultiPartArticleSection> retrieveSections(
+        final MultiPartArticle forArticle) {
+
+        final MultiPartArticle article = itemRepo
+            .findById(forArticle.getObjectId(),
+                      MultiPartArticle.class)
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No MultiPartArticle with ID %d in the database.",
+                    forArticle.getObjectId())));
+
+        return article.getSections();
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
     public void moveToFirst(final MultiPartArticle article,
                             final MultiPartArticleSection section) {
 
@@ -54,11 +72,11 @@ public class MultiPartArticleSectionStepController {
             article.getObjectId())));
 
         final MultiPartArticleSection theSection = sectionRepo
-        .findById(section.getSectionId())
-        .orElseThrow(() -> new IllegalArgumentException(String.format(
+            .findById(section.getSectionId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
             "No MultiPartArticleSection with ID %d in the database.",
             section.getSectionId())));
-        
+
         sectionManager.moveToFirst(article, section);
     }
 
