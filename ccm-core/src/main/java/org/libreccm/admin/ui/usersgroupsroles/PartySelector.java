@@ -30,7 +30,7 @@ import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.security.User;
+import org.libreccm.security.Party;
 
 import java.util.List;
 import java.util.ResourceBundle;
@@ -39,29 +39,25 @@ import java.util.ResourceBundle;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class UserSelector extends Window {
+public class PartySelector extends Window {
 
-    private static final long serialVersionUID = -6227551833159691370L;
+    private static final long serialVersionUID = 6915710902238111484L;
 
-    private static final String COL_USER_NAME = "username";
-    private static final String COL_GIVEN_NAME = "given_name";
-    private static final String COL_FAMILY_NAME = "family_name";
-    private static final String COL_EMAIL = "email";
+    private static final String COL_PARTY_NAME = "partyname";
 
+    public PartySelector(final String caption,
+                         final String actionLabel,
+                         final UsersGroupsRoles usersGroupsRoles,
+                         final List<Party> excludedParties,
+                         final PartySelectionAction action) {
 
-    public UserSelector(final String caption,
-                        final String actionLabel,
-                        final UsersGroupsRoles usersGroupsRoles,
-                        final List<User> excludedUsers,
-                        final UserSelectionAction action) {
-
-        addWidgets(caption, actionLabel, excludedUsers, action);
+        addWidgets(caption, actionLabel, excludedParties, action);
     }
 
     private void addWidgets(final String caption,
                             final String actionLabel,
-                            final List<User> excludedUsers,
-                            final UserSelectionAction action) {
+                            final List<Party> excludedParties,
+                            final PartySelectionAction action) {
 
         setCaption(caption);
 
@@ -71,30 +67,18 @@ public class UserSelector extends Window {
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 
-        final Grid<User> usersGrid = new Grid<>();
-        usersGrid
-            .addColumn(User::getName)
-            .setId(COL_USER_NAME)
-            .setCaption("User Name");
-        usersGrid
-            .addColumn(User::getGivenName)
-            .setId(COL_GIVEN_NAME)
-            .setCaption("Given name");
-        usersGrid
-            .addColumn(User::getFamilyName)
-            .setId(COL_FAMILY_NAME)
-            .setCaption("Family name");
-        usersGrid
-            .addColumn(user -> user.getPrimaryEmailAddress().getAddress())
-            .setId(COL_EMAIL)
-            .setCaption("E-Mail");
+        final Grid<Party> partiesGrid = new Grid<>();
+        partiesGrid
+            .addColumn(Party::getName)
+            .setId(COL_PARTY_NAME)
+            .setCaption("Party name");
 
-        usersGrid.setSelectionMode(Grid.SelectionMode.MULTI);
-        usersGrid.setWidth("100%");
+        partiesGrid.setSelectionMode(Grid.SelectionMode.MULTI);
+        partiesGrid.setWidth("100%");
 
         final Button actionButton = new Button(actionLabel);
         actionButton.addClickListener(event -> {
-            action.action(usersGrid.getSelectedItems());
+            action.action(partiesGrid.getSelectedItems());
             close();
         });
         actionButton.setIcon(VaadinIcons.PLUS_CIRCLE_O);
@@ -102,25 +86,22 @@ public class UserSelector extends Window {
 
         final Button clearButton = new Button("Clear selection");
         clearButton.addClickListener(event -> {
-            usersGrid.getSelectionModel().deselectAll();
+            partiesGrid.getSelectionModel().deselectAll();
         });
         clearButton.setIcon(VaadinIcons.BACKSPACE);
         clearButton.setStyleName(ValoTheme.BUTTON_TINY);
 
-        final HeaderRow actions = usersGrid.prependHeaderRow();
-        final HeaderCell actionsCell = actions.join(COL_USER_NAME,
-                                                    COL_GIVEN_NAME,
-                                                    COL_FAMILY_NAME,
-                                                    COL_EMAIL);
+        final HeaderRow actions = partiesGrid.prependHeaderRow();
+        final HeaderCell actionsCell = actions.getCell(COL_PARTY_NAME);
         actionsCell.setComponent(new HorizontalLayout(actionButton,
                                                       clearButton));
-
-        final UserSelectorDataProvider dataProvider = cdiUtil
-            .findBean(UserSelectorDataProvider.class);
-        dataProvider.setExcludedUsers(excludedUsers);
-        usersGrid.setDataProvider(dataProvider);
-
-        setContent(usersGrid);
+        
+        final PartySelectorDataProvider dataProvider = cdiUtil
+        .findBean(PartySelectorDataProvider.class);
+        dataProvider.setExcludedParties(excludedParties);
+        partiesGrid.setDataProvider(dataProvider);
+        
+        setContent(partiesGrid);
     }
 
 }

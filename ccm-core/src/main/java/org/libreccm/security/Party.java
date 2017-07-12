@@ -37,9 +37,9 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
@@ -62,12 +62,20 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 @NamedQueries({
     @NamedQuery(
         name = "Party.findByName",
-        query = "SELECT p FROM Party p WHERE p.name = :name"),
+        query = "SELECT p FROM Party p WHERE p.name = :name")
+    ,
     @NamedQuery(
         name = "Party.searchByName",
         query = "SELECT p FROM Party p "
                     + "WHERE LOWER(p.name) LIKE CONCAT(LOWER(:term), '%') "
                     + "ORDER BY p.name")
+    ,
+    @NamedQuery(
+        name = "Party.findByRole",
+        query = "SELECT p FROM Party p "
+                    + "JOIN p.roleMemberships m "
+                    + "WHERE m.role = :role")
+
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(name = "Party.withRoleMemberships",
