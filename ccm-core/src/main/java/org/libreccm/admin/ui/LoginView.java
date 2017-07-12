@@ -77,6 +77,7 @@ public class LoginView extends CustomComponent implements View {
 
         formLayout = new FormLayout();
         formLayout.setSizeFull();
+        formLayout.setMargin(true);
 
         userName = new TextField();
         userName.setCaption("User name");
@@ -126,7 +127,6 @@ public class LoginView extends CustomComponent implements View {
 //                submitButton.removeClickShortcut();
 //            }
 //        });
-
         password.addFocusListener(event -> {
             submitButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         });
@@ -136,15 +136,13 @@ public class LoginView extends CustomComponent implements View {
 
         loginPanel = new Panel("Login", formLayout);
 
-        loginPanel.setWidth(
-            "24em");
+        loginPanel.setWidth("24em");
 
         final VerticalLayout viewLayout = new VerticalLayout(loginPanel);
 
         viewLayout.setComponentAlignment(loginPanel, Alignment.MIDDLE_CENTER);
 
-        setCompositionRoot(viewLayout);
-
+        super.setCompositionRoot(viewLayout);
     }
 
     @PostConstruct

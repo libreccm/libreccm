@@ -101,6 +101,8 @@ public class GroupSelectorDataProvider extends AbstractDataProvider<Group, Strin
             criteriaQuery.where(builder.not(from.in(excludedGroups)));
         }
 
+        criteriaQuery.orderBy(builder.asc(from.get("name")));
+        
         return entityManager
             .createQuery(criteriaQuery)
             .setMaxResults(query.getLimit())
