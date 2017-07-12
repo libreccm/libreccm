@@ -38,7 +38,7 @@ import org.librecms.contenttypes.MultiPartArticleSectionRepository;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-class SectionSelectionModel<T extends MultiPartArticleSection>
+public class SectionSelectionModel<T extends MultiPartArticleSection>
     implements SingleSelectionModel<Long> {
 
     private final Class<T> clazz;
