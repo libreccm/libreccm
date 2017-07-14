@@ -12,7 +12,7 @@
                         active="false" />
     <ccm_core.workflows workflow_id="-140"
                         uuid="c6e317a1-88d5-48ab-8896-304d4c8d1f3e"
-                        active="false" />
+                        active="true" />
 
     <ccm_core.workflow_names workflow_id="-100" 
                              locale="en"
@@ -48,7 +48,7 @@
                              workflow_id="-110" />
     <ccm_core.workflow_tasks task_id="-140100"
                              uuid="438a742b-dc1f-42f4-8fb8-061fbed5b26b"
-                             active="false" 
+                             active="true"
                              workflow_id="-140" />
     
     <ccm_core.workflow_task_labels task_id="-100100" 
@@ -727,6 +727,9 @@
                                         role_id="-3300" />
     <ccm_core.workflow_task_assignments task_assignment_id="-930"
                                         task_id="-110100" 
+                                        role_id="-3200" />
+    <ccm_core.workflow_task_assignments task_assignment_id="-930930"
+                                        task_id="-140100" 
                                         role_id="-3200" />
     
     <ccm_cms.content_section_roles role_id="-3100" 
