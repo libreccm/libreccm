@@ -18,8 +18,9 @@
  */
 package org.librecms.contenttypes;
 
-import com.arsdigita.cms.contenttypes.ui.mparticle.MultiPartArticleCreateForm;
-import com.arsdigita.cms.contenttypes.ui.mparticle.MultiPartArticleEdit;
+import com.arsdigita.cms.ui.authoring.multipartarticle.MultiPartArticleCreateForm;
+import com.arsdigita.cms.ui.authoring.multipartarticle.MultiPartArticleEdit;
+import com.arsdigita.cms.ui.authoring.multipartarticle.MultiPartArticleSectionsStep;
 
 import org.hibernate.envers.Audited;
 import org.libreccm.l10n.LocalizedString;
@@ -64,6 +65,15 @@ import static org.librecms.CmsConstants.*;
             descriptionKey = "cms.contenttypes.shared.basic_properties"
                                  + ".description",
             order = 1)
+        ,
+        @AuthoringStep(
+            component = MultiPartArticleSectionsStep.class,
+            labelBundle = "org.librecms.CmsResources",
+            labelKey = "cms.contenttypes.shared.body_text.title",
+            descriptionBundle
+                = "com.arsdigita.cms.contenttypes.MultiPartArticleResources",
+            descriptionKey = "mparticle.authoring.body_text.description",
+            order = 2)
     })
 public class MultiPartArticle extends ContentItem implements Serializable {
 

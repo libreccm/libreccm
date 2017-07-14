@@ -16,8 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.cms.contenttypes.ui.mparticle;
+package com.arsdigita.cms.ui.authoring.multipartarticle;
 
+import org.bouncycastle.asn1.cmp.ProtectedPart;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contenttypes.MultiPartArticle;
 import org.librecms.contenttypes.MultiPartArticleSection;
@@ -35,7 +36,7 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class MultiPartArticleSectionStepController {
+class MultiPartArticleSectionStepController {
 
     @Inject
     private ContentItemRepository itemRepo;
@@ -47,7 +48,7 @@ public class MultiPartArticleSectionStepController {
     private MultiPartArticleSectionManager sectionManager;
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<MultiPartArticleSection> retrieveSections(
+    protected List<MultiPartArticleSection> retrieveSections(
         final MultiPartArticle forArticle) {
 
         final MultiPartArticle article = itemRepo
@@ -61,8 +62,25 @@ public class MultiPartArticleSectionStepController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public void moveToFirst(final MultiPartArticle article,
-                            final MultiPartArticleSection section) {
+    protected MultiPartArticleSection addSection(
+        final MultiPartArticle article) {
+
+        final MultiPartArticle theArticle = itemRepo
+            .findById(article.getObjectId(),
+                      MultiPartArticle.class)
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No MultiPartArticle with ID %d in the database.",
+            article.getObjectId())));
+
+        final MultiPartArticleSection section = new MultiPartArticleSection();
+        sectionManager.addSectionToMultiPartArticle(section, theArticle);
+
+        return section;
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void removeSection(final MultiPartArticle article,
+                                 final MultiPartArticleSection section) {
 
         final MultiPartArticle theArticle = itemRepo
             .findById(article.getObjectId(),
@@ -77,7 +95,28 @@ public class MultiPartArticleSectionStepController {
             "No MultiPartArticleSection with ID %d in the database.",
             section.getSectionId())));
 
-        sectionManager.moveToFirst(article, section);
+        sectionManager.removeSectionFromMultiPartArticle(theSection,
+                                                         theArticle);
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void moveToFirst(final MultiPartArticle article,
+                               final MultiPartArticleSection section) {
+
+        final MultiPartArticle theArticle = itemRepo
+            .findById(article.getObjectId(),
+                      MultiPartArticle.class)
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No MultiPartArticle with ID %d in the database.",
+            article.getObjectId())));
+
+        final MultiPartArticleSection theSection = sectionRepo
+            .findById(section.getSectionId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No MultiPartArticleSection with ID %d in the database.",
+            section.getSectionId())));
+
+        sectionManager.moveToFirst(theArticle, theSection);
     }
 
 }

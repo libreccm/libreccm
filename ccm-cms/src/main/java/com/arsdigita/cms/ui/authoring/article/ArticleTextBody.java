@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  */
-package com.arsdigita.cms.ui.authoring;
+package com.arsdigita.cms.ui.authoring.article;
 
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.PageState;
@@ -24,6 +24,9 @@ import com.arsdigita.bebop.form.Option;
 import com.arsdigita.bebop.form.SingleSelect;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.ItemSelectionModel;
+import com.arsdigita.cms.ui.authoring.AuthoringKitWizard;
+import com.arsdigita.cms.ui.authoring.SelectedLanguageUtil;
+import com.arsdigita.cms.ui.authoring.TextBody;
 
 import org.librecms.contenttypes.Article;
 
@@ -113,16 +116,12 @@ public class ArticleTextBody extends TextBody {
                               final String text) {
 
         final Article article = getSelectedArticle(state);
-        final String selectedLanguage = (String) state.getValue(
-            selectedLanguageParam);
-        final Locale selectedLocale;
-        if (selectedLanguage == null) {
-            selectedLocale = KernelConfig.getConfig().getDefaultLocale();
-        } else {
-            selectedLocale = new Locale(selectedLanguage);
-        }
+
+        final Locale selectedLocale = SelectedLanguageUtil
+            .selectedLocale(state, selectedLanguageParam);
 
         article.getText().addValue(selectedLocale, text);
+
         final ContentItemRepository itemRepo = CdiUtil
             .createCdiUtil()
             .findBean(ContentItemRepository.class);
@@ -151,14 +150,8 @@ public class ArticleTextBody extends TextBody {
 
         final Article article = getSelectedArticle(state);
 
-        final String selectedLanguage = (String) state
-            .getValue(selectedLanguageParam);
-        final Locale selectedLocale;
-        if (selectedLanguage == null) {
-            selectedLocale = KernelConfig.getConfig().getDefaultLocale();
-        } else {
-            selectedLocale = new Locale(selectedLanguage);
-        }
+        final Locale selectedLocale = SelectedLanguageUtil
+            .selectedLocale(state, selectedLanguageParam);
 
         return article.getText().getValue(selectedLocale);
     }
