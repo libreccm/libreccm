@@ -18,8 +18,8 @@
  */
 package org.librecms.contenttypes;
 
-import com.arsdigita.cms.contenttypes.ui.ArticlePropertiesStep;
-import com.arsdigita.cms.ui.authoring.ArticleTextBody;
+import com.arsdigita.cms.ui.authoring.article.ArticlePropertiesStep;
+import com.arsdigita.cms.ui.authoring.article.ArticleTextBody;
 import com.arsdigita.cms.ui.authoring.PageCreateForm;
 
 import java.io.Serializable;

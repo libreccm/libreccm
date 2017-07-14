@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  */
-package com.arsdigita.cms.contenttypes.ui;
+package com.arsdigita.cms.ui.authoring.news;
 
 import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.PageState;
@@ -34,6 +34,7 @@ import com.arsdigita.cms.ItemSelectionModel;
 import org.librecms.contenttypes.News;
 
 import com.arsdigita.cms.ui.authoring.BasicPageForm;
+import com.arsdigita.cms.ui.authoring.SelectedLanguageUtil;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
 
@@ -107,9 +108,9 @@ public class NewsPropertyForm extends BasicPageForm
                             final StringParameter selectedLanguageParam) {
 
         super(ID, itemSelectionModel, selectedLanguageParam);
-        
+
         Objects.requireNonNull(selectedLanguageParam);
-        
+
         this.propertiesStep = propertiesStep;
         this.selectedLanguageParam = selectedLanguageParam;
         addSubmissionListener(this);
@@ -175,14 +176,8 @@ public class NewsPropertyForm extends BasicPageForm
             releaseDate = item.getReleaseDate();
         }
 
-        final String selectedLanguage = (String) state
-            .getValue(selectedLanguageParam);
-        final Locale selectedLocale;
-        if (selectedLanguage == null) {
-            selectedLocale = KernelConfig.getConfig().getDefaultLocale();
-        } else {
-            selectedLocale = new Locale(selectedLanguage);
-        }
+        final Locale selectedLocale = SelectedLanguageUtil
+            .selectedLocale(state, selectedLanguageParam);
 
         releaseDateSelector.addYear(releaseDate);
         data.put(NEWS_DATE, releaseDate);
@@ -223,14 +218,8 @@ public class NewsPropertyForm extends BasicPageForm
                 .getSaveButton()
                 .isSelected(event.getPageState())) {
 
-            final String selectedLanguage = (String) state
-                .getValue(selectedLanguageParam);
-            final Locale selectedLocale;
-            if (selectedLanguage == null) {
-                selectedLocale = KernelConfig.getConfig().getDefaultLocale();
-            } else {
-                selectedLocale = new Locale(selectedLanguage);
-            }
+            final Locale selectedLocale = SelectedLanguageUtil
+                .selectedLocale(state, selectedLanguageParam);
 
             item.setReleaseDate((java.util.Date) data.get(NEWS_DATE));
             item

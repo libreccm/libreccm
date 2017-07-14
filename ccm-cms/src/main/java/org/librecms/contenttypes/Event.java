@@ -18,8 +18,8 @@
  */
 package org.librecms.contenttypes;
 
-import com.arsdigita.cms.contenttypes.ui.EventPropertiesStep;
-import com.arsdigita.cms.ui.authoring.EventTextBody;
+import com.arsdigita.cms.ui.authoring.event.EventPropertiesStep;
+import com.arsdigita.cms.ui.authoring.event.EventTextBody;
 import com.arsdigita.cms.ui.contenttypes.EventCreateForm;
 
 import java.io.Serializable;

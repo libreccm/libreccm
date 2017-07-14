@@ -163,14 +163,8 @@ public abstract class BasicPageForm extends BasicItemForm {
         final ContentItem item = getItemSelectionModel()
             .getSelectedObject(state);
 
-        final String selectedLanguage = (String) state
-            .getValue(selectedLanguageParam);
-        final Locale selectedLocale;
-        if (selectedLanguage == null) {
-            selectedLocale = KernelConfig.getConfig().getDefaultLocale();
-        } else {
-            selectedLocale = new Locale(selectedLanguage);
-        }
+        final Locale selectedLocale = SelectedLanguageUtil
+            .selectedLocale(state, selectedLanguageParam);
 
         if (item != null) {
             // Preset fields
@@ -244,15 +238,9 @@ public abstract class BasicPageForm extends BasicItemForm {
             .getSelectedObject(state);
 
         if (item != null) {
-            // Update attributes
-            final String selectedLanguage = (String) state
-                .getValue(selectedLanguageParam);
-            final Locale selectedLocale;
-            if (selectedLanguage == null) {
-                selectedLocale = KernelConfig.getConfig().getDefaultLocale();
-            } else {
-                selectedLocale = new Locale(selectedLanguage);
-            }
+
+            final Locale selectedLocale = SelectedLanguageUtil
+                .selectedLocale(state, selectedLanguageParam);
 
             item.getName().addValue(selectedLocale, (String) data.get(NAME));
             item.getTitle().addValue(selectedLocale, (String) data.get(TITLE));

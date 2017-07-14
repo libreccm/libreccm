@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.cms.contenttypes.ui.mparticle;
+package com.arsdigita.cms.ui.authoring.multipartarticle;
 
 import com.arsdigita.bebop.ActionLink;
 import com.arsdigita.bebop.ColumnPanel;
@@ -25,21 +25,16 @@ import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SingleSelectionModel;
-import com.arsdigita.bebop.event.ActionEvent;
-import com.arsdigita.bebop.event.ActionListener;
-import com.arsdigita.bebop.event.PrintEvent;
-import com.arsdigita.bebop.event.PrintListener;
 import com.arsdigita.bebop.event.TableActionEvent;
 import com.arsdigita.bebop.event.TableActionListener;
 import com.arsdigita.bebop.parameters.LongParameter;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.cms.ItemSelectionModel;
-import com.arsdigita.cms.contenttypes.ui.ResettableContainer;
-import com.arsdigita.cms.dispatcher.Utilities;
+import com.arsdigita.cms.ui.authoring.ResettableContainer;
 import com.arsdigita.cms.ui.authoring.AuthoringKitWizard;
+import com.arsdigita.cms.ui.authoring.SelectedLanguageUtil;
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.kernel.KernelConfig;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
@@ -149,7 +144,7 @@ public class MultiPartArticleSectionsStep extends ResettableContainer {
         final Label emptyView = new Label(new GlobalizedMessage(
             "cms.contenttypes.ui.mparticle.no_sections_yet",
             CmsConstants.CMS_BUNDLE));
-        sectionTable.setEmptyView(this);
+        sectionTable.setEmptyView(emptyView);
 
         moveSectionLabel = new Label(new GlobalizedMessage(
             "cms.contenttypes.ui.mparticle.section.title",
@@ -185,14 +180,10 @@ public class MultiPartArticleSectionsStep extends ResettableContainer {
             } else {
                 beginLink.setVisible(state, true);
                 moveSectionLabel.setVisible(state, true);
-                final String selectedLanguage = (String) state
-                    .getValue(selectedLanguageParam);
-                final Locale selectedLocale;
-                if (selectedLanguage == null) {
-                    selectedLocale = KernelConfig.getConfig().getDefaultLocale();
-                } else {
-                    selectedLocale = new Locale(selectedLanguage);
-                }
+
+                final Locale selectedLocale = SelectedLanguageUtil
+                    .selectedLocale(state, selectedLanguageParam);
+
                 final Object[] parameterObj = {
                     moveSectionModel
                     .getSelectedSection(state)
@@ -297,7 +288,8 @@ public class MultiPartArticleSectionsStep extends ResettableContainer {
             "cms.contenttypes.ui.mparticle.delete_section",
             CmsConstants.CMS_BUNDLE)));
         sectionDeleteForm = new SectionDeleteForm(selectedArticleModel,
-                                                  selectedSectionModel);
+                                                  selectedSectionModel,
+                                                  selectedLanguageParam);
         sectionDeleteForm.addSubmissionListener(event -> {
 
             final PageState state = event.getPageState();
@@ -368,9 +360,9 @@ public class MultiPartArticleSectionsStep extends ResettableContainer {
 
     @Override
     public void register(final Page page) {
-        
+
         super.register(page);
-        
+
         page.addGlobalStateParam(moveSectionParam);
         page.setVisibleDefault(beginLink, false);
         page.setVisibleDefault(moveSectionLabel, false);

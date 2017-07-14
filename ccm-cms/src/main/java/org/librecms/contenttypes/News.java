@@ -18,8 +18,8 @@
  */
 package org.librecms.contenttypes;
 
-import com.arsdigita.cms.contenttypes.ui.NewsPropertiesStep;
-import com.arsdigita.cms.ui.authoring.NewsTextBody;
+import com.arsdigita.cms.ui.authoring.news.NewsPropertiesStep;
+import com.arsdigita.cms.ui.authoring.news.NewsTextBody;
 import com.arsdigita.cms.ui.contenttypes.NewsCreateForm;
 
 import org.hibernate.envers.Audited;
