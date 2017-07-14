@@ -228,6 +228,7 @@ public class ContentItemManagerTest {
                           "object_order",
                           "phase_id",
                           "rev",
+                          "task_assignment_id",
                           "task_id",
                           "uuid",
                           "timestamp",
@@ -259,7 +260,7 @@ public class ContentItemManagerTest {
             final TypedQuery<Long> query = entityManager.createQuery(
                 "SELECT COUNT(w) FROM Workflow w", Long.class);
             final long workflowCount = query.getSingleResult();
-            assertThat("Expected three workflows in database.",
+            assertThat("Expected four workflows in database.",
                        workflowCount, is(4L));
         });
     }
@@ -278,16 +279,19 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemTypeNotInSection() {
-        final ContentSection section = sectionRepo
-            .findByLabel("info")
-            .get();
-        final Folder folder = section.getRootDocumentsFolder();
 
-        itemManager.createContentItem("Test", 
-                                      section, 
-                                      folder, 
-                                      Event.class,
-                                      Locale.ENGLISH);
+        shiro.getSystemUser().execute(() -> {
+            final ContentSection section = sectionRepo
+                .findByLabel("info")
+                .get();
+            final Folder folder = section.getRootDocumentsFolder();
+
+            itemManager.createContentItem("Test",
+                                          section,
+                                          folder,
+                                          Event.class,
+                                          Locale.ENGLISH);
+        });
     }
 
     /**
@@ -303,15 +307,16 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemNameIsNull() {
+
         shiro.getSystemUser().execute(() -> {
             final ContentSection section = sectionRepo
                 .findByLabel("info")
                 .get();
             final Folder folder = section.getRootDocumentsFolder();
 
-            itemManager.createContentItem(null, 
-                                          section, 
-                                          folder, 
+            itemManager.createContentItem(null,
+                                          section,
+                                          folder,
                                           Article.class,
                                           Locale.ENGLISH);
         });
@@ -330,6 +335,7 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemNameIsEmpty() {
+
         shiro.getSystemUser().execute(() -> {
             final ContentSection section = sectionRepo
                 .findByLabel("info")
@@ -337,8 +343,8 @@ public class ContentItemManagerTest {
             final Folder folder = section.getRootDocumentsFolder();
 
             itemManager.createContentItem(" ",
-                                          section, 
-                                          folder, 
+                                          section,
+                                          folder,
                                           Article.class,
                                           Locale.ENGLISH);
         });
@@ -358,14 +364,15 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(NullPointerException.class)
     public void createItemFolderIsNull() {
+
         shiro.getSystemUser().execute(() -> {
             final ContentSection section = sectionRepo
                 .findByLabel("info")
                 .get();
 
-            itemManager.createContentItem("Test", 
-                                          section, 
-                                          null, 
+            itemManager.createContentItem("Test",
+                                          section,
+                                          null,
                                           Article.class,
                                           Locale.ENGLISH);
         });
@@ -392,11 +399,13 @@ public class ContentItemManagerTest {
                           "phase_id",
                           "rev",
                           "task_id",
+                          "task_assignment_id",
                           "timestamp",
                           "uuid",
                           "workflow_id"
         })
     public void createContentItemWithWorkflow() {
+
         shiro.getSystemUser().execute(() -> {
             final ContentSection section = sectionRepo
                 .findByLabel("info")
@@ -477,6 +486,7 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemNameIsNullWithWorkflow() {
+
         shiro.getSystemUser().execute(() -> {
             final ContentSection section = sectionRepo
                 .findByLabel("info")
@@ -509,6 +519,7 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void createItemNameIsNullWorkflowIsNull() {
+
         shiro.getSystemUser().execute(() -> {
             final ContentSection section = sectionRepo
                 .findByLabel("info")
@@ -538,6 +549,7 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(NullPointerException.class)
     public void createItemFolderIsNullWithWorkflow() {
+
         shiro.getSystemUser().execute(() -> {
             final ContentSection section = sectionRepo
                 .findByLabel("info")
@@ -577,13 +589,15 @@ public class ContentItemManagerTest {
         })
     public void moveItem() {
 
-        final Optional<ContentItem> item = itemRepo.findById(-10100L);
-        assertThat(item.isPresent(), is(true));
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            assertThat(item.isPresent(), is(true));
 
-        final Folder targetFolder = folderRepo.findById(-2120L).get();
-        assertThat(targetFolder, is(not(nullValue())));
+            final Folder targetFolder = folderRepo.findById(-2120L).get();
+            assertThat(targetFolder, is(not(nullValue())));
 
-        itemManager.move(item.get(), targetFolder);
+            itemManager.move(item.get(), targetFolder);
+        });
     }
 
     /**
@@ -607,18 +621,21 @@ public class ContentItemManagerTest {
                           "workflow_id"
         })
     public void moveItemToOtherContentSection() {
-        final Optional<ContentItem> item = itemRepo.findById(-10100L);
-        final Folder targetFolder = folderRepo.findById(-2300L).get();
 
-        assertThat(item.isPresent(), is(true));
-        assertThat(targetFolder, is(not(nullValue())));
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            final Folder targetFolder = folderRepo.findById(-2300L).get();
 
-        itemManager.move(item.get(), targetFolder);
+            assertThat(item.isPresent(), is(true));
+            assertThat(targetFolder, is(not(nullValue())));
+
+            itemManager.move(item.get(), targetFolder);
+        });
     }
 
     /**
-     * Verifies that null null null null null null null null null null null null
-     * null null null null null null null null null null     {@link ContentItemManager#move(org.librecms.contentsection.ContentItem, org.librecms.contentsection.Folder) 
+     * Verifies that
+     * {@link ContentItemManager#move(org.librecms.contentsection.ContentItem, org.librecms.contentsection.Folder)}
      * throws an {@link IllegalArgumentException} if the type of the item to
      * copy has not been registered in content section to which the target
      * folder belongs.
@@ -631,13 +648,16 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveToOtherContentSectionTypeNotPresent() {
-        final Optional<ContentItem> item = itemRepo.findById(-10400L);
-        final Folder targetFolder = folderRepo.findById(-2300L).get();
 
-        assertThat(item.isPresent(), is(true));
-        assertThat(targetFolder, is(not(nullValue())));
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-10400L);
+            final Folder targetFolder = folderRepo.findById(-2300L).get();
 
-        itemManager.move(item.get(), targetFolder);
+            assertThat(item.isPresent(), is(true));
+            assertThat(targetFolder, is(not(nullValue())));
+
+            itemManager.move(item.get(), targetFolder);
+        });
     }
 
     /**
@@ -654,10 +674,13 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveItemNull() {
-        final Folder targetFolder = folderRepo.findById(-2120L).get();
-        assertThat(targetFolder, is(not(nullValue())));
 
-        itemManager.move(null, targetFolder);
+        shiro.getSystemUser().execute(() -> {
+            final Folder targetFolder = folderRepo.findById(-2120L).get();
+            assertThat(targetFolder, is(not(nullValue())));
+
+            itemManager.move(null, targetFolder);
+        });
     }
 
     /**
@@ -674,10 +697,13 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveItemTargetFolderIsNull() {
-        final Optional<ContentItem> item = itemRepo.findById(-10100L);
-        assertThat(item.isPresent(), is(true));
 
-        itemManager.move(item.get(), null);
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            assertThat(item.isPresent(), is(true));
+
+            itemManager.move(item.get(), null);
+        });
     }
 
     /**
@@ -709,13 +735,16 @@ public class ContentItemManagerTest {
                           "workflow_id"
         })
     public void copyToOtherFolder() {
-        final Optional<ContentItem> item = itemRepo.findById(-10100L);
-        assertThat(item.isPresent(), is(true));
 
-        final Folder targetFolder = folderRepo.findById(-2120L).get();
-        assertThat(targetFolder, is(not(nullValue())));
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            assertThat(item.isPresent(), is(true));
 
-        itemManager.copy(item.get(), targetFolder);
+            final Folder targetFolder = folderRepo.findById(-2120L).get();
+            assertThat(targetFolder, is(not(nullValue())));
+
+            itemManager.copy(item.get(), targetFolder);
+        });
     }
 
     /**
@@ -747,16 +776,21 @@ public class ContentItemManagerTest {
                           "workflow_id"
         })
     public void copyToFolderInOtherSection() {
-        final Optional<ContentItem> source = itemRepo.findById(-10100L);
-        final Folder targetFolder = folderRepo.findById(-2300L).get();
 
-        assertThat(source.isPresent(), is(true));
-        assertThat(targetFolder, is(not(nullValue())));
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> source = itemRepo.findById(-10100L);
+            final Folder targetFolder = folderRepo.findById(-2300L).get();
 
-        final ContentItem target = itemManager.copy(source.get(), targetFolder);
+            assertThat(source.isPresent(), is(true));
+            assertThat(targetFolder, is(not(nullValue())));
 
-        assertThat(target.getUuid(), is(not(equalTo(source.get().getUuid()))));
-        assertThat(target.getItemUuid(), is(equalTo(target.getUuid())));
+            final ContentItem target = itemManager.copy(source.get(),
+                                                        targetFolder);
+
+            assertThat(target.getUuid(),
+                       is(not(equalTo(source.get().getUuid()))));
+            assertThat(target.getItemUuid(), is(equalTo(target.getUuid())));
+        });
     }
 
     /**
@@ -774,13 +808,16 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyToFolderInOtherSectionTypeNotPresent() {
-        final Optional<ContentItem> source = itemRepo.findById(-10400L);
-        final Folder targetFolder = folderRepo.findById(-2300L).get();
 
-        assertThat(source.isPresent(), is(true));
-        assertThat(targetFolder, is(not(nullValue())));
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> source = itemRepo.findById(-10400L);
+            final Folder targetFolder = folderRepo.findById(-2300L).get();
 
-        itemManager.copy(source.get(), targetFolder);
+            assertThat(source.isPresent(), is(true));
+            assertThat(targetFolder, is(not(nullValue())));
+
+            itemManager.copy(source.get(), targetFolder);
+        });
     }
 
     /**
@@ -814,13 +851,16 @@ public class ContentItemManagerTest {
                           "workflow_id"
         })
     public void copyToSameFolder() {
-        final Optional<ContentItem> item = itemRepo.findById(-10100L);
-        assertThat(item.isPresent(), is(true));
 
-        final Folder targetFolder = folderRepo.findById(-2110L).get();
-        assertThat(targetFolder, is(not(nullValue())));
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            assertThat(item.isPresent(), is(true));
 
-        itemManager.copy(item.get(), targetFolder);
+            final Folder targetFolder = folderRepo.findById(-2110L).get();
+            assertThat(targetFolder, is(not(nullValue())));
+
+            itemManager.copy(item.get(), targetFolder);
+        });
     }
 
     /**
@@ -838,10 +878,13 @@ public class ContentItemManagerTest {
                     + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyItemNull() {
-        final Folder targetFolder = folderRepo.findById(-2120L).get();
-        assertThat(targetFolder, is(not(nullValue())));
 
-        itemManager.copy(null, targetFolder);
+        shiro.getSystemUser().execute(() -> {
+            final Folder targetFolder = folderRepo.findById(-2120L).get();
+            assertThat(targetFolder, is(not(nullValue())));
+
+            itemManager.copy(null, targetFolder);
+        });
     }
 
     /**
@@ -859,10 +902,13 @@ public class ContentItemManagerTest {
                     + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyItemToFolderNull() {
-        final Optional<ContentItem> item = itemRepo.findById(-10100L);
-        assertThat(item.isPresent(), is(true));
 
-        itemManager.copy(item.get(), null);
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            assertThat(item.isPresent(), is(true));
+
+            itemManager.copy(item.get(), null);
+        });
     }
 
     /**
@@ -897,12 +943,15 @@ public class ContentItemManagerTest {
                           "workflow_id"
         })
     public void publishItem() {
-        final Optional<ContentItem> item = itemRepo.findById(-10100L);
-        assertThat(item.isPresent(), is(true));
 
-        final ContentItem live = itemManager.publish(item.get());
-        assertThat(live, is(not(nullValue())));
-        assertThat(live.getVersion(), is(ContentItemVersion.LIVE));
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            assertThat(item.isPresent(), is(true));
+
+            final ContentItem live = itemManager.publish(item.get());
+            assertThat(live, is(not(nullValue())));
+            assertThat(live.getVersion(), is(ContentItemVersion.LIVE));
+        });
     }
 
     /**
@@ -937,15 +986,19 @@ public class ContentItemManagerTest {
                           "workflow_id"
         })
     public void publishItemWithLifecycle() {
-        final Optional<ContentItem> item = itemRepo.findById(-10100L);
-        final LifecycleDefinition lifecycleDef = lifecycleDefinitionRepo
-            .findById(-200L).get();
-        assertThat(item.isPresent(), is(true));
-        assertThat(lifecycleDef, is(not(nullValue())));
 
-        final ContentItem live = itemManager.publish(item.get(), lifecycleDef);
-        assertThat(live, is(not(nullValue())));
-        assertThat(live.getVersion(), is(ContentItemVersion.LIVE));
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            final LifecycleDefinition lifecycleDef = lifecycleDefinitionRepo
+                .findById(-200L).get();
+            assertThat(item.isPresent(), is(true));
+            assertThat(lifecycleDef, is(not(nullValue())));
+
+            final ContentItem live = itemManager.publish(item.get(),
+                                                         lifecycleDef);
+            assertThat(live, is(not(nullValue())));
+            assertThat(live.getVersion(), is(ContentItemVersion.LIVE));
+        });
     }
 
     /**
@@ -971,18 +1024,21 @@ public class ContentItemManagerTest {
                           "uuid",
                           "workflow_id"})
     public void republishItem() {
-        final Optional<ContentItem> item = itemRepo.findById(-10200L);
-        assertThat(item.isPresent(), is(true));
 
-        item.get().getName().addValue(Locale.ENGLISH, "article2-edited");
-        item.get().getTitle()
-            .addValue(Locale.ENGLISH, "Article has been edited");
-        itemRepo.save(item.get());
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-10200L);
+            assertThat(item.isPresent(), is(true));
 
-        final Optional<ContentItem> draft = itemRepo.findById(-10200L);
-        assertThat(draft.get().getName().getValue(Locale.ENGLISH),
-                   is(equalTo("article2-edited")));
-        itemManager.publish(draft.get());
+            item.get().getName().addValue(Locale.ENGLISH, "article2-edited");
+            item.get().getTitle()
+                .addValue(Locale.ENGLISH, "Article has been edited");
+            itemRepo.save(item.get());
+
+            final Optional<ContentItem> draft = itemRepo.findById(-10200L);
+            assertThat(draft.get().getName().getValue(Locale.ENGLISH),
+                       is(equalTo("article2-edited")));
+            itemManager.publish(draft.get());
+        });
     }
 
     /**
@@ -999,9 +1055,12 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void publishItemNull() {
-        final ContentItem item = null;
 
-        itemManager.publish(item);
+        shiro.getSystemUser().execute(() -> {
+            final ContentItem item = null;
+
+            itemManager.publish(item);
+        });
     }
 
     /**
@@ -1018,9 +1077,12 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void publishItemLifecycleIsNull() {
-        final Optional<ContentItem> draft = itemRepo.findById(-10200L);
 
-        itemManager.publish(draft.get(), null);
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> draft = itemRepo.findById(-10200L);
+
+            itemManager.publish(draft.get(), null);
+        });
     }
 
     /**
@@ -1047,10 +1109,13 @@ public class ContentItemManagerTest {
                           "uuid",
                           "workflow_id"})
     public void unpublishItem() {
-        final Optional<ContentItem> item = itemRepo.findById(-10200L);
-        assertThat(item.isPresent(), is(true));
 
-        itemManager.unpublish(item.get());
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-10200L);
+            assertThat(item.isPresent(), is(true));
+
+            itemManager.unpublish(item.get());
+        });
     }
 
     /**
@@ -1065,10 +1130,13 @@ public class ContentItemManagerTest {
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
                             + "ContentItemManagerTest/data.xml")
     public void unpublishNonLiveItem() {
-        final Optional<ContentItem> item = itemRepo.findById(-10300L);
-        assertThat(item.isPresent(), is(true));
 
-        itemManager.unpublish(item.get());
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-10300L);
+            assertThat(item.isPresent(), is(true));
+
+            itemManager.unpublish(item.get());
+        });
     }
 
     /**
@@ -1085,8 +1153,11 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void unpublishItemNull() {
-        final ContentItem item = null;
-        itemManager.unpublish(item);
+
+        shiro.getSystemUser().execute(() -> {
+            final ContentItem item = null;
+            itemManager.unpublish(item);
+        });
     }
 
     /**
@@ -1101,20 +1172,23 @@ public class ContentItemManagerTest {
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
                             + "ContentItemManagerTest/data.xml")
     public void isLive() {
-        final Optional<ContentItem> item1 = itemRepo.findById(-10100L);
-        final Optional<ContentItem> item2 = itemRepo.findById(-10200L);
-        final Optional<ContentItem> item3 = itemRepo.findById(-10300L);
-        final Optional<ContentItem> item4 = itemRepo.findById(-10400L);
 
-        assertThat(item1.isPresent(), is(true));
-        assertThat(item2.isPresent(), is(true));
-        assertThat(item3.isPresent(), is(true));
-        assertThat(item4.isPresent(), is(true));
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item1 = itemRepo.findById(-10100L);
+            final Optional<ContentItem> item2 = itemRepo.findById(-10200L);
+            final Optional<ContentItem> item3 = itemRepo.findById(-10300L);
+            final Optional<ContentItem> item4 = itemRepo.findById(-10400L);
 
-        assertThat(itemManager.isLive(item1.get()), is(false));
-        assertThat(itemManager.isLive(item2.get()), is(true));
-        assertThat(itemManager.isLive(item3.get()), is(false));
-        assertThat(itemManager.isLive(item4.get()), is(false));
+            assertThat(item1.isPresent(), is(true));
+            assertThat(item2.isPresent(), is(true));
+            assertThat(item3.isPresent(), is(true));
+            assertThat(item4.isPresent(), is(true));
+
+            assertThat(itemManager.isLive(item1.get()), is(false));
+            assertThat(itemManager.isLive(item2.get()), is(true));
+            assertThat(itemManager.isLive(item3.get()), is(false));
+            assertThat(itemManager.isLive(item4.get()), is(false));
+        });
     }
 
     /**
@@ -1131,43 +1205,46 @@ public class ContentItemManagerTest {
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
                             + "ContentItemManagerTest/data.xml")
     public void getLiveVersion() {
-        final Optional<ContentItem> draft1 = itemRepo.findById(-10100L);
-        final Optional<ContentItem> draft2 = itemRepo.findById(-10200L);
-        final Optional<ContentItem> draft3 = itemRepo.findById(-10300L);
-        final Optional<ContentItem> draft4 = itemRepo.findById(-10400L);
 
-        final Optional<ContentItem> live2 = itemRepo.findById(-99200L);
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> draft1 = itemRepo.findById(-10100L);
+            final Optional<ContentItem> draft2 = itemRepo.findById(-10200L);
+            final Optional<ContentItem> draft3 = itemRepo.findById(-10300L);
+            final Optional<ContentItem> draft4 = itemRepo.findById(-10400L);
 
-        assertThat(itemManager.getLiveVersion(draft1.get(),
-                                              ContentItem.class).isPresent(),
-                   is(false));
-        final Optional<Article> liveVersion = itemManager.getLiveVersion(
-            draft2.get(), Article.class);
-        assertThat(liveVersion.isPresent(),
-                   is(true));
-        assertThat(liveVersion.get().getObjectId(),
-                   is(-99200L));
-        assertThat(liveVersion.get().getItemUuid(),
-                   is(equalTo("acae860f-2ffa-450d-b486-054292f0dae6")));
-        assertThat(liveVersion.get().getVersion(),
-                   is(ContentItemVersion.LIVE));
-        assertThat(itemManager.getLiveVersion(draft3.get(),
-                                              ContentItem.class).isPresent(),
-                   is(false));
-        assertThat(itemManager.getLiveVersion(draft4.get(),
-                                              ContentItem.class).isPresent(),
-                   is(false));
+            final Optional<ContentItem> live2 = itemRepo.findById(-99200L);
 
-        final Optional<ContentItem> fromLive = itemManager.getLiveVersion(
-            live2.get(), ContentItem.class);
-        assertThat(fromLive.isPresent(),
-                   is(true));
-        assertThat(fromLive.get().getObjectId(),
-                   is(-99200L));
-        assertThat(fromLive.get().getItemUuid(),
-                   is(equalTo("acae860f-2ffa-450d-b486-054292f0dae6")));
-        assertThat(fromLive.get().getVersion(),
-                   is(ContentItemVersion.LIVE));
+            assertThat(itemManager.getLiveVersion(draft1.get(),
+                                                  ContentItem.class).isPresent(),
+                       is(false));
+            final Optional<Article> liveVersion = itemManager.getLiveVersion(
+                draft2.get(), Article.class);
+            assertThat(liveVersion.isPresent(),
+                       is(true));
+            assertThat(liveVersion.get().getObjectId(),
+                       is(-99200L));
+            assertThat(liveVersion.get().getItemUuid(),
+                       is(equalTo("acae860f-2ffa-450d-b486-054292f0dae6")));
+            assertThat(liveVersion.get().getVersion(),
+                       is(ContentItemVersion.LIVE));
+            assertThat(itemManager.getLiveVersion(draft3.get(),
+                                                  ContentItem.class).isPresent(),
+                       is(false));
+            assertThat(itemManager.getLiveVersion(draft4.get(),
+                                                  ContentItem.class).isPresent(),
+                       is(false));
+
+            final Optional<ContentItem> fromLive = itemManager.getLiveVersion(
+                live2.get(), ContentItem.class);
+            assertThat(fromLive.isPresent(),
+                       is(true));
+            assertThat(fromLive.get().getObjectId(),
+                       is(-99200L));
+            assertThat(fromLive.get().getItemUuid(),
+                       is(equalTo("acae860f-2ffa-450d-b486-054292f0dae6")));
+            assertThat(fromLive.get().getVersion(),
+                       is(ContentItemVersion.LIVE));
+        });
     }
 
     /**
@@ -1183,36 +1260,42 @@ public class ContentItemManagerTest {
                             + "ContentItemManagerTest/data.xml")
     // getDraftVersion
     public void getDraftVersion() {
-        final Optional<ContentItem> draft1 = itemRepo.findById(-10100L);
-        final Optional<ContentItem> draft2 = itemRepo.findById(-10200L);
-        final Optional<ContentItem> draft3 = itemRepo.findById(-10300L);
-        final Optional<ContentItem> draft4 = itemRepo.findById(-10400L);
 
-        assertThat(itemManager.getDraftVersion(draft1.get(),
-                                               ContentItem.class).getObjectId(),
-                   is(-10100L));
-        assertThat(itemManager.getDraftVersion(draft2.get(),
-                                               ContentItem.class).getObjectId(),
-                   is(-10200L));
-        assertThat(itemManager.getDraftVersion(draft3.get(),
-                                               ContentItem.class).getObjectId(),
-                   is(-10300L));
-        assertThat(itemManager.getDraftVersion(draft4.get(),
-                                               ContentItem.class).getObjectId(),
-                   is(-10400L));
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> draft1 = itemRepo.findById(-10100L);
+            final Optional<ContentItem> draft2 = itemRepo.findById(-10200L);
+            final Optional<ContentItem> draft3 = itemRepo.findById(-10300L);
+            final Optional<ContentItem> draft4 = itemRepo.findById(-10400L);
 
-        final Optional<ContentItem> live2 = itemRepo.findById(-99200L);
+            assertThat(itemManager.getDraftVersion(draft1.get(),
+                                                   ContentItem.class)
+                .getObjectId(),
+                       is(-10100L));
+            assertThat(itemManager.getDraftVersion(draft2.get(),
+                                                   ContentItem.class)
+                .getObjectId(),
+                       is(-10200L));
+            assertThat(itemManager.getDraftVersion(draft3.get(),
+                                                   ContentItem.class)
+                .getObjectId(),
+                       is(-10300L));
+            assertThat(itemManager.getDraftVersion(draft4.get(),
+                                                   ContentItem.class)
+                .getObjectId(),
+                       is(-10400L));
 
-        final ContentItem draftVersion = itemManager.getDraftVersion(
-            live2.get(), ContentItem.class);
+            final Optional<ContentItem> live2 = itemRepo.findById(-99200L);
 
-        assertThat(draftVersion, is(not(nullValue())));
-        assertThat(draftVersion.getObjectId(), is(-10200L));
-        assertThat(draftVersion.getItemUuid(),
-                   is(equalTo("acae860f-2ffa-450d-b486-054292f0dae6")));
-        assertThat(draftVersion.getVersion(),
-                   is(ContentItemVersion.DRAFT));
+            final ContentItem draftVersion = itemManager.getDraftVersion(
+                live2.get(), ContentItem.class);
 
+            assertThat(draftVersion, is(not(nullValue())));
+            assertThat(draftVersion.getObjectId(), is(-10200L));
+            assertThat(draftVersion.getItemUuid(),
+                       is(equalTo("acae860f-2ffa-450d-b486-054292f0dae6")));
+            assertThat(draftVersion.getVersion(),
+                       is(ContentItemVersion.DRAFT));
+        });
     }
 
 }

@@ -206,12 +206,16 @@ public class ItemAttachmentManagerTest {
                           "uuid",
                           "attachment_id"})
     public void attachNonSharedAsset() throws MimeTypeParseException {
-        final Optional<ContentItem> item = itemRepo.findById(-510L);
-        assertThat(item.isPresent(), is(true));
 
-        final Asset file = assetRepo.findById(-720L).get();
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            assertThat(item.isPresent(), is(true));
 
-        attachmentManager.attachAsset(file, item.get().getAttachments().get(1));
+            final Asset file = assetRepo.findById(-720L).get();
+
+            attachmentManager.attachAsset(file, item.get().getAttachments().get(
+                                          1));
+        });
     }
 
     /**
@@ -231,13 +235,16 @@ public class ItemAttachmentManagerTest {
                           "uuid",
                           "attachment_id"})
     public void attachSharedAsset() throws MimeTypeParseException {
-        final Optional<ContentItem> item = itemRepo.findById(-510L);
-        assertThat(item.isPresent(), is(true));
 
-        final Asset shared = assetRepo.findById(-610L).get();
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            assertThat(item.isPresent(), is(true));
 
-        attachmentManager.attachAsset(shared,
-                                      item.get().getAttachments().get(1));
+            final Asset shared = assetRepo.findById(-610L).get();
+
+            attachmentManager.attachAsset(shared,
+                                          item.get().getAttachments().get(1));
+        });
     }
 
     /**
@@ -253,13 +260,16 @@ public class ItemAttachmentManagerTest {
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
                             + "ItemAttachmentManagerTest/data.xml")
     public void attachAssetAlreadyAttached() {
-        final Optional<ContentItem> item = itemRepo.findById(-510L);
-        assertThat(item.isPresent(), is(true));
 
-        final Asset shared = assetRepo.findById(-620L).get();
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            assertThat(item.isPresent(), is(true));
 
-        attachmentManager.attachAsset(shared,
-                                      item.get().getAttachments().get(1));
+            final Asset shared = assetRepo.findById(-620L).get();
+
+            attachmentManager.attachAsset(shared,
+                                          item.get().getAttachments().get(1));
+        });
     }
 
     /**
@@ -276,13 +286,16 @@ public class ItemAttachmentManagerTest {
                             + "ItemAttachmentManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void attachAssetNull() {
-        final Optional<ContentItem> item = itemRepo.findById(-510L);
-        assertThat(item.isPresent(), is(true));
 
-        final Asset asset = null;
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            assertThat(item.isPresent(), is(true));
 
-        attachmentManager.attachAsset(asset,
-                                      item.get().getAttachments().get(1));
+            final Asset asset = null;
+
+            attachmentManager.attachAsset(asset,
+                                          item.get().getAttachments().get(1));
+        });
     }
 
     /**
@@ -299,10 +312,13 @@ public class ItemAttachmentManagerTest {
                             + "ItemAttachmentManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void attachAssetToListNull() {
-        final AttachmentList list = null;
-        final Asset shared = assetRepo.findById(-610L).get();
 
-        attachmentManager.attachAsset(shared, list);
+        shiro.getSystemUser().execute(() -> {
+            final AttachmentList list = null;
+            final Asset shared = assetRepo.findById(-610L).get();
+
+            attachmentManager.attachAsset(shared, list);
+        });
     }
 
     /**
@@ -319,15 +335,18 @@ public class ItemAttachmentManagerTest {
                     + "after-unattach-shared.xml",
         excludeColumns = {"timestamp"})
     public void unattachSharedAsset() {
-        final Asset asset = assetRepo.findById(-610L).get();
-        final Optional<ContentItem> item = itemRepo.findById(-510L);
 
-        assertThat(asset, is(not(nullValue())));
-        assertThat(item.isPresent(), is(true));
+        shiro.getSystemUser().execute(() -> {
+            final Asset asset = assetRepo.findById(-610L).get();
+            final Optional<ContentItem> item = itemRepo.findById(-510L);
 
-        final AttachmentList list = item.get().getAttachments().get(0);
+            assertThat(asset, is(not(nullValue())));
+            assertThat(item.isPresent(), is(true));
 
-        attachmentManager.unattachAsset(asset, list);
+            final AttachmentList list = item.get().getAttachments().get(0);
+
+            attachmentManager.unattachAsset(asset, list);
+        });
     }
 
     /**
@@ -346,15 +365,18 @@ public class ItemAttachmentManagerTest {
                     + "after-unattach-nonshared.xml",
         excludeColumns = {"timestamp"})
     public void unattachNonSharedAsset() {
-        final Asset asset = assetRepo.findById(-720L).get();
-        final Optional<ContentItem> item = itemRepo.findById(-510L);
 
-        assertThat(asset, is(not(nullValue())));
-        assertThat(item.isPresent(), is(true));
+        shiro.getSystemUser().execute(() -> {
+            final Asset asset = assetRepo.findById(-720L).get();
+            final Optional<ContentItem> item = itemRepo.findById(-510L);
 
-        final AttachmentList list = item.get().getAttachments().get(0);
+            assertThat(asset, is(not(nullValue())));
+            assertThat(item.isPresent(), is(true));
 
-        attachmentManager.unattachAsset(asset, list);
+            final AttachmentList list = item.get().getAttachments().get(0);
+
+            attachmentManager.unattachAsset(asset, list);
+        });
     }
 
     /**
@@ -370,15 +392,18 @@ public class ItemAttachmentManagerTest {
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
                             + "ItemAttachmentManagerTest/data.xml")
     public void unattachAssetNotAttached() {
-        final Asset asset = assetRepo.findById(-720L).get();
-        final Optional<ContentItem> item = itemRepo.findById(-510L);
 
-        assertThat(asset, is(not(nullValue())));
-        assertThat(item.isPresent(), is(true));
+        shiro.getSystemUser().execute(() -> {
+            final Asset asset = assetRepo.findById(-720L).get();
+            final Optional<ContentItem> item = itemRepo.findById(-510L);
 
-        final AttachmentList list = item.get().getAttachments().get(1);
+            assertThat(asset, is(not(nullValue())));
+            assertThat(item.isPresent(), is(true));
 
-        attachmentManager.unattachAsset(asset, list);
+            final AttachmentList list = item.get().getAttachments().get(1);
+
+            attachmentManager.unattachAsset(asset, list);
+        });
     }
 
     /**
@@ -395,14 +420,17 @@ public class ItemAttachmentManagerTest {
                             + "ItemAttachmentManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void unattachAssetNull() {
-        final Asset asset = null;
 
-        final Optional<ContentItem> item = itemRepo.findById(-510L);
-        assertThat(item.isPresent(), is(true));
+        shiro.getSystemUser().execute(() -> {
+            final Asset asset = null;
 
-        final AttachmentList list = item.get().getAttachments().get(0);
+            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            assertThat(item.isPresent(), is(true));
 
-        attachmentManager.unattachAsset(asset, list);
+            final AttachmentList list = item.get().getAttachments().get(0);
+
+            attachmentManager.unattachAsset(asset, list);
+        });
     }
 
     /**
@@ -419,12 +447,15 @@ public class ItemAttachmentManagerTest {
                             + "ItemAttachmentManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void unattachAssetFromListNull() {
-        final Asset asset = assetRepo.findById(-720L).get();
-        assertThat(asset, is(not(nullValue())));
 
-        final AttachmentList list = null;
+        shiro.getSystemUser().execute(() -> {
+            final Asset asset = assetRepo.findById(-720L).get();
+            assertThat(asset, is(not(nullValue())));
 
-        attachmentManager.unattachAsset(asset, list);
+            final AttachmentList list = null;
+
+            attachmentManager.unattachAsset(asset, list);
+        });
     }
 
     /**
@@ -441,13 +472,16 @@ public class ItemAttachmentManagerTest {
                     + "ItemAttachmentManagerTest/after-move-up.xml",
         excludeColumns = {"timestamp"})
     public void moveUp() {
-        final Optional<ContentItem> item = itemRepo.findById(-510L);
-        assertThat(item.isPresent(), is(true));
 
-        final AttachmentList list = item.get().getAttachments().get(0);
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            assertThat(item.isPresent(), is(true));
 
-        attachmentManager.moveUp(list.getAttachments().get(0).getAsset(),
-                                 list);
+            final AttachmentList list = item.get().getAttachments().get(0);
+
+            attachmentManager.moveUp(list.getAttachments().get(0).getAsset(),
+                                     list);
+        });
     }
 
     /**
@@ -462,13 +496,16 @@ public class ItemAttachmentManagerTest {
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
                             + "ItemAttachmentManagerTest/data.xml")
     public void moveUpLast() {
-        final Optional<ContentItem> item = itemRepo.findById(-510L);
-        assertThat(item.isPresent(), is(true));
 
-        final AttachmentList list = item.get().getAttachments().get(0);
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            assertThat(item.isPresent(), is(true));
 
-        attachmentManager.moveUp(list.getAttachments().get(2).getAsset(),
-                                 list);
+            final AttachmentList list = item.get().getAttachments().get(0);
+
+            attachmentManager.moveUp(list.getAttachments().get(2).getAsset(),
+                                     list);
+        });
     }
 
     /**
@@ -485,12 +522,15 @@ public class ItemAttachmentManagerTest {
                             + "ItemAttachmentManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveUpNull() {
-        final Optional<ContentItem> item = itemRepo.findById(-510L);
-        assertThat(item.isPresent(), is(true));
 
-        final AttachmentList list = item.get().getAttachments().get(0);
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            assertThat(item.isPresent(), is(true));
 
-        attachmentManager.moveUp(null, list);
+            final AttachmentList list = item.get().getAttachments().get(0);
+
+            attachmentManager.moveUp(null, list);
+        });
     }
 
     /**
@@ -507,12 +547,15 @@ public class ItemAttachmentManagerTest {
                             + "ItemAttachmentManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveUpInListNull() {
-        final Asset asset = assetRepo.findById(-720L).get();
-        assertThat(asset, is(not(nullValue())));
 
-        final AttachmentList list = null;
+        shiro.getSystemUser().execute(() -> {
+            final Asset asset = assetRepo.findById(-720L).get();
+            assertThat(asset, is(not(nullValue())));
 
-        attachmentManager.moveUp(asset, list);
+            final AttachmentList list = null;
+
+            attachmentManager.moveUp(asset, list);
+        });
     }
 
     /**
@@ -529,13 +572,16 @@ public class ItemAttachmentManagerTest {
                     + "ItemAttachmentManagerTest/after-move-down.xml",
         excludeColumns = {"timestamp"})
     public void moveDown() {
-        final Optional<ContentItem> item = itemRepo.findById(-510L);
-        assertThat(item.isPresent(), is(true));
 
-        final AttachmentList list = item.get().getAttachments().get(0);
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            assertThat(item.isPresent(), is(true));
 
-        attachmentManager.moveDown(list.getAttachments().get(2).getAsset(),
-                                   list);
+            final AttachmentList list = item.get().getAttachments().get(0);
+
+            attachmentManager.moveDown(list.getAttachments().get(2).getAsset(),
+                                       list);
+        });
     }
 
     /**
@@ -550,13 +596,16 @@ public class ItemAttachmentManagerTest {
     @ShouldMatchDataSet("datasets/org/librecms/contentsection/"
                             + "ItemAttachmentManagerTest/data.xml")
     public void moveDownFirst() {
-        final Optional<ContentItem> item = itemRepo.findById(-510L);
-        assertThat(item.isPresent(), is(true));
 
-        final AttachmentList list = item.get().getAttachments().get(0);
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            assertThat(item.isPresent(), is(true));
 
-        attachmentManager.moveDown(list.getAttachments().get(0).getAsset(),
-                                   list);
+            final AttachmentList list = item.get().getAttachments().get(0);
+
+            attachmentManager.moveDown(list.getAttachments().get(0).getAsset(),
+                                       list);
+        });
     }
 
     /**
@@ -573,12 +622,15 @@ public class ItemAttachmentManagerTest {
                             + "ItemAttachmentManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveDownNull() {
-        final Optional<ContentItem> item = itemRepo.findById(-510L);
-        assertThat(item.isPresent(), is(true));
 
-        final AttachmentList list = item.get().getAttachments().get(0);
+        shiro.getSystemUser().execute(() -> {
+            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            assertThat(item.isPresent(), is(true));
 
-        attachmentManager.moveDown(null, list);
+            final AttachmentList list = item.get().getAttachments().get(0);
+
+            attachmentManager.moveDown(null, list);
+        });
     }
 
     /**
@@ -595,12 +647,15 @@ public class ItemAttachmentManagerTest {
                             + "ItemAttachmentManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveDownInListNull() {
-        final Asset asset = assetRepo.findById(-720L).get();
-        assertThat(asset, is(not(nullValue())));
 
-        final AttachmentList list = null;
+        shiro.getSystemUser().execute(() -> {
+            final Asset asset = assetRepo.findById(-720L).get();
+            assertThat(asset, is(not(nullValue())));
 
-        attachmentManager.moveDown(asset, list);
+            final AttachmentList list = null;
+
+            attachmentManager.moveDown(asset, list);
+        });
     }
 
 }
