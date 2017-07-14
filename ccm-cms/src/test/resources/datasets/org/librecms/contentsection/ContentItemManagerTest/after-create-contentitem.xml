@@ -12,7 +12,7 @@
                         active="false" />
     <ccm_core.workflows workflow_id="-140"
                         uuid="c6e317a1-88d5-48ab-8896-304d4c8d1f3e"
-                        active="false" />
+                        active="true" />
 
     <ccm_core.workflow_names workflow_id="-100" 
                              locale="en"
@@ -31,10 +31,9 @@
     <ccm_core.workflow_templates workflow_id="-110" />
     <ccm_core.workflow_templates workflow_id="-120" />
     
-<ccm_core.workflow_tasks task_id="-100100"
+    <ccm_core.workflow_tasks task_id="-100100"
                              uuid="43db829c-7749-4ca9-8aba-241a9c2d00b3"
                              active="false"
-                             task_state="ENABLED" 
                              workflow_id="-100" />
     <ccm_core.workflow_tasks task_id="-100200"
                              uuid="9d6112af-abde-42d6-9c9b-06bb0b245158"
@@ -48,11 +47,12 @@
                              workflow_id="-110" />
     <ccm_core.workflow_tasks task_id="-140100"
                              uuid="75b64386-1df2-494a-bab8-2bab81f0ed45"
-                             active="false" 
+                             active="false"
+                             task_state="ENABLED" 
                              workflow_id="-140" />
     <ccm_core.workflow_tasks task_id="-140200"
                              uuid="0a68c843-71e3-4e97-9a77-9427f6220cb1"
-                             active="false" 
+                             active="true" 
                              workflow_id="-140" />
     
     <ccm_core.workflow_task_labels task_id="-100100" 
@@ -741,6 +741,12 @@
     <ccm_core.workflow_task_assignments task_assignment_id="-930"
                                         task_id="-110100" 
                                         role_id="-3200" />
+    <ccm_core.workflow_task_assignments task_assignment_id="-910910"
+                                        task_id="-140100" 
+                                        role_id="-3200" />
+    <ccm_core.workflow_task_assignments task_assignment_id="-920920"
+                                        task_id="-140200" 
+                                        role_id="-3300" />
     
     <ccm_cms.content_section_roles role_id="-3100" 
                                    section_id="-1100" />

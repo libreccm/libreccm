@@ -1278,6 +1278,7 @@ public class ContentItemManager {
                 .createNamedQuery(
                     "ContentItem.findLiveVersion", ContentItem.class);
             query.setParameter("uuid", item.getItemUuid());
+            contentItemRepo.setAuthorizationParameters(query);
 
             final ContentItem result = query.getSingleResult();
             if (type.isAssignableFrom(result.getClass())) {

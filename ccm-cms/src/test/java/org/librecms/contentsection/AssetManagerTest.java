@@ -202,7 +202,7 @@ public class AssetManagerTest {
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldMatchDataSet(
         value
-        = "datasets/org/librecms/contentsection/AssetManagerTest/after-share.xml",
+            = "datasets/org/librecms/contentsection/AssetManagerTest/after-share.xml",
         excludeColumns = {"asset_id",
                           "categorization_id",
                           "id",
@@ -465,11 +465,14 @@ public class AssetManagerTest {
                           "categorization_id",
                           "object_order"})
     public void copyAssetToSameFolder() {
-        final Asset asset = assetRepo.findById(-1100L).get();
 
-        final Folder targetFolder = folderRepo.findById(-420L).get();
+        shiro.getSystemUser().execute(() -> {
+            final Asset asset = assetRepo.findById(-1100L).get();
 
-        assetManager.copy(asset, targetFolder);
+            final Folder targetFolder = folderRepo.findById(-420L).get();
+
+            assetManager.copy(asset, targetFolder);
+        });
     }
 
     /**
