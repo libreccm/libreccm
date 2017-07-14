@@ -24,6 +24,7 @@ import com.arsdigita.cms.ui.contenttypes.NewsCreateForm;
 
 import org.hibernate.envers.Audited;
 import org.libreccm.l10n.LocalizedString;
+import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 
 import java.io.Serializable;
@@ -57,18 +58,18 @@ import static org.librecms.CmsConstants.*;
     steps = {
         @AuthoringStep(
             component = NewsPropertiesStep.class,
-            labelBundle = "org.librecms.CmsResources",
+            labelBundle = CmsConstants.CMS_BUNDLE,
             labelKey = "cms.contenttypes.shared.basic_properties.title",
-            descriptionBundle = "org.librecms.CmsResources",
+            descriptionBundle = CmsConstants.CMS_BUNDLE,
             descriptionKey = "cms.contenttypes.shared.basic_properties"
                                  + ".description",
             order = 1)
         ,
         @AuthoringStep(
             component = NewsTextBody.class,
-            labelBundle = "org.librecms.CmsResources",
+            labelBundle = CmsConstants.CMS_BUNDLE,
             labelKey = "cms.contenttypes.shared.body_text.title",
-            descriptionBundle = "org.librecms.CmsResources",
+            descriptionBundle = CmsConstants.CMS_BUNDLE,
             descriptionKey = "cms.contenttypes.shared.body_text.description",
             order = 2
         )
