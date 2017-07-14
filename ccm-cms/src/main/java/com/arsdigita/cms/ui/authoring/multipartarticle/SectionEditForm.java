@@ -23,7 +23,6 @@ import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
-import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SaveCancelSection;
 import com.arsdigita.bebop.event.FormInitListener;
@@ -33,7 +32,6 @@ import com.arsdigita.bebop.event.FormSubmissionListener;
 import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.bebop.form.CheckboxGroup;
 import com.arsdigita.bebop.form.Option;
-import com.arsdigita.bebop.parameters.LongParameter;
 import com.arsdigita.bebop.parameters.NotNullValidationListener;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.parameters.TrimmedStringParameter;
@@ -73,8 +71,6 @@ public class SectionEditForm extends Form {
     private final SectionSelectionModel<? extends MultiPartArticleSection> selectedSectionModel;
     private final StringParameter selectedLanguageParam;
 
-    private LongParameter textParameter;
-    private ItemSelectionModel selectedTextModel;
     private MultiPartArticleSectionsStep sectionsStep;
 
     private SaveCancelSection saveCancelSection;
@@ -181,11 +177,6 @@ public class SectionEditForm extends Form {
         return section;
     }
 
-    @Override
-    public void register(final Page page) {
-        super.register(page);
-        page.addGlobalStateParam(textParameter);
-    }
 
     /**
      * Initialise the form. If there is a selected section, ie. this is an
