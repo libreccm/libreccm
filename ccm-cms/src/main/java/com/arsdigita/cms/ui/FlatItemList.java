@@ -44,7 +44,7 @@ import com.arsdigita.cms.CMS;
 import org.librecms.contentsection.ContentSection;
 
 import com.arsdigita.cms.ui.authoring.CreationSelector;
-import com.arsdigita.cms.ui.authoring.NewItemForm;
+import com.arsdigita.cms.ui.authoring.news.NewItemForm;
 import com.arsdigita.cms.ui.folder.FolderCreateForm;
 import com.arsdigita.cms.ui.folder.FolderEditorForm;
 import com.arsdigita.cms.ui.folder.FolderManipulator;

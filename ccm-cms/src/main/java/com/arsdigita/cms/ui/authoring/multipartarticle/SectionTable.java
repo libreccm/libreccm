@@ -16,40 +16,36 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  */
-package com.arsdigita.cms.contenttypes.ui.mparticle;
+package com.arsdigita.cms.ui.authoring.multipartarticle;
 
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.ControlLink;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Table;
+import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.event.TableActionEvent;
 import com.arsdigita.bebop.event.TableActionListener;
 import com.arsdigita.bebop.table.TableCellRenderer;
 import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.table.TableColumnModel;
-import com.arsdigita.bebop.table.TableModel;
-import com.arsdigita.bebop.table.TableModelBuilder;
-import com.arsdigita.cms.CMS;
 
 import org.librecms.contentsection.ContentItem;
 
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.globalization.GlobalizedMessage;
 
-import org.librecms.contenttypes.MultiPartArticleSection;
 import org.librecms.contenttypes.MultiPartArticle;
 
 import com.arsdigita.util.LockableImpl;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.security.PermissionChecker;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 import org.librecms.contenttypes.MultiPartArticleSection;
 import org.librecms.contenttypes.MultiPartArticleSectionRepository;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
@@ -60,9 +56,6 @@ import java.util.Objects;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class SectionTable extends Table {
-
-    private static final Logger LOGGER = LogManager
-        .getLogger(SectionTable.class);
 
     /**
      * Index of the title column
@@ -127,10 +120,10 @@ public class SectionTable extends Table {
         model.get(2).setCellRenderer(new SectionTableCellRenderer(true));
         model.get(3).setCellRenderer(new SectionTableCellRenderer(true));
 
-        setModelBuilder(
+        super.setModelBuilder(
             new SectionTableModelBuilder(selectedArticleModel, moveSectionModel));
 
-        addTableActionListener(new TableActionListener() {
+        super.addTableActionListener(new TableActionListener() {
 
             @Override
             public void cellSelected(final TableActionEvent event) {
@@ -207,62 +200,64 @@ public class SectionTable extends Table {
 
     public void setSectionModel(
         final SectionSelectionModel<? extends MultiPartArticleSection> selectedSectionModel) {
-        
+
         Objects.requireNonNull(selectedSectionModel);
 
         this.selectedSectionModel = selectedSectionModel;
     }
 
-
-
-    /**
-     *
-     */
-    public class SectionTableCellRenderer extends LockableImpl
+    private class SectionTableCellRenderer
+        extends LockableImpl
         implements TableCellRenderer {
 
-        private boolean m_active;
+        private boolean active;
 
         public SectionTableCellRenderer() {
             this(false);
         }
 
-        public SectionTableCellRenderer(boolean active) {
-            m_active = active;
+        public SectionTableCellRenderer(final boolean active) {
+            this.active = active;
         }
 
         @Override
-        public Component getComponent(Table table, PageState state,
-                                      Object value, boolean isSelected,
-                                      Object key, int row, int column) {
+        public Component getComponent(final Table table,
+                                      final PageState state,
+                                      final Object value,
+                                      final boolean isSelected,
+                                      final Object key,
+                                      final int row,
+                                      final int column) {
 
-            Component ret;
-            SecurityManager sm = CMS.getSecurityManager(state);
-            ContentItem item = (ContentItem) selectedArticleModel
-                .getSelectedObject(
-                    state);
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final PermissionChecker permissionChecker = cdiUtil
+                .findBean(PermissionChecker.class);
 
-            boolean active = m_active && sm.canAccess(state.getRequest(),
-                                                      SecurityManager.EDIT_ITEM,
-                                                      item);
+            final ContentItem article = selectedArticleModel.getSelectedObject(
+                state);
 
+            boolean createLink = active
+                                     && permissionChecker
+                    .isPermitted(ItemPrivileges.EDIT, article);
+
+            final Component ret;
             if (value instanceof Label) {
-                if (active) {
+                if (createLink) {
                     ret = new ControlLink((Component) value);
                 } else {
                     ret = (Component) value;
                 }
-
             } else if (value instanceof String) {
                 // Backwards compatibility, should be removed asap!
-                if (active) {
+                if (createLink) {
                     ret = new ControlLink(value.toString());
                 } else {
-                    ret = new Label(value.toString());
+                    ret = new Text(value.toString());
                 }
             } else {
-                ret = new Label(MPArticleGlobalizationUtil.globalize(
-                    "cms.contenttypes.ui.mparticle.section_table.link_not_defined"),
+                ret = new Label(new GlobalizedMessage(
+                    "cms.contenttypes.ui.mparticle.section_table.link_not_defined",
+                    CmsConstants.CMS_BUNDLE),
                                 false);
             }
 

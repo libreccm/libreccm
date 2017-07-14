@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  */
-package com.arsdigita.cms.contenttypes.ui;
+package com.arsdigita.cms.ui.authoring.event;
 
 import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.FormProcessException;
@@ -41,6 +41,7 @@ import org.librecms.contenttypes.Event;
 
 import com.arsdigita.cms.ui.CMSDHTMLEditor;
 import com.arsdigita.cms.ui.authoring.BasicPageForm;
+import com.arsdigita.cms.ui.authoring.SelectedLanguageUtil;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
 
@@ -433,14 +434,8 @@ public class EventPropertyForm
         }
         endDateField.addYear(endDate);
 
-        final String selectedLanguage = (String) state
-            .getValue(selectedLanguageParam);
-        final Locale selectedLocale;
-        if (selectedLanguage == null) {
-            selectedLocale = KernelConfig.getConfig().getDefaultLocale();
-        } else {
-            selectedLocale = new Locale(selectedLanguage);
-        }
+        final Locale selectedLocale = SelectedLanguageUtil
+            .selectedLocale(state, selectedLanguageParam);
 
         data.put(LEAD, item.getDescription().getValue(selectedLocale));
         data.put(START_DATE, startDate);
@@ -507,14 +502,8 @@ public class EventPropertyForm
         if (item != null
                 && getSaveCancelSection().getSaveButton().isSelected(state)) {
 
-            final String selectedLanguage = (String) state
-                .getValue(selectedLanguageParam);
-            final Locale selectedLocale;
-            if (selectedLanguage == null) {
-                selectedLocale = KernelConfig.getConfig().getDefaultLocale();
-            } else {
-                selectedLocale = new Locale(selectedLanguage);
-            }
+            final Locale selectedLocale = SelectedLanguageUtil
+                .selectedLocale(state, selectedLanguageParam);
 
             final java.util.Date startDate = (java.util.Date) data
                 .get(START_DATE);

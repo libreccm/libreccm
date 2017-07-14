@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  */
-package com.arsdigita.cms.contenttypes.ui;
+package com.arsdigita.cms.ui.authoring.article;
 
 import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.FormProcessException;
@@ -32,6 +32,7 @@ import com.arsdigita.bebop.parameters.StringInRangeValidationListener;
 import com.arsdigita.bebop.parameters.StringParameter;
 
 import com.arsdigita.cms.ItemSelectionModel;
+import com.arsdigita.cms.ui.authoring.SelectedLanguageUtil;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
 
@@ -60,8 +61,8 @@ public class ArticlePropertyForm extends GenericArticlePropertyForm
      * Creates a new form to edit the Article object specified by the item
      * selection model passed in.
      *
-     * @param itemModel The ItemSelectionModel to use to obtain the Article to
-     *                  work on
+     * @param itemModel             The ItemSelectionModel to use to obtain the
+     *                              Article to work on
      * @param selectedLanguageParam
      */
     public ArticlePropertyForm(final ItemSelectionModel itemModel,
@@ -73,20 +74,21 @@ public class ArticlePropertyForm extends GenericArticlePropertyForm
      * Creates a new form to edit the Article object specified by the item
      * selection model passed in.
      *
-     * @param itemModel      The ItemSelectionModel to use to obtain the Article
-     *                       to work on
-     * @param propertiesStep The ArticlePropertiesStep which controls this form.
+     * @param itemModel             The ItemSelectionModel to use to obtain the
+     *                              Article to work on
+     * @param propertiesStep        The ArticlePropertiesStep which controls
+     *                              this form.
      * @param selectedLanguageParam
      */
     public ArticlePropertyForm(
         final ItemSelectionModel itemModel,
         final ArticlePropertiesStep propertiesStep,
         final StringParameter selectedLanguageParam) {
-        
+
         super(itemModel, propertiesStep, selectedLanguageParam);
-        
+
         Objects.requireNonNull(selectedLanguageParam);
-        
+
         this.propertiesStep = propertiesStep;
         this.selectedLanguageParam = selectedLanguageParam;
         addSubmissionListener(this);
@@ -137,14 +139,8 @@ public class ArticlePropertyForm extends GenericArticlePropertyForm
         final PageState state = event.getPageState();
         final Article article = (Article) super.initBasicWidgets(event);
 
-        final String selectedLanguage = (String) state
-            .getValue(selectedLanguageParam);
-        final Locale selectedLocale;
-        if (selectedLanguage == null) {
-            selectedLocale = KernelConfig.getConfig().getDefaultLocale();
-        } else {
-            selectedLocale = new Locale(selectedLanguage);
-        }
+        final Locale selectedLocale = SelectedLanguageUtil
+            .selectedLocale(state, selectedLanguageParam);
 
         data.put(LEAD, article.getDescription().getValue(selectedLocale));
     }
@@ -177,14 +173,8 @@ public class ArticlePropertyForm extends GenericArticlePropertyForm
                 && getSaveCancelSection().getSaveButton()
                 .isSelected(event.getPageState())) {
 
-            final String selectedLanguage = (String) state
-                .getValue(selectedLanguageParam);
-            final Locale selectedLocale;
-            if (selectedLanguage == null) {
-                selectedLocale = KernelConfig.getConfig().getDefaultLocale();
-            } else {
-                selectedLocale = new Locale(selectedLanguage);
-            }
+            final Locale selectedLocale = SelectedLanguageUtil
+                .selectedLocale(state, selectedLanguageParam);
 
             article
                 .getDescription()

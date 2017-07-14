@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  */
-package com.arsdigita.cms.contenttypes.ui.mparticle;
+package com.arsdigita.cms.ui.authoring.multipartarticle;
 
 import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.FormProcessException;
@@ -28,13 +28,12 @@ import com.arsdigita.bebop.parameters.StringParameter;
 import org.librecms.contentsection.Folder;
 
 import com.arsdigita.cms.ItemSelectionModel;
-import com.arsdigita.cms.ui.authoring.BasicPageForm;
+import com.arsdigita.cms.ui.authoring.SelectedLanguageUtil;
 
 import org.librecms.contenttypes.MultiPartArticle;
 
 import com.arsdigita.cms.ui.authoring.SimpleEditStep;
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.kernel.KernelConfig;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
@@ -108,7 +107,6 @@ public class MultiPartArticleEditForm extends MultiPartArticleForm
 
 //        final MultiPartArticle article = (MultiPartArticle) itemSelectionModel
 //            .getSelectedObject(state);
-
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final ContentItemRepository itemRepo = cdiUtil
             .findBean(ContentItemRepository.class);
@@ -127,14 +125,8 @@ public class MultiPartArticleEditForm extends MultiPartArticleForm
         final MultiPartArticle article = (MultiPartArticle) itemSelectionModel
             .getSelectedObject(state);
 
-        final Locale selectedLocale;
-        final String selectedLanguage = (String) state
-            .getValue(selectedLanguageParam);
-        if (selectedLanguage == null) {
-            selectedLocale = KernelConfig.getConfig().getDefaultLocale();
-        } else {
-            selectedLocale = new Locale(selectedLanguage);
-        }
+        final Locale selectedLocale = SelectedLanguageUtil
+            .selectedLocale(state, selectedLanguageParam);
 
         final String newName = (String) data.get(MultiPartArticleForm.NAME);
         final String oldName = article.getName().getValue(selectedLocale);

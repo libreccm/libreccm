@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.cms.contenttypes.ui.mparticle;
+package com.arsdigita.cms.ui.authoring.multipartarticle;
 
 import com.arsdigita.bebop.ColumnPanel;
 import com.arsdigita.bebop.Embedded;
@@ -39,15 +39,13 @@ import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.parameters.TrimmedStringParameter;
 import com.arsdigita.bebop.parameters.URLTokenValidationListener;
 import com.arsdigita.cms.ItemSelectionModel;
+import com.arsdigita.cms.ui.authoring.SelectedLanguageUtil;
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.web.Web;
 import com.arsdigita.xml.Element;
 
 import java.util.Date;
 import java.util.Locale;
-
-import javax.servlet.ServletException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -138,13 +136,13 @@ public abstract class MultiPartArticleForm
         titleWidget.setLabel(new GlobalizedMessage("cms.contenttypes.ui.title",
                                                    CmsConstants.CMS_BUNDLE));
         titleWidget.addValidationListener(new NotNullValidationListener());
-        titleWidget.setOnFocus("if (this.form." + NAME + ".value == '') { "
-                                   + " defaulting = true; this.form." + NAME
-                                   + ".value = urlize(this.value); }");
-        titleWidget.setOnKeyUp(
-            "if (defaulting) { this.form." + NAME
-                + ".value = urlize(this.value) }"
-        );
+        titleWidget.setOnFocus(String.format(
+            "if (this.form.%s.value == '') { "
+                + " defaulting = true; this.form.%s.value = urlize(this.value); }",
+            NAME, NAME));
+        titleWidget.setOnKeyUp(String.format(
+            "if (defaulting) { this.form.%s.value = urlize(this.value) }",
+            NAME));
         add(titleWidget);
 
         //add(new Label(GlobalizationUtil
@@ -156,11 +154,11 @@ public abstract class MultiPartArticleForm
         nameWidget.addValidationListener(new NotNullValidationListener());
         nameWidget.addValidationListener(new URLTokenValidationListener());
         nameWidget.setOnFocus("defaulting = false");
-        nameWidget.setOnBlur(
-            "if (this.value == '') "
-                + "{ defaulting = true; this.value = urlize(this.form." + TITLE
-                + ".value) }"
-        );
+        nameWidget.setOnBlur(String.format(
+            "if (this.value == '') { "
+                + "defaulting = true; this.value = urlize(this.form.%s.value) "
+                + "}",
+            TITLE));
         add(nameWidget);
 
         if (!CMSConfig.getConfig().isHideLaunchDate()) {
@@ -233,14 +231,8 @@ public abstract class MultiPartArticleForm
         final MultiPartArticle article = (MultiPartArticle) itemSelectionModel
             .getSelectedObject(state);
 
-        final String selectedLanguage = (String) state
-            .getValue(selectedLanguageParam);
-        final Locale selectedLocale;
-        if (selectedLanguage == null) {
-            selectedLocale = KernelConfig.getConfig().getDefaultLocale();
-        } else {
-            selectedLocale = new Locale(selectedLanguage);
-        }
+        final Locale selectedLocale = SelectedLanguageUtil
+            .selectedLocale(state, selectedLanguageParam);
 
         if (article != null) {
             data.put(NAME, article.getName().getValue(selectedLocale));
@@ -269,14 +261,8 @@ public abstract class MultiPartArticleForm
             .getSelectedObject(state);
 
         if (article != null) {
-            final String selectedLanguage = (String) state
-                .getValue(selectedLanguageParam);
-            final Locale selectedLocale;
-            if (selectedLanguage == null) {
-                selectedLocale = KernelConfig.getConfig().getDefaultLocale();
-            } else {
-                selectedLocale = new Locale(selectedLanguage);
-            }
+            final Locale selectedLocale = SelectedLanguageUtil
+                .selectedLocale(state, selectedLanguageParam);
 
             article.getName().addValue(selectedLocale,
                                        (String) data.get(NAME));
