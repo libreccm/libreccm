@@ -18,7 +18,6 @@
  */
 package com.arsdigita.cms.ui.authoring.multipartarticle;
 
-import org.bouncycastle.asn1.cmp.ProtectedPart;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contenttypes.MultiPartArticle;
 import org.librecms.contenttypes.MultiPartArticleSection;
@@ -26,6 +25,7 @@ import org.librecms.contenttypes.MultiPartArticleSectionManager;
 import org.librecms.contenttypes.MultiPartArticleSectionRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -58,12 +58,19 @@ class MultiPartArticleSectionStepController {
             .format("No MultiPartArticle with ID %d in the database.",
                     forArticle.getObjectId())));
 
-        return article.getSections();
+        //Ensure that the sections are loaded
+        return article
+            .getSections()
+            .stream()
+            .sorted((section1, section2) -> {
+                return Integer.compare(section1.getRank(), section2.getRank());
+            })
+            .collect(Collectors.toList());
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    protected MultiPartArticleSection addSection(
-        final MultiPartArticle article) {
+    protected void addSection(final MultiPartArticle article,
+                              final MultiPartArticleSection section) {
 
         final MultiPartArticle theArticle = itemRepo
             .findById(article.getObjectId(),
@@ -72,10 +79,7 @@ class MultiPartArticleSectionStepController {
             "No MultiPartArticle with ID %d in the database.",
             article.getObjectId())));
 
-        final MultiPartArticleSection section = new MultiPartArticleSection();
         sectionManager.addSectionToMultiPartArticle(section, theArticle);
-
-        return section;
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -119,4 +123,19 @@ class MultiPartArticleSectionStepController {
         sectionManager.moveToFirst(theArticle, theSection);
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void moveAfter(final MultiPartArticle article,
+                             final MultiPartArticleSection section,
+                             final MultiPartArticleSection after) {
+        
+        final MultiPartArticle theArticle = itemRepo
+            .findById(article.getObjectId(),
+                      MultiPartArticle.class)
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No MultiPartArticle with ID %d in the database.",
+            article.getObjectId())));
+        
+        sectionManager.moveSectionAfter(theArticle, section, after);
+    }
+    
 }

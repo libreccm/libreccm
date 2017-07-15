@@ -58,7 +58,6 @@ import java.util.Locale;
  */
 public class SectionEditForm extends Form {
 
-
     public static final String TITLE = "title";
     public static final String TEXT = "text";
     public static final String IMAGE = "image";
@@ -177,7 +176,6 @@ public class SectionEditForm extends Form {
         return section;
     }
 
-
     /**
      * Initialise the form. If there is a selected section, ie. this is an
      * 'edit' step rather than a 'create new' step, load the data into the form
@@ -278,7 +276,7 @@ public class SectionEditForm extends Form {
             final MultiPartArticleSection section;
             if (selectedSectionModel.getSelectedKey(state) == null) {
                 section = new MultiPartArticleSection();
-                controller.addSection(article);
+
             } else {
                 section = selectedSectionModel.getSelectedSection(state);
             }
@@ -306,6 +304,17 @@ public class SectionEditForm extends Form {
             section.getText().addValue(selectedLocale, text);
 
             sectionRepo.save(section);
+
+            if (selectedSectionModel.getSelectedKey(state) == null) {
+                controller.addSection(article, section);
+            }
+
+            if (sectionsStep != null) {
+                sectionsStep
+                    .onlyShowComponent(state,
+                                       MultiPartArticleSectionsStep.SECTION_TABLE
+                                       + sectionsStep.getTypeIDStr());
+            }
         }
 
     }
