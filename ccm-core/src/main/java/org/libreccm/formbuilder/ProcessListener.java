@@ -73,11 +73,18 @@ public class ProcessListener extends CcmObject implements Serializable {
     @Column(name = "PROCESS_LISTENER_ORDER")
     private long order;
 
+    public ProcessListener() {
+        super();
+        name = new LocalizedString();
+        description = new LocalizedString();
+    }
+    
     public LocalizedString getName() {
         return name;
     }
 
     public void setName(final LocalizedString name) {
+        Objects.requireNonNull(name);
         this.name = name;
     }
 
@@ -86,6 +93,7 @@ public class ProcessListener extends CcmObject implements Serializable {
     }
 
     public void setDescription(final LocalizedString description) {
+        Objects.requireNonNull(description);
         this.description = description;
     }
 

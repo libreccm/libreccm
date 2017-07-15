@@ -94,6 +94,8 @@ public class MultiPartArticle extends ContentItem implements Serializable {
     private List<MultiPartArticleSection> sections;
 
     public MultiPartArticle() {
+        super();
+        summary = new LocalizedString();
         this.sections = new ArrayList<>();
     }
 
@@ -102,6 +104,7 @@ public class MultiPartArticle extends ContentItem implements Serializable {
     }
 
     public void setSummary(final LocalizedString summary) {
+        Objects.requireNonNull(summary);
         this.summary = summary;
     }
 

@@ -116,6 +116,7 @@ public class LegalMetadata extends Asset implements Serializable {
     }
 
     public void setRights(final LocalizedString rights) {
+        Objects.requireNonNull(rights);
         this.rights = rights;
     }
 

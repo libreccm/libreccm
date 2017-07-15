@@ -98,6 +98,7 @@ public class PhaseDefinition implements Serializable {
     }
 
     public void setLabel(final LocalizedString label) {
+        Objects.requireNonNull(label);
         this.label = label;
     }
 
@@ -106,6 +107,7 @@ public class PhaseDefinition implements Serializable {
     }
 
     public void setDescription(final LocalizedString description) {
+        Objects.requireNonNull(description);
         this.description = description;
     }
 

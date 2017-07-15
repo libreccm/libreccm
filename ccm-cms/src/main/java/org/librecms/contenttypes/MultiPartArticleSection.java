@@ -93,6 +93,12 @@ public class MultiPartArticleSection implements Serializable {
         ))
     private LocalizedString text;
 
+    public MultiPartArticleSection() {
+        super();
+        title = new LocalizedString();
+        text = new LocalizedString();
+    }
+
     public long getSectionId() {
         return sectionId;
     }
@@ -106,6 +112,7 @@ public class MultiPartArticleSection implements Serializable {
     }
 
     public void setTitle(final LocalizedString title) {
+        Objects.requireNonNull(title);
         this.title = title;
     }
 
@@ -130,6 +137,7 @@ public class MultiPartArticleSection implements Serializable {
     }
 
     public void setText(final LocalizedString text) {
+        Objects.requireNonNull(text);
         this.text = text;
     }
 

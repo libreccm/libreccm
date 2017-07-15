@@ -62,51 +62,51 @@ import javax.validation.constraints.NotNull;
 @Table(name = "PAGE_MODELS", schema = CoreConstants.DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(
-            name = "PageModel.findDraftVersion",
-            query = "SELECT p FROM PageModel p "
-                            + "WHERE p.modelUuid = :uuid "
-                            + "AND p.version = org.libreccm.pagemodel.PageModelVersion.DRAFT")
+        name = "PageModel.findDraftVersion",
+        query = "SELECT p FROM PageModel p "
+                    + "WHERE p.modelUuid = :uuid "
+                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.DRAFT")
     ,
     @NamedQuery(
-            name = "PageModel.hasLiveVersion",
-            query = "SELECT (CASE WHEN COUNT(p) > 0 THEN true ELSE False END) "
-                            + "FROM PageModel p "
-                            + "WHERE p.modelUuid = :uuid "
-                            + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE"
+        name = "PageModel.hasLiveVersion",
+        query = "SELECT (CASE WHEN COUNT(p) > 0 THEN true ELSE False END) "
+                    + "FROM PageModel p "
+                    + "WHERE p.modelUuid = :uuid "
+                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE"
     )
     ,
     @NamedQuery(
-            name = "PageModel.findLiveVersion",
-            query = "SELECT p FROM PageModel p "
-                            + "WHERE p.modelUuid = :uuid "
-                            + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE")
+        name = "PageModel.findLiveVersion",
+        query = "SELECT p FROM PageModel p "
+                    + "WHERE p.modelUuid = :uuid "
+                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE")
     ,
     @NamedQuery(
-            name = "PageModel.findByApplication",
-            query = "SELECT p FROM PageModel p "
-                            + "WHERE p.application = :application "
-                            + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE")
+        name = "PageModel.findByApplication",
+        query = "SELECT p FROM PageModel p "
+                    + "WHERE p.application = :application "
+                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE")
     ,
     @NamedQuery(
-            name = "PageModel.countByApplication",
-            query = "SELECT COUNT(p) FROM PageModel p "
-                            + "WHERE p.application = :application "
-                            + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE")
+        name = "PageModel.countByApplication",
+        query = "SELECT COUNT(p) FROM PageModel p "
+                    + "WHERE p.application = :application "
+                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE")
     ,
     @NamedQuery(
-            name = "PageModel.findByApplicationAndName",
-            query = "SELECT p FROM PageModel p "
-                            + "WHERE p.name = :name "
-                            + "AND p.application = :application "
-                            + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE"
+        name = "PageModel.findByApplicationAndName",
+        query = "SELECT p FROM PageModel p "
+                    + "WHERE p.name = :name "
+                    + "AND p.application = :application "
+                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE"
     )
     ,
     @NamedQuery(
-            name = "PageModel.countByApplicationAndName",
-            query = "SELECT COUNT(p) FROM PageModel p "
-                            + "WHERE p.name = :name "
-                            + "AND p.application = :application "
-                            + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE"
+        name = "PageModel.countByApplicationAndName",
+        query = "SELECT COUNT(p) FROM PageModel p "
+                    + "WHERE p.name = :name "
+                    + "AND p.application = :application "
+                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE"
     )
 })
 public class PageModel implements Serializable {
@@ -156,12 +156,12 @@ public class PageModel implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "PAGE_MODEL_TITLES",
-                                   schema = CoreConstants.DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "PAGE_MODEL_ID")
-                                   }))
+        name = "values",
+        joinTable = @JoinTable(name = "PAGE_MODEL_TITLES",
+                               schema = CoreConstants.DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "PAGE_MODEL_ID")
+                               }))
     private LocalizedString title;
 
     /**
@@ -169,12 +169,12 @@ public class PageModel implements Serializable {
      */
     @Embedded
     @AssociationOverride(
-            name = "values",
-            joinTable = @JoinTable(name = "PAGE_MODEL_DESCRIPTIONS",
-                                   schema = CoreConstants.DB_SCHEMA,
-                                   joinColumns = {
-                                       @JoinColumn(name = "PAGE_MODEL_ID")
-                                   }))
+        name = "values",
+        joinTable = @JoinTable(name = "PAGE_MODEL_DESCRIPTIONS",
+                               schema = CoreConstants.DB_SCHEMA,
+                               joinColumns = {
+                                   @JoinColumn(name = "PAGE_MODEL_ID")
+                               }))
     private LocalizedString description;
 
     /**
@@ -247,6 +247,7 @@ public class PageModel implements Serializable {
     }
 
     protected void setTitle(final LocalizedString title) {
+        Objects.requireNonNull(title);
         this.title = title;
     }
 
@@ -255,6 +256,7 @@ public class PageModel implements Serializable {
     }
 
     protected void setDescription(final LocalizedString description) {
+        Objects.requireNonNull(description);
         this.description = description;
     }
 
@@ -350,13 +352,13 @@ public class PageModel implements Serializable {
 
     public String toString(final String data) {
         return String.format("%s{ "
-                                     + "pageModelId = %d, "
-                                     + "uuid = %s, "
-                                     + "name = \"%s\", "
-                                     + "title = %s, "
-                                     + "description = %s, "
-                                     + "type = \"%s\""
-                                     + " }",
+                                 + "pageModelId = %d, "
+                                 + "uuid = %s, "
+                                 + "name = \"%s\", "
+                                 + "title = %s, "
+                                 + "description = %s, "
+                                 + "type = \"%s\""
+                                 + " }",
                              super.toString(),
                              pageModelId,
                              uuid,

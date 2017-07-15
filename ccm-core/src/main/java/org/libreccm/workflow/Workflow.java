@@ -112,7 +112,7 @@ public class Workflow implements Identifiable, Serializable, Portable {
                                schema = DB_SCHEMA,
                                joinColumns = {
                                    @JoinColumn(name = "WORKFLOW_ID")}))
-    private LocalizedString name;
+    private LocalizedString name = new LocalizedString();
 
     /**
      * Description of the workflow.
@@ -125,7 +125,7 @@ public class Workflow implements Identifiable, Serializable, Portable {
                                joinColumns = {
                                    @JoinColumn(name = "WORKFLOW_ID")
                                }))
-    private LocalizedString description;
+    private LocalizedString description = new LocalizedString();
 
     /**
      * The current state of the workflow.
@@ -201,6 +201,7 @@ public class Workflow implements Identifiable, Serializable, Portable {
     }
 
     public void setName(final LocalizedString name) {
+        Objects.requireNonNull(name);
         this.name = name;
     }
 
@@ -209,6 +210,7 @@ public class Workflow implements Identifiable, Serializable, Portable {
     }
 
     public void setDescription(final LocalizedString description) {
+        Objects.requireNonNull(description);
         this.description = description;
     }
 
