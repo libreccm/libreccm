@@ -23,7 +23,6 @@ import com.arsdigita.cms.ui.assets.forms.BookmarkForm;
 import org.librecms.contentsection.Asset;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.util.Objects;
 
 import javax.persistence.AssociationOverride;
@@ -85,6 +84,7 @@ public class Bookmark extends Asset implements Serializable {
     }
 
     public void setDescription(final LocalizedString description) {
+        Objects.requireNonNull(description);
         this.description = description;
     }
 

@@ -119,6 +119,12 @@ public class ContentType extends CcmObject implements Serializable {
     @JoinColumn(name = "DEFAULT_WORKFLOW")
     private WorkflowTemplate defaultWorkflow;
 
+    public ContentType() {
+        super();
+        label = new LocalizedString();
+        description = new LocalizedString();
+    }
+    
     public String getContentItemClass() {
         return contentItemClass;
     }
@@ -140,6 +146,7 @@ public class ContentType extends CcmObject implements Serializable {
     }
 
     public void setLabel(final LocalizedString label) {
+        Objects.requireNonNull(label);
         this.label = label;
     }
 
@@ -148,6 +155,7 @@ public class ContentType extends CcmObject implements Serializable {
     }
 
     public void setDescription(final LocalizedString description) {
+        Objects.requireNonNull(description);
         this.description = description;
     }
 

@@ -93,6 +93,7 @@ public class Article extends ContentItem implements Serializable {
     }
 
     public void setText(final LocalizedString text) {
+        Objects.requireNonNull(text);
         this.text = text;
     }
 

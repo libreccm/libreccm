@@ -192,6 +192,7 @@ public class AttachmentList implements Comparable<AttachmentList>,
     }
 
     public void setTitle(final LocalizedString title) {
+        Objects.requireNonNull(title);
         this.title = title;
     }
 

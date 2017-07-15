@@ -106,11 +106,17 @@ public class News extends ContentItem implements Serializable {
     @Column(name = "HOMEPAGE")
     private boolean homepage;
 
+    public News() {
+        super();
+        text = new LocalizedString();
+    }
+    
     public LocalizedString getText() {
         return text;
     }
 
     public void setText(final LocalizedString text) {
+        Objects.requireNonNull(text);
         this.text = text;
     }
 

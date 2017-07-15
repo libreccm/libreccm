@@ -286,12 +286,13 @@ public class Role implements Serializable, Portable {
         assignedTasks.remove(taskAssignment);
     }
 
-    public void setDescription(final LocalizedString description) {
-        this.description = description;
-    }
-
     public LocalizedString getDescription() {
         return this.description;
+    }
+
+    public void setDescription(final LocalizedString description) {
+        Objects.requireNonNull(description);
+        this.description = description;
     }
 
     @Override
@@ -319,7 +320,7 @@ public class Role implements Serializable, Portable {
         if (roleId != other.getRoleId()) {
             return false;
         }
-        
+
         return Objects.equals(name, other.getName());
 //        if (!Objects.equals(name, other.getName())) {
 //            return false;

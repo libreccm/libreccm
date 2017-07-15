@@ -95,6 +95,7 @@ public class BinaryAsset extends Asset implements Serializable {
     }
 
     public void setDescription(final LocalizedString description) {
+        Objects.requireNonNull(description);
         this.description = description;
     }
 

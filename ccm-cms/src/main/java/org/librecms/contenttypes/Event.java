@@ -169,11 +169,21 @@ public class Event extends ContentItem implements Serializable {
         ))
     private LocalizedString cost;
 
+    public Event() {
+        text = new LocalizedString();
+        eventDate = new LocalizedString();
+        location = new LocalizedString();
+        mainContributor = new LocalizedString();
+        eventType = new LocalizedString();
+        cost = new LocalizedString();
+    }
+    
     public LocalizedString getText() {
         return text;
     }
 
     public void setText(final LocalizedString text) {
+        Objects.requireNonNull(text);
         this.text = text;
     }
 
@@ -214,6 +224,7 @@ public class Event extends ContentItem implements Serializable {
     }
 
     public void setEventDate(final LocalizedString eventDate) {
+        Objects.requireNonNull(eventDate);
         this.eventDate = eventDate;
     }
 
@@ -222,6 +233,7 @@ public class Event extends ContentItem implements Serializable {
     }
 
     public void setLocation(final LocalizedString location) {
+        Objects.requireNonNull(location);
         this.location = location;
     }
 
@@ -230,6 +242,7 @@ public class Event extends ContentItem implements Serializable {
     }
 
     public void setMainContributor(final LocalizedString mainContributor) {
+        Objects.requireNonNull(mainContributor);
         this.mainContributor = mainContributor;
     }
 
@@ -238,6 +251,7 @@ public class Event extends ContentItem implements Serializable {
     }
 
     public void setEventType(final LocalizedString eventType) {
+        Objects.requireNonNull(eventType);
         this.eventType = eventType;
     }
 
@@ -254,6 +268,7 @@ public class Event extends ContentItem implements Serializable {
     }
 
     public void setCost(final LocalizedString cost) {
+        Objects.requireNonNull(cost);
         this.cost = cost;
     }
 

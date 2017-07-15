@@ -115,13 +115,12 @@ public class Resource extends CcmObject implements Serializable {
         childs = new ArrayList<>();
     }
     
-//    @Column(name = "resource_type")
-//    private String resourceType;
     public LocalizedString getTitle() {
         return title;
     }
 
     public void setTitle(final LocalizedString title) {
+        Objects.requireNonNull(title);
         this.title = title;
     }
 
@@ -130,6 +129,7 @@ public class Resource extends CcmObject implements Serializable {
     }
 
     public void setDescription(final LocalizedString description) {
+        Objects.requireNonNull(description);
         this.description = description;
     }
 
