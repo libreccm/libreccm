@@ -20,6 +20,7 @@ package com.arsdigita.cms.ui.authoring.multipartarticle;
 
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Table;
+import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.table.TableModel;
 import com.arsdigita.bebop.table.TableModelBuilder;
 import com.arsdigita.cms.ItemSelectionModel;
@@ -36,6 +37,8 @@ class SectionTableModelBuilder extends LockableImpl implements TableModelBuilder
     private final ItemSelectionModel selectedArticleModel;
     private final SectionSelectionModel<? extends MultiPartArticleSection> moveSectionModel;
 
+    private final StringParameter selectedLanguageParam;
+
     /**
      * Private class constructor.
      *
@@ -44,10 +47,12 @@ class SectionTableModelBuilder extends LockableImpl implements TableModelBuilder
      */
     public SectionTableModelBuilder(
         final ItemSelectionModel selectedArticleModel,
-        final SectionSelectionModel<? extends MultiPartArticleSection> moveSectionModel) {
+        final SectionSelectionModel<? extends MultiPartArticleSection> moveSectionModel,
+        final StringParameter selectedLanguageParam) {
 
         this.selectedArticleModel = selectedArticleModel;
         this.moveSectionModel = moveSectionModel;
+        this.selectedLanguageParam = selectedLanguageParam;
     }
 
     /**
@@ -67,6 +72,7 @@ class SectionTableModelBuilder extends LockableImpl implements TableModelBuilder
                 .getSelectedObject(state);
         return new SectionTableModel(table,
                                      state,
+                                     selectedLanguageParam,
                                      article,
                                      moveSectionModel);
     }

@@ -26,6 +26,7 @@ import com.arsdigita.bebop.Table;
 import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.event.TableActionEvent;
 import com.arsdigita.bebop.event.TableActionListener;
+import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.table.TableCellRenderer;
 import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.table.TableColumnModel;
@@ -62,17 +63,21 @@ public class SectionTable extends Table {
      */
     public static final int COL_INDEX_TITLE = 0;
     /**
+     * Index of the page break column
+     */
+    public static final int COL_PAGE_BREAK = 1;
+    /**
      * Index of the edit column.
      */
-    public static final int COL_INDEX_EDIT = 1;
+    public static final int COL_INDEX_EDIT = 2;
     /**
      * Index of the move column
      */
-    public static final int COL_INDEX_MOVE = 2;
+    public static final int COL_INDEX_MOVE = 3;
     /**
      * Index of the delete column
      */
-    public static final int COL_INDEX_DELETE = 3;
+    public static final int COL_INDEX_DELETE = 4;
 
     private ItemSelectionModel selectedArticleModel;
     private SectionSelectionModel<? extends MultiPartArticleSection> selectedSectionModel;
@@ -81,14 +86,16 @@ public class SectionTable extends Table {
     /**
      * Constructor. Create an instance of this class.
      *
-     * @param selectedArticleModel a selection model that returns the
-     *                             MultiPartArticle which holds the sections to
-     *                             display.
+     * @param selectedArticleModel  a selection model that returns the
+     *                              MultiPartArticle which holds the sections to
+     *                              display.
      * @param moveSectionModel
+     * @param selectedLanguageParam
      */
     public SectionTable(
         final ItemSelectionModel selectedArticleModel,
-        final SectionSelectionModel<? extends MultiPartArticleSection> moveSectionModel) {
+        final SectionSelectionModel<? extends MultiPartArticleSection> moveSectionModel,
+        final StringParameter selectedLanguageParam) {
 
         super();
         this.selectedArticleModel = selectedArticleModel;
@@ -99,6 +106,11 @@ public class SectionTable extends Table {
             COL_INDEX_TITLE,
             new Label(new GlobalizedMessage(
                 "cms.contenttypes.ui.mparticle.section_table.header_section",
+                CmsConstants.CMS_BUNDLE))));
+        model.add(new TableColumn(
+            COL_PAGE_BREAK,
+            new Label(new GlobalizedMessage(
+                "cms.contenttypes.ui.mparticle.section_table.header_page_break",
                 CmsConstants.CMS_BUNDLE))));
         model.add(new TableColumn(
             COL_INDEX_EDIT,
@@ -116,12 +128,14 @@ public class SectionTable extends Table {
                 "cms.contenttypes.ui.mparticle.section_table.header_delete",
                 CmsConstants.CMS_BUNDLE))));
 
-        model.get(1).setCellRenderer(new SectionTableCellRenderer(true));
-        model.get(2).setCellRenderer(new SectionTableCellRenderer(true));
-        model.get(3).setCellRenderer(new SectionTableCellRenderer(true));
+        model.get(COL_INDEX_EDIT).setCellRenderer(new SectionTableCellRenderer(true));
+        model.get(COL_INDEX_MOVE).setCellRenderer(new SectionTableCellRenderer(true));
+        model.get(COL_INDEX_DELETE).setCellRenderer(new SectionTableCellRenderer(true));
 
         super.setModelBuilder(
-            new SectionTableModelBuilder(selectedArticleModel, moveSectionModel));
+            new SectionTableModelBuilder(selectedArticleModel,
+                                         moveSectionModel,
+                                         selectedLanguageParam));
 
         super.addTableActionListener(new TableActionListener() {
 
@@ -175,16 +189,18 @@ public class SectionTable extends Table {
                                     + "the database.",
                                 destId)));
 
-                        // if sect is lower in rank than the dest
-                        // then move below is default behavior
-                        int rank = destSection.getRank();
-                        if (section.getRank() > rank) {
-                            // otherwise, add one to get "move below"
-                            rank++;
-                        }
-
-                        section.setRank(rank);
-                        sectionRepo.save(section);
+                        controller.moveAfter(article, section, destSection);
+                        
+//                        // if sect is lower in rank than the dest
+//                        // then move below is default behavior
+//                        int rank = destSection.getRank();
+//                        if (section.getRank() > rank) {
+//                            // otherwise, add one to get "move below"
+//                            rank++;
+//                        }
+//
+//                        section.setRank(rank);
+//                        sectionRepo.save(section);
                         moveSectionModel.setSelectedKey(state, null);
                     }
                 }

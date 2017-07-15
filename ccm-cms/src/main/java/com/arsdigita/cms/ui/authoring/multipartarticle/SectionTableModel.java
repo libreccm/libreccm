@@ -21,8 +21,10 @@ package com.arsdigita.cms.ui.authoring.multipartarticle;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Table;
+import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.table.TableColumnModel;
 import com.arsdigita.bebop.table.TableModel;
+import com.arsdigita.cms.ui.authoring.SelectedLanguageUtil;
 import com.arsdigita.globalization.GlobalizedMessage;
 
 import org.libreccm.cdi.utils.CdiUtil;
@@ -38,6 +40,7 @@ class SectionTableModel implements TableModel {
     private final TableColumnModel columnModel;
     private final SectionTable sectionTable;
     private final PageState pageState;
+    private final StringParameter selectedLanguageParam;
     private final SectionSelectionModel<? extends MultiPartArticleSection> moveSectionModel;
 
     private final Iterator<MultiPartArticleSection> iterator;
@@ -54,10 +57,12 @@ class SectionTableModel implements TableModel {
     public SectionTableModel(
         final Table sectionTable,
         final PageState pageState,
+        final StringParameter selectedLanguageParam,
         final MultiPartArticle article,
         final SectionSelectionModel<? extends MultiPartArticleSection> moveSectionModel) {
 
         this.pageState = pageState;
+        this.selectedLanguageParam = selectedLanguageParam;
         this.sectionTable = (SectionTable) sectionTable;
         this.moveSectionModel = moveSectionModel;
 
@@ -104,9 +109,23 @@ class SectionTableModel implements TableModel {
         if (columnModel == null) {
             return null;
         }
+
         switch (columnIndex) {
             case SectionTable.COL_INDEX_TITLE:
-                return currentSection.getTitle();
+                return currentSection
+                    .getTitle()
+                    .getValue(SelectedLanguageUtil
+                        .selectedLocale(pageState, selectedLanguageParam));
+            case SectionTable.COL_PAGE_BREAK:
+                if (currentSection.isPageBreak()) {
+                    return new Label(
+                        new GlobalizedMessage("cms.ui.yes",
+                                              CmsConstants.CMS_BUNDLE));
+                } else {
+                    return new Label(
+                        new GlobalizedMessage("cms.ui.no",
+                                              CmsConstants.CMS_BUNDLE));
+                }
             case SectionTable.COL_INDEX_EDIT:
                 return new Label(new GlobalizedMessage(
                     "cms.contenttypes.ui.mparticle.section_table.link_edit",
