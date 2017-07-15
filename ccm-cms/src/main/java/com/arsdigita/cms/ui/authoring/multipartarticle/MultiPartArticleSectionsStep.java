@@ -129,7 +129,8 @@ public class MultiPartArticleSectionsStep extends ResettableContainer {
         moveSectionModel = new SectionSelectionModel<>(moveSectionParam);
 
         sectionTable = new SectionTable(selectedArticleModel,
-                                        moveSectionModel);
+                                        moveSectionModel,
+                                        selectedLanguageParam);
         sectionTable.setClassAttr(DATA_TABLE);
 
         // selected section is based on the selection in the SectionTable
@@ -149,6 +150,27 @@ public class MultiPartArticleSectionsStep extends ResettableContainer {
         moveSectionLabel = new Label(new GlobalizedMessage(
             "cms.contenttypes.ui.mparticle.section.title",
             CmsConstants.CMS_BUNDLE));
+        moveSectionLabel.addPrintListener(event -> {
+            final PageState state = event.getPageState();
+            final Label target = (Label) event.getTarget();
+
+            if (moveSectionModel.getSelectedKey(state) != null) {
+                final Locale selectedLocale = SelectedLanguageUtil
+                    .selectedLocale(state, selectedLanguageParam);
+
+                final Object[] parameterObj = {
+                    moveSectionModel
+                    .getSelectedSection(state)
+                    .getTitle()
+                    .getValue(selectedLocale)
+                };
+
+                target.setLabel(new GlobalizedMessage(
+                    "cms.contenttypes.ui.mparticle.move_section_name",
+                    CmsConstants.CMS_BUNDLE,
+                    parameterObj));
+            }
+        });
         panel.add(moveSectionLabel, ColumnPanel.FULL_WIDTH | ColumnPanel.LEFT);
 
         beginLink = new ActionLink(new GlobalizedMessage(
@@ -181,21 +203,22 @@ public class MultiPartArticleSectionsStep extends ResettableContainer {
                 beginLink.setVisible(state, true);
                 moveSectionLabel.setVisible(state, true);
 
-                final Locale selectedLocale = SelectedLanguageUtil
-                    .selectedLocale(state, selectedLanguageParam);
-
-                final Object[] parameterObj = {
-                    moveSectionModel
-                    .getSelectedSection(state)
-                    .getTitle()
-                    .getValue(selectedLocale)
-                };
-
-                moveSectionLabel
-                    .setLabel(new GlobalizedMessage(
-                        "cms.contenttypes.ui.mparticle.move_section_name",
-                        CmsConstants.CMS_BUNDLE,
-                        parameterObj));
+//                final Locale selectedLocale = SelectedLanguageUtil
+//                    .selectedLocale(state, selectedLanguageParam);
+//
+//                final Object[] parameterObj = {
+//                    moveSectionModel
+//                    .getSelectedSection(state)
+//                    .getTitle()
+//                    .getValue(selectedLocale)
+//                };
+//
+//                moveSectionLabel
+//                    .setLabel(new GlobalizedMessage(
+//                        "cms.contenttypes.ui.mparticle.move_section_name",
+//                        CmsConstants.CMS_BUNDLE,
+//                        parameterObj),
+//                              state);
             }
         });
 
