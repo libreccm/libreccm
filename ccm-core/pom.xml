@@ -61,6 +61,14 @@
             <artifactId>hibernate-validator-cdi</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>javax.el</groupId>
+            <artifactId>javax.el-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.el</artifactId>
+        </dependency>
         
         <dependency>
             <groupId>org.hibernate</groupId>
