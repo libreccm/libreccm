@@ -387,6 +387,7 @@ public class Asset extends CcmObject {
     }
 
     public void setTitle(final LocalizedString title) {
+        Objects.requireNonNull(title);
         this.title = title;
     }
 

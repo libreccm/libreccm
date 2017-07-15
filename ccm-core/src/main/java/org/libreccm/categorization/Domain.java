@@ -229,6 +229,7 @@ public class Domain extends CcmObject implements Serializable {
     }
 
     public void setTitle(final LocalizedString title) {
+        Objects.requireNonNull(title);
         this.title = title;
     }
 
@@ -237,6 +238,7 @@ public class Domain extends CcmObject implements Serializable {
     }
 
     public void setDescription(final LocalizedString description) {
+        Objects.requireNonNull(description);
         this.description = description;
     }
 

@@ -75,6 +75,7 @@ public class SideNote extends Asset implements Serializable {
     }
 
     public void setText(final LocalizedString text) {
+        Objects.requireNonNull(text);
         this.text = text;
     }
 

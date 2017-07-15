@@ -65,6 +65,7 @@ public class LocalizedStringSetting
 
     @Override
     public void setValue(final LocalizedString value) {
+        Objects.requireNonNull(value);
         this.value = value;
     }
 

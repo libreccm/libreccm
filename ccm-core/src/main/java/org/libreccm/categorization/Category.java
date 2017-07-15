@@ -288,6 +288,7 @@ public class Category extends CcmObject implements Serializable, Portable {
     }
 
     public void setTitle(final LocalizedString title) {
+        Objects.requireNonNull(title);
         this.title = title;
     }
 
@@ -296,6 +297,7 @@ public class Category extends CcmObject implements Serializable, Portable {
     }
 
     public void setDescription(final LocalizedString description) {
+        Objects.requireNonNull(description);
         this.description = description;
     }
 

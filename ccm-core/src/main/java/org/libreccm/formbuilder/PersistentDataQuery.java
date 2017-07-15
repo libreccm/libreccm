@@ -65,6 +65,12 @@ public class PersistentDataQuery extends CcmObject implements Serializable {
                 @JoinColumn(name = "DATA_QUERY_ID")}))
     private LocalizedString description;
 
+    public PersistentDataQuery() {
+        super();
+        name = new LocalizedString();
+        description = new LocalizedString();
+    }
+    
     public String getQueryId() {
         return queryId;
     }
@@ -78,6 +84,7 @@ public class PersistentDataQuery extends CcmObject implements Serializable {
     }
 
     public void setName(final LocalizedString name) {
+        Objects.requireNonNull(name);
         this.name = name;
     }
 
@@ -86,6 +93,7 @@ public class PersistentDataQuery extends CcmObject implements Serializable {
     }
 
     public void setDescription(final LocalizedString description) {
+        Objects.requireNonNull(description);
         this.description = description;
     }
 
