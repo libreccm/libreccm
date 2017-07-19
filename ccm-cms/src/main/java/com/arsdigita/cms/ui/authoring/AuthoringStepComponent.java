@@ -25,7 +25,6 @@ import com.arsdigita.bebop.event.ActionListener;
  * currently an optional interface.
  *
  * @author Scott Seago (sseago@redhat.com)
- * @version $Revision: #4 $ $DateTime: 2004/08/17 23:15:09 $
  */
 public interface AuthoringStepComponent {
 
