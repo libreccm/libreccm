@@ -38,12 +38,12 @@ public class ContentSectionConfig {
 
     /**
      * A list of workflow tasks, and the associated events for which alerts have
-     * to be sent. Parameter name TASK_ALERTS in the old initializer system /
+     * to be sent. Parameter name TASK_ALERTS in the old initialiser system /
      * enterprise.init Specifies when to generate email alerts: by default,
      * generate email alerts on enable, finish, and rollback (happens on
      * rejection) changes. There are four action types for each task type:
      * enable, disable, finish, and rollback. Example: (Note that the values
-     * below are based on the task labels, and as such are not globalized.)
+     * below are based on the task labels, and as such are not globalised.)
      * <pre>
      * taskAlerts = {
      *      { "Authoring",
@@ -58,12 +58,12 @@ public class ContentSectionConfig {
      *  };
      * </pre>
      *
-     * In the new Initializer system we use a specifically formatted String
+     * In the new Initialiser system we use a specifically formatted String
      * Array because we have no List parameter. Format: - A string for each task
      * to handle, possible values: Authoring, Approval, Deploy - Each Task
      * String: [taskName]:[alert_1]:...:[alert_n] The specially formatted string
      * is not handled by StringArray parameter, but forwarded untouched to the
-     * initializer which has the duty to process it!
+     * initialiser which has the duty to process it!
      *
      * Currently there is no way to persist taskAlerts section specific. So all
      * sections have to treated equally. Default values are provided here.
@@ -78,7 +78,7 @@ public class ContentSectionConfig {
     /**
      * Should we send alerts about overdue tasks at all? Send alerts when a task
      * is overdue (has remained in the \"enabled\" state for a long time)
-     * Parameter SEND_OVERDUE_ALERTS in the old initializer system, default
+     * Parameter SEND_OVERDUE_ALERTS in the old initialiser system, default
      * false
      */
     @Setting
@@ -99,7 +99,7 @@ public class ContentSectionConfig {
 
     /**
      * The time to wait between sending successive alerts on the same overdue
-     * task (in HOURS). Parameter name OVERDUE_ALERT_INTERVAL in old initializer
+     * task (in HOURS). Parameter name OVERDUE_ALERT_INTERVAL in old initialiser
      * system Description: Time to wait between sending overdue notifications on
      * the same task (in hours)
      */
@@ -108,15 +108,24 @@ public class ContentSectionConfig {
 
     /**
      * The maximum number of alerts to send about any one overdue task.
-     * Parameter name MAX_ALERTS in old initializer system. Description: The
+     * Parameter name MAX_ALERTS in old initialiser system. Description: The
      * maximum number of alerts to send that a single task is overdue
      */
     @Setting
     private int maxAlerts = 5;
 
+    /**
+     * Assets steps which are added which are present on all content items.
+     */
+    @Setting
+    private List<String> defaultAuthoringSteps = Arrays
+        .asList(new String[]{
+        "com.arsdigita.cms.ui.authoring.assets.ImageStep",
+        "com.arsdigita.cms.ui.authoring.assets.RelatedInfoStep"});
+
     public static ContentSectionConfig getConfig() {
         final ConfigurationManager confManager = CdiUtil.createCdiUtil()
-                .findBean(ConfigurationManager.class);
+            .findBean(ConfigurationManager.class);
         return confManager.findConfiguration(ContentSectionConfig.class);
     }
 
@@ -162,6 +171,14 @@ public class ContentSectionConfig {
 
     public void setMaxAlerts(final int maxAlerts) {
         this.maxAlerts = maxAlerts;
+    }
+    
+    public List<String> getDefaultAuthoringSteps() {
+        return new ArrayList<>(defaultAuthoringSteps);
+    }
+    
+    public void setDefaultAuthoringSteps(final List<String> defaultAuthoringSteps) {
+        this.defaultAuthoringSteps = new ArrayList<>(defaultAuthoringSteps);
     }
 
 }
