@@ -58,6 +58,39 @@ import static org.librecms.CmsConstants.*;
 @Audited
 @NamedQueries({
     @NamedQuery(
+        name = "Asset.findById",
+        query = "SELECT DISTINCT a "
+                    + "FROM Asset a "
+                    + "LEFT JOIN a.permissions p "
+                    + "WHERE a.objectId = :assetId "
+                    + "AND ("
+                    + "  ("
+                    + "    p.grantee IN :roles "
+                    + "    AND p.grantedPrivilege = "
+                    + "      '" + AssetPrivileges.VIEW + "' "
+                    + "  ) "
+                    + "  OR true = :isSystemUser OR true = :isAdmin"
+                    + ")"
+    )
+    ,
+@NamedQuery(
+        name = "Asset.findByIdAndType",
+        query = "SELECT DISTINCT a "
+                    + "FROM Asset a "
+                    + "LEFT JOIN a.permissions p "
+                    + "WHERE a.objectId = :assetId "
+                    + "AND TYPE(a) = :type "
+                    + "AND ("
+                    + "  ("
+                    + "    p.grantee IN :roles "
+                    + "    AND p.grantedPrivilege = "
+                    + "      '" + AssetPrivileges.VIEW + "' "
+                    + "  )"
+                    + "  OR true = :isSystemUser OR true = :isAdmin"
+                    + ")"
+    )
+    ,
+    @NamedQuery(
         name = "Asset.findByUuid",
         query = "SELECT DISTINCT a "
                     + "FROM Asset a "
@@ -357,6 +390,7 @@ import static org.librecms.CmsConstants.*;
                     + "  ) "
                     + "  OR true = :isSystemUser OR true = :isAdmin"
                     + ")")
+
 })
 public class Asset extends CcmObject {
 
