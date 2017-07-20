@@ -91,7 +91,7 @@ public abstract class AssetForm extends Form implements FormInitListener,
     }
 
     private void initComponents() {
-        
+
         showLocalePanel = new BoxPanel(BoxPanel.HORIZONTAL);
         final Label showLocaleLabel = new Label(new PrintListener() {
 
@@ -165,12 +165,13 @@ public abstract class AssetForm extends Form implements FormInitListener,
         showLocaleSubmit = new Submit(new GlobalizedMessage(
             "cms.ui.asset.show_locale",
             CmsConstants.CMS_BUNDLE)) {
-                
-                @Override
-                public boolean isVisible(final PageState state) {
-                    return getSelectedAsset(state).isPresent();
-                }
-            };
+
+            @Override
+            public boolean isVisible(final PageState state) {
+                return getSelectedAsset(state).isPresent();
+            }
+
+        };
         showLocalePanel.add(showLocaleLabel);
         showLocalePanel.add(showLocaleSelect);
         showLocalePanel.add(showLocaleSubmit);
@@ -260,14 +261,13 @@ public abstract class AssetForm extends Form implements FormInitListener,
             return Optional.empty();
         } else {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final AssetRepository assetRepo = cdiUtil.findBean(
-                AssetRepository.class);
+            final AssetRepository assetRepo = cdiUtil
+                .findBean(AssetRepository.class);
             final Asset asset = assetRepo
-                .findById(selectionModel.getSelectedKey(state))
+                .findById((long) selectionModel.getSelectedKey(state))
                 .orElseThrow(() -> new IllegalArgumentException(String.
-                format(
-                    "No asset with ID %d in the database.",
-                    selectionModel.getSelectedKey(state))));
+                format("No asset with ID %d in the database.",
+                       selectionModel.getSelectedKey(state))));
             return Optional.of(asset);
         }
     }
@@ -312,8 +312,19 @@ public abstract class AssetForm extends Form implements FormInitListener,
         }
     }
 
-    protected abstract void initForm(final PageState state,
-                                     final Optional<Asset> selectedAsset);
+    protected void initForm(final PageState state,
+                            final Optional<Asset> selectedAsset) {
+
+        if (selectedAsset.isPresent()) {
+
+            title.setValue(state,
+                           selectedAsset
+                               .get()
+                               .getTitle()
+                               .getValue(getSelectedLocale(state)));
+            showLocale(state);
+        }
+    }
 
     @Override
     public void process(final FormSectionEvent event)
@@ -326,16 +337,17 @@ public abstract class AssetForm extends Form implements FormInitListener,
         if (showLocaleSubmit.isSelected(state)) {
 
             final Optional<Asset> selectedAsset = getSelectedAsset(state);
+            initForm(state, selectedAsset);
 
-            if (selectedAsset.isPresent()) {
-
-                title.setValue(state,
-                               selectedAsset
-                                   .get()
-                                   .getTitle()
-                                   .getValue(getSelectedLocale(state)));
-                showLocale(state);
-            }
+//            if (selectedAsset.isPresent()) {
+//
+//                title.setValue(state,
+//                               selectedAsset
+//                                   .get()
+//                                   .getTitle()
+//                                   .getValue(getSelectedLocale(state)));
+//                showLocale(state);
+//            }
             return;
         }
 

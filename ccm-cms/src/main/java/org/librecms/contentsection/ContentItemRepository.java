@@ -88,13 +88,13 @@ public class ContentItemRepository
 
     @Inject
     private WorkflowRepository workflowRepo;
-    
+
     @Inject
     private TaskRepository taskRepo;
-    
+
     @Inject
     private TaskManager taskManager;
-    
+
     @Inject
     private PermissionChecker permissionChecker;
 
@@ -134,8 +134,7 @@ public class ContentItemRepository
     public Optional<ContentItem> findById(final long itemId) {
 
         final TypedQuery<ContentItem> query = getEntityManager()
-            .createNamedQuery("ContentItem.findById",
-                              ContentItem.class);
+            .createNamedQuery("ContentItem.findById", ContentItem.class);
         query.setParameter("objectId", itemId);
         setAuthorizationParameters(query);
 
@@ -499,10 +498,10 @@ public class ContentItemRepository
 
             removeCategoryFromItem(item, category);
         }
-       
+
         if (draft.getWorkflow() != null) {
             final Workflow workflow = draft.getWorkflow();
-            for(final Task task : workflow.getTasks()) {
+            for (final Task task : workflow.getTasks()) {
                 taskManager.removeTask(workflow, task);
             }
             workflowRepo.delete(workflow);

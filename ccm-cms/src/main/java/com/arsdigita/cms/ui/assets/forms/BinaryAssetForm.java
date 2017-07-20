@@ -95,13 +95,15 @@ public abstract class BinaryAssetForm extends AssetForm {
         panel.add(fileUpload);
 
         add(panel);
-        
+
         setEncType(CmsConstants.FORM_ENCTYPE_MULTIPART);
     }
 
     @Override
     protected void initForm(final PageState state,
                             final Optional<Asset> selectedAsset) {
+
+        super.initForm(state, selectedAsset);
 
         if (selectedAsset.isPresent()) {
 
@@ -126,7 +128,7 @@ public abstract class BinaryAssetForm extends AssetForm {
                 mimeType.setText("-");
                 size.setText("-");
             } else {
-                
+
                 fileName.setText(binaryAsset.getFileName());
                 mimeType.setText(binaryAsset.getMimeType().toString());
                 size.setText(Long.toString(binaryAsset.getSize()));
@@ -211,18 +213,20 @@ public abstract class BinaryAssetForm extends AssetForm {
         throws FormProcessException {
 
         final File file = fileUpload.getFile(event);
-        final Path path = file.toPath();
-        final byte[] data;
-        try {
-            data = Files.readAllBytes(path);
-        } catch (IOException ex) {
-            throw new FormProcessException(ex);
-        }
-        binaryAsset.setData(data);
-        binaryAsset.setFileName(fileUpload.getFileName(event));
-        binaryAsset.setSize(data.length);
+        if (file != null) {
+            final Path path = file.toPath();
+            final byte[] data;
+            try {
+                data = Files.readAllBytes(path);
+            } catch (IOException ex) {
+                throw new FormProcessException(ex);
+            }
+            binaryAsset.setData(data);
+            binaryAsset.setFileName(fileUpload.getFileName(event));
+            binaryAsset.setSize(data.length);
 
-        binaryAsset.setMimeType(fileUpload.getMimeType(event));
+            binaryAsset.setMimeType(fileUpload.getMimeType(event));
+        }
     }
 
 }

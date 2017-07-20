@@ -18,34 +18,36 @@
  */
 package com.arsdigita.bebop.parameters;
 
-
 /**
- *    A class that represents the model for number form parameters.
+ * A class that represents the model for number form parameters.
  *
- *    @author Randy Graebner (randyg@alum.mit.edu)
- *    @version $Id$
+ * @author <a href="randyg@alum.mit.edu">Randy Graebner</a>
+ * @author <a href="jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-
 public class LongParameter extends NumberParameter {
 
-    public LongParameter(String name) {
+    public LongParameter(final String name) {
         super(name);
     }
 
     @Override
-    public Object unmarshal(String encoded) {
-        try {
-            return new Long(encoded);
-        }
-        catch (NumberFormatException e) {
-            throw new IllegalArgumentException(getName() + " should be a " +
-                                               "Long Number, but is '" +
-                                               encoded + "'");
+    public Object unmarshal(final String encoded) {
+        if (encoded == null || encoded.isEmpty()) {
+            return null;
+        } else {
+            try {
+                return new Long(encoded);
+            } catch (NumberFormatException ex) {
+                throw new IllegalArgumentException(String
+                    .format("%s should be a Long Number, but is '%s'",
+                            getName(),
+                            encoded));
+            }
         }
     }
 
     @Override
-    public Class getValueClass() {
+    public Class<?> getValueClass() {
         return Long.class;
     }
 
