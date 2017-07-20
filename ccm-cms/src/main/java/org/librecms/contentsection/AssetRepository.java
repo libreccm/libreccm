@@ -56,10 +56,10 @@ public class AssetRepository
 
     @Inject
     private Shiro shiro;
-    
+
     @Inject
     private PermissionChecker permissionChecker;
-    
+
     @Inject
     private EntityManager entityManager;
 
@@ -98,6 +98,44 @@ public class AssetRepository
         if (asset.getUuid() == null) {
             final String uuid = UUID.randomUUID().toString();
             asset.setUuid(uuid);
+        }
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public Optional<Asset> findById(final long assetId) {
+
+        final TypedQuery<Asset> query = getEntityManager()
+            .createNamedQuery("Asset.findById", Asset.class)
+            .setParameter("assetId", assetId);
+        setAuthorizationParameters(query);
+
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    @SuppressWarnings("unchecked")
+    public <T extends Asset> Optional<T> findById(final long assetId,
+                                                  final Class<T> type) {
+
+        final TypedQuery<Asset> query = getEntityManager()
+            .createNamedQuery("assetId", Asset.class)
+            .setParameter("assetId", assetId)
+            .setParameter("type", type);
+        setAuthorizationParameters(query);
+
+        try {
+            final Asset result = query.getSingleResult();
+            if (result.getClass().isAssignableFrom(type)) {
+                return Optional.of((T) query.getSingleResult());
+            } else {
+                return Optional.empty();
+            }
+        } catch (NoResultException ex) {
+            return Optional.empty();
         }
     }
 
@@ -161,7 +199,7 @@ public class AssetRepository
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<Asset> findByUuid(final String uuid) {
-        
+
         final TypedQuery<Asset> query = entityManager
             .createNamedQuery("Asset.findByUuid", Asset.class);
         query.setParameter("uuid", uuid);
@@ -362,7 +400,7 @@ public class AssetRepository
             "Asset.countInFolder", Long.class);
         query.setParameter("folder", folder);
         setAuthorizationParameters(query);
-        
+
         return query.getSingleResult();
     }
 
@@ -513,7 +551,7 @@ public class AssetRepository
     }
 
     private void setAuthorizationParameters(final TypedQuery<?> query) {
-        
+
         final Optional<User> user = shiro.getUser();
         final List<Role> roles;
         if (user.isPresent()) {
@@ -526,8 +564,7 @@ public class AssetRepository
         } else {
             roles = Collections.emptyList();
         }
-        
-        
+
         final boolean isSystemUser = shiro.isSystemUser();
         final boolean isAdmin = permissionChecker.isPermitted("*");
 
@@ -535,5 +572,5 @@ public class AssetRepository
         query.setParameter("isSystemUser", isSystemUser);
         query.setParameter("isAdmin", isAdmin);
     }
-    
+
 }

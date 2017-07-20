@@ -26,10 +26,10 @@ import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.cms.ui.assets.AssetPane;
 import com.arsdigita.cms.ui.assets.AssetSearchWidget;
 import com.arsdigita.globalization.GlobalizedMessage;
+
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
 import org.librecms.assets.BinaryAsset;
-import org.librecms.assets.ExternalAudioAsset;
 import org.librecms.assets.Image;
 import org.librecms.assets.LegalMetadata;
 import org.librecms.contentsection.Asset;
@@ -54,31 +54,35 @@ public class ImageForm extends BinaryAssetForm {
     @Override
     protected void addWidgets() {
 
+        super.addWidgets();
+        
         width = new TextField("width-text");
         height = new TextField("height-text");
-        assetSearchWidget = new AssetSearchWidget("legal-metadata", LegalMetadata.class);
+        assetSearchWidget = new AssetSearchWidget("legal-metadata",
+                                                  LegalMetadata.class);
 
         add(new Label(new GlobalizedMessage(
-                "cms.ui.assets.image.width.label",
-                CmsConstants.CMS_BUNDLE
+            "cms.ui.assets.image.width.label",
+            CmsConstants.CMS_BUNDLE
         )));
         add(width);
 
         add(new Label(new GlobalizedMessage(
-                "cms.ui.assets.image.height.label",
-                CmsConstants.CMS_BUNDLE
+            "cms.ui.assets.image.height.label",
+            CmsConstants.CMS_BUNDLE
         )));
         add(height);
 
         add(new Label(new GlobalizedMessage(
-                "cms.ui.assets.image.legal_metadata.label",
-                CmsConstants.CMS_BUNDLE
+            "cms.ui.assets.image.legal_metadata.label",
+            CmsConstants.CMS_BUNDLE
         )));
         add(assetSearchWidget);
     }
 
     @Override
-    protected void initForm(PageState state, Optional<Asset> selectedAsset) {
+    protected void initForm(final PageState state, 
+                            final Optional<Asset> selectedAsset) {
 
         super.initForm(state, selectedAsset);
 
@@ -87,12 +91,14 @@ public class ImageForm extends BinaryAssetForm {
             Image image = (Image) selectedAsset.get();
 
             width.setValue(state,
-                    Long.toString(image.getWidth()));
+                           Long.toString(image.getWidth()));
             height.setValue(state,
-                    Long.toString(image.getHeight()));
+                            Long.toString(image.getHeight()));
             final LegalMetadata legalMetadata = image
-                    .getLegalMetadata();
-            if (legalMetadata != null) {
+                .getLegalMetadata();
+            if (legalMetadata == null) {
+                assetSearchWidget.setValue(state, null);
+            } else {
                 assetSearchWidget.setValue(state, legalMetadata.getObjectId());
             }
         }
@@ -100,7 +106,7 @@ public class ImageForm extends BinaryAssetForm {
 
     @Override
     protected Asset createAsset(final FormSectionEvent event)
-            throws FormProcessException {
+        throws FormProcessException {
 
         final Image image = (Image) super.createAsset(event);
 
@@ -116,7 +122,7 @@ public class ImageForm extends BinaryAssetForm {
     @Override
     protected void updateAsset(final Asset asset,
                                final FormSectionEvent event)
-            throws FormProcessException {
+        throws FormProcessException {
 
         super.updateAsset(asset, event);
 
@@ -137,12 +143,12 @@ public class ImageForm extends BinaryAssetForm {
         if (legalMetadataId != null) {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final AssetRepository assetRepo = cdiUtil.findBean(
-                    AssetRepository.class);
+                AssetRepository.class);
             final LegalMetadata legalMetadata = (LegalMetadata) assetRepo
-                    .findById(legalMetadataId)
-                    .orElseThrow(() -> new IllegalArgumentException(String.format(
-                            "No LegalMetadata asset with ID %d in the database.",
-                            legalMetadataId)));
+                .findById(legalMetadataId)
+                .orElseThrow(() -> new IllegalArgumentException(String.format(
+                "No LegalMetadata asset with ID %d in the database.",
+                legalMetadataId)));
 
             image.setLegalMetadata(legalMetadata);
         }
@@ -152,4 +158,5 @@ public class ImageForm extends BinaryAssetForm {
     protected BinaryAsset createBinaryAsset(final PageState state) {
         return new Image();
     }
+
 }
