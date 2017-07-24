@@ -260,6 +260,25 @@ import static org.librecms.CmsConstants.*;
                     + ")")
     ,
     @NamedQuery(
+        name = "Asset.findByNameInFolder",
+        query = "SELECT DISTINCT a "
+                    + "FROM Asset a "
+                    + "JOIN a.categories c "
+                    + "LEFT JOIN a.permissions p "
+                    + "WHERE c.category = :folder "
+                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
+                    + "AND a.displayName = :name "
+                    + "AND ("
+                    + "      ("
+                    + "        p.grantee IN :roles "
+                    + "        AND p.grantedPrivilege = '"
+                    + AssetPrivileges.VIEW + "'"
+                    + "      ) "
+                    + "      OR true = :isSystemUser OR true = :isAdmin"
+                    + "    )"
+    )
+    ,
+    @NamedQuery(
         name = "Asset.countInFolder",
         query = "SELECT COUNT(DISTINCT a) "
                     + "FROM Asset a "

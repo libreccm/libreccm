@@ -22,10 +22,12 @@ import javax.enterprise.context.RequestScoped;
 
 /**
  *
+ *  Controller for the asset forms
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class AssetFormController {
+class AssetFormController {
     
     
     

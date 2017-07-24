@@ -18,8 +18,6 @@
  */
 package org.librecms.contentsection;
 
-import com.arsdigita.kernel.KernelConfig;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -70,6 +68,7 @@ import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 import org.libreccm.security.PermissionChecker;
+import org.libreccm.security.PermissionManager;
 import org.librecms.contentsection.privileges.TypePrivileges;
 
 /**
@@ -77,47 +76,47 @@ import org.librecms.contentsection.privileges.TypePrivileges;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
- @RequestScoped
+@RequestScoped
 public class ContentItemManager {
 
     private static final Logger LOGGER = LogManager.getLogger(
         ContentItemManager.class);
 
     @Inject
-    private EntityManager entityManager;
-
-    @Inject
-    private ConfigurationManager confManager;
+    private AssetManager assetManager;
 
     @Inject
     private CategoryManager categoryManager;
 
     @Inject
-    private FolderManager folderManager;
+    private ContentItemRepository contentItemRepo;
 
     @Inject
     private ContentSectionManager sectionManager;
 
     @Inject
-    private ContentItemRepository contentItemRepo;
-
-    @Inject
     private ContentTypeRepository typeRepo;
 
     @Inject
-    private LifecycleManager lifecycleManager;
+    private EntityManager entityManager;
 
     @Inject
-    private WorkflowManager workflowManager;
+    private FolderManager folderManager;
 
     @Inject
     private FolderRepository folderRepo;
 
     @Inject
-    private AssetManager assetManager;
+    private LifecycleManager lifecycleManager;
 
     @Inject
     private PermissionChecker permissionChecker;
+
+    @Inject
+    private PermissionManager permissionManager;
+
+    @Inject
+    private WorkflowManager workflowManager;
 
     /**
      * Creates a new content item in the provided content section and folder
@@ -319,9 +318,6 @@ public class ContentItemManager {
             throw new RuntimeException(ex);
         }
 
-        final KernelConfig kernelConfig = confManager.findConfiguration(
-            KernelConfig.class);
-
         item.setDisplayName(name);
         item.getName().addValue(locale,
                                 name);
@@ -351,6 +347,8 @@ public class ContentItemManager {
         if (item.getWorkflow() != null) {
             workflowManager.start(item.getWorkflow());
         }
+        
+        permissionManager.copyPermissions(folder, item, true);
 
         return item;
     }
@@ -537,8 +535,8 @@ public class ContentItemManager {
                     source = (LocalizedString) readMethod.invoke(draftItem);
                     target = (LocalizedString) readMethod.invoke(copy);
                 } catch (IllegalAccessException
-                             | IllegalArgumentException
-                             | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -550,8 +548,8 @@ public class ContentItemManager {
                 try {
                     linkedItem = (ContentItem) readMethod.invoke(draftItem);
                 } catch (IllegalAccessException
-                             | IllegalArgumentException
-                             | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -561,8 +559,8 @@ public class ContentItemManager {
                 try {
                     writeMethod.invoke(copy, linkedDraftItem);
                 } catch (IllegalAccessException
-                             | IllegalArgumentException
-                             | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
             } else if (propType != null
@@ -573,8 +571,8 @@ public class ContentItemManager {
                     source = (List<Object>) readMethod.invoke(draftItem);
                     target = (List<Object>) readMethod.invoke(copy);
                 } catch (IllegalAccessException
-                             | IllegalArgumentException
-                             | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -588,8 +586,8 @@ public class ContentItemManager {
                     source = (Map<Object, Object>) readMethod.invoke(draftItem);
                     target = (Map<Object, Object>) readMethod.invoke(copy);
                 } catch (IllegalAccessException
-                             | IllegalArgumentException
-                             | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -603,8 +601,8 @@ public class ContentItemManager {
                     source = (Set<Object>) readMethod.invoke(draftItem);
                     target = (Set<Object>) readMethod.invoke(copy);
                 } catch (IllegalAccessException
-                             | IllegalArgumentException
-                             | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -615,8 +613,8 @@ public class ContentItemManager {
                     value = readMethod.invoke(draftItem);
                     writeMethod.invoke(copy, value);
                 } catch (IllegalAccessException
-                             | IllegalArgumentException
-                             | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
             }
@@ -785,8 +783,8 @@ public class ContentItemManager {
                     sourceStr = (LocalizedString) readMethod.invoke(source);
                     targetStr = (LocalizedString) readMethod.invoke(target);
                 } catch (IllegalAccessException
-                             | IllegalArgumentException
-                             | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new UnexpectedErrorException(ex);
                 }
 
@@ -797,8 +795,8 @@ public class ContentItemManager {
                     value = readMethod.invoke(source);
                     writeMethod.invoke(target, value);
                 } catch (IllegalAccessException
-                             | IllegalArgumentException
-                             | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new UnexpectedErrorException(ex);
                 }
             }
@@ -922,8 +920,8 @@ public class ContentItemManager {
                     source = (LocalizedString) readMethod.invoke(draftItem);
                     target = (LocalizedString) readMethod.invoke(liveItem);
                 } catch (IllegalAccessException
-                             | IllegalArgumentException
-                             | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -934,8 +932,8 @@ public class ContentItemManager {
                 try {
                     linkedItem = (ContentItem) readMethod.invoke(draftItem);
                 } catch (IllegalAccessException
-                             | IllegalArgumentException
-                             | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -949,8 +947,8 @@ public class ContentItemManager {
                                 linkedDraftItem, ContentItem.class);
                         writeMethod.invoke(liveItem, linkedLiveItem);
                     } catch (IllegalAccessException
-                                 | IllegalArgumentException
-                                 | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                         throw new RuntimeException(ex);
                     }
                 }
@@ -962,8 +960,8 @@ public class ContentItemManager {
                     source = (List<Object>) readMethod.invoke(draftItem);
                     target = (List<Object>) readMethod.invoke(liveItem);
                 } catch (IllegalAccessException
-                             | IllegalArgumentException
-                             | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -977,8 +975,8 @@ public class ContentItemManager {
                     source = (Map<Object, Object>) readMethod.invoke(draftItem);
                     target = (Map<Object, Object>) readMethod.invoke(liveItem);
                 } catch (IllegalAccessException
-                             | IllegalArgumentException
-                             | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -992,8 +990,8 @@ public class ContentItemManager {
                     source = (Set<Object>) readMethod.invoke(draftItem);
                     target = (Set<Object>) readMethod.invoke(liveItem);
                 } catch (IllegalAccessException
-                             | IllegalArgumentException
-                             | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
 
@@ -1004,8 +1002,8 @@ public class ContentItemManager {
                     value = readMethod.invoke(item);
                     writeMethod.invoke(liveItem, value);
                 } catch (IllegalAccessException
-                             | IllegalArgumentException
-                             | InvocationTargetException ex) {
+                         | IllegalArgumentException
+                         | InvocationTargetException ex) {
                     throw new RuntimeException(ex);
                 }
             }

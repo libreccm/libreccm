@@ -536,7 +536,7 @@ public class AssetPane extends LayoutPanel implements Resettable {
                     .findBean(AssetTypesManager.class);
                 final AssetTypeInfo typeInfo = typesManager
                     .getAssetTypeInfo(selectedAssetType);
-                final Class<? extends AssetForm> assetForm = typeInfo
+                final Class<? extends AbstractAssetForm> assetForm = typeInfo
                     .getAssetForm();
                 try {
                     return assetForm

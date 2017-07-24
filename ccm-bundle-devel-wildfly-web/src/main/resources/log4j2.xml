@@ -77,6 +77,9 @@
         <Logger name="org.libreccm.ui.admin.usersgroupsroles.RolesController"
                 level="debug">
         </Logger>
+        <Logger name="org.librecms.contentsection.AssetRepository"
+                level="debug">
+        </Logger>
         <Logger name="org.librecms.contentsection.ContentSectionSetup"
                 level="debug">
         </Logger>

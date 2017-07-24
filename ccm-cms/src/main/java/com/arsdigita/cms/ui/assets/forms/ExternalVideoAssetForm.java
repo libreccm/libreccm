@@ -18,7 +18,6 @@
  */
 package com.arsdigita.cms.ui.assets.forms;
 
-import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.FormSectionEvent;
@@ -42,7 +41,8 @@ import org.librecms.contentsection.AssetRepository;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class ExternalVideoAssetForm extends BookmarkForm {
+public class ExternalVideoAssetForm 
+    extends AbstractBookmarkForm<ExternalVideoAsset> {
 
     private AssetSearchWidget assetSearchWidget;
 
@@ -64,7 +64,7 @@ public class ExternalVideoAssetForm extends BookmarkForm {
 
     @Override
     protected void initForm(final PageState state,
-                            final Optional<Asset> selectedAsset) {
+                            final Optional<ExternalVideoAsset> selectedAsset) {
         super.initForm(state, selectedAsset);
 
         if (selectedAsset.isPresent()) {
@@ -81,20 +81,25 @@ public class ExternalVideoAssetForm extends BookmarkForm {
     }
 
     @Override
-    protected Asset createAsset(final FormSectionEvent event)
-        throws FormProcessException {
-
-        Objects.requireNonNull(event);
-        
-        final PageState state = event.getPageState();
-
-        final ExternalVideoAsset externalVideoAsset = new ExternalVideoAsset();
-
-        updateData((Bookmark) externalVideoAsset, state);
-        updateData(externalVideoAsset, state);
-
-        return externalVideoAsset;
+    protected Class<ExternalVideoAsset> getAssetClass() {
+        return ExternalVideoAsset.class;
     }
+    
+//    @Override
+//    protected Asset createAsset(final FormSectionEvent event)
+//        throws FormProcessException {
+//
+//        Objects.requireNonNull(event);
+//        
+//        final PageState state = event.getPageState();
+//
+//        final ExternalVideoAsset externalVideoAsset = new ExternalVideoAsset();
+//
+//        updateData((Bookmark) externalVideoAsset, state);
+//        updateData(externalVideoAsset, state);
+//
+//        return externalVideoAsset;
+//    }
 
     protected void updateData(final ExternalVideoAsset externalVideoAsset,
                               final PageState state) {

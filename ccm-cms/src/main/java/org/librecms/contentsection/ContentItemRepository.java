@@ -410,7 +410,7 @@ public class ContentItemRepository
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<ContentItem> findByPath(final String path) {
 
-        //The last token is the name of the item itself. Remove this part an get 
+        //The last token is the name of the item itself. Remove this part and get 
         //the folder containing the item using the FolderRepository.
         final String normalizedPath = PathUtil.normalizePath(path);
         final int lastTokenStart = normalizedPath.lastIndexOf('/');

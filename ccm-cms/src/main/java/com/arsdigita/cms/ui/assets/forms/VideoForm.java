@@ -26,9 +26,9 @@ import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.cms.ui.assets.AssetPane;
 import com.arsdigita.cms.ui.assets.AssetSearchWidget;
 import com.arsdigita.globalization.GlobalizedMessage;
+
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
-import org.librecms.assets.BinaryAsset;
 import org.librecms.assets.VideoAsset;
 import org.librecms.assets.LegalMetadata;
 import org.librecms.contentsection.Asset;
@@ -39,8 +39,10 @@ import java.util.Optional;
 /**
  *
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * 
  */
-public class VideoForm extends BinaryAssetForm {
+public class VideoForm extends AbstractBinaryAssetForm<VideoAsset> {
 
     private TextField width;
     private TextField height;
@@ -77,13 +79,14 @@ public class VideoForm extends BinaryAssetForm {
     }
 
     @Override
-    protected void initForm(PageState state, Optional<Asset> selectedAsset) {
+    protected void initForm(final PageState state, 
+                            final Optional<VideoAsset> selectedAsset) {
 
         super.initForm(state, selectedAsset);
 
         if (selectedAsset.isPresent()) {
 
-            VideoAsset video = (VideoAsset) selectedAsset.get();
+            final VideoAsset video = selectedAsset.get();
 
             width.setValue(state,
                     Long.toString(video.getWidth()));
@@ -98,19 +101,26 @@ public class VideoForm extends BinaryAssetForm {
     }
 
     @Override
-    protected Asset createAsset(final FormSectionEvent event)
-            throws FormProcessException {
-
-        final VideoAsset video = (VideoAsset) super.createAsset(event);
-
-        final PageState state = event.getPageState();
-
-        video.setHeight(Long.parseLong((String) height.getValue(state)));
-        video.setWidth(Long.parseLong((String) width.getValue(state)));
-        updateData(video, state);
-
-        return video;
+    protected Class<VideoAsset> getAssetClass() {
+        return VideoAsset.class;
     }
+
+    
+    
+//    @Override
+//    protected Asset createAsset(final FormSectionEvent event)
+//            throws FormProcessException {
+//
+//        final VideoAsset video = (VideoAsset) super.createAsset(event);
+//
+//        final PageState state = event.getPageState();
+//
+//        video.setHeight(Long.parseLong((String) height.getValue(state)));
+//        video.setWidth(Long.parseLong((String) width.getValue(state)));
+//        updateData(video, state);
+//
+//        return video;
+//    }
 
     @Override
     protected void updateAsset(final Asset asset,
@@ -147,8 +157,8 @@ public class VideoForm extends BinaryAssetForm {
         }
     }
 
-    @Override
-    protected BinaryAsset createBinaryAsset(final PageState state) {
-        return new VideoAsset();
-    }
+//    @Override
+//    protected BinaryAsset createBinaryAsset(final PageState state) {
+//        return new VideoAsset();
+//    }
 }

@@ -34,16 +34,15 @@ public final class PathUtil {
      * 
      * The method does the following:
      * <ul>
-     *     <li>Replace all "<code>.</code>" in the path with a slash.</li>
      *     <li>If the first character is a slash remove the character.</li>
      *     <li>If the last character is a slash remove the character.</li>
      * </ul>
      * 
-     * @param path
-     * @return 
+     * @param path The path to normalise.
+     * @return  The normalised path
      */
     protected static final String normalizePath(final String path) {
-        String normalizedPath = path.replace('.', '/');
+        String normalizedPath = path;
         if (normalizedPath.charAt(0) == '/') {
             normalizedPath = normalizedPath.substring(1);
         }

@@ -23,11 +23,13 @@ import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.form.TextArea;
-import com.arsdigita.cms.ui.assets.AssetForm;
+import com.arsdigita.cms.ui.assets.AbstractAssetForm;
 import com.arsdigita.cms.ui.assets.AssetPane;
 import com.arsdigita.globalization.GlobalizedMessage;
+
 import java.util.Objects;
 import java.util.Optional;
+
 import org.librecms.CmsConstants;
 import org.librecms.assets.SideNote;
 import org.librecms.contentsection.Asset;
@@ -36,7 +38,7 @@ import org.librecms.contentsection.Asset;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class SideNoteForm extends AssetForm {
+public class SideNoteForm extends AbstractAssetForm<SideNote> {
 
     private TextArea text;
 
@@ -55,7 +57,7 @@ public class SideNoteForm extends AssetForm {
 
     @Override
     protected void initForm(final PageState state,
-                            final Optional<Asset> selectedAsset) {
+                            final Optional<SideNote> selectedAsset) {
 
         if (selectedAsset.isPresent()) {
             if (!(selectedAsset.get() instanceof SideNote)) {
@@ -66,8 +68,8 @@ public class SideNoteForm extends AssetForm {
                         selectedAsset.get().getClass().getName()));
             }
 
-            final SideNote sideNote = (SideNote) selectedAsset.get();
-
+            final SideNote sideNote = selectedAsset.get();
+            
             text.setValue(state,
                           sideNote
                                   .getText()
@@ -79,7 +81,7 @@ public class SideNoteForm extends AssetForm {
     @Override
     protected void showLocale(final PageState state) {
 
-        final Optional<Asset> selectedAsset = getSelectedAsset(state);
+        final Optional<SideNote> selectedAsset = getSelectedAsset(state);
 
         if (selectedAsset.isPresent()) {
             if (!(selectedAsset.get() instanceof SideNote)) {
@@ -90,7 +92,7 @@ public class SideNoteForm extends AssetForm {
                         selectedAsset.get().getClass().getName()));
             }
 
-            final SideNote sideNote = (SideNote) selectedAsset.get();
+            final SideNote sideNote =selectedAsset.get();
 
             text.setValue(state,
                           sideNote
@@ -100,22 +102,29 @@ public class SideNoteForm extends AssetForm {
     }
 
     @Override
-    protected Asset createAsset(final FormSectionEvent event) throws
-            FormProcessException {
-
-        Objects.requireNonNull(event);
-
-        final PageState state = event.getPageState();
-        
-        final SideNote sideNote = new SideNote();
-
-        sideNote
-                .getText()
-                .addValue(getSelectedLocale(state),
-                          (String) text.getValue(state));
-
-        return sideNote;
+    protected Class<SideNote> getAssetClass() {
+        return SideNote.class;
     }
+
+    
+    
+//    @Override
+//    protected Asset createAsset(final FormSectionEvent event) throws
+//            FormProcessException {
+//
+//        Objects.requireNonNull(event);
+//
+//        final PageState state = event.getPageState();
+//        
+//        final SideNote sideNote = new SideNote();
+//
+//        sideNote
+//                .getText()
+//                .addValue(getSelectedLocale(state),
+//                          (String) text.getValue(state));
+//
+//        return sideNote;
+//    }
 
     @Override
     protected void updateAsset(final Asset asset, 
