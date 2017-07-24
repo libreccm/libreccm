@@ -27,16 +27,21 @@ import org.librecms.assets.FileAsset;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class FileAssetForm extends BinaryAssetForm {
+public class FileAssetForm extends AbstractBinaryAssetForm<FileAsset> {
 
     public FileAssetForm(final AssetPane assetPane) {
         super(assetPane);
     }
     
     @Override
-    protected BinaryAsset createBinaryAsset(final PageState state) {
-        return new FileAsset();
+    protected Class<FileAsset> getAssetClass() {
+        return FileAsset.class;
     }
+    
+//    @Override
+//    protected BinaryAsset createBinaryAsset(final PageState state) {
+//        return new FileAsset();
+//    }
     
     
     

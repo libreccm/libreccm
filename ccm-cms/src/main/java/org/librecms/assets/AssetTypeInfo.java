@@ -18,7 +18,7 @@
  */
 package org.librecms.assets;
 
-import com.arsdigita.cms.ui.assets.AssetForm;
+import com.arsdigita.cms.ui.assets.AbstractAssetForm;
 
 import org.librecms.contentsection.Asset;
 
@@ -59,7 +59,7 @@ public class AssetTypeInfo {
     /**
      * The form for editing and creating asset of the type described.
      */
-    private Class<? extends AssetForm> assetForm;
+    private Class<? extends AbstractAssetForm> assetForm;
 
     public String getLabelBundle() {
         return labelBundle;
@@ -101,11 +101,11 @@ public class AssetTypeInfo {
         this.assetClass = assetClass;
     }
 
-    public Class<? extends AssetForm> getAssetForm() {
+    public Class<? extends AbstractAssetForm> getAssetForm() {
         return assetForm;
     }
 
-    public void setAssetForm(final Class<? extends AssetForm> assetForm) {
+    public void setAssetForm(final Class<? extends AbstractAssetForm> assetForm) {
         this.assetForm = assetForm;
     }
 

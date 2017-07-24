@@ -25,11 +25,11 @@ import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.cms.ui.assets.AssetPane;
 import com.arsdigita.cms.ui.assets.AssetSearchWidget;
 import com.arsdigita.globalization.GlobalizedMessage;
+
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
 import org.librecms.assets.AudioAsset;
 import org.librecms.assets.BinaryAsset;
-import org.librecms.assets.Image;
 import org.librecms.assets.LegalMetadata;
 import org.librecms.contentsection.Asset;
 import org.librecms.contentsection.AssetRepository;
@@ -39,8 +39,9 @@ import java.util.Optional;
 /**
  *
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class AudioForm extends BinaryAssetForm {
+public class AudioForm extends AbstractBinaryAssetForm<AudioAsset> {
 
     private AssetSearchWidget assetSearchWidget;
 
@@ -61,13 +62,14 @@ public class AudioForm extends BinaryAssetForm {
     }
 
     @Override
-    protected void initForm(PageState state, Optional<Asset> selectedAsset) {
+    protected void initForm(final PageState state, 
+                            final Optional<AudioAsset> selectedAsset) {
 
         super.initForm(state, selectedAsset);
 
         if (selectedAsset.isPresent()) {
 
-            final AudioAsset audioAsset = (AudioAsset) selectedAsset.get();
+            final AudioAsset audioAsset = selectedAsset.get();
 
             final LegalMetadata legalMetadata = audioAsset
                     .getLegalMetadata();
@@ -78,17 +80,22 @@ public class AudioForm extends BinaryAssetForm {
     }
 
     @Override
-    protected Asset createAsset(final FormSectionEvent event)
-            throws FormProcessException {
-
-        final AudioAsset audioAsset = (AudioAsset) super.createAsset(event);
-
-        final PageState state = event.getPageState();
-
-        updateData(audioAsset, state);
-
-        return audioAsset;
+    protected Class<AudioAsset> getAssetClass() {
+        return AudioAsset.class;
     }
+    
+//    @Override
+//    protected Asset createAsset(final FormSectionEvent event)
+//            throws FormProcessException {
+//
+//        final AudioAsset audioAsset = (AudioAsset) super.createAsset(event);
+//
+//        final PageState state = event.getPageState();
+//
+//        updateData(audioAsset, state);
+//
+//        return audioAsset;
+//    }
 
     @Override
     protected void updateAsset(final Asset asset,
@@ -122,8 +129,8 @@ public class AudioForm extends BinaryAssetForm {
         }
     }
 
-    @Override
-    protected BinaryAsset createBinaryAsset(final PageState state) {
-        return new AudioAsset();
-    }
+//    @Override
+//    protected BinaryAsset createBinaryAsset(final PageState state) {
+//        return new AudioAsset();
+//    }
 }

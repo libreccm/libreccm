@@ -233,9 +233,9 @@ import static org.librecms.CmsConstants.*;
                   + "           ELSE '" + ItemPrivileges.VIEW_PUBLISHED + "' "
                   + "           END"
                   + "          )"
-                  + "       )"
-                  + "       OR true = :isSystemUser OR true = :isAdmin"
-                  + "     )")
+                  + "      )"
+                  + "      OR true = :isSystemUser OR true = :isAdmin"
+                  + "    )")
     ,
     @NamedQuery(
         name = "ContentItem.countByNameInFolder",

@@ -18,10 +18,14 @@
  */
 package org.librecms.contentsection;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.auditing.AbstractAuditedEntityRepository;
+import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
+import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.security.AuthorizationRequired;
@@ -54,6 +58,9 @@ import javax.transaction.Transactional;
 public class AssetRepository
     extends AbstractAuditedEntityRepository<Long, Asset> {
 
+    private static final Logger LOGGER = LogManager
+        .getLogger(AssetRepository.class);
+
     @Inject
     private Shiro shiro;
 
@@ -68,6 +75,9 @@ public class AssetRepository
 
     @Inject
     private CategoryManager categoryManager;
+
+    @Inject
+    private FolderRepository folderRepo;
 
     @Inject
     private AssetManager assetManager;
@@ -521,6 +531,86 @@ public class AssetRepository
         setAuthorizationParameters(query);
 
         return query.getResultList();
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public Optional<Asset> findByNameInFolder(final Folder folder,
+                                              final String name) {
+
+        final TypedQuery<Asset> query = getEntityManager()
+            .createNamedQuery("Asset.findByNameInFolder",
+                              Asset.class)
+            .setParameter("folder", folder)
+            .setParameter("name", name);
+//        setAuthorizationParameters(query);
+
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public Optional<Asset> findByPath(final String path) {
+
+        //The last token is the name of the asset itself. Remove this part and 
+        //get the folder containing the asset using the FolderRepository.
+        final String normalizedPath = PathUtil.normalizePath(path);
+        final int lastTokenStart = normalizedPath.lastIndexOf('/');
+        final String folderPath = normalizedPath.substring(0, lastTokenStart);
+        final String assetName = normalizedPath.substring(lastTokenStart + 1);
+
+        final Optional<Folder> folder = folderRepo.findByPath(
+            folderPath, FolderType.ASSETS_FOLDER);
+
+        if (folder.isPresent()) {
+            return findByNameInFolder(folder.get(), assetName);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public Optional<Asset> findByPath(final ContentSection section,
+                                      final String path) {
+
+        //The last token is the name of the asset itself. Remove this part an get 
+        //the folder containing the asset using the FolderRepository.
+        final String normalizedPath = PathUtil.normalizePath(path);
+        final int lastTokenStart = normalizedPath.lastIndexOf('/');
+        final String assetName;
+        final Optional<Folder> folder;
+        if (lastTokenStart < 0) {
+            assetName = normalizedPath;
+            folder = folderRepo
+                .findById(section.getRootAssetsFolder().getObjectId());
+        } else {
+            final String folderPath = normalizedPath
+                .substring(0, lastTokenStart);
+            assetName = normalizedPath.substring(lastTokenStart + 1);
+            folder = folderRepo
+                .findByPath(section, folderPath, FolderType.ASSETS_FOLDER);
+        }
+
+        if (folder.isPresent()) {
+            LOGGER.debug("transaction is active? {}", 
+                         entityManager.isJoinedToTransaction());
+            LOGGER.debug("Folder for path {} found...", path);
+//            LOGGER.debug("Assets in the folder:");
+//            final Folder theFolder = folderRepo
+//                .findById(folder.get().getObjectId())
+//                .orElseThrow(() -> new IllegalArgumentException());
+            for (final Categorization categorization : folder.get().getObjects()) {
+                LOGGER.debug("    {}",
+                             categorization.getCategorizedObject()
+                                 .getDisplayName());
+            }
+
+            return findByNameInFolder(folder.get(), assetName);
+        } else {
+            return Optional.empty();
+        }
     }
 
     /**

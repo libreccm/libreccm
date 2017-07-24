@@ -18,7 +18,7 @@
  */
 package org.librecms.assets;
 
-import com.arsdigita.cms.ui.assets.AssetForm;
+import com.arsdigita.cms.ui.assets.AbstractAssetForm;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -50,7 +50,7 @@ public @interface AssetType {
      * @return The form for editing and creating assets of the annotated sub
      *         class {@link org.librecms.contentsection.Asset}.
      */
-    Class<? extends AssetForm> assetForm();
+    Class<? extends AbstractAssetForm> assetForm();
 
     /**
      * The key for the localised label of the asset type. If not set the default
