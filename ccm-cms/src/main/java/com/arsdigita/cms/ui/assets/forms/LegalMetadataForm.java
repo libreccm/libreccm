@@ -24,7 +24,7 @@ import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.form.TextArea;
-import com.arsdigita.cms.ui.assets.AssetForm;
+import com.arsdigita.cms.ui.assets.AbstractAssetForm;
 import com.arsdigita.cms.ui.assets.AssetPane;
 import com.arsdigita.globalization.GlobalizedMessage;
 
@@ -39,7 +39,7 @@ import java.util.Optional;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class LegalMetadataForm extends AssetForm {
+public class LegalMetadataForm extends AbstractAssetForm<LegalMetadata> {
 
     private TextArea rightsHolder;
     private TextArea rights;
@@ -84,7 +84,7 @@ public class LegalMetadataForm extends AssetForm {
 
     @Override
     protected void initForm(final PageState state,
-                            final Optional<Asset> selectedAsset) {
+                            final Optional<LegalMetadata> selectedAsset) {
 
         if (selectedAsset.isPresent()) {
 
@@ -96,8 +96,7 @@ public class LegalMetadataForm extends AssetForm {
                     selectedAsset.get().getClass().getName()));
             }
 
-            final LegalMetadata legalMetadata = (LegalMetadata) selectedAsset
-                .get();
+            final LegalMetadata legalMetadata = selectedAsset.get();
 
             rightsHolder.setValue(state, legalMetadata.getRightsHolder());
             rights.setValue(state,
@@ -112,7 +111,7 @@ public class LegalMetadataForm extends AssetForm {
     @Override
     protected void showLocale(final PageState state) {
 
-        final Optional<Asset> selectedAsset = getSelectedAsset(state);
+        final Optional<LegalMetadata> selectedAsset = getSelectedAsset(state);
 
         if (selectedAsset.isPresent()) {
             if (!(getSelectedAsset(state).get() instanceof LegalMetadata)) {
@@ -120,8 +119,7 @@ public class LegalMetadataForm extends AssetForm {
                     "Selected asset is not a legal metadata");
             }
 
-            final LegalMetadata legalMetadata = (LegalMetadata) selectedAsset.
-                get();
+            final LegalMetadata legalMetadata = selectedAsset.get();
 
             rights.setValue(state,
                             legalMetadata
@@ -131,33 +129,37 @@ public class LegalMetadataForm extends AssetForm {
     }
 
     @Override
-    protected Asset createAsset(final FormSectionEvent event)
-        throws FormProcessException {
-
-        Objects.requireNonNull(event);
-        
-        final PageState state = event.getPageState();
-
-        final LegalMetadata legalMetadata = new LegalMetadata();
-
-        legalMetadata.setRightsHolder((String) rightsHolder.getValue(state));
-        legalMetadata.getRights().addValue(getSelectedLocale(state),
-                                           (String) rights.getValue(state));
-
-        legalMetadata.setPublisher((String) publisher.getValue(state));
-        legalMetadata.setCreator((String) creator.getValue(state));
-
-        return legalMetadata;
+    protected Class<LegalMetadata> getAssetClass() {
+        return LegalMetadata.class;
     }
 
+//    @Override
+//    protected Asset createAsset(final FormSectionEvent event)
+//        throws FormProcessException {
+//
+//        Objects.requireNonNull(event);
+//
+//        final PageState state = event.getPageState();
+//
+//        final LegalMetadata legalMetadata = new LegalMetadata();
+//
+//        legalMetadata.setRightsHolder((String) rightsHolder.getValue(state));
+//        legalMetadata.getRights().addValue(getSelectedLocale(state),
+//                                           (String) rights.getValue(state));
+//
+//        legalMetadata.setPublisher((String) publisher.getValue(state));
+//        legalMetadata.setCreator((String) creator.getValue(state));
+//
+//        return legalMetadata;
+//    }
     @Override
-    protected void updateAsset(final Asset asset, 
+    protected void updateAsset(final Asset asset,
                                final FormSectionEvent event)
         throws FormProcessException {
 
         Objects.requireNonNull(asset);
         Objects.requireNonNull(event);
-        
+
         final PageState state = event.getPageState();
 
         if (!(asset instanceof LegalMetadata)) {

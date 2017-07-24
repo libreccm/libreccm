@@ -40,8 +40,9 @@ import java.util.Optional;
 /**
  *
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class ImageForm extends BinaryAssetForm {
+public class ImageForm extends AbstractBinaryAssetForm<Image> {
 
     private TextField width;
     private TextField height;
@@ -55,7 +56,7 @@ public class ImageForm extends BinaryAssetForm {
     protected void addWidgets() {
 
         super.addWidgets();
-        
+
         width = new TextField("width-text");
         height = new TextField("height-text");
         assetSearchWidget = new AssetSearchWidget("legal-metadata",
@@ -81,14 +82,14 @@ public class ImageForm extends BinaryAssetForm {
     }
 
     @Override
-    protected void initForm(final PageState state, 
-                            final Optional<Asset> selectedAsset) {
+    protected void initForm(final PageState state,
+                            final Optional<Image> selectedAsset) {
 
         super.initForm(state, selectedAsset);
 
         if (selectedAsset.isPresent()) {
 
-            Image image = (Image) selectedAsset.get();
+            final Image image = selectedAsset.get();
 
             width.setValue(state,
                            Long.toString(image.getWidth()));
@@ -103,21 +104,34 @@ public class ImageForm extends BinaryAssetForm {
             }
         }
     }
-
+    
     @Override
-    protected Asset createAsset(final FormSectionEvent event)
-        throws FormProcessException {
-
-        final Image image = (Image) super.createAsset(event);
-
-        final PageState state = event.getPageState();
-
-        image.setHeight(Long.parseLong((String) height.getValue(state)));
-        image.setWidth(Long.parseLong((String) width.getValue(state)));
-        updateData(image, state);
-
-        return image;
+    protected Class<Image> getAssetClass() {
+        return Image.class;
     }
+
+//    @Override
+//    protected Asset createAsset(final FormSectionEvent event)
+//        throws FormProcessException {
+//
+//        final Image image = (Image) super.createAsset(event);
+//
+//        final PageState state = event.getPageState();
+//
+//        image.setDisplayName(getTitleValue(state)
+//            .toLowerCase()
+//            .replace(" ", "-"));
+//
+//        if (height.getValue(state) != null) {
+//            image.setHeight(Long.parseLong((String) height.getValue(state)));
+//        }
+//        if (width.getValue(state) != null) {
+//            image.setWidth(Long.parseLong((String) width.getValue(state)));
+//        }
+//        updateData(image, state);
+//
+//        return image;
+//    }
 
     @Override
     protected void updateAsset(final Asset asset,
@@ -154,9 +168,9 @@ public class ImageForm extends BinaryAssetForm {
         }
     }
 
-    @Override
-    protected BinaryAsset createBinaryAsset(final PageState state) {
-        return new Image();
-    }
+//    @Override
+//    protected BinaryAsset createBinaryAsset(final PageState state) {
+//        return new Image();
+//    }
 
 }

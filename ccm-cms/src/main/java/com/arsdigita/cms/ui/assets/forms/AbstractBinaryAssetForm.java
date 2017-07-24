@@ -26,7 +26,7 @@ import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.form.TextArea;
 import com.arsdigita.cms.ui.FileUploadSection;
-import com.arsdigita.cms.ui.assets.AssetForm;
+import com.arsdigita.cms.ui.assets.AbstractAssetForm;
 import com.arsdigita.cms.ui.assets.AssetPane;
 import com.arsdigita.globalization.GlobalizedMessage;
 
@@ -45,8 +45,10 @@ import org.librecms.contentsection.Asset;
  * Base form for assets which extend {@link BinaryAsset}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * @param <T> Type of binary asset
  */
-public abstract class BinaryAssetForm extends AssetForm {
+public abstract class AbstractBinaryAssetForm<T extends BinaryAsset> 
+    extends AbstractAssetForm<T> {
 
     private TextArea description;
     private Text fileName;
@@ -54,7 +56,7 @@ public abstract class BinaryAssetForm extends AssetForm {
     private Text size;
     private FileUploadSection fileUpload;
 
-    public BinaryAssetForm(final AssetPane assetPane) {
+    public AbstractBinaryAssetForm(final AssetPane assetPane) {
         super(assetPane);
     }
 
@@ -101,7 +103,7 @@ public abstract class BinaryAssetForm extends AssetForm {
 
     @Override
     protected void initForm(final PageState state,
-                            final Optional<Asset> selectedAsset) {
+                            final Optional<T> selectedAsset) {
 
         super.initForm(state, selectedAsset);
 
@@ -140,7 +142,7 @@ public abstract class BinaryAssetForm extends AssetForm {
     @Override
     protected void showLocale(final PageState state) {
 
-        final Optional<Asset> selectedAsset = getSelectedAsset(state);
+        final Optional<T> selectedAsset = getSelectedAsset(state);
 
         if (selectedAsset.isPresent()) {
             if (!(getSelectedAsset(state).get() instanceof BinaryAsset)) {
@@ -158,27 +160,27 @@ public abstract class BinaryAssetForm extends AssetForm {
 
     }
 
-    @Override
-    protected Asset createAsset(final FormSectionEvent event)
-        throws FormProcessException {
+//    @Override
+//    protected Asset createAsset(final FormSectionEvent event)
+//        throws FormProcessException {
+//
+//        Objects.requireNonNull(event);
+//
+//        final PageState state = event.getPageState();
+//
+//        final BinaryAsset binaryAsset = createBinaryAsset(state);
+//
+//        binaryAsset
+//            .getDescription()
+//            .addValue(getSelectedLocale(state),
+//                      (String) description.getValue(state));
+//
+//        setFileData(event, binaryAsset);
+//
+//        return binaryAsset;
+//    }
 
-        Objects.requireNonNull(event);
-
-        final PageState state = event.getPageState();
-
-        final BinaryAsset binaryAsset = createBinaryAsset(state);
-
-        binaryAsset
-            .getDescription()
-            .addValue(getSelectedLocale(state),
-                      (String) description.getValue(state));
-
-        setFileData(event, binaryAsset);
-
-        return binaryAsset;
-    }
-
-    protected abstract BinaryAsset createBinaryAsset(final PageState state);
+//    protected abstract BinaryAsset createBinaryAsset(final PageState state);
 
     @Override
     protected void updateAsset(final Asset asset,

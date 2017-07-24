@@ -45,6 +45,7 @@ import java.util.Objects;
 import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.LocalizedString;
+import org.libreccm.security.PermissionManager;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -52,6 +53,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -70,9 +72,6 @@ public class AssetManager {
         getLogger(AssetManager.class);
 
     @Inject
-    private EntityManager entityManager;
-
-    @Inject
     private AssetRepository assetRepo;
 
     @Inject
@@ -82,7 +81,47 @@ public class AssetManager {
     private FolderRepository folderRepo;
 
     @Inject
-    private FolderManager folderManager;
+    private PermissionManager permissionManager;
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public <T extends Asset> T createAsset(final String name,
+                                           final String title,
+                                           final Locale locale,
+                                           final Folder folder,
+                                           final Class<T> assetType) {
+
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(title);
+        Objects.requireNonNull(locale);
+        Objects.requireNonNull(folder);
+        Objects.requireNonNull(assetType);
+
+        if (name.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                "The name of an asset can't be empty.");
+        }
+
+        if (title.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                "The title of an asset can't be empty.");
+        }
+
+        final T asset;
+        try {
+            asset = assetType.newInstance();
+        } catch (IllegalAccessException | InstantiationException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+
+        asset.setDisplayName(name);
+        asset.getTitle().addValue(locale, title);
+        assetRepo.save(asset);
+
+        categoryManager.addObjectToCategory(asset, folder);
+        permissionManager.copyPermissions(folder, asset, true);
+        
+        return asset;
+    }
 
     /**
      * Makes an {@link Asset} a shared {@code Asset} by adding it to an asset
@@ -468,7 +507,7 @@ public class AssetManager {
                 } else {
                     sectionName = "?";
                 }
-                
+
                 return String.format("%s:/%s", sectionName, path);
             } else {
                 return String.format("/%s", path);

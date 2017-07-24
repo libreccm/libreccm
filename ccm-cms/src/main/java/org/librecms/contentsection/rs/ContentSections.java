@@ -37,6 +37,7 @@ public class ContentSections extends Application{
         final Set<Class<?>> classes = new HashSet<>();
         
         classes.add(Assets.class);
+        classes.add(Images.class);
         
         return classes;
     }

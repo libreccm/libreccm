@@ -129,14 +129,18 @@ public class PermissionManager {
      * @param grantee   The role to which the privilege is granted.
      * @param object    The object on which the privilege is granted.
      *
+     * @return The newly granted permission. If there is also none inherited
+     *         permission granting the provided {@code privilege} on the
+     *         provided {@code object} the return value is {@code null}.
+     *
      * @see RecursivePermissions
      */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
-    public void grantPrivilege(final String privilege,
-                               final Role grantee,
-                               final CcmObject object) {
+    public Permission grantPrivilege(final String privilege,
+                                     final Role grantee,
+                                     final CcmObject object) {
         if (privilege == null || privilege.isEmpty()) {
             throw new IllegalArgumentException(
                 "Can't grant a permission without a privilege.");
@@ -156,7 +160,9 @@ public class PermissionManager {
             revokePrivilege(privilege, grantee, object);
         }
 
-        if (!existsPermission(privilege, grantee, object)) {
+        if (existsPermission(privilege, grantee, object)) {
+            return null;
+        } else {
             final Permission permission = new Permission();
             permission.setGrantee(grantee);
             permission.setGrantedPrivilege(privilege);
@@ -166,6 +172,8 @@ public class PermissionManager {
             entityManager.persist(permission);
 
             grantRecursive(privilege, grantee, object, object.getClass(), object);
+
+            return permission;
         }
     }
 
@@ -485,14 +493,35 @@ public class PermissionManager {
      * permissions.
      *
      *
-     * @param source
-     * @param target
+     * @param source The source object from which the permissions are copied.
+     * @param target The target object to which the permissions are copied.
      */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void copyPermissions(final CcmObject source,
                                 final CcmObject target) {
+        copyPermissions(source, target, false);
+    }
+
+    /**
+     * Copy the permissions from on {@link CcmObject} to another. The
+     * permissions granted on the {@code target} object will not be removed.
+     * Instead the permissions from {@code source} object are added the the
+     * permissions. This variant is should only be used to copy permissions from
+     * a parent object (like a category) to a new or newly assigned object.
+     *
+     * @param source    The source object from which the permissions are copied.
+     * @param target    The target object to which the permissions are copied.
+     * @param inherited Value for the {@link Permission#inherited} field of the
+     *                  copied permission.
+     */
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void copyPermissions(final CcmObject source,
+                                final CcmObject target,
+                                final boolean inherited) {
         if (source == null) {
             throw new IllegalArgumentException(
                 "Can't copy permissions from source NULL.");
@@ -509,9 +538,15 @@ public class PermissionManager {
         final List<Permission> result = query.getResultList();
 
         for (final Permission permission : result) {
-            grantPrivilege(permission.getGrantedPrivilege(),
-                           permission.getGrantee(),
-                           target);
+            final Permission granted = grantPrivilege(
+                permission.getGrantedPrivilege(),
+                permission.getGrantee(),
+                target);
+            granted.setInherited(inherited);
+            if (inherited) {
+                granted.setInheritedFrom(source);
+            }
+            entityManager.merge(granted);
         }
     }
 

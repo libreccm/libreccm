@@ -18,13 +18,13 @@
  */
 package com.arsdigita.cms.ui.assets.forms;
 
-import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.cms.ui.assets.AssetPane;
 import com.arsdigita.cms.ui.assets.AssetSearchWidget;
 import com.arsdigita.globalization.GlobalizedMessage;
+
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
 import org.librecms.assets.Bookmark;
@@ -41,7 +41,8 @@ import java.util.Optional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
-public class ExternalAudioAssetForm extends BookmarkForm {
+public class ExternalAudioAssetForm 
+    extends AbstractBookmarkForm<ExternalAudioAsset> {
 
     private AssetSearchWidget assetSearchWidget;
 
@@ -63,13 +64,12 @@ public class ExternalAudioAssetForm extends BookmarkForm {
 
     @Override
     protected void initForm(final PageState state,
-                            final Optional<Asset> selectedAsset) {
+                            final Optional<ExternalAudioAsset> selectedAsset) {
         super.initForm(state, selectedAsset);
 
         if (selectedAsset.isPresent()) {
             final ExternalAudioAsset externalAudioAsset
-                                         = (ExternalAudioAsset) selectedAsset
-                    .get();
+                                     = (ExternalAudioAsset) selectedAsset.get();
 
             final LegalMetadata legalMetadata = externalAudioAsset
                 .getLegalMetadata();
@@ -80,21 +80,25 @@ public class ExternalAudioAssetForm extends BookmarkForm {
     }
 
     @Override
-    protected Asset createAsset(final FormSectionEvent event)
-        throws FormProcessException {
-
-        Objects.requireNonNull(event);
-        
-        final PageState state = event.getPageState();
-
-        final ExternalAudioAsset externalAudioAsset = new ExternalAudioAsset();
-
-        updateData((Bookmark) externalAudioAsset, state);
-        updateData(externalAudioAsset, state);
-
-        return externalAudioAsset;
+    protected Class<ExternalAudioAsset> getAssetClass() {
+        return ExternalAudioAsset.class;
     }
 
+//    @Override
+//    protected Asset createAsset(final FormSectionEvent event)
+//        throws FormProcessException {
+//
+//        Objects.requireNonNull(event);
+//
+//        final PageState state = event.getPageState();
+//
+//        final ExternalAudioAsset externalAudioAsset = new ExternalAudioAsset();
+//
+//        updateData((Bookmark) externalAudioAsset, state);
+//        updateData(externalAudioAsset, state);
+//
+//        return externalAudioAsset;
+//    }
     protected void updateData(final ExternalAudioAsset externalAudioAsset,
                               final PageState state) {
 
@@ -114,14 +118,14 @@ public class ExternalAudioAssetForm extends BookmarkForm {
     }
 
     @Override
-    protected void updateAsset(final Asset asset, 
+    protected void updateAsset(final Asset asset,
                                final FormSectionEvent event) {
 
         Objects.requireNonNull(asset);
         Objects.requireNonNull(event);
 
         final PageState state = event.getPageState();
-        
+
         if (!(asset instanceof ExternalAudioAsset)) {
             throw new IllegalArgumentException(String.format(
                 "Provided asset is not an instance of class (or sub class of) "

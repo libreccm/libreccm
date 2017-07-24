@@ -47,25 +47,29 @@ import org.librecms.contentsection.AssetRepository;
 
 import java.util.Optional;
 
-import org.libreccm.categorization.CategoryManager;
 import org.libreccm.core.UnexpectedErrorException;
 import org.librecms.assets.AssetL10NManager;
-import org.librecms.contentsection.Folder;
+import org.librecms.contentsection.AssetManager;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.TooManyListenersException;
 
 /**
+ * Basic Form for manipulating assets.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * @param <T> The type of the asset.
  */
-public abstract class AssetForm extends Form implements FormInitListener,
-                                                        FormProcessListener,
-                                                        FormSubmissionListener {
+public abstract class AbstractAssetForm<T extends Asset>
+    extends Form implements FormInitListener,
+                            FormProcessListener,
+                            FormSubmissionListener {
 
-    private static final String ASSET_TITLE = "asset-title";
+    private static final String ASSET_TITLE = "asset-name";
+    private static final String ASSET_NAME = "asset-title";
 
     private final AssetPane assetPane;
     private final SingleSelectionModel<Long> selectionModel;
@@ -78,10 +82,11 @@ public abstract class AssetForm extends Form implements FormInitListener,
     private SingleSelect addLocaleSelect;
     private Submit addLocaleSubmit;
 
+    private TextField name;
     private TextField title;
     private SaveCancelSection saveCancelSection;
 
-    public AssetForm(final AssetPane assetPane) {
+    public AbstractAssetForm(final AssetPane assetPane) {
         super("asset-form", new ColumnPanel(1));
 
         this.assetPane = assetPane;
@@ -98,7 +103,7 @@ public abstract class AssetForm extends Form implements FormInitListener,
             @Override
             public void prepare(final PrintEvent event) {
                 final PageState state = event.getPageState();
-                final Optional<Asset> selectedAsset = getSelectedAsset(state);
+                final Optional<T> selectedAsset = getSelectedAsset(state);
                 final Label target = (Label) event.getTarget();
                 if (selectedAsset.isPresent()) {
                     target.setLabel(new GlobalizedMessage(
@@ -121,8 +126,7 @@ public abstract class AssetForm extends Form implements FormInitListener,
                 public void prepare(final PrintEvent event) {
                     final PageState state = event.getPageState();
 
-                    final Optional<Asset> selectedAsset
-                                              = getSelectedAsset(state);
+                    final Optional<T> selectedAsset = getSelectedAsset(state);
                     if (selectedAsset.isPresent()) {
                         final SingleSelect target = (SingleSelect) event
                             .getTarget();
@@ -196,8 +200,7 @@ public abstract class AssetForm extends Form implements FormInitListener,
                 public void prepare(final PrintEvent event) {
                     final PageState state = event.getPageState();
 
-                    final Optional<Asset> selectedAsset
-                                              = getSelectedAsset(state);
+                    final Optional<T> selectedAsset = getSelectedAsset(state);
                     if (selectedAsset.isPresent()) {
                         final SingleSelect target = (SingleSelect) event
                             .getTarget();
@@ -232,6 +235,11 @@ public abstract class AssetForm extends Form implements FormInitListener,
         addLocalePanel.add(addLocaleSubmit);
         add(addLocalePanel);
 
+        add(new Label(new GlobalizedMessage("cms.ui.asset.name",
+                                            CmsConstants.CMS_BUNDLE)));
+        name = new TextField(ASSET_NAME);
+        add(name);
+
         add(new Label(new GlobalizedMessage("cms.ui.asset.title",
                                             CmsConstants.CMS_BUNDLE)));
         title = new TextField(ASSET_TITLE);
@@ -255,7 +263,8 @@ public abstract class AssetForm extends Form implements FormInitListener,
         return (String) title.getValue(state);
     }
 
-    protected Optional<Asset> getSelectedAsset(final PageState state) {
+    @SuppressWarnings("unchecked")
+    protected Optional<T> getSelectedAsset(final PageState state) {
 
         if (selectionModel.getSelectedKey(state) == null) {
             return Optional.empty();
@@ -268,7 +277,17 @@ public abstract class AssetForm extends Form implements FormInitListener,
                 .orElseThrow(() -> new IllegalArgumentException(String.
                 format("No asset with ID %d in the database.",
                        selectionModel.getSelectedKey(state))));
-            return Optional.of(asset);
+            if (getAssetClass().isAssignableFrom(asset.getClass())) {
+                return Optional.of((T) asset);
+            } else {
+                throw new UnexpectedErrorException(String
+                    .format(
+                        "The requested asset is not of the type expected by "
+                            + "this form. Expected type is \"%s\". "
+                            + "Type of asset: \"%s\".",
+                        getAssetClass().getName(),
+                        asset.getClass().getName()));
+            }
         }
     }
 
@@ -277,7 +296,7 @@ public abstract class AssetForm extends Form implements FormInitListener,
 
         final PageState state = event.getPageState();
 
-        final Optional<Asset> selectedAsset = getSelectedAsset(state);
+        final Optional<T> selectedAsset = getSelectedAsset(state);
 
         if (selectedAsset.isPresent()) {
 
@@ -312,8 +331,12 @@ public abstract class AssetForm extends Form implements FormInitListener,
         }
     }
 
+    protected String getTitleValue(final PageState state) {
+        return (String) title.getValue(state);
+    }
+
     protected void initForm(final PageState state,
-                            final Optional<Asset> selectedAsset) {
+                            final Optional<T> selectedAsset) {
 
         if (selectedAsset.isPresent()) {
 
@@ -336,18 +359,9 @@ public abstract class AssetForm extends Form implements FormInitListener,
 
         if (showLocaleSubmit.isSelected(state)) {
 
-            final Optional<Asset> selectedAsset = getSelectedAsset(state);
+            final Optional<T> selectedAsset = getSelectedAsset(state);
             initForm(state, selectedAsset);
 
-//            if (selectedAsset.isPresent()) {
-//
-//                title.setValue(state,
-//                               selectedAsset
-//                                   .get()
-//                                   .getTitle()
-//                                   .getValue(getSelectedLocale(state)));
-//                showLocale(state);
-//            }
             return;
         }
 
@@ -356,52 +370,77 @@ public abstract class AssetForm extends Form implements FormInitListener,
                 .findBean(AssetL10NManager.class);
             final Locale add = new Locale((String) addLocaleSelect
                 .getValue(state));
-            final Optional<Asset> selectedAsset = getSelectedAsset(state);
+            final Optional<T> selectedAsset = getSelectedAsset(state);
             l10nManager.addLanguage(selectedAsset.get(), add);
         }
 
         if (saveCancelSection.getSaveButton().isSelected(state)) {
-            final Optional<Asset> selectedAsset = getSelectedAsset(state);
+            final Optional<T> selectedAsset = getSelectedAsset(state);
             final Asset asset;
             if (selectedAsset.isPresent()) {
                 asset = selectedAsset.get();
-                updateAsset(asset, event);
+//                updateAsset(asset, event);
+
+                asset.setDisplayName((String) name.getValue(state));
+                asset.getTitle().addValue(getSelectedLocale(state),
+                                          (String) title.getValue(state));
+
+//                final AssetRepository assetRepo = cdiUtil
+//                    .findBean(AssetRepository.class);
+//                assetRepo.save(asset);
             } else {
                 asset = createAsset(event);
+                updateAsset(asset, event);
             }
 
-            asset.getTitle().addValue(getSelectedLocale(state),
-                                      (String) title.getValue(state));
+            updateAsset(asset, event);
 
             final AssetRepository assetRepo = cdiUtil
                 .findBean(AssetRepository.class);
             assetRepo.save(asset);
 
-            if (!selectedAsset.isPresent()) {
-                //Set display name
-                asset.setDisplayName((String) title.getValue(state));
-                assetRepo.save(asset);
-
-                //Add new asset to currently selected folder
-                final Folder selectedFolder = assetPane
-                    .getFolderSelectionModel()
-                    .getSelectedObject(state);
-                final CategoryManager categoryManager = cdiUtil
-                    .findBean(CategoryManager.class);
-                categoryManager.addObjectToCategory(
-                    asset,
-                    selectedFolder,
-                    CmsConstants.CATEGORIZATION_TYPE_FOLDER);
-            }
-
+//            if (!selectedAsset.isPresent()) {
+//                //Set display name
+//                asset.setDisplayName((String) title.getValue(state));
+//                assetRepo.save(asset);
+//
+//                //Add new asset to currently selected folder
+//                final Folder selectedFolder = assetPane
+//                    .getFolderSelectionModel()
+//                    .getSelectedObject(state);
+//                final CategoryManager categoryManager = cdiUtil
+//                    .findBean(CategoryManager.class);
+//                categoryManager.addObjectToCategory(
+//                    asset,
+//                    selectedFolder,
+//                    CmsConstants.CATEGORIZATION_TYPE_FOLDER);
+//            }
             assetPane.browseMode(state);
         }
     }
 
+    protected abstract Class<T> getAssetClass();
+
     protected abstract void showLocale(final PageState state);
 
-    protected abstract Asset createAsset(final FormSectionEvent event)
-        throws FormProcessException;
+    protected final T createAsset(final FormSectionEvent event)
+        throws FormProcessException {
+
+        Objects.requireNonNull(event);
+
+        final PageState state = event.getPageState();
+
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final AssetManager assetManager = cdiUtil.findBean(AssetManager.class);
+
+        return assetManager.createAsset((String) name.getValue(state),
+                                        (String) title.getValue(state),
+                                        getSelectedLocale(state),
+                                        assetPane
+                                            .getFolderSelectionModel()
+                                            .getSelectedObject(state),
+                                        getAssetClass());
+    }
 
     protected abstract void updateAsset(final Asset asset,
                                         final FormSectionEvent event)
