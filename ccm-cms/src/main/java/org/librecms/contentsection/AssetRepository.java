@@ -25,16 +25,18 @@ import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
-import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.Permission;
 import org.libreccm.security.PermissionChecker;
+import org.libreccm.security.PermissionManager;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.security.Role;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
 import org.librecms.contentsection.privileges.AssetPrivileges;
+import org.librecms.contentsection.rs.Assets;
 
 import java.util.Collections;
 import java.util.List;
@@ -62,25 +64,28 @@ public class AssetRepository
         .getLogger(AssetRepository.class);
 
     @Inject
-    private Shiro shiro;
-
-    @Inject
-    private PermissionChecker permissionChecker;
-
-    @Inject
-    private EntityManager entityManager;
-
-    @Inject
-    private CcmObjectRepository ccmObjectRepo;
+    private AssetManager assetManager;
 
     @Inject
     private CategoryManager categoryManager;
 
     @Inject
+    private CcmObjectRepository ccmObjectRepo;
+
+    @Inject
+    private EntityManager entityManager;
+
+    @Inject
     private FolderRepository folderRepo;
 
     @Inject
-    private AssetManager assetManager;
+    private PermissionChecker permissionChecker;
+
+    @Inject
+    private PermissionManager permissionManager;
+
+    @Inject
+    private Shiro shiro;
 
     @Override
     public Long getEntityId(final Asset asset) {
@@ -191,6 +196,13 @@ public class AssetRepository
                 } catch (ObjectNotAssignedToCategoryException ex) {
                     throw new UnexpectedErrorException(ex);
                 }
+            }
+
+            final List<Permission> permissions = asset.getPermissions();
+            for (final Permission permission : permissions) {
+                permissionManager.revokePrivilege(permission.getGrantedPrivilege(), 
+                                                  permission.getGrantee(),
+                                                  asset);
             }
 
             ccmObjectRepo.delete(asset);
@@ -542,7 +554,7 @@ public class AssetRepository
                               Asset.class)
             .setParameter("folder", folder)
             .setParameter("name", name);
-//        setAuthorizationParameters(query);
+        setAuthorizationParameters(query);
 
         try {
             return Optional.of(query.getSingleResult());
@@ -594,7 +606,7 @@ public class AssetRepository
         }
 
         if (folder.isPresent()) {
-            LOGGER.debug("transaction is active? {}", 
+            LOGGER.debug("transaction is active? {}",
                          entityManager.isJoinedToTransaction());
             LOGGER.debug("Folder for path {} found...", path);
 //            LOGGER.debug("Assets in the folder:");
