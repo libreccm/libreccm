@@ -340,6 +340,11 @@ public abstract class AbstractAssetForm<T extends Asset>
 
         if (selectedAsset.isPresent()) {
 
+            name.setValue(state,
+                          selectedAsset
+                              .get()
+                              .getDisplayName());
+
             title.setValue(state,
                            selectedAsset
                                .get()

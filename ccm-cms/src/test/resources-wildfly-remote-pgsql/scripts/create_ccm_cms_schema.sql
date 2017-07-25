@@ -170,8 +170,8 @@ create schema CCM_CORE;
 
     create table CCM_CMS.BINARY_ASSETS (
         ASSET_DATA oid,
-        FILENAME varchar(512) not null,
-        MIME_TYPE varchar(512) not null,
+        FILENAME varchar(512),
+        MIME_TYPE varchar(512),
         DATA_SIZE int8,
         OBJECT_ID int8 not null,
         primary key (OBJECT_ID)

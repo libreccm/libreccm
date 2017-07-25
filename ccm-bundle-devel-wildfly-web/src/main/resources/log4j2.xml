@@ -71,6 +71,9 @@
         <Logger name="org.libreccm.security.OneTimeAuthTokenCleaner"
                 level="debug">
         </Logger>
+        <Logger name="org.libreccm.security.PermissionManager"
+                level="debug">
+        </Logger>
         <Logger name="org.libreccm.security.Shiro"
                 level="debug">
         </Logger>

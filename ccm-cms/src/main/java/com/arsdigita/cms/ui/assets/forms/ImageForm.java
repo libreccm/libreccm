@@ -104,7 +104,7 @@ public class ImageForm extends AbstractBinaryAssetForm<Image> {
             }
         }
     }
-    
+
     @Override
     protected Class<Image> getAssetClass() {
         return Image.class;
@@ -132,7 +132,6 @@ public class ImageForm extends AbstractBinaryAssetForm<Image> {
 //
 //        return image;
 //    }
-
     @Override
     protected void updateAsset(final Asset asset,
                                final FormSectionEvent event)
@@ -144,8 +143,18 @@ public class ImageForm extends AbstractBinaryAssetForm<Image> {
 
         final Image image = (Image) asset;
 
-        image.setHeight(Long.parseLong((String) height.getValue(state)));
-        image.setWidth(Long.parseLong((String) width.getValue(state)));
+        if (height.getValue(state) == null
+                || ((String) height.getValue(state)).trim().isEmpty()) {
+            image.setHeight(-1);
+        } else {
+            image.setHeight(Long.parseLong((String) height.getValue(state)));
+        }
+        if (width.getValue(state) == null
+                || ((String) width.getValue(state)).trim().isEmpty()) {
+            image.setWidth(-1);
+        } else {
+            image.setWidth(Long.parseLong((String) width.getValue(state)));
+        }
 
         updateData(image, state);
     }
@@ -172,5 +181,4 @@ public class ImageForm extends AbstractBinaryAssetForm<Image> {
 //    protected BinaryAsset createBinaryAsset(final PageState state) {
 //        return new Image();
 //    }
-
 }
