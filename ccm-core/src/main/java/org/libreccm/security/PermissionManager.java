@@ -18,6 +18,9 @@
  */
 package org.libreccm.security;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -47,6 +50,9 @@ import javax.transaction.Transactional;
  */
 @RequestScoped
 public class PermissionManager {
+
+    private static final Logger LOGGER = LogManager
+        .getLogger(PermissionManager.class);
 
     @SuppressWarnings("PMD.LongVariable")
     private static final String QUERY_PARAM_OBJECT = "object";
@@ -413,6 +419,13 @@ public class PermissionManager {
     public void revokePrivilege(final String privilege,
                                 final Role grantee,
                                 final CcmObject object) {
+
+        LOGGER.debug("Revoking permission granting privilege \"{}\" "
+                         + "on object \"{}\" to role \"{}\"...",
+                     privilege,
+                     grantee.getName(),
+                     object.getUuid());
+
         if (privilege == null || privilege.isEmpty()) {
             throw new IllegalArgumentException(
                 "Can't revoke a permission without a privilege.");
@@ -428,7 +441,12 @@ public class PermissionManager {
                 "Can't revoke a permission from object NULL.");
         }
 
-        if (existsPermission(privilege, grantee, object)) {
+        if (existsPermission(privilege, grantee, object)
+            || existsInheritedPermission(privilege, grantee, object)) {
+
+            LOGGER.debug("There is a permission for the provided parameters, "
+                             + "revoking it...");
+
             final Query deleteQuery = entityManager.createQuery(
                 "DELETE FROM Permission p "
                     + "WHERE p.grantedPrivilege = :privilege "
@@ -437,7 +455,8 @@ public class PermissionManager {
             deleteQuery.setParameter(QUERY_PARAM_PRIVILEGE, privilege);
             deleteQuery.setParameter(QUERY_PARAM_GRANTEE, grantee);
             deleteQuery.setParameter(QUERY_PARAM_OBJECT, object);
-            deleteQuery.executeUpdate();
+            final int deleted = deleteQuery.executeUpdate();
+            LOGGER.debug("{} permissions deleted.", deleted);
 
             final Query deleteInheritedQuery = entityManager.createQuery(
                 "DELETE FROM Permission p "
@@ -448,7 +467,14 @@ public class PermissionManager {
             deleteInheritedQuery.setParameter(QUERY_PARAM_PRIVILEGE, privilege);
             deleteInheritedQuery.setParameter(QUERY_PARAM_GRANTEE, grantee);
             deleteInheritedQuery.setParameter("object", object);
-            deleteInheritedQuery.executeUpdate();
+            final int deletedInherited =  deleteInheritedQuery.executeUpdate();
+            LOGGER.debug("{} inherited permissions deleted.", deletedInherited);
+        } else {
+            LOGGER.warn("No permission granting privilege \"{}\" "
+                            + "on object \"{}\" to role \"{}\". Ignoring.",
+                        privilege,
+                        grantee.getName(),
+                        object.getUuid());
         }
     }
 
