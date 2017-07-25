@@ -117,7 +117,9 @@ public class AssetManager {
         asset.getTitle().addValue(locale, title);
         assetRepo.save(asset);
 
-        categoryManager.addObjectToCategory(asset, folder);
+        categoryManager.addObjectToCategory(asset, 
+                                            folder, 
+                                            CmsConstants.CATEGORIZATION_TYPE_FOLDER);
         permissionManager.copyPermissions(folder, asset, true);
         
         return asset;

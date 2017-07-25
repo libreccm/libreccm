@@ -69,12 +69,10 @@ public class BinaryAsset extends Asset implements Serializable {
     private LocalizedString description;
 
     @Column(name = "FILENAME", length = 512, nullable = false)
-    @NotEmpty
     private String fileName;
 
     @Column(name = "MIME_TYPE", length = 512, nullable = false)
     @Convert(converter = MimeTypeConverter.class)
-    @NotNull
     private MimeType mimeType;
 
     @Column(name = "ASSET_DATA")
