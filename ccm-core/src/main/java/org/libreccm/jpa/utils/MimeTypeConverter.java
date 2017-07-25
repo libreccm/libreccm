@@ -43,6 +43,9 @@ public class MimeTypeConverter implements AttributeConverter<MimeType, String> {
 
     @Override
     public MimeType convertToEntityAttribute(final String dbData) {
+        if (dbData == null) {
+            return null;
+        }
         try {
             return new MimeType(dbData);
         } catch (MimeTypeParseException ex) {
