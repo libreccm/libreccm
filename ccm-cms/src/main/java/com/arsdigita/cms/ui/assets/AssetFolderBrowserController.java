@@ -18,7 +18,9 @@
  */
 package com.arsdigita.cms.ui.assets;
 
+import com.arsdigita.cms.CMS;
 import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.web.CCMDispatcherServlet;
 
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
@@ -58,8 +60,10 @@ import org.librecms.contentsection.FolderRepository;
 
 import java.util.Collections;
 import java.util.Optional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.librecms.assets.Image;
 
 import static org.librecms.CmsConstants.*;
 
@@ -71,7 +75,7 @@ import static org.librecms.CmsConstants.*;
 public class AssetFolderBrowserController {
 
     private static final Logger LOGGER = LogManager
-            .getLogger(AssetFolderBrowserController.class);
+        .getLogger(AssetFolderBrowserController.class);
 
     @Inject
     private EntityManager entityManager;
@@ -111,7 +115,7 @@ public class AssetFolderBrowserController {
     @PostConstruct
     private void init() {
         final KernelConfig kernelConfig = confManager.findConfiguration(
-                KernelConfig.class);
+            KernelConfig.class);
         defaultLocale = kernelConfig.getDefaultLocale();
     }
 
@@ -128,9 +132,9 @@ public class AssetFolderBrowserController {
                                                        firstResult,
                                                        maxResults);
         final List<AssetFolderBrowserTableRow> subFolderRows = subFolders
-                .stream()
-                .map(subFolder -> buildRow(subFolder))
-                .collect(Collectors.toList());
+            .stream()
+            .map(subFolder -> buildRow(subFolder))
+            .collect(Collectors.toList());
 
         if (subFolders.size() > maxResults) {
             return subFolderRows;
@@ -145,9 +149,9 @@ public class AssetFolderBrowserController {
                                                           firstAsset,
                                                           maxAssets);
             final List<AssetFolderBrowserTableRow> assetRows = assets
-                    .stream()
-                    .map(asset -> buildRow(asset))
-                    .collect(Collectors.toList());
+                .stream()
+                .map(asset -> buildRow(asset))
+                .collect(Collectors.toList());
 
             final List<AssetFolderBrowserTableRow> rows = new ArrayList<>();
             rows.addAll(subFolderRows);
@@ -177,19 +181,19 @@ public class AssetFolderBrowserController {
         criteriaQuery = criteriaQuery.select(builder.count(from));
 
         final List<Folder> subFolders = findSubFolders(
-                folder,
-                filterTerm,
-                AssetFolderBrowser.SORT_KEY_NAME,
-                AssetFolderBrowser.SORT_ACTION_UP,
-                -1,
-                -1);
+            folder,
+            filterTerm,
+            AssetFolderBrowser.SORT_KEY_NAME,
+            AssetFolderBrowser.SORT_ACTION_UP,
+            -1,
+            -1);
         final List<Asset> assets = findAssetsInFolder(
-                folder,
-                filterTerm,
-                AssetFolderBrowser.SORT_KEY_NAME,
-                AssetFolderBrowser.SORT_ACTION_UP,
-                -1,
-                -1);
+            folder,
+            filterTerm,
+            AssetFolderBrowser.SORT_KEY_NAME,
+            AssetFolderBrowser.SORT_ACTION_UP,
+            -1,
+            -1);
 
         if (subFolders.isEmpty() && assets.isEmpty()) {
             return 0;
@@ -199,8 +203,8 @@ public class AssetFolderBrowserController {
             criteriaQuery = criteriaQuery.where(from.in(subFolders));
         } else {
             criteriaQuery = criteriaQuery.where(builder.or(
-                    from.in(subFolders),
-                    from.in(assets)));
+                from.in(subFolders),
+                from.in(assets)));
         }
 
         return entityManager.createQuery(criteriaQuery).getSingleResult();
@@ -218,17 +222,17 @@ public class AssetFolderBrowserController {
             if (objectId.startsWith(FOLDER_BROWSER_KEY_PREFIX_FOLDER)) {
                 copyFolder(targetFolder,
                            Long.parseLong(objectId.substring(
-                                   FOLDER_BROWSER_KEY_PREFIX_FOLDER.length())));
+                               FOLDER_BROWSER_KEY_PREFIX_FOLDER.length())));
             } else if (objectId.startsWith(FOLDER_BROWSER_KEY_PREFIX_ASSET)) {
                 copyAsset(targetFolder,
                           Long.parseLong(objectId.substring(
-                                  FOLDER_BROWSER_KEY_PREFIX_ASSET.length())));
+                              FOLDER_BROWSER_KEY_PREFIX_ASSET.length())));
             } else {
                 throw new IllegalArgumentException(String.format(
-                        "ID '%s' does not start with '%s' or '%s'.",
-                        objectId,
-                        FOLDER_BROWSER_KEY_PREFIX_FOLDER,
-                        FOLDER_BROWSER_KEY_PREFIX_ASSET));
+                    "ID '%s' does not start with '%s' or '%s'.",
+                    objectId,
+                    FOLDER_BROWSER_KEY_PREFIX_FOLDER,
+                    FOLDER_BROWSER_KEY_PREFIX_ASSET));
             }
         }
 
@@ -240,10 +244,10 @@ public class AssetFolderBrowserController {
         Objects.requireNonNull(targetFolder);
 
         final Folder folder = folderRepo.findById(folderId)
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                "No folder with ID %d in the database. "
-                        + "Where did that ID come from?",
-                folderId)));
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No folder with ID %d in the database. "
+                + "Where did that ID come from?",
+            folderId)));
 
         folderManager.copyFolder(folder, targetFolder);
 
@@ -255,10 +259,10 @@ public class AssetFolderBrowserController {
         Objects.requireNonNull(targetFolder);
 
         final Asset asset = assetRepo
-                .findById(assetId)
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                "No asset ith ID %d in the database. Where did that ID come from?",
-                assetId)));
+            .findById(assetId)
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No asset ith ID %d in the database. Where did that ID come from?",
+            assetId)));
 
         assetManager.copy(asset, targetFolder);
     }
@@ -274,17 +278,17 @@ public class AssetFolderBrowserController {
             if (objectId.startsWith(FOLDER_BROWSER_KEY_PREFIX_FOLDER)) {
                 moveFolder(targetFolder,
                            Long.parseLong(objectId.substring(
-                                   FOLDER_BROWSER_KEY_PREFIX_FOLDER.length())));
+                               FOLDER_BROWSER_KEY_PREFIX_FOLDER.length())));
             } else if (objectId.startsWith(FOLDER_BROWSER_KEY_PREFIX_ASSET)) {
                 moveAsset(targetFolder,
                           Long.parseLong(objectId.substring(
-                                  FOLDER_BROWSER_KEY_PREFIX_ASSET.length())));
+                              FOLDER_BROWSER_KEY_PREFIX_ASSET.length())));
             } else {
                 throw new IllegalArgumentException(String.format(
-                        "ID '%s' does not start with '%s' or '%s'.",
-                        objectId,
-                        FOLDER_BROWSER_KEY_PREFIX_FOLDER,
-                        FOLDER_BROWSER_KEY_PREFIX_ASSET));
+                    "ID '%s' does not start with '%s' or '%s'.",
+                    objectId,
+                    FOLDER_BROWSER_KEY_PREFIX_FOLDER,
+                    FOLDER_BROWSER_KEY_PREFIX_ASSET));
             }
         }
     }
@@ -294,10 +298,10 @@ public class AssetFolderBrowserController {
         Objects.requireNonNull(targetFolder);
 
         final Folder folder = folderRepo.findById(folderId)
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                "No folder with ID %d in the database. "
-                        + "Where did that ID come from?",
-                folderId)));
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No folder with ID %d in the database. "
+                + "Where did that ID come from?",
+            folderId)));
 
         folderManager.moveFolder(folder, targetFolder);
     }
@@ -307,10 +311,10 @@ public class AssetFolderBrowserController {
         Objects.requireNonNull(targetFolder);
 
         final Asset asset = assetRepo
-                .findById(assetId)
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                "No asset with ID %d in the database. Where did that ID come from?",
-                assetId)));
+            .findById(assetId)
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No asset with ID %d in the database. Where did that ID come from?",
+            assetId)));
 
         assetManager.move(asset, targetFolder);
     }
@@ -321,20 +325,20 @@ public class AssetFolderBrowserController {
         Objects.requireNonNull(sources);
 
         final List<String> sourceFolderIds = sources
-                .stream()
-                .filter(source -> source.startsWith(
-                FOLDER_BROWSER_KEY_PREFIX_FOLDER))
-                .collect(Collectors.toList());
+            .stream()
+            .filter(source -> source.startsWith(
+            FOLDER_BROWSER_KEY_PREFIX_FOLDER))
+            .collect(Collectors.toList());
         final List<String> parentFolderIds = sourceFolderIds
-                .stream()
-                .map(sourceFolderId -> findParentFolderId(sourceFolderId))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+            .stream()
+            .map(sourceFolderId -> findParentFolderId(sourceFolderId))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .collect(Collectors.toList());
         final List<List<String>> subFolderIds = sourceFolderIds
-                .stream()
-                .map(sourceFolderId -> findSubFolderIds(sourceFolderId))
-                .collect(Collectors.toList());
+            .stream()
+            .map(sourceFolderId -> findSubFolderIds(sourceFolderId))
+            .collect(Collectors.toList());
 
         final List<String> invalidTargetIds = new ArrayList<>();
         invalidTargetIds.addAll(sourceFolderIds);
@@ -353,26 +357,26 @@ public class AssetFolderBrowserController {
 
         if (!folderId.startsWith(FOLDER_BROWSER_KEY_PREFIX_FOLDER)) {
             throw new IllegalArgumentException(String.format(
-                    "Provided string '%s' is not an ID of a folder.",
-                    folderId));
+                "Provided string '%s' is not an ID of a folder.",
+                folderId));
         }
 
         final long objectId = Long.parseLong(folderId.substring(
-                FOLDER_BROWSER_KEY_PREFIX_FOLDER.length()));
+            FOLDER_BROWSER_KEY_PREFIX_FOLDER.length()));
         final Folder folder = folderRepo.findById(objectId)
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                "No folder with ID %d found in database. "
-                        + "Where did that ID come form?",
-                objectId)));
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No folder with ID %d found in database. "
+                + "Where did that ID come form?",
+            objectId)));
         final Optional<Folder> parentFolder = folderManager.getParentFolder(
-                folder);
+            folder);
         if (parentFolder.isPresent()) {
             return Optional.empty();
         } else {
             return Optional.ofNullable(String.format(
-                    "%s%d",
-                    FOLDER_BROWSER_KEY_PREFIX_FOLDER,
-                    parentFolder.get().getObjectId()));
+                "%s%d",
+                FOLDER_BROWSER_KEY_PREFIX_FOLDER,
+                parentFolder.get().getObjectId()));
         }
     }
 
@@ -382,23 +386,23 @@ public class AssetFolderBrowserController {
 
         if (!folderId.startsWith(FOLDER_BROWSER_KEY_PREFIX_FOLDER)) {
             throw new IllegalArgumentException(String.format(
-                    "Provided string '%s' is not the ID of a folder.",
-                    folderId));
+                "Provided string '%s' is not the ID of a folder.",
+                folderId));
         }
 
         final long objectId = Long.parseLong(folderId.substring(
-                FOLDER_BROWSER_KEY_PREFIX_FOLDER.length()));
+            FOLDER_BROWSER_KEY_PREFIX_FOLDER.length()));
         final Folder folder = folderRepo.findById(objectId)
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                "No folder with ID %d found in database. "
-                        + "Where did that ID come form?",
-                objectId)));
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No folder with ID %d found in database. "
+                + "Where did that ID come form?",
+            objectId)));
         return findSubFolders(folder)
-                .stream()
-                .map(subFolder -> String.format("%s%d",
-                                                FOLDER_BROWSER_KEY_PREFIX_FOLDER,
-                                                subFolder.getObjectId()))
-                .collect(Collectors.toList());
+            .stream()
+            .map(subFolder -> String.format("%s%d",
+                                            FOLDER_BROWSER_KEY_PREFIX_FOLDER,
+                                            subFolder.getObjectId()))
+            .collect(Collectors.toList());
     }
 
     private List<Folder> findSubFolders(final Folder folder) {
@@ -406,7 +410,7 @@ public class AssetFolderBrowserController {
         Objects.requireNonNull(folder);
 
         if (folder.getSubFolders() == null
-                    || folder.getSubFolders().isEmpty()) {
+                || folder.getSubFolders().isEmpty()) {
             return Collections.emptyList();
         }
 
@@ -431,21 +435,21 @@ public class AssetFolderBrowserController {
 
         if (objectId.startsWith("folder-")) {
             final long folderId = Long.parseLong(
-                    objectId.substring("folder-".length()));
+                objectId.substring("folder-".length()));
 
             folderRepo
-                    .findById(folderId)
-                    .ifPresent(folderRepo::delete);
+                .findById(folderId)
+                .ifPresent(folderRepo::delete);
         } else if (objectId.startsWith("asset-")) {
             final long assetId = Long.parseLong(
-                    objectId.substring("asset-".length()));
+                objectId.substring("asset-".length()));
 
             assetRepo
-                    .findById(assetId)
-                    .ifPresent(assetRepo::delete);
+                .findById(assetId)
+                .ifPresent(assetRepo::delete);
         } else {
             throw new IllegalArgumentException(
-                    "The objectId is expected to start with 'folder-' or 'asset-'.");
+                "The objectId is expected to start with 'folder-' or 'asset-'.");
         }
     }
 
@@ -457,15 +461,15 @@ public class AssetFolderBrowserController {
         row.setObjectUuid(folder.getUuid());
         row.setName(folder.getName());
         if (folder.getTitle().hasValue(globalizationHelper
-                .getNegotiatedLocale())) {
+            .getNegotiatedLocale())) {
             row.setTitle(folder.getTitle().getValue(globalizationHelper
-                    .getNegotiatedLocale()));
+                .getNegotiatedLocale()));
         } else {
             row.setTitle(folder.getTitle().getValue(defaultLocale));
         }
         row.setFolder(true);
         row.setDeletable(!categoryManager.hasSubCategories(folder)
-                                 && !categoryManager.hasObjects(folder));
+                             && !categoryManager.hasObjects(folder));
 
         return row;
     }
@@ -478,14 +482,22 @@ public class AssetFolderBrowserController {
         row.setObjectUuid(asset.getUuid());
         row.setName(asset.getDisplayName());
         if (asset.getTitle().hasValue(globalizationHelper
-                .getNegotiatedLocale())) {
+            .getNegotiatedLocale())) {
             row.setTitle(asset.getTitle().getValue(globalizationHelper
-                    .getNegotiatedLocale()));
+                .getNegotiatedLocale()));
         } else {
             row.setTitle(asset.getTitle().getValue(defaultLocale));
         }
+        if (asset instanceof Image) {
+            row.setThumbnailUrl(String
+                .format("%s/content-sections/%s/images/"
+                            + "uuid-%s?width=150&height=100",
+                        CCMDispatcherServlet.getContextPath(),
+                        CMS.getContext().getContentSection().getLabel(),
+                        asset.getUuid()));
+        }
         final AssetTypeInfo typeInfo = typesManager
-                .getAssetTypeInfo(asset.getClass());
+            .getAssetTypeInfo(asset.getClass());
         row.setTypeLabelBundle(typeInfo.getLabelBundle());
         row.setTypeLabelKey(typeInfo.getLabelKey());
 
@@ -506,32 +518,32 @@ public class AssetFolderBrowserController {
         final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
         final CriteriaQuery<Folder> criteria = builder
-                .createQuery(Folder.class);
+            .createQuery(Folder.class);
         final Root<Folder> from = criteria.from(Folder.class);
 
         final Order order;
         if (AssetFolderBrowser.SORT_KEY_NAME.equals(orderBy)
-                    && AssetFolderBrowser.SORT_ACTION_DOWN.
-                        equals(orderDirection)) {
+                && AssetFolderBrowser.SORT_ACTION_DOWN.
+                equals(orderDirection)) {
             order = builder.desc(from.get("name"));
         } else {
             order = builder.asc(from.get("name"));
         }
 
         final TypedQuery<Folder> query = entityManager
-                .createQuery(
-                        criteria.where(
-                                builder.and(
-                                        builder.
-                                                equal(from.get("parentCategory"),
-                                                      folder),
-                                        builder.like(builder.lower(from.get(
-                                                "name")),
-                                                     filterTerm)
-                                )
-                        )
-                                .orderBy(order)
-                );
+            .createQuery(
+                criteria.where(
+                    builder.and(
+                        builder.
+                            equal(from.get("parentCategory"),
+                                  folder),
+                        builder.like(builder.lower(from.get(
+                            "name")),
+                                     filterTerm)
+                    )
+                )
+                    .orderBy(order)
+            );
 
         if (firstResult >= 0) {
             query.setFirstResult(firstResult);
@@ -582,35 +594,35 @@ public class AssetFolderBrowserController {
 
         LOGGER.debug("The database contains {} assets.",
                      entityManager.createQuery(criteria.select(fromAsset)
-                             .where(
-                                     builder.and(
-                                             builder.equal(join.get("category"),
-                                                           folder),
-                                             builder.equal(join.get("type"),
-                                                           CmsConstants.CATEGORIZATION_TYPE_FOLDER),
-                                             builder.like(builder.lower(
-                                                     fromAsset.get(
-                                                             "displayName")),
-                                                          filterTerm)
-                                     ))).getResultList().size());
+                         .where(
+                             builder.and(
+                                 builder.equal(join.get("category"),
+                                               folder),
+                                 builder.equal(join.get("type"),
+                                               CmsConstants.CATEGORIZATION_TYPE_FOLDER),
+                                 builder.like(builder.lower(
+                                     fromAsset.get(
+                                         "displayName")),
+                                              filterTerm)
+                             ))).getResultList().size());
 
         final TypedQuery<Asset> query = entityManager
-                .createQuery(
-                        criteria.select(fromAsset)
-                                .where(
-                                        builder.and(
-                                                builder.equal(join.get(
-                                                        "category"), folder),
-                                                builder.equal(join.get("type"),
-                                                              CmsConstants.CATEGORIZATION_TYPE_FOLDER),
-                                                builder.like(builder.lower(
-                                                        fromAsset.get(
-                                                                "displayName")),
-                                                             filterTerm)
-                                        )
-                                )
-                                .orderBy(order)
-                );
+            .createQuery(
+                criteria.select(fromAsset)
+                    .where(
+                        builder.and(
+                            builder.equal(join.get(
+                                "category"), folder),
+                            builder.equal(join.get("type"),
+                                          CmsConstants.CATEGORIZATION_TYPE_FOLDER),
+                            builder.like(builder.lower(
+                                fromAsset.get(
+                                    "displayName")),
+                                         filterTerm)
+                        )
+                    )
+                    .orderBy(order)
+            );
 
         if (firstResult >= 0) {
             query.setFirstResult(firstResult);

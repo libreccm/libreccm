@@ -101,6 +101,8 @@ public class AssetFolderBrowser extends Table {
                                   CMS_FOLDER_BUNDLE),
             new GlobalizedMessage("cms.ui.folder.type",
                                   CMS_FOLDER_BUNDLE),
+            new GlobalizedMessage("cms.ui.asset.thumbnail",
+                                  CMS_BUNDLE),
             new GlobalizedMessage("cms.ui.folder.creation_date",
                                   CMS_FOLDER_BUNDLE),
             new GlobalizedMessage("cms.ui.folder.last_modified",
@@ -119,6 +121,9 @@ public class AssetFolderBrowser extends Table {
         nameColumn = getColumn(AssetFolderBrowserTableModel.COL_NAME);
         nameColumn.setCellRenderer(new NameCellRenderer());
         nameColumn.setHeaderRenderer(new HeaderCellRenderer(SORT_KEY_NAME));
+
+        getColumn(AssetFolderBrowserTableModel.COL_THUMBNAIL)
+            .setCellRenderer(new ThumbnailCellRenderer());
 
         getColumn(AssetFolderBrowserTableModel.COL_CREATION_DATE)
             .setHeaderRenderer(
@@ -300,6 +305,26 @@ public class AssetFolderBrowser extends Table {
 //                                                                 name,
 //                                                                 section,
 //                                                                 "DRAFT"));
+            }
+        }
+
+    }
+
+    private class ThumbnailCellRenderer implements TableCellRenderer {
+
+        @Override
+        public Component getComponent(final Table table,
+                                      final PageState state,
+                                      final Object value,
+                                      final boolean isSelected,
+                                      final Object key,
+                                      final int row,
+                                      final int column) {
+            if (value == null) {
+                return new Text("");
+            } else {
+                final Image image = new Image((String) value, "");
+                return image;
             }
         }
 

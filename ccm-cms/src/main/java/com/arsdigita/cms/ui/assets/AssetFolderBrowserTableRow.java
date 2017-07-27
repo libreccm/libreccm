@@ -30,6 +30,7 @@ class AssetFolderBrowserTableRow {
     private String objectUuid;
     private String name;
     private String title;
+    private String thumbnailUrl;
     private String typeLabelBundle;
     private String typeLabelKey;
     private Date created;
@@ -67,6 +68,14 @@ class AssetFolderBrowserTableRow {
 
     public void setTitle(final String title) {
         this.title = title;
+    }
+    
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+    
+    public void setThumbnailUrl(final String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     public String getTypeLabelBundle() {
