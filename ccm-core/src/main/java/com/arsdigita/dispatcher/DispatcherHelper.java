@@ -52,8 +52,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 
 import java.net.URLEncoder;
+
+import javax.servlet.ServletRequestWrapper;
 
 /**
  * Class static helper methods for request dispatching. Contains various
@@ -70,7 +73,8 @@ public final class DispatcherHelper implements DispatcherConstants {
      * set com.arsdigita.dispatcher.DispatcherHelper=DEBUG by uncommenting or
      * adding the line.
      */
-    private static final Logger LOGGER = LogManager.getLogger(DispatcherHelper.class);
+    private static final Logger LOGGER = LogManager.getLogger(
+        DispatcherHelper.class);
     private static String s_webappCtx;
     private static String s_staticURL;
     private static boolean s_cachingActive;
@@ -177,7 +181,14 @@ public final class DispatcherHelper implements DispatcherConstants {
     }
 
     public static String getDispatcherPrefix(HttpServletRequest req) {
-        return (String) req.getAttribute(DISPATCHER_PREFIX_ATTR);
+        final HttpServletRequest request;
+        if (req instanceof ShiroHttpServletRequest) {
+            request = (HttpServletRequest) ((ServletRequestWrapper) req)
+                .getRequest();
+        } else {
+            request = req;
+        }
+        return (String) request.getAttribute(DISPATCHER_PREFIX_ATTR);
     }
 
     public static void setDispatcherPrefix(HttpServletRequest req,
@@ -541,10 +552,10 @@ public final class DispatcherHelper implements DispatcherConstants {
 
             if (previous instanceof MultipartHttpServletRequest) {
                 LOGGER.debug("Build new multipart request from previous "
-                                + previous + " and current " + orig);
+                                 + previous + " and current " + orig);
 
                 MultipartHttpServletRequest previousmp
-                                            = (MultipartHttpServletRequest) previous;
+                                                = (MultipartHttpServletRequest) previous;
 
                 sreq = new MultipartHttpServletRequest(previousmp,
                                                        orig);
@@ -567,7 +578,7 @@ public final class DispatcherHelper implements DispatcherConstants {
             }
         } else {
             LOGGER.debug("The request is not multipart; proceeding "
-                            + "without wrapping the request");
+                             + "without wrapping the request");
         }
         return sreq;
     }
@@ -681,14 +692,14 @@ public final class DispatcherHelper implements DispatcherConstants {
                 destination = URL.there(req, url.substring(0, sep), params);
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Setting destination with map to "
-                                    + destination);
+                                     + destination);
                 }
             }
             throw new RedirectSignal(destination, true);
         } else {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Redirecting to URL without using URL.there. "
-                                + "URL is " + url);
+                                 + "URL is " + url);
             }
             throw new RedirectSignal(url, true);
         }
@@ -875,7 +886,7 @@ public final class DispatcherHelper implements DispatcherConstants {
                     LOGGER.warn(
                         "webappContext changed. Expected='" + s_webappCtx
                             + "' found='" + webappCtx
-                        + "'.\nPerhaps the enterprise.init "
+                            + "'.\nPerhaps the enterprise.init "
                             + "com.arsdigita.dispatcher.Initializer webappContext "
                         + "parameter is wrong.");
                     // Save the webappCtx from the request for future use.
@@ -1193,7 +1204,7 @@ public final class DispatcherHelper implements DispatcherConstants {
         // Set the preferedLocale to the default locale (first entry in the 
         // config parameter list)
         Locale preferedLocale
-               = new Locale(kernelConfig.getDefaultLanguage(), "", "");
+                   = new Locale(kernelConfig.getDefaultLanguage(), "", "");
 
         // The ACCEPTED_LANGUAGES from the client
         Enumeration locales = null;

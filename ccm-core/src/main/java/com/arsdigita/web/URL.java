@@ -706,7 +706,7 @@ public class URL {
             @SuppressWarnings("unchecked")
             final Bean<ConfigurationManager> bean
                                                  = (Bean<ConfigurationManager>) iterator
-                .next();
+                    .next();
             final CreationalContext<ConfigurationManager> ctx = beanManager
                 .createCreationalContext(bean);
             confManager = (ConfigurationManager) beanManager.getReference(
