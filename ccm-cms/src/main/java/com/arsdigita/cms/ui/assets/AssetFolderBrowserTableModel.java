@@ -35,9 +35,10 @@ class AssetFolderBrowserTableModel implements TableModel {
     protected static final int COL_NAME = 0;
     protected static final int COL_TITLE = 1;
     protected static final int COL_TYPE = 2;
-    protected static final int COL_CREATION_DATE = 3;
-    protected static final int COL_LAST_MODIFIED = 4;
-    protected static final int COL_DELETEABLE = 5;
+    protected static final int COL_THUMBNAIL = 3;
+    protected static final int COL_CREATION_DATE = 4;
+    protected static final int COL_LAST_MODIFIED = 5;
+    protected static final int COL_DELETEABLE = 6;
 
     private final Iterator<AssetFolderBrowserTableRow> iterator;
     private AssetFolderBrowserTableRow currentRow;
@@ -79,6 +80,8 @@ class AssetFolderBrowserTableModel implements TableModel {
                 } else {
                     return new GlobalizedMessage(typeLabelKey, typeLabelBundle);
                 }
+            case COL_THUMBNAIL:
+                return currentRow.getThumbnailUrl();
             case COL_CREATION_DATE:
                 return currentRow.getCreated();
             case COL_LAST_MODIFIED:
