@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
@@ -107,6 +108,20 @@ public class AttachmentListManager {
         Collections.sort(names);
 
         return names;
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public Optional<AttachmentList> getAttachmentList(final long listId) {
+
+        final TypedQuery<AttachmentList> query = entityManager
+            .createNamedQuery("AttachmentList.findById", AttachmentList.class);
+        query.setParameter("listId", listId);
+
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
     }
 
     /**
@@ -382,5 +397,4 @@ public class AttachmentListManager {
         entityManager.merge(list2.get());
     }
 
- 
 }
