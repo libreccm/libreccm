@@ -19,9 +19,7 @@
 package org.librecms.contentsection;
 
 import org.hibernate.envers.Audited;
-import org.libreccm.core.CcmObject;
 import org.libreccm.core.Identifiable;
-import org.libreccm.security.Relation;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -52,22 +50,27 @@ import static org.librecms.CmsConstants.*;
 @Audited
 @NamedQueries({
     @NamedQuery(
-            name = "ItemAttachment.countByAssetIdAndList",
-            query = "SELECT COUNT(i) FROM ItemAttachment i "
-                            + "WHERE i.asset = :asset "
-                            + "AND i.attachmentList = :attachmentList")
+        name = "ItemAttachment.findById",
+        query = "SELECT i FROM ItemAttachment i "
+                    + "WHERE i.attachmentId = :attachmentId")
     ,
     @NamedQuery(
-            name = "ItemAttachment.findByAssetByAndList",
-            query = "SELECT i FROM ItemAttachment i "
-                            + "WHERE i.asset = :asset "
-                            + "AND i.attachmentList = :attachmentList"
+        name = "ItemAttachment.countByAssetIdAndList",
+        query = "SELECT COUNT(i) FROM ItemAttachment i "
+                    + "WHERE i.asset = :asset "
+                    + "AND i.attachmentList = :attachmentList")
+    ,
+    @NamedQuery(
+        name = "ItemAttachment.findByAssetByAndList",
+        query = "SELECT i FROM ItemAttachment i "
+                    + "WHERE i.asset = :asset "
+                    + "AND i.attachmentList = :attachmentList"
     )
 })
 public class ItemAttachment<T extends Asset>
-        implements Comparable<ItemAttachment<?>>,
-                   Identifiable,
-                   Serializable {
+    implements Comparable<ItemAttachment<?>>,
+               Identifiable,
+               Serializable {
 
     private static final long serialVersionUID = -9005379413315191984L;
 
@@ -96,7 +99,7 @@ public class ItemAttachment<T extends Asset>
      * The {@link Asset} which is linked by this attachment to the
      * {@link #attachmentList}.
      */
-    @ManyToOne(targetEntity = Asset.class, 
+    @ManyToOne(targetEntity = Asset.class,
                cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "ASSET_ID")
     private T asset;
@@ -161,7 +164,7 @@ public class ItemAttachment<T extends Asset>
     public int hashCode() {
         int hash = 3;
         hash
-        = 71 * hash + (int) (attachmentId ^ (attachmentId >>> 32));
+            = 71 * hash + (int) (attachmentId ^ (attachmentId >>> 32));
         hash = 71 * hash + Objects.hashCode(uuid);
         hash = 71 * hash + Objects.hashCode(asset);
         hash = 71 * hash + (int) (sortKey ^ (sortKey >>> 32));
@@ -206,11 +209,11 @@ public class ItemAttachment<T extends Asset>
 
     public String toString(final String data) {
         return String.format("%s{ "
-                                     + "attachmentId = %d, "
-                                     + "uuid = %s, "
-                                     + "asset = { %s }, "
-                                     + "sortKey = %d%s"
-                                     + " }",
+                                 + "attachmentId = %d, "
+                                 + "uuid = %s, "
+                                 + "asset = { %s }, "
+                                 + "sortKey = %d%s"
+                                 + " }",
                              super.toString(),
                              attachmentId,
                              uuid,

@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
@@ -51,6 +52,17 @@ public class ItemAttachmentManager {
 
     @Inject
     private AssetManager assetManager;
+
+    public Optional<ItemAttachment<?>> findById(final long attachmentId) {
+
+        final TypedQuery<ItemAttachment> query = entityManager
+            .createNamedQuery("ItemAttachment.findById", ItemAttachment.class);
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
+    }
 
     /**
      * Adds the provided {@link Asset} to the provided {@link AttachmentList}.

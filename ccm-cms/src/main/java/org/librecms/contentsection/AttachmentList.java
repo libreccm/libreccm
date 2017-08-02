@@ -60,6 +60,11 @@ import static org.librecms.CmsConstants.*;
 @Audited
 @NamedQueries({
     @NamedQuery(
+        name = "AttachmentList.findById",
+        query = "SELECT l FROM AttachmentList l WHERE l.listId = :listId"
+    )
+    ,
+    @NamedQuery(
         name = "AttachmentList.findForItemAndName",
         query = "SELECT l FROM AttachmentList l "
                     + "WHERE l.name = :name "
