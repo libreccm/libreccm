@@ -73,8 +73,6 @@ public class MultiPartArticleSectionManager {
                                                             section2.getRank()))
             .collect(Collectors.toList());
 
-        final int oldRank = section.getRank();
-
         section.setRank(0);
         sections
             .stream()
