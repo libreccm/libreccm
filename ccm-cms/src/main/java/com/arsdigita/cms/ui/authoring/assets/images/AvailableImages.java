@@ -33,17 +33,15 @@ import com.arsdigita.bebop.event.TableActionEvent;
 import com.arsdigita.bebop.event.TableActionListener;
 import com.arsdigita.bebop.form.Submit;
 import com.arsdigita.bebop.form.TextField;
+import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.table.TableCellRenderer;
 import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.table.TableColumnModel;
+import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.globalization.GlobalizedMessage;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
-import org.librecms.assets.Image;
-import org.librecms.contentsection.AttachmentList;
-
-import java.util.List;
 
 /**
  *
@@ -52,12 +50,14 @@ import java.util.List;
 class AvailableImages extends BoxPanel {
 
     protected static final int COL_PREVIEW = 0;
-    protected static final int COL_PROPERTIES = 1;
-    protected static final int COL_CAPTION = 2;
-    protected static final int COL_ADD = 3;
+    protected static final int COL_TITLE = 1;
+    protected static final int COL_PROPERTIES = 2;
+    protected static final int COL_CAPTION = 3;
+    protected static final int COL_ADD = 4;
 
-    public AvailableImages(final AttachmentList imagesList,
-                           final List<Image> assignedImages) {
+    public AvailableImages(final ImageStep imageStep,
+                           final ItemSelectionModel itemSelectionModel,
+                           final StringParameter selectedLanguageParam) {
 
         super(BoxPanel.VERTICAL);
 
@@ -65,9 +65,11 @@ class AvailableImages extends BoxPanel {
                                          new BoxPanel(BoxPanel.HORIZONTAL));
         final TextField filterField = new TextField("filter_available_images");
         filterField.setLabel(new GlobalizedMessage(
-            "cms.ui.authoring.assets.imagestep.available_images.filter_label"));
+            "cms.ui.authoring.assets.imagestep.available_images.filter_label",
+            CmsConstants.CMS_BUNDLE));
         final Submit submitFilter = new Submit(new GlobalizedMessage(
-            "cms.ui.authoring.assets.imagestep.available_images.submit_filter"));
+            "cms.ui.authoring.assets.imagestep.available_images.submit_filter",
+            CmsConstants.CMS_BUNDLE));
         filterForm.add(filterField);
         filterForm.add(submitFilter);
 
@@ -84,7 +86,7 @@ class AvailableImages extends BoxPanel {
 
                 return (int) controller
                     .getNumberOfAvailableImages(
-                        assignedImages,
+                        itemSelectionModel.getSelectedItem(state),
                         (String) filterField.getValue(state));
             }
 
@@ -106,6 +108,11 @@ class AvailableImages extends BoxPanel {
                 "cms.ui.authoring.assets.imagestep.available_images.preview_header",
                 CmsConstants.CMS_BUNDLE))));
         columnModel.add(new TableColumn(
+            COL_TITLE,
+            new Label(new GlobalizedMessage(
+                "cms.ui.authoring.assets.imagestep.available_images.title_header",
+                CmsConstants.CMS_BUNDLE))));
+        columnModel.add(new TableColumn(
             COL_PROPERTIES,
             new Label(new GlobalizedMessage(
                 "cms.ui.authoring.assets.imagestep.available_images.properties_header",
@@ -121,9 +128,8 @@ class AvailableImages extends BoxPanel {
                 "cms.ui.authoring.assets.imagestep.available_images.select_header",
                 CmsConstants.CMS_BUNDLE))));
 
-        table.setModelBuilder(new AvailableImagesTableModelBuilder(imagesList,
-                                                                   filterField,
-                                                                   paginator));
+        table.setModelBuilder(new AvailableImagesTableModelBuilder(
+            itemSelectionModel, selectedLanguageParam, filterField, paginator));
 
         table
             .getColumn(COL_PREVIEW)
@@ -134,6 +140,10 @@ class AvailableImages extends BoxPanel {
         table
             .getColumn(COL_ADD)
             .setCellRenderer(new AddCellRenderer());
+
+        table.setEmptyView(new Label(new GlobalizedMessage(
+            "cms.ui.authoring.assets.imagestep.available_images.none",
+            CmsConstants.CMS_BUNDLE)));
 
         table.addTableActionListener(new TableActionListener() {
 
@@ -146,7 +156,12 @@ class AvailableImages extends BoxPanel {
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final ImageStepController controller = cdiUtil
                     .findBean(ImageStepController.class);
-                controller.attachImage(imagesList, imageId);
+                controller
+                    .attachImage(itemSelectionModel
+                        .getSelectedItem(event.getPageState()),
+                                 imageId);
+
+                imageStep.showAssignedImages(event.getPageState());
             }
 
             @Override
@@ -155,6 +170,8 @@ class AvailableImages extends BoxPanel {
             }
 
         });
+        
+        super.add(table);
     }
 
     private class ThumbnailCellRenderer implements TableCellRenderer {

@@ -120,7 +120,7 @@ public class JpqlConsole extends CustomComponent {
 //        splitPanel.setSplitPosition(33.3f, Unit.PERCENTAGE);
 //        splitPanel.setFirstComponent(queryForm);
 //        splitPanel.setSecondComponent(resultsLayout);
-        setCompositionRoot(new VerticalLayout(queryLayout, resultsPanel));
+        super.setCompositionRoot(new VerticalLayout(queryLayout, resultsPanel));
     }
 
     @SuppressWarnings("unchecked")

@@ -18,6 +18,9 @@
  */
 package org.librecms.contentsection;
 
+import com.arsdigita.cms.ui.authoring.assets.RelatedInfoStep;
+import com.arsdigita.cms.ui.authoring.assets.images.ImageStep;
+
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.Configuration;
 import org.libreccm.configuration.ConfigurationManager;
@@ -120,8 +123,8 @@ public class ContentSectionConfig {
     @Setting
     private List<String> defaultAuthoringSteps = Arrays
         .asList(new String[]{
-        "com.arsdigita.cms.ui.authoring.assets.ImageStep",
-        "com.arsdigita.cms.ui.authoring.assets.RelatedInfoStep"});
+        ImageStep.class.getName(),
+        RelatedInfoStep.class.getName()});
 
     public static ContentSectionConfig getConfig() {
         final ConfigurationManager confManager = CdiUtil.createCdiUtil()

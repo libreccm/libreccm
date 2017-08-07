@@ -20,13 +20,14 @@ package com.arsdigita.cms.ui.authoring.assets.images;
 
 /**
  * A container for the data shown in the table of assigned images.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class AvailableImageTableRow {
-    
+
     private long imageId;
     private String imageUuid;
+    private String title;
     private String filename;
     private long width;
     private long height;
@@ -36,17 +37,25 @@ class AvailableImageTableRow {
     public long getImageId() {
         return imageId;
     }
-    
+
     public void setImageId(final long imageId) {
         this.imageId = imageId;
     }
-    
+
     public String getImageUuid() {
         return imageUuid;
     }
 
     public void setImageUuid(final String imageUuid) {
         this.imageUuid = imageUuid;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(final String title) {
+        this.title = title;
     }
 
     public String getFilename() {
@@ -88,7 +97,5 @@ class AvailableImageTableRow {
     public void setCaption(final String caption) {
         this.caption = caption;
     }
-    
-    
-    
+
 }
