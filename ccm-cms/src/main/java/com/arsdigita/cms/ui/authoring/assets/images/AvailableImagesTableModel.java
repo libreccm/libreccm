@@ -63,11 +63,13 @@ class AvailableImagesTableModel implements TableModel {
         switch (columnIndex) {
             case AvailableImages.COL_PREVIEW:
                 return String
-                    .format("%s/content-.sections/%s/images/"
+                    .format("%s/content-sections/%s/images/"
                                 + "uuid-%s?width=150&height=100",
                             CCMDispatcherServlet.getContextPath(),
                             CMS.getContext().getContentSection().getLabel(),
                             currentRow.getImageUuid());
+            case AvailableImages.COL_TITLE:
+                return currentRow.getTitle();
             case AvailableImages.COL_PROPERTIES:
                 final ImageProperties imageProperties = new ImageProperties();
                 imageProperties.setFilename(currentRow.getFilename());

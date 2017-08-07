@@ -84,7 +84,7 @@ class AssignedImagesTableModelBuilder extends LockableImpl implements
             .findBean(ImageStepController.class);
 
         final List<AssignedImageTableRow> rows = controller
-            .retrieveAssignedImages(selectedItem, selectedLocale);
+            .retrieveAssignedImagesRows(selectedItem, selectedLocale);
 
         return new AssignedImagesTableModel(rows,
                                             state,
