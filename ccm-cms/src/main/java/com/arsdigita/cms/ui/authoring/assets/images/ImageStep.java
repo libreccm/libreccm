@@ -19,16 +19,15 @@
 package com.arsdigita.cms.ui.authoring.assets.images;
 
 import com.arsdigita.bebop.ActionLink;
+import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.ControlLink;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Table;
-import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.parameters.LongParameter;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.ItemSelectionModel;
-import com.arsdigita.cms.ui.GlobalNavigation;
 import com.arsdigita.cms.ui.authoring.AuthoringKitWizard;
 import com.arsdigita.cms.ui.authoring.ResettableContainer;
 import com.arsdigita.cms.ui.authoring.assets.ItemAttachmentSelectionModel;
@@ -54,6 +53,8 @@ import java.util.Locale;
     descriptionKey = "image_step.description")
 public class ImageStep extends ResettableContainer {
 
+    public static final String IMAGES_ATTACHMENT_LIST = ".images";
+
     private final LongParameter moveAttachmentParam;
     private final ItemAttachmentSelectionModel moveAttachmentModel;
 
@@ -61,6 +62,9 @@ public class ImageStep extends ResettableContainer {
     private final ControlLink addImageLink;
     private final ActionLink beginLink;
     private final Table assignedImagesTable;
+    private final Label addImageHeader;
+    private final AvailableImages availableImages;
+    private final ControlLink cancelAddImage;
 
     public ImageStep(final ItemSelectionModel itemSelectionModel,
                      final AuthoringKitWizard authoringKitWizard,
@@ -95,20 +99,42 @@ public class ImageStep extends ResettableContainer {
                 CmsConstants.CMS_BUNDLE,
                 new String[]{title}));
         });
-        super.add(assignedImagesHeader);
+        assignedImagesHeader.setClassAttr("");
 
-        addImageLink = new ControlLink(new Label(new GlobalizedMessage(
+        addImageHeader = new Label(event -> {
+            final PageState state = event.getPageState();
+            final Label target = (Label) event.getTarget();
+
+            final ContentItem selectedItem = itemSelectionModel
+                .getSelectedItem(state);
+            final String selectedLanguage = (String) state
+                .getValue(selectedLanguageParam);
+            final Locale selectedLocale = new Locale(selectedLanguage);
+            final String title;
+            if (selectedItem.getTitle().hasValue(selectedLocale)) {
+                title = selectedItem.getTitle().getValue(selectedLocale);
+            } else {
+                title = selectedItem.getTitle().getValue(KernelConfig
+                    .getConfig()
+                    .getDefaultLocale());
+            }
+
+            target.setLabel(new GlobalizedMessage(
+                "cms.ui.authoring.assets.imagestep.add_heading",
+                CmsConstants.CMS_BUNDLE,
+                new String[]{title}));
+        });
+
+        addImageLink = new ActionLink(new Label(new GlobalizedMessage(
             "cms.ui.authoring.assets.imagestep.assigned_images.add_image",
             CmsConstants.CMS_BUNDLE)));
         addImageLink.addActionListener(event -> {
-            //ToDo
+            showAvailableImages(event.getPageState());
         });
-        super.add(addImageLink);
 
         beginLink = new ActionLink(new GlobalizedMessage(
             "cms.ui.authoring.assets.imagestep.assigned_images.move_to_beginning",
             CmsConstants.CMS_BUNDLE));
-        add(beginLink);
 
         beginLink.addActionListener(event -> {
             final PageState state = event.getPageState();
@@ -125,14 +151,31 @@ public class ImageStep extends ResettableContainer {
         assignedImagesTable = new AssignedImagesTable(itemSelectionModel,
                                                       moveAttachmentModel,
                                                       selectedLanguageParam);
-        super.add(assignedImagesTable);
 
-        super.add(new Text("Image Step placeholder"));
-        
+        cancelAddImage = new ControlLink(new Label(new GlobalizedMessage(
+            "cms.ui.authoring.assets.imagestep.assigned_images.cancel_add_image",
+            CmsConstants.CMS_BUNDLE)));
+        cancelAddImage.addActionListener(event -> {
+            showAssignedImages(event.getPageState());
+        });
+
+        availableImages = new AvailableImages(this,
+                                              itemSelectionModel,
+                                              selectedLanguageParam);
+
+        final BoxPanel panel = new BoxPanel(BoxPanel.VERTICAL);
+        panel.add(assignedImagesHeader);
+        panel.add(addImageLink);
+        panel.add(beginLink);
+        panel.add(assignedImagesTable);
+        panel.add(addImageHeader);
+        panel.add(availableImages);
+        super.add(panel);
+
         moveAttachmentModel.addChangeListener(event -> {
-            
+
             final PageState state = event.getPageState();
-            
+
             if (moveAttachmentModel.getSelectedKey(state) == null) {
                 addImageLink.setVisible(state, true);
                 beginLink.setVisible(state, false);
@@ -151,6 +194,27 @@ public class ImageStep extends ResettableContainer {
         page.setVisibleDefault(addImageLink, true);
         page.setVisibleDefault(beginLink, false);
         page.setVisibleDefault(assignedImagesTable, true);
+        page.setVisibleDefault(addImageHeader, false);
+        page.setVisibleDefault(cancelAddImage, false);
+        page.setVisibleDefault(availableImages, false);
+    }
+
+    protected void showAssignedImages(final PageState state) {
+        assignedImagesHeader.setVisible(state, true);
+        addImageLink.setVisible(state, true);
+        assignedImagesTable.setVisible(state, true);
+        addImageHeader.setVisible(state, false);
+
+        availableImages.setVisible(state, false);
+    }
+
+    protected void showAvailableImages(final PageState state) {
+        assignedImagesHeader.setVisible(state, false);
+        addImageLink.setVisible(state, false);
+        assignedImagesTable.setVisible(state, false);
+        addImageHeader.setVisible(state, true);
+        cancelAddImage.setVisible(state, true);
+        availableImages.setVisible(state, true);
     }
 
 }

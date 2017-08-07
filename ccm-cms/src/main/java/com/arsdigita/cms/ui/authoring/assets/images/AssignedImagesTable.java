@@ -138,12 +138,12 @@ class AssignedImagesTable extends Table {
                                 .findBean(ImageStepController.class);
 
                             final ItemAttachment<?> selectedAttachment
-                                                    = moveAttachmentModel
+                                                        = moveAttachmentModel
                                     .getSelectedAttachment(state);
-                            
+
                             final Long destId = Long
-                            .parseLong((String) event.getRowKey());
-                            
+                                .parseLong((String) event.getRowKey());
+
                             controller.moveAfter(selectedAttachment, destId);
 
                         }
@@ -164,6 +164,10 @@ class AssignedImagesTable extends Table {
             }
 
         });
+
+        super.setEmptyView(new Label(new GlobalizedMessage(
+            "cms.ui.authoring.assets.imagestep.assigned_images.none",
+            CmsConstants.CMS_BUNDLE)));
 
     }
 

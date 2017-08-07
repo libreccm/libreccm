@@ -62,7 +62,7 @@ class ImageStepController {
 
     @Inject
     private AssetRepository assetRepo;
-    
+
     @Inject
     private AttachmentListManager attachmentListManager;
 
@@ -70,11 +70,10 @@ class ImageStepController {
     private ItemAttachmentManager attachmentManager;
 
     @Transactional(Transactional.TxType.REQUIRED)
-    protected List<AssignedImageTableRow> retrieveAssignedImages(
-        final ContentItem fromContentItem, final Locale selectedLocale) {
+    protected List<ItemAttachment<Image>> retrieveAssignedImages(
+        final ContentItem fromContentItem) {
 
         Objects.requireNonNull(fromContentItem);
-        Objects.requireNonNull(selectedLocale);
 
         final ContentItem item = itemRepo
             .findById(fromContentItem.getObjectId())
@@ -83,7 +82,7 @@ class ImageStepController {
                     fromContentItem.getObjectId())));
 
         final List<AttachmentList> imageLists = attachmentListManager
-            .getAttachmentList(item, ".images");
+            .getAttachmentList(item, ImageStep.IMAGES_ATTACHMENT_LIST);
 
         if (imageLists.isEmpty()) {
             return Collections.emptyList();
@@ -97,18 +96,66 @@ class ImageStepController {
         }
 
         @SuppressWarnings("unchecked")
-        final List<AssignedImageTableRow> rows = attachments
+        final List<ItemAttachment<Image>> imageAttachments = attachments
             .stream()
             .sorted((attachment1, attachment2) -> {
                 return attachment1.compareTo(attachment2);
             })
             .filter(attachment -> attachment.getAsset() instanceof Image)
             .map(attachment -> (ItemAttachment<Image>) attachment)
-            .map(imageAttachment -> buildAssignedImageTableRow(imageAttachment,
-                                                           selectedLocale))
             .collect(Collectors.toList());
 
-        return rows;
+        return imageAttachments;
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected List<AssignedImageTableRow> retrieveAssignedImagesRows(
+        final ContentItem fromContentItem, final Locale selectedLocale) {
+
+//        Objects.requireNonNull(fromContentItem);
+//        Objects.requireNonNull(selectedLocale);
+//
+//        final ContentItem item = itemRepo
+//            .findById(fromContentItem.getObjectId())
+//            .orElseThrow(() -> new IllegalArgumentException(String
+//            .format("No ContentItem with id %d in the database.",
+//                    fromContentItem.getObjectId())));
+//
+//        final List<AttachmentList> imageLists = attachmentListManager
+//            .getAttachmentList(item, ImageStep.IMAGES_ATTACHMENT_LIST);
+//
+//        if (imageLists.isEmpty()) {
+//            return Collections.emptyList();
+//        }
+//
+//        final List<ItemAttachment<?>> attachments = new ArrayList<>();
+//        for (final AttachmentList imageList : imageLists) {
+//            for (final ItemAttachment<?> attachment : imageList.getAttachments()) {
+//                attachments.add(attachment);
+//            }
+//        }
+        final List<ItemAttachment<Image>> imageAttachments
+                                              = retrieveAssignedImages(
+                fromContentItem);
+
+//        @SuppressWarnings("unchecked")
+//        final List<AssignedImageTableRow> rows = attachments
+//            .stream()
+//            .sorted((attachment1, attachment2) -> {
+//                return attachment1.compareTo(attachment2);
+//            })
+//            .filter(attachment -> attachment.getAsset() instanceof Image)
+//            .map(attachment -> (ItemAttachment<Image>) attachment)
+//            .map(imageAttachment -> buildAssignedImageTableRow(imageAttachment,
+//                                                               selectedLocale))
+//            .collect(Collectors.toList());
+//
+//        return rows;
+        return imageAttachments
+            .stream()
+            .map(imageAttachment -> buildAssignedImageTableRow(imageAttachment,
+                                                               selectedLocale))
+            .collect(Collectors.toList());
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -208,8 +255,23 @@ class ImageStepController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    protected long getNumberOfAvailableImages(final List<Image> excluededImages,
+    protected long getNumberOfAvailableImages(final ContentItem selectedItem,
                                               final String filter) {
+
+        Objects.requireNonNull(selectedItem);
+
+        final ContentItem item = itemRepo
+            .findById(selectedItem.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No ContentItem with ID %d in the database.",
+                    selectedItem.getObjectId())));
+
+        final List<ItemAttachment<Image>> imageAttachments
+                                              = retrieveAssignedImages(item);
+        final List<Image> excluededImages = imageAttachments
+            .stream()
+            .map(imageAttachment -> imageAttachment.getAsset())
+            .collect(Collectors.toList());
 
         final CriteriaBuilder criteriaBuilder = entityManager
             .getCriteriaBuilder();
@@ -217,19 +279,30 @@ class ImageStepController {
         final CriteriaQuery<Long> query = criteriaBuilder
             .createQuery(Long.class);
         final Root<Image> from = query.from(Image.class);
-        final Join<Image, String> titleJoin = from.join("title.values");
+        final Join<Image, LocalizedString> titleJoin = from.join("title");
+        final Join<Image, String> titleValuesJoin = titleJoin.join("values");
 
         query
             .select(criteriaBuilder.count(from));
         if (filter == null || filter.trim().isEmpty()) {
-            query.where(criteriaBuilder.and(
-                criteriaBuilder.not(from.in(excluededImages)),
-                criteriaBuilder.like(titleJoin, String.format("&s%%", filter))));
+            if (excluededImages != null && !excluededImages.isEmpty()) {
+                query.where(criteriaBuilder.not(from.in(excluededImages)));
+            }
         } else {
-            query.where(criteriaBuilder.not(from.in(excluededImages)));
+            if (excluededImages == null || excluededImages.isEmpty()) {
+                criteriaBuilder.like(titleValuesJoin,
+                                     String.format("%s%%", filter));
+            } else {
+                query.where(criteriaBuilder.and(
+                    criteriaBuilder.not(from.in(excluededImages)),
+                    criteriaBuilder.like(titleValuesJoin,
+                                         String.format("%s%%", filter))));
+            }
         }
 
-        return entityManager.createQuery(query).getSingleResult();
+        final long result = entityManager.createQuery(query)
+            .getSingleResult();
+        return result;
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -237,20 +310,31 @@ class ImageStepController {
                                              final String filter,
                                              final long firstImage,
                                              final long maxImages) {
+
         final CriteriaBuilder criteriaBuilder = entityManager
             .getCriteriaBuilder();
 
         final CriteriaQuery<Image> criteriaQuery = criteriaBuilder
             .createQuery(Image.class);
         final Root<Image> from = criteriaQuery.from(Image.class);
-        final Join<Image, String> titleJoin = from.join("title.values");
+        final Join<Image, String> titleJoin = from.join("title");
+        final Join<Image, String> titleValuesJoin = titleJoin.join("values");
 
         if (filter == null || filter.trim().isEmpty()) {
-            criteriaQuery.where(criteriaBuilder.and(
-                criteriaBuilder.not(from.in(excludedImages)),
-                criteriaBuilder.like(titleJoin, String.format("&s%%", filter))));
+            if (excludedImages != null && !excludedImages.isEmpty()) {
+                criteriaQuery.where(criteriaBuilder.not(from.in(
+                    excludedImages)));
+            }
         } else {
-            criteriaQuery.where(criteriaBuilder.not(from.in(excludedImages)));
+            if (excludedImages == null || excludedImages.isEmpty()) {
+                criteriaBuilder.like(titleValuesJoin,
+                                     String.format("%s%%", filter));
+            } else {
+                criteriaQuery.where(criteriaBuilder.and(
+                    criteriaBuilder.not(from.in(excludedImages)),
+                    criteriaBuilder.like(titleValuesJoin,
+                                         String.format("%s%%", filter))));
+            }
         }
 
         final TypedQuery<Image> query = entityManager
@@ -258,53 +342,70 @@ class ImageStepController {
         query.setFirstResult((int) firstImage);
         query.setMaxResults((int) maxImages);
 
-        return query.getResultList();
+        final List<Image> result = query.getResultList();
+        return result;
 
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
     protected List<AvailableImageTableRow> getAvailableImageRows(
         final List<Image> excludedImages,
+        final Locale selectedLocale,
         final String filter,
         final long firstImage,
-        final long lastImage) {
+        final long lastImage
+    ) {
 
-        return getAvailableImages(excludedImages, filter, firstImage, lastImage)
+        return getAvailableImages(excludedImages, filter, firstImage,
+                                  lastImage)
             .stream()
-            .map(this::buildAvailableImageRow)
+            .map(image -> buildAvailableImageRow(image, selectedLocale))
             .collect(Collectors.toList());
-        
+
     }
-    
-    private AvailableImageTableRow buildAvailableImageRow(final Image image) {
+
+    private AvailableImageTableRow buildAvailableImageRow(
+        final Image image, final Locale selectedLocale) {
         final AvailableImageTableRow row = new AvailableImageTableRow();
         row.setImageId(image.getObjectId());
         row.setImageUuid(image.getUuid());
+        row.setTitle(image.getTitle().getValue(selectedLocale));
         row.setFilename(image.getFileName());
         row.setWidth(image.getWidth());
-        row.setHeight(row.getHeight());
+        row.setHeight(image.getHeight());
         row.setType(image.getMimeType().toString());
-        
+
         return row;
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    protected void attachImage(final AttachmentList attachmentList,
+    protected void attachImage(final ContentItem contentItem,
                                final long imageId) {
-        
-        final AttachmentList addTo = attachmentListManager
-            .getAttachmentList(attachmentList.getListId())
-        .orElseThrow(() -> new IllegalArgumentException(String
-        .format("No AttachmentList with ID %d in the database.", 
-                attachmentList.getListId())));
-        
+
+        final ContentItem item = itemRepo
+            .findById(contentItem.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No ContentItem with ID %d in the database.",
+                    contentItem.getObjectId())));
+
+        final List<AttachmentList> list = attachmentListManager
+            .getAttachmentList(item, ImageStep.IMAGES_ATTACHMENT_LIST);
+
+        final AttachmentList addTo;
+        if (list == null || list.isEmpty()) {
+            addTo = attachmentListManager
+                .createAttachmentList(item, ImageStep.IMAGES_ATTACHMENT_LIST);
+        } else {
+            addTo = list.get(0);
+        }
+
         final Image image = assetRepo
             .findById(imageId, Image.class)
-        .orElseThrow(() -> new IllegalArgumentException(String
+            .orElseThrow(() -> new IllegalArgumentException(String
             .format("No Image with ID %d in the database.",
                     imageId)));
-        
-        attachmentManager.attachAsset(image, attachmentList);
+
+        attachmentManager.attachAsset(image, addTo);
     }
 
     private AssignedImageTableRow buildAssignedImageTableRow(

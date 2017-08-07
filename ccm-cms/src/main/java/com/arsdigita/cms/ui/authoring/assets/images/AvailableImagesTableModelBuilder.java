@@ -22,15 +22,19 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Paginator;
 import com.arsdigita.bebop.Table;
 import com.arsdigita.bebop.form.TextField;
+import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.table.TableModel;
 import com.arsdigita.bebop.table.TableModelBuilder;
+import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.util.LockableImpl;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.assets.Image;
-import org.librecms.contentsection.AttachmentList;
+import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.ItemAttachment;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -41,14 +45,19 @@ public class AvailableImagesTableModelBuilder
     extends LockableImpl
     implements TableModelBuilder {
 
-    private final AttachmentList imageList;
+    private final ItemSelectionModel itemSelectionModel;
+    private final StringParameter selectedLanguageParam;
     private final TextField filterField;
     private final Paginator paginator;
 
-    public AvailableImagesTableModelBuilder(final AttachmentList imageList,
-                                            final TextField filterField,
-                                            final Paginator paginator) {
-        this.imageList = imageList;
+    public AvailableImagesTableModelBuilder(
+        final ItemSelectionModel itemSelectionModel,
+        final StringParameter selectedLanguageParam,
+        final TextField filterField,
+        final Paginator paginator) {
+
+        this.itemSelectionModel = itemSelectionModel;
+        this.selectedLanguageParam = selectedLanguageParam;
         this.filterField = filterField;
         this.paginator = paginator;
     }
@@ -57,28 +66,34 @@ public class AvailableImagesTableModelBuilder
     public TableModel makeModel(final Table table,
                                 final PageState state) {
 
-        final List<Image> excludedImages = imageList
-            .getAttachments()
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ImageStepController controller = cdiUtil
+            .findBean(ImageStepController.class);
+
+        final ContentItem selectedItem = itemSelectionModel
+            .getSelectedItem(state);
+
+        final List<ItemAttachment<Image>> imageAttachments = controller
+        .retrieveAssignedImages(selectedItem);
+        
+        final List<Image> excludedImages = imageAttachments
             .stream()
             .map(attachment -> attachment.getAsset())
-            .filter(asset -> asset instanceof Image)
-            .map(asset -> (Image) asset)
             .collect(Collectors.toList());
 
         //Paginator count from 1, JPA from 0
         final int firstResult = paginator.getFirst(state) - 1;
         final int maxResults = paginator.getPageSize(state);
 
-        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final ImageStepController controller = cdiUtil
-            .findBean(ImageStepController.class);
+        final Locale selectedLocale = new Locale((String) state.getValue(selectedLanguageParam));
         
         final List<AvailableImageTableRow> rows = controller
-        .getAvailableImageRows(excludedImages, 
-                               (String) filterField.getValue(state), 
-                               firstResult, 
-                               maxResults);
-        
+            .getAvailableImageRows(excludedImages,
+                                   selectedLocale,
+                                   (String) filterField.getValue(state),
+                                   firstResult,
+                                   maxResults);
+
         return new AvailableImagesTableModel(rows);
     }
 
