@@ -48,10 +48,11 @@ import org.librecms.contentsection.ItemAttachment;
 class AssignedImagesTable extends Table {
 
     protected static final int COL_PREVIEW = 0;
-    protected static final int COL_IMAGE_DATA = 1;
-    protected static final int COL_CAPTION = 2;
-    protected static final int COL_MOVE = 3;
-    protected static final int COL_REMOVE = 4;
+    protected static final int COL_TITLE = 1;
+    protected static final int COL_IMAGE_DATA = 2;
+    protected static final int COL_CAPTION = 3;
+    protected static final int COL_MOVE = 4;
+    protected static final int COL_REMOVE = 5;
 
     private final ItemSelectionModel itemSelectionModel;
     private final ItemAttachmentSelectionModel moveAttachmentModel;
@@ -72,6 +73,11 @@ class AssignedImagesTable extends Table {
             COL_PREVIEW,
             new Label(new GlobalizedMessage(
                 "cms.ui.authoring.assets.imagestep.assigned_images.preview_header",
+                CmsConstants.CMS_BUNDLE))));
+        columnModel.add(new TableColumn(
+            COL_TITLE,
+            new Label(new GlobalizedMessage(
+                "cms.ui.authoring.assets.imagestep.assigned_images.title_header",
                 CmsConstants.CMS_BUNDLE))));
         columnModel.add(new TableColumn(
             COL_IMAGE_DATA,

@@ -87,6 +87,8 @@ class AssignedImagesTableModel implements TableModel {
 
                 return imageProperties;
             }
+            case AssignedImagesTable.COL_TITLE:
+                return currentRow.getTitle();
             case AssignedImagesTable.COL_CAPTION:
                 return currentRow.getCaption();
             case AssignedImagesTable.COL_MOVE:
