@@ -18,6 +18,9 @@
  */
 package com.arsdigita.cms.ui.authoring.assets.images;
 
+import com.arsdigita.kernel.KernelConfig;
+
+import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.l10n.LocalizedString;
 import org.librecms.assets.Image;
 import org.librecms.contentsection.AssetRepository;
@@ -35,6 +38,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -55,20 +59,33 @@ import javax.transaction.Transactional;
 class ImageStepController {
 
     @Inject
-    private EntityManager entityManager;
-
-    @Inject
-    private ContentItemRepository itemRepo;
-
-    @Inject
     private AssetRepository assetRepo;
 
     @Inject
     private AttachmentListManager attachmentListManager;
 
     @Inject
+    private ConfigurationManager confManager;
+    
+    @Inject
+    private ContentItemRepository itemRepo;
+
+    @Inject
+    private EntityManager entityManager;
+
+    @Inject
     private ItemAttachmentManager attachmentManager;
 
+    private Locale defaultLocale;
+    
+    @PostConstruct
+    private void init() {
+        
+        final KernelConfig kernelConfig = confManager
+            .findConfiguration(KernelConfig.class);
+        defaultLocale = kernelConfig.getDefaultLocale();
+    }
+    
     @Transactional(Transactional.TxType.REQUIRED)
     protected List<ItemAttachment<Image>> retrieveAssignedImages(
         final ContentItem fromContentItem) {
@@ -284,14 +301,15 @@ class ImageStepController {
 
         query
             .select(criteriaBuilder.count(from));
+
         if (filter == null || filter.trim().isEmpty()) {
             if (excluededImages != null && !excluededImages.isEmpty()) {
                 query.where(criteriaBuilder.not(from.in(excluededImages)));
             }
         } else {
             if (excluededImages == null || excluededImages.isEmpty()) {
-                criteriaBuilder.like(titleValuesJoin,
-                                     String.format("%s%%", filter));
+                query.where(criteriaBuilder.like(titleValuesJoin,
+                                                 String.format("%s%%", filter)));
             } else {
                 query.where(criteriaBuilder.and(
                     criteriaBuilder.not(from.in(excluededImages)),
@@ -327,8 +345,9 @@ class ImageStepController {
             }
         } else {
             if (excludedImages == null || excludedImages.isEmpty()) {
-                criteriaBuilder.like(titleValuesJoin,
-                                     String.format("%s%%", filter));
+                criteriaQuery
+                    .where(criteriaBuilder.like(titleValuesJoin,
+                                                String.format("%s%%", filter)));
             } else {
                 criteriaQuery.where(criteriaBuilder.and(
                     criteriaBuilder.not(from.in(excludedImages)),
@@ -369,7 +388,13 @@ class ImageStepController {
         final AvailableImageTableRow row = new AvailableImageTableRow();
         row.setImageId(image.getObjectId());
         row.setImageUuid(image.getUuid());
-        row.setTitle(image.getTitle().getValue(selectedLocale));
+        if (image.getTitle().hasValue(selectedLocale)) {
+            row.setTitle(image.getTitle().getValue(selectedLocale));
+        } else if(image.getTitle().hasValue(defaultLocale)){
+            row.setTitle(image.getTitle().getValue(defaultLocale));
+        } else {
+            row.setTitle(image.getTitle().getValue());
+        }
         row.setFilename(image.getFileName());
         row.setWidth(image.getWidth());
         row.setHeight(image.getHeight());
@@ -422,6 +447,13 @@ class ImageStepController {
         row.setWidth(image.getWidth());
         row.setHeight(image.getHeight());
         row.setType(image.getMimeType().toString());
+        if (image.getTitle().hasValue(selectedLocale)) {
+            row.setTitle(image.getTitle().getValue(selectedLocale));
+        } else if(image.getTitle().hasValue(defaultLocale)){
+            row.setTitle(image.getTitle().getValue(defaultLocale));
+        } else {
+            row.setTitle(image.getTitle().getValue());
+        }
         row.setCaption(image.getDescription().getValue(selectedLocale));
 
         return row;
