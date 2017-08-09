@@ -137,7 +137,7 @@ public class AssetRepository
                                                   final Class<T> type) {
 
         final TypedQuery<Asset> query = getEntityManager()
-            .createNamedQuery("assetId", Asset.class)
+            .createNamedQuery("Asset.findByIdAndType", Asset.class)
             .setParameter("assetId", assetId)
             .setParameter("type", type);
         setAuthorizationParameters(query);

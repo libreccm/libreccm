@@ -151,7 +151,15 @@ class AvailableImages extends BoxPanel {
             public void cellSelected(final TableActionEvent event)
                 throws FormProcessException {
 
-                final long imageId = (long) event.getRowKey();
+                final Object rowKey = event.getRowKey();
+                final long imageId;
+                if (rowKey instanceof Long) {
+                imageId = (Long) event.getRowKey();
+                } else if(rowKey instanceof String) {
+                    imageId = Long.parseLong((String) rowKey);
+                } else {
+                    imageId = Long.parseLong(rowKey.toString());
+                }
 
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final ImageStepController controller = cdiUtil
