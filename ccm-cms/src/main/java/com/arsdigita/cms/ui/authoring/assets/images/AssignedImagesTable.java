@@ -85,7 +85,7 @@ class AssignedImagesTable extends Table {
                 "cms.ui.authoring.assets.imagestep.assigned_images.properties_header",
                 CmsConstants.CMS_BUNDLE))));
         columnModel.add(new TableColumn(
-            COL_IMAGE_DATA,
+            COL_CAPTION,
             new Label(new GlobalizedMessage(
                 "cms.ui.authoring.assets.imagestep.assigned_images.caption_header",
                 CmsConstants.CMS_BUNDLE))));
@@ -95,7 +95,7 @@ class AssignedImagesTable extends Table {
                 "cms.ui.authoring.assets.imagestep.assigned_images.move_header",
                 CmsConstants.CMS_BUNDLE))));
         columnModel.add(new TableColumn(
-            COL_IMAGE_DATA,
+            COL_REMOVE,
             new Label(new GlobalizedMessage(
                 "cms.ui.authoring.assets.imagestep.assigned_images.remove_header",
                 CmsConstants.CMS_BUNDLE))));
@@ -151,15 +151,14 @@ class AssignedImagesTable extends Table {
                                 .parseLong((String) event.getRowKey());
 
                             controller.moveAfter(selectedAttachment, destId);
-
                         }
                         break;
                     case COL_REMOVE:
                         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                         final ImageStepController controller = cdiUtil
                             .findBean(ImageStepController.class);
-                        controller.deleteAttachment(moveAttachmentModel
-                            .getSelectedAttachment(state));
+                        controller.deleteAttachment(Long
+                            .parseLong((String) event.getRowKey()));
                         break;
                 }
             }

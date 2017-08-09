@@ -73,7 +73,7 @@ class AssignedImagesTableModel implements TableModel {
         switch (columnIndex) {
             case AssignedImagesTable.COL_PREVIEW:
                 return String
-                    .format("%s/content-.sections/%s/images/"
+                    .format("%s/content-sections/%s/images/"
                                 + "uuid-%s?width=150&height=100",
                             CCMDispatcherServlet.getContextPath(),
                             CMS.getContext().getContentSection().getLabel(),
