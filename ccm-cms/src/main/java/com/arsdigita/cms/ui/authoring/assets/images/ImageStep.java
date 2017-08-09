@@ -146,6 +146,8 @@ public class ImageStep extends ResettableContainer {
                 .findBean(ImageStepController.class);
 
             controller.moveToFirst(toMove);
+            
+            moveAttachmentModel.setSelectedKey(state, null);
         });
 
         assignedImagesTable = new AssignedImagesTable(itemSelectionModel,
@@ -197,6 +199,8 @@ public class ImageStep extends ResettableContainer {
         page.setVisibleDefault(addImageHeader, false);
         page.setVisibleDefault(cancelAddImage, false);
         page.setVisibleDefault(availableImages, false);
+        
+        page.addComponentStateParam(assignedImagesTable, moveAttachmentParam);
     }
 
     protected void showAssignedImages(final PageState state) {

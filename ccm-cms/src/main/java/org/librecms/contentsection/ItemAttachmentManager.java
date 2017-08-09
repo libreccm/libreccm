@@ -53,6 +53,7 @@ public class ItemAttachmentManager {
     @Inject
     private AssetManager assetManager;
 
+    @Transactional(Transactional.TxType.REQUIRED)
     public Optional<ItemAttachment<?>> findById(final long attachmentId) {
 
         final TypedQuery<ItemAttachment> query = entityManager
