@@ -33,18 +33,18 @@ import org.librecms.contentsection.ItemAttachmentManager;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class ItemAttachmentSelectionModel implements SingleSelectionModel<Long>{
-    
+public class ItemAttachmentSelectionModel implements SingleSelectionModel<Long> {
+
     private final SingleSelectionModel<Long> model;
 
     public ItemAttachmentSelectionModel(final LongParameter parameter) {
         this.model = new ParameterSingleSelectionModel<>(parameter);
     }
-    
+
     public ItemAttachmentSelectionModel(final String parameterName) {
         this(new LongParameter(parameterName));
     }
-    
+
     @Override
     public boolean isSelected(final PageState state) {
         return model.isSelected(state);
@@ -71,12 +71,16 @@ public class ItemAttachmentSelectionModel implements SingleSelectionModel<Long>{
 
     public ItemAttachment<?> getSelectedAttachment(final PageState state) {
         final Long key = getSelectedKey(state);
-        final ItemAttachmentManager manager = CdiUtil
-        .createCdiUtil()
-        .findBean(ItemAttachmentManager.class);
-        return manager.findById(key).get();
+        if (key == null) {
+            return null;
+        } else {
+            final ItemAttachmentManager manager = CdiUtil
+                .createCdiUtil()
+                .findBean(ItemAttachmentManager.class);
+            return manager.findById(key).get();
+        }
     }
-    
+
     @Override
     public void clearSelection(final PageState state) {
         model.clearSelection(state);
@@ -96,5 +100,5 @@ public class ItemAttachmentSelectionModel implements SingleSelectionModel<Long>{
     public ParameterModel getStateParameter() {
         return model.getStateParameter();
     }
-    
+
 }

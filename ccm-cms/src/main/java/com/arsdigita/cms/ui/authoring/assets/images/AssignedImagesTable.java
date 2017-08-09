@@ -133,11 +133,12 @@ class AssignedImagesTable extends Table {
                 switch (column.getModelIndex()) {
                     case COL_MOVE:
                         if (moveAttachmentModel
-                            .getSelectedAttachment(state) == null) {
+                            .getSelectedKey(state) == null) {
 
                             moveAttachmentModel
                                 .setSelectedKey(state,
-                                                Long.parseLong(column.getKey()));
+                                                Long.parseLong((String) event
+                                                    .getRowKey()));
                         } else {
                             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                             final ImageStepController controller = cdiUtil
@@ -151,6 +152,7 @@ class AssignedImagesTable extends Table {
                                 .parseLong((String) event.getRowKey());
 
                             controller.moveAfter(selectedAttachment, destId);
+                            moveAttachmentModel.setSelectedKey(state, null);
                         }
                         break;
                     case COL_REMOVE:
