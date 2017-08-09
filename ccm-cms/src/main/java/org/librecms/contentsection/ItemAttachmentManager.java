@@ -57,6 +57,7 @@ public class ItemAttachmentManager {
 
         final TypedQuery<ItemAttachment> query = entityManager
             .createNamedQuery("ItemAttachment.findById", ItemAttachment.class);
+        query.setParameter("attachmentId", attachmentId);
         try {
             return Optional.of(query.getSingleResult());
         } catch (NoResultException ex) {

@@ -66,7 +66,7 @@ class ImageStepController {
 
     @Inject
     private ConfigurationManager confManager;
-    
+
     @Inject
     private ContentItemRepository itemRepo;
 
@@ -77,15 +77,15 @@ class ImageStepController {
     private ItemAttachmentManager attachmentManager;
 
     private Locale defaultLocale;
-    
+
     @PostConstruct
     private void init() {
-        
+
         final KernelConfig kernelConfig = confManager
             .findConfiguration(KernelConfig.class);
         defaultLocale = kernelConfig.getDefaultLocale();
     }
-    
+
     @Transactional(Transactional.TxType.REQUIRED)
     protected List<ItemAttachment<Image>> retrieveAssignedImages(
         final ContentItem fromContentItem) {
@@ -258,6 +258,18 @@ class ImageStepController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
+    protected void deleteAttachment(final long attachmentId) {
+
+        final ItemAttachment<?> attachment = attachmentManager
+            .findById(attachmentId)
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No ItemAttachment with ID %d in the database.",
+                    attachmentId)));
+        
+        deleteAttachment(attachment);
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
     protected void deleteAttachment(final ItemAttachment<?> attachment) {
 
         Objects.requireNonNull(attachment);
@@ -390,7 +402,7 @@ class ImageStepController {
         row.setImageUuid(image.getUuid());
         if (image.getTitle().hasValue(selectedLocale)) {
             row.setTitle(image.getTitle().getValue(selectedLocale));
-        } else if(image.getTitle().hasValue(defaultLocale)){
+        } else if (image.getTitle().hasValue(defaultLocale)) {
             row.setTitle(image.getTitle().getValue(defaultLocale));
         } else {
             row.setTitle(image.getTitle().getValue());
@@ -449,7 +461,7 @@ class ImageStepController {
         row.setType(image.getMimeType().toString());
         if (image.getTitle().hasValue(selectedLocale)) {
             row.setTitle(image.getTitle().getValue(selectedLocale));
-        } else if(image.getTitle().hasValue(defaultLocale)){
+        } else if (image.getTitle().hasValue(defaultLocale)) {
             row.setTitle(image.getTitle().getValue(defaultLocale));
         } else {
             row.setTitle(image.getTitle().getValue());

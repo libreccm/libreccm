@@ -197,7 +197,12 @@ public class AttachmentListManager {
                                                               item.getClass());
 
         final List<AttachmentList> lists = draft.getAttachments();
-        final long lastOrder = lists.get(lists.size() - 1).getOrder();
+        final long lastOrder;
+        if (lists.isEmpty()) {
+            lastOrder = 0;
+        } else {
+            lastOrder = lists.get(lists.size() - 1).getOrder();
+        }
 
         final AttachmentList list = new AttachmentList();
         list.setItem(draft);
