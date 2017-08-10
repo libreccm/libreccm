@@ -255,7 +255,7 @@
                 <plugin>
                     <groupId>com.vaadin</groupId>
                     <artifactId>vaadin-maven-plugin</artifactId>
-                    <version>8.1.0</version>
+                    <version>8.1.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -409,12 +409,12 @@
             <dependency>
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-client-compiled</artifactId>
-                <version>8.1.0</version>
+                <version>8.1.1</version>
             </dependency>
             <dependency>
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-themes</artifactId>
-                <version>8.1.0</version>
+                <version>8.1.1</version>
             </dependency>
             
             <!-- 

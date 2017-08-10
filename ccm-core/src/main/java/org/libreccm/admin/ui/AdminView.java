@@ -25,6 +25,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.ClassResource;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomComponent;
@@ -33,6 +34,7 @@ import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 import org.apache.shiro.subject.Subject;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.GroupManager;
@@ -61,7 +63,6 @@ public class AdminView extends CustomComponent implements View {
 
     public static final String VIEWNAME = "admin";
 
-
     @Inject
     private JpqlConsoleController jpqlConsoleController;
 
@@ -88,10 +89,10 @@ public class AdminView extends CustomComponent implements View {
 
     @Inject
     private RoleRepository roleRepo;
-    
+
     @Inject
     private RoleManager roleManager;
-    
+
     @Inject
     private UsersTableDataProvider usersTableDataProvider;
 
@@ -128,52 +129,51 @@ public class AdminView extends CustomComponent implements View {
             jpqlConsole = null;
         }
 
-        final GridLayout header = new GridLayout(5, 1);
-        header.setWidth("100%");
-        header.addStyleName("libreccm-header");
-
-        final Label headerInfoLine = new Label("LibreCCM");
-        headerInfoLine.setId("libreccm-headerinfoline");
-        header.addComponent(headerInfoLine, 3, 0, 4, 0);
-        header.setComponentAlignment(headerInfoLine, Alignment.TOP_RIGHT);
-
-        final String logoPath;
-        switch (servletContext.getInitParameter("ccm.distribution")
-            .toLowerCase()) {
-            case "libreccm":
-                logoPath = "/themes/libreccm-default/images/libreccm.png";
-                break;
-            case "librecms":
-                logoPath = "/themes/libreccm-default/images/librecms.png";
-                break;
-            case "aplaws":
-                logoPath = "/themes/libreccm-default/images/aplaws.png";
-                break;
-            case "scientificcms":
-                logoPath = "/themes/libreccm-default/images/scientificcms.png";
-                break;
-            default:
-                logoPath = "/themes/libreccm-default/images/libreccm.png";
-                break;
-        }
-
-        final Image logo = new Image(null, new ClassResource(logoPath));
-        logo.setId("libreccm-logo");
-        logo.addStyleName("libreccm-logo");
-        header.addComponent(logo, 0, 0);
-        header.setComponentAlignment(logo, Alignment.MIDDLE_LEFT);
-
+//        final GridLayout header = new GridLayout(5, 1);
+//        header.setWidth("100%");
+//        header.addStyleName("libreccm-header");
+//
+//        final Label headerInfoLine = new Label("LibreCCM");
+//        headerInfoLine.setId("libreccm-headerinfoline");
+//        header.addComponent(headerInfoLine, 3, 0, 4, 0);
+//        header.setComponentAlignment(headerInfoLine, Alignment.TOP_RIGHT);
+//
+//        final String logoPath;
+//        switch (servletContext.getInitParameter("ccm.distribution")
+//            .toLowerCase()) {
+//            case "libreccm":
+//                logoPath = "/themes/libreccm-default/images/libreccm.png";
+//                break;
+//            case "librecms":
+//                logoPath = "/themes/libreccm-default/images/librecms.png";
+//                break;
+//            case "aplaws":
+//                logoPath = "/themes/libreccm-default/images/aplaws.png";
+//                break;
+//            case "scientificcms":
+//                logoPath = "/themes/libreccm-default/images/scientificcms.png";
+//                break;
+//            default:
+//                logoPath = "/themes/libreccm-default/images/libreccm.png";
+//                break;
+//        }
+//
+//        final Image logo = new Image(null, new ClassResource(logoPath));
+//        logo.setId("libreccm-logo");
+//        logo.addStyleName("libreccm-logo");
+//        header.addComponent(logo, 0, 0);
+//        header.setComponentAlignment(logo, Alignment.MIDDLE_LEFT);
         final CssLayout footer = new CssLayout();
 //        footer.setWidth("100%");
         footer.setHeight("5em");
 
-        final VerticalLayout viewLayout = new VerticalLayout();
+        final VerticalLayout viewLayout = new VerticalLayout(new Header(),
+                                                             tabSheet,
+                                                             footer);
 
-        viewLayout.addComponent(header);
-        viewLayout.addComponent(tabSheet);
-        viewLayout.addComponent(footer);
+        viewLayout.addStyleName("libreccm-main-margin-top");
 
-        setCompositionRoot(viewLayout);
+        super.setCompositionRoot(viewLayout);
     }
 
     @PostConstruct
@@ -221,9 +221,9 @@ public class AdminView extends CustomComponent implements View {
     public RoleRepository getRoleRepository() {
         return roleRepo;
     }
-    
+
     public RoleManager getRoleManager() {
         return roleManager;
     }
-    
+
 }
