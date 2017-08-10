@@ -135,10 +135,10 @@ public class LoginView extends CustomComponent implements View {
         });
 
         loginPanel = new Panel("Login", formLayout);
+        loginPanel.setWidth("27em");
 
-        loginPanel.setWidth("24em");
-
-        final VerticalLayout viewLayout = new VerticalLayout(loginPanel);
+        final VerticalLayout viewLayout = new VerticalLayout(new Header(),
+                                                             loginPanel);
 
         viewLayout.setComponentAlignment(loginPanel, Alignment.MIDDLE_CENTER);
 
