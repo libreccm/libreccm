@@ -116,8 +116,7 @@ public abstract class AbstractAssetForm<T extends Asset>
                 }
             }
 
-        }
-        );
+        });
         showLocaleSelect = new SingleSelect("selected-locale");
         try {
             showLocaleSelect.addPrintListener(new PrintListener() {
@@ -139,9 +138,8 @@ public abstract class AbstractAssetForm<T extends Asset>
                         final List<Locale> availableLocales = new ArrayList<>(
                             l10nManager.availableLocales(selectedAsset.get()));
                         availableLocales.sort((locale1, locale2) -> {
-                            return locale1
-                                .toString()
-                                .compareTo(locale2.toString());
+                            return locale1.toString().compareTo(locale2
+                                .toString());
                         });
                         availableLocales.forEach(locale -> target.addOption(
                             new Option(locale.toString(),
@@ -301,10 +299,7 @@ public abstract class AbstractAssetForm<T extends Asset>
         if (selectedAsset.isPresent()) {
 
             showLocaleSelect.setValue(state,
-                                      KernelConfig
-                                          .getConfig()
-                                          .getDefaultLocale()
-                                          .toString());
+                                      getSelectedLocale(state));
 
             title.setValue(state,
                            selectedAsset

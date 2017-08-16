@@ -57,7 +57,7 @@ public class UsersTable extends Grid<User> {
     private final Button createUserButton;
 
     public UsersTable(final AdminView view,
-                      final UsersGroupsRoles usersGroupsRoles) {
+                      final UsersGroupsRolesTab usersGroupsRoles) {
 
         super();
 

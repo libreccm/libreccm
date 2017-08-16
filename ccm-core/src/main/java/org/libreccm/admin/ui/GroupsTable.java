@@ -57,7 +57,7 @@ public class GroupsTable extends Grid<Group> {
     private final Button createGroupButton;
 
     public GroupsTable(final AdminView view,
-                       final UsersGroupsRoles usersGroupsRoles) {
+                       final UsersGroupsRolesTab usersGroupsRoles) {
 
         super();
 
@@ -158,11 +158,11 @@ public class GroupsTable extends Grid<Group> {
         private static final long serialVersionUID = -1168912882249598278L;
 
         private final Group group;
-        private final UsersGroupsRoles usersGroupsRoles;
+        private final UsersGroupsRolesTab usersGroupsRoles;
         private final GroupRepository groupRepo;
 
         public ConfirmDeleteDialog(final Group group,
-                                   final UsersGroupsRoles usersGroupsRoles,
+                                   final UsersGroupsRolesTab usersGroupsRoles,
                                    final GroupRepository groupRepo) {
 
             this.group = group;

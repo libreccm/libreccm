@@ -59,13 +59,13 @@ public class UserDetails extends Window {
     private static final String COL_ROLE_NAME = "role_name";
     private static final String COL_ROLE_REMOVE = "role_remove";
 
-    private final UsersGroupsRoles usersGroupsRoles;
+    private final UsersGroupsRolesTab usersGroupsRoles;
     private final User user;
     private final UserRepository userRepo;
     private final UserManager userManager;
 
     public UserDetails(final User user,
-                       final UsersGroupsRoles usersGroupsRoles,
+                       final UsersGroupsRolesTab usersGroupsRoles,
                        final UserRepository userRepo,
                        final UserManager userManager) {
 

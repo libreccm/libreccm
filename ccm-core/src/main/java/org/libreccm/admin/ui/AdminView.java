@@ -23,18 +23,11 @@ import com.arsdigita.ui.admin.AdminUiConstants;
 import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.ClassResource;
 import com.vaadin.server.VaadinServlet;
-import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ValoTheme;
 import org.apache.shiro.subject.Subject;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.GroupManager;
@@ -107,7 +100,7 @@ public class AdminView extends CustomComponent implements View {
     private final TabSheet tabSheet;
 //    private final Grid<User> usersTable;
     private final TabSheet.Tab tabUsersGroupsRoles;
-    private final UsersGroupsRoles usersGroupsRoles;
+    private final UsersGroupsRolesTab usersGroupsRoles;
 
     private final JpqlConsole jpqlConsole;
 
@@ -115,7 +108,7 @@ public class AdminView extends CustomComponent implements View {
 
         tabSheet = new TabSheet();
 
-        usersGroupsRoles = new UsersGroupsRoles(this);
+        usersGroupsRoles = new UsersGroupsRolesTab(this);
         tabUsersGroupsRoles = tabSheet.addTab(usersGroupsRoles,
                                               "Users/Groups/Roles");
 

@@ -71,7 +71,7 @@ public class UserEditor extends Window {
 
     }
 
-    private final UsersGroupsRoles usersGroupsRoles;
+    private final UsersGroupsRolesTab usersGroupsRoles;
     private final User user;
     private final UserRepository userRepo;
     private final UserManager userManager;
@@ -88,7 +88,7 @@ public class UserEditor extends Window {
     private CheckBox passwordResetRequired;
     private CheckBox banned;
 
-    public UserEditor(final UsersGroupsRoles usersGroupsRoles,
+    public UserEditor(final UsersGroupsRolesTab usersGroupsRoles,
                       final UserRepository userRepo,
                       final UserManager userManager) {
 
@@ -103,7 +103,7 @@ public class UserEditor extends Window {
     }
 
     public UserEditor(final User user,
-                      final UsersGroupsRoles usersGroupsRoles,
+                      final UsersGroupsRolesTab usersGroupsRoles,
                       final UserRepository userRepo,
                       final UserManager userManager) {
 
