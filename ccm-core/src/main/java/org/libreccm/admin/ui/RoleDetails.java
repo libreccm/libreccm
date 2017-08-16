@@ -54,13 +54,13 @@ public class RoleDetails extends Window {
     private static final String COL_MEMBER_NAME = "partyname";
     private static final String COL_MEMBER_REMOVE = "member_remove";
 
-    private final UsersGroupsRoles usersGroupsRoles;
+    private final UsersGroupsRolesTab usersGroupsRoles;
     private final Role role;
     private final RoleRepository roleRepo;
     private final RoleManager roleManager;
 
     public RoleDetails(final Role role,
-                       final UsersGroupsRoles usersGroupsRoles,
+                       final UsersGroupsRolesTab usersGroupsRoles,
                        final RoleRepository roleRepo,
                        final RoleManager roleManager) {
 

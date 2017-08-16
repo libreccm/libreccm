@@ -44,7 +44,7 @@ public class RoleSelector extends Window {
     
     public RoleSelector(final String caption,
                         final String actionLabel,
-                        final UsersGroupsRoles usersGroupsRoles,
+                        final UsersGroupsRolesTab usersGroupsRoles,
                         final List<Role> excludedRoles,
                         final RoleSelectionAction action) {
 

@@ -47,7 +47,7 @@ public class GroupEditor extends Window {
 
     private static final long serialVersionUID = -5834095844674226692L;
 
-    private final UsersGroupsRoles usersGroupsRoles;
+    private final UsersGroupsRolesTab usersGroupsRoles;
     private final Group group;
     private final GroupRepository groupRepo;
     private final GroupManager groupManager;
@@ -56,7 +56,7 @@ public class GroupEditor extends Window {
 
     private TextField groupName;
 
-    public GroupEditor(final UsersGroupsRoles usersGroupsRoles,
+    public GroupEditor(final UsersGroupsRolesTab usersGroupsRoles,
                        final GroupRepository groupRepo,
                        final GroupManager groupManager) {
 
@@ -71,7 +71,7 @@ public class GroupEditor extends Window {
     }
 
     public GroupEditor(final Group group,
-                       final UsersGroupsRoles usersGroupsRoles,
+                       final UsersGroupsRolesTab usersGroupsRoles,
                        final GroupRepository groupRepo,
                        final GroupManager groupManager) {
 

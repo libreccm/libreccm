@@ -43,7 +43,7 @@ public class GroupSelector extends Window {
 
     public GroupSelector(final String caption,
                          final String actionLabel,
-                         final UsersGroupsRoles usersGroupsRoles,
+                         final UsersGroupsRolesTab usersGroupsRoles,
                          final List<Group> excludedGroups,
                          final GroupSelectionAction action) {
 
