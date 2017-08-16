@@ -23,8 +23,6 @@ import com.arsdigita.ui.admin.AdminUiConstants;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import org.libreccm.admin.ui.AdminView;
 
 import java.util.ResourceBundle;
 
@@ -32,7 +30,7 @@ import java.util.ResourceBundle;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class UsersGroupsRoles extends CustomComponent {
+public class UsersGroupsRolesTab extends CustomComponent {
 
     private static final long serialVersionUID = 7280416743018127366L;
 
@@ -63,7 +61,7 @@ public class UsersGroupsRoles extends CustomComponent {
     private GroupsTableDataProvider groupsTableDataProvider;
     private RolesTableDataProvider rolesTableDataProvider;
 
-    public UsersGroupsRoles(final AdminView view) {
+    public UsersGroupsRolesTab(final AdminView view) {
 
         this.view = view;
 
@@ -179,7 +177,7 @@ public class UsersGroupsRoles extends CustomComponent {
         tabSheet.addTab(groupsTable, "Groups");
         tabSheet.addTab(rolesTable, "Roles");
 
-        setCompositionRoot(tabSheet);
+        super.setCompositionRoot(tabSheet);
 
     }
 

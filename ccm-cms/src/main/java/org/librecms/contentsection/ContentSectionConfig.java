@@ -18,7 +18,7 @@
  */
 package org.librecms.contentsection;
 
-import com.arsdigita.cms.ui.authoring.assets.RelatedInfoStep;
+import com.arsdigita.cms.ui.authoring.assets.relatedinfo.RelatedInfoStep;
 import com.arsdigita.cms.ui.authoring.assets.images.ImageStep;
 
 import org.libreccm.cdi.utils.CdiUtil;

@@ -51,7 +51,7 @@ public class UserSelector extends Window {
 
     public UserSelector(final String caption,
                         final String actionLabel,
-                        final UsersGroupsRoles usersGroupsRoles,
+                        final UsersGroupsRolesTab usersGroupsRoles,
                         final List<User> excludedUsers,
                         final UserSelectionAction action) {
 

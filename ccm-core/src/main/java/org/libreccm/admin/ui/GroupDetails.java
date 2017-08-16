@@ -68,7 +68,7 @@ public class GroupDetails extends Window {
     private static final String COL_ROLE_NAME = "role_name";
     private static final String COL_ROLE_REMOVE = "remove";
 
-    private final UsersGroupsRoles usersGroupsRoles;
+    private final UsersGroupsRolesTab usersGroupsRoles;
     private final Group group;
     private final GroupRepository groupRepo;
 
@@ -80,7 +80,7 @@ public class GroupDetails extends Window {
     private HorizontalLayout saveCancelButtons;
 
     public GroupDetails(final Group group,
-                        final UsersGroupsRoles usersGroupsRoles,
+                        final UsersGroupsRolesTab usersGroupsRoles,
                         final GroupRepository groupRepo) {
 
         super(String.format("Edit group %s", group.getName()));

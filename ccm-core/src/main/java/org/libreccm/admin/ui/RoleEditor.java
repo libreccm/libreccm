@@ -45,7 +45,7 @@ public class RoleEditor extends Window {
 
     private static final long serialVersionUID = -2982855646090602847L;
 
-    private final UsersGroupsRoles usersGroupsRoles;
+    private final UsersGroupsRolesTab usersGroupsRoles;
     private final Role role;
     private final RoleRepository roleRepo;
     private final RoleManager roleManager;
@@ -55,7 +55,7 @@ public class RoleEditor extends Window {
     private TextField roleName;
     private TextArea roleDescription;
 
-    public RoleEditor(final UsersGroupsRoles usersGroupsRoles,
+    public RoleEditor(final UsersGroupsRolesTab usersGroupsRoles,
                       final RoleRepository roleRepo,
                       final RoleManager roleManager) {
 
@@ -70,7 +70,7 @@ public class RoleEditor extends Window {
     }
 
     public RoleEditor(final Role role,
-                      final UsersGroupsRoles usersGroupsRoles,
+                      final UsersGroupsRolesTab usersGroupsRoles,
                       final RoleRepository roleRepo,
                       final RoleManager roleManager) {
 

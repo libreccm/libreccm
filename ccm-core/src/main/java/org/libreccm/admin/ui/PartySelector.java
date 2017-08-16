@@ -47,7 +47,7 @@ public class PartySelector extends Window {
 
     public PartySelector(final String caption,
                          final String actionLabel,
-                         final UsersGroupsRoles usersGroupsRoles,
+                         final UsersGroupsRolesTab usersGroupsRoles,
                          final List<Party> excludedParties,
                          final PartySelectionAction action) {
 

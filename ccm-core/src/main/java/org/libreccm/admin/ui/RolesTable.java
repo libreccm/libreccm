@@ -60,7 +60,7 @@ public class RolesTable extends Grid<Role> {
     private final Button createRoleButton;
 
     public RolesTable(final AdminView view,
-                      final UsersGroupsRoles usersGroupsRoles) {
+                      final UsersGroupsRolesTab usersGroupsRoles) {
 
         super();
 
@@ -194,11 +194,11 @@ public class RolesTable extends Grid<Role> {
         private static final long serialVersionUID = -1315311220464298282L;
 
         private final Role role;
-        private final UsersGroupsRoles usersGroupsRoles;
+        private final UsersGroupsRolesTab usersGroupsRoles;
         private final RoleRepository roleRepo;
 
         public ConfirmDeleteDialog(final Role role,
-                                   final UsersGroupsRoles usersGroupsRoles,
+                                   final UsersGroupsRolesTab usersGroupsRoles,
                                    final RoleRepository roleRepo) {
             this.role = role;
             this.usersGroupsRoles = usersGroupsRoles;

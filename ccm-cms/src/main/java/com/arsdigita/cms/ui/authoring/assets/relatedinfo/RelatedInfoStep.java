@@ -16,8 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.cms.ui.authoring.assets;
+package com.arsdigita.cms.ui.authoring.assets.relatedinfo;
 
+import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.ItemSelectionModel;
@@ -47,4 +48,8 @@ public class RelatedInfoStep extends ResettableContainer {
         super.add(new Text("Related Info Step placeholder"));
     }
 
+    protected void showAttachmentList(final PageState state) {
+        
+    }
+    
 }

@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.assets;
+package org.librecms.contentsection;
 
 import com.arsdigita.kernel.KernelConfig;
 
@@ -24,10 +24,7 @@ import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.AuthorizationRequired;
-import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.RequiresPrivilege;
-import org.librecms.contentsection.Asset;
-import org.librecms.contentsection.AssetRepository;
 import org.librecms.contentsection.privileges.AssetPrivileges;
 
 import java.beans.IntrospectionException;
@@ -48,24 +45,25 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 /**
- * Manages the language variants of an asset.
+ * Manages the language variants of an {@link AttachmentList}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class AssetL10NManager {
+public class AttachmentListL10NManager {
 
     @Inject
     private ConfigurationManager confManager;
 
     @Inject
-    private AssetRepository assetRepo;
+    private AttachmentListManager listManager;
 
     @Inject
-    private PermissionChecker permissionChecker;
+    private EntityManager entityManager;
 
     private Locale defaultLocale;
     private List<Locale> supportedLocales;
@@ -82,11 +80,11 @@ public class AssetL10NManager {
     }
 
     private List<PropertyDescriptor> findLocalizedStringProperties(
-        final Asset asset) {
+        final AttachmentList attachmentList) {
 
         try {
             final PropertyDescriptor[] properties = Introspector
-                .getBeanInfo(asset.getClass())
+                .getBeanInfo(attachmentList.getClass())
                 .getPropertyDescriptors();
 
             return Arrays.stream(properties)
@@ -99,12 +97,15 @@ public class AssetL10NManager {
         } catch (IntrospectionException ex) {
             throw new UnexpectedErrorException(ex);
         }
+
     }
 
-    private LocalizedString readLocalizedString(final Asset asset,
-                                                final Method readMethod) {
+    private LocalizedString readLocalizedString(
+        final AttachmentList attachmentList,
+        final Method readMethod) {
+
         try {
-            return (LocalizedString) readMethod.invoke(asset);
+            return (LocalizedString) readMethod.invoke(attachmentList);
         } catch (IllegalAccessException
                  | IllegalArgumentException
                  | InvocationTargetException ex) {
@@ -112,122 +113,106 @@ public class AssetL10NManager {
         }
     }
 
-    private Set<Locale> collectLanguages(final Asset asset) {
+    private Set<Locale> collectLanguages(final AttachmentList attachmentList) {
 
         final Set<Locale> locales = new HashSet<>();
 
-        findLocalizedStringProperties(asset)
+        findLocalizedStringProperties(attachmentList)
             .stream()
             .map(property -> property.getReadMethod())
-            .map(readMethod -> readLocalizedString(asset, readMethod))
+            .map(readMethod -> readLocalizedString(attachmentList, readMethod))
             .forEach(str -> locales.addAll(str.getAvailableLocales()));
 
         return locales;
     }
 
     /**
-     * Helper method for reading methods in this class for verifying that the
-     * current user is permitted to read the item.
+     * Retrieves all languages in which the describing properties of an {@link AttachmentList) are available.
      *
-     * @param asset The asset for which the read permission is verified
-     */
-    private void checkReadPermission(final Asset asset) {
-
-        final String requiredPrivilege = AssetPrivileges.VIEW;
-
-        permissionChecker.checkPermission(requiredPrivilege, asset);
-    }
-
-    /**
-     * Retrieves all languages in which an asset is available.
-     *
-     * @param asset The asset.
+     * @param attachmentList The {@link AttachmentList}
      *
      * @return An (unmodifiable) {@link Set} containing all languages in which
-     *         the asset is available.
+     * the attachment list is available.
      */
     @Transactional(Transactional.TxType.REQUIRED)
-    public Set<Locale> availableLocales(final Asset asset) {
+    public Set<Locale> availableLocales(final AttachmentList attachmentList) {
 
-        checkReadPermission(asset);
-        return Collections.unmodifiableSet(collectLanguages(asset));
+        return Collections.unmodifiableSet(collectLanguages(attachmentList));
     }
 
     /**
-     * Checks if an asset has data for particular language.
+     * Checks if an {@link AttachmentList} has data for the particular language.
      *
-     * @param asset  The asset to check.
-     * @param locale The locale to check for.
+     * @param attachmentList The AttachmentList to check.
+     * @param locale         The locale to check for.
      *
-     * @return {@link true} if the asset has data for the language, {@code false}
-     *         if not.
+     * @return {@link true} if the attachment list has data for the language,
+     *         {@code false} if not.
      */
-    @AuthorizationRequired
-    @Transactional(Transactional.TxType.REQUIRED)
-    public boolean hasLanguage(
-        @RequiresPrivilege(AssetPrivileges.VIEW)
-        final Asset asset,
-        final Locale locale) {
+    public boolean hasLanguage(final AttachmentList attachmentList,
+                               final Locale locale) {
 
-        Objects.requireNonNull(asset,
-                               "Can't check if asset null has a specific locale.");
+        Objects.requireNonNull(
+            attachmentList,
+            "Can't check if AttachmentList null has a specific locale.");
         Objects.requireNonNull(locale, "Can't check for locale null.");
 
-        checkReadPermission(asset);
-
-        return collectLanguages(asset).contains(locale);
+        return collectLanguages(attachmentList).contains(locale);
     }
 
     /**
-     * Returns a {@link Set} containing the locales for which the asset does not
-     * yet have a variant.
+     * Returns a {@link Set} containing the locales for which the
+     * {@link AttachmentList} does not yet have a variant.
      *
-     * @param asset The asset.
+     * @param attachmentList The {@link AttachmentList}.
      *
-     * @return A {@link Set} with the locales for which the asset does not have a
-     *         variant.
+     * @return A {@link Set} with the locales for which the
+     *         {@link AttachmentList} does not have a variant.
      */
     @Transactional(Transactional.TxType.REQUIRED)
-    public Set<Locale> creatableLocales(final Asset asset) {
-        checkReadPermission(asset);
+    public Set<Locale> creatableLocales(final AttachmentList attachmentList) {
 
         return supportedLocales.stream()
-            .filter(locale -> !hasLanguage(asset, locale))
+            .filter(locale -> !hasLanguage(attachmentList, locale))
             .collect(Collectors.toSet());
     }
 
     /**
-     * Adds a language to an asset. The method will retrieve all fields of the
-     * type {@link LocalizedString} from the asset and add a new entry for the
-     * provided locale by coping the value for the default language configured
-     * in {@link KernelConfig}. If a field does not have an entry for the
-     * default language the first value found is used.
+     * Adds a language to an {@link AttachmentList}. The method will retrieve
+     * all fields of the type {@link LocalizedString} from the
+     * {@link AttachmentList} and add a new entry for the provided locale by
+     * coping the value for the default language configured in
+     * {@link KernelConfig}. If a field does not have an entry for the default
+     * language the first value found is used.
      *
-     * @param asset  The asset to which the language variant is added.
-     * @param locale The locale of the language to add.
+     * @param attachmentList The {@link AttachmentList} to which the language
+     *                       variant is added.
+     * @param locale         The locale of the language to add.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void addLanguage(
         @RequiresPrivilege(AssetPrivileges.EDIT)
-        final Asset asset,
+        final AttachmentList attachmentList,
         final Locale locale) {
 
-        Objects.requireNonNull(asset, "Can't add language to asset null.");
-        Objects.requireNonNull(asset, "Cant't add language null to an asset.");
+        Objects.requireNonNull(attachmentList,
+                               "Can't add language to asset null.");
+        Objects.requireNonNull(attachmentList,
+                               "Cant't add language null to an asset.");
 
-        findLocalizedStringProperties(asset)
-            .forEach(property -> addLanguage(asset, locale, property));
-        
-        assetRepo.save(asset);
+        findLocalizedStringProperties(attachmentList)
+            .forEach(property -> addLanguage(attachmentList, locale, property));
+
+        entityManager.merge(attachmentList);
     }
 
-    private void addLanguage(final Asset asset,
+    private void addLanguage(final AttachmentList attachmentList,
                              final Locale locale,
                              final PropertyDescriptor property) {
 
         final Method readMethod = property.getReadMethod();
-        final LocalizedString localizedStr = readLocalizedString(asset,
+        final LocalizedString localizedStr = readLocalizedString(attachmentList,
                                                                  readMethod);
         addLanguage(localizedStr, locale);
     }
@@ -263,37 +248,41 @@ public class AssetL10NManager {
     }
 
     /**
-     * Removes a language variant from an asset. This method will retrieve all
-     * fields of the type {@link LocalizedString} from the asset and remove the
-     * entry for the provided locale if the field has an entry for that locale.
+     * Removes a language variant from an {@link AttachmentList}. This method
+     * will retrieve all fields of the type {@link LocalizedString} from the
+     * {@link AttachmentList} and remove the entry for the provided locale if
+     * the field has an entry for that locale.
      *
-     * @param asset
+     * @param attachmentList
      * @param locale
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeLanguage(
         @RequiresPrivilege(AssetPrivileges.EDIT)
-        final Asset asset,
+        final AttachmentList attachmentList,
         final Locale locale) {
 
-        Objects.requireNonNull(asset, "Can't remove language to asset null.");
+        Objects.requireNonNull(attachmentList,
+                               "Can't remove language to attachmentList null.");
         Objects
-            .requireNonNull(asset, "Cant't remove language null to an asset.");
+            .requireNonNull(attachmentList,
+                            "Cant't remove language null to an attachmentList.");
 
-        findLocalizedStringProperties(asset)
-            .forEach(property -> removeLanguage(asset, locale, property));
+        findLocalizedStringProperties(attachmentList)
+            .forEach(
+                property -> removeLanguage(attachmentList, locale, property));
 
-        assetRepo.save(asset);
+        entityManager.merge(attachmentList);
     }
 
-    private void removeLanguage(final Asset asset,
+    private void removeLanguage(final AttachmentList attachmentList,
                                 final Locale locale,
                                 final PropertyDescriptor property) {
 
         final Method readMethod = property.getReadMethod();
 
-        final LocalizedString localizedStr = readLocalizedString(asset,
+        final LocalizedString localizedStr = readLocalizedString(attachmentList,
                                                                  readMethod);
         if (localizedStr.hasValue(locale)) {
             localizedStr.removeValue(locale);
@@ -302,29 +291,30 @@ public class AssetL10NManager {
 
     /**
      * This method normalises the values of the fields of type
-     * {@link LocalizedString} of an asset. The method will first retrieve all
-     * fields of the type {@link LocalizedString} from the asset and than build
-     * a set with all locales provided by any of the fields. After that the
-     * method will iterate over all {@link LocalizedString} fields and check if
-     * the {@link LocalizedString} has an entry for every language in the set.
-     * If not an entry for the language is added.
+     * {@link LocalizedString} of an {@link AttachmentList}. The method will
+     * first retrieve all fields of the type {@link LocalizedString} from the
+     * {@link AttachmentList} and than build a set with all locales provided by
+     * any of the fields. After that the method will iterate over all
+     * {@link LocalizedString} fields and check if the {@link LocalizedString}
+     * has an entry for every language in the set. If not an entry for the
+     * language is added.
      *
-     * @param asset The asset to normalise.
+     * @param attachmentList The attachmentList to normalise.
      */
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public void normalizeLanguages(
-        @RequiresPrivilege(AssetPrivileges.EDIT)
-        final Asset asset) {
+        final AttachmentList attachmentList) {
 
-        Objects.requireNonNull(asset, "Can't normalise asset null");
+        Objects.requireNonNull(attachmentList,
+                               "Can't normalise attachmentList null");
 
-        final Set<Locale> languages = collectLanguages(asset);
+        final Set<Locale> languages = collectLanguages(attachmentList);
 
-        findLocalizedStringProperties(asset)
+        findLocalizedStringProperties(attachmentList)
             .stream()
             .map(property -> property.getReadMethod())
-            .map(readMethod -> readLocalizedString(asset, readMethod))
+            .map(readMethod -> readLocalizedString(attachmentList, readMethod))
             .forEach(str -> normalize(str, languages));
     }
 
