@@ -26,23 +26,22 @@ import com.arsdigita.bebop.parameters.LongParameter;
 import com.arsdigita.bebop.parameters.ParameterModel;
 
 import org.libreccm.cdi.utils.CdiUtil;
-import org.librecms.contentsection.AttachmentList;
-import org.librecms.contentsection.AttachmentListManager;
+import org.librecms.contentsection.ItemAttachment;
+import org.librecms.contentsection.ItemAttachmentManager;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class AttachmentListSelectionModel implements
-    SingleSelectionModel<Long> {
+public class AttachmentSelectionModel implements SingleSelectionModel<Long> {
 
     private final SingleSelectionModel<Long> model;
 
-    public AttachmentListSelectionModel(final LongParameter parameter) {
+    public AttachmentSelectionModel(final LongParameter parameter) {
         this.model = new ParameterSingleSelectionModel<>(parameter);
     }
 
-    public AttachmentListSelectionModel(final String parameterName) {
+    public AttachmentSelectionModel(final String parameterName) {
         this(new LongParameter(parameterName));
     }
 
@@ -71,15 +70,15 @@ public class AttachmentListSelectionModel implements
         model.setSelectedKey(state, key);
     }
 
-    public AttachmentList getSelectedAttachmentList(final PageState state) {
+    public ItemAttachment<?> getSelectedAttachment(final PageState state) {
         final Long key = getSelectedKey(state);
         if (key == null) {
             return null;
         } else {
-            final AttachmentListManager manager = CdiUtil
+            final ItemAttachmentManager manager = CdiUtil
                 .createCdiUtil()
-                .findBean(AttachmentListManager.class);
-            return manager.getAttachmentList(key).get();
+                .findBean(ItemAttachmentManager.class);
+            return manager.findById(key).get();
         }
     }
 
