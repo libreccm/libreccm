@@ -109,7 +109,7 @@ class RelatedInfoAttachAssetForm
             attachmentManager.attachAsset(asset, list);
         }
 
-        relatedInfoStep.showAttachmentList(state);
+        relatedInfoStep.showAttachmentListTable(state);
     }
 
     @Override
@@ -119,7 +119,7 @@ class RelatedInfoAttachAssetForm
         final PageState state = event.getPageState();
 
         listSelectionModel.clearSelection(state);
-        relatedInfoStep.showAttachmentList(state);
+        relatedInfoStep.showAttachmentListTable(state);
     }
 
 }

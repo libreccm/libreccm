@@ -132,8 +132,7 @@ class AssignedImagesTable extends Table {
 
                 switch (column.getModelIndex()) {
                     case COL_MOVE:
-                        if (moveAttachmentModel
-                            .getSelectedKey(state) == null) {
+                        if (moveAttachmentModel.getSelectedKey(state) == null) {
 
                             moveAttachmentModel
                                 .setSelectedKey(state,
@@ -152,7 +151,7 @@ class AssignedImagesTable extends Table {
                                 .parseLong((String) event.getRowKey());
 
                             controller.moveAfter(selectedAttachment, destId);
-                            moveAttachmentModel.setSelectedKey(state, null);
+                            moveAttachmentModel.clearSelection(state);
                         }
                         break;
                     case COL_REMOVE:

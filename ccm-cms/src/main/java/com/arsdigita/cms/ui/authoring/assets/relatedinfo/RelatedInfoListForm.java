@@ -370,7 +370,7 @@ class RelatedInfoListForm
         
         if (saveCancelSection.getCancelButton().isSelected(state)) {
             listSelectionModel.clearSelection(state);
-            relatedInfoStep.showAttachmentList(state);
+            relatedInfoStep.showAttachmentListTable(state);
         }
     }
 

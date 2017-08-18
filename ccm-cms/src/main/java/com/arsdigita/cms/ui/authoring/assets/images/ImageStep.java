@@ -147,7 +147,7 @@ public class ImageStep extends ResettableContainer {
 
             controller.moveToFirst(toMove);
             
-            moveAttachmentModel.setSelectedKey(state, null);
+            moveAttachmentModel.clearSelection(state);
         });
 
         assignedImagesTable = new AssignedImagesTable(itemSelectionModel,

@@ -18,14 +18,20 @@
  */
 package com.arsdigita.cms.ui.authoring.assets.relatedinfo;
 
+import com.arsdigita.bebop.ActionLink;
+import com.arsdigita.bebop.Label;
+import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
-import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.ui.authoring.AuthoringKitWizard;
 import com.arsdigita.cms.ui.authoring.ResettableContainer;
+import com.arsdigita.cms.ui.authoring.assets.AttachmentListSelectionModel;
+import com.arsdigita.globalization.GlobalizedMessage;
 
+import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
+import org.librecms.contentsection.AttachmentList;
 import org.librecms.ui.authoring.ContentItemAuthoringStep;
 
 /**
@@ -39,17 +45,110 @@ import org.librecms.ui.authoring.ContentItemAuthoringStep;
     descriptionKey = "related_info_step.description")
 public class RelatedInfoStep extends ResettableContainer {
 
+    private final ItemSelectionModel itemSelectionModel;
+    private final AttachmentListSelectionModel selectedListModel;
+    private final AttachmentListSelectionModel moveListModel;
+    private final AuthoringKitWizard authoringKitWizard;
+    private final StringParameter selectedLanguageParam;
+
+    private final RelatedInfoListTable listTable;
+    private final RelatedInfoListForm listForm;
+    private final ActionLink addListLink;
+    private final ActionLink listToFirstLink;
+
     public RelatedInfoStep(final ItemSelectionModel itemSelectionModel,
                            final AuthoringKitWizard authoringKitWizard,
                            final StringParameter selectedLanguage) {
 
         super();
 
-        super.add(new Text("Related Info Step placeholder"));
+        this.itemSelectionModel = itemSelectionModel;
+        this.authoringKitWizard = authoringKitWizard;
+        this.selectedLanguageParam = selectedLanguage;
+
+        selectedListModel = new AttachmentListSelectionModel(
+            "selected-attachment-list");
+        moveListModel = new AttachmentListSelectionModel("move-attachment-list");
+
+        listTable = new RelatedInfoListTable(this,
+                                             itemSelectionModel,
+                                             selectedListModel, moveListModel,
+                                             selectedLanguageParam);
+        listForm = new RelatedInfoListForm(this,
+                                           itemSelectionModel,
+                                           selectedListModel,
+                                           selectedLanguageParam);
+
+        super.add(listTable);
+        super.add(listForm);
+
+        addListLink = new ActionLink(new Label(new GlobalizedMessage(
+            "cms.ui.authoring.assets.related_info_step.add_list",
+            CmsConstants.CMS_BUNDLE)));
+        addListLink.addActionListener(event -> {
+            showListEditForm(event.getPageState());
+        });
+
+        listToFirstLink = new ActionLink(new GlobalizedMessage(
+            "cms.ui.authoring.assets.related_info_step.move_to_beginning",
+            CmsConstants.CMS_BUNDLE));
+        listToFirstLink.addActionListener(event -> {
+            final PageState state = event.getPageState();
+            final AttachmentList toMove = moveListModel
+                .getSelectedAttachmentList(state);
+
+            final RelatedInfoStepController controller = CdiUtil
+                .createCdiUtil()
+                .findBean(RelatedInfoStepController.class);
+
+            controller.moveToFirst(itemSelectionModel.getSelectedItem(state),
+                                   toMove);
+
+            moveListModel.clearSelection(state);
+        });
+
+        moveListModel.addChangeListener(event -> {
+
+            final PageState state = event.getPageState();
+
+            if (moveListModel.getSelectedKey(state) == null) {
+                addListLink.setVisible(state, true);
+                listToFirstLink.setVisible(state, false);
+            } else {
+                addListLink.setVisible(state, false);
+                listToFirstLink.setVisible(state, true);
+            }
+        });
     }
 
-    protected void showAttachmentList(final PageState state) {
-        
+    @Override
+    public void register(final Page page) {
+
+        super.register(page);
+
+        page.addComponentStateParam(this, selectedListModel.getStateParameter());
+        page.addComponentStateParam(this, moveListModel.getStateParameter());
+
+        page.setVisibleDefault(listTable, true);
+        page.setVisibleDefault(listForm, false);
+        page.setVisibleDefault(addListLink, true);
+        page.setVisibleDefault(listToFirstLink, false);
     }
-    
+
+    protected void showAttachmentListTable(final PageState state) {
+
+        listTable.setVisible(state, true);
+        addListLink.setVisible(state, true);
+        listForm.setVisible(state, false);
+        listToFirstLink.setVisible(state, false);
+    }
+
+    void showListEditForm(final PageState state) {
+
+        listTable.setVisible(state, false);
+        listForm.setVisible(state, true);
+        addListLink.setVisible(state, false);
+        listToFirstLink.setVisible(state, false);
+    }
+
 }
