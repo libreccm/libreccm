@@ -65,16 +65,16 @@ class ImageStepController {
     private AttachmentListManager attachmentListManager;
 
     @Inject
-    private ConfigurationManager confManager;
+    private ItemAttachmentManager attachmentManager;
 
     @Inject
-    private ContentItemRepository itemRepo;
+    private ConfigurationManager confManager;
 
     @Inject
     private EntityManager entityManager;
 
     @Inject
-    private ItemAttachmentManager attachmentManager;
+    private ContentItemRepository itemRepo;
 
     private Locale defaultLocale;
 
@@ -265,7 +265,7 @@ class ImageStepController {
             .orElseThrow(() -> new IllegalArgumentException(String
             .format("No ItemAttachment with ID %d in the database.",
                     attachmentId)));
-        
+
         deleteAttachment(attachment);
     }
 
