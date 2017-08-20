@@ -25,6 +25,8 @@ import org.librecms.contentsection.AttachmentList;
 import org.librecms.contentsection.AttachmentListManager;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemRepository;
+import org.librecms.contentsection.ItemAttachment;
+import org.librecms.contentsection.ItemAttachmentManager;
 
 import java.util.List;
 import java.util.Locale;
@@ -55,6 +57,9 @@ class RelatedInfoStepController {
 
     @Inject
     private EntityManager entityManager;
+
+    @Inject
+    private ItemAttachmentManager itemAttachmentManager;
 
     private Locale defaultLocale;
 
@@ -167,6 +172,13 @@ class RelatedInfoStepController {
         entityManager.merge(toMove);
     }
 
+    protected void moveAfter(final AttachmentList list,
+                             final ItemAttachment<?> attachment,
+                             final long destId) {
+        //ToDo
+        throw new UnsupportedOperationException();
+    }
+
     protected void deleteList(final Long listId) {
 
         final AttachmentList list = attachmentListManager
@@ -179,7 +191,20 @@ class RelatedInfoStepController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    List<AttachmentListTableRow> retrieveAttachmentLists(
+    protected void removeAttachment(final long attachmentId) {
+
+        final ItemAttachment<?> attachment = itemAttachmentManager
+            .findById(attachmentId)
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No ItemAttachment with ID %d in the database.",
+                    attachmentId)));
+        
+        entityManager.remove(attachment);
+
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected List<AttachmentListTableRow> retrieveAttachmentLists(
         final ContentItem forContentItem,
         final Locale selectedLocale) {
 
@@ -195,6 +220,26 @@ class RelatedInfoStepController {
             .map(list -> buildAttachmentListTableRow(list, selectedLocale))
             .collect(Collectors.toList());
 
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected List<AttachmentTableRow> retrieveAttachments(
+        final ContentItem selectedItem,
+        final AttachmentList fromList,
+        final Locale selectedLocale) {
+
+        final AttachmentList list = attachmentListManager
+            .getAttachmentList(fromList.getListId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No AttachmentList with ID %d in the database.",
+                    fromList.getListId())));
+
+        return list
+            .getAttachments()
+            .stream()
+            .map(attachment -> buildAttachmentTableRow(attachment,
+                                                       selectedLocale))
+            .collect(Collectors.toList());
     }
 
     private AttachmentListTableRow buildAttachmentListTableRow(
@@ -227,6 +272,35 @@ class RelatedInfoStepController {
                 .getDescription()
                 .getValue()));
         }
+
+        return row;
+    }
+
+    private AttachmentTableRow buildAttachmentTableRow(
+        final ItemAttachment<?> attachment,
+        final Locale selectedLocale) {
+
+        final AttachmentTableRow row = new AttachmentTableRow();
+
+        row.setAttachmentId(attachment.getAttachmentId());
+        if (attachment.getAsset().getTitle().hasValue(selectedLocale)) {
+            row.setTitle(attachment
+                .getAsset()
+                .getTitle()
+                .getValue(selectedLocale));
+        } else if (attachment.getAsset().getTitle().hasValue(defaultLocale)) {
+            row.setTitle(attachment
+                .getAsset()
+                .getTitle()
+                .getValue(defaultLocale));
+        } else {
+            row.setTitle(attachment
+                .getAsset()
+                .getTitle()
+                .getValue());
+        }
+
+        row.setType(attachment.getAsset().getClass());
 
         return row;
     }
