@@ -25,9 +25,11 @@ import com.arsdigita.bebop.table.TableModel;
 import com.arsdigita.bebop.table.TableModelBuilder;
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.ui.authoring.assets.AttachmentListSelectionModel;
+import com.arsdigita.cms.ui.authoring.assets.AttachmentSelectionModel;
 import com.arsdigita.util.LockableImpl;
 
 import org.libreccm.cdi.utils.CdiUtil;
+import org.librecms.contentsection.AttachmentList;
 import org.librecms.contentsection.ContentItem;
 
 import java.util.List;
@@ -37,23 +39,26 @@ import java.util.Locale;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-class RelatedInfoListTableModelBuilder
+class AttachmentsTableModelBuilder
     extends LockableImpl
     implements TableModelBuilder {
 
     private final ItemSelectionModel itemSelectionModel;
-    private final AttachmentListSelectionModel moveListModel;
+    private final AttachmentListSelectionModel listSelectionModel;
+    private final AttachmentSelectionModel moveAttachmentModel;
     private final StringParameter selectedLanguageParam;
 
-    protected RelatedInfoListTableModelBuilder(
+    public AttachmentsTableModelBuilder(
         final ItemSelectionModel itemSelectionModel,
-        final AttachmentListSelectionModel moveListModel,
+        final AttachmentListSelectionModel listSelectionModel,
+        final AttachmentSelectionModel moveAttachmentModel,
         final StringParameter selectedLanguageParam) {
 
         super();
 
         this.itemSelectionModel = itemSelectionModel;
-        this.moveListModel = moveListModel;
+        this.listSelectionModel = listSelectionModel;
+        this.moveAttachmentModel = moveAttachmentModel;
         this.selectedLanguageParam = selectedLanguageParam;
     }
 
@@ -62,6 +67,7 @@ class RelatedInfoListTableModelBuilder
 
         final ContentItem selectedItem = itemSelectionModel
             .getSelectedItem(state);
+        final AttachmentList list = listSelectionModel.getSelectedAttachmentList(state);
         final String selectedLanguage = (String) state
             .getValue(selectedLanguageParam);
         final Locale selectedLocale = new Locale(selectedLanguage);
@@ -70,10 +76,10 @@ class RelatedInfoListTableModelBuilder
         final RelatedInfoStepController controller = cdiUtil
             .findBean(RelatedInfoStepController.class);
 
-        final List<AttachmentListTableRow> rows = controller
-            .retrieveAttachmentLists(selectedItem, selectedLocale);
+        final List<AttachmentTableRow> rows = controller
+            .retrieveAttachments(selectedItem, list, selectedLocale);
 
-        return new RelatedInfoListTableModel(rows, state, moveListModel);
+        return new AttachmentsTableModel(rows, state, moveAttachmentModel);
     }
 
 }

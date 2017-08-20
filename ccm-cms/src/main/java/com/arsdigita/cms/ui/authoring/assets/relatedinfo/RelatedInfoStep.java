@@ -151,4 +151,10 @@ public class RelatedInfoStep extends ResettableContainer {
         listToFirstLink.setVisible(state, false);
     }
 
+    void showAttachmentsTable(final PageState state) {
+        
+        
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

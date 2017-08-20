@@ -110,14 +110,17 @@ class RelatedInfoListTable extends Table {
                 selectedLanguageParam));
 
         super
+            .getColumn(COL_NAME)
+            .setCellRenderer(new ControlLinkCellRenderer());
+        super
             .getColumn(COL_EDIT)
-            .setCellRenderer(new EditCellRenderer());
+            .setCellRenderer(new ControlLinkCellRenderer());
         super
             .getColumn(COL_MOVE)
-            .setCellRenderer(new MoveCellRenderer());
+            .setCellRenderer(new ControlLinkCellRenderer());
         super
             .getColumn(COL_DELETE)
-            .setCellRenderer(new DeleteCellRenderer());
+            .setCellRenderer(new ControlLinkCellRenderer());
 
         super
             .addTableActionListener(new TableActionListener() {
@@ -132,6 +135,13 @@ class RelatedInfoListTable extends Table {
                         .get(event.getColumn());
 
                     switch (column.getModelIndex()) {
+                        case COL_NAME:
+                            selectedListModel
+                                .setSelectedKey(state,
+                                                Long.parseLong((String) event
+                                                    .getRowKey()));
+                            relatedInfoStep.showAttachmentsTable(state);
+                            break;
                         case COL_EDIT:
                             selectedListModel
                                 .setSelectedKey(state,
@@ -168,17 +178,22 @@ class RelatedInfoListTable extends Table {
                                 moveListModel.clearSelection(state);
                             }
                             break;
-                        case COL_DELETE:
+                        case COL_DELETE: {
                             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                             final RelatedInfoStepController controller = cdiUtil
                                 .findBean(RelatedInfoStepController.class);
                             controller.deleteList(Long
                                 .parseLong((String) event.getRowKey()));
+                            break;
+                        }
+                        default:
+                            throw new IllegalArgumentException(String
+                                .format("Illegal column index: %d",
+                                        column.getModelIndex()));
                     }
                 }
 
                 @Override
-
                 public void headSelected(final TableActionEvent event) {
                     //Nothing
                 }
@@ -186,7 +201,7 @@ class RelatedInfoListTable extends Table {
             });
     }
 
-    private class MoveCellRenderer implements TableCellRenderer {
+    private class ControlLinkCellRenderer implements TableCellRenderer {
 
         @Override
         public Component getComponent(final Table table,
@@ -201,37 +216,53 @@ class RelatedInfoListTable extends Table {
         }
 
     }
-
-    private class EditCellRenderer implements TableCellRenderer {
-
-        @Override
-        public Component getComponent(final Table table,
-                                      final PageState state,
-                                      final Object value,
-                                      final boolean isSelected,
-                                      final Object key,
-                                      final int row,
-                                      final int column) {
-
-            return new ControlLink((Component) value);
-        }
-
-    }
-
-    private class DeleteCellRenderer implements TableCellRenderer {
-
-        @Override
-        public Component getComponent(final Table table,
-                                      final PageState state,
-                                      final Object value,
-                                      final boolean isSelected,
-                                      final Object key,
-                                      final int row,
-                                      final int column) {
-
-            return new ControlLink((Component) value);
-        }
-
-    }
+//    
+//    private class MoveCellRenderer implements TableCellRenderer {
+//
+//        @Override
+//        public Component getComponent(final Table table,
+//                                      final PageState state,
+//                                      final Object value,
+//                                      final boolean isSelected,
+//                                      final Object key,
+//                                      final int row,
+//                                      final int column) {
+//
+//            return new ControlLink((Component) value);
+//        }
+//
+//    }
+//
+//    private class EditCellRenderer implements TableCellRenderer {
+//
+//        @Override
+//        public Component getComponent(final Table table,
+//                                      final PageState state,
+//                                      final Object value,
+//                                      final boolean isSelected,
+//                                      final Object key,
+//                                      final int row,
+//                                      final int column) {
+//
+//            return new ControlLink((Component) value);
+//        }
+//
+//    }
+//
+//    private class DeleteCellRenderer implements TableCellRenderer {
+//
+//        @Override
+//        public Component getComponent(final Table table,
+//                                      final PageState state,
+//                                      final Object value,
+//                                      final boolean isSelected,
+//                                      final Object key,
+//                                      final int row,
+//                                      final int column) {
+//
+//            return new ControlLink((Component) value);
+//        }
+//
+//}
 
 }
