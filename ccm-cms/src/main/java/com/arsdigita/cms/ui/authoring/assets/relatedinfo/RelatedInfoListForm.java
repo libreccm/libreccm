@@ -29,11 +29,15 @@ import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.FormSubmissionListener;
+import com.arsdigita.bebop.event.ParameterEvent;
 import com.arsdigita.bebop.form.Option;
 import com.arsdigita.bebop.form.SingleSelect;
 import com.arsdigita.bebop.form.Submit;
 import com.arsdigita.bebop.form.TextArea;
 import com.arsdigita.bebop.form.TextField;
+import com.arsdigita.bebop.parameters.GlobalizedParameterListener;
+import com.arsdigita.bebop.parameters.ParameterData;
+import com.arsdigita.bebop.parameters.StringIsLettersOrDigitsValidationListener;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.ui.authoring.assets.AttachmentListSelectionModel;
@@ -224,6 +228,7 @@ class RelatedInfoListForm
         super.add(new Label(new GlobalizedMessage("cms.ui.assetlist.name",
                                                   CmsConstants.CMS_BUNDLE)));
         nameField = new TextField("attachmentListName");
+        nameField.addValidationListener(new AssetListNameValidator());
         super.add(nameField);
 
         super.add(new Label(new GlobalizedMessage("cms.ui.assetlist.title",
@@ -365,13 +370,35 @@ class RelatedInfoListForm
     @Override
     public void submitted(final FormSectionEvent event)
         throws FormProcessException {
-        
+
         final PageState state = event.getPageState();
-        
+
         if (saveCancelSection.getCancelButton().isSelected(state)) {
             listSelectionModel.clearSelection(state);
             relatedInfoStep.showAttachmentListTable(state);
         }
+    }
+
+    private class AssetListNameValidator extends GlobalizedParameterListener {
+
+        public AssetListNameValidator() {
+            super.setError(new GlobalizedMessage(
+                "cms.ui.assetlist.name_cant_start_with_dot",
+                CmsConstants.CMS_BUNDLE));
+        }
+
+        @Override
+        public void validate(final ParameterEvent event) throws
+            FormProcessException {
+
+            final ParameterData data = event.getParameterData();
+            final String value = (String) data.getValue();
+
+            if (value.startsWith(".")) {
+                data.addError(getError());
+            }
+        }
+
     }
 
 }
