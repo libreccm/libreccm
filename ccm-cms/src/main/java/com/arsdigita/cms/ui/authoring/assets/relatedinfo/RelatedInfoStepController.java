@@ -117,6 +117,42 @@ class RelatedInfoStepController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
+    void moveToFirst(final AttachmentList selectedList,
+                     final ItemAttachment<?> attachmentToMove) {
+
+        Objects.requireNonNull(selectedList);
+        Objects.requireNonNull(attachmentToMove);
+
+        final AttachmentList list = attachmentListManager
+            .getAttachmentList(selectedList.getListId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No AttachmentList with ID %d in the database.",
+                    selectedList.getListId())));
+
+        final ItemAttachment<?> toMove = itemAttachmentManager
+            .findById(attachmentToMove.getAttachmentId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No ItemAttachment with ID %d in the database.",
+                    attachmentToMove.getAttachmentId())));
+
+        final List<ItemAttachment<?>> attachments = list
+            .getAttachments()
+            .stream()
+            .sorted((attachment1, attachment2) -> {
+                return attachment1.compareTo(attachment2);
+            })
+            .collect(Collectors.toList());
+
+        toMove.setSortKey(0);
+        attachments
+            .stream()
+            .filter(current -> !current.equals(toMove))
+            .forEach(current -> current.setSortKey(current.getSortKey() + 1));
+        
+        attachments.forEach(entityManager::merge);
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
     protected void moveAfter(final ContentItem selectedItem,
                              final AttachmentList listToMove,
                              final Long destId) {
@@ -198,7 +234,7 @@ class RelatedInfoStepController {
             .orElseThrow(() -> new IllegalArgumentException(String
             .format("No ItemAttachment with ID %d in the database.",
                     attachmentId)));
-        
+
         entityManager.remove(attachment);
 
     }

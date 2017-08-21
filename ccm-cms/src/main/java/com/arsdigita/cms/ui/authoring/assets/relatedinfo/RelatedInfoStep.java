@@ -27,11 +27,13 @@ import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.ui.authoring.AuthoringKitWizard;
 import com.arsdigita.cms.ui.authoring.ResettableContainer;
 import com.arsdigita.cms.ui.authoring.assets.AttachmentListSelectionModel;
+import com.arsdigita.cms.ui.authoring.assets.AttachmentSelectionModel;
 import com.arsdigita.globalization.GlobalizedMessage;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.AttachmentList;
+import org.librecms.contentsection.ItemAttachment;
 import org.librecms.ui.authoring.ContentItemAuthoringStep;
 
 /**
@@ -46,15 +48,24 @@ import org.librecms.ui.authoring.ContentItemAuthoringStep;
 public class RelatedInfoStep extends ResettableContainer {
 
     private final ItemSelectionModel itemSelectionModel;
-    private final AttachmentListSelectionModel selectedListModel;
-    private final AttachmentListSelectionModel moveListModel;
     private final AuthoringKitWizard authoringKitWizard;
     private final StringParameter selectedLanguageParam;
+
+    private final AttachmentListSelectionModel selectedListModel;
+    private final AttachmentListSelectionModel moveListModel;
 
     private final RelatedInfoListTable listTable;
     private final RelatedInfoListForm listForm;
     private final ActionLink addListLink;
     private final ActionLink listToFirstLink;
+
+    private final AttachmentSelectionModel selectedAttachmentModel;
+    private final AttachmentSelectionModel moveAttachmentModel;
+
+    private final AttachmentsTable attachmentsTable;
+    private final RelatedInfoAttachAssetForm attachAssetForm;
+    private final ActionLink attachAssetLink;
+    private final ActionLink attachmentToFirstLink;
 
     public RelatedInfoStep(final ItemSelectionModel itemSelectionModel,
                            final AuthoringKitWizard authoringKitWizard,
@@ -68,7 +79,8 @@ public class RelatedInfoStep extends ResettableContainer {
 
         selectedListModel = new AttachmentListSelectionModel(
             "selected-attachment-list");
-        moveListModel = new AttachmentListSelectionModel("move-attachment-list");
+        moveListModel = new AttachmentListSelectionModel(
+            "move-attachment-list-model");
 
         listTable = new RelatedInfoListTable(this,
                                              itemSelectionModel,
@@ -90,7 +102,8 @@ public class RelatedInfoStep extends ResettableContainer {
         });
 
         listToFirstLink = new ActionLink(new GlobalizedMessage(
-            "cms.ui.authoring.assets.related_info_step.move_to_beginning",
+            "cms.ui.authoring.assets.related_info_step.attachment_list"
+                + ".move_to_beginning",
             CmsConstants.CMS_BUNDLE));
         listToFirstLink.addActionListener(event -> {
             final PageState state = event.getPageState();
@@ -119,6 +132,60 @@ public class RelatedInfoStep extends ResettableContainer {
                 listToFirstLink.setVisible(state, true);
             }
         });
+
+        selectedAttachmentModel = new AttachmentSelectionModel(
+            "selected-attachment-model");
+        moveAttachmentModel = new AttachmentSelectionModel(
+            "move-attachment-model");
+
+        attachmentsTable = new AttachmentsTable(this, itemSelectionModel,
+                                                selectedListModel,
+                                                selectedAttachmentModel,
+                                                moveAttachmentModel,
+                                                selectedLanguageParam);
+        attachAssetForm = new RelatedInfoAttachAssetForm(this,
+                                                         itemSelectionModel,
+                                                         selectedListModel,
+                                                         selectedLanguageParam);
+
+        attachAssetLink = new ActionLink(new GlobalizedMessage(
+            "cms.ui.authoring.assets.related_info_step.attach_asset",
+            CmsConstants.CMS_BUNDLE));
+        attachAssetLink.addActionListener(event -> {
+            showAttachAssetForm(event.getPageState());
+        });
+
+        attachmentToFirstLink = new ActionLink(new GlobalizedMessage(
+            "cms.ui.authoring.assets.related_info_step.attachment.move_to_first",
+            CmsConstants.CMS_BUNDLE));
+        attachmentToFirstLink.addActionListener(event -> {
+            final PageState state = event.getPageState();
+            final ItemAttachment<?>
+            toMove = moveAttachmentModel
+                .getSelectedAttachment(state);
+
+            final RelatedInfoStepController controller = CdiUtil
+                .createCdiUtil()
+                .findBean(RelatedInfoStepController.class);
+
+            controller.moveToFirst(selectedListModel
+                .getSelectedAttachmentList(state), toMove);
+
+            moveAttachmentModel.clearSelection(state);
+        });
+
+        moveAttachmentModel.addChangeListener(event -> {
+
+            final PageState state = event.getPageState();
+
+            if (moveAttachmentModel.getSelectedKey(state) == null) {
+                attachAssetLink.setVisible(state, true);
+                attachmentToFirstLink.setVisible(state, false);
+            } else {
+                attachAssetLink.setVisible(state, false);
+                attachmentToFirstLink.setVisible(state, true);
+            }
+        });
     }
 
     @Override
@@ -128,11 +195,19 @@ public class RelatedInfoStep extends ResettableContainer {
 
         page.addComponentStateParam(this, selectedListModel.getStateParameter());
         page.addComponentStateParam(this, moveListModel.getStateParameter());
+        page.addComponentStateParam(this, 
+                                    selectedAttachmentModel.getStateParameter());
+        page.addComponentStateParam(this, 
+                                    moveAttachmentModel.getStateParameter());
 
         page.setVisibleDefault(listTable, true);
         page.setVisibleDefault(listForm, false);
         page.setVisibleDefault(addListLink, true);
         page.setVisibleDefault(listToFirstLink, false);
+        page.setVisibleDefault(attachmentsTable, false);
+        page.setVisibleDefault(attachAssetForm, false);
+        page.setVisibleDefault(attachAssetLink, false);
+        page.setVisibleDefault(attachmentToFirstLink, false);
     }
 
     protected void showAttachmentListTable(final PageState state) {
@@ -141,6 +216,10 @@ public class RelatedInfoStep extends ResettableContainer {
         addListLink.setVisible(state, true);
         listForm.setVisible(state, false);
         listToFirstLink.setVisible(state, false);
+        attachmentsTable.setVisible(state, false);
+        attachAssetForm.setVisible(state, false);
+        attachAssetLink.setVisible(state, false);
+        attachmentToFirstLink.setVisible(state, false);
     }
 
     void showListEditForm(final PageState state) {
@@ -149,12 +228,33 @@ public class RelatedInfoStep extends ResettableContainer {
         listForm.setVisible(state, true);
         addListLink.setVisible(state, false);
         listToFirstLink.setVisible(state, false);
+        attachmentsTable.setVisible(state, false);
+        attachAssetForm.setVisible(state, false);
+        attachAssetLink.setVisible(state, false);
+        attachmentToFirstLink.setVisible(state, false);
     }
 
     void showAttachmentsTable(final PageState state) {
-        
-        
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        listTable.setVisible(state, false);
+        listForm.setVisible(state, false);
+        addListLink.setVisible(state, false);
+        listToFirstLink.setVisible(state, false);
+        attachmentsTable.setVisible(state, true);
+        attachAssetForm.setVisible(state, false);
+        attachAssetLink.setVisible(state, true);
+        attachmentToFirstLink.setVisible(state, false);
+    }
+    
+    void showAttachAssetForm(final PageState state) {
+        listTable.setVisible(state, false);
+        listForm.setVisible(state, false);
+        addListLink.setVisible(state, false);
+        listToFirstLink.setVisible(state, false);
+        attachmentsTable.setVisible(state, false);
+        attachAssetForm.setVisible(state, true);
+        attachAssetLink.setVisible(state, false);
+        attachmentToFirstLink.setVisible(state, false);
     }
 
 }
