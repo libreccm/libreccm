@@ -18,21 +18,18 @@
  */
 package org.librecms.contentsection.rs;
 
-import com.arsdigita.cms.ui.assets.AssetSearchWidget;
-import com.arsdigita.kernel.KernelConfig;
-
 import org.libreccm.l10n.GlobalizationHelper;
-import org.librecms.assets.AssetTypeInfo;
-import org.librecms.assets.AssetTypesManager;
-import org.librecms.contentsection.Asset;
-import org.librecms.contentsection.AssetManager;
-import org.librecms.contentsection.AssetRepository;
+import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentItemManager;
+import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.FolderManager;
 import org.librecms.contentsection.FolderRepository;
 import org.librecms.contentsection.FolderType;
+import org.librecms.contenttypes.ContentTypeInfo;
+import org.librecms.contenttypes.ContentTypesManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,37 +50,39 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
 /**
- * Provides a Web Service (build using JAX-RS). Used for example by the 
- * {@link AssetSearchWidget}.
- * 
+ * Provides a Web Service (build using JAX-RS). Used for example by the
+ * {@link ItemSearchWidget}.
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 @Path("/{content-section}/assets/")
-public class Assets {
+public class ContentItems {
 
     @Inject
     private ContentSectionRepository sectionRepo;
 
     @Inject
     private FolderRepository folderRepo;
-    
+
     @Inject
     private FolderManager folderManager;
 
     @Inject
-    private AssetRepository assetRepo;
+    private ContentItemRepository itemRepo;
 
     @Inject
-    private AssetManager assetManager;
-    
+    private ContentItemManager itemManager;
+
     @Inject
-    private AssetTypesManager assetTypesManager;
+    private ContentTypesManager itemTypesManager;
 
     @Inject
     private GlobalizationHelper globalizationHelper;
 
-    private Class<? extends Asset> toAssetTypeClass(final String type) {
+    private Class<? extends ContentItem> toContentItemTypeClass(
+        final String type) {
+
         final Class<?> clazz;
         try {
             clazz = Class.forName(type);
@@ -93,61 +92,64 @@ public class Assets {
                 type));
         }
 
-        if (Asset.class.isAssignableFrom(clazz)) {
+        if (ContentItem.class.isAssignableFrom(clazz)) {
             @SuppressWarnings("unchecked")
-            final Class<? extends Asset> typeClass
-                                             = (Class<? extends Asset>) clazz;
+            final Class<? extends ContentItem> typeClass
+                                                   = (Class<? extends ContentItem>) clazz;
             return typeClass;
         } else {
             throw new IllegalArgumentException(String.format(
                 "Type '%s is not a subclass of '%s'.",
                 type,
-                Asset.class.getName()));
+                ContentItem.class.getName()));
         }
     }
 
-    private Map<String, String> createAssetMapEntry(final Folder folder) {
+    private Map<String, String> createItemMapEntry(final Folder folder) {
+
         final Map<String, String> result = new HashMap<>();
 
         result.put("title",
                    folder
-                       .getTitle()
-                       .getValue(KernelConfig.getConfig().getDefaultLocale()));
+                       .getTitle().getValue(globalizationHelper
+                           .getNegotiatedLocale()));
+
         result.put("type",
                    Folder.class.getName());
         result.put("place", "");
-        
+
         return result;
     }
 
-    private Map<String, String> createAssetMapEntry(final Asset asset) {
+    private Map<String, String> createItemMapEntry(final ContentItem item) {
+
         final Map<String, String> result = new HashMap<>();
 
-        result.put("assetId", 
-                   Long.toString(asset.getObjectId()));
-        
+        result.put("itemId",
+                   Long.toString(item.getObjectId()));
+
         result.put("title",
-                   asset.getTitle().getValue(globalizationHelper
+                   item.getTitle().getValue(globalizationHelper
                        .getNegotiatedLocale()));
 
         result.put("type",
-                   asset.getClass().getName());
+                   item.getClass().getName());
 
-        final AssetTypeInfo typeInfo = assetTypesManager
-            .getAssetTypeInfo(asset.getClass());
+        final ContentTypeInfo typeInfo = itemTypesManager
+            .getContentTypeInfo(item.getClass());
         final ResourceBundle bundle = ResourceBundle
             .getBundle(typeInfo.getLabelBundle(),
                        globalizationHelper.getNegotiatedLocale());
         result.put("typeLabel", bundle.getString(typeInfo.getLabelKey()));
 
-        final Optional<Folder> assetFolder = assetManager.getAssetFolder(asset);
-        if (assetFolder.isPresent()) {
-        result.put("place", 
-                   folderManager.getFolderPath(assetFolder.get()));
+        final Optional<Folder> itemFolder = itemManager.getItemFolder(item);
+        if (itemFolder.isPresent()) {
+            result.put("place",
+                       folderManager.getFolderPath(itemFolder.get()));
         } else {
             result.put("place", "");
         }
-        
+
         return result;
     }
 
@@ -155,7 +157,7 @@ public class Assets {
     @Path("/")
     @Produces("text/json; charset=utf-8")
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<Map<String, String>> findAssets(
+    public List<Map<String, String>> findItems(
         @PathParam("content-section") final String section,
         @QueryParam("query") final String query,
         @QueryParam("type") final String type) {
@@ -165,57 +167,63 @@ public class Assets {
             .orElseThrow(() -> new NotFoundException(
             String.format("No content section '%s' found.", section)));
 
-        final List<Asset> assets;
+        final List<ContentItem> items;
         if ((query == null || query.trim().isEmpty())
                 && (type == null || type.trim().isEmpty())) {
-            assets = assetRepo.findByContentSection(contentSection);
+            items = itemRepo
+                .findByContentSection(contentSection);
+
         } else if ((query != null && !query.trim().isEmpty())
                        && (type == null || type.trim().isEmpty())) {
-            assets = assetRepo.findByTitleAndContentSection(query,
-                                                            contentSection);
+
+            items = itemRepo.findByNameAndContentSection(query,
+                                                          contentSection);
         } else if ((query == null || query.trim().isEmpty())
                        && (type != null && !type.trim().isEmpty())) {
-            final Class<? extends Asset> assetType = toAssetTypeClass(type);
-            assets = assetRepo.findByTypeAndContentSection(assetType,
-                                                           contentSection);
+
+            final Class<? extends ContentItem> itemType
+                                                   = toContentItemTypeClass(type);
+            items = itemRepo.findByTypeAndContentSection(itemType,
+                                                         contentSection);
         } else {
-            final Class<? extends Asset> assetType = toAssetTypeClass(type);
-            assets = assetRepo.findByTitleAndTypeAndContentSection(
+            final Class<? extends ContentItem> itemType
+                                                   = toContentItemTypeClass(type);
+            items = itemRepo.findByNameAndTypeAndContentSection(
                 query,
-                assetType,
+                itemType,
                 contentSection);
         }
 
-        return assets
+        return items
             .stream()
-            .map(asset -> createAssetMapEntry(asset))
+            .map(item -> createItemMapEntry(item))
             .collect(Collectors.toList());
     }
 
     @GET
-    @Path("/folders/")
+    @Path("/folders")
     @Produces("text/json; charset=utf-8")
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<Map<String, String>> findAssetsInRootFolder(
+    public List<Map<String, String>> findItemsInRootFolder(
         @PathParam("content-section") final String section,
         @QueryParam("query") final String query,
         @QueryParam("type") final String type) {
 
         final ContentSection contentSection = sectionRepo
             .findByLabel(section)
-            .orElseThrow(() -> new NotFoundException(
-            String.format("No content section '%s' found.", section)));
+            .orElseThrow(() -> new NotFoundException(String
+            .format("No content section with '%s' found.", section)));
 
-        final Folder folder = contentSection.getRootAssetsFolder();
+        final Folder folder = contentSection.getRootDocumentsFolder();
 
-        return findAssetsInFolder(folder, query, type);
+        return findItemsInFolder(folder, query, type);
     }
 
     @GET
     @Path("/folders/{folder}/")
     @Produces("text/json; charset=utf-8")
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<Map<String, String>> findAssetsInFolder(
+    public List<Map<String, String>> findItemsInFolder(
         @PathParam("content-section") final String section,
         @PathParam("folder") final String folderPath,
         @QueryParam("query") final String query,
@@ -228,54 +236,56 @@ public class Assets {
 
         final Folder folder = folderRepo.findByPath(contentSection,
                                                     folderPath,
-                                                    FolderType.ASSETS_FOLDER)
+                                                    FolderType.DOCUMENTS_FOLDER)
             .orElseThrow(() -> new NotFoundException(String.format(
-            "No assets folder with path '%s' in content section '%s'",
+            "No documents folder with path '%s' in content section '%s'",
             folderPath,
             section)));
 
-        return findAssetsInFolder(folder, query, type);
+        return findItemsInFolder(folder, query, type);
     }
 
-    private List<Map<String, String>> findAssetsInFolder(final Folder folder,
-                                                         final String query,
-                                                         final String type) {
+    private List<Map<String, String>> findItemsInFolder(final Folder folder,
+                                                        final String query,
+                                                        final String type) {
 
         final List<Map<String, String>> subFolderEntries = folder
             .getSubFolders()
             .stream()
-            .map(subFolder -> createAssetMapEntry(subFolder))
+            .map(subFolder -> createItemMapEntry(subFolder))
             .collect(Collectors.toList());
 
-        final List<Asset> assets;
+        final List<ContentItem> items;
         if ((query == null || query.trim().isEmpty())
-                && ((type == null) || type.trim().isEmpty())) {
-            assets = assetRepo.findByFolder(folder);
+                && (type == null || type.trim().isEmpty())) {
+            items = itemRepo.findByFolder(folder);
         } else if ((query != null && !query.trim().isEmpty())
                        && (type == null || type.trim().isEmpty())) {
-
-            assets = assetRepo.filterByFolderAndTitle(folder, query);
+            items = itemRepo.filterByFolderAndName(folder, query);
         } else if ((query == null || query.trim().isEmpty())
-                       && (type != null && !type.trim().isEmpty())) {
-            final Class<? extends Asset> assetType = toAssetTypeClass(type);
-            assets = assetRepo.filterByFolderAndType(folder, assetType);
+                       && (type != null && type.trim().isEmpty())) {
+            final Class<? extends ContentItem> itemType
+                                                   = toContentItemTypeClass(type);
+            items = itemRepo.filterByFolderAndType(folder, itemType);
         } else {
-            final Class<? extends Asset> assetType = toAssetTypeClass(type);
-            assets = assetRepo.filterByFolderAndTypeAndTitle(folder,
-                                                             assetType,
-                                                             query);
+            final Class<? extends ContentItem> itemType
+                                                   = toContentItemTypeClass(type);
+            items = itemRepo.filterByFolderAndTypeAndName(folder,
+                                                          itemType,
+                                                          query);
         }
 
-        final List<Map<String, String>> assetEntries = assets
+        final List<Map<String, String>> itemEntries = items
             .stream()
-            .map(asset -> createAssetMapEntry(asset))
+            .map(item -> createItemMapEntry(item))
             .collect(Collectors.toList());
-
+        
         final List<Map<String, String>> result = new ArrayList<>();
         result.addAll(subFolderEntries);
-        result.addAll(assetEntries);
-
+        result.addAll(itemEntries);
+        
         return result;
+
     }
 
 }

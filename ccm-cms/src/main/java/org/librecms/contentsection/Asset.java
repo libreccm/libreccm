@@ -195,7 +195,7 @@ import static org.librecms.CmsConstants.*;
                     + "JOIN a.title.values t "
                     + "JOIN a.categories c "
                     + "LEFT JOIN a.permissions p "
-                    + "WHERE LOWER(t) LIKE CONCAT('%s', :title, '%s') "
+                    + "WHERE LOWER(t) LIKE CONCAT('%', :title, '%') "
                     + "AND c.category.section = :section "
                     + "AND ("
                     + "  ("

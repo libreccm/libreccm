@@ -238,6 +238,68 @@ public class ContentItemRepository
         }
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
+    @SuppressWarnings("unchecked")
+    public <T extends ContentItem> List<T> findByContentSection(
+        final ContentSection section) {
+
+        final TypedQuery<ContentItem> query = getEntityManager()
+            .createNamedQuery("ContentItem.findByContentSection",
+                              ContentItem.class);
+        query.setParameter("section", section);
+        setAuthorizationParameters(query);
+
+        return (List<T>) query.getResultList();
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    @SuppressWarnings("unchecked")
+    public <T extends ContentItem> List<T> findByNameAndContentSection(
+        final String name, final ContentSection section) {
+
+        final TypedQuery<ContentItem> query = getEntityManager()
+            .createNamedQuery("ContentItem.findByNameAndContentSection",
+                              ContentItem.class);
+        query.setParameter("section", section);
+        query.setParameter("name", name);
+        setAuthorizationParameters(query);
+
+        return (List<T>) query.getResultList();
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    @SuppressWarnings("unchecked")
+    public <T extends ContentItem> List<T> findByTypeAndContentSection(
+        final Class<? extends ContentItem> type, final ContentSection section) {
+
+        final TypedQuery<ContentItem> query = getEntityManager()
+            .createNamedQuery("ContentItem.findByNameAndContentSection",
+                              ContentItem.class);
+        query.setParameter("section", section);
+        query.setParameter("type", type);
+        setAuthorizationParameters(query);
+
+        return (List<T>) query.getResultList();
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    @SuppressWarnings("unchecked")
+    public <T extends ContentItem> List<T> findByNameAndTypeAndContentSection(
+        final String name,
+        final Class<? extends ContentItem> type,
+        final ContentSection section) {
+
+        final TypedQuery<ContentItem> query = getEntityManager()
+            .createNamedQuery("ContentItem.findByNameAndContentSection",
+                              ContentItem.class);
+        query.setParameter("section", section);
+        query.setParameter("name", name);
+        query.setParameter("type", type);
+        setAuthorizationParameters(query);
+
+        return (List<T>) query.getResultList();
+    }
+
     /**
      * Finds all content items of a specific type.
      *
@@ -352,6 +414,39 @@ public class ContentItemRepository
                               ContentItem.class);
         query.setParameter("folder", folder);
         query.setParameter("name", name);
+        setAuthorizationParameters(query);
+
+        return query.getResultList();
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<ContentItem> filterByFolderAndType(
+        final Category folder,
+        final Class<? extends ContentItem> type) {
+
+        final TypedQuery<ContentItem> query = getEntityManager()
+            .createNamedQuery("ContentItem.filterByFolderAndType",
+                              ContentItem.class);
+        query.setParameter("folder", folder);
+        query.setParameter("type", type);
+        setAuthorizationParameters(query);
+
+        return query.getResultList();
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<ContentItem> filterByFolderAndTypeAndName(
+        final Category folder,
+        final Class<? extends ContentItem> type,
+        final String name) {
+
+        
+        final TypedQuery<ContentItem> query = getEntityManager()
+            .createNamedQuery("ContentItem.filterByFolderAndTypeAndName",
+                              ContentItem.class);
+        query.setParameter("folder", folder);
+        query.setParameter("name", name);
+        query.setParameter("type", type);
         setAuthorizationParameters(query);
 
         return query.getResultList();

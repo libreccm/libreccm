@@ -26,35 +26,24 @@ import com.arsdigita.xml.Element;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.GlobalizationHelper;
-import org.librecms.assets.AssetTypeInfo;
-import org.librecms.assets.AssetTypesManager;
-import org.librecms.contentsection.Asset;
-import org.librecms.contentsection.AssetRepository;
+import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
+import org.librecms.contenttypes.ContentTypeInfo;
+import org.librecms.contenttypes.ContentTypesManager;
 
 import java.util.ResourceBundle;
 
 /**
- * A widget for selecting an asset. The widget does not contain any other
- * widgets, only the information required to create an HTML/JavaScript dialog
- * for selecting an asset. To create the dialog the
- * {@link org.librecms.contentsection.rs.Assets} class can be used which
- * provides several methods for getting the assets of an content section.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class AssetSearchWidget extends Widget {
+public class ItemSearchWidget extends Widget {
 
-    private Class<? extends Asset> type;
+    private Class<? extends ContentItem> type;
 
-    public AssetSearchWidget(final String name) {
+    public ItemSearchWidget(final String name) {
         super(new LongParameter(name));
-    }
-
-    public AssetSearchWidget(final String name,
-                             final Class<? extends Asset> type) {
-        this(name);
-        this.type = type;
     }
 
     @Override
@@ -64,12 +53,12 @@ public class AssetSearchWidget extends Widget {
 
     @Override
     protected String getType() {
-        return "asset-search-widget";
+        return "item-search-widget";
     }
 
     @Override
     protected String getElementTag() {
-        return "cms:asset-search-widget";
+        return "cms:item-search-widget";
     }
 
     @Override
@@ -91,36 +80,38 @@ public class AssetSearchWidget extends Widget {
         final Long value = (Long) getValue(state);
         if (value != null) {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final AssetRepository assetRepo = cdiUtil
-                .findBean(AssetRepository.class);
-            final AssetTypesManager typesManager = cdiUtil
-                .findBean(AssetTypesManager.class);
+            final ContentItemRepository itemRepo = cdiUtil
+                .findBean(ContentItemRepository.class);
+            final ContentTypesManager typesManager = cdiUtil
+                .findBean(ContentTypesManager.class);
             final GlobalizationHelper globalizationHelper = cdiUtil
                 .findBean(GlobalizationHelper.class);
 
-            final Asset asset = assetRepo
+            final ContentItem item = itemRepo
                 .findById(value)
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                "No Asset with ID %d in the database.", value)));
-
+                .orElseThrow(() -> new IllegalArgumentException(String
+                .format("No ContentItem with ID %d in the database.", value)));
+            
             final Element selected = widget
-                .newChildElement("cms:selected-asset", CMS.CMS_XML_NS);
-            selected.addAttribute("assetId",
-                                  Long.toString(asset.getObjectId()));
+                .newChildElement("cms:selected-content-item", CMS.CMS_XML_NS);
+            selected.addAttribute("contentItemId", 
+                                  Long.toString(item.getObjectId()));
+            selected.addAttribute("name", item.getDisplayName());
             selected.addAttribute(
-                "title",
-                globalizationHelper
-                    .getValueFromLocalizedString(asset.getTitle()));
-            final AssetTypeInfo typeInfo = typesManager
-                .getAssetTypeInfo(asset.getClass().getName());
+                "title", 
+                globalizationHelper.getValueFromLocalizedString(item.getTitle()));
+            final ContentTypeInfo typeInfo = typesManager
+            .getContentTypeInfo(item.getClass());
             final ResourceBundle bundle = ResourceBundle
                 .getBundle(typeInfo.getLabelBundle(),
                            globalizationHelper.getNegotiatedLocale());
             final String typeLabel = bundle.getString(typeInfo.getLabelKey());
             selected.addAttribute("type", typeLabel);
-
+            
             exportAttributes(widget);
+            
         }
+
     }
 
 }
