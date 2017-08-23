@@ -36,7 +36,6 @@ import org.libreccm.core.UnexpectedErrorException;
 import org.librecms.contentsection.Asset;
 import org.librecms.contentsection.AssetRepository;
 import org.librecms.contentsection.AttachmentList;
-import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ItemAttachmentManager;
 
 /**
@@ -63,7 +62,7 @@ class RelatedInfoAttachAssetForm
         final AttachmentListSelectionModel listSelectionModel,
         final StringParameter selectedLangugeParam) {
 
-        super("relatedinfo-attachasset-form");
+        super("relatedinfo-attach-asset-form");
 
         this.relatedInfoStep = relatedInfoStep;
         this.itemSelectionModel = itemSelectionModel;
