@@ -56,7 +56,7 @@ import javax.ws.rs.QueryParam;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Path("/{content-section}/assets/")
+@Path("/{content-section}/items/")
 public class ContentItems {
 
     @Inject

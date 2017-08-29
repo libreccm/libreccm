@@ -1432,7 +1432,8 @@ img.cmsImageDisplay {
     width: auto;
 }
 
-div.asset-search-widget dialog {
+div.asset-search-widget dialog,
+div.item-search-widget dialog {
     background-color: #e6e4f2;
 
     border: 1px solid #555;
@@ -1454,27 +1455,32 @@ div.asset-search-widget dialog {
     z-index: 999;
 }
 
-div.asset-search-widget dialog[open="open"] {
+div.asset-search-widget dialog[open="open"],
+div.item-search-widget dialog[open="open"] {
     display: block;
 }
 
-div.asset-search-widget dialog .controls {
+div.asset-search-widget dialog .controls,
+div.item-search-widget dialog .controls {
     padding: 0.5em;
 }
 
-div.asset-search-widget dialog .controls label {
+div.asset-search-widget dialog .controls label,
+div.item-search-widget dialog .controls label {
 
     font-weight: bold;
 
     margin-right: 0.5em;
 }
 
-div.asset-search-widget dialog .dialogarea controls button {
+div.asset-search-widget dialog .dialogarea controls button, 
+div.item-search-widget dialog .dialogarea controls button{
 
     margin-left: 0.5em;
 
 }
-div .asset-search-widget dialog .selectable-assets {
+div.asset-search-widget dialog .selectable-assets, 
+div.item-search-widget dialog .selectable-assets {
 
     padding: 0;
     
@@ -1487,14 +1493,16 @@ div .asset-search-widget dialog .selectable-assets {
     overflow: scroll;
 }
 
-div.asset-search-widget dialog .dialogarea table {
+div.asset-search-widget dialog .dialogarea table,
+div.item-search-widget dialog .dialogarea table {
 
     margin-top: 1em;
     margin-left: 0.5em;
     margin-right: 0.5em;
 }
 
-div.asset-search-widget dialog .selectable-assets table thead tr th {
+div.asset-search-widget dialog .selectable-assets table thead tr th,
+div.item-search-widget dialog .selectable-assets table thead tr th {
     
     background-color: transparent;
     
@@ -1504,7 +1512,8 @@ div.asset-search-widget dialog .selectable-assets table thead tr th {
     
 }
 
-div.asset-search-widget dialog .titlebar {
+div.asset-search-widget dialog .titlebar,
+div.item-search-widget dialog .titlebar {
 
     border-bottom: 1px solid #555;
 
@@ -1513,7 +1522,8 @@ div.asset-search-widget dialog .titlebar {
     padding: 0.5em 1em;
 }
 
-div.asset-search-widget dialog .titlebar .close-button {
+div.asset-search-widget dialog .titlebar .close-button,
+div.item-search-widget dialog .titlebar .close-button {
 
     background-color: transparent;
 
@@ -1525,11 +1535,13 @@ div.asset-search-widget dialog .titlebar .close-button {
     right: 5px;
 }
 
-div.asset-search-widget dialog .titlebar .close-button:after {
+div.asset-search-widget dialog .titlebar .close-button:after,
+div.item-search-widget dialog .titlebar .close-button:after {
     content: '\2715';
 }
 
-div.asset-search-widget dialog .titlebar .close-button span {
+div.asset-search-widget dialog .titlebar .close-button span,
+div.item-search-widget dialog .titlebar .close-button span {
 
     position: absolute;
     top: -999px;
