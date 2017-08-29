@@ -25,6 +25,7 @@
     
     <xsl:import href="cms/asset-search-widget.xsl" />
     <xsl:import href="cms/image.xsl" />
+    <xsl:import href="cms/item-search-widget.xsl" />
     <xsl:import href="cms/item-summary.xsl" />
     <xsl:import href="cms/notes.xsl" />
     <xsl:import href="cms/tasks-panel.xsl" />
