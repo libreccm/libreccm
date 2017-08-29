@@ -20,7 +20,9 @@ package com.arsdigita.cms.ui.authoring.assets.relatedinfo;
 
 import com.arsdigita.kernel.KernelConfig;
 
+import org.apache.commons.fileupload.MultipartStream;
 import org.libreccm.configuration.ConfigurationManager;
+import org.librecms.assets.RelatedLink;
 import org.librecms.contentsection.AttachmentList;
 import org.librecms.contentsection.AttachmentListManager;
 import org.librecms.contentsection.ContentItem;
@@ -148,7 +150,7 @@ class RelatedInfoStepController {
             .stream()
             .filter(current -> !current.equals(toMove))
             .forEach(current -> current.setSortKey(current.getSortKey() + 1));
-        
+
         attachments.forEach(entityManager::merge);
     }
 
@@ -276,6 +278,27 @@ class RelatedInfoStepController {
             .map(attachment -> buildAttachmentTableRow(attachment,
                                                        selectedLocale))
             .collect(Collectors.toList());
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void createInternalLink(final AttachmentList attachmentList,
+                                      final long targetItemId,
+                                      final String title,
+//                                      final String description,
+                                      final String selectedLanguage) {
+
+        final ContentItem targetItem = itemRepo
+            .findById(targetItemId)
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No ContentItem with ID %d in the database.", targetItemId)));
+        
+        final RelatedLink link = new RelatedLink();
+        link.setTargetItem(targetItem);
+        final Locale selectedLocale = new Locale(selectedLanguage);
+        link.getTitle().addValue(selectedLocale, title);
+        
+
+        itemAttachmentManager.attachAsset(link, attachmentList);
     }
 
     private AttachmentListTableRow buildAttachmentListTableRow(

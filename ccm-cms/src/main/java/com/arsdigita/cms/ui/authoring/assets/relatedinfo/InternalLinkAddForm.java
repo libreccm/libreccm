@@ -20,17 +20,19 @@ package com.arsdigita.cms.ui.authoring.assets.relatedinfo;
 
 import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormProcessException;
+import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SaveCancelSection;
 import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.FormSubmissionListener;
-import com.arsdigita.bebop.form.TextArea;
 import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.ui.assets.ItemSearchWidget;
 import com.arsdigita.cms.ui.authoring.assets.AttachmentListSelectionModel;
+
+import org.libreccm.cdi.utils.CdiUtil;
 
 /**
  *
@@ -46,44 +48,66 @@ public class InternalLinkAddForm
     private final ItemSelectionModel itemSelectionModel;
     private final AttachmentListSelectionModel listSelectionModel;
     private final StringParameter selectedLanguageParam;
-    
+
     private final TextField titleField;
-    private final TextArea descriptionArea;
+//    private final TextArea descriptionArea;
     private final ItemSearchWidget itemSearchWidget;
     private final SaveCancelSection saveCancelSection;
-    
+
     public InternalLinkAddForm(
         final RelatedInfoStep relatedInfoStep,
         final ItemSelectionModel itemSelectionModel,
         final AttachmentListSelectionModel listSelectionModel,
         final StringParameter selectedLanguageParam) {
-        
+
         super("relatedinfo-attach-internallink-form");
-        
+
         this.relatedInfoStep = relatedInfoStep;
         this.itemSelectionModel = itemSelectionModel;
         this.listSelectionModel = listSelectionModel;
         this.selectedLanguageParam = selectedLanguageParam;
-        
+
         titleField = new TextField("link-title");
-        descriptionArea = new TextArea("link-description");
+//        descriptionArea = new TextArea("link-description");
         itemSearchWidget = new ItemSearchWidget("link-item-search");
         saveCancelSection = new SaveCancelSection();
     }
 
     @Override
-    public void init(FormSectionEvent e) throws FormProcessException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void init(final FormSectionEvent event) throws FormProcessException {
+
     }
 
     @Override
-    public void process(FormSectionEvent e) throws FormProcessException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void process(final FormSectionEvent event) throws
+        FormProcessException {
+
+        final PageState state = event.getPageState();
+
+        if (saveCancelSection.getSaveButton().isSelected(state)) {
+
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final RelatedInfoStepController controller = cdiUtil
+                .findBean(RelatedInfoStepController.class);
+
+            controller.createInternalLink(
+                listSelectionModel.getSelectedAttachmentList(state),
+                (Long) itemSearchWidget.getValue(state),
+                (String) titleField.getValue(state),
+                (String) state.getValue(selectedLanguageParam));
+
+            relatedInfoStep.showAttachmentsTable(state);
+        }
     }
 
     @Override
-    public void submitted(FormSectionEvent e) throws FormProcessException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void submitted(final FormSectionEvent event) throws
+        FormProcessException {
+        
+        if (saveCancelSection.getCancelButton().isSelected(event.getPageState())) {
+            relatedInfoStep.showAttachmentsTable(event.getPageState());
+        }
+        
     }
 
 }
