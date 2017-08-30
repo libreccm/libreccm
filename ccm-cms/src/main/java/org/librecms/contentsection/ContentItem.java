@@ -180,7 +180,7 @@ import static org.librecms.CmsConstants.*;
                     + "AND ("
                     + "      ("
                     + "        p.grantee IN :roles "
-                    + "        AND p.grantedPrivileges = "
+                    + "        AND p.grantedPrivilege = "
                     + "          (CASE WHEN i.version = 'DRAFT' "
                     + "            THEN '" + ItemPrivileges.PREVIEW + "' "
                     + "            ELSE '" + ItemPrivileges.VIEW_PUBLISHED
@@ -202,7 +202,7 @@ import static org.librecms.CmsConstants.*;
                     + "AND ("
                     + "      ("
                     + "        p.grantee IN :roles "
-                    + "        AND p.grantedPrivileges = "
+                    + "        AND p.grantedPrivilege = "
                     + "          (CASE WHEN i.version = 'DRAFT' "
                     + "            THEN '" + ItemPrivileges.PREVIEW + "' "
                     + "            ELSE '" + ItemPrivileges.VIEW_PUBLISHED
@@ -224,7 +224,7 @@ import static org.librecms.CmsConstants.*;
                     + "AND ("
                     + "      ("
                     + "        p.grantee IN :roles "
-                    + "        AND p.grantedPrivileges = "
+                    + "        AND p.grantedPrivilege = "
                     + "          (CASE WHEN i.version = 'DRAFT' "
                     + "            THEN '" + ItemPrivileges.PREVIEW + "' "
                     + "            ELSE '" + ItemPrivileges.VIEW_PUBLISHED
@@ -247,7 +247,7 @@ import static org.librecms.CmsConstants.*;
                     + "AND ("
                     + "      ("
                     + "        p.grantee IN :roles "
-                    + "        AND p.grantedPrivileges = "
+                    + "        AND p.grantedPrivilege = "
                     + "          (CASE WHEN i.version = 'DRAFT' "
                     + "            THEN '" + ItemPrivileges.PREVIEW + "' "
                     + "            ELSE '" + ItemPrivileges.VIEW_PUBLISHED
@@ -424,7 +424,7 @@ import static org.librecms.CmsConstants.*;
                     + "WHERE c.category = :folder "
                     + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
                     + "AND LOWER(i.displayName) LIKE CONCAT(LOWER(:name), '%') "
-                    + "AND TYPE(i) = :type"
+                    + "AND TYPE(i) = :type "
                     + "AND ("
                     + "      ("
                     + "        p.grantee IN :roles "
