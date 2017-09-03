@@ -95,6 +95,9 @@ public class AdminView extends CustomComponent implements View {
     @Inject
     private RolesTableDataProvider rolesTableDataProvider;
 
+    @Inject
+    private ConfigurationsTabController configurationsTabController;
+    
     private ResourceBundle bundle;
 
     private final TabSheet tabSheet;
@@ -104,6 +107,8 @@ public class AdminView extends CustomComponent implements View {
 
     private final JpqlConsole jpqlConsole;
 
+    private final ConfigurationTab configurationTab;
+    
     public AdminView() {
 
         tabSheet = new TabSheet();
@@ -121,6 +126,9 @@ public class AdminView extends CustomComponent implements View {
         } else {
             jpqlConsole = null;
         }
+        
+        configurationTab = new ConfigurationTab();
+        tabSheet.addTab(configurationTab, "Configuration");
 
 //        final GridLayout header = new GridLayout(5, 1);
 //        header.setWidth("100%");
@@ -183,6 +191,8 @@ public class AdminView extends CustomComponent implements View {
             .getString("ui.admin.tab.users_groups_roles.title"));
 
         usersGroupsRoles.localize();
+        
+        configurationTab.init(configurationsTabController);
     }
 
     @Override
@@ -191,8 +201,16 @@ public class AdminView extends CustomComponent implements View {
 //        usersGroupsRoles.setUsers(userRepo.findAll());
     }
 
+    protected GlobalizationHelper getGlobalizationHelper() {
+        return globalizationHelper;
+    }
+    
     protected JpqlConsoleController getJpqlConsoleController() {
         return jpqlConsoleController;
+    }
+    
+    protected ConfigurationsTabController getConfigurationsTabController() {
+        return configurationsTabController;
     }
 
     public UserRepository getUserRepository() {

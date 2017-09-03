@@ -18,6 +18,8 @@
  */
 package org.libreccm.admin.ui;
 
+import com.arsdigita.kernel.KernelConfig;
+
 import com.vaadin.cdi.ViewScoped;
 import com.vaadin.data.provider.AbstractDataProvider;
 import com.vaadin.data.provider.Query;
@@ -25,7 +27,7 @@ import org.libreccm.configuration.ConfigurationInfo;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.l10n.GlobalizationHelper;
 
-import java.util.SortedSet;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,7 +38,7 @@ import javax.inject.Inject;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ViewScoped
-public class ConfigurationsTableDataProvider extends AbstractDataProvider<Class<?>, String> {
+class ConfigurationsTableDataProvider extends AbstractDataProvider<ConfigurationsGridRowData, String> {
 
     private static final long serialVersionUID = -7001151229931864885L;
 
@@ -54,7 +56,12 @@ public class ConfigurationsTableDataProvider extends AbstractDataProvider<Class<
     }
 
     @Override
-    public int size(final Query<Class<?>, String> query) {
+    public int size(final Query<ConfigurationsGridRowData, String> query) {
+
+        final Locale defaultLocale = confManager
+            .findConfiguration(KernelConfig.class)
+            .getDefaultLocale();
+
         if (filter == null || filter.trim().isEmpty()) {
             return confManager.findAllConfigurations().size();
         } else {
@@ -64,14 +71,13 @@ public class ConfigurationsTableDataProvider extends AbstractDataProvider<Class<
                 .filter(conf -> {
                     final ConfigurationInfo info = confManager
                         .getConfigurationInfo(conf);
-//                    return c.getName().startsWith(filterTerm);
                     if (filter == null || filter.isEmpty()) {
                         return true;
                     } else {
                         return info
-                            .getTitle(globalizationHelper.getNegotiatedLocale())
-                            .startsWith(
-                                filter);
+                            .getTitle(globalizationHelper.getNegotiatedLocale(),
+                                      defaultLocale)
+                            .startsWith(filter);
                     }
                 })
                 .count();
@@ -79,34 +85,93 @@ public class ConfigurationsTableDataProvider extends AbstractDataProvider<Class<
     }
 
     @Override
-    public Stream<Class<?>> fetch(final Query<Class<?>, String> query) {
+    public Stream<ConfigurationsGridRowData> fetch(
+        final Query<ConfigurationsGridRowData, String> query) {
+
+        final int fromIndex;
+        final int toIndex;
+        final int size = size(query);
+        if (query.getOffset() > size - 1) {
+            fromIndex = size - 1;
+        } else {
+            fromIndex = query.getOffset();
+        }
+
+        if ((query.getOffset() + query.getLimit()) > size) {
+            toIndex = size;
+        } else {
+            toIndex = query.getOffset() + query.getLimit();
+        }
+
         if (filter == null || filter.trim().isEmpty()) {
-            return confManager.findAllConfigurations().stream();
+            return confManager
+                .findAllConfigurations()
+                .stream()
+                .map(configurationClass -> createRowData(configurationClass))
+                .sorted((rowData1, rowData2) -> {
+                    return rowData1
+                        .getConfigurationClass()
+                        .getSimpleName()
+                        .compareTo(rowData2.getConfigurationClass()
+                            .getSimpleName());
+                })
+                .collect(Collectors.toList())
+                .subList(fromIndex, toIndex)
+                .stream();
         } else {
             return confManager
                 .findAllConfigurations()
                 .stream()
-                .filter(conf -> {
-                    final ConfigurationInfo info = confManager
-                        .getConfigurationInfo(conf);
-//                    return c.getName().startsWith(filterTerm);
+                .map(configurationClass -> createRowData(configurationClass))
+                .filter(rowData -> {
                     if (filter == null || filter.isEmpty()) {
                         return true;
                     } else {
-                        return info
-                            .getTitle(globalizationHelper.getNegotiatedLocale())
-                            .startsWith(
-                                filter);
+                        return rowData
+                            .getTitle()
+                            .startsWith(filter);
                     }
                 })
+                .sorted((rowData1, rowData2) -> {
+                    return rowData1
+                        .getConfigurationClass()
+                        .getSimpleName()
+                        .compareTo(rowData2.getConfigurationClass()
+                            .getSimpleName());
+                })
                 .collect(Collectors.toList())
-                .subList(query.getOffset(), query.getOffset() + query.getLimit())
+                .subList(fromIndex, toIndex)
                 .stream();
         }
     }
 
     public void setFilter(final String filter) {
         this.filter = filter;
+    }
+
+    private ConfigurationsGridRowData createRowData(
+        final Class<?> configurationClass) {
+
+        final ConfigurationInfo info = confManager
+            .getConfigurationInfo(configurationClass);
+
+        final Locale defaultLocale = confManager
+            .findConfiguration(KernelConfig.class)
+            .getDefaultLocale();
+
+        final ConfigurationsGridRowData rowData
+                                            = new ConfigurationsGridRowData();
+        rowData.setConfigurationClass(configurationClass);
+        rowData.setName(info.getName());
+        rowData.setTitle(info
+            .getTitle(globalizationHelper.getNegotiatedLocale(),
+                      defaultLocale));
+        rowData.setDescription(info
+            .getDescription(globalizationHelper.getNegotiatedLocale()));
+        rowData.setConfigurationInfo(info);
+
+        return rowData;
+
     }
 
 }
