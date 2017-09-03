@@ -115,6 +115,40 @@ public final class ConfigurationInfo {
         this.descKey = descKey;
     }
 
+    public String getTitle(final Locale locale,
+                           final Locale fallback) {
+        final ResourceBundle bundle = getDescriptionBundle(locale);
+
+        if (bundle == null) {
+            return name;
+        } else {
+            try {
+                return bundle.getString(titleKey);
+            } catch (MissingResourceException ex) {
+                LOGGER.warn("Can't find resource for bundle '{}', "
+                                + "key '{}' and locale '{}'.",
+                            descBundle,
+                            titleKey,
+                            locale);
+                if (fallback == null) {
+                    return name;
+                } else {
+                    return getTitle(fallback, null);
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     * @param locale
+     *
+     * @return
+     *
+     * @deprecated Use {@link #getTitle(java.util.Locale, java.util.Locale)}
+     * instead.
+     */
+    @Deprecated()
     public String getTitle(final Locale locale) {
         final ResourceBundle bundle = getDescriptionBundle(locale);
 

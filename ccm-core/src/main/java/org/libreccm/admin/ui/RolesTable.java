@@ -33,7 +33,6 @@ import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.themes.ValoTheme;
-import org.libreccm.admin.ui.AdminView;
 import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
 
@@ -226,10 +225,7 @@ public class RolesTable extends Grid<Role> {
 
             final VerticalLayout layout = new VerticalLayout(text, buttons);
 
-//            final Panel panel = new Panel(
-//                bundle.getString("ui.admin.groups.delete.confirm.title"),
-//                layout);
-            setContent(layout);
+            super.setContent(layout);
         }
 
         private void deleteRole() {

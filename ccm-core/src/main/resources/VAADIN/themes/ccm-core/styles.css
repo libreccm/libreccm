@@ -1081,7 +1081,7 @@
  */
 
 .v-vaadin-version:after {
-	content: "8.1.1";
+	content: "8.1.3";
 }
 
 .v-widget {
@@ -3070,6 +3070,10 @@ select:focus {
 .v-filterselect .v-icon {
 	position: absolute;
 	pointer-events: none;
+}
+
+.v-filterselect .v-icon.FontAwesome {
+	margin-left: 0px;
 }
 
 .v-filterselect-error .v-filterselect-input {

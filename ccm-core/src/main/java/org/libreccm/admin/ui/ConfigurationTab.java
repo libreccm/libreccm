@@ -18,7 +18,16 @@
  */
 package org.libreccm.admin.ui;
 
+import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.themes.ValoTheme;
+import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.configuration.SettingManager;
+import org.libreccm.l10n.GlobalizationHelper;
+
+import java.util.Locale;
 
 /**
  *
@@ -27,12 +36,77 @@ import com.vaadin.ui.CustomComponent;
 public class ConfigurationTab extends CustomComponent {
 
     private static final long serialVersionUID = 7642627611731762410L;
-    
-    
-    
-    public ConfigurationTab(final AdminView adminView) {
+
+    private static final String COL_CONF_TITLE = "title";
+    private static final String COL_CONF_CLASS = "configuration_class";
+    private static final String COL_CONF_DESC = "description";
+
+    private ConfigurationsTabController controller;
+
+    private final Grid<ConfigurationsGridRowData> configurationsGrid;
+
+    public ConfigurationTab() {
+
+        super();
+        configurationsGrid = new Grid<>();
+
+        configurationsGrid.addComponentColumn(rowData -> {
+            final Button button = new Button(
+                rowData.getTitle(),
+                event -> {
+                    final ConfigurationSettingsWindow window
+                                                          = new ConfigurationSettingsWindow(
+                        rowData.getConfigurationClass(),
+                        rowData.getConfigurationInfo(),
+                        this);
+                    window.setWidth("70%");
+                    window.center();
+                    UI.getCurrent().addWindow(window);
+                });
+            button.setStyleName(ValoTheme.BUTTON_LINK);
+
+            return button;
+        })
+            .setId(COL_CONF_TITLE);
+
+        configurationsGrid.addColumn(
+            ConfigurationsGridRowData::getName)
+            .setId(COL_CONF_CLASS)
+            .setCaption("Configuration class");
+
+        configurationsGrid.addColumn(
+            ConfigurationsGridRowData::getDescription)
+            .setCaption(COL_CONF_DESC)
+            .setCaption("Description");
+
+        configurationsGrid.setWidth("100%");
         
+        super.setCompositionRoot(configurationsGrid);
+
+    }
+
+    protected void init(final ConfigurationsTabController controller) {
+        
+        this.controller = controller;
+        
+        configurationsGrid
+            .setDataProvider(controller.getConfigurationsTableDataProvider());
+    }
+
+    protected GlobalizationHelper getGlobalizationHelper() {
+        return controller.getGlobalizationHelper();
     }
     
-    
+    protected Locale getDefaultLocale() {
+        return controller.getDefaultLocale();
+    }
+
+    protected ConfigurationManager getConfigurationManager() {
+        return controller.getConfigurationManager();
+    }
+
+    protected SettingManager getSettingManager() {
+        return controller.getSettingManager();
+    }
+
 }
