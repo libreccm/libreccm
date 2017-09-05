@@ -68,7 +68,7 @@
                     class="item-search-widget-dialog"
                     data-itemtype="{./@item-type}"
                     data-contentsection="{./@content-section}"
-                    data-dispatcherPrefix="{$dispathcher-prefix}"
+                    data-dispatcherPrefix="{$dispatcher-prefix}"
                     data-targetId="{./@name}">
                 <h3 class="titlebar">
                     <xsl:value-of select="foundry:get-internal-static-text('cms', 'item-search-widget/titlebar')" />
@@ -464,6 +464,7 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
             </dialog>
             
         </div>
