@@ -84,7 +84,7 @@ public class Document {
     // Explicitly create elements & attributes to avoid namespace
     // problems
     private final static String identityXSL =
-                                "<xsl:stylesheet version=\"1.0\""
+                                "<xsl:stylesheet version=\"2  .0\""
                                 + " xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n"
                                 + "<xsl:output method=\"xml\"/>\n"
                                 + "<xsl:template match=\"text()|comment()|processing-instruction()\">\n"
