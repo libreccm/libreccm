@@ -19,6 +19,7 @@
 package com.arsdigita.cms.ui.authoring.assets.relatedinfo;
 
 import com.arsdigita.bebop.ActionLink;
+import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
@@ -91,9 +92,6 @@ public class RelatedInfoStep extends ResettableContainer {
                                            selectedListModel,
                                            selectedLanguageParam);
 
-        super.add(listTable);
-        super.add(listForm);
-
         addListLink = new ActionLink(new Label(new GlobalizedMessage(
             "cms.ui.authoring.assets.related_info_step.add_list",
             CmsConstants.CMS_BUNDLE)));
@@ -160,8 +158,7 @@ public class RelatedInfoStep extends ResettableContainer {
             CmsConstants.CMS_BUNDLE));
         attachmentToFirstLink.addActionListener(event -> {
             final PageState state = event.getPageState();
-            final ItemAttachment<?>
-            toMove = moveAttachmentModel
+            final ItemAttachment<?> toMove = moveAttachmentModel
                 .getSelectedAttachment(state);
 
             final RelatedInfoStepController controller = CdiUtil
@@ -186,6 +183,20 @@ public class RelatedInfoStep extends ResettableContainer {
                 attachmentToFirstLink.setVisible(state, true);
             }
         });
+
+        final BoxPanel panel = new BoxPanel(BoxPanel.VERTICAL);
+
+        panel.add(addListLink);
+        panel.add(listToFirstLink);
+        panel.add(listTable);
+        panel.add(listForm);
+
+        panel.add(attachAssetLink);
+        panel.add(attachmentToFirstLink);
+        panel.add(attachmentsTable);
+        panel.add(attachAssetForm);
+
+        super.add(panel);
     }
 
     @Override
@@ -195,9 +206,9 @@ public class RelatedInfoStep extends ResettableContainer {
 
         page.addComponentStateParam(this, selectedListModel.getStateParameter());
         page.addComponentStateParam(this, moveListModel.getStateParameter());
-        page.addComponentStateParam(this, 
+        page.addComponentStateParam(this,
                                     selectedAttachmentModel.getStateParameter());
-        page.addComponentStateParam(this, 
+        page.addComponentStateParam(this,
                                     moveAttachmentModel.getStateParameter());
 
         page.setVisibleDefault(listTable, true);
@@ -245,7 +256,7 @@ public class RelatedInfoStep extends ResettableContainer {
         attachAssetLink.setVisible(state, true);
         attachmentToFirstLink.setVisible(state, false);
     }
-    
+
     void showAttachAssetForm(final PageState state) {
         listTable.setVisible(state, false);
         listForm.setVisible(state, false);

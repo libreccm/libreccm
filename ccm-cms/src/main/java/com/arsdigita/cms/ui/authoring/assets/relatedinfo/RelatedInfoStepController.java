@@ -20,7 +20,6 @@ package com.arsdigita.cms.ui.authoring.assets.relatedinfo;
 
 import com.arsdigita.kernel.KernelConfig;
 
-import org.apache.commons.fileupload.MultipartStream;
 import org.libreccm.configuration.ConfigurationManager;
 import org.librecms.assets.RelatedLink;
 import org.librecms.contentsection.AttachmentList;
@@ -284,19 +283,18 @@ class RelatedInfoStepController {
     protected void createInternalLink(final AttachmentList attachmentList,
                                       final long targetItemId,
                                       final String title,
-//                                      final String description,
+                                      //                                      final String description,
                                       final String selectedLanguage) {
 
         final ContentItem targetItem = itemRepo
             .findById(targetItemId)
             .orElseThrow(() -> new IllegalArgumentException(String
             .format("No ContentItem with ID %d in the database.", targetItemId)));
-        
+
         final RelatedLink link = new RelatedLink();
         link.setTargetItem(targetItem);
         final Locale selectedLocale = new Locale(selectedLanguage);
         link.getTitle().addValue(selectedLocale, title);
-        
 
         itemAttachmentManager.attachAsset(link, attachmentList);
     }
@@ -319,15 +317,15 @@ class RelatedInfoStepController {
         }
 
         if (attachmentList.getDescription().hasValue(selectedLocale)) {
-            row.setTitle(shortenDescription(attachmentList
+            row.setDescription(shortenDescription(attachmentList
                 .getDescription()
                 .getValue(selectedLocale)));
         } else if (attachmentList.getDescription().hasValue(defaultLocale)) {
-            row.setTitle(shortenDescription(attachmentList
+            row.setDescription(shortenDescription(attachmentList
                 .getDescription()
                 .getValue(defaultLocale)));
         } else {
-            row.setTitle(shortenDescription(attachmentList
+            row.setDescription(shortenDescription(attachmentList
                 .getDescription()
                 .getValue()));
         }
@@ -366,7 +364,9 @@ class RelatedInfoStepController {
 
     private String shortenDescription(final String description) {
 
-        if (description.trim().length() < 140) {
+        if (description == null) {
+            return "";
+        } else if (description.trim().length() < 140) {
             return description.trim();
         } else {
             final String tmp = description.trim().substring(0, 140);
