@@ -22,18 +22,15 @@ import org.libreccm.core.AbstractEntityRepository;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
+import javax.enterprise.context.RequestScoped;
+import javax.persistence.EntityGraph;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityGraph;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
 
 /**
  * A repository for executing CRUD operations on {@link Domain} objects.
@@ -46,9 +43,6 @@ import javax.transaction.Transactional;
  */
 @RequestScoped
 public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
-
-    @Inject
-    private EntityManager entityManager;
 
     @Override
     public Class<Domain> getEntityClass() {
@@ -82,12 +76,12 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
      *         {@code null} if there is no such {@code Domain}.
      */
     public Optional<Domain> findByDomainKey(final String domainKey) {
-        final TypedQuery<Domain> query = entityManager.createNamedQuery(
-            "Domain.findByKey", Domain.class);
+        final TypedQuery<Domain> query = getEntityManager()
+                .createNamedQuery("Domain.findByKey", Domain.class);
         query.setParameter("key", domainKey);
 
-        final EntityGraph<?> graph = entityManager.getEntityGraph(
-            "Domain.allCategories");
+        final EntityGraph<?> graph = getEntityManager()
+                .getEntityGraph(    "Domain.allCategories");
         query.setHint("javax.persistence.fetchgraph", graph);
 
         try {
@@ -106,19 +100,38 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
      *         if there is so such {@code Domain}.
      */
     public Domain findByUri(final URI uri) {
-        final TypedQuery<Domain> query = entityManager.createNamedQuery(
-            "Domain.findByUri", Domain.class);
+        final TypedQuery<Domain> query = getEntityManager()
+                .createNamedQuery("Domain.findByUri", Domain.class);
         query.setParameter("uri", uri);
 
         return query.getSingleResult();
     }
 
+    /**
+     * Finds a {@link Domain} by its uuid.
+     *
+     * @param uuid The uuid of the item to find
+     *
+     * @return An optional either with the found item or empty
+     */
+    public Optional<Domain> findByUuid(final String uuid) {
+        final TypedQuery<Domain> query = getEntityManager()
+                .createNamedQuery("Domain.findByUuid", Domain.class);
+        query.setParameter("uuid", uuid);
+
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
+    }
+
     public List<Domain> search(final String term) {
-        final TypedQuery<Domain> query = entityManager.createNamedQuery(
-            "Domain.search", Domain.class);
+        final TypedQuery<Domain> query = getEntityManager()
+                .createNamedQuery("Domain.search", Domain.class);
         query.setParameter("term", term);
-        final EntityGraph<?> graph = entityManager.getEntityGraph(
-            "Domain.withOwners");
+        final EntityGraph<?> graph = getEntityManager()
+                .getEntityGraph("Domain.withOwners");
         query.setHint("javax.persistence.fetchgraph", graph);
 
         return query.getResultList();

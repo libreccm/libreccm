@@ -18,12 +18,12 @@
  */
 package org.libreccm.security;
 
-import static org.libreccm.core.CoreConstants.*;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.CcmObject;
+
+import static org.libreccm.core.CoreConstants.ACCESS_DENIED;
 
 /**
  * A helper class used by the secured collections provided by this package.

@@ -18,14 +18,11 @@
  */
 package org.libreccm.web;
 
-import com.arsdigita.web.URL;
-
+import javax.servlet.annotation.WebServlet;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import javax.servlet.annotation.WebServlet;
 
 /**
  * Provides the path name of the location of the applications servlet/JSP.

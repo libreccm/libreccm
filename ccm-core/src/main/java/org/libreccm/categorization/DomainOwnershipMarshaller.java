@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 LibreCCM Foundation.
+ * Copyright (C) 2015 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,36 +16,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.workflow;
+package org.libreccm.categorization;
 
-import org.libreccm.core.AbstractEntityRepository;
+import org.libreccm.portation.AbstractMarshaller;
+import org.libreccm.portation.Marshals;
 
 import javax.enterprise.context.RequestScoped;
-import java.util.UUID;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 /**
- * A repository for {@link WorkflowTemplate}s.
- * 
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers<\a>
+ * @version created the 8/23/17
  */
 @RequestScoped
-public class WorkflowTemplateRepository
-    extends AbstractEntityRepository<Long, WorkflowTemplate> {
+@Marshals(DomainOwnership.class)
+public class DomainOwnershipMarshaller extends AbstractMarshaller<DomainOwnership> {
+
+    @Inject
+    private EntityManager entityManager;
 
     @Override
-    public Class<WorkflowTemplate> getEntityClass() {
-        return WorkflowTemplate.class;
+    protected Class<DomainOwnership> getObjectClass() {
+        return DomainOwnership.class;
     }
 
     @Override
-    public boolean isNew(final WorkflowTemplate template) {
-        return template.getWorkflowId() == 0;
+    protected void insertIntoDb(DomainOwnership portableObject) {
+        if (portableObject.getOwnershipId() == 0) {
+            entityManager.persist(portableObject);
+        } else {
+            entityManager.merge(portableObject);
+        }
     }
-    
-    @Override
-    public void initNewEntity(final WorkflowTemplate workflowTemplate) {
-        super.initNewEntity(workflowTemplate);
-        workflowTemplate.setUuid(UUID.randomUUID().toString());
-    }
-
 }

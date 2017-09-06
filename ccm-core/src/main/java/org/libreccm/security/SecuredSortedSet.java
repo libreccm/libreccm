@@ -18,10 +18,10 @@
  */
 package org.libreccm.security;
 
+import org.libreccm.core.CcmObject;
+
 import java.util.Comparator;
 import java.util.SortedSet;
-
-import org.libreccm.core.CcmObject;
 
 /**
  * Decorator for {@link SortedSet} which checks if the current subject is

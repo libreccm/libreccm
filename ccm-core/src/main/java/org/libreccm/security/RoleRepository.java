@@ -18,19 +18,15 @@
  */
 package org.libreccm.security;
 
-import java.util.List;
-
-import javax.enterprise.context.RequestScoped;
-import javax.persistence.TypedQuery;
-
 import org.libreccm.core.AbstractEntityRepository;
+import org.libreccm.core.CcmObject;
 import org.libreccm.core.CoreConstants;
 
+import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
-
-import org.libreccm.core.CcmObject;
-
+import java.util.List;
 import java.util.Optional;
 
 /**

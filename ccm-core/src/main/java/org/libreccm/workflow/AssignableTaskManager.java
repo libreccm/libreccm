@@ -19,24 +19,17 @@
 package org.libreccm.workflow;
 
 import org.libreccm.core.CoreConstants;
-import org.libreccm.security.AuthorizationRequired;
-import org.libreccm.security.RequiresPrivilege;
-import org.libreccm.security.Role;
-import org.libreccm.security.RoleMembership;
-import org.libreccm.security.RoleRepository;
-import org.libreccm.security.Shiro;
-import org.libreccm.security.User;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import org.libreccm.security.*;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  *

@@ -20,23 +20,13 @@ package org.libreccm.workflow;
 
 import org.hibernate.annotations.Type;
 import org.libreccm.core.CoreConstants;
+import org.libreccm.core.Identifiable;
 import org.libreccm.security.User;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
-
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import org.libreccm.core.Identifiable;
 
 /**
  * A comment for a task. Comments are intended for other users, for example to

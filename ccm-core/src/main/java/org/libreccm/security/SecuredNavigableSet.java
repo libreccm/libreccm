@@ -18,9 +18,10 @@
  */
 package org.libreccm.security;
 
+import org.libreccm.core.CcmObject;
+
 import java.util.Iterator;
 import java.util.NavigableSet;
-import org.libreccm.core.CcmObject;
 
 /**
  * A decorated for {@link NavigableSet} which checks if the current subject is

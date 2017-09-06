@@ -20,9 +20,9 @@
 @XmlAccessorType(XmlAccessType.NONE)
 package org.libreccm.categorization;
 
-import static org.libreccm.categorization.CategorizationConstants.*;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlNs;
 import javax.xml.bind.annotation.XmlSchema;
+
+import static org.libreccm.categorization.CategorizationConstants.CAT_XML_NS;

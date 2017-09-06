@@ -26,14 +26,13 @@ import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Manager for {@link Task}s. The logic of some of this methods has been taken

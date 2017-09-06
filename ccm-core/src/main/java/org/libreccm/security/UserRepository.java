@@ -21,13 +21,12 @@ package org.libreccm.security;
 import org.libreccm.core.AbstractEntityRepository;
 import org.libreccm.core.CoreConstants;
 
-import java.util.List;
-import java.util.Optional;
-
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.EntityGraph;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository for user objects.

@@ -19,20 +19,6 @@
 package org.libreccm.security;
 
 import com.arsdigita.kernel.security.SecurityConfig;
-
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Date;
-import java.util.List;
-
-import org.libreccm.configuration.ConfigurationManager;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
-
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.shiro.authc.credential.PasswordMatcher;
 import org.apache.shiro.authc.credential.PasswordService;
@@ -43,7 +29,18 @@ import org.apache.shiro.crypto.hash.format.HashFormat;
 import org.apache.shiro.crypto.hash.format.HashFormatFactory;
 import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat;
 import org.apache.shiro.util.ByteSource;
+import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CoreConstants;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Date;
+import java.util.List;
 
 /**
  * This class manages the generation and delation of {@link OneTimeAuthToken}s.
