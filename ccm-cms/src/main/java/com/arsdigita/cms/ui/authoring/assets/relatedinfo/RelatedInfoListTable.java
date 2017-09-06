@@ -122,6 +122,10 @@ class RelatedInfoListTable extends Table {
             .getColumn(COL_DELETE)
             .setCellRenderer(new ControlLinkCellRenderer());
 
+        super.setEmptyView(new Label(new GlobalizedMessage(
+            "cms.ui.authoring.assets.related_info_step.list.none",
+            CmsConstants.CMS_BUNDLE)));
+
         super
             .addTableActionListener(new TableActionListener() {
 

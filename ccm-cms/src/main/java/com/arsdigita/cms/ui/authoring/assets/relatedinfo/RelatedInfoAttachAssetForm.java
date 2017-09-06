@@ -20,6 +20,7 @@ package com.arsdigita.cms.ui.authoring.assets.relatedinfo;
 
 import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormProcessException;
+import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SaveCancelSection;
 import com.arsdigita.bebop.event.FormInitListener;
@@ -80,8 +81,19 @@ class RelatedInfoAttachAssetForm
     }
 
     @Override
+    public void register(final Page page) {
+        super.register(page);
+        
+        page.addComponentStateParam(this, itemSelectionModel.getStateParameter());
+        page.addComponentStateParam(this, listSelectionModel.getStateParameter());
+    }
+
+    @Override
     public void init(final FormSectionEvent event) throws FormProcessException {
-        // Nothing yet
+        if (listSelectionModel.getSelectedKey(event.getPageState()) == null) {
+            throw new UnexpectedErrorException("The selected list null. "
+                                                   + "This should not happen.");
+        }
     }
 
     @Override
@@ -89,6 +101,11 @@ class RelatedInfoAttachAssetForm
         FormProcessException {
 
         final PageState state = event.getPageState();
+
+        if (listSelectionModel.getSelectedKey(state) == null) {
+            throw new UnexpectedErrorException("The selected list null. "
+                                                   + "This should not happen.");
+        }
 
         final Object value = searchWidget.getValue(state);
         if (value != null) {
@@ -101,10 +118,10 @@ class RelatedInfoAttachAssetForm
                 .findById((long) value)
                 .orElseThrow(() -> new UnexpectedErrorException(String
                 .format("No Asset with ID %d in the database.", value)));
-            
+
             final AttachmentList list = listSelectionModel
                 .getSelectedAttachmentList(state);
-            
+
             attachmentManager.attachAsset(asset, list);
         }
 
