@@ -18,8 +18,9 @@
  */
 package org.libreccm.security;
 
-import java.util.Set;
 import org.libreccm.core.CcmObject;
+
+import java.util.Set;
 
 /**
  * A decorator for {@link Set} which checks if the current subject is permitted

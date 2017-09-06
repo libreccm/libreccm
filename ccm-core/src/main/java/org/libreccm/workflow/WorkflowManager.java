@@ -19,9 +19,9 @@
 package org.libreccm.workflow;
 
 import com.arsdigita.kernel.KernelConfig;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.shiro.subject.Subject;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CoreConstants;
@@ -29,19 +29,7 @@ import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.security.Shiro;
-
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import org.libreccm.security.User;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
@@ -49,11 +37,13 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
-
-import org.apache.shiro.subject.Subject;
-import org.libreccm.security.User;
-
-import java.util.Optional;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
 
 /**
  * Manager for {@link Workflow}s. The logic of some of these classes has been

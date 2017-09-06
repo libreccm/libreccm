@@ -21,27 +21,27 @@ package org.libreccm.categorization;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
- * @version created on 3/23/17
+ * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers<\a>
+ * @version created the 8/10/17
  */
-public class CategorizationIdGenerator extends ObjectIdGenerator<String> {
+public class DomainOwnershipIdGenerator extends ObjectIdGenerator<String> {
     @Override
     public Class<?> getScope() {
-        return Categorization.class;
+        return DomainOwnership.class;
     }
 
     @Override
-    public boolean canUseFor(ObjectIdGenerator<?> gen) {
-        return gen instanceof CategorizationIdGenerator;
+    public boolean canUseFor(ObjectIdGenerator<?> objectIdGenerator) {
+        return objectIdGenerator instanceof DomainOwnershipIdGenerator;
     }
 
     @Override
-    public ObjectIdGenerator<String> forScope(Class<?> scope) {
+    public ObjectIdGenerator<String> forScope(Class<?> aClass) {
         return this;
     }
 
     @Override
-    public ObjectIdGenerator<String> newForSerialization(Object context) {
+    public ObjectIdGenerator<String> newForSerialization(Object o) {
         return this;
     }
 
@@ -49,20 +49,21 @@ public class CategorizationIdGenerator extends ObjectIdGenerator<String> {
     public IdKey key(Object key) {
         if (key == null)
             return null;
-        return new IdKey(Categorization.class, Categorization.class, key);
+        return new IdKey(DomainOwnership.class, DomainOwnership.class, key);
+
     }
 
     @Override
     public String generateId(Object forPojo) {
-        if (!(forPojo instanceof Categorization)) {
+        if (!(forPojo instanceof DomainOwnership)) {
             throw new IllegalArgumentException(
-                "Only Categorization instances are supported.");
+                    "Only DomainOwnerships instances are supported.");
         }
 
-        final Categorization categorization = (Categorization) forPojo;
+        final DomainOwnership domainOwnership = (DomainOwnership) forPojo;
 
         return String.format("{%s}{%s}",
-                categorization.getCategory().getUuid(),
-                categorization.getCategorizedObject().getUuid());
+                domainOwnership.getDomain().getDomainKey(),
+                domainOwnership.getOwner().getPrimaryUrl());
     }
 }

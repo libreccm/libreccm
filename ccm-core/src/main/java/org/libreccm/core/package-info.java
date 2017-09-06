@@ -25,10 +25,10 @@
 @XmlAccessorType(XmlAccessType.NONE)
 package org.libreccm.core;
 
-import static org.libreccm.core.CoreConstants.*;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlNs;
 import javax.xml.bind.annotation.XmlSchema;
+
+import static org.libreccm.core.CoreConstants.CORE_XML_NS;
 

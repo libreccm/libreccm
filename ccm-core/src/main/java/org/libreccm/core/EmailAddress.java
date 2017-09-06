@@ -18,18 +18,17 @@
  */
 package org.libreccm.core;
 
-import static org.libreccm.core.CoreConstants.*;
-
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
-
-import java.io.Serializable;
-import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+import java.util.Objects;
+
+import static org.libreccm.core.CoreConstants.CORE_XML_NS;
 
 /**
  * An embeddable entity for storing email addresses.

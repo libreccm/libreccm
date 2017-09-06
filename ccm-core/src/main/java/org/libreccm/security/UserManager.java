@@ -20,13 +20,6 @@ package org.libreccm.security;
 
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.kernel.security.SecurityConfig;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.executable.ValidateOnExecution;
-
 import org.apache.shiro.authc.credential.PasswordMatcher;
 import org.apache.shiro.authc.credential.PasswordService;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
@@ -41,7 +34,11 @@ import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.core.EmailAddress;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.constraints.NotNull;
+import javax.validation.executable.ValidateOnExecution;
 
 /**
  * Provides various operations for user objects.

@@ -21,12 +21,11 @@ package org.libreccm.workflow;
 import org.libreccm.core.AbstractEntityRepository;
 import org.libreccm.core.CcmObject;
 
-import java.util.Optional;
-import java.util.UUID;
-
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Repository for {@link Workflow}s.

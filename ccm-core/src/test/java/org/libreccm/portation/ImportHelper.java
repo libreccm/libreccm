@@ -18,30 +18,13 @@
  */
 package org.libreccm.portation;
 
-import org.libreccm.categorization.Categorization;
-import org.libreccm.categorization.CategorizationMarshaller;
-import org.libreccm.categorization.Category;
-import org.libreccm.categorization.CategoryMarshaller;
-import org.libreccm.security.Group;
-import org.libreccm.security.GroupMarshaller;
-import org.libreccm.security.GroupMembership;
-import org.libreccm.security.GroupMembershipMarshaller;
-import org.libreccm.security.Permission;
-import org.libreccm.security.PermissionMarshaller;
-import org.libreccm.security.Role;
-import org.libreccm.security.RoleMarshaller;
-import org.libreccm.security.RoleMembership;
-import org.libreccm.security.RoleMembershipMarshaller;
-import org.libreccm.security.User;
-import org.libreccm.security.UserMarshaller;
-import org.libreccm.workflow.AssignableTask;
-import org.libreccm.workflow.AssignableTaskMarshaller;
-import org.libreccm.workflow.TaskAssignment;
-import org.libreccm.workflow.TaskAssignmentMarshaller;
-import org.libreccm.workflow.Workflow;
-import org.libreccm.workflow.WorkflowMarshaller;
-import org.libreccm.workflow.WorkflowTemplate;
-import org.libreccm.workflow.WorkflowTemplateMarshaller;
+import org.libreccm.categorization.*;
+import org.libreccm.core.ResourceType;
+import org.libreccm.core.ResourceTypeMarshaller;
+import org.libreccm.security.*;
+import org.libreccm.web.CcmApplication;
+import org.libreccm.web.CcmApplicationMarshaller;
+import org.libreccm.workflow.*;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -56,17 +39,11 @@ import javax.inject.Inject;
 @RequestScoped
 class ImportHelper {
     //private String repoPath = "/home/jensp/pwi/libreccm/ccm/";
-    private String repoPath = "/home/tosmers/Svn/libreccm/";
-    private String projectPath = "ccm_ng/ccm-core/src/test/resources/" +
+    private final String repoPath = "/home/tosmers/Svn/libreccm/";
+    private final String projectPath = "ccm_ng/ccm-core/src/test/resources/" +
                     "portation/trunk-iaw-exports";
-    private boolean indentation = false;
+    private final boolean indentation = false;
 
-    @Inject
-    @Marshals(Category.class)
-    private CategoryMarshaller categoryMarshaller;
-    @Inject
-    @Marshals(Categorization.class)
-    private CategorizationMarshaller categorizationMarshaller;
     @Inject
     @Marshals(User.class)
     private UserMarshaller userMarshaller;
@@ -82,6 +59,26 @@ class ImportHelper {
     @Inject
     @Marshals(RoleMembership.class)
     private RoleMembershipMarshaller roleMembershipMarshaller;
+
+    @Inject
+    @Marshals(Category.class)
+    private CategoryMarshaller categoryMarshaller;
+    @Inject
+    @Marshals(Categorization.class)
+    private CategorizationMarshaller categorizationMarshaller;
+    @Inject
+    @Marshals(ResourceType.class)
+    private ResourceTypeMarshaller resourceTypeMarshaller;
+    @Inject
+    @Marshals(CcmApplication.class)
+    private CcmApplicationMarshaller ccmApplicationMarshaller;
+    @Inject
+    @Marshals(Domain.class)
+    private DomainMarshaller domainMarshaller;
+    @Inject
+    @Marshals(DomainOwnership.class)
+    private DomainOwnershipMarshaller domainOwnershipMarshaller;
+
     @Inject
     @Marshals(WorkflowTemplate.class)
     private WorkflowTemplateMarshaller workflowTemplateMarshaller;
@@ -94,80 +91,153 @@ class ImportHelper {
     @Inject
     @Marshals(TaskAssignment.class)
     private TaskAssignmentMarshaller taskAssignmentMarshaller;
+
     @Inject
     @Marshals(Permission.class)
     private PermissionMarshaller permissionMarshaller;
 
 
-    boolean importCategories() {
-        categoryMarshaller.prepare(Format.XML, repoPath + projectPath,
-                "categories.xml", indentation);
-        return categoryMarshaller.importFile();
-    }
-
-    boolean importCategorizations() {
-        categorizationMarshaller.prepare(Format.XML, repoPath + projectPath,
-                "categorizations.xml", indentation);
-        return categorizationMarshaller.importFile();
-    }
-
     boolean importUsers() {
-        userMarshaller.prepare(Format.XML, repoPath + projectPath,
-                "users.xml", indentation);
+        userMarshaller.prepare(
+                Format.XML,
+                repoPath + projectPath,
+                "users.xml",
+                indentation);
         return userMarshaller.importFile();
     }
 
     boolean importGroups() {
-        groupMarshaller.prepare(Format.XML, repoPath + projectPath,
-                "groups.xml", indentation);
+        groupMarshaller.prepare(
+                Format.XML,
+                repoPath + projectPath,
+                "groups.xml",
+                indentation);
         return groupMarshaller.importFile();
     }
 
     boolean importGroupMemberships() {
-        groupMembershipMarshaller.prepare(Format.XML, repoPath + projectPath,
-                "groupMemberships.xml", indentation);
+        groupMembershipMarshaller.prepare(
+                Format.XML,
+                repoPath + projectPath,
+                "groupMemberships.xml",
+                indentation);
         return groupMembershipMarshaller.importFile();
     }
 
     boolean importRoles() {
-        roleMarshaller.prepare(Format.XML, repoPath + projectPath,
-                "roles.xml", indentation);
+        roleMarshaller.prepare(
+                Format.XML,
+                repoPath + projectPath,
+                "roles.xml",
+                indentation);
         return roleMarshaller.importFile();
     }
 
     boolean importRoleMemberships() {
-        roleMembershipMarshaller.prepare(Format.XML, repoPath + projectPath,
-                "roleMemberships.xml", indentation);
+        roleMembershipMarshaller.prepare(
+                Format.XML,
+                repoPath + projectPath,
+                "roleMemberships.xml",
+                indentation);
         return roleMembershipMarshaller.importFile();
     }
 
+    boolean importCategories() {
+        categoryMarshaller.prepare(
+                Format.XML,
+                repoPath + projectPath,
+                "categories.xml",
+                indentation);
+        return categoryMarshaller.importFile();
+    }
+
+    boolean importCategorizations() {
+        categorizationMarshaller.prepare(
+                Format.XML,
+                repoPath + projectPath,
+                "categorizations.xml",
+                indentation);
+        return categorizationMarshaller.importFile();
+    }
+
+    boolean importResourceTypes() {
+        resourceTypeMarshaller.prepare(
+                Format.XML,
+                repoPath + projectPath,
+                "resourceTypes.xml",
+                indentation);
+        return resourceTypeMarshaller.importFile();
+    }
+
+    boolean importCcmApplications() {
+        ccmApplicationMarshaller.prepare(
+                Format.XML,
+                repoPath + projectPath,
+                "ccmApplications.xml",
+                indentation);
+        return ccmApplicationMarshaller.importFile();
+    }
+
+    boolean importDomains() {
+        domainMarshaller.prepare(
+                Format.XML,
+                repoPath + projectPath,
+                "domains.xml",
+                indentation);
+        return domainMarshaller.importFile();
+    }
+
+    boolean importDomainOwnerships() {
+        domainOwnershipMarshaller.prepare(
+                Format.XML,
+                repoPath + projectPath,
+                "domainOwnerships.xml",
+                indentation);
+        return domainOwnershipMarshaller.importFile();
+    }
+
     boolean importWorkflowTemplates() {
-        workflowTemplateMarshaller.prepare(Format.XML, repoPath + projectPath,
-                "workflowTemplates.xml", indentation);
+        workflowTemplateMarshaller.prepare(
+                Format.XML,
+                repoPath + projectPath,
+                "workflowTemplates.xml",
+                indentation);
         return workflowTemplateMarshaller.importFile();
     }
 
     boolean importWorkflows() {
-        workflowMarshaller.prepare(Format.XML, repoPath + projectPath,
-                "workflows.xml", indentation);
+        workflowMarshaller.prepare(
+                Format.XML,
+                repoPath + projectPath,
+                "workflows.xml",
+                indentation);
         return workflowMarshaller.importFile();
     }
 
     boolean importAssignableTasks() {
-        assignableTaskMarshaller.prepare(Format.XML, repoPath + projectPath,
-                "assignableTasks.xml", indentation);
+        assignableTaskMarshaller.prepare(
+                Format.XML,
+                repoPath + projectPath,
+                "assignableTasks.xml",
+                indentation);
         return assignableTaskMarshaller.importFile();
     }
 
     boolean importTaskAssignments() {
-        taskAssignmentMarshaller.prepare(Format.XML, repoPath + projectPath,
-                "taskAssignments.xml", indentation);
+        taskAssignmentMarshaller.prepare(
+                Format.XML,
+                repoPath + projectPath,
+                "taskAssignments.xml",
+                indentation);
         return taskAssignmentMarshaller.importFile();
     }
 
     boolean importPermissions() {
-        permissionMarshaller.prepare(Format.XML, repoPath + projectPath,
-                "permissions.xml", indentation);
+        permissionMarshaller.prepare(
+                Format.XML,
+                repoPath + projectPath,
+                "permissions.xml",
+                indentation);
         return permissionMarshaller.importFile();
     }
 

@@ -18,25 +18,20 @@
  */
 package org.libreccm.security;
 
-import static org.libreccm.core.CoreConstants.*;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.subject.Subject;
 import org.libreccm.core.CcmObject;
 
-import java.util.Optional;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.Objects;
-
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
+import java.util.Optional;
+
+import static org.libreccm.core.CoreConstants.ACCESS_DENIED;
 
 /**
  * An utility class for checking permissions. Uses the current {@link Subject}

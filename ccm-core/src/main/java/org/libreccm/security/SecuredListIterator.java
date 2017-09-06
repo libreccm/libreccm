@@ -18,9 +18,9 @@
  */
 package org.libreccm.security;
 
-import java.util.ListIterator;
-
 import org.libreccm.core.CcmObject;
+
+import java.util.ListIterator;
 
 /**
  * A decorator for {@link ListIterator} which checks if the current subject is

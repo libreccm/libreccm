@@ -25,11 +25,10 @@ import org.libreccm.core.CoreConstants;
 import org.libreccm.core.EmailAddress;
 import org.libreccm.modules.InstallEvent;
 
+import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-
-import javax.persistence.EntityManager;
 
 /**
  * Class used by {@link CcmCore#install(org.libreccm.modules.InstallEvent)} to

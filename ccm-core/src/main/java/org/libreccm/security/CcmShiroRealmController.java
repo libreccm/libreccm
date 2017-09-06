@@ -19,19 +19,16 @@
 package org.libreccm.security;
 
 import com.arsdigita.kernel.KernelConfig;
-
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.libreccm.configuration.ConfigurationManager;
 
-import java.util.List;
-import java.util.Optional;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * This bean provides several services for the {@link CcmShiroRealm}. It wraps

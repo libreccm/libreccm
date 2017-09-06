@@ -18,8 +18,6 @@
  */
 package org.libreccm.categorization;
 
-import static org.libreccm.categorization.CategorizationConstants.*;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.core.CcmObject;
@@ -29,19 +27,16 @@ import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.security.Shiro;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.StringJoiner;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.util.*;
+
+import static org.libreccm.categorization.CategorizationConstants.PRIVILEGE_MANAGE_CATEGORY;
+import static org.libreccm.categorization.CategorizationConstants.PRIVILEGE_MANAGE_CATEGORY_OBJECTS;
 
 /**
  * The {@code CategoryManager} provides several helper methods for managing

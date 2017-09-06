@@ -23,13 +23,12 @@ import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
-import java.util.List;
-import java.util.Optional;
-
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -86,6 +85,26 @@ public class ApplicationRepository
         query.setParameter("type", type);
 
         return query.getResultList();
+    }
+
+    /**
+     * Finds a {@link CcmApplication} by its uuid.
+     *
+     * @param uuid The uuid of the item to find
+     *
+     * @return An optional either with the found item or empty
+     */
+    public Optional<CcmApplication> findByUuid(final String uuid) {
+        final TypedQuery<CcmApplication> query = getEntityManager()
+                .createNamedQuery("CcmApplication.findByUuid",
+                                  CcmApplication.class);
+        query.setParameter("uuid", uuid);
+
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
     }
     
     @AuthorizationRequired

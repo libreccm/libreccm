@@ -23,12 +23,10 @@ import com.arsdigita.ui.admin.applications.AbstractAppSettingsPane;
 import com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm;
 import com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane;
 
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-
-import javax.servlet.annotation.WebServlet;
-
-import javax.servlet.http.HttpServlet;
 
 /**
  *

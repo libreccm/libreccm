@@ -22,10 +22,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.configuration.ConfigurationManager;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Singleton;
@@ -36,6 +32,9 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.List;
 
 /**
  * This EJB uses the {@link TimerService} to run a cleanup task periodically to

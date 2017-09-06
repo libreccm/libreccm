@@ -23,14 +23,13 @@ import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.CcmApplication;
 
-import java.util.List;
-import java.util.Optional;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Provides several methods when managing the relations between {@link Domain}s

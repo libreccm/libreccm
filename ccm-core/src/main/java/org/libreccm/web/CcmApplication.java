@@ -18,34 +18,27 @@
  */
 package org.libreccm.web;
 
-import static org.libreccm.web.WebConstants.*;
-
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.libreccm.categorization.Domain;
 import org.libreccm.categorization.DomainManager;
 import org.libreccm.categorization.DomainOwnership;
-
-import static org.libreccm.core.CoreConstants.*;
-
 import org.libreccm.core.Resource;
+import org.libreccm.portation.Portable;
 
+import javax.persistence.*;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.NamedAttributeNode;
-import javax.persistence.NamedEntityGraph;
-import javax.persistence.NamedEntityGraphs;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+import static org.libreccm.web.WebConstants.WEB_XML_NS;
 
 /**
  *
@@ -59,7 +52,10 @@ import javax.xml.bind.annotation.XmlRootElement;
                             + "WHERE a.primaryUrl = :path"),
     @NamedQuery(name = "CcmApplication.findByType",
                 query = "SELECT A FROM CcmApplication a "
-                            + "WHERE a.applicationType = :type")
+                            + "WHERE a.applicationType = :type"),
+    @NamedQuery(name = "CcmApplication.findByUuid",
+                query = "SELECT a FROM CcmApplication a "
+                            + "WHERE a.uuid = :uuid")
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(
@@ -69,7 +65,10 @@ import javax.xml.bind.annotation.XmlRootElement;
         })
 })
 @XmlRootElement(name = "application", namespace = WEB_XML_NS)
-public class CcmApplication extends Resource implements Serializable {
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+                  resolver = CcmApplicationIdResolver.class,
+                  property = "uuid")
+public class CcmApplication extends Resource implements Serializable, Portable {
 
     private static final long serialVersionUID = 9205226362368890784L;
 
@@ -91,6 +90,7 @@ public class CcmApplication extends Resource implements Serializable {
     @OneToMany(mappedBy = "owner")
     @XmlElementWrapper(name = "domains", namespace = WEB_XML_NS)
     @XmlElement(name = "domain", namespace = WEB_XML_NS)
+    @JsonIgnore
     private List<DomainOwnership> domains;
 
     public CcmApplication() {

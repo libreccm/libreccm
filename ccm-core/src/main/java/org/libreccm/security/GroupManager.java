@@ -20,14 +20,13 @@ package org.libreccm.security;
 
 import org.libreccm.core.CoreConstants;
 
-import java.util.List;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.util.List;
 
 /**
  * Manager class providing methods for adding and removing members to and from
