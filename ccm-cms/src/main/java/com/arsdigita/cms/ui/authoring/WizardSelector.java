@@ -149,6 +149,7 @@ public class WizardSelector extends AuthoringKitSelector
     /**
      * Reset the state of the current wizard
      */
+    @Override
     public void reset(final PageState state) {
         final Resettable resettable = (Resettable) getCurrentWizard(state);
         if (resettable != null) {

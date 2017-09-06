@@ -37,7 +37,6 @@ import com.arsdigita.bebop.form.TextArea;
 import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.bebop.parameters.GlobalizedParameterListener;
 import com.arsdigita.bebop.parameters.ParameterData;
-import com.arsdigita.bebop.parameters.StringIsLettersOrDigitsValidationListener;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.ui.authoring.assets.AttachmentListSelectionModel;
@@ -365,6 +364,8 @@ class RelatedInfoListForm
 
             controller.saveAttachmentList(attachmentList);
         }
+        
+        relatedInfoStep.showAttachmentListTable(state);
     }
 
     @Override

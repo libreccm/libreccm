@@ -20,6 +20,7 @@ package com.arsdigita.cms.ui.authoring.assets.relatedinfo;
 
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.table.TableModel;
 import com.arsdigita.cms.ui.authoring.assets.AttachmentListSelectionModel;
 import com.arsdigita.globalization.GlobalizedMessage;
@@ -71,14 +72,15 @@ class RelatedInfoListTableModel implements TableModel {
 
         switch (columnIndex) {
             case RelatedInfoListTable.COL_NAME:
-                return currentRow.getName();
+                return new Text(currentRow.getName());
             case RelatedInfoListTable.COL_TITLE:
-                return currentRow.getTitle();
+                return new Text(currentRow.getTitle());
             case RelatedInfoListTable.COL_DESC:
-                return currentRow.getDescription();
+                return new Text(currentRow.getDescription());
             case RelatedInfoListTable.COL_EDIT:
                 return new Label(new GlobalizedMessage(
-                    "cms.ui.authoring.assets.related_info_step.list.edit"));
+                    "cms.ui.authoring.assets.related_info_step.list.edit",
+                    CmsConstants.CMS_BUNDLE));
             case RelatedInfoListTable.COL_MOVE:
                 if (moveListModel.getSelectedAttachmentList(state) == null) {
                     return new Label(new GlobalizedMessage(
@@ -91,7 +93,8 @@ class RelatedInfoListTableModel implements TableModel {
                 }
             case RelatedInfoListTable.COL_DELETE:
                 return new Label(new GlobalizedMessage(
-                    "cms.ui.authoring.assets.related_info_step.list.delete"));
+                    "cms.ui.authoring.assets.related_info_step.list.delete",
+                    CmsConstants.CMS_BUNDLE));
             default:
                 throw new IllegalArgumentException(String.format(
                     "Illegal column index %d.", columnIndex));
