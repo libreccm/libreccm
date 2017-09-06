@@ -18,23 +18,17 @@
  */
 package org.libreccm.categorization;
 
-import static org.libreccm.core.CoreConstants.*;
-
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import org.libreccm.core.CcmObject;
+import org.libreccm.portation.Portable;
 import org.libreccm.web.CcmApplication;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  * Association class for the association between a {@link Domain} and a
@@ -52,7 +46,9 @@ import javax.persistence.Table;
         query = "SELECT o FROM DomainOwnership o "
                     + "WHERE o.owner = :owner AND o.domain = :domain")
 })
-public class DomainOwnership implements Serializable {
+@JsonIdentityInfo(generator = DomainOwnershipIdGenerator.class,
+                  property = "customOwnId")
+public class DomainOwnership implements Serializable, Portable {
 
     private static final long serialVersionUID = 201504301305L;
 
@@ -65,16 +61,18 @@ public class DomainOwnership implements Serializable {
     private long ownershipId;
 
     /**
-     * The {@link CcmObject} owning the {@link Domain}.
-     */
-    @ManyToOne(optional = false)
-    private CcmApplication owner;
-
-    /**
      * The {@link Domain} owned by the {@link CcmObject}.
      */
     @ManyToOne(optional = false)
+    @JsonIdentityReference(alwaysAsId = true)
     private Domain domain;
+
+    /**
+     * The {@link CcmObject} owning the {@link Domain}.
+     */
+    @ManyToOne(optional = false)
+    @JsonIdentityReference(alwaysAsId = true)
+    private CcmApplication owner;
 
     /**
      * The context for the domain mapping.

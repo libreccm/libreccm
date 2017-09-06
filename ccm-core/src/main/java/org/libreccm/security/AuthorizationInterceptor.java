@@ -23,13 +23,12 @@ import org.apache.logging.log4j.Logger;
 import org.apache.shiro.subject.Subject;
 import org.libreccm.core.CcmObject;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 /**
  * A CDI interceptor which can be used to secure methods of CDI beans. To use

@@ -18,29 +18,18 @@
  */
 package org.libreccm.core;
 
-import static org.libreccm.core.CoreConstants.*;
-
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.web.CcmApplication;
 
+import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
-import javax.persistence.AssociationOverride;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  * The {@code Resource} class is a base class for several other classes, for
@@ -58,6 +47,13 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "RESOURCES", schema = DB_SCHEMA)
+@NamedQueries({
+        @NamedQuery(name = "Resource.findByUuid",
+                query = "SELECT r FROM Resource r WHERE r.uuid = :uuid"),
+})
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+                  resolver = ResourceIdResolver.class,
+                  property = "uuid")
 public class Resource extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 7345482620613842781L;
@@ -87,6 +83,7 @@ public class Resource extends CcmObject implements Serializable {
     private LocalizedString description;
 
     @ManyToOne
+    @JsonIdentityReference(alwaysAsId = true)
     private ResourceType resourceType;
     
     /**
@@ -100,6 +97,7 @@ public class Resource extends CcmObject implements Serializable {
      * The child resources of this resource.
      */
     @OneToMany(mappedBy = "parent")
+    @JsonIgnore
     private List<Resource> childs;
 
     /**
@@ -107,6 +105,7 @@ public class Resource extends CcmObject implements Serializable {
      * the property will be null.
      */
     @ManyToOne
+    @JsonIdentityReference(alwaysAsId = true)
     private Resource parent;
 
     public Resource() {

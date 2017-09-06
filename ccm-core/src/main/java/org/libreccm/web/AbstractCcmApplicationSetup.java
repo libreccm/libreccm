@@ -26,11 +26,10 @@ import org.libreccm.modules.InstallEvent;
 import org.libreccm.security.ApplicationRoleSetup;
 import org.libreccm.security.Role;
 
+import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-
-import javax.persistence.EntityManager;
 
 /**
  *

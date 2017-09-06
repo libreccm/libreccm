@@ -18,10 +18,11 @@
  */
 package org.libreccm.security;
 
+import org.libreccm.core.CcmObject;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
-import org.libreccm.core.CcmObject;
 
 /**
  * A decorator for {@link List}s of {@link CcmObject}s which checks if the

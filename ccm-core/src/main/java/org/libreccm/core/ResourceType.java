@@ -18,23 +18,16 @@
  */
 package org.libreccm.core;
 
-import static org.libreccm.core.CoreConstants.*;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.libreccm.l10n.LocalizedString;
+import org.libreccm.portation.Portable;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
-import javax.persistence.AssociationOverride;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Table;
-
-import org.libreccm.l10n.LocalizedString;
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  * This class is a port of the old {@code ResourceType} entity. 
@@ -52,12 +45,19 @@ import org.libreccm.l10n.LocalizedString;
 @Entity
 @Table(name = "RESOURCE_TYPES", schema = DB_SCHEMA)
 @Inheritance(strategy = InheritanceType.JOINED)
+@NamedQueries({
+        @NamedQuery(name = "ResourceType.findByTitle",
+                query = "SELECT r FROM ResourceType r WHERE r.title = :title")
+})
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+                  resolver = ResourceTypeIdResolver.class,
+                  property = "title")
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
                    "PMD.ModifiedCyclomaticComplexity",
                    "PMD.NPathComplexity",
                    "PMD.LongVariable"})
-public class ResourceType implements Serializable {
+public class ResourceType implements Serializable, Portable {
 
     private static final long serialVersionUID = 4563584142251370627L;
 

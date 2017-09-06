@@ -16,14 +16,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-@XmlSchema(xmlns = {@XmlNs(prefix = "l10n", namespaceURI = L10N_XML_NS)})
-@XmlAccessorType(XmlAccessType.NONE)
-package org.libreccm.l10n;
+package org.libreccm.categorization;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlNs;
-import javax.xml.bind.annotation.XmlSchema;
+import org.libreccm.portation.AbstractMarshaller;
+import org.libreccm.portation.Marshals;
 
-import static org.libreccm.l10n.L10NConstants.L10N_XML_NS;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 
+/**
+ * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers<\a>
+ * @version created the 8/22/17
+ */
+@RequestScoped
+@Marshals(Domain.class)
+public class DomainMarshaller extends AbstractMarshaller<Domain> {
+
+    @Inject
+    private DomainRepository domainRepository;
+
+    @Override
+    protected Class<Domain> getObjectClass() {
+        return Domain.class;
+    }
+
+    @Override
+    protected void insertIntoDb(Domain portableObject) {
+        domainRepository.save(portableObject);
+    }
+}

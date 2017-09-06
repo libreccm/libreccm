@@ -23,14 +23,12 @@ import com.fasterxml.jackson.annotation.ObjectIdResolver;
 import org.libreccm.cdi.utils.CdiUtil;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
- * @version created on 3/23/17
+ * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers<\a>
+ * @version created the 8/2/17
  */
-public class CategoryIdResolver implements ObjectIdResolver {
-
+public class DomainIdResolver implements ObjectIdResolver {
     @Override
-    public void bindItem(ObjectIdGenerator.IdKey idKey,
-                         Object pojo) {
+    public void bindItem(ObjectIdGenerator.IdKey idKey, Object o) {
         // According to the Jackson JavaDoc, this method can be used to keep
         // track of objects directly in a resolver implementation. We don't need
         // this here therefore this method is empty.
@@ -39,23 +37,23 @@ public class CategoryIdResolver implements ObjectIdResolver {
     @Override
     public Object resolveId(ObjectIdGenerator.IdKey id) {
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final CategoryRepository categoryRepository = cdiUtil
-                .findBean(CategoryRepository.class);
+        final DomainRepository domainRepository = cdiUtil
+                .findBean(DomainRepository.class);
 
-        return categoryRepository
+        return domainRepository
                 .findByUuid(id.key.toString())
                 .orElseThrow(() -> new IllegalArgumentException(String
-                .format("No Category with uuid %s in the database.",
+                        .format("No Domain with uuid %s in the database.",
                         id.key.toString())));
     }
 
     @Override
-    public ObjectIdResolver newForDeserialization(Object context) {
-        return new CategoryIdResolver();
+    public ObjectIdResolver newForDeserialization(Object o) {
+        return new DomainIdResolver();
     }
 
     @Override
     public boolean canUseFor(ObjectIdResolver resolverType) {
-        return resolverType instanceof CategoryIdResolver;
+        return resolverType instanceof DomainIdResolver;
     }
 }

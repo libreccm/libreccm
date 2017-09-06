@@ -19,15 +19,13 @@
 package org.libreccm.security;
 
 import com.arsdigita.ui.login.UserNewForm;
-
 import org.apache.logging.log4j.util.Strings;
 import org.libreccm.core.CoreConstants;
-
-import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.mail.MessagingException;
+import java.util.Optional;
 
 
 /**

@@ -18,44 +18,28 @@
  */
 package org.libreccm.categorization;
 
-import static org.libreccm.categorization.CategorizationConstants.*;
-import static org.libreccm.core.CoreConstants.*;
-
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
+import org.libreccm.portation.Portable;
 import org.libreccm.security.RecursivePermissions;
 import org.libreccm.web.CcmApplication;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-
-import javax.persistence.AssociationOverride;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedAttributeNode;
-import javax.persistence.NamedEntityGraph;
-import javax.persistence.NamedEntityGraphs;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.NamedSubgraph;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+import java.util.*;
+
+import static org.libreccm.categorization.CategorizationConstants.CAT_XML_NS;
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  * A domain is collection of categories designed a specific purpose. This entity
@@ -77,6 +61,8 @@ import javax.xml.bind.annotation.XmlRootElement;
                 query = "SELECT d FROM Domain d WHERE d.domainKey = :key"),
     @NamedQuery(name = "Domain.findByUri",
                 query = "SELECT d FROM Domain d WHERE d.uri = :uri"),
+    @NamedQuery(name = "Domain.findByUuid",
+                query = "SELECT d FROM Domain d WHERE d.uuid = :uuid"),
     @NamedQuery(name = "Domain.findAll",
                 query = "SELECT d FROM Domain d ORDER BY d.domainKey"),
     @NamedQuery(
@@ -110,7 +96,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     )
 })
 @XmlRootElement(name = "domain", namespace = CAT_XML_NS)
-public class Domain extends CcmObject implements Serializable {
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+                  resolver = DomainIdResolver.class,
+                  property = "uuid")
+public class Domain extends CcmObject implements Serializable, Portable {
 
     private static final long serialVersionUID = 4012590760598188732L;
 
@@ -192,6 +181,7 @@ public class Domain extends CcmObject implements Serializable {
     @ManyToOne
     @JoinColumn(name = "ROOT_CATEGORY_ID")
     @XmlElement(name = "root", namespace = CAT_XML_NS)
+    @JsonIdentityReference(alwaysAsId = true)
     private Category root;
 
     /**
@@ -199,6 +189,7 @@ public class Domain extends CcmObject implements Serializable {
      */
     @OneToMany(mappedBy = "domain")
     @XmlElementWrapper(name = "owners", namespace = CAT_XML_NS)
+    @JsonIgnore
     private List<DomainOwnership> owners;
 
     public Domain() {

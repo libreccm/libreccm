@@ -33,13 +33,10 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.*;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.libreccm.security.Group;
 import org.libreccm.security.GroupRepository;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import javax.inject.Inject;
-
-import java.util.concurrent.TimeUnit;
 
 import static org.libreccm.testutils.DependenciesHelpers.getModuleDependencies;
 
@@ -149,6 +146,11 @@ public class CoreDataImportTest {
 
 
         Assert.assertFalse(importHelper.importCategories());
+        Assert.assertFalse(importHelper.importCategorizations());
+        Assert.assertFalse(importHelper.importResourceTypes());
+        Assert.assertFalse(importHelper.importCcmApplications());
+        Assert.assertFalse(importHelper.importDomains());
+        Assert.assertFalse(importHelper.importDomainOwnerships());
 
     }
 

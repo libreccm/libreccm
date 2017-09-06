@@ -19,16 +19,14 @@
 package org.libreccm.l10n;
 
 import com.arsdigita.kernel.KernelConfig;
-
 import org.libreccm.configuration.ConfigurationManager;
-
-import java.util.Enumeration;
-import java.util.Locale;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Enumeration;
+import java.util.Locale;
 
 /**
  * Provides the locale which has been selected based on the available languages
