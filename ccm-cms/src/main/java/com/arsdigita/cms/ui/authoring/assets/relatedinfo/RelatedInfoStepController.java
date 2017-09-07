@@ -21,7 +21,10 @@ package com.arsdigita.cms.ui.authoring.assets.relatedinfo;
 import com.arsdigita.kernel.KernelConfig;
 
 import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.core.UnexpectedErrorException;
 import org.librecms.assets.RelatedLink;
+import org.librecms.contentsection.Asset;
+import org.librecms.contentsection.AssetRepository;
 import org.librecms.contentsection.AttachmentList;
 import org.librecms.contentsection.AttachmentListManager;
 import org.librecms.contentsection.ContentItem;
@@ -46,6 +49,9 @@ import javax.transaction.Transactional;
  */
 @RequestScoped
 class RelatedInfoStepController {
+
+    @Inject
+    private AssetRepository assetRepo;
 
     @Inject
     private AttachmentListManager attachmentListManager;
@@ -297,6 +303,24 @@ class RelatedInfoStepController {
         link.getTitle().addValue(selectedLocale, title);
 
         itemAttachmentManager.attachAsset(link, attachmentList);
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void attachAsset(final AttachmentList attachmentList,
+                               final long assetId) {
+
+        final Asset asset = assetRepo
+            .findById(assetId)
+            .orElseThrow(() -> new UnexpectedErrorException(String
+            .format("No Asset with ID %d in the database.", assetId)));
+
+        final AttachmentList list = attachmentListManager
+            .getAttachmentList(attachmentList.getListId())
+            .orElseThrow(() -> new UnexpectedErrorException(String
+            .format("No AttachmentList with ID %d in the database.",
+                    attachmentList.getListId())));
+        
+        itemAttachmentManager.attachAsset(asset, list);
     }
 
     private AttachmentListTableRow buildAttachmentListTableRow(
