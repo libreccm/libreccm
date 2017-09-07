@@ -31,7 +31,6 @@ import com.arsdigita.bebop.table.TableCellRenderer;
 import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.table.TableColumnModel;
 import com.arsdigita.cms.ItemSelectionModel;
-import com.arsdigita.cms.ui.GlobalNavigation;
 import com.arsdigita.cms.ui.authoring.assets.AttachmentListSelectionModel;
 import com.arsdigita.cms.ui.authoring.assets.AttachmentSelectionModel;
 import com.arsdigita.globalization.GlobalizedMessage;
@@ -89,11 +88,13 @@ class AttachmentsTable extends Table {
         columnModel.add(new TableColumn(
             COL_MOVE,
             new Label(new GlobalizedMessage(
-                "cms.ui.authoring.assets.related_info_step.attachment.move"))));
+                "cms.ui.authoring.assets.related_info_step.attachment.move",
+                CmsConstants.CMS_BUNDLE))));
         columnModel.add(new TableColumn(
             COL_REMOVE,
             new Label(new GlobalizedMessage(
-                "cms.ui.authoring.assets.related_info_step.attachment.remove"))));
+                "cms.ui.authoring.assets.related_info_step.attachment.remove",
+                CmsConstants.CMS_BUNDLE))));
 
         super
             .setModelBuilder(new AttachmentsTableModelBuilder(
