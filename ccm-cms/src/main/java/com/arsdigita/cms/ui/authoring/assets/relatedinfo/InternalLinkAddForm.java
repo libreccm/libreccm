@@ -20,6 +20,7 @@ package com.arsdigita.cms.ui.authoring.assets.relatedinfo;
 
 import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormProcessException;
+import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SaveCancelSection;
 import com.arsdigita.bebop.event.FormInitListener;
@@ -31,8 +32,10 @@ import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.ui.assets.ItemSearchWidget;
 import com.arsdigita.cms.ui.authoring.assets.AttachmentListSelectionModel;
+import com.arsdigita.globalization.GlobalizedMessage;
 
 import org.libreccm.cdi.utils.CdiUtil;
+import org.librecms.CmsConstants;
 
 /**
  *
@@ -67,10 +70,24 @@ public class InternalLinkAddForm
         this.listSelectionModel = listSelectionModel;
         this.selectedLanguageParam = selectedLanguageParam;
 
+        final Label titleLabel = new Label(new GlobalizedMessage(
+            "cms.ui.authoring.assets.related_info_step.internal_link.title",
+            CmsConstants.CMS_BUNDLE));
         titleField = new TextField("link-title");
+        
 //        descriptionArea = new TextArea("link-description");
+        final Label itemSearchLabel = new Label(new GlobalizedMessage(
+            "cms.ui.authoring.assets.related_info_step.internal_link.target_item",
+            CmsConstants.CMS_BUNDLE));
         itemSearchWidget = new ItemSearchWidget("link-item-search");
+        
         saveCancelSection = new SaveCancelSection();
+
+        super.add(titleLabel);
+        super.add(titleField);
+        super.add(itemSearchLabel); 
+        super.add(itemSearchWidget);
+        super.add(saveCancelSection);
     }
 
     @Override
@@ -103,11 +120,11 @@ public class InternalLinkAddForm
     @Override
     public void submitted(final FormSectionEvent event) throws
         FormProcessException {
-        
+
         if (saveCancelSection.getCancelButton().isSelected(event.getPageState())) {
             relatedInfoStep.showAttachmentsTable(event.getPageState());
         }
-        
+
     }
 
 }

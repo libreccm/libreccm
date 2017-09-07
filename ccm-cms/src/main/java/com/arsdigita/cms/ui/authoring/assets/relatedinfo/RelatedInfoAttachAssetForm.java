@@ -20,6 +20,7 @@ package com.arsdigita.cms.ui.authoring.assets.relatedinfo;
 
 import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormProcessException;
+import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SaveCancelSection;
 import com.arsdigita.bebop.event.FormInitListener;
@@ -30,13 +31,12 @@ import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.ui.assets.AssetSearchWidget;
 import com.arsdigita.cms.ui.authoring.assets.AttachmentListSelectionModel;
+import com.arsdigita.globalization.GlobalizedMessage;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.UnexpectedErrorException;
-import org.librecms.contentsection.Asset;
-import org.librecms.contentsection.AssetRepository;
+import org.librecms.CmsConstants;
 import org.librecms.contentsection.AttachmentList;
-import org.librecms.contentsection.ItemAttachmentManager;
 
 /**
  *
@@ -69,6 +69,10 @@ class RelatedInfoAttachAssetForm
         this.listSelectionModel = listSelectionModel;
         this.selectedLanguageParameter = selectedLangugeParam;
 
+        final Label label = new Label(new GlobalizedMessage(
+            "cms.ui.authoring.assets.related_info_step.attach_asset.selected_asset",
+            CmsConstants.CMS_BUNDLE));
+        super.add(label);
         searchWidget = new AssetSearchWidget("asset-search-widget");
         super.add(searchWidget);
         saveCancelSection = new SaveCancelSection();

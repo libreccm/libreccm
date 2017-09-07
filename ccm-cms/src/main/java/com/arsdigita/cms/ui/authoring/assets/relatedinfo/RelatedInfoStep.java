@@ -23,6 +23,7 @@ import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.cms.ui.authoring.AuthoringKitWizard;
@@ -65,7 +66,10 @@ public class RelatedInfoStep extends ResettableContainer {
 
     private final AttachmentsTable attachmentsTable;
     private final RelatedInfoAttachAssetForm attachAssetForm;
+    private final InternalLinkAddForm internalLinkAddForm;
+
     private final ActionLink attachAssetLink;
+    private final ActionLink internalLinkAddLink;
     private final ActionLink attachmentToFirstLink;
 
     public RelatedInfoStep(final ItemSelectionModel itemSelectionModel,
@@ -145,12 +149,24 @@ public class RelatedInfoStep extends ResettableContainer {
                                                          itemSelectionModel,
                                                          selectedListModel,
                                                          selectedLanguageParam);
+        internalLinkAddForm = new InternalLinkAddForm(this,
+                                                      itemSelectionModel,
+                                                      selectedListModel,
+                                                      selectedLanguageParam);
+        
 
         attachAssetLink = new ActionLink(new GlobalizedMessage(
             "cms.ui.authoring.assets.related_info_step.attach_asset",
             CmsConstants.CMS_BUNDLE));
         attachAssetLink.addActionListener(event -> {
             showAttachAssetForm(event.getPageState());
+        });
+
+        internalLinkAddLink = new ActionLink(new GlobalizedMessage(
+            "cms.ui.authoring.assets.related_info_step.add_internal_link",
+            CmsConstants.CMS_BUNDLE));
+        internalLinkAddLink.addActionListener(event -> {
+            showAddInternalLinkForm(event.getPageState());
         });
 
         attachmentToFirstLink = new ActionLink(new GlobalizedMessage(
@@ -184,9 +200,13 @@ public class RelatedInfoStep extends ResettableContainer {
             }
         });
 
+        final SimpleContainer addLinks = new SimpleContainer();
+        addLinks.add(addListLink);
+        addLinks.add(internalLinkAddLink);
+
         final BoxPanel panel = new BoxPanel(BoxPanel.VERTICAL);
 
-        panel.add(addListLink);
+        panel.add(addLinks);
         panel.add(listToFirstLink);
         panel.add(listTable);
         panel.add(listForm);
@@ -195,6 +215,7 @@ public class RelatedInfoStep extends ResettableContainer {
         panel.add(attachmentToFirstLink);
         panel.add(attachmentsTable);
         panel.add(attachAssetForm);
+        panel.add(internalLinkAddForm);
 
         super.add(panel);
     }
@@ -211,17 +232,14 @@ public class RelatedInfoStep extends ResettableContainer {
         page.addComponentStateParam(this,
                                     moveAttachmentModel.getStateParameter());
 
-//        page.addGlobalStateParam(selectedListModel.getStateParameter());
-//        page.addGlobalStateParam(moveListModel.getStateParameter());
-//        page.addGlobalStateParam(selectedAttachmentModel.getStateParameter());
-//        page.addGlobalStateParam(moveAttachmentModel.getStateParameter());
-
         page.setVisibleDefault(listTable, true);
         page.setVisibleDefault(listForm, false);
         page.setVisibleDefault(addListLink, true);
         page.setVisibleDefault(listToFirstLink, false);
         page.setVisibleDefault(attachmentsTable, false);
         page.setVisibleDefault(attachAssetForm, false);
+        page.setVisibleDefault(internalLinkAddForm, false);
+        page.setVisibleDefault(internalLinkAddLink, false);
         page.setVisibleDefault(attachAssetLink, false);
         page.setVisibleDefault(attachmentToFirstLink, false);
     }
@@ -236,6 +254,8 @@ public class RelatedInfoStep extends ResettableContainer {
         attachAssetForm.setVisible(state, false);
         attachAssetLink.setVisible(state, false);
         attachmentToFirstLink.setVisible(state, false);
+        internalLinkAddForm.setVisible(state, false);
+        internalLinkAddLink.setVisible(state, false);
     }
 
     void showListEditForm(final PageState state) {
@@ -248,6 +268,8 @@ public class RelatedInfoStep extends ResettableContainer {
         attachAssetForm.setVisible(state, false);
         attachAssetLink.setVisible(state, false);
         attachmentToFirstLink.setVisible(state, false);
+        internalLinkAddForm.setVisible(state, false);
+        internalLinkAddLink.setVisible(state, false);
     }
 
     void showAttachmentsTable(final PageState state) {
@@ -260,6 +282,8 @@ public class RelatedInfoStep extends ResettableContainer {
         attachAssetForm.setVisible(state, false);
         attachAssetLink.setVisible(state, true);
         attachmentToFirstLink.setVisible(state, false);
+        internalLinkAddForm.setVisible(state, false);
+        internalLinkAddLink.setVisible(state, true);
     }
 
     void showAttachAssetForm(final PageState state) {
@@ -271,6 +295,21 @@ public class RelatedInfoStep extends ResettableContainer {
         attachAssetForm.setVisible(state, true);
         attachAssetLink.setVisible(state, false);
         attachmentToFirstLink.setVisible(state, false);
+        internalLinkAddForm.setVisible(state, false);
+        internalLinkAddLink.setVisible(state, false);
+    }
+    
+    void showAddInternalLinkForm(final PageState state) {
+        listTable.setVisible(state, false);
+        listForm.setVisible(state, false);
+        addListLink.setVisible(state, false);
+        listToFirstLink.setVisible(state, false);
+        attachmentsTable.setVisible(state, false);
+        attachAssetForm.setVisible(state, false);
+        attachAssetLink.setVisible(state, false);
+        attachmentToFirstLink.setVisible(state, false);
+        internalLinkAddForm.setVisible(state, true);
+        internalLinkAddLink.setVisible(state, false);
     }
 
 }
