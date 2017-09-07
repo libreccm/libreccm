@@ -23,10 +23,9 @@ import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
-import java.util.UUID;
-
 import javax.enterprise.context.RequestScoped;
 import javax.transaction.Transactional;
+import java.util.UUID;
 
 /**
  * Repository class for managing {@link ComponentModel} entities.

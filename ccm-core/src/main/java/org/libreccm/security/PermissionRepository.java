@@ -20,7 +20,7 @@ package org.libreccm.security;
 
 import org.libreccm.core.AbstractEntityRepository;
 
-import javax.faces.bean.RequestScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.util.Optional;

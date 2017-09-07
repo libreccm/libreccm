@@ -19,11 +19,10 @@
 package org.libreccm.configuration;
 
 
-import java.io.Serializable;
-import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * A setting for storing a string value.

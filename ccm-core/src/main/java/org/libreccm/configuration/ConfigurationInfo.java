@@ -21,13 +21,7 @@ package org.libreccm.configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Collections;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.NavigableMap;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Describes a configuration. Useful for generating user interfaces.

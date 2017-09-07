@@ -21,12 +21,11 @@ package org.libreccm.pagemodel.ui;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.tree.TreeModel;
 import com.arsdigita.bebop.tree.TreeNode;
-
-import java.util.Iterator;
-
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.pagemodel.PageModelRepository;
 import org.libreccm.web.CcmApplication;
+
+import java.util.Iterator;
 
 /**
  *

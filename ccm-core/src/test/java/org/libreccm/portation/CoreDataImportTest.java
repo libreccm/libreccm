@@ -88,7 +88,11 @@ public class CoreDataImportTest {
                         .class.getPackage())
                 .addPackage(org.libreccm.cdi.utils.CdiUtil
                         .class.getPackage())
+                .addPackage(org.libreccm.configuration.ConfigurationManager
+                        .class.getPackage())
                 .addPackage(org.libreccm.core.CcmObject
+                        .class.getPackage())
+                .addPackage(org.libreccm.jpa.EntityManagerProducer
                         .class.getPackage())
                 .addPackage(org.libreccm.l10n.LocalizedString
                         .class.getPackage())
@@ -98,15 +102,11 @@ public class CoreDataImportTest {
                         .class.getPackage())
                 .addPackage(org.libreccm.workflow.AssignableTask
                         .class.getPackage())
-                .addPackage(org.libreccm.configuration.ConfigurationManager
+                .addPackage(org.libreccm.web.CcmApplication
                         .class.getPackage())
                 .addPackage(org.libreccm.tests.categories.IntegrationTest
                         .class.getPackage())
                 .addPackage(org.libreccm.testutils.EqualsVerifier
-                        .class.getPackage())
-                .addPackage(org.libreccm.web.CcmApplication
-                        .class.getPackage())
-                .addPackage(org.libreccm.jpa.EntityManagerProducer
                         .class.getPackage())
                 .addAsLibraries(getModuleDependencies())
                 .addAsResource("test-persistence.xml",
@@ -151,6 +151,12 @@ public class CoreDataImportTest {
         Assert.assertFalse(importHelper.importCcmApplications());
         Assert.assertFalse(importHelper.importDomains());
         Assert.assertFalse(importHelper.importDomainOwnerships());
+
+        Assert.assertFalse(importHelper.importPermissions());
+
+        Assert.assertFalse(importHelper.importWorkflowTemplates());
+        //Assert.assertFalse(importHelper.importWorkflows());
+
 
     }
 

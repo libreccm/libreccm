@@ -66,7 +66,7 @@ import static org.libreccm.web.WebConstants.WEB_XML_NS;
 })
 @XmlRootElement(name = "application", namespace = WEB_XML_NS)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
-                  resolver = CcmApplicationIdResolver.class,
+                  resolver = ApplicationIdResolver.class,
                   property = "uuid")
 public class CcmApplication extends Resource implements Serializable, Portable {
 

@@ -18,10 +18,10 @@
  */
 package org.libreccm.jpa;
 
-import javax.enterprise.context.ApplicationScoped;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;

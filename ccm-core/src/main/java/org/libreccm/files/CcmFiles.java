@@ -23,16 +23,15 @@ import org.apache.logging.log4j.Logger;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.UnexpectedErrorException;
 
+import javax.enterprise.inject.Instance;
+import javax.faces.bean.RequestScoped;
+import javax.inject.Inject;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.enterprise.inject.Instance;
-import javax.faces.bean.RequestScoped;
-import javax.inject.Inject;
 
 /**
  * This class provides access to the (local) file system. If available an

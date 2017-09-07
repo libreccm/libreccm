@@ -30,7 +30,6 @@ import javax.enterprise.context.RequestScoped;
  */
 @RequestScoped
 public class UserIdResolver implements ObjectIdResolver {
-
     @Override
     public void bindItem(final ObjectIdGenerator.IdKey id,
                          final Object pojo) {
@@ -42,10 +41,10 @@ public class UserIdResolver implements ObjectIdResolver {
     @Override
     public Object resolveId(final ObjectIdGenerator.IdKey id) {
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final UserRepository userRepo = cdiUtil
+        final UserRepository userRepository = cdiUtil
                 .findBean(UserRepository.class);
 
-        return userRepo
+        return userRepository
                 .findByName(id.key.toString())
                 .orElseThrow(() -> new IllegalArgumentException(String
                 .format("No User with name %s in the database.",

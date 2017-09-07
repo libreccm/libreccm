@@ -18,14 +18,13 @@
  */
 package org.libreccm.admin.ui;
 
-import java.util.List;
-import java.util.Objects;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Objects;
 
 /**
  *

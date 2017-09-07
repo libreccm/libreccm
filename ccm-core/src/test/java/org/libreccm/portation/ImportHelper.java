@@ -23,7 +23,7 @@ import org.libreccm.core.ResourceType;
 import org.libreccm.core.ResourceTypeMarshaller;
 import org.libreccm.security.*;
 import org.libreccm.web.CcmApplication;
-import org.libreccm.web.CcmApplicationMarshaller;
+import org.libreccm.web.ApplicationMarshaller;
 import org.libreccm.workflow.*;
 
 import javax.enterprise.context.RequestScoped;
@@ -71,7 +71,7 @@ class ImportHelper {
     private ResourceTypeMarshaller resourceTypeMarshaller;
     @Inject
     @Marshals(CcmApplication.class)
-    private CcmApplicationMarshaller ccmApplicationMarshaller;
+    private ApplicationMarshaller applicationMarshaller;
     @Inject
     @Marshals(Domain.class)
     private DomainMarshaller domainMarshaller;
@@ -170,12 +170,12 @@ class ImportHelper {
     }
 
     boolean importCcmApplications() {
-        ccmApplicationMarshaller.prepare(
+        applicationMarshaller.prepare(
                 Format.XML,
                 repoPath + projectPath,
                 "ccmApplications.xml",
                 indentation);
-        return ccmApplicationMarshaller.importFile();
+        return applicationMarshaller.importFile();
     }
 
     boolean importDomains() {
@@ -194,6 +194,15 @@ class ImportHelper {
                 "domainOwnerships.xml",
                 indentation);
         return domainOwnershipMarshaller.importFile();
+    }
+
+    boolean importPermissions() {
+        permissionMarshaller.prepare(
+                Format.XML,
+                repoPath + projectPath,
+                "permissions.xml",
+                indentation);
+        return permissionMarshaller.importFile();
     }
 
     boolean importWorkflowTemplates() {
@@ -230,15 +239,6 @@ class ImportHelper {
                 "taskAssignments.xml",
                 indentation);
         return taskAssignmentMarshaller.importFile();
-    }
-
-    boolean importPermissions() {
-        permissionMarshaller.prepare(
-                Format.XML,
-                repoPath + projectPath,
-                "permissions.xml",
-                indentation);
-        return permissionMarshaller.importFile();
     }
 
 }

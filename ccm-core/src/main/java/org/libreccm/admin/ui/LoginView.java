@@ -18,7 +18,6 @@
  */
 package org.libreccm.admin.ui;
 
-
 import com.vaadin.cdi.CDIView;
 import org.libreccm.ui.AbstractLoginView;
 

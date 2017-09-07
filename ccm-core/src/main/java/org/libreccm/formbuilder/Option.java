@@ -18,19 +18,13 @@
  */
 package org.libreccm.formbuilder;
 
-import static org.libreccm.core.CoreConstants.*;
-
 import org.libreccm.l10n.LocalizedString;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
-import javax.persistence.AssociationOverride;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Table;
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  *

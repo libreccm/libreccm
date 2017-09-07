@@ -19,27 +19,14 @@
 package org.libreccm.admin.ui;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
-
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import com.vaadin.ui.*;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.security.Party;
-import org.libreccm.security.PartyRepository;
-import org.libreccm.security.Role;
-import org.libreccm.security.RoleManager;
-import org.libreccm.security.RoleRepository;
+import org.libreccm.security.*;
 
 import java.util.ResourceBundle;
 

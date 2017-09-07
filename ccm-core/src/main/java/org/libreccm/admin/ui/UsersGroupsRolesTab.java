@@ -19,7 +19,6 @@
 package org.libreccm.admin.ui;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
-
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.UI;

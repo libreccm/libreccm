@@ -22,10 +22,13 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdResolver;
 import org.libreccm.cdi.utils.CdiUtil;
 
+import javax.enterprise.context.RequestScoped;
+
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers<\a>
  * @version created the 8/2/17
  */
+@RequestScoped
 public class DomainIdResolver implements ObjectIdResolver {
     @Override
     public void bindItem(ObjectIdGenerator.IdKey idKey, Object o) {

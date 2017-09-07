@@ -7,11 +7,7 @@ package org.libreccm.admin.ui;
 
 import com.vaadin.server.ClassResource;
 import com.vaadin.server.VaadinServlet;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.Label;
+import com.vaadin.ui.*;
 
 import javax.servlet.ServletContext;
 

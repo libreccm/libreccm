@@ -18,17 +18,12 @@
  */
 package org.libreccm.configuration;
 
-import static org.libreccm.core.CoreConstants.*;
-
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  * Setting for a list of strings. In contrast to the {@link EnumSetting} which

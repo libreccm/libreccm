@@ -69,8 +69,8 @@ public class PermissionIdGenerator extends ObjectIdGenerator<String> {
 
         return String.join("_",
                 permission.getGrantedPrivilege(),
-                String.valueOf(permission.getGrantee().getRoleId()),
-                String.valueOf(permission.getObject().getObjectId())
+                String.valueOf(permission.getGrantee().getName()),
+                String.valueOf(permission.getObject().getUuid())
         );
     }
 }

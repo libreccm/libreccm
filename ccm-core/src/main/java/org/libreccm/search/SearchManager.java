@@ -28,14 +28,13 @@ import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
-import java.util.List;
-import java.util.concurrent.Future;
-
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.concurrent.Future;
 
 /**
  * Provides an interface to Hibernate search. The methods here can be used to
