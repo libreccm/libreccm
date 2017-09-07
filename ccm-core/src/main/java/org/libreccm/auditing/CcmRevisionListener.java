@@ -19,7 +19,6 @@
 package org.libreccm.auditing;
 
 import org.apache.shiro.subject.Subject;
-
 import org.hibernate.envers.RevisionListener;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Shiro;

@@ -21,13 +21,7 @@ package org.libreccm.configuration;
 import org.libreccm.l10n.LocalizedString;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Example of configuration with all available setting types. Not used anywhere

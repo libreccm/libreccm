@@ -19,7 +19,6 @@
 package org.libreccm.admin.ui;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
-
 import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -30,19 +29,12 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import org.apache.shiro.subject.Subject;
 import org.libreccm.l10n.GlobalizationHelper;
-import org.libreccm.security.GroupManager;
-import org.libreccm.security.GroupRepository;
-import org.libreccm.security.PermissionChecker;
-import org.libreccm.security.RoleManager;
-import org.libreccm.security.RoleRepository;
-import org.libreccm.security.UserManager;
-import org.libreccm.security.UserRepository;
-
-import java.util.ResourceBundle;
+import org.libreccm.security.*;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
+import java.util.ResourceBundle;
 
 /**
  *

@@ -20,15 +20,6 @@ package org.libreccm.ui.admin.sysinfo;
 
 import org.xml.sax.SAXException;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -36,6 +27,12 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.ResourceBundle;
 
 /**
  *

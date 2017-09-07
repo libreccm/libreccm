@@ -57,7 +57,7 @@ public class TaskAssignmentIdGenerator extends ObjectIdGenerator<String> {
     public String generateId(final Object forPojo) {
         if (!(forPojo instanceof TaskAssignment)) {
             throw new IllegalArgumentException(
-                    "Only RoleMembership instances are supported.");
+                    "Only TaskAssignment instances are supported.");
         }
 
         final TaskAssignment assignment = (TaskAssignment) forPojo;

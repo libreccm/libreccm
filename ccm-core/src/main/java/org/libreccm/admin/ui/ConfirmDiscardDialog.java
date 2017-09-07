@@ -19,13 +19,7 @@
 package org.libreccm.admin.ui;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
-
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import com.vaadin.ui.*;
 
 import java.util.ResourceBundle;
 

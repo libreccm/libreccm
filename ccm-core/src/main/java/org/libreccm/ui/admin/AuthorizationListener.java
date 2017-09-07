@@ -21,13 +21,13 @@ package org.libreccm.ui.admin;
 import com.arsdigita.web.BaseServlet;
 import com.arsdigita.web.CCMDispatcherServlet;
 import com.arsdigita.web.WebConfig;
-
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.net.URLCodec;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.shiro.subject.Subject;
+import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.security.PermissionChecker;
 
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.ExternalContext;
@@ -37,12 +37,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.shiro.subject.Subject;
-import org.libreccm.configuration.ConfigurationManager;
-import org.libreccm.security.PermissionChecker;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  *

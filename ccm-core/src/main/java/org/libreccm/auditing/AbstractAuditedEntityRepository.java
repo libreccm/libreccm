@@ -25,7 +25,6 @@ import org.hibernate.envers.query.AuditQuery;
 import org.libreccm.core.AbstractEntityRepository;
 
 import javax.inject.Inject;
-
 import java.util.List;
 import java.util.stream.Collectors;
 

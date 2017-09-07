@@ -20,7 +20,6 @@ package org.libreccm.pagemodel.ui;
 
 import com.arsdigita.bebop.Tree;
 import com.arsdigita.toolbox.ui.LayoutPanel;
-import java.util.Map;
 
 /**
  *

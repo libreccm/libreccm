@@ -20,7 +20,6 @@ package org.libreccm.admin.ui;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Button;
-
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Window;

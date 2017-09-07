@@ -27,18 +27,14 @@ import org.libreccm.security.RoleRepository;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import java.util.Set;
-
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.transaction.Transactional;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *

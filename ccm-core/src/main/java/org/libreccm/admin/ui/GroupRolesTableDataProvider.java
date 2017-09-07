@@ -25,9 +25,6 @@ import org.libreccm.security.Group;
 import org.libreccm.security.Role;
 import org.libreccm.security.RoleMembership;
 
-import java.util.Objects;
-import java.util.stream.Stream;
-
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -35,6 +32,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  *

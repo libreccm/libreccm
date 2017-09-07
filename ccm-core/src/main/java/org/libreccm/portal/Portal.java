@@ -18,19 +18,18 @@
  */
 package org.libreccm.portal;
 
-import static org.libreccm.core.CoreConstants.*;
-
 import org.libreccm.core.Resource;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  *

@@ -18,11 +18,12 @@
  */
 package org.libreccm.pagemodel.ui;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import org.libreccm.web.ApplicationManager;
 import org.libreccm.web.ApplicationType;
 import org.libreccm.web.CcmApplication;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 
 /**
  *

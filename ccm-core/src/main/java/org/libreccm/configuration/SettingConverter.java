@@ -22,13 +22,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.l10n.LocalizedString;
 
+import javax.enterprise.context.RequestScoped;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.enterprise.context.RequestScoped;
 
 /**
  * Helper class for converting values to settings of the appropriate type.

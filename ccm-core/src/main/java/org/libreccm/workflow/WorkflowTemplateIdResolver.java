@@ -16,17 +16,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.web;
+package org.libreccm.workflow;
 
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdResolver;
 import org.libreccm.cdi.utils.CdiUtil;
 
+import javax.enterprise.context.RequestScoped;
+
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers<\a>
- * @version created the 8/10/17
+ * @version created the 9/6/17
  */
-public class CcmApplicationIdResolver implements ObjectIdResolver {
+@RequestScoped
+public class WorkflowTemplateIdResolver implements ObjectIdResolver {
     @Override
     public void bindItem(ObjectIdGenerator.IdKey idKey, Object o) {
         // According to the Jackson JavaDoc, this method can be used to keep
@@ -35,25 +38,25 @@ public class CcmApplicationIdResolver implements ObjectIdResolver {
     }
 
     @Override
-    public Object resolveId(ObjectIdGenerator.IdKey id) {
+    public Object resolveId(ObjectIdGenerator.IdKey idKey) {
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final ApplicationRepository applicationRepository = cdiUtil
-                .findBean(ApplicationRepository.class);
+        final WorkflowTemplateRepository workflowTemplateRepository = cdiUtil
+                .findBean(WorkflowTemplateRepository.class);
 
-        return applicationRepository
-                .findByUuid(id.key.toString())
+        return workflowTemplateRepository
+                .findByUuid(idKey.toString())
                 .orElseThrow(() -> new IllegalArgumentException(String
-                        .format("No ccmApplications with uuid %s in the " +
-                                "database.", id.key.toString())));
+                        .format("No workflow templates with uuid %s in the " +
+                                "database.", idKey.toString())));
     }
 
     @Override
     public ObjectIdResolver newForDeserialization(Object o) {
-        return new CcmApplicationIdResolver();
+        return new WorkflowTemplateIdResolver();
     }
 
     @Override
-    public boolean canUseFor(ObjectIdResolver objectIdResolver) {
-        return objectIdResolver instanceof CcmApplicationIdResolver;
+    public boolean canUseFor(ObjectIdResolver resolverType) {
+        return resolverType instanceof WorkflowTemplateIdResolver;
     }
 }

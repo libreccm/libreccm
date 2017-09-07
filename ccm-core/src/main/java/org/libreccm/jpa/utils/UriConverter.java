@@ -18,10 +18,10 @@
  */
 package org.libreccm.jpa.utils;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * A converter for converting URI properties to String. JPA does not support URI

@@ -19,20 +19,10 @@
 package org.libreccm.admin.ui;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
-
 import com.vaadin.data.HasValue;
 import com.vaadin.server.Page;
 import com.vaadin.server.UserError;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
-import org.libreccm.admin.ui.ConfirmDiscardDialog;
+import com.vaadin.ui.*;
 import org.libreccm.security.Group;
 import org.libreccm.security.GroupManager;
 import org.libreccm.security.GroupRepository;

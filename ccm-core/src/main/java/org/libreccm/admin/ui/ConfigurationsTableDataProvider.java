@@ -19,7 +19,6 @@
 package org.libreccm.admin.ui;
 
 import com.arsdigita.kernel.KernelConfig;
-
 import com.vaadin.cdi.ViewScoped;
 import com.vaadin.data.provider.AbstractDataProvider;
 import com.vaadin.data.provider.Query;
@@ -27,11 +26,10 @@ import org.libreccm.configuration.ConfigurationInfo;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.l10n.GlobalizationHelper;
 
+import javax.inject.Inject;
 import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.inject.Inject;
 
 /**
  *
