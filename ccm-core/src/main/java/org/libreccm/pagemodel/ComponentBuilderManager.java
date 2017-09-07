@@ -18,14 +18,15 @@
  */
 package org.libreccm.pagemodel;
 
-import java.util.Iterator;
-import java.util.Optional;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.Iterator;
+import java.util.Optional;
 
 /**
  * Provides access to all available implementations of the

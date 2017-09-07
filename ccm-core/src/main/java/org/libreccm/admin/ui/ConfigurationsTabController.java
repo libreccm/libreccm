@@ -19,15 +19,13 @@
 package org.libreccm.admin.ui;
 
 import com.arsdigita.kernel.KernelConfig;
-
 import com.vaadin.cdi.ViewScoped;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.configuration.SettingManager;
 import org.libreccm.l10n.GlobalizationHelper;
 
-import java.util.Locale;
-
 import javax.inject.Inject;
+import java.util.Locale;
 
 /**
  *

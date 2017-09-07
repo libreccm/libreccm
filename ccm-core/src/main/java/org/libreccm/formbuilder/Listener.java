@@ -20,15 +20,14 @@ package org.libreccm.formbuilder;
 
 import org.libreccm.core.CcmObject;
 
-import static org.libreccm.core.CoreConstants.*;
-
-import java.io.Serializable;
-import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.Objects;
+
+import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 /**
  *

@@ -18,8 +18,8 @@
  */
 package org.libreccm.pagemodel;
 
-import java.util.Optional;
 import javax.inject.Inject;
+import java.util.Optional;
 
 /**
  * An abstract base class for implementations of the {@link PageBuilder}

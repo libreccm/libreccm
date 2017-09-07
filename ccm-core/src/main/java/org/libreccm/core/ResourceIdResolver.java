@@ -22,10 +22,13 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdResolver;
 import org.libreccm.cdi.utils.CdiUtil;
 
+import javax.enterprise.context.RequestScoped;
+
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers<\a>
  * @version created the 8/10/17
  */
+@RequestScoped
 public class ResourceIdResolver implements ObjectIdResolver {
     @Override
     public void bindItem(ObjectIdGenerator.IdKey idKey, Object o) {
@@ -37,8 +40,8 @@ public class ResourceIdResolver implements ObjectIdResolver {
     @Override
     public Object resolveId(ObjectIdGenerator.IdKey id) {
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final ResourceRepository resourceRepository = cdiUtil.findBean
-                (ResourceRepository.class);
+        final ResourceRepository resourceRepository = cdiUtil
+                .findBean(ResourceRepository.class);
 
         return resourceRepository
                 .findByUuid(id.key.toString())

@@ -18,14 +18,13 @@
  */
 package org.libreccm.ui.admin;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.shiro.subject.Subject;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.Serializable;
 import java.util.Optional;
 

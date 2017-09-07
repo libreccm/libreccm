@@ -18,11 +18,10 @@
  */
 package org.libreccm.configuration;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * Setting for values for type double (rational numbers). Be aware: Because how

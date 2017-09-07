@@ -20,25 +20,20 @@ package org.libreccm.security;
 
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdResolver;
+import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.core.UnexpectedErrorException;
 
-import javax.inject.Inject;
+import javax.enterprise.context.RequestScoped;
 import java.util.Optional;
 
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
  * @version created on 3/23/17
  */
+@RequestScoped
 public class PermissionIdResolver implements ObjectIdResolver {
-    @Inject
-    private PermissionRepository permissionRepository;
-    @Inject
-    private RoleRepository roleRepository;
-    @Inject
-    private CcmObjectRepository ccmObjectRepository;
-
     @Override
     public void bindItem(final ObjectIdGenerator.IdKey id,
                          final Object pojo) {
@@ -49,25 +44,35 @@ public class PermissionIdResolver implements ObjectIdResolver {
 
     @Override
     public Object resolveId(final ObjectIdGenerator.IdKey id) {
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final CcmObjectRepository ccmObjectRepository = cdiUtil
+                .findBean(CcmObjectRepository.class);
+        final RoleRepository roleRepository = cdiUtil
+                .findBean(RoleRepository.class);
+        final PermissionRepository permissionRepository = cdiUtil
+                .findBean(PermissionRepository.class);
+
         String[] customPermId = id.key.toString().split("_");
 
         String privilege = customPermId[0];
-        final long granteeId = Long.getLong(customPermId[1]);
-        final long objectId = Long.getLong(customPermId[2]);
+        final String granteeName = customPermId[1];
+        final String objectUuid = customPermId[2];
 
-        final Optional<Role> grantee = roleRepository.findById(granteeId);
+        final Optional<CcmObject> object = ccmObjectRepository
+                .findObjectByUuid(objectUuid);
+        final Optional<Role> grantee = roleRepository
+                .findByName(granteeName);
         if (!grantee.isPresent()) {
             throw new UnexpectedErrorException(String.format(
                     "Role with id \"%s\" was not found in the database," +
-                    " but has been associated with a permission.",
-                    granteeId));
+                            " but has been associated with a permission.",
+                    granteeName));
         }
-        final Optional<CcmObject> object = ccmObjectRepository.findObjectById
-                (objectId);
         Optional<Permission> permission = permissionRepository
-                            .findByCustomPermId(privilege,
-                                                grantee.get(),
-                                                object.orElse(null));
+                .findByCustomPermId(privilege,
+                                    grantee.get(),
+                                    object.orElse(null));
+
         if (!permission.isPresent()) {
             throw new UnexpectedErrorException(String.format(
                     "Permission with privilege \"%s\", grantee \"%s and " +

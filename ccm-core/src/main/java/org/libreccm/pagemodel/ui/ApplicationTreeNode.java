@@ -20,10 +20,11 @@ package org.libreccm.pagemodel.ui;
 
 import com.arsdigita.bebop.tree.TreeNode;
 import com.arsdigita.kernel.KernelConfig;
-import java.util.Locale;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.web.CcmApplication;
+
+import java.util.Locale;
 
 /**
  *

@@ -18,17 +18,12 @@
  */
 package org.libreccm.admin.ui;
 
-import org.libreccm.security.Role;
-import org.libreccm.security.RoleManager;
-import org.libreccm.security.RoleRepository;
-import org.libreccm.security.User;
-import org.libreccm.security.UserRepository;
-
-import java.util.Set;
+import org.libreccm.security.*;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.Set;
 
 /**
  *

@@ -30,7 +30,7 @@ import javax.inject.Inject;
  */
 @RequestScoped
 @Marshals(CcmApplication.class)
-public class CcmApplicationMarshaller extends AbstractMarshaller<CcmApplication> {
+public class ApplicationMarshaller extends AbstractMarshaller<CcmApplication> {
 
     @Inject
     private ApplicationRepository applicationRepository;

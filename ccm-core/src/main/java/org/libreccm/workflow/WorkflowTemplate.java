@@ -18,10 +18,15 @@
  */
 package org.libreccm.workflow;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.libreccm.core.CcmObject;
 import org.libreccm.portation.Portable;
+import org.libreccm.security.GroupIdResolver;
 
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import java.io.Serializable;
 
@@ -35,6 +40,14 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
  */
 @Entity
 @Table(name = "WORKFLOW_TEMPLATES", schema = DB_SCHEMA)
+@NamedQueries({
+        @NamedQuery(
+                name = "WorkflowTemplate.findByUuid",
+                query = "SELECT T FROM WorkflowTemplate t WHERE t.uuid = :uuid")
+})
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+                  resolver = WorkflowTemplateIdResolver.class,
+                  property = "uuid")
 public class WorkflowTemplate extends Workflow implements Serializable,
         Portable {
 
@@ -50,8 +63,8 @@ public class WorkflowTemplate extends Workflow implements Serializable,
      */
     @Override
     protected void setObject(final CcmObject object) {
-        throw new UnsupportedOperationException(
-            "A WorkflowTemplate has no object.");
+        //throw new UnsupportedOperationException(
+        //    "A WorkflowTemplate has no object.");
     }
 
     @Override

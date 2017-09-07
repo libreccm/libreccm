@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.core;
+package org.libreccm.web;
 
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdResolver;
@@ -29,7 +29,7 @@ import javax.enterprise.context.RequestScoped;
  * @version created the 8/10/17
  */
 @RequestScoped
-public class ResourceTypeIdResolver implements ObjectIdResolver {
+public class ApplicationIdResolver implements ObjectIdResolver {
     @Override
     public void bindItem(ObjectIdGenerator.IdKey idKey, Object o) {
         // According to the Jackson JavaDoc, this method can be used to keep
@@ -40,23 +40,23 @@ public class ResourceTypeIdResolver implements ObjectIdResolver {
     @Override
     public Object resolveId(ObjectIdGenerator.IdKey id) {
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final ResourceTypeRepository resourceTypeRepository = cdiUtil
-                .findBean(ResourceTypeRepository.class);
+        final ApplicationRepository applicationRepository = cdiUtil
+                .findBean(ApplicationRepository.class);
 
-        return resourceTypeRepository
-                .findByTitle(id.key.toString())
+        return applicationRepository
+                .findByUuid(id.key.toString())
                 .orElseThrow(() -> new IllegalArgumentException(String
-                        .format("No ResourceType with title %s in the " +
-                                        "database.", id.key.toString())));
+                        .format("No ccmApplications with uuid %s in the " +
+                                "database.", id.key.toString())));
     }
 
     @Override
     public ObjectIdResolver newForDeserialization(Object o) {
-        return new ResourceTypeIdResolver();
+        return new ApplicationIdResolver();
     }
 
     @Override
-    public boolean canUseFor(ObjectIdResolver resolverType) {
-        return resolverType instanceof ResourceTypeIdResolver;
+    public boolean canUseFor(ObjectIdResolver objectIdResolver) {
+        return objectIdResolver instanceof ApplicationIdResolver;
     }
 }

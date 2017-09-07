@@ -20,17 +20,16 @@ package org.libreccm.workflow;
 
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdResolver;
+import org.libreccm.cdi.utils.CdiUtil;
 
-import javax.inject.Inject;
+import javax.enterprise.context.RequestScoped;
 
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
  * @version created on 3/23/17
  */
+@RequestScoped
 public class WorkflowIdResolver implements ObjectIdResolver {
-    @Inject
-    private WorkflowRepository workflowRepository;
-
     @Override
     public void bindItem(final ObjectIdGenerator.IdKey id,
                          final Object pojo) {
@@ -41,7 +40,15 @@ public class WorkflowIdResolver implements ObjectIdResolver {
 
     @Override
     public Object resolveId(final ObjectIdGenerator.IdKey id) {
-        return workflowRepository.findByUuid(id.key.toString());
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final WorkflowRepository workflowRepository = cdiUtil
+                .findBean(WorkflowRepository.class);
+
+        return workflowRepository
+                .findByUuid(id.key.toString())
+                .orElseThrow(() -> new IllegalArgumentException(String
+                        .format("No workflows with uuid %s in the " +
+                                "database.", id.key.toString())));
     }
 
     @Override

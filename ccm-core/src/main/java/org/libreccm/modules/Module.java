@@ -20,16 +20,14 @@ package org.libreccm.modules;
 
 import org.libreccm.configuration.Configuration;
 import org.libreccm.configuration.ConfigurationManager;
-import org.libreccm.pagemodel.ComponentModel;
 import org.libreccm.pagemodel.PageModelComponentModel;
 import org.libreccm.web.ApplicationType;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-
-import static java.lang.annotation.ElementType.*;
-
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.TYPE;
 
 /**
  * Annotation for describing some meta data of a module.

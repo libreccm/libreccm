@@ -19,10 +19,9 @@
 package org.libreccm.configuration;
 
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import java.io.Serializable;
 
 /**
  * Setting for storing a long value.

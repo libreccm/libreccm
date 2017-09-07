@@ -21,6 +21,9 @@ package org.libreccm.workflow;
 import org.libreccm.core.AbstractEntityRepository;
 
 import javax.enterprise.context.RequestScoped;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -48,4 +51,30 @@ public class WorkflowTemplateRepository
         workflowTemplate.setUuid(UUID.randomUUID().toString());
     }
 
+    /**
+     * Find a {@link WorkflowTemplate} by its UUID.
+     *
+     * @param uuid The UUID of the {@link WorkflowTemplate} to find.
+     *
+     * @return An {@link Optional} containing the {@link WorkflowTemplate}
+     * identified by the provided UUID.
+     */
+    public Optional<WorkflowTemplate> findByUuid(final String uuid) {
+        if (uuid == null || uuid.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "The UUID of the WorkflowTemplate to retrieve can't be " +
+                            "null or empty.");
+        }
+
+        final TypedQuery<WorkflowTemplate> query = getEntityManager()
+                .createNamedQuery("WorkflowTemplate.findByUuid",
+                        WorkflowTemplate.class);
+        query.setParameter("uuid", uuid);
+
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch(NoResultException ex) {
+            return Optional.empty();
+        }
+    }
 }

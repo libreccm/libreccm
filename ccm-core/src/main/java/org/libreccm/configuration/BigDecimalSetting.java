@@ -18,11 +18,11 @@
  */
 package org.libreccm.configuration;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Entity;
 
 /**
  * Setting for values of type {@link BigDecimal}. Use this for rational numbers
