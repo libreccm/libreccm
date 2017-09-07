@@ -211,6 +211,11 @@ public class RelatedInfoStep extends ResettableContainer {
         page.addComponentStateParam(this,
                                     moveAttachmentModel.getStateParameter());
 
+//        page.addGlobalStateParam(selectedListModel.getStateParameter());
+//        page.addGlobalStateParam(moveListModel.getStateParameter());
+//        page.addGlobalStateParam(selectedAttachmentModel.getStateParameter());
+//        page.addGlobalStateParam(moveAttachmentModel.getStateParameter());
+
         page.setVisibleDefault(listTable, true);
         page.setVisibleDefault(listForm, false);
         page.setVisibleDefault(addListLink, true);

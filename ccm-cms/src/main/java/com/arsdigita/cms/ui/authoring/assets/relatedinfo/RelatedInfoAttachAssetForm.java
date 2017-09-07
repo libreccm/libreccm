@@ -20,7 +20,6 @@ package com.arsdigita.cms.ui.authoring.assets.relatedinfo;
 
 import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormProcessException;
-import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SaveCancelSection;
 import com.arsdigita.bebop.event.FormInitListener;
@@ -79,14 +78,14 @@ class RelatedInfoAttachAssetForm
         super.addProcessListener(this);
         super.addSubmissionListener(this);
     }
-
-    @Override
-    public void register(final Page page) {
-        super.register(page);
-        
-        page.addComponentStateParam(this, itemSelectionModel.getStateParameter());
-        page.addComponentStateParam(this, listSelectionModel.getStateParameter());
-    }
+//
+//    @Override
+//    public void register(final Page page) {
+//        super.register(page);
+//        
+//        page.addComponentStateParam(this, itemSelectionModel.getStateParameter());
+//        page.addComponentStateParam(this, listSelectionModel.getStateParameter());
+//    }
 
     @Override
     public void init(final FormSectionEvent event) throws FormProcessException {
@@ -110,32 +109,36 @@ class RelatedInfoAttachAssetForm
         final Object value = searchWidget.getValue(state);
         if (value != null) {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final ItemAttachmentManager attachmentManager = cdiUtil
-                .findBean(ItemAttachmentManager.class);
-            final AssetRepository assetRepo = cdiUtil
-                .findBean(AssetRepository.class);
-            final Asset asset = assetRepo
-                .findById((long) value)
-                .orElseThrow(() -> new UnexpectedErrorException(String
-                .format("No Asset with ID %d in the database.", value)));
+//            final ItemAttachmentManager attachmentManager = cdiUtil
+//                .findBean(ItemAttachmentManager.class);
+//            final AssetRepository assetRepo = cdiUtil
+//                .findBean(AssetRepository.class);
+//            final Asset asset = assetRepo
+//                .findById((long) value)
+//                .orElseThrow(() -> new UnexpectedErrorException(String
+//                .format("No Asset with ID %d in the database.", value)));
 
             final AttachmentList list = listSelectionModel
                 .getSelectedAttachmentList(state);
 
-            attachmentManager.attachAsset(asset, list);
+//            attachmentManager.attachAsset(asset, list);
+            final RelatedInfoStepController controller = cdiUtil
+                .findBean(RelatedInfoStepController.class);
+            controller.attachAsset(list, (long) value);
         }
 
-        relatedInfoStep.showAttachmentListTable(state);
+        relatedInfoStep.showAttachmentsTable(state);
     }
 
     @Override
-    public void submitted(final FormSectionEvent event) throws
-        FormProcessException {
+    public void submitted(final FormSectionEvent event)
+        throws FormProcessException {
 
         final PageState state = event.getPageState();
 
-        listSelectionModel.clearSelection(state);
-        relatedInfoStep.showAttachmentListTable(state);
+        if (saveCancelSection.getCancelButton().isSelected(state)) {
+            relatedInfoStep.showAttachmentsTable(state);
+        }
     }
 
 }
