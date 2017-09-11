@@ -88,6 +88,9 @@ public class InternalLinkAddForm
         super.add(itemSearchLabel); 
         super.add(itemSearchWidget);
         super.add(saveCancelSection);
+        
+        super.addProcessListener(this);
+        super.addSubmissionListener(this);
     }
 
     @Override

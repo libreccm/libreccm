@@ -115,6 +115,7 @@ function getItemsForSelectItemDialog(dialogId) {
     }
 
     request.open("GET", url);
+    request.withCredentials = true;
     request.addEventListener('load', function (event) {
         if (request.status >= 200 && request.status <= 300) {
             var items = JSON.parse(request.responseText);
@@ -133,7 +134,7 @@ function getItemsForSelectItemDialog(dialogId) {
                     + "</tr>";
             }
             document
-                .querySelector('#' + dialogId + "tbody")
+                .querySelector('#' + dialogId + " tbody")
                 .innerHTML = tableRows;
         } else {
             alert("Error while retrieving items. "

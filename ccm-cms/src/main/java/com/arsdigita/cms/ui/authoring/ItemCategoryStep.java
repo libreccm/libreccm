@@ -35,13 +35,18 @@ import com.arsdigita.cms.CMS;
 
 import com.arsdigita.cms.ItemSelectionModel;
 
+import org.librecms.CmsConstants;
+import org.librecms.ui.authoring.ContentItemAuthoringStep;
+
 import java.math.BigDecimal;
 
 
-/**
- * 
- * 
- */
+@ContentItemAuthoringStep(
+    labelBundle = CmsConstants.CMS_BUNDLE,
+    labelKey = "item_category_step.label",
+    descriptionBundle = CmsConstants.CMS_BUNDLE,
+    descriptionKey = "item_category_step.description"
+)
 public class ItemCategoryStep extends SimpleContainer  implements Resettable{
     
 
@@ -58,7 +63,8 @@ public class ItemCategoryStep extends SimpleContainer  implements Resettable{
     
 
     public ItemCategoryStep(final ItemSelectionModel itemSelectionModel, 
-                            final AuthoringKitWizard authoringKitWizard) {
+                            final AuthoringKitWizard authoringKitWizard,
+                            final StringParameter selectedLanguage) {
         
         super("cms:categoryStep", CMS.CMS_XML_NS);
 

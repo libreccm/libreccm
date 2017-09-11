@@ -18,15 +18,22 @@
  */
 package org.libreccm.l10n;
 
+import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.configuration.ConfigurationManager;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.util.Enumeration;
 import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 /**
  * Provides the locale which has been selected based on the available languages
@@ -63,6 +70,9 @@ import java.util.Locale;
 @RequestScoped
 public class GlobalizationHelper {
 
+    private static final Logger LOGGER = LogManager
+        .getLogger(GlobalizationHelper.class);
+
     private static final String LANG_PARAM = "lang";
 
     @Inject
@@ -80,6 +90,7 @@ public class GlobalizationHelper {
      * values the first value available locale (ordered alphabetically) is used.
      *
      * @param localizedString
+     *
      * @return
      */
     public String getValueFromLocalizedString(
@@ -166,6 +177,80 @@ public class GlobalizationHelper {
         }
 
         return selected;
+    }
+
+    /**
+     * Retrieve the {@link ResourceBundle} identified by {@code name} for the
+     * negotiated locale
+     *
+     * @param name The fully qualified name of the {@link ResourceBundle} to
+     *             retrieve.
+     *
+     * @return The {@link ResourceBundle} identified for the negotiated locale
+     *         or, if the {@link ResourceBundle} is not available for negotiated
+     *         locale, for the default locale. Or both do not exist {@code null}
+     *         is returned.
+     */
+    public ResourceBundle getResourceBundle(final String name) {
+
+        try {
+            return ResourceBundle.getBundle(name, getNegotiatedLocale());
+        } catch (MissingResourceException ex) {
+            LOGGER.warn(
+                "ResourceBundle \"{}\" does not exist for negotiated locale \"{}\".",
+                name,
+                getNegotiatedLocale().toString());
+            LOGGER.warn(ex);
+        }
+
+        final KernelConfig kernelConfig = confManager
+            .findConfiguration(KernelConfig.class);
+        final Locale defaultLocale = kernelConfig.getDefaultLocale();
+        try {
+            return ResourceBundle.getBundle(name, defaultLocale);
+        } catch (MissingResourceException ex) {
+            LOGGER.warn(
+                "ResourceBundle \"{}\" does not exist for negotiated locale \"{}\".",
+                name,
+                defaultLocale);
+            LOGGER.warn(ex);
+        }
+
+        return null;
+    }
+
+    /**
+     * Creates a instance of the {@link LocalizedTextsUtil} class for the
+     * {@link ResourceBundle} identified by {@code bundleName} and the
+     * {@link #getNegotiatedLocale()}.
+     *
+     * The {@link ResourceBundle} is retrieved using
+     * {@link #getResourceBundle(java.lang.String)}.
+     *
+     * @param bundleName The fully qualified name of the {@link ResourceBundle}
+     *                   to use.
+     *
+     * @return A {@link LocalizedTextsUtil} for the {@link ResourceBundle}
+     *         identified by the provided {@code bundleName}.
+     */
+    public LocalizedTextsUtil getLocalizedTextsUtil(final String bundleName) {
+        return new LocalizedTextsUtil(bundleName, getResourceBundle(bundleName));
+    }
+
+    /**
+     * Creates a {@link GlobalizedMessagesUtil} for the {@link ResourceBundle}
+     * identified by {@code bundleName}.
+     *
+     * @param bundleName The fully qualified name of the {@link ResourceBundle}
+     *                   to use.
+     *
+     * @return A {@link GlobalizedMessagesUtil} for the {@link ResourceBundle}
+     *         identified by {@code bundleName}.
+     */
+    public GlobalizedMessagesUtil getGlobalizedMessagesUtil(
+        final String bundleName) {
+
+        return new GlobalizedMessagesUtil(bundleName);
     }
 
     private Locale scanLocale(final String language) {

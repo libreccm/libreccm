@@ -25,12 +25,14 @@ import com.arsdigita.cms.ui.authoring.assets.AttachmentSelectionModel;
 import com.arsdigita.globalization.GlobalizedMessage;
 
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.CmsConstants;
 import org.librecms.assets.AssetTypeInfo;
 import org.librecms.assets.AssetTypesManager;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
@@ -77,29 +79,33 @@ class AttachmentsTableModel implements TableModel {
             case AttachmentsTable.COL_TITLE:
                 return currentRow.getTitle();
             case AttachmentsTable.COL_TYPE: {
-                final AssetTypesManager typesManager = CdiUtil
-                    .createCdiUtil()
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final AssetTypesManager typesManager = cdiUtil
                     .findBean(AssetTypesManager.class);
                 final AssetTypeInfo typeInfo = typesManager
                     .getAssetTypeInfo(currentRow.getType());
-                final ResourceBundle bundle = ResourceBundle
-                    .getBundle(typeInfo.getLabelBundle());
-                return bundle.getString(typeInfo.getLabelKey());
+                try {
+                    final ResourceBundle bundle = ResourceBundle
+                        .getBundle(typeInfo.getLabelBundle());
+                    return bundle.getString(typeInfo.getLabelKey());
+                } catch (MissingResourceException ex) {
+                    return typeInfo.getAssetClass().getName();
+                }
             }
             case AttachmentsTable.COL_MOVE:
                 if (moveAttachmentModel.getSelectedAttachment(state) == null) {
                     return new Label(new GlobalizedMessage(
-                    "cms.ui.authoring.assets.related_info_step.attachment.move",
-                    CmsConstants.CMS_BUNDLE));
+                        "cms.ui.authoring.assets.related_info_step.attachment.move",
+                        CmsConstants.CMS_BUNDLE));
                 } else {
                     return new Label(new GlobalizedMessage(
-                    "cms.ui.authoring.assets.related_info_step.attachment.move_here",
-                    CmsConstants.CMS_BUNDLE));
+                        "cms.ui.authoring.assets.related_info_step.attachment.move_here",
+                        CmsConstants.CMS_BUNDLE));
                 }
             case AttachmentsTable.COL_REMOVE:
                 return new Label(new GlobalizedMessage(
-                "cms.ui.authoring.assets.related_info_step.attachment.remove",
-                CmsConstants.CMS_BUNDLE));
+                    "cms.ui.authoring.assets.related_info_step.attachment.remove",
+                    CmsConstants.CMS_BUNDLE));
             default:
                 throw new IllegalArgumentException(String.format(
                     "Illegal column index %d.", columnIndex));

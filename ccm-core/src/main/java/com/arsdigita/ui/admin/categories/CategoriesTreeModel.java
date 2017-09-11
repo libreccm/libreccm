@@ -54,24 +54,24 @@ public class CategoriesTreeModel implements TreeModel {
     @Override
     public boolean hasChildren(final TreeNode node,
                                final PageState state) {
-        final CategoryRepository categoryRepo = CdiUtil.createCdiUtil()
-            .findBean(CategoryRepository.class);
-        final Category category = categoryRepo.findById(
-            ((CategoryTreeNode) node).getCategory().getObjectId()).get();
 
-        return (category.getSubCategories() != null
-                && !category.getSubCategories().isEmpty());
+        final CategoriesController controller = CdiUtil
+            .createCdiUtil()
+            .findBean(CategoriesController.class);
+        return controller.hasChildren(((CategoryTreeNode) node).getCategory());
     }
 
     @Override
     public Iterator getChildren(final TreeNode node,
                                 final PageState state) {
-        final CategoryRepository categoryRepo = CdiUtil.createCdiUtil()
-            .findBean(CategoryRepository.class);
-        final Category category = categoryRepo.findById(
-            ((CategoryTreeNode) node).getCategory().getObjectId()).get();
 
-        return new SubCategoryNodesIterator(category.getSubCategories());
+        final CategoriesController controller = CdiUtil
+            .createCdiUtil()
+            .findBean(CategoriesController.class);
+        final List<Category> subCategories = controller
+            .getSubCategories(((CategoryTreeNode) node).getCategory());
+
+        return new SubCategoryNodesIterator(subCategories);
     }
 
     private class CategoryTreeNode implements TreeNode {
