@@ -183,6 +183,31 @@ public class FolderRepository extends AbstractEntityRepository<Long, Folder> {
         return Optional.of(current);
     }
 
+    /**
+     * Counts the subfolders of a folder.
+     *
+     * @param parent The folder.
+     *
+     * @return The number of subfolders in the folder.
+     */
+    public long countSubFolders(final Folder parent) {
+
+        final TypedQuery<Long> query = getEntityManager()
+            .createNamedQuery("Folder.countSubFolders", Long.class);
+        query.setParameter("parent", parent);
+
+        return query.getSingleResult();
+    }
+
+    public List<Folder> findSubFolders(final Folder parent) {
+        
+        final TypedQuery<Folder> query = getEntityManager()
+            .createNamedQuery("Folder.findSubFolders", Folder.class);
+        query.setParameter("parent", parent);
+        
+        return query.getResultList();
+    }
+    
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     @Override

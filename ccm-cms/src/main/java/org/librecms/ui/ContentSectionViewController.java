@@ -21,7 +21,10 @@ package org.librecms.ui;
 import com.vaadin.cdi.ViewScoped;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.PermissionChecker;
+import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
+import org.librecms.contentsection.FolderRepository;
+import org.librecms.contenttypes.ContentTypesManager;
 
 import javax.inject.Inject;
 
@@ -30,7 +33,19 @@ import javax.inject.Inject;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ViewScoped
-class ContentSectionViewController {
+public class ContentSectionViewController {
+
+    @Inject
+    private BrowseDocumentsDataProvider browseDocumentsDataProvider;
+    
+    @Inject
+    private BrowseDocumentsFolderTreeDataProvider folderTreeDataProvider;
+    
+    @Inject
+    private ContentTypesManager contentTypesManager;
+
+    @Inject
+    private FolderRepository folderRepository;
 
     @Inject
     private GlobalizationHelper globalizationHelper;
@@ -39,18 +54,43 @@ class ContentSectionViewController {
     private PermissionChecker permissionChecker;
 
     @Inject
-    private ContentSectionRepository sectionRepo;
+    private ContentSectionRepository sectionRepository;
+
+    @Inject
+    private ContentSectionViewState contentSectionViewState;
+
+    protected BrowseDocumentsDataProvider getBrowseDocumentsDataProvider() {
+        return browseDocumentsDataProvider;
+    }
     
-    public GlobalizationHelper getGlobalizationHelper() {
+    protected BrowseDocumentsFolderTreeDataProvider getFolderTreeDataProvider() {
+        return folderTreeDataProvider;
+    }
+    
+    protected ContentTypesManager getContentTypesManager() {
+        return contentTypesManager;
+    }
+
+    protected FolderRepository getFolderRepository() {
+        return folderRepository;
+    }
+
+    protected GlobalizationHelper getGlobalizationHelper() {
         return globalizationHelper;
     }
 
-    public PermissionChecker getPermissionChecker() {
+    protected PermissionChecker getPermissionChecker() {
         return permissionChecker;
     }
 
-    public ContentSectionRepository getSectionRepo() {
-        return sectionRepo;
+    protected ContentSectionRepository getSectionRepository() {
+        return sectionRepository;
     }
+
+    protected ContentSectionViewState getContentSectionViewState() {
+        return contentSectionViewState;
+    }
+
     
+
 }

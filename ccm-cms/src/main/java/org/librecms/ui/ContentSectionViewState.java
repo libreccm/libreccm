@@ -16,31 +16,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.contentsection.rs;
+package org.librecms.ui;
 
-
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+import com.vaadin.cdi.ViewScoped;
+import org.librecms.contentsection.ContentSection;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@ApplicationPath("/content-sections")
-public class ContentSections extends Application{
+@ViewScoped
+class ContentSectionViewState {
     
-    @Override
-    public Set<Class<?>> getClasses() {
-        final Set<Class<?>> classes = new HashSet<>();
-        
-        classes.add(Assets.class);
-        classes.add(ContentItems.class);
-        classes.add(Images.class);
-        
-        return classes;
+    private ContentSection selectedContentSection;
+
+    protected ContentSection getSelectedContentSection() {
+        return selectedContentSection;
     }
+
+    protected void setSelectedContentSection(
+        final ContentSection selectedContentSection) {
+        this.selectedContentSection = selectedContentSection;
+    }
+    
+    
     
 }

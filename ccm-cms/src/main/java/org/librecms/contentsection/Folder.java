@@ -60,18 +60,19 @@ import static org.librecms.CmsConstants.*;
     ,
     @NamedQuery(
         name = "Folder.findSubFolders",
-        query = "SELECT f FROM Folder f WHERE f.parentCategory = :parent "
-                    + "AND LOWER(f.name) LIKE :term "
+        query = "SELECT f "
+                    + "FROM Folder f"
+                    + " WHERE f.parentCategory = :parent "
                     + "ORDER BY f.name"
     )
     ,
-//    @NamedQuery(
-//        name = "Folder.countSubFolders",
-//        query
-//            = "SELECT COUNT(f) FROM Folder f WHERE f.parentCategory = :parent "
-//                  + "AND LOWER(f.name) LIKE :term"
-//    )
-//    ,
+    @NamedQuery(
+        name = "Folder.countSubFolders",
+        query = "SELECT COUNT(f) "
+                    + "FROM Folder f "
+                    + "WHERE f.parentCategory = :parent"
+    )
+    ,
 //    @NamedQuery(
 //        name = "Folder.findItems",
 //        query = "SELECT c.categorizedObject "
