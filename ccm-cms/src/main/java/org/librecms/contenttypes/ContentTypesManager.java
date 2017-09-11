@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
+import javax.transaction.Transactional;
 
 /**
  * Provides informations about the available content types.
@@ -291,6 +292,7 @@ public class ContentTypesManager {
      *
      * @return A {@link ContentTypeInfo} describing the content type.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public ContentTypeInfo getContentTypeInfo(final ContentType contentType) {
         return getContentTypeInfo(contentType.getContentItemClass());
     }
