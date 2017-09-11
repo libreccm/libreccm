@@ -78,6 +78,51 @@
         <translation lang="en">Welcome</translation>
     </text>
     
+    <text id="item-search-widget/table/header/title">
+        <translation lang="de">Titel</translation>
+        <translation lang="en">Titel</translation>
+    </text>
+    
+    <text id="item-search-widget/table/header/type">
+        <translation lang="de">Typ</translation>
+        <translation lang="en">Type</translation>
+    </text>
+    
+    <text id="item-search-widget/table/header/place">
+        <translation lang="de">Ort</translation>
+        <translation lang="en">Place</translation>
+    </text>
+    
+    <text id="item-search-widget/filter-list">
+        <translation lang="de">Liste filtern</translation>
+        <translation lang="en">Filter list</translation>
+    </text>
+    
+    <text id="item-search-widget/filter-list/apply">
+        <translation lang="de">Anwenden</translation>
+        <translation lang="en">Apply</translation>
+    </text>
+    
+    <text id="item-search-widget/no-item-selected">
+        <translation lang="de">Keine Content Item ausgewählt</translation>
+        <translation lang="en">No item selected</translation>
+    </text>
+    
+    <text id="item-search-widget/select-item-button">
+        <translation lang="de">Item auswählen</translation>
+        <translation lang="en">Select item</translation>
+    </text>
+    
+    <text id="item-search-widget/titlebar">
+        <translation lang="de">Item auswählen</translation>
+        <translation lang="en">Select item</translation>
+    </text>
+    
+    <text id="item-search-widget/titlebar/close">
+        <translation lang="de">Schließen</translation>
+        <translation lang="en">Close</translation>
+    </text>
+    
     <text id="summary/itemSummary/header">
         <translation lang="en">Item Summary</translation>
         <translation lang="de">Zusammenfassung</translation>

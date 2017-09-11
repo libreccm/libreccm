@@ -51,7 +51,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-
 /**
  * abstract class for displaying the categories assigned to an object under one
  * or more root nodes. Subclasses should retrieve the object to be assigned and
@@ -188,14 +187,13 @@ public abstract class ACSObjectCategorySummary extends SimpleComponent {
                                            getXMLPrefix()),
                              getXMLNameSpace());
 
-        final List<Category> categories = getObject(state)
-            .getCategories()
-            .stream()
-            .map(categorization -> categorization.getCategory())
-            .collect(Collectors.toList());
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ACSObjectCategoryController controller = cdiUtil
+            .findBean(ACSObjectCategoryController.class);
+        final List<Category> categories = controller
+            .getCategoriesForObject(getObject(state));
 
-        final CategoryManager categoryManager = CdiUtil
-            .createCdiUtil()
+        final CategoryManager categoryManager = cdiUtil
             .findBean(CategoryManager.class);
 
         for (final Category category : categories) {
@@ -258,12 +256,12 @@ public abstract class ACSObjectCategorySummary extends SimpleComponent {
                              Objects.toString(category),
                              Objects.toString(object));
             }
-            
+
             final CategoryManager categoryManager = cdiUtil
-            .findBean(CategoryManager.class);
+                .findBean(CategoryManager.class);
             try {
-            categoryManager.removeObjectFromCategory(object, category);
-            } catch(ObjectNotAssignedToCategoryException ex) {
+                categoryManager.removeObjectFromCategory(object, category);
+            } catch (ObjectNotAssignedToCategoryException ex) {
                 throw new UnexpectedErrorException(ex);
             }
 

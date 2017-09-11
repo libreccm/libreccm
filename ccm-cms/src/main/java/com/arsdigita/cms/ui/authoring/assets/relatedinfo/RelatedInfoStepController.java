@@ -302,7 +302,13 @@ class RelatedInfoStepController {
         final Locale selectedLocale = new Locale(selectedLanguage);
         link.getTitle().addValue(selectedLocale, title);
 
-        itemAttachmentManager.attachAsset(link, attachmentList);
+        final AttachmentList list = attachmentListManager
+            .getAttachmentList(attachmentList.getListId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No AttachmentList with Id %d in the database.",
+            attachmentList.getListId())));
+
+        itemAttachmentManager.attachAsset(link, list);
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -319,7 +325,7 @@ class RelatedInfoStepController {
             .orElseThrow(() -> new UnexpectedErrorException(String
             .format("No AttachmentList with ID %d in the database.",
                     attachmentList.getListId())));
-        
+
         itemAttachmentManager.attachAsset(asset, list);
     }
 
