@@ -21,9 +21,11 @@ package org.librecms.ui;
 import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
@@ -38,7 +40,7 @@ import javax.inject.Inject;
  */
 @CDIView(value = ContentSectionView.VIEWNAME,
          uis = {CmsUI.class})
-class ContentSectionView implements View {
+class ContentSectionView extends CustomComponent implements View {
 
     private static final long serialVersionUID = 602851260519364741L;
 
@@ -58,10 +60,26 @@ class ContentSectionView implements View {
 
         this.controller = controller;
 
+        final BrowseDocuments browseDocuments = new BrowseDocuments(controller);
+        
         tabSheet = new TabSheet();
+        tabSheet.addTab(browseDocuments, "Documents");
+        tabSheet.addTab(new Label("Search placeholder"), "Search");
+        tabSheet.addTab(new Label("Media & Records placeholder"),
+                        "Media & Records");
+        tabSheet.addTab(new Label("Roles placeholder"), "Roles");
+        tabSheet.addTab(new Label("Workflows Placeholder"), "Workflows");
+        tabSheet.addTab(new Label("Lifecycles placeholder"), "Lifecycles");
+        tabSheet.addTab(new Label("Document types placeholder"),
+                        "Documents types");
 
         noSectionPanel = new Panel();
         noSectionPanel.setVisible(false);
+        
+        final VerticalLayout layout = new VerticalLayout(tabSheet, 
+            noSectionPanel);
+        
+        super.setCompositionRoot(layout);
     }
 
     @Override
@@ -71,18 +89,21 @@ class ContentSectionView implements View {
 
         if (parameters == null || parameters.trim().isEmpty()) {
             tabSheet.setVisible(false);
-                noSectionPanel.setCaption("No content section selected");
-                noSectionPanel.setContent(new Label("No content section selected"));
-                noSectionPanel.setVisible(true);
+            noSectionPanel.setCaption("No content section selected");
+            noSectionPanel.setContent(new Label("No content section selected"));
+            noSectionPanel.setVisible(true);
         } else {
             final ContentSectionRepository sectionRepo = controller
-                .getSectionRepo();
+                .getSectionRepository();
 
             final Optional<ContentSection> contentSection = sectionRepo
                 .findByLabel(parameters);
 
             if (contentSection.isPresent()) {
                 selectedSection = contentSection.get();
+                controller
+                    .getContentSectionViewState()
+                    .setSelectedContentSection(selectedSection);
             } else {
                 tabSheet.setVisible(false);
                 noSectionPanel.setCaption(String

@@ -18,6 +18,7 @@
  */
 package org.librecms.contentsection;
 
+import com.arsdigita.cms.ui.authoring.ItemCategoryStep;
 import com.arsdigita.cms.ui.authoring.assets.relatedinfo.RelatedInfoStep;
 import com.arsdigita.cms.ui.authoring.assets.images.ImageStep;
 
@@ -123,6 +124,7 @@ public class ContentSectionConfig {
     @Setting
     private List<String> defaultAuthoringSteps = Arrays
         .asList(new String[]{
+        ItemCategoryStep.class.getName(),
         ImageStep.class.getName(),
         RelatedInfoStep.class.getName()});
 
@@ -175,12 +177,13 @@ public class ContentSectionConfig {
     public void setMaxAlerts(final int maxAlerts) {
         this.maxAlerts = maxAlerts;
     }
-    
+
     public List<String> getDefaultAuthoringSteps() {
         return new ArrayList<>(defaultAuthoringSteps);
     }
-    
-    public void setDefaultAuthoringSteps(final List<String> defaultAuthoringSteps) {
+
+    public void setDefaultAuthoringSteps(
+        final List<String> defaultAuthoringSteps) {
         this.defaultAuthoringSteps = new ArrayList<>(defaultAuthoringSteps);
     }
 
