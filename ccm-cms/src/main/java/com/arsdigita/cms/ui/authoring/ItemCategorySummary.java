@@ -28,25 +28,23 @@ import com.arsdigita.cms.CMS;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.CcmObject;
 import org.libreccm.security.PermissionChecker;
-import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ItemCategorySummary extends ACSObjectCategorySummary {
-
+    
     public ItemCategorySummary() {
         super();
     }
-
+    
     @Override
     protected boolean canEdit(final PageState state) {
-
+        
         final PermissionChecker permissionChecker = CdiUtil
             .createCdiUtil()
             .findBean(PermissionChecker.class);
-
+        
         return permissionChecker.isPermitted(ItemPrivileges.CATEGORIZE,
                                              CMS.getContext().getContentItem());
     }
@@ -57,7 +55,7 @@ public class ItemCategorySummary extends ACSObjectCategorySummary {
      */
     @Override
     protected CcmObject getObject(final PageState state) {
-
+        
         return CMS.getContext().getContentItem();
     }
 
@@ -82,14 +80,12 @@ public class ItemCategorySummary extends ACSObjectCategorySummary {
      */
     @Override
     protected List<Category> getRootCategories(final PageState state) {
-
-        final ContentSection section = CMS.getContext().getContentSection();
-        return section
-            .getDomains()
-            .stream()
-            .map(domainOwnership -> domainOwnership.getDomain())
-            .map(domain -> domain.getRoot())
-            .collect(Collectors.toList());
+        
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ItemCategoryStepController controller = cdiUtil
+            .findBean(ItemCategoryStepController.class);
+        
+        return controller.getRootCategories(CMS.getContext().getContentSection());
     }
-
+    
 }
