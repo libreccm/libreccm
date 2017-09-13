@@ -19,6 +19,8 @@
 package org.arsdigita.cms;
 
 import com.arsdigita.bebop.form.DHTMLEditor;
+import com.arsdigita.cms.ui.authoring.ItemCategoryExtension;
+import com.arsdigita.cms.ui.authoring.ItemCategoryForm;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.Configuration;
@@ -368,6 +370,16 @@ public class CMSConfig {
 
     @Setting
     private int xmlCacheAge = 60 * 60 * 24;
+
+    @Setting
+    private String categoryAuthoringAddForm = ItemCategoryForm.class.getName();
+
+    @Setting
+    private String categoryAuthoringExtension = ItemCategoryExtension.class
+        .getName();
+
+    @Setting
+    private boolean categoryPickerAjaxExpandAll = false;
 
     /**
      * Max length of the description of a link (in database max length are 4000
@@ -927,6 +939,34 @@ public class CMSConfig {
 
     public void setLinkDescMaxLength(final int linkDescMaxLength) {
         this.linkDescMaxLength = linkDescMaxLength;
+    }
+
+    public String getCategoryAuthoringAddForm() {
+        return categoryAuthoringAddForm;
+    }
+
+    public void setCategoryAuthoringAddForm(
+        final String categoryAuthoringAddForm) {
+
+        this.categoryAuthoringAddForm = categoryAuthoringAddForm;
+    }
+
+    public String getCategoryAuthoringExtension() {
+        return categoryAuthoringExtension;
+    }
+
+    public void setCategoryAuthoringExtension(
+        final String categoryAuthoringExtension) {
+        this.categoryAuthoringExtension = categoryAuthoringExtension;
+    }
+
+    public boolean isCategoryPickerAjaxExpandAll() {
+        return categoryPickerAjaxExpandAll;
+    }
+
+    public void setCategoryPickerAjaxExpandAll(
+        final boolean categoryPickerAjaxExpandAll) {
+        this.categoryPickerAjaxExpandAll = categoryPickerAjaxExpandAll;
     }
 
 }
