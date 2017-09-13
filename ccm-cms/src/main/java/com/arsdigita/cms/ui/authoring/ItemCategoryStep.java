@@ -29,17 +29,17 @@ import com.arsdigita.bebop.Resettable;
 import com.arsdigita.bebop.parameters.LongParameter;
 import com.arsdigita.web.RedirectSignal;
 
-
 import com.arsdigita.cms.CMS;
 
-
 import com.arsdigita.cms.ItemSelectionModel;
+import com.arsdigita.util.Classes;
 
+import org.arsdigita.cms.CMSConfig;
+import org.libreccm.core.UnexpectedErrorException;
 import org.librecms.CmsConstants;
 import org.librecms.ui.authoring.ContentItemAuthoringStep;
 
 import java.math.BigDecimal;
-
 
 @ContentItemAuthoringStep(
     labelBundle = CmsConstants.CMS_BUNDLE,
@@ -47,25 +47,23 @@ import java.math.BigDecimal;
     descriptionBundle = CmsConstants.CMS_BUNDLE,
     descriptionKey = "item_category_step.description"
 )
-public class ItemCategoryStep extends SimpleContainer  implements Resettable{
-    
+public class ItemCategoryStep extends SimpleContainer implements Resettable {
 
     private final LongParameter rootParameter;
     private final StringParameter modeParameter;
-    
-    private final ItemCategorySummary itemCategorySummary;
-    
-    private final SimpleComponent addComponent;
-    
-//    private SimpleComponent[] extensionSummaries;
-//    private SimpleComponent[] extensionForms;
-//    private int extensionsCount;
-    
 
-    public ItemCategoryStep(final ItemSelectionModel itemSelectionModel, 
+    private final ItemCategorySummary itemCategorySummary;
+
+    private final SimpleComponent addComponent;
+
+    private final SimpleComponent[] extensionSummaries;
+    private final SimpleComponent[] extensionForms;
+    private int extensionsCount;
+
+    public ItemCategoryStep(final ItemSelectionModel itemSelectionModel,
                             final AuthoringKitWizard authoringKitWizard,
                             final StringParameter selectedLanguage) {
-        
+
         super("cms:categoryStep", CMS.CMS_XML_NS);
 
         rootParameter = new LongParameter("root");
@@ -73,43 +71,63 @@ public class ItemCategoryStep extends SimpleContainer  implements Resettable{
 
         itemCategorySummary = new ItemCategorySummary();
         itemCategorySummary.registerAction(ItemCategorySummary.ACTION_ADD,
-                new AddActionListener("plain"));
+                                           new AddActionListener("plain"));
         itemCategorySummary.registerAction(ItemCategorySummary.ACTION_ADD_JS,
-                new AddActionListener("javascript"));
+                                           new AddActionListener("javascript"));
 
-//        Class addForm = CMSConfig.getConfig().getCategoryAuthoringAddForm();
-//        addComponent = (SimpleComponent)
-//            Classes.newInstance(addForm,
-//                                new Class[] { BigDecimalParameter.class,
-//                                              StringParameter.class },
-//                                new Object[] { rootParameter, modeParameter });
-        addComponent = new ItemCategoryForm(rootParameter, modeParameter);
+        final String addFormClassName = CMSConfig
+            .getConfig()
+            .getCategoryAuthoringAddForm();
+        final Class<?> addFormClass;
+        try {
+            addFormClass = Class.forName(addFormClassName);
+        } catch (ClassNotFoundException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+        addComponent = (SimpleComponent) Classes
+            .newInstance(addFormClass,
+                         new Class<?>[]{LongParameter.class,
+                                        StringParameter.class},
+                         new Object[]{rootParameter, modeParameter});
         addComponent.addCompletionListener(new ResetListener());
 
-//        Class extensionClass = ContentSection.getConfig().getCategoryAuthoringExtension();
-//        ItemCategoryExtension extension = (ItemCategoryExtension)
-//            Classes.newInstance(extensionClass);
-//        
-//        extensionSummaries = extension.getSummary();
-//        extensionForms = extension.getForm();
-//        int nSummaries = extensionSummaries.length;
-//        int nForms= extensionForms.length;
-//        Assert.isTrue(nSummaries==nForms, "invalid CategoryStep extension");
-//        extensionsCount = nForms;
-//        for (int i=0;i<extensionsCount;i++) {
-//            extensionSummaries[i].addCompletionListener(new ExtensionListener(i));
-//            extensionForms[i].addCompletionListener(new ResetListener());
-//            add(extensionSummaries[i]);
-//            add(extensionForms[i]);
-//        }
-        add(itemCategorySummary);
-        add(addComponent);
+        final String extensionClassName = CMSConfig
+            .getConfig()
+            .getCategoryAuthoringExtension();
+        final Class<?> extensionClass;
+        try {
+            extensionClass = Class.forName(extensionClassName);
+        } catch (ClassNotFoundException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+        final ItemCategoryExtension extension = (ItemCategoryExtension) Classes
+            .newInstance(extensionClass);
+
+        extensionSummaries = extension.getSummary();
+        extensionForms = extension.getForm();
+        int nSummaries = extensionSummaries.length;
+        int nForms = extensionForms.length;
+        if (nSummaries != nForms) {
+            throw new UnexpectedErrorException(
+                "Invalid category step extension.");
+        }
+        extensionsCount = nForms;
+        for (int i = 0; i < extensionsCount; i++) {
+            extensionSummaries[i]
+                .addCompletionListener(new ExtensionListener(i));
+            extensionForms[i].addCompletionListener(new ResetListener());
+            super.add(extensionSummaries[i]);
+            super.add(extensionForms[i]);
+        }
+        super.add(itemCategorySummary);
+        super.add(addComponent);
     }
 
     @Override
-    public void register(Page p) {
+    public void register(Page p
+    ) {
         super.register(p);
-        
+
         p.setVisibleDefault(addComponent, false);
 //        for (int i=0;i<extensionsCount;i++) {
 //            p.setVisibleDefault(extensionForms[i], false);    
@@ -119,10 +137,11 @@ public class ItemCategoryStep extends SimpleContainer  implements Resettable{
     }
 
     @Override
-    public void reset(PageState state) {
+    public void reset(PageState state
+    ) {
         state.setValue(rootParameter, null);
         state.setValue(modeParameter, null);
-        
+
         itemCategorySummary.setVisible(state, true);
         addComponent.setVisible(state, false);
 //        for (int i=0;i<extensionsCount;i++) {
@@ -132,6 +151,7 @@ public class ItemCategoryStep extends SimpleContainer  implements Resettable{
     }
 
     private class AddActionListener implements ActionListener {
+
         private String m_mode;
 
         public AddActionListener(String mode) {
@@ -141,7 +161,7 @@ public class ItemCategoryStep extends SimpleContainer  implements Resettable{
         @Override
         public void actionPerformed(ActionEvent e) {
             PageState state = e.getPageState();
-            
+
             state.setValue(rootParameter,
                            new BigDecimal(state.getControlEventValue()));
 
@@ -155,22 +175,28 @@ public class ItemCategoryStep extends SimpleContainer  implements Resettable{
 //                extensionForms[i].setVisible(state, false);
 //            }
         }
+
     }
 
     private class ResetListener implements ActionListener {
+
         @Override
         public void actionPerformed(ActionEvent e) {
             PageState state = e.getPageState();
             reset(state);
             throw new RedirectSignal(state.toURL(), true);
         }
+
     }
 
     private class ExtensionListener implements ActionListener {
+
         int extensionIndex;
+
         public ExtensionListener(int i) {
             extensionIndex = i;
         }
+
         @Override
         public void actionPerformed(ActionEvent e) {
             PageState state = e.getPageState();
@@ -181,6 +207,7 @@ public class ItemCategoryStep extends SimpleContainer  implements Resettable{
 //            }
 //            extensionForms[extensionIndex].setVisible(state, true);
         }
+
     }
 
 }
