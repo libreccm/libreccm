@@ -172,7 +172,7 @@ public abstract class ACSObjectCategorySummary extends SimpleComponent {
                                       ACTION_ADD_JS,
                                       Long.toString(rootCategory.getObjectId()));
                 try {
-                    root.addAttribute("addJsAction",
+                    root.addAttribute("addJSAction",
                                       XML.format(state.stateAsURL()));
                 } catch (IOException ex) {
                     throw new UnexpectedErrorException("cannot generate URL",

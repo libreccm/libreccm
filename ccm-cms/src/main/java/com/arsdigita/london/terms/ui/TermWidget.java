@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,8 +36,6 @@ import org.libreccm.categorization.Category;
 
 import com.arsdigita.cms.CMS;
 
-import org.librecms.contentsection.ContentItem;
-import org.librecms.contentsection.ContentSection;
 import org.libreccm.categorization.Domain;
 
 import com.arsdigita.xml.Element;
@@ -98,6 +95,7 @@ public class TermWidget extends Widget {
 
     @Override
     protected void generateWidget(final PageState state, final Element parent) {
+        
         final Domain domain = picker.getDomain(state);
 
         final Element widget = parent.newChildElement("cms:categoryWidget",

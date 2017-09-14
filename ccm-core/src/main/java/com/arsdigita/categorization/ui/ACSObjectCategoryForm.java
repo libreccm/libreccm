@@ -44,6 +44,7 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.UnexpectedErrorException;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -82,10 +83,10 @@ public abstract class ACSObjectCategoryForm extends Form {
         categoryWidget.addValidationListener(new NotNullValidationListener());
         saveCancelSection = new SaveCancelSection();
 
-        add(categoryWidget);
-        add(saveCancelSection);
+        super.add(categoryWidget);
+        super.add(saveCancelSection);
 
-        addInitListener(new FormInitListener() {
+        super.addInitListener(new FormInitListener() {
 
             @Override
             public void init(final FormSectionEvent event)
@@ -96,11 +97,11 @@ public abstract class ACSObjectCategoryForm extends Form {
 
                 final List<Long> selectedCats = new ArrayList<>();
                 final Set<Long> ancestorCats = new HashSet<>();
-                final List<Category> categories = object
-                    .getCategories()
-                    .stream()
-                    .map(categorization -> categorization.getCategory())
-                    .collect(Collectors.toList());
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final ACSObjectCategoryController controller = cdiUtil
+                    .findBean(ACSObjectCategoryController.class);
+                final List<Category> categories = controller
+                    .getCategoriesForObject(object);
                 for (final Category category : categories) {
                     selectedCats.add(category.getObjectId());
                     addAncestorCats(ancestorCats, category);
@@ -117,7 +118,7 @@ public abstract class ACSObjectCategoryForm extends Form {
 
         });
 
-        addProcessListener(new FormProcessListener() {
+        super.addProcessListener(new FormProcessListener() {
 
             @Override
             public void process(final FormSectionEvent event)
@@ -127,19 +128,27 @@ public abstract class ACSObjectCategoryForm extends Form {
 
                 final CcmObject object = getObject(state);
 
-                final Set<Long> curSelectedCat = object
-                    .getCategories()
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final ACSObjectCategoryController controller = cdiUtil
+                    .findBean(ACSObjectCategoryController.class);
+
+                final Set<Long> curSelectedCat = controller
+                    .getCategoriesForObject(object)
                     .stream()
-                    .map(categorization -> categorization.getCategory())
                     .map(category -> category.getObjectId())
                     .collect(Collectors.toSet());
 
-                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final CategoryRepository categoryRepo = cdiUtil
                     .findBean(CategoryRepository.class);
                 final CategoryManager categoryManager = cdiUtil
                     .findBean(CategoryManager.class);
-                final Long[] ids = (Long[]) categoryWidget.getValue(state);
+                final List<Long> ids = new ArrayList<>();
+                for (final BigDecimal value : (BigDecimal[]) categoryWidget
+                    .getValue(state)) {
+
+                    ids.add(value.longValue());
+
+                }
                 for (final Long id : ids) {
                     final Category cat = categoryRepo
                         .findById(id)
@@ -148,11 +157,10 @@ public abstract class ACSObjectCategoryForm extends Form {
                                           + "Where did that ID come from?",
                                       id)));
                     if (!curSelectedCat.contains(id)) {
-                        categoryManager.addObjectToCategory(object, cat);
+                        controller.addObjectToCategory(object, cat);
                     } else {
                         try {
-                            categoryManager
-                                .removeObjectFromCategory(object, cat);
+                            controller.removeObjectFromCategory(object, cat);
                         } catch (ObjectNotAssignedToCategoryException ex) {
                             throw new UnexpectedErrorException(ex);
                         }
@@ -163,7 +171,7 @@ public abstract class ACSObjectCategoryForm extends Form {
             }
 
         });
-        addSubmissionListener(new FormSubmissionListener() {
+        super.addSubmissionListener(new FormSubmissionListener() {
 
             @Override
             public void submitted(final FormSectionEvent event)
@@ -185,7 +193,9 @@ public abstract class ACSObjectCategoryForm extends Form {
     private void addAncestorCats(final Set<Long> ancestorCats,
                                  final Category category) {
 
-        ancestorCats.add(category.getParentCategory().getObjectId());
+        if (category.getParentCategory() != null) {
+            ancestorCats.add(category.getParentCategory().getObjectId());
+        }
 
     }
 
