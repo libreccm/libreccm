@@ -20,7 +20,7 @@ package org.arsdigita.cms;
 
 import com.arsdigita.bebop.form.DHTMLEditor;
 import com.arsdigita.cms.ui.authoring.ItemCategoryExtension;
-import com.arsdigita.cms.ui.authoring.ItemCategoryForm;
+import com.arsdigita.london.terms.ui.ItemCategoryPicker;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.Configuration;
@@ -372,7 +372,7 @@ public class CMSConfig {
     private int xmlCacheAge = 60 * 60 * 24;
 
     @Setting
-    private String categoryAuthoringAddForm = ItemCategoryForm.class.getName();
+    private String categoryAuthoringAddForm = ItemCategoryPicker.class.getName();
 
     @Setting
     private String categoryAuthoringExtension = ItemCategoryExtension.class

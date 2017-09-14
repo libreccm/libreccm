@@ -20,9 +20,6 @@ package com.arsdigita.london.terms.ui;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.libreccm.categorization.Categorization;
-import org.libreccm.categorization.CategorizationConstants;
-import org.libreccm.categorization.CategorizationMarshaller;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.CategoryRepository;
@@ -40,6 +37,11 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 /**
@@ -66,7 +68,26 @@ class CategoryPickerController {
 
     @Inject
     private DomainManager domainManager;
+    
+    @Inject
+    private EntityManager entityManager;
 
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected Domain findDomainByRootCategory(final long rootCategoryId) {
+        
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<Domain> query = builder.createQuery(Domain.class);
+        
+        final Root<Domain> from = query.from(Domain.class);
+        final Join<Domain, Category> rootCatJoin = from.join("root");
+        
+        query.where(builder.equal(rootCatJoin.get("objectId"), rootCategoryId));
+        
+        return entityManager
+            .createQuery(query)
+            .getSingleResult();
+    }
+    
     @Transactional(Transactional.TxType.REQUIRED)
     protected List<Category> getCurrentCategories(final Domain domain,
                                                   final CcmObject object) {
@@ -183,7 +204,10 @@ class CategoryPickerController {
     @Transactional(Transactional.TxType.REQUIRED)
     protected List<Category> getRootCategories(final Domain domain) {
 
-        return getDomainModelCategory(domain).getSubCategories();
+        return getDomainModelCategory(domain)
+            .getSubCategories()
+            .stream()
+            .collect(Collectors.toList());
     }
 
     @Transactional(Transactional.TxType.REQUIRED)

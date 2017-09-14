@@ -33,6 +33,7 @@ import org.libreccm.categorization.DomainRepository;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.CcmObject;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 /**
@@ -157,23 +158,26 @@ public abstract class ACSObjectCategoryPicker extends SimpleContainer {
 //        }
 //    }
     protected Domain getDomain(final PageState state) {
+
         LOGGER.debug("Getting domain for {}", state.getValue(rootParam));
 
-        final Long domainId = (Long) state.getValue(rootParam);
+        final Object value = state.getValue(rootParam);
+        final Long domainId;
+        if (value instanceof Long) {
+            domainId = (Long) value;
+        } else if (value instanceof BigDecimal) {
+            domainId = ((Number) value).longValue();
+        } else if (value instanceof String) {
+            domainId = Long.parseLong((String) value);
+        } else {
+            domainId = Long.parseLong(value.toString());
+        }
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final DomainRepository domainRepo = cdiUtil
-            .findBean(DomainRepository.class);
+        final CategoryPickerController controller = cdiUtil
+            .findBean(CategoryPickerController.class);
 
-        final Optional<Domain> domain = domainRepo
-            .findById(domainId);
-
-        if (domain.isPresent()) {
-            return domain.get();
-        } else {
-            LOGGER.warn("No Domain for ID {} found.", domainId);
-            return null;
-        }
+        return controller.findDomainByRootCategory(domainId);
     }
 
     /**
