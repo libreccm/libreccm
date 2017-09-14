@@ -124,56 +124,55 @@ public class ItemCategoryStep extends SimpleContainer implements Resettable {
     }
 
     @Override
-    public void register(Page p
-    ) {
-        super.register(p);
+    public void register(final Page page) {
+        super.register(page);
 
-        p.setVisibleDefault(addComponent, false);
-//        for (int i=0;i<extensionsCount;i++) {
-//            p.setVisibleDefault(extensionForms[i], false);    
-//        }
-        p.addGlobalStateParam(rootParameter);
-        p.addGlobalStateParam(modeParameter);
+        page.setVisibleDefault(addComponent, false);
+        for (int i = 0; i < extensionsCount; i++) {
+            page.setVisibleDefault(extensionForms[i], false);
+        }
+        page.addGlobalStateParam(rootParameter);
+        page.addGlobalStateParam(modeParameter);
     }
 
     @Override
-    public void reset(PageState state
-    ) {
+    public void reset(final PageState state) {
         state.setValue(rootParameter, null);
         state.setValue(modeParameter, null);
 
         itemCategorySummary.setVisible(state, true);
         addComponent.setVisible(state, false);
-//        for (int i=0;i<extensionsCount;i++) {
-//            extensionSummaries[i].setVisible(state, true);
-//            extensionForms[i].setVisible(state, false);
-//        }
+        for (int i = 0; i < extensionsCount; i++) {
+            extensionSummaries[i].setVisible(state, true);
+            extensionForms[i].setVisible(state, false);
+        }
     }
 
     private class AddActionListener implements ActionListener {
 
-        private String m_mode;
+        private final String mode;
 
-        public AddActionListener(String mode) {
-            m_mode = mode;
+        public AddActionListener(final String mode) {
+            this.mode = mode;
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
-            PageState state = e.getPageState();
+        public void actionPerformed(final ActionEvent event) {
+            
+            final PageState state = event.getPageState();
 
             state.setValue(rootParameter,
                            new BigDecimal(state.getControlEventValue()));
 
             state.setValue(ItemCategoryStep.this.modeParameter,
-                           m_mode);
+                           mode);
 
             itemCategorySummary.setVisible(state, false);
             addComponent.setVisible(state, true);
-//            for (int i=0;i<extensionsCount;i++) {
-//                extensionSummaries[i].setVisible(state, false);
-//                extensionForms[i].setVisible(state, false);
-//            }
+            for (int i=0;i<extensionsCount;i++) {
+                extensionSummaries[i].setVisible(state, false);
+                extensionForms[i].setVisible(state, false);
+            }
         }
 
     }
@@ -182,7 +181,7 @@ public class ItemCategoryStep extends SimpleContainer implements Resettable {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            PageState state = e.getPageState();
+            final PageState state = e.getPageState();
             reset(state);
             throw new RedirectSignal(state.toURL(), true);
         }
@@ -191,21 +190,22 @@ public class ItemCategoryStep extends SimpleContainer implements Resettable {
 
     private class ExtensionListener implements ActionListener {
 
-        int extensionIndex;
+        private final int extensionIndex;
 
-        public ExtensionListener(int i) {
-            extensionIndex = i;
+        public ExtensionListener(int extensionIndex) {
+            this.extensionIndex = extensionIndex;
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
-            PageState state = e.getPageState();
+        public void actionPerformed(final ActionEvent event) {
+            
+            final PageState state = event.getPageState();
             itemCategorySummary.setVisible(state, false);
             addComponent.setVisible(state, false);
-//            for (int i=0;i<extensionsCount;i++) {
-//                extensionSummaries[i].setVisible(state, false);
-//            }
-//            extensionForms[extensionIndex].setVisible(state, true);
+            for (int i=0;i<extensionsCount;i++) {
+                extensionSummaries[i].setVisible(state, false);
+            }
+            extensionForms[extensionIndex].setVisible(state, true);
         }
 
     }
