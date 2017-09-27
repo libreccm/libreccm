@@ -42,7 +42,7 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ViewScoped
-public class BrowseDocumentsFolderTreeDataProvider
+public class FolderBrowserFolderTreeDataProvider
     extends AbstractBackEndHierarchicalDataProvider<Folder, String> {
 
     private static final long serialVersionUID = 5330319780008907163L;
@@ -69,7 +69,7 @@ public class BrowseDocumentsFolderTreeDataProvider
                 .orElseThrow(() -> new IllegalArgumentException(String
                 .format("No folder with ID %d in the database.",
                         selectedParent.get().getObjectId())));
-            
+
             return folderRepo.findSubFolders(parent).stream();
         } else {
             final ContentSection section = sectionRepo
@@ -87,6 +87,7 @@ public class BrowseDocumentsFolderTreeDataProvider
             return result.stream();
         }
 
+//        return folderRepo.findSubFolders(parent).stream();
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -103,22 +104,24 @@ public class BrowseDocumentsFolderTreeDataProvider
                 .orElseThrow(() -> new IllegalArgumentException(String
                 .format("No folder with ID %d in the database.",
                         selectedParent.get().getObjectId())));
-        } else {
-            final ContentSection section = sectionRepo
-                .findById(contentSectionViewState
-                    .getSelectedContentSection()
-                    .getObjectId())
-                .orElseThrow(() -> new UnexpectedErrorException(String
-                .format("No ContentSection with ID %d in the database.",
-                        contentSectionViewState
-                            .getSelectedContentSection()
-                            .getObjectId())));
 
-            parent = section.getRootDocumentsFolder();
+            return (int) folderRepo.countSubFolders(parent);
+        } else {
+//            final ContentSection section = sectionRepo
+//                .findById(contentSectionViewState
+//                    .getSelectedContentSection()
+//                    .getObjectId())
+//                .orElseThrow(() -> new UnexpectedErrorException(String
+//                .format("No ContentSection with ID %d in the database.",
+//                        contentSectionViewState
+//                            .getSelectedContentSection()
+//                            .getObjectId())));
+//
+//            parent = section.getRootDocumentsFolder();
+            return 1;
         }
 
-        return (int) folderRepo.countSubFolders(parent);
-
+//        return (int) folderRepo.countSubFolders(parent);
     }
 
     @Override
