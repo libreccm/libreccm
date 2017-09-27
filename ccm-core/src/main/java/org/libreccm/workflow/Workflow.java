@@ -19,6 +19,7 @@
 package org.libreccm.workflow;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.libreccm.core.CcmObject;
@@ -48,12 +49,12 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 @NamedQueries({
     @NamedQuery(
         name = "Workflow.findByUuid",
-        query = "SELECT W FROM Workflow w WHERE w.uuid = :uuid")
+        query = "SELECT w FROM Workflow w WHERE w.uuid = :uuid")
     ,
     @NamedQuery(
         name = "Workflow.findForObject",
         query = "SELECT w FROM Workflow w "
-                    + "WHERE W.object = :object")
+                    + "WHERE w.object = :object")
 })
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
                   resolver = WorkflowIdResolver.class,
@@ -82,6 +83,7 @@ public class Workflow implements Identifiable, Serializable, Portable {
      */
     @ManyToOne
     @JoinColumn(name = "TEMPLATE_ID")
+    @JsonIdentityReference(alwaysAsId = true)
     private WorkflowTemplate template;
 
     /**
@@ -136,6 +138,7 @@ public class Workflow implements Identifiable, Serializable, Portable {
      */
     @OneToOne
     @JoinColumn(name = "OBJECT_ID")
+    @JsonIdentityReference(alwaysAsId = true)
     private CcmObject object;
 
     /**

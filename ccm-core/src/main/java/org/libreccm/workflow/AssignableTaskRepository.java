@@ -36,8 +36,8 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class AssignableTaskRepository
-    extends AbstractEntityRepository<Long, AssignableTask> {
+public class AssignableTaskRepository extends AbstractEntityRepository<Long,
+        AssignableTask> {
 
     @Override
     public Class<AssignableTask> getEntityClass() {

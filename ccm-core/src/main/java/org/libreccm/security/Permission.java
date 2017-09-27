@@ -143,6 +143,7 @@ public class Permission implements Serializable, Portable {
     @ManyToOne
     @JoinColumn(name = "CREATION_USER_ID")
     @XmlElement(name = "creation-user", namespace = CORE_XML_NS)
+    @JsonIdentityReference(alwaysAsId = true)
     private User creationUser;
 
     /**

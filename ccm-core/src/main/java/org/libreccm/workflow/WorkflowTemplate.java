@@ -43,7 +43,8 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 @NamedQueries({
         @NamedQuery(
                 name = "WorkflowTemplate.findByUuid",
-                query = "SELECT T FROM WorkflowTemplate t WHERE t.uuid = :uuid")
+                query = "SELECT t FROM WorkflowTemplate t " +
+                        "WHERE t.uuid = :uuid")
 })
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
                   resolver = WorkflowTemplateIdResolver.class,
