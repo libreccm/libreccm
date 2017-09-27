@@ -18,9 +18,12 @@
  */
 package org.libreccm.workflow;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.Type;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.core.Identifiable;
+import org.libreccm.portation.Portable;
 import org.libreccm.security.User;
 
 import javax.persistence.*;
@@ -36,7 +39,15 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "WORKFLOW_TASK_COMMENTS", schema = CoreConstants.DB_SCHEMA)
-public class TaskComment implements Identifiable, Serializable {
+@NamedQueries({
+        @NamedQuery(
+                name = "TaskComment.findByUuid",
+                query = "SELECT c FROM TaskComment c WHERE c.uuid = :uuid")
+})
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+                  resolver = TaskCommentIdResolver.class,
+                  property = "uuid")
+public class TaskComment implements Identifiable, Serializable, Portable {
 
     private static final long serialVersionUID = 3842991529698351698L;
 

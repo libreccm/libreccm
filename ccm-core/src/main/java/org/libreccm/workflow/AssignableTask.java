@@ -19,6 +19,7 @@
 package org.libreccm.workflow;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.libreccm.portation.Portable;
@@ -100,6 +101,7 @@ public class AssignableTask extends Task implements Serializable, Portable {
      */
     @OneToOne
     @JoinColumn(name = "LOCKING_USER_ID")
+    @JsonIdentityReference(alwaysAsId = true)
     private User lockingUser;
 
     /**
@@ -128,6 +130,7 @@ public class AssignableTask extends Task implements Serializable, Portable {
     @OneToOne
     @JoinColumn(name = "NOTIFICATION_SENDER")
     @SuppressWarnings("PMD.LongVariable") //Shorter name would not be descriptive
+    @JsonIdentityReference(alwaysAsId = true)
     private User notificationSender;
 
     /**

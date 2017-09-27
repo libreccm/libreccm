@@ -38,16 +38,16 @@ public class WorkflowTemplateIdResolver implements ObjectIdResolver {
     }
 
     @Override
-    public Object resolveId(ObjectIdGenerator.IdKey idKey) {
+    public Object resolveId(ObjectIdGenerator.IdKey id) {
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final WorkflowTemplateRepository workflowTemplateRepository = cdiUtil
                 .findBean(WorkflowTemplateRepository.class);
 
         return workflowTemplateRepository
-                .findByUuid(idKey.toString())
+                .findByUuid(id.key.toString())
                 .orElseThrow(() -> new IllegalArgumentException(String
                         .format("No workflow templates with uuid %s in the " +
-                                "database.", idKey.toString())));
+                                "database.", id.key.toString())));
     }
 
     @Override

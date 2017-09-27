@@ -80,11 +80,18 @@ class ImportHelper {
     private DomainOwnershipMarshaller domainOwnershipMarshaller;
 
     @Inject
+    @Marshals(Permission.class)
+    private PermissionMarshaller permissionMarshaller;
+
+    @Inject
     @Marshals(WorkflowTemplate.class)
     private WorkflowTemplateMarshaller workflowTemplateMarshaller;
     @Inject
     @Marshals(Workflow.class)
     private WorkflowMarshaller workflowMarshaller;
+    @Inject
+    @Marshals(TaskComment.class)
+    private TaskCommentMarshaller taskCommentMarshaller;
     @Inject
     @Marshals(AssignableTask.class)
     private AssignableTaskMarshaller assignableTaskMarshaller;
@@ -92,9 +99,6 @@ class ImportHelper {
     @Marshals(TaskAssignment.class)
     private TaskAssignmentMarshaller taskAssignmentMarshaller;
 
-    @Inject
-    @Marshals(Permission.class)
-    private PermissionMarshaller permissionMarshaller;
 
 
     boolean importUsers() {
@@ -221,6 +225,15 @@ class ImportHelper {
                 "workflows.xml",
                 indentation);
         return workflowMarshaller.importFile();
+    }
+
+    boolean importTaskComments() {
+        taskCommentMarshaller.prepare(
+                Format.XML,
+                repoPath + projectPath,
+                "taskComments.xml",
+                indentation);
+        return taskCommentMarshaller.importFile();
     }
 
     boolean importAssignableTasks() {
