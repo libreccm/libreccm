@@ -47,8 +47,8 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ViewScoped
-class BrowseDocumentsDataProvider
-    extends AbstractBackEndDataProvider<BrowseDocumentsItem, String> {
+class FolderBrowserDataProvider
+    extends AbstractBackEndDataProvider<FolderBrowserItem, String> {
 
     private static final long serialVersionUID = 7693820518000376630L;
 
@@ -77,8 +77,8 @@ class BrowseDocumentsDataProvider
 
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
-    protected Stream<BrowseDocumentsItem> fetchFromBackEnd(
-        final Query<BrowseDocumentsItem, String> query) {
+    protected Stream<FolderBrowserItem> fetchFromBackEnd(
+        final Query<FolderBrowserItem, String> query) {
 
         final Folder folder;
         if (currentFolder == null) {
@@ -157,9 +157,9 @@ class BrowseDocumentsDataProvider
             .map(this::buildRow);
     }
 
-    private BrowseDocumentsItem buildRow(final CcmObject object) {
+    private FolderBrowserItem buildRow(final CcmObject object) {
 
-        final BrowseDocumentsItem row = new BrowseDocumentsItem();
+        final FolderBrowserItem row = new FolderBrowserItem();
         if (object instanceof Folder) {
 
             final Folder folder = (Folder) object;
@@ -198,7 +198,7 @@ class BrowseDocumentsDataProvider
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     protected int sizeInBackEnd(
-        final Query<BrowseDocumentsItem, String> query) {
+        final Query<FolderBrowserItem, String> query) {
 
         final Folder folder;
         if (currentFolder == null) {
@@ -382,10 +382,10 @@ class BrowseDocumentsDataProvider
 //            .getResultList();
 //    }
 //
-//    private BrowseDocumentsItem createBrowseDocumentsItem(
+//    private FolderBrowserItem createBrowseDocumentsItem(
 //        final Folder fromFolder) {
 //
-//        final BrowseDocumentsItem item = new BrowseDocumentsItem();
+//        final FolderBrowserItem item = new FolderBrowserItem();
 //        item.setItemId(fromFolder.getObjectId());
 //        item.setName(fromFolder.getName());
 //        item.setTitle(fromFolder
@@ -396,10 +396,10 @@ class BrowseDocumentsDataProvider
 //        return item;
 //    }
 //
-//    private BrowseDocumentsItem createBrowseDocumentsItem(
+//    private FolderBrowserItem createBrowseDocumentsItem(
 //        final ContentItem fromItem) {
 //
-//        final BrowseDocumentsItem item = new BrowseDocumentsItem();
+//        final FolderBrowserItem item = new FolderBrowserItem();
 //        item.setCreationDate(fromItem.getCreationDate());
 //        item.setFolder(false);
 //        item.setItemId(fromItem.getObjectId());

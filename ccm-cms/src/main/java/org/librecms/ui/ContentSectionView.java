@@ -21,12 +21,12 @@ package org.librecms.ui;
 import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ValoTheme;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
 
@@ -46,12 +46,22 @@ class ContentSectionView extends CustomComponent implements View {
 
     public static final String VIEWNAME = "ContentSection";
 
+    private static final String TAB_DOCUMENTS = "tab_documents";
+    private static final String TAB_SEARCH = "tab_search";
+    private static final String TAB_MEDIA = "tab_media";
+    private static final String TAB_ROLES = "tab_roles";
+    private static final String TAB_WORKFLOWS = "tab_workflows";
+    private static final String TAB_LIFECYCLES = "tab_lifecycles";
+    private static final String TAB_DOCUMENT_TYPES = "tab_document_types";
+
     private final ContentSectionViewController controller;
 
     private ContentSection selectedSection;
 
     private final TabSheet tabSheet;
     private final Panel noSectionPanel;
+
+    private final FolderBrowser folderBrowser;
 
     @Inject
     ContentSectionView(final ContentSectionViewController controller) {
@@ -60,26 +70,63 @@ class ContentSectionView extends CustomComponent implements View {
 
         this.controller = controller;
 
-        final BrowseDocuments browseDocuments = new BrowseDocuments(controller);
+        folderBrowser = new FolderBrowser(controller);
+        final VerticalLayout folderBrowserLayout = new VerticalLayout();
+        folderBrowserLayout.setHeight("100%");
+        folderBrowserLayout.addComponentsAndExpand(folderBrowser);
         
         tabSheet = new TabSheet();
-        tabSheet.addTab(browseDocuments, "Documents");
-        tabSheet.addTab(new Label("Search placeholder"), "Search");
-        tabSheet.addTab(new Label("Media & Records placeholder"),
-                        "Media & Records");
-        tabSheet.addTab(new Label("Roles placeholder"), "Roles");
-        tabSheet.addTab(new Label("Workflows Placeholder"), "Workflows");
-        tabSheet.addTab(new Label("Lifecycles placeholder"), "Lifecycles");
-        tabSheet.addTab(new Label("Document types placeholder"),
-                        "Documents types");
+        tabSheet
+            .addTab(folderBrowser, "Documents")
+            .setId(TAB_DOCUMENTS);
+        tabSheet
+            .addTab(new Label("Search placeholder"), "Search")
+            .setId(TAB_SEARCH);
+        tabSheet
+            .addTab(new Label("Media & Records placeholder"), "Media & Records")
+            .setId(TAB_MEDIA);
+        tabSheet
+            .addTab(new Label("Roles placeholder"), "Roles")
+            .setId(TAB_ROLES);
+        tabSheet
+            .addTab(new Label("Workflows Placeholder"), "Workflows")
+            .setId(TAB_WORKFLOWS);
+        tabSheet
+            .addTab(new Label("Lifecycles placeholder"), "Lifecycles")
+            .setId(TAB_LIFECYCLES);
+        tabSheet
+            .addTab(new Label("Document types placeholder"), "Documents types")
+            .setId(TAB_DOCUMENT_TYPES);
 
+        tabSheet.addSelectedTabChangeListener(event -> {
+
+            final Component selectedTab = event.getTabSheet().getSelectedTab();
+
+            if (TAB_DOCUMENTS.equals(selectedTab.getId())) {
+
+                final FolderBrowser browser = (FolderBrowser) selectedTab;
+
+                browser
+                    .getFolderTree()
+                    .expand(controller
+                        .getContentSectionViewState()
+                        .getSelectedContentSection()
+                        .getRootDocumentsFolder());
+            }
+        });
+
+        tabSheet.setHeight("100%");
+        
         noSectionPanel = new Panel();
         noSectionPanel.setVisible(false);
-        
-        final VerticalLayout layout = new VerticalLayout(tabSheet, 
-            noSectionPanel);
-        
+
+        final VerticalLayout layout = new VerticalLayout();
+        layout.addComponentsAndExpand(tabSheet, noSectionPanel);
+        layout.setHeight("100%");
+        layout.addStyleName("content-section-view-layout");
+
         super.setCompositionRoot(layout);
+        super.setHeight("100%");
     }
 
     @Override
@@ -104,6 +151,13 @@ class ContentSectionView extends CustomComponent implements View {
                 controller
                     .getContentSectionViewState()
                     .setSelectedContentSection(selectedSection);
+
+                folderBrowser
+                    .getFolderTree()
+                    .expand(controller
+                        .getContentSectionViewState()
+                        .getSelectedContentSection()
+                        .getRootDocumentsFolder());
             } else {
                 tabSheet.setVisible(false);
                 noSectionPanel.setCaption(String
