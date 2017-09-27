@@ -23,7 +23,6 @@ import com.arsdigita.cms.CMS;
 
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentType;
-import org.librecms.lifecycle.LifecycleDefinition;
 
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
@@ -34,7 +33,6 @@ import org.libreccm.cdi.utils.CdiUtil;
 
 import java.util.Locale;
 
-import org.libreccm.workflow.WorkflowTemplate;
 import org.librecms.CmsConstants;
 import org.librecms.contenttypes.ContentTypeInfo;
 import org.librecms.contenttypes.ContentTypesManager;

@@ -2,7 +2,7 @@ drop schema if exists CCM_CORE cascade;
 
 drop sequence if exists HIBERNATE_SEQUENCE;
 
-create schema CCM_CORE;
+    create schema CCM_CORE;
 
     create table CCM_CORE.APPLICATIONS (
         APPLICATION_TYPE varchar(1024) not null,
@@ -436,7 +436,7 @@ create schema CCM_CORE;
         PERMISSION_ID int8 not null,
         CREATION_DATE timestamp,
         CREATION_IP varchar(255),
-        granted_privilege varchar(255),
+        GRANTED_PRIVILEGE varchar(255),
         INHERITED boolean,
         CREATION_USER_ID int8,
         GRANTEE_ID int8,
@@ -529,11 +529,11 @@ create schema CCM_CORE;
         SETTING_ID int8 not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
-        SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
         SETTING_VALUE_BOOLEAN boolean,
-        SETTING_VALUE_STRING varchar(1024),
-        SETTING_VALUE_DOUBLE float8,
+        SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
         SETTING_VALUE_LONG int8,
+        SETTING_VALUE_DOUBLE float8,
+        SETTING_VALUE_STRING varchar(1024),
         primary key (SETTING_ID)
     );
 
@@ -649,13 +649,9 @@ create schema CCM_CORE;
         primary key (TASK_ID)
     );
 
-    create table CCM_CORE.WORKFLOW_TEMPLATES (
-        WORKFLOW_ID int8 not null,
-        primary key (WORKFLOW_ID)
-    );
-
     create table CCM_CORE.WORKFLOWS (
         WORKFLOW_ID int8 not null,
+        abstract_workflow boolean,
         ACTIVE boolean,
         WORKFLOW_STATE varchar(255),
         TASKS_STATE varchar(255),
@@ -691,7 +687,8 @@ create schema CCM_CORE;
 
     alter table CCM_CORE.WORKFLOWS 
         add constraint UK_o113id7d1cxql0edsrohlnn9x unique (UUID);
-create sequence hibernate_sequence start 1 increment 1;
+
+    create sequence hibernate_sequence start 1 increment 1;
 
     alter table CCM_CORE.APPLICATIONS 
         add constraint FKatcp9ij6mbkx0nfeig1o6n3lm 
@@ -1014,7 +1011,7 @@ create sequence hibernate_sequence start 1 increment 1;
         references CCM_CORE.CCM_ROLES;
 
     alter table CCM_CORE.PERMISSIONS 
-        add constraint FKc1x3h1p3o20qiwmonpmva7t5i 
+        add constraint FKg56ujjoe0j30pq579rf0l5yc6 
         foreign key (INHERITED_FROM_ID) 
         references CCM_CORE.CCM_OBJECTS;
 
@@ -1198,17 +1195,12 @@ create sequence hibernate_sequence start 1 increment 1;
         foreign key (WORKFLOW_ID) 
         references CCM_CORE.WORKFLOWS;
 
-    alter table CCM_CORE.WORKFLOW_TEMPLATES 
-        add constraint FK8692vdme4yxnkj1m0k1dw74pk 
-        foreign key (WORKFLOW_ID) 
-        references CCM_CORE.WORKFLOWS;
-
     alter table CCM_CORE.WORKFLOWS 
         add constraint FKrm2yfrs6veoxoy304upq2wc64 
         foreign key (OBJECT_ID) 
         references CCM_CORE.CCM_OBJECTS;
 
     alter table CCM_CORE.WORKFLOWS 
-        add constraint FKeixdxau4jebw682gd49tdbsjy 
+        add constraint FK9ray5beiny6wm2mi0uwyecay2 
         foreign key (TEMPLATE_ID) 
-        references CCM_CORE.WORKFLOW_TEMPLATES;
+        references CCM_CORE.WORKFLOWS;

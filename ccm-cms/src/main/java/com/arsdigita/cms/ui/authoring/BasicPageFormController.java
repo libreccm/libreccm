@@ -18,8 +18,8 @@
  */
 package com.arsdigita.cms.ui.authoring;
 
-import org.libreccm.workflow.WorkflowTemplate;
-import org.libreccm.workflow.WorkflowTemplateRepository;
+import org.libreccm.workflow.Workflow;
+import org.libreccm.workflow.WorkflowRepository;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemInitializer;
 import org.librecms.contentsection.ContentItemManager;
@@ -56,7 +56,7 @@ class BasicPageFormController {
     private FolderRepository folderRepo;
 
     @Inject
-    private WorkflowTemplateRepository workflowTemplateRepo;
+    private WorkflowRepository workflowRepo;
 
     @Transactional(Transactional.TxType.REQUIRED)
     protected <T extends ContentItem> T createContentItem(
@@ -81,7 +81,7 @@ class BasicPageFormController {
         final String name,
         final ContentSection section,
         final Folder folder,
-        final WorkflowTemplate workflowTemplate,
+        final Workflow workflowTemplate,
         final Class<T> clazz,
         final ContentItemInitializer<T> initializer,
         final Locale locale) {
@@ -109,7 +109,7 @@ class BasicPageFormController {
                                                  locale);
 
         } else {
-            final WorkflowTemplate itemWorkflowTemplate = workflowTemplateRepo
+            final Workflow itemWorkflowTemplate = workflowRepo
                 .findById(workflowTemplate.getWorkflowId())
                 .orElseThrow(() -> new IllegalArgumentException(String
                 .format("No WorkflowTemplate with ID %d in the database.",

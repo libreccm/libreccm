@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.libreccm.categorization.Category;
-import org.libreccm.workflow.WorkflowTemplate;
 import org.librecms.lifecycle.LifecycleDefinition;
 
 import java.util.List;
@@ -38,7 +37,6 @@ import javax.inject.Inject;
 import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
-import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.AuthorizationRequired;
@@ -212,7 +210,7 @@ public class ContentItemManager {
      * {@link ContentSection#rootDocumentsFolder} of the provided content
      * section. Otherwise an {@link IllegalArgumentException} is thrown.
      *
-     * Likewise the provided {@link WorkflowTemplate} must be defined in the
+     * Likewise the provided abstract {@link Workflow} must be defined in the
      * provided content section. Otherwise an {@link IllegalArgumentException}
      * is thrown.
      *
@@ -235,7 +233,7 @@ public class ContentItemManager {
         final ContentSection section,
         @RequiresPrivilege(ItemPrivileges.CREATE_NEW)
         final Folder folder,
-        final WorkflowTemplate workflowTemplate,
+        final Workflow workflowTemplate,
         final Class<T> type,
         final Locale locale) {
 
@@ -258,7 +256,7 @@ public class ContentItemManager {
      * {@link ContentSection#rootDocumentsFolder} of the provided content
      * section. Otherwise an {@link IllegalArgumentException} is thrown.
      *
-     * Likewise the provided {@link WorkflowTemplate} must be defined in the
+     * Likewise the provided abstract {@link Workflow} must be defined in the
      * provided content section. Otherwise an {@link IllegalArgumentException}
      * is thrown.
      *
@@ -283,7 +281,7 @@ public class ContentItemManager {
         final ContentSection section,
         @RequiresPrivilege(ItemPrivileges.CREATE_NEW)
         final Folder folder,
-        final WorkflowTemplate workflowTemplate,
+        final Workflow workflowTemplate,
         final Class<T> type,
         final ContentItemInitializer<T> initializer,
         final Locale locale) {
@@ -490,13 +488,10 @@ public class ContentItemManager {
             throw new RuntimeException(ex);
         }
 
-//        final String uuid = UUID.randomUUID().toString();
-//        copy.setUuid(uuid);
-//        copy.setItemUuid(uuid);
         copy.setContentType(contentType.get());
 
         if (draftItem.getWorkflow() != null) {
-            final WorkflowTemplate template = draftItem.getWorkflow()
+            final Workflow template = draftItem.getWorkflow()
                 .getTemplate();
             final Workflow copyWorkflow = workflowManager.createWorkflow(
                 template, item);

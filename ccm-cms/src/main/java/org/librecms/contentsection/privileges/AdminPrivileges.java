@@ -22,7 +22,7 @@ import org.libreccm.categorization.Category;
 import org.libreccm.categorization.Domain;
 import org.libreccm.security.Role;
 import org.libreccm.web.CcmApplication;
-import org.libreccm.workflow.WorkflowTemplate;
+import org.libreccm.workflow.Workflow;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentType;
 import org.librecms.lifecycle.LifecycleDefinition;
@@ -66,7 +66,7 @@ public final class AdminPrivileges {
      */
     public static final String ADMINISTER_ROLES = "administer_roles";
     /**
-     * Allows manipulation of the {@link WorkflowTemplate}s assigned to a
+     * Allows manipulation of the (abstract) {@link Workflow}s assigned to a
      * {@link ContentSection}.
      * 
      * @see ContentSection#workflowTemplates

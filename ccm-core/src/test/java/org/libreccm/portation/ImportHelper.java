@@ -80,13 +80,6 @@ class ImportHelper {
     private DomainOwnershipMarshaller domainOwnershipMarshaller;
 
     @Inject
-    @Marshals(Permission.class)
-    private PermissionMarshaller permissionMarshaller;
-
-    @Inject
-    @Marshals(WorkflowTemplate.class)
-    private WorkflowTemplateMarshaller workflowTemplateMarshaller;
-    @Inject
     @Marshals(Workflow.class)
     private WorkflowMarshaller workflowMarshaller;
     @Inject
@@ -209,14 +202,6 @@ class ImportHelper {
         return permissionMarshaller.importFile();
     }
 
-    boolean importWorkflowTemplates() {
-        workflowTemplateMarshaller.prepare(
-                Format.XML,
-                repoPath + projectPath,
-                "workflowTemplates.xml",
-                indentation);
-        return workflowTemplateMarshaller.importFile();
-    }
 
     boolean importWorkflows() {
         workflowMarshaller.prepare(

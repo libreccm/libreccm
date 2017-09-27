@@ -42,10 +42,8 @@ import com.arsdigita.cms.CMS;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentType;
 import org.librecms.lifecycle.LifecycleDefinition;
-import org.libreccm.workflow.WorkflowTemplate;
 
 import com.arsdigita.cms.ui.CMSForm;
-import com.arsdigita.cms.ui.GlobalNavigation;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.util.UncheckedWrapperException;
@@ -53,7 +51,8 @@ import com.arsdigita.util.UncheckedWrapperException;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.workflow.WorkflowTemplateRepository;
+import org.libreccm.workflow.Workflow;
+import org.libreccm.workflow.WorkflowRepository;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentTypeManager;
 import org.librecms.contentsection.ContentTypeRepository;
@@ -204,7 +203,7 @@ public class EditType extends CMSForm
             data.put(m_lcSelect.getName(), cycle.getDefinitionId());
         }
 
-        WorkflowTemplate template = type.getDefaultWorkflow();
+        Workflow template = type.getDefaultWorkflow();
         if (template != null) {
             data.put(m_wfSelect.getName(), template.getWorkflowId());
         }
@@ -215,7 +214,7 @@ public class EditType extends CMSForm
      * model.
      */
     private ContentType getContentType(final PageState state) {
-        final String key = (String) m_types.getSelectedKey(state);
+        final String key = m_types.getSelectedKey(state);
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final ContentTypeRepository typeRepo = cdiUtil.findBean(
@@ -226,7 +225,7 @@ public class EditType extends CMSForm
             result = typeRepo.findById(Long.parseLong(key));
         } catch (NumberFormatException ex) {
             throw new UncheckedWrapperException(String.format(
-                "The provided key \"%d\" is not a long.", key),
+                "The provided key \"%s\" is not a long.", key),
                                                 ex);
         }
 
@@ -265,8 +264,8 @@ public class EditType extends CMSForm
             ContentTypeRepository.class);
         final LifecycleDefinitionRepository lifecycleDefRepo = cdiUtil.findBean(
             LifecycleDefinitionRepository.class);
-        final WorkflowTemplateRepository workflowTemplateRepo = cdiUtil
-            .findBean(WorkflowTemplateRepository.class);
+        final WorkflowRepository workflowRepo = cdiUtil
+            .findBean(WorkflowRepository.class);
         final ContentTypeManager typeManager = cdiUtil.findBean(
             ContentTypeManager.class);
 
@@ -292,11 +291,11 @@ public class EditType extends CMSForm
         } else {
             defaultLifecycle = lifecycleDefRepo.findById(lifecycleId).get();
         }
-        final WorkflowTemplate defaultWorkflow;
+        final Workflow defaultWorkflow;
         if (workflowId == 0) {
              defaultWorkflow = null;
         } else {
-            defaultWorkflow = workflowTemplateRepo.findById(workflowId).get();
+            defaultWorkflow = workflowRepo.findById(workflowId).get();
         }
         
 
@@ -367,7 +366,7 @@ public class EditType extends CMSForm
             final ContentTypeAdminPaneController controller = cdiUtil
                 .findBean(ContentTypeAdminPaneController.class);
 
-            final List<WorkflowTemplate> templates = controller
+            final List<Workflow> templates = controller
                 .getWorkflowTemplates(section);
             final Locale defaultLocale = KernelConfig.getConfig()
                 .getDefaultLocale();

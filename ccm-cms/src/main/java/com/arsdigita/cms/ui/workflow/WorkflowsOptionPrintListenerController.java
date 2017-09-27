@@ -19,7 +19,7 @@
 package com.arsdigita.cms.ui.workflow;
 
 
-import org.libreccm.workflow.WorkflowTemplate;
+import org.libreccm.workflow.Workflow;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
 
@@ -41,7 +41,7 @@ class WorkflowsOptionPrintListenerController {
     private ContentSectionRepository sectionRepo;
 
     @Transactional(Transactional.TxType.REQUIRED)
-    protected List<WorkflowTemplate> getWorkflowTemplates(
+    protected List<Workflow> getWorkflowTemplates(
         final ContentSection section) {
 
         Objects.requireNonNull(section);

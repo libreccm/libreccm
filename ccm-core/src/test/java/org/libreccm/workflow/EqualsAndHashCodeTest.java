@@ -47,8 +47,7 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
             TaskComment.class,
             TaskAssignment.class,
             AssignableTask.class,
-            Workflow.class,
-            WorkflowTemplate.class
+            Workflow.class
         });
     }
 
@@ -97,12 +96,6 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
 
         final Workflow workflow2 = new Workflow();
         workflow2.getName().addValue(Locale.ENGLISH, "Workflow 2");
-
-        final WorkflowTemplate template1 = new WorkflowTemplate();
-        template1.getName().addValue(Locale.ENGLISH, "Template 1");
-
-        final WorkflowTemplate template2 = new WorkflowTemplate();
-        template1.getName().addValue(Locale.ENGLISH, "Template 2");
         
         final CcmObject object1 = new CcmObject();
         object1.setDisplayName("Object 1");
@@ -117,7 +110,6 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
             .withPrefabValues(Group.class, group1, group2)
             .withPrefabValues(User.class, user1, user2)
             .withPrefabValues(Workflow.class, workflow1, workflow2)
-            .withPrefabValues(WorkflowTemplate.class, template1, template2)
             .withPrefabValues(CcmObject.class, object1, object2);
     }
 

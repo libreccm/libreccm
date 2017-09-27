@@ -39,8 +39,8 @@ import com.arsdigita.util.Assert;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.GlobalizationHelper;
-import org.libreccm.workflow.WorkflowTemplate;
-import org.libreccm.workflow.WorkflowTemplateRepository;
+import org.libreccm.workflow.Workflow;
+import org.libreccm.workflow.WorkflowRepository;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemInitializer;
@@ -100,9 +100,9 @@ public class PageCreateForm
         this.selectedLanguageParam = selectedLanguageParam;
 
         workflowSection.setCreationSelector(creationSelector);
-        addSubmissionListener(this);
+        super.addSubmissionListener(this);
 
-        getSaveCancelSection().getSaveButton()
+        super.getSaveCancelSection().getSaveButton()
             .setButtonLabel(new GlobalizedMessage("cms.ui.create",
                                                   CmsConstants.CMS_BUNDLE));
     }
@@ -239,9 +239,9 @@ public class PageCreateForm
                                      getItemInitializer(data, state),
                                      locale);
         } else {
-            final WorkflowTemplateRepository workflowTemplateRepo = cdiUtil
-                .findBean(WorkflowTemplateRepository.class);
-            final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+            final WorkflowRepository workflowRepo = cdiUtil
+                .findBean(WorkflowRepository.class);
+            final Workflow workflowTemplate = workflowRepo
                 .findById(selectedWorkflowTemplateId)
                 .orElseThrow(() -> new IllegalArgumentException(String.format(
                 "No WorkflowTemplate with ID %d in the database.",
@@ -262,7 +262,7 @@ public class PageCreateForm
         final ContentItemRepository itemRepo = cdiUtil
             .findBean(ContentItemRepository.class);
         itemRepo.save(item);
-        
+
         state.setValue(selectedLanguageParam, locale.toString());
 
         creationSelector.editItem(state, item);

@@ -29,6 +29,7 @@ import org.libreccm.portation.Portable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +37,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import java.util.Locale;
 
 /**
  * A workflow is a collection of tasks which are performed on an object. Tasks
@@ -79,12 +82,17 @@ public class Workflow implements Identifiable, Serializable, Portable {
     private String uuid;
 
     /**
+     * Indicates that this {@code Workflow} can be assigned to an object.
+     */
+    @Column(name = "abstract_workflow")
+    private boolean abstractWorkflow;
+
+    /**
      * The template which was used to generate the workflow.
      */
     @ManyToOne
     @JoinColumn(name = "TEMPLATE_ID")
-    @JsonIdentityReference(alwaysAsId = true)
-    private WorkflowTemplate template;
+    private Workflow template;
 
     /**
      * Human readable name of the workflow.
@@ -173,11 +181,19 @@ public class Workflow implements Identifiable, Serializable, Portable {
         this.uuid = uuid;
     }
 
-    public WorkflowTemplate getTemplate() {
+    public boolean isAbstractWorkflow() {
+        return abstractWorkflow;
+    }
+
+    public void setAbstractWorkflow(boolean abstractWorkflow) {
+        this.abstractWorkflow = abstractWorkflow;
+    }
+
+    public Workflow getTemplate() {
         return template;
     }
 
-    protected void setTemplate(final WorkflowTemplate template) {
+    protected void setTemplate(final Workflow template) {
         this.template = template;
     }
 
@@ -228,6 +244,11 @@ public class Workflow implements Identifiable, Serializable, Portable {
     }
 
     protected void setObject(final CcmObject object) {
+        if (abstractWorkflow) {
+            throw new AbstractWorkflowException(String.format(
+                "Workflow %s is abstrct and can not assigned to an object.",
+                uuid));
+        }
         this.object = object;
     }
 
@@ -257,6 +278,7 @@ public class Workflow implements Identifiable, Serializable, Portable {
         hash = 79 * hash + (int) (workflowId ^ (workflowId >>> 32));
         hash = 79 * hash + Objects.hashCode(uuid);
         hash = 79 * hash + Objects.hashCode(name);
+        hash = 79 * hash + (abstractWorkflow ? 1 : 0);
         hash = 79 * hash + Objects.hashCode(description);
         hash = 79 * hash + Objects.hashCode(state);
         hash = 79 * hash + (active ? 1 : 0);
@@ -286,6 +308,10 @@ public class Workflow implements Identifiable, Serializable, Portable {
         }
 
         if (!Objects.equals(name, other.getName())) {
+            return false;
+        }
+
+        if (abstractWorkflow != other.isAbstractWorkflow()) {
             return false;
         }
 
@@ -319,6 +345,7 @@ public class Workflow implements Identifiable, Serializable, Portable {
                                  + "uuid = \"%s\", "
                                  + "name = \"%s\", "
                                  + "description = \"%s\", "
+                                 + "abstractWorkflow = %b, "
                                  + "state = \"%s\", "
                                  + "active = %b%s"
                                  + " }",
@@ -327,6 +354,7 @@ public class Workflow implements Identifiable, Serializable, Portable {
                              uuid,
                              Objects.toString(name),
                              Objects.toString(description),
+                             abstractWorkflow,
                              Objects.toString(state),
                              active,
                              data);

@@ -26,8 +26,7 @@ import com.arsdigita.cms.CMS;
 import com.arsdigita.kernel.KernelConfig;
 
 import org.libreccm.cdi.utils.CdiUtil;
-import org.librecms.contentsection.ContentSection;
-import org.libreccm.workflow.WorkflowTemplate;
+import org.libreccm.workflow.Workflow;
 
 import java.util.Iterator;
 import java.util.Locale;
@@ -49,8 +48,8 @@ class WorkflowListModelBuilder extends AbstractListModelBuilder {
 
     private class Model implements ListModel {
 
-        private final Iterator<WorkflowTemplate> templates;
-        private WorkflowTemplate currentTemplate;
+        private final Iterator<Workflow> templates;
+        private Workflow currentTemplate;
 
         public Model() {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();

@@ -388,7 +388,7 @@ public class ContentTypeRepositoryTest {
             .addClass(org.libreccm.workflow.TaskState.class)
             .addClass(org.libreccm.workflow.Workflow.class)
             .addClass(org.libreccm.workflow.WorkflowState.class)
-            .addClass(org.libreccm.workflow.WorkflowTemplate.class)
+            .addClass(org.libreccm.workflow.AbstractWorkflowException.class)
             .addClass(org.librecms.CmsConstants.class)
             .addClass(org.librecms.contentsection.Asset.class)
             .addClass(org.librecms.contentsection.AttachmentList.class)

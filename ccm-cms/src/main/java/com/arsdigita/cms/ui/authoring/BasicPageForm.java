@@ -21,7 +21,6 @@ package com.arsdigita.cms.ui.authoring;
 import com.arsdigita.bebop.ColumnPanel;
 import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.FormProcessException;
-import com.arsdigita.bebop.FormSection;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.FormSectionEvent;
@@ -38,16 +37,13 @@ import org.librecms.contentsection.Folder;
 
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.util.Assert;
 
 import org.arsdigita.cms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.l10n.GlobalizationHelper;
-import org.libreccm.workflow.WorkflowTemplate;
+import org.libreccm.workflow.Workflow;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItemInitializer;
-import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentType;
 
 import java.util.Date;
@@ -293,7 +289,7 @@ public abstract class BasicPageForm extends BasicItemForm {
         final String name,
         final ContentSection section,
         final Folder folder,
-        final WorkflowTemplate workflowTemplate,
+        final Workflow workflowTemplate,
         final ContentItemInitializer<T> initializer,
         final Locale locale) throws FormProcessException {
 
