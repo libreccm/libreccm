@@ -19,6 +19,7 @@
 package org.libreccm.workflow;
 
 import com.arsdigita.kernel.KernelConfig;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.subject.Subject;
@@ -37,13 +38,22 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
 
 /**
  * Manager for {@link Workflow}s. The logic of some of these classes has been
@@ -109,18 +119,18 @@ public class WorkflowManager {
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
-    public Workflow createWorkflow(final WorkflowTemplate template,
+    public Workflow createWorkflow(final Workflow template,
                                    final CcmObject object) {
-        if (template == null) {
+        Objects.requireNonNull(template,
+                               "Can't create a workflow without a template.");
+        if (!template.isAbstractWorkflow()) {
             throw new IllegalArgumentException(
-                "Can't create a workflow without a template.");
+                "The provided template is not an abstract workflow");
         }
 
-        if (object == null) {
-            throw new IllegalArgumentException(
-                "Can't create a workflow without an object.");
-        }
-
+        Objects.requireNonNull(object, 
+                               "Can't create a workflow without an object.");
+        
         final Workflow workflow = new Workflow();
 
         final LocalizedString name = new LocalizedString();
@@ -219,8 +229,8 @@ public class WorkflowManager {
                     writeMethod.invoke(task, value);
                 }
             } catch (IllegalAccessException
-                         | IllegalArgumentException
-                         | InvocationTargetException ex) {
+                     | IllegalArgumentException
+                     | InvocationTargetException ex) {
                 throw new RuntimeException();
             }
         }

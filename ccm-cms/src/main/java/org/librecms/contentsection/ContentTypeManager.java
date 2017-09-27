@@ -24,9 +24,11 @@ import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.PermissionManager;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.security.Role;
-import org.libreccm.workflow.WorkflowTemplate;
+import org.libreccm.workflow.Workflow;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.lifecycle.LifecycleDefinition;
+
+import java.util.Objects;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -98,7 +100,7 @@ public class ContentTypeManager {
      * Sets the default workflow to use for new items of a content type.
      *
      * @param type
-     * @param template The {@link WorkflowTemplate} for the workflow to use for
+     * @param template The abstract {@link Workflow} for the workflow to use for
      *                 new items of the provided {@code type}.
      */
     @Transactional(Transactional.TxType.REQUIRED)
@@ -106,7 +108,15 @@ public class ContentTypeManager {
     public void setDefaultWorkflow(
         @RequiresPrivilege(AdminPrivileges.ADMINISTER_CONTENT_TYPES)
         final ContentType type,
-        final WorkflowTemplate template) {
+        final Workflow template) {
+
+        Objects.requireNonNull(type);
+        Objects.requireNonNull(template);
+
+        if (!template.isAbstractWorkflow()) {
+            throw new IllegalArgumentException(
+                "The provided workflow is not an abstract workflow.");
+        }
 
         type.setDefaultWorkflow(template);
 

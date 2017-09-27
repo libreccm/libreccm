@@ -57,8 +57,8 @@ import static org.libreccm.testutils.DependenciesHelpers.*;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.persistence.CleanupUsingScript;
 import org.jboss.arquillian.persistence.TestExecutionPhase;
-import org.libreccm.workflow.WorkflowTemplate;
-import org.libreccm.workflow.WorkflowTemplateRepository;
+import org.libreccm.workflow.Workflow;
+import org.libreccm.workflow.WorkflowRepository;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 import org.librecms.contenttypes.Article;
 import org.librecms.contenttypes.Event;
@@ -102,7 +102,7 @@ public class ContentSectionManagerTest {
     private LifecycleDefinitionRepository lifecycleDefRepo;
 
     @Inject
-    private WorkflowTemplateRepository workflowTemplateRepo;
+    private WorkflowRepository workflowRepo;
 
     public ContentSectionManagerTest() {
     }
@@ -198,7 +198,7 @@ public class ContentSectionManagerTest {
         assertThat(categoryRepo, is(not(nullValue())));
         assertThat(typeRepo, is(not(nullValue())));
         assertThat(lifecycleDefRepo, is(not(nullValue())));
-        assertThat(workflowTemplateRepo, is(not(nullValue())));
+        assertThat(workflowRepo, is(not(nullValue())));
     }
 
     /**
@@ -449,9 +449,11 @@ public class ContentSectionManagerTest {
     public void addContentTypeToSection() {
         final ContentSection section = repository.findById(-1100L).get();
         final LifecycleDefinition lifecycleDef = lifecycleDefRepo
-            .findById(-13002L).get();
-        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
-            .findById(-14001L).get();
+            .findById(-13002L)
+            .get();
+        final Workflow workflowTemplate = workflowRepo
+            .findById(-14001L)
+            .get();
 
         manager.addContentTypeToSection(Event.class,
                                         section,
@@ -474,9 +476,11 @@ public class ContentSectionManagerTest {
     public void addAlreadyAddedContentTypeToSection() {
         final ContentSection section = repository.findById(-1100L).get();
         final LifecycleDefinition lifecycleDef = lifecycleDefRepo
-            .findById(-13002L).get();
-        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
-            .findById(-14002L).get();
+            .findById(-13002L)
+            .get();
+        final Workflow workflowTemplate = workflowRepo
+            .findById(-14002L)
+            .get();
 
         manager.addContentTypeToSection(News.class,
                                         section,
@@ -501,7 +505,7 @@ public class ContentSectionManagerTest {
         final ContentSection section = repository.findById(-1100L).get();
         final LifecycleDefinition lifecycleDef = lifecycleDefRepo
             .findById(-13002L).get();
-        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+        final Workflow workflowTemplate = workflowRepo
             .findById(-14002L).get();
 
         manager.addContentTypeToSection(null,
@@ -527,7 +531,7 @@ public class ContentSectionManagerTest {
     public void addContentTypeToSectionSectionIsNull() {
         final LifecycleDefinition lifecycleDef = lifecycleDefRepo
             .findById(-13002L).get();
-        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+        final Workflow workflowTemplate = workflowRepo
             .findById(-14002L).get();
 
         manager.addContentTypeToSection(Event.class,
@@ -551,7 +555,7 @@ public class ContentSectionManagerTest {
     @InSequence(800)
     public void addContentTypeToSectionLifecycleIsNull() {
         final ContentSection section = repository.findById(-1100L).get();
-        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+        final Workflow workflowTemplate = workflowRepo
             .findById(-14001L).get();
 
         manager.addContentTypeToSection(Event.class,
@@ -602,7 +606,7 @@ public class ContentSectionManagerTest {
         final ContentSection section = repository.findById(-1100L).get();
         final LifecycleDefinition lifecycleDef = lifecycleDefRepo
             .findById(-13003L).get();
-        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+        final Workflow workflowTemplate = workflowRepo
             .findById(-14001L).get();
 
         manager.addContentTypeToSection(Event.class,
@@ -628,7 +632,7 @@ public class ContentSectionManagerTest {
         final ContentSection section = repository.findById(-1100L).get();
         final LifecycleDefinition lifecycleDef = lifecycleDefRepo
             .findById(-13002L).get();
-        final WorkflowTemplate workflowTemplate = workflowTemplateRepo
+        final Workflow workflowTemplate = workflowRepo
             .findById(-14003L).get();
 
         manager.addContentTypeToSection(Event.class,

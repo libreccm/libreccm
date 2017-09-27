@@ -20,6 +20,7 @@ package org.librecms.contentsection;
 
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
+import org.apache.shiro.subject.ExecutionException;
 import org.apache.shiro.subject.Subject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
@@ -55,6 +56,8 @@ import org.librecms.assets.FileAsset;
 import org.librecms.assets.Image;
 import org.librecms.assets.VideoAsset;
 import org.librecms.contentsection.rs.Assets;
+
+import java.util.concurrent.Callable;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -202,15 +205,19 @@ public class AssetRepositoryTest {
         excludeColumns = {"timestamp", "object_order"}
     )
     public void deleteUnusedAsset() {
-        final Asset asset = assetRepo.findById(-800L).get();
 
-        assetRepo.delete(asset);
+        shiro.getSystemUser().execute(() -> {
+            final Asset asset = assetRepo.findById(-800L).get();
+
+            assetRepo.delete(asset);
+        });
     }
 
     /**
      * Verifies that an {@link Asset} which is associated to at least one
      * {@link ContentItem} can't be deleted by using
      * {@link AssetRepository#delete(org.librecms.assets.Asset)}.
+     * @throws java.lang.Throwable
      */
     @Test(expected = AssetInUseException.class)
     @InSequence(110)
@@ -220,10 +227,18 @@ public class AssetRepositoryTest {
         "datasets/org/librecms/contentsection/AssetRepositoryTest/"
             + "data.xml")
     @ShouldThrowException(AssetInUseException.class)
-    public void deleteUsedAsset() {
-        final Asset asset = assetRepo.findById(-700L).get();
+    public void deleteUsedAsset() throws Throwable {
 
-        assetRepo.delete(asset);
+        try {
+            shiro.getSystemUser().execute(() -> {
+                final Asset asset = assetRepo.findById(-700L).get();
+                assetRepo.delete(asset);
+
+                return null;
+            });
+        } catch (ExecutionException ex) {
+            throw ex.getCause();
+        }
     }
 
     /**
@@ -234,6 +249,7 @@ public class AssetRepositoryTest {
     @InSequence(200)
     @UsingDataSet(
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
+
     public void findAssetByUuid() {
 
         final Optional<Asset> header = shiro
@@ -341,7 +357,6 @@ public class AssetRepositoryTest {
         assertThat(images.get(1).getDisplayName(),
                    is(equalTo("services-header.png")));
         assertThat(images.get(2).getDisplayName(), is(equalTo("the-phb.png")));
-        
 
         assertThat(files.get(0).getDisplayName(), is(equalTo("catalog.pdf")));
         assertThat(files.get(1).getDisplayName(),
@@ -487,7 +502,7 @@ public class AssetRepositoryTest {
         assertThat(files.get(0).getDisplayName(), is(equalTo("catalog.pdf")));
         assertThat(files.get(1).getDisplayName(),
                    is(equalTo("product1-datasheet.pdf")));
-        
+
     }
 
     /**

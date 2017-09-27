@@ -21,6 +21,7 @@ package org.librecms.contentsection;
 import org.libreccm.security.RecursivePermissions;
 import org.libreccm.security.Role;
 import org.libreccm.web.CcmApplication;
+import org.libreccm.workflow.Workflow;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -42,7 +43,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
-import org.libreccm.workflow.WorkflowTemplate;
 import org.librecms.contentsection.privileges.AssetPrivileges;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 import org.librecms.contentsection.privileges.TypePrivileges;
@@ -58,53 +58,53 @@ import static org.librecms.CmsConstants.*;
 @Table(name = "CONTENT_SECTIONS", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(
-            name = "ContentSection.findById",
-            query = "SELECT S FROM ContentSection s WHERE s.objectId = :objectId")
+        name = "ContentSection.findById",
+        query = "SELECT S FROM ContentSection s WHERE s.objectId = :objectId")
     ,
     @NamedQuery(
-            name = "ContentSection.findByLabel",
-            query = "SELECT s FROM ContentSection s WHERE s.label = :label")
+        name = "ContentSection.findByLabel",
+        query = "SELECT s FROM ContentSection s WHERE s.label = :label")
     ,
     @NamedQuery(
-            name = "ContentSection.findUsableContentTypes",
-            query = "SELECT t FROM ContentType t "
-                            + "WHERE t.contentSection = :section "
-                            + "AND "
-                            + "(t IN (SELECT p.object FROM Permission p "
-                            + "WHERE p.grantedPrivilege = '"
-                            + TypePrivileges.USE_TYPE + "' "
-                            + "AND p.grantee in :roles) "
-                            + "OR true = :isSysAdmin)")
+        name = "ContentSection.findUsableContentTypes",
+        query = "SELECT t FROM ContentType t "
+                    + "WHERE t.contentSection = :section "
+                    + "AND "
+                    + "(t IN (SELECT p.object FROM Permission p "
+                    + "WHERE p.grantedPrivilege = '"
+                    + TypePrivileges.USE_TYPE + "' "
+                    + "AND p.grantee in :roles) "
+                    + "OR true = :isSysAdmin)")
     ,
     @NamedQuery(
-            name = "ContentSection.countUsableContentTypes",
-            query = "SELECT COUNT(t) FROM ContentType t "
-                            + "WHERE t.contentSection = :section "
-                            + "AND "
-                            + "(t IN (SELECT p.object FROM Permission p "
-                            + "WHERE p.grantedPrivilege = '"
-                            + TypePrivileges.USE_TYPE + "' "
-                            + "AND p.grantee IN :roles) "
-                            + "OR true = :isSysAdmin)")
+        name = "ContentSection.countUsableContentTypes",
+        query = "SELECT COUNT(t) FROM ContentType t "
+                    + "WHERE t.contentSection = :section "
+                    + "AND "
+                    + "(t IN (SELECT p.object FROM Permission p "
+                    + "WHERE p.grantedPrivilege = '"
+                    + TypePrivileges.USE_TYPE + "' "
+                    + "AND p.grantee IN :roles) "
+                    + "OR true = :isSysAdmin)")
     ,
     @NamedQuery(
-            name = "ContentSection.hasUsableContentTypes",
-            query = "SELECT (CASE WHEN COUNT(t) > 0 THEN true ELSE false END)"
-                            + "FROM ContentType t "
-                            + "WHERE t.contentSection = :section "
-                            + "AND "
-                            + "(t IN (SELECT p.object FROM Permission p "
-                            + "WHERE p.grantedPrivilege = '"
-                            + TypePrivileges.USE_TYPE + "' "
-                            + "AND p.grantee IN :roles) "
-                            + "OR true = :isSysAdmin)")
+        name = "ContentSection.hasUsableContentTypes",
+        query = "SELECT (CASE WHEN COUNT(t) > 0 THEN true ELSE false END)"
+                    + "FROM ContentType t "
+                    + "WHERE t.contentSection = :section "
+                    + "AND "
+                    + "(t IN (SELECT p.object FROM Permission p "
+                    + "WHERE p.grantedPrivilege = '"
+                    + TypePrivileges.USE_TYPE + "' "
+                    + "AND p.grantee IN :roles) "
+                    + "OR true = :isSysAdmin)")
     ,
     @NamedQuery(
-            name = "ContentSection.findPermissions",
-            query = "SELECT p FROM Permission p "
-                            + "WHERE (p.object = :section "
-                            + "       OR p.object = :rootDocumentsFolder"
-                            + "                   OR p.object = :rootAssetsFolder) "
+        name = "ContentSection.findPermissions",
+        query = "SELECT p FROM Permission p "
+                    + "WHERE (p.object = :section "
+                    + "       OR p.object = :rootDocumentsFolder"
+                    + "                   OR p.object = :rootAssetsFolder) "
                     + "AND p.grantee = :role")
 })
 //@ApplicationType(
@@ -184,29 +184,29 @@ public class ContentSection extends CcmApplication implements Serializable {
 
     @OneToMany
     @JoinTable(
-            name = "CONTENT_SECTION_LIFECYCLE_DEFINITIONS",
-            schema = DB_SCHEMA,
-            joinColumns = {
-                @JoinColumn(name = "CONTENT_SECTION_ID")
-            },
-            inverseJoinColumns = {
-                @JoinColumn(name = "LIFECYCLE_DEFINITION_ID")
-            }
+        name = "CONTENT_SECTION_LIFECYCLE_DEFINITIONS",
+        schema = DB_SCHEMA,
+        joinColumns = {
+            @JoinColumn(name = "CONTENT_SECTION_ID")
+        },
+        inverseJoinColumns = {
+            @JoinColumn(name = "LIFECYCLE_DEFINITION_ID")
+        }
     )
     private List<LifecycleDefinition> lifecycleDefinitions = new ArrayList<>();
 
     @OneToMany
     @JoinTable(
-            name = "CONTENT_SECTION_WORKFLOW_TEMPLATES",
-            schema = DB_SCHEMA,
-            joinColumns = {
-                @JoinColumn(name = "CONTENT_SECTION_ID")
-            },
-            inverseJoinColumns = {
-                @JoinColumn(name = "WORKFLOW_TEMPLATE_ID")
-            }
+        name = "CONTENT_SECTION_WORKFLOW_TEMPLATES",
+        schema = DB_SCHEMA,
+        joinColumns = {
+            @JoinColumn(name = "CONTENT_SECTION_ID")
+        },
+        inverseJoinColumns = {
+            @JoinColumn(name = "WORKFLOW_TEMPLATE_ID")
+        }
     )
-    private List<WorkflowTemplate> workflowTemplates = new ArrayList<>();
+    private List<Workflow> workflowTemplates = new ArrayList<>();
 
     public ContentSection() {
         roles = new ArrayList<>();
@@ -326,7 +326,7 @@ public class ContentSection extends CcmApplication implements Serializable {
     }
 
     protected void setLifecycleDefinitions(
-            final List<LifecycleDefinition> lifecycleDefinitions) {
+        final List<LifecycleDefinition> lifecycleDefinitions) {
         this.lifecycleDefinitions = lifecycleDefinitions;
     }
 
@@ -335,24 +335,28 @@ public class ContentSection extends CcmApplication implements Serializable {
     }
 
     protected void removeLifecycleDefinition(
-            final LifecycleDefinition definition) {
+        final LifecycleDefinition definition) {
         lifecycleDefinitions.remove(definition);
     }
 
-    public List<WorkflowTemplate> getWorkflowTemplates() {
+    public List<Workflow> getWorkflowTemplates() {
         return Collections.unmodifiableList(workflowTemplates);
     }
 
     protected void setWorkflowTemplates(
-            final List<WorkflowTemplate> workflowTemplates) {
+        final List<Workflow> workflowTemplates) {
         this.workflowTemplates = workflowTemplates;
     }
 
-    protected void addWorkflowTemplate(final WorkflowTemplate template) {
+    protected void addWorkflowTemplate(final Workflow template) {
+        if (!template.isAbstractWorkflow()) {
+            throw new IllegalArgumentException(
+                "The provided workflow is not an abstract workflow.");
+        }
         workflowTemplates.add(template);
     }
 
-    protected void removeWorkflowTemplate(final WorkflowTemplate template) {
+    protected void removeWorkflowTemplate(final Workflow template) {
         workflowTemplates.remove(template);
     }
 
@@ -422,23 +426,23 @@ public class ContentSection extends CcmApplication implements Serializable {
     @Override
     public String toString(final String data) {
         return super.toString(String.format(
-                ", label = \"%s\", "
-                        + "rootDocumentsFolder = \"%s\", "
-                        + "rootAssetsFolder = \"%s\", "
-                        + "pageResolverClass = \"%s\", "
-                        + "itemResolverClass = \"%s\", "
-                        + "templateResolverClass = \"%s\", "
-                        + "xmlGeneratorClass = \"%s\", "
-                        + "defaultLocale = \"%s\"%s",
-                label,
-                Objects.toString(rootDocumentsFolder),
-                Objects.toString(rootAssetsFolder),
-                pageResolverClass,
-                itemResolverClass,
-                templateResolverClass,
-                xmlGeneratorClass,
-                Objects.toString(defaultLocale),
-                data));
+            ", label = \"%s\", "
+                + "rootDocumentsFolder = \"%s\", "
+                + "rootAssetsFolder = \"%s\", "
+                + "pageResolverClass = \"%s\", "
+                + "itemResolverClass = \"%s\", "
+                + "templateResolverClass = \"%s\", "
+                + "xmlGeneratorClass = \"%s\", "
+                + "defaultLocale = \"%s\"%s",
+            label,
+            Objects.toString(rootDocumentsFolder),
+            Objects.toString(rootAssetsFolder),
+            pageResolverClass,
+            itemResolverClass,
+            templateResolverClass,
+            xmlGeneratorClass,
+            Objects.toString(defaultLocale),
+            data));
     }
 
 }

@@ -23,8 +23,7 @@ import org.libreccm.workflow.AssignableTask;
 import org.libreccm.workflow.AssignableTaskManager;
 import org.libreccm.workflow.Workflow;
 import org.libreccm.workflow.WorkflowManager;
-import org.libreccm.workflow.WorkflowTemplate;
-import org.libreccm.workflow.WorkflowTemplateRepository;
+import org.libreccm.workflow.WorkflowRepository;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
@@ -56,7 +55,7 @@ class ApplyWorkflowController {
     private ContentSectionRepository sectionRepo;
 
     @Inject
-    private WorkflowTemplateRepository templateRepo;
+    private WorkflowRepository templateRepo;
 
     @Inject
     private WorkflowManager workflowManager;
@@ -68,7 +67,7 @@ class ApplyWorkflowController {
     private PermissionChecker permissionChecker;
 
     @Transactional(Transactional.TxType.REQUIRED)
-    protected WorkflowTemplate getDefaultWorkflow(final ContentType contentType) {
+    protected Workflow getDefaultWorkflow(final ContentType contentType) {
 
         Objects.requireNonNull(contentType);
 
@@ -83,7 +82,7 @@ class ApplyWorkflowController {
 
     @Transactional(Transactional.TxType.REQUIRED)
     Long getDefaultWorkflowId(final ContentType contentType) {
-        final WorkflowTemplate workflowTemplate
+        final Workflow workflowTemplate
                                    = getDefaultWorkflow(contentType);
         if (workflowTemplate == null) {
             return null;
@@ -93,7 +92,7 @@ class ApplyWorkflowController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    protected List<WorkflowTemplate> getWorkflowTemplates(
+    protected List<Workflow> getWorkflowTemplates(
         final ContentSection section) {
 
         final ContentSection contentSection = sectionRepo
@@ -115,7 +114,7 @@ class ApplyWorkflowController {
         Objects.requireNonNull(folder);
         Objects.requireNonNull(workflowTemplateId);
         
-        final WorkflowTemplate workflowTemplate;
+        final Workflow workflowTemplate;
         if (workflowTemplateId == null
                 && permissionChecker
                 .isPermitted(ItemPrivileges.APPLY_ALTERNATE_WORKFLOW, folder)) {

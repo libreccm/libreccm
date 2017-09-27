@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
+import org.apache.shiro.subject.ExecutionException;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
@@ -51,9 +52,12 @@ import java.util.Locale;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
+
 import org.jboss.arquillian.persistence.CleanupUsingScript;
 
 import org.librecms.assets.FileAsset;
+
+import java.util.concurrent.Callable;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -212,19 +216,24 @@ public class AssetManagerTest {
                           "timestamp",
                           "uuid"})
     public void shareAsset() throws MimeTypeParseException {
-        final Folder folder = folderRepo.findById(-420L).get();
-        assertThat(folder, is(not(nullValue())));
 
-        final FileAsset file = new FileAsset();
-        file.setDisplayName("datasheet.pdf");
-        file.setFileName("datasheet.pdf");
-        file.setMimeType(new MimeType("application/pdf"));
-        file.getTitle().addValue(Locale.ENGLISH, "datasheet.pdf");
-        assetRepo.save(file);
+        shiro.getSystemUser().execute(() -> {
+            final Folder folder = folderRepo.findById(-420L).get();
+            assertThat(folder, is(not(nullValue())));
 
-        assetManager.shareAsset(file, folder);
+            final FileAsset file = new FileAsset();
+            file.setDisplayName("datasheet.pdf");
+            file.setFileName("datasheet.pdf");
+            file.setMimeType(new MimeType("application/pdf"));
+            file.getTitle().addValue(Locale.ENGLISH, "datasheet.pdf");
+            assetRepo.save(file);
 
-        assertThat(file.getDisplayName(), is(equalTo("datasheet.pdf")));
+            assetManager.shareAsset(file, folder);
+            assertThat(file.getDisplayName(), is(equalTo("datasheet.pdf")));
+
+            return null;
+        });
+
     }
 
     /**
@@ -241,9 +250,12 @@ public class AssetManagerTest {
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void shareAssetNull() {
-        final Folder folder = folderRepo.findById(-420L).get();
 
-        assetManager.shareAsset(null, folder);
+        shiro.getSystemUser().execute(() -> {
+            final Folder folder = folderRepo.findById(-420L).get();
+
+            assetManager.shareAsset(null, folder);
+        });
     }
 
     /**
@@ -261,13 +273,22 @@ public class AssetManagerTest {
     @ShouldMatchDataSet(
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
-    public void shareAssetFolderIsNull() throws MimeTypeParseException {
-        final FileAsset file = new FileAsset();
-        file.setDisplayName("datasheet.pdf");
-        file.setFileName("datasheet.pdf");
-        file.setMimeType(new MimeType("application/pdf"));
+    public void shareAssetFolderIsNull() throws Throwable {
 
-        assetManager.shareAsset(file, null);
+        try {
+            shiro.getSystemUser().execute(() -> {
+                final FileAsset file = new FileAsset();
+                file.setDisplayName("datasheet.pdf");
+                file.setFileName("datasheet.pdf");
+                file.setMimeType(new MimeType("application/pdf"));
+
+                assetManager.shareAsset(file, null);
+                return null;
+            });
+        } catch (ExecutionException ex) {
+            //We need the original exception
+            throw ex.getCause();
+        }
     }
 
     /**
@@ -284,11 +305,14 @@ public class AssetManagerTest {
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void shareAlreadySharedAsset() {
-        final Folder folder = folderRepo.findById(-420L).get();
 
-        final Asset asset = assetRepo.findById(-700L).get();
+        shiro.getSystemUser().execute(() -> {
+            final Folder folder = folderRepo.findById(-420L).get();
 
-        assetManager.shareAsset(asset, folder);
+            final Asset asset = assetRepo.findById(-700L).get();
+
+            assetManager.shareAsset(asset, folder);
+        });
     }
 
     /**
@@ -304,7 +328,9 @@ public class AssetManagerTest {
                     + "after-clean-orphaned.xml",
         excludeColumns = {"timestamp", "object_order"})
     public void cleanOrphanedAssets() {
-        assetManager.cleanOrphanedAssets();
+        shiro.getSystemUser().execute(() -> {
+            assetManager.cleanOrphanedAssets();
+        });
     }
 
     /**
@@ -324,11 +350,17 @@ public class AssetManagerTest {
                           "object_order",
                           "uuid"})
     public void moveAssetToOtherFolder() {
-        final Asset asset = assetRepo.findById(-900L).get();
 
-        final Folder folder = folderRepo.findById(-410L).get();
+        shiro.getSystemUser().execute(() -> {
+            final Asset asset = assetRepo.findById(-900L).get();
 
-        assetManager.move(asset, folder);
+            shiro.getSystemUser().execute(() -> {
+                final Folder folder = folderRepo.findById(-410L).get();
+
+                assetManager.move(asset, folder);
+            });
+            return null;
+        });
     }
 
     /**
@@ -348,11 +380,14 @@ public class AssetManagerTest {
                           "object_order",
                           "uuid"})
     public void moveAssetToFolderInOtherContentSection() {
-        final Asset asset = assetRepo.findById(-900L).get();
 
-        final Folder folder = folderRepo.findById(-1600L).get();
+        shiro.getSystemUser().execute(() -> {
+            final Asset asset = assetRepo.findById(-900L).get();
 
-        assetManager.move(asset, folder);
+            final Folder folder = folderRepo.findById(-1600L).get();
+
+            assetManager.move(asset, folder);
+        });
     }
 
     /**
@@ -371,9 +406,11 @@ public class AssetManagerTest {
     public void moveAssetNull() {
         final Asset asset = null;
 
-        final Folder folder = folderRepo.findById(-410L).get();
+        shiro.getSystemUser().execute(() -> {
+            final Folder folder = folderRepo.findById(-410L).get();
 
-        assetManager.move(asset, folder);
+            assetManager.move(asset, folder);
+        });
     }
 
     /**
@@ -390,11 +427,14 @@ public class AssetManagerTest {
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveAssetTargetFolderIsNull() {
-        final Asset asset = assetRepo.findById(-900L).get();
 
-        final Folder targetFolder = null;
+        shiro.getSystemUser().execute(() -> {
+            final Asset asset = assetRepo.findById(-900L).get();
 
-        assetManager.move(asset, targetFolder);
+            final Folder targetFolder = null;
+
+            assetManager.move(asset, targetFolder);
+        });
     }
 
     /**
@@ -411,11 +451,14 @@ public class AssetManagerTest {
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void moveAssetTargetFolderIsNotAssetFolder() {
-        final Asset asset = assetRepo.findById(-900L).get();
 
-        final Folder folder = folderRepo.findById(-200L).get();
+        shiro.getSystemUser().execute(() -> {
+            final Asset asset = assetRepo.findById(-900L).get();
 
-        assetManager.move(asset, folder);
+            final Folder folder = folderRepo.findById(-200L).get();
+
+            assetManager.move(asset, folder);
+        });
     }
 
     /**
@@ -438,11 +481,14 @@ public class AssetManagerTest {
                           "categorization_id",
                           "object_order"})
     public void copyAssetToOtherFolder() {
-        final Asset asset = assetRepo.findById(-1100L).get();
 
-        final Folder targetFolder = folderRepo.findById(-400L).get();
+        shiro.getSystemUser().execute(() -> {
+            final Asset asset = assetRepo.findById(-1100L).get();
 
-        assetManager.copy(asset, targetFolder);
+            final Folder targetFolder = folderRepo.findById(-400L).get();
+
+            assetManager.copy(asset, targetFolder);
+        });
     }
 
     /**
@@ -496,11 +542,14 @@ public class AssetManagerTest {
                           "categorization_id",
                           "object_order"})
     public void copyAssetToOtherContentSection() {
-        final Asset asset = assetRepo.findById(-1100L).get();
 
-        final Folder targetFolder = folderRepo.findById(-1600L).get();
+        shiro.getSystemUser().execute(() -> {
+            final Asset asset = assetRepo.findById(-1100L).get();
 
-        assetManager.copy(asset, targetFolder);
+            final Folder targetFolder = folderRepo.findById(-1600L).get();
+
+            assetManager.copy(asset, targetFolder);
+        });
     }
 
     /**
@@ -517,11 +566,14 @@ public class AssetManagerTest {
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyAssetNull() {
-        final Asset asset = null;
 
-        final Folder targetFolder = folderRepo.findById(-420L).get();
+        shiro.getSystemUser().execute(() -> {
+            final Asset asset = null;
 
-        assetManager.copy(asset, targetFolder);
+            final Folder targetFolder = folderRepo.findById(-420L).get();
+
+            assetManager.copy(asset, targetFolder);
+        });
     }
 
     /**
@@ -538,11 +590,14 @@ public class AssetManagerTest {
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyAssetTargetFolderIsNull() {
-        final Asset asset = assetRepo.findById(-1100L).get();
 
-        final Folder targetFolder = null;
+        shiro.getSystemUser().execute(() -> {
+            final Asset asset = assetRepo.findById(-1100L).get();
 
-        assetManager.copy(asset, targetFolder);
+            final Folder targetFolder = null;
+
+            assetManager.copy(asset, targetFolder);
+        });
     }
 
     /**
@@ -559,11 +614,14 @@ public class AssetManagerTest {
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldThrowException(IllegalArgumentException.class)
     public void copyAssetTargetFolderIsNotAssetFolder() {
-        final Asset asset = assetRepo.findById(-1100L).get();
 
-        final Folder targetFolder = folderRepo.findById(-200L).get();
+        shiro.getSystemUser().execute(() -> {
+            final Asset asset = assetRepo.findById(-1100L).get();
 
-        assetManager.copy(asset, targetFolder);
+            final Folder targetFolder = folderRepo.findById(-200L).get();
+
+            assetManager.copy(asset, targetFolder);
+        });
     }
 
     /**
@@ -578,17 +636,22 @@ public class AssetManagerTest {
     @ShouldMatchDataSet(
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     public void verifyIsAssetInUse() {
-        final Asset header = assetRepo.findById(-700L).get();
-        final Asset phb = assetRepo.findById(-800L).get();
-        final Asset servicesHeader = assetRepo.findById(-900L).get();
-        final Asset product1Datasheet = assetRepo.findById(-1000L).get();
-        final Asset catalog = assetRepo.findById(-1100L).get();
 
-        assertThat(assetManager.isAssetInUse(header), is(true));
-        assertThat(assetManager.isAssetInUse(phb), is(false));
-        assertThat(assetManager.isAssetInUse(servicesHeader), is(true));
-        assertThat(assetManager.isAssetInUse(product1Datasheet), is(true));
-        assertThat(assetManager.isAssetInUse(catalog), is(true));
+        shiro.getSystemUser().execute(() -> {
+            final Asset header = assetRepo.findById(-700L).get();
+            final Asset phb = assetRepo.findById(-800L).get();
+            final Asset servicesHeader = assetRepo.findById(-900L).get();
+            final Asset product1Datasheet = assetRepo.findById(-1000L).get();
+            final Asset catalog = assetRepo.findById(-1100L).get();
+
+            assertThat(assetManager.isAssetInUse(header), is(true));
+            assertThat(assetManager.isAssetInUse(phb), is(false));
+            assertThat(assetManager.isAssetInUse(servicesHeader), is(true));
+            assertThat(assetManager.isAssetInUse(product1Datasheet), is(true));
+            assertThat(assetManager.isAssetInUse(catalog), is(true));
+
+            return null;
+        });
     }
 
     /**
@@ -603,22 +666,25 @@ public class AssetManagerTest {
     @ShouldMatchDataSet(
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     public void verifyGetAssetPathWithoutContentSection() {
-        final Asset header = assetRepo.findById(-700L).get();
-        final Asset phb = assetRepo.findById(-800L).get();
-        final Asset servicesHeader = assetRepo.findById(-900L).get();
-        final Asset product1Datasheet = assetRepo.findById(-1000L).get();
-        final Asset catalog = assetRepo.findById(-1100L).get();
 
-        assertThat(assetManager.getAssetPath(header),
-                   is(equalTo("/media/images/header.png")));
-        assertThat(assetManager.getAssetPath(phb),
-                   is(equalTo("/media/images/the-phb.png")));
-        assertThat(assetManager.getAssetPath(servicesHeader),
-                   is(equalTo("/media/services-header.png")));
-        assertThat(assetManager.getAssetPath(product1Datasheet),
-                   is(equalTo("")));
-        assertThat(assetManager.getAssetPath(catalog),
-                   is(equalTo("/media/downloads/catalog.pdf")));
+        shiro.getSystemUser().execute(() -> {
+            final Asset header = assetRepo.findById(-700L).get();
+            final Asset phb = assetRepo.findById(-800L).get();
+            final Asset servicesHeader = assetRepo.findById(-900L).get();
+            final Asset product1Datasheet = assetRepo.findById(-1000L).get();
+            final Asset catalog = assetRepo.findById(-1100L).get();
+
+            assertThat(assetManager.getAssetPath(header),
+                       is(equalTo("/media/images/header.png")));
+            assertThat(assetManager.getAssetPath(phb),
+                       is(equalTo("/media/images/the-phb.png")));
+            assertThat(assetManager.getAssetPath(servicesHeader),
+                       is(equalTo("/media/services-header.png")));
+            assertThat(assetManager.getAssetPath(product1Datasheet),
+                       is(equalTo("")));
+            assertThat(assetManager.getAssetPath(catalog),
+                       is(equalTo("/media/downloads/catalog.pdf")));
+        });
     }
 
     /**
@@ -633,22 +699,25 @@ public class AssetManagerTest {
     @ShouldMatchDataSet(
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     public void verifyGetAssetPathWithContentSection() {
-        final Asset header = assetRepo.findById(-700L).get();
-        final Asset phb = assetRepo.findById(-800L).get();
-        final Asset servicesHeader = assetRepo.findById(-900L).get();
-        final Asset product1Datasheet = assetRepo.findById(-1000L).get();
-        final Asset catalog = assetRepo.findById(-1100L).get();
 
-        assertThat(assetManager.getAssetPath(header, true),
-                   is(equalTo("info:/media/images/header.png")));
-        assertThat(assetManager.getAssetPath(phb, true),
-                   is(equalTo("info:/media/images/the-phb.png")));
-        assertThat(assetManager.getAssetPath(servicesHeader, true),
-                   is(equalTo("info:/media/services-header.png")));
-        assertThat(assetManager.getAssetPath(product1Datasheet, true),
-                   is(equalTo("")));
-        assertThat(assetManager.getAssetPath(catalog, true),
-                   is(equalTo("info:/media/downloads/catalog.pdf")));
+        shiro.getSystemUser().execute(() -> {
+            final Asset header = assetRepo.findById(-700L).get();
+            final Asset phb = assetRepo.findById(-800L).get();
+            final Asset servicesHeader = assetRepo.findById(-900L).get();
+            final Asset product1Datasheet = assetRepo.findById(-1000L).get();
+            final Asset catalog = assetRepo.findById(-1100L).get();
+
+            assertThat(assetManager.getAssetPath(header, true),
+                       is(equalTo("info:/media/images/header.png")));
+            assertThat(assetManager.getAssetPath(phb, true),
+                       is(equalTo("info:/media/images/the-phb.png")));
+            assertThat(assetManager.getAssetPath(servicesHeader, true),
+                       is(equalTo("info:/media/services-header.png")));
+            assertThat(assetManager.getAssetPath(product1Datasheet, true),
+                       is(equalTo("")));
+            assertThat(assetManager.getAssetPath(catalog, true),
+                       is(equalTo("info:/media/downloads/catalog.pdf")));
+        });
     }
 
     /**
@@ -663,37 +732,40 @@ public class AssetManagerTest {
     @ShouldMatchDataSet(
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     public void verifyGetAssetFolder() {
-        final Asset header = assetRepo.findById(-700L).get();
-        final Asset phb = assetRepo.findById(-800L).get();
-        final Asset servicesHeader = assetRepo.findById(-900L).get();
-        final Asset product1Datasheet = assetRepo.findById(-1000L).get();
-        final Asset catalog = assetRepo.findById(-1100L).get();
 
-        final Folder media = folderRepo.findById(-400L).get();
-        final Folder images = folderRepo.findById(-410L).get();
-        final Folder downloads = folderRepo.findById(-420L).get();
+        shiro.getSystemUser().execute(() -> {
+            final Asset header = assetRepo.findById(-700L).get();
+            final Asset phb = assetRepo.findById(-800L).get();
+            final Asset servicesHeader = assetRepo.findById(-900L).get();
+            final Asset product1Datasheet = assetRepo.findById(-1000L).get();
+            final Asset catalog = assetRepo.findById(-1100L).get();
 
-        final Optional<Folder> headerFolder = assetManager
-            .getAssetFolder(header);
-        final Optional<Folder> phbFolder = assetManager
-            .getAssetFolder(phb);
-        final Optional<Folder> servicesHeaderFolder = assetManager
-            .getAssetFolder(servicesHeader);
-        final Optional<Folder> product1DatasheetFolder = assetManager
-            .getAssetFolder(product1Datasheet);
-        final Optional<Folder> catalogFolder = assetManager
-            .getAssetFolder(catalog);
+            final Folder media = folderRepo.findById(-400L).get();
+            final Folder images = folderRepo.findById(-410L).get();
+            final Folder downloads = folderRepo.findById(-420L).get();
 
-        assertThat(headerFolder.isPresent(), is(true));
-        assertThat(phbFolder.isPresent(), is(true));
-        assertThat(servicesHeaderFolder.isPresent(), is(true));
-        assertThat(product1DatasheetFolder.isPresent(), is(false));
-        assertThat(catalogFolder.isPresent(), is(true));
+            final Optional<Folder> headerFolder = assetManager
+                .getAssetFolder(header);
+            final Optional<Folder> phbFolder = assetManager
+                .getAssetFolder(phb);
+            final Optional<Folder> servicesHeaderFolder = assetManager
+                .getAssetFolder(servicesHeader);
+            final Optional<Folder> product1DatasheetFolder = assetManager
+                .getAssetFolder(product1Datasheet);
+            final Optional<Folder> catalogFolder = assetManager
+                .getAssetFolder(catalog);
 
-        assertThat(headerFolder.get(), is(equalTo(images)));
-        assertThat(phbFolder.get(), is(equalTo(images)));
-        assertThat(servicesHeaderFolder.get(), is(equalTo(media)));
-        assertThat(catalogFolder.get(), is(equalTo(downloads)));
+            assertThat(headerFolder.isPresent(), is(true));
+            assertThat(phbFolder.isPresent(), is(true));
+            assertThat(servicesHeaderFolder.isPresent(), is(true));
+            assertThat(product1DatasheetFolder.isPresent(), is(false));
+            assertThat(catalogFolder.isPresent(), is(true));
+
+            assertThat(headerFolder.get(), is(equalTo(images)));
+            assertThat(phbFolder.get(), is(equalTo(images)));
+            assertThat(servicesHeaderFolder.get(), is(equalTo(media)));
+            assertThat(catalogFolder.get(), is(equalTo(downloads)));
+        });
     }
 
     /**
@@ -708,58 +780,63 @@ public class AssetManagerTest {
     @ShouldMatchDataSet(
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     public void verifyGetAssetFolders() {
-        final Asset header = assetRepo.findById(-700L).get();
-        final Asset phb = assetRepo.findById(-800L).get();
-        final Asset servicesHeader = assetRepo.findById(-900L).get();
-        final Asset product1Datasheet = assetRepo.findById(-1000L).get();
-        final Asset catalog = assetRepo.findById(-1100L).get();
 
-        final Folder infoAssets = folderRepo.findById(-300L).get();
-        final Folder media = folderRepo.findById(-400L).get();
-        final Folder images = folderRepo.findById(-410L).get();
-        final Folder downloads = folderRepo.findById(-420L).get();
+        shiro.getSystemUser().execute(() -> {
+            final Asset header = assetRepo.findById(-700L).get();
+            final Asset phb = assetRepo.findById(-800L).get();
+            final Asset servicesHeader = assetRepo.findById(-900L).get();
+            final Asset product1Datasheet = assetRepo.findById(-1000L).get();
+            final Asset catalog = assetRepo.findById(-1100L).get();
 
-        final List<Folder> headerFolders = assetManager.getAssetFolders(header);
-        final List<Folder> phbFolders = assetManager.getAssetFolders(phb);
-        final List<Folder> servicesHeaderFolders = assetManager.getAssetFolders(
-            servicesHeader);
-        final List<Folder> product1DatasheetFolders = assetManager.
-            getAssetFolders(product1Datasheet);
-        final List<Folder> catalogFolders = assetManager.
-            getAssetFolders(catalog);
+            final Folder infoAssets = folderRepo.findById(-300L).get();
+            final Folder media = folderRepo.findById(-400L).get();
+            final Folder images = folderRepo.findById(-410L).get();
+            final Folder downloads = folderRepo.findById(-420L).get();
 
-        assertThat(headerFolders, is(not(nullValue())));
-        assertThat(phbFolders, is(not(nullValue())));
-        assertThat(servicesHeaderFolders, is(not(nullValue())));
-        assertThat(product1DatasheetFolders, is(not(nullValue())));
-        assertThat(catalogFolders, is(not(nullValue())));
+            final List<Folder> headerFolders = assetManager.getAssetFolders(
+                header);
+            final List<Folder> phbFolders = assetManager.getAssetFolders(phb);
+            final List<Folder> servicesHeaderFolders = assetManager
+                .getAssetFolders(
+                    servicesHeader);
+            final List<Folder> product1DatasheetFolders = assetManager.
+                getAssetFolders(product1Datasheet);
+            final List<Folder> catalogFolders = assetManager.
+                getAssetFolders(catalog);
 
-        assertThat(headerFolders.isEmpty(), is(false));
-        assertThat(phbFolders.isEmpty(), is(false));
-        assertThat(servicesHeaderFolders.isEmpty(), is(false));
-        assertThat(product1DatasheetFolders.isEmpty(), is(true));
-        assertThat(catalogFolders.isEmpty(), is(false));
+            assertThat(headerFolders, is(not(nullValue())));
+            assertThat(phbFolders, is(not(nullValue())));
+            assertThat(servicesHeaderFolders, is(not(nullValue())));
+            assertThat(product1DatasheetFolders, is(not(nullValue())));
+            assertThat(catalogFolders, is(not(nullValue())));
 
-        assertThat(headerFolders.size(), is(3));
-        assertThat(phbFolders.size(), is(3));
-        assertThat(servicesHeaderFolders.size(), is(2));
-        assertThat(product1DatasheetFolders.size(), is(0));
-        assertThat(catalogFolders.size(), is(3));
+            assertThat(headerFolders.isEmpty(), is(false));
+            assertThat(phbFolders.isEmpty(), is(false));
+            assertThat(servicesHeaderFolders.isEmpty(), is(false));
+            assertThat(product1DatasheetFolders.isEmpty(), is(true));
+            assertThat(catalogFolders.isEmpty(), is(false));
 
-        assertThat(headerFolders.get(0), is(equalTo(infoAssets)));
-        assertThat(headerFolders.get(1), is(equalTo(media)));
-        assertThat(headerFolders.get(2), is(equalTo(images)));
+            assertThat(headerFolders.size(), is(3));
+            assertThat(phbFolders.size(), is(3));
+            assertThat(servicesHeaderFolders.size(), is(2));
+            assertThat(product1DatasheetFolders.size(), is(0));
+            assertThat(catalogFolders.size(), is(3));
 
-        assertThat(phbFolders.get(0), is(equalTo(infoAssets)));
-        assertThat(phbFolders.get(1), is(equalTo(media)));
-        assertThat(phbFolders.get(2), is(equalTo(images)));
+            assertThat(headerFolders.get(0), is(equalTo(infoAssets)));
+            assertThat(headerFolders.get(1), is(equalTo(media)));
+            assertThat(headerFolders.get(2), is(equalTo(images)));
 
-        assertThat(servicesHeaderFolders.get(0), is(equalTo(infoAssets)));
-        assertThat(servicesHeaderFolders.get(1), is(equalTo(media)));
+            assertThat(phbFolders.get(0), is(equalTo(infoAssets)));
+            assertThat(phbFolders.get(1), is(equalTo(media)));
+            assertThat(phbFolders.get(2), is(equalTo(images)));
 
-        assertThat(catalogFolders.get(0), is(equalTo(infoAssets)));
-        assertThat(catalogFolders.get(1), is(equalTo(media)));
-        assertThat(catalogFolders.get(2), is(equalTo(downloads)));
+            assertThat(servicesHeaderFolders.get(0), is(equalTo(infoAssets)));
+            assertThat(servicesHeaderFolders.get(1), is(equalTo(media)));
+
+            assertThat(catalogFolders.get(0), is(equalTo(infoAssets)));
+            assertThat(catalogFolders.get(1), is(equalTo(media)));
+            assertThat(catalogFolders.get(2), is(equalTo(downloads)));
+        });
 
     }
 

@@ -64,7 +64,6 @@ import org.libreccm.workflow.TaskManager;
 import org.libreccm.workflow.Workflow;
 import org.libreccm.workflow.WorkflowManager;
 import org.libreccm.workflow.WorkflowRepository;
-import org.libreccm.workflow.WorkflowTemplate;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
@@ -823,7 +822,7 @@ class ItemLifecycleSelectForm extends BaseForm {
             } else {
                 // restart the workflow by recreating it
                 // from the same workflow template
-                final WorkflowTemplate template = workflow.getTemplate();
+                final Workflow template = workflow.getTemplate();
                 workflowRepo.delete(workflow);
                 final Workflow restarted = workflowManager.createWorkflow(
                     template, item);

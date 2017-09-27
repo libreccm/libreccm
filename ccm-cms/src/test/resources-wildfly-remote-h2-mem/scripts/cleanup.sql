@@ -82,8 +82,6 @@ DELETE FROM ccm_core.workflow_task_descriptions;
 
 DELETE FROM ccm_cms.content_section_workflow_templates;
 
-DELETE FROM ccm_core.workflow_templates;
-
 DELETE FROM ccm_core.workflows;
 
 DELETE FROM ccm_cms.lifecycle_phase_definition_labels;

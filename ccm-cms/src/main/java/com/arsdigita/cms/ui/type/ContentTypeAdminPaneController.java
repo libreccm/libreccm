@@ -18,7 +18,7 @@
  */
 package com.arsdigita.cms.ui.type;
 
-import org.libreccm.workflow.WorkflowTemplate;
+import org.libreccm.workflow.Workflow;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.ContentType;
@@ -130,7 +130,7 @@ class ContentTypeAdminPaneController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public WorkflowTemplate getWorkflowTemplate(final ContentType type) {
+    public Workflow getWorkflowTemplate(final ContentType type) {
 
         final ContentType contentType = typeRepo
             .findById(type.getObjectId())
@@ -146,7 +146,7 @@ class ContentTypeAdminPaneController {
     public Optional<String> getWorkflowTemplateName(final ContentType type,
                                                     final Locale locale) {
 
-        final WorkflowTemplate workflowTemplate = getWorkflowTemplate(type);
+        final Workflow workflowTemplate = getWorkflowTemplate(type);
 
         if (workflowTemplate == null) {
             return Optional.empty();
@@ -170,7 +170,7 @@ class ContentTypeAdminPaneController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<WorkflowTemplate> getWorkflowTemplates(
+    public List<Workflow> getWorkflowTemplates(
         final ContentSection section) {
 
         final ContentSection contentSection = sectionRepo
