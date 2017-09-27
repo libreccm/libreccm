@@ -46,7 +46,7 @@ create schema CCM_CORE;
 
     create table CCM_CORE.CATEGORY_DESCRIPTIONS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -63,7 +63,7 @@ create schema CCM_CORE;
 
     create table CCM_CORE.CATEGORY_TITLES (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -111,7 +111,7 @@ create schema CCM_CORE;
 
     create table CCM_CORE.DOMAIN_DESCRIPTIONS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -128,14 +128,14 @@ create schema CCM_CORE;
 
     create table CCM_CORE.DOMAIN_TITLES (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_COMPONENT_DESCRIPTIONS (
         COMPONENT_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (COMPONENT_ID, LOCALE)
     );
@@ -180,14 +180,14 @@ create schema CCM_CORE;
 
     create table CCM_CORE.FORMBUILDER_DATA_QUERY_DESCRIPTIONS (
         DATA_QUERY_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (DATA_QUERY_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_DATA_QUERY_NAMES (
         DATA_QUERY_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (DATA_QUERY_ID, LOCALE)
     );
@@ -224,7 +224,7 @@ create schema CCM_CORE;
 
     create table CCM_CORE.FORMBUILDER_OPTION_LABELS (
         OPTION_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (OPTION_ID, LOCALE)
     );
@@ -237,14 +237,14 @@ create schema CCM_CORE;
 
     create table CCM_CORE.FORMBUILDER_PROCESS_LISTENER_DESCRIPTIONS (
         PROCESS_LISTENER_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (PROCESS_LISTENER_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_PROCESS_LISTENER_NAMES (
         PROCESS_LISTENER_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (PROCESS_LISTENER_ID, LOCALE)
     );
@@ -403,14 +403,14 @@ create schema CCM_CORE;
 
     create table CCM_CORE.PAGE_MODEL_DESCRIPTIONS (
         PAGE_MODEL_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (PAGE_MODEL_ID, LOCALE)
     );
 
     create table CCM_CORE.PAGE_MODEL_TITLES (
         PAGE_MODEL_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (PAGE_MODEL_ID, LOCALE)
     );
@@ -436,7 +436,7 @@ create schema CCM_CORE;
         PERMISSION_ID bigint not null,
         CREATION_DATE timestamp,
         CREATION_IP varchar(255),
-        granted_privilege varchar(255),
+        GRANTED_PRIVILEGE varchar(255),
         INHERITED boolean,
         CREATION_USER_ID bigint,
         GRANTEE_ID bigint,
@@ -473,21 +473,21 @@ create schema CCM_CORE;
 
     create table CCM_CORE.RESOURCE_DESCRIPTIONS (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CORE.RESOURCE_TITLES (
         OBJECT_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CORE.RESOURCE_TYPE_DESCRIPTIONS (
         RESOURCE_TYPE_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (RESOURCE_TYPE_ID, LOCALE)
     );
@@ -512,7 +512,7 @@ create schema CCM_CORE;
 
     create table CCM_CORE.ROLE_DESCRIPTIONS (
         ROLE_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (ROLE_ID, LOCALE)
     );
@@ -529,11 +529,11 @@ create schema CCM_CORE;
         SETTING_ID bigint not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
-        SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         SETTING_VALUE_BOOLEAN boolean,
-        SETTING_VALUE_STRING varchar(1024),
-        SETTING_VALUE_DOUBLE double,
+        SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         SETTING_VALUE_LONG bigint,
+        SETTING_VALUE_DOUBLE double,
+        SETTING_VALUE_STRING varchar(1024),
         primary key (SETTING_ID)
     );
 
@@ -544,7 +544,7 @@ create schema CCM_CORE;
 
     create table CCM_CORE.SETTINGS_L10N_STR_VALUES (
         ENTRY_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (ENTRY_ID, LOCALE)
     );
@@ -593,14 +593,14 @@ create schema CCM_CORE;
 
     create table CCM_CORE.WORKFLOW_DESCRIPTIONS (
         WORKFLOW_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (WORKFLOW_ID, LOCALE)
     );
 
     create table CCM_CORE.WORKFLOW_NAMES (
         WORKFLOW_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (WORKFLOW_ID, LOCALE)
     );
@@ -614,7 +614,7 @@ create schema CCM_CORE;
 
     create table CCM_CORE.WORKFLOW_TASK_COMMENTS (
         COMMENT_ID bigint not null,
-        COMMENT longvarchar,
+        COMMENT varchar(2147483647),
         UUID varchar(255) not null,
         AUTHOR_ID bigint,
         TASK_ID bigint,
@@ -628,14 +628,14 @@ create schema CCM_CORE;
 
     create table CCM_CORE.WORKFLOW_TASK_DESCRIPTIONS (
         TASK_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (TASK_ID, LOCALE)
     );
 
     create table CCM_CORE.WORKFLOW_TASK_LABELS (
         TASK_ID bigint not null,
-        LOCALIZED_VALUE longvarchar,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (TASK_ID, LOCALE)
     );
@@ -649,13 +649,9 @@ create schema CCM_CORE;
         primary key (TASK_ID)
     );
 
-    create table CCM_CORE.WORKFLOW_TEMPLATES (
-        WORKFLOW_ID bigint not null,
-        primary key (WORKFLOW_ID)
-    );
-
     create table CCM_CORE.WORKFLOWS (
         WORKFLOW_ID bigint not null,
+        abstract_workflow boolean,
         ACTIVE boolean,
         WORKFLOW_STATE varchar(255),
         TASKS_STATE varchar(255),
@@ -691,7 +687,8 @@ create schema CCM_CORE;
 
     alter table CCM_CORE.WORKFLOWS 
         add constraint UK_o113id7d1cxql0edsrohlnn9x unique (UUID);
-create sequence hibernate_sequence start with 1 increment by 1;
+
+    create sequence hibernate_sequence start with 1 increment by 1;
 
     alter table CCM_CORE.APPLICATIONS 
         add constraint FKatcp9ij6mbkx0nfeig1o6n3lm 
@@ -1014,7 +1011,7 @@ create sequence hibernate_sequence start with 1 increment by 1;
         references CCM_CORE.CCM_ROLES;
 
     alter table CCM_CORE.PERMISSIONS 
-        add constraint FKc1x3h1p3o20qiwmonpmva7t5i 
+        add constraint FKg56ujjoe0j30pq579rf0l5yc6 
         foreign key (INHERITED_FROM_ID) 
         references CCM_CORE.CCM_OBJECTS;
 
@@ -1198,17 +1195,12 @@ create sequence hibernate_sequence start with 1 increment by 1;
         foreign key (WORKFLOW_ID) 
         references CCM_CORE.WORKFLOWS;
 
-    alter table CCM_CORE.WORKFLOW_TEMPLATES 
-        add constraint FK8692vdme4yxnkj1m0k1dw74pk 
-        foreign key (WORKFLOW_ID) 
-        references CCM_CORE.WORKFLOWS;
-
     alter table CCM_CORE.WORKFLOWS 
         add constraint FKrm2yfrs6veoxoy304upq2wc64 
         foreign key (OBJECT_ID) 
         references CCM_CORE.CCM_OBJECTS;
 
     alter table CCM_CORE.WORKFLOWS 
-        add constraint FKeixdxau4jebw682gd49tdbsjy 
+        add constraint FK9ray5beiny6wm2mi0uwyecay2 
         foreign key (TEMPLATE_ID) 
-        references CCM_CORE.WORKFLOW_TEMPLATES;
+        references CCM_CORE.WORKFLOWS;

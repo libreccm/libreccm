@@ -29,7 +29,6 @@ import com.arsdigita.cms.ui.VisibilityComponent;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.workflow.Workflow;
 import org.libreccm.workflow.WorkflowRepository;
-import org.libreccm.workflow.WorkflowTemplateRepository;
 
 import org.librecms.contentsection.privileges.AdminPrivileges;
 
@@ -92,8 +91,8 @@ public final class WorkflowAdminPane extends BaseAdminPane {
                 .toString();
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final WorkflowTemplateRepository templateRepo = cdiUtil.findBean(
-                WorkflowTemplateRepository.class);
+            final WorkflowRepository templateRepo = cdiUtil.findBean(
+                WorkflowRepository.class);
             
             return templateRepo.findById(Long.parseLong(id));
         }

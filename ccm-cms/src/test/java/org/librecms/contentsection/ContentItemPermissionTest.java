@@ -152,11 +152,11 @@ public class ContentItemPermissionTest {
             .addClass(org.libreccm.workflow.TaskComment.class)
             .addClass(org.libreccm.workflow.TaskState.class)
             .addClass(org.libreccm.workflow.Workflow.class)
+            .addClass(org.libreccm.workflow.AbstractWorkflowException.class)
             //Classes required by org.libreccm.categorization.Category
             .addClass(org.libreccm.security.RecursivePermissions.class)
             //Classes required by org.libreccm.workflow.Workflow.class
             .addClass(org.libreccm.workflow.WorkflowState.class)
-            .addClass(org.libreccm.workflow.WorkflowTemplate.class)
             //Classes required by org.librecms.contentsection.ContentItem
             .addClass(org.librecms.contentsection.AttachmentList.class)
             .addClass(org.librecms.contentsection.ContentItemVersion.class)

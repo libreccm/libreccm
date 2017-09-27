@@ -81,7 +81,6 @@ create table CCM_CORE.APPLICATIONS (
         OBJECT_ID int8 not null,
         REV int4 not null,
         REVTYPE int2,
-        REVEND int4,
         DISPLAY_NAME varchar(255),
         primary key (OBJECT_ID, REV)
     );
@@ -438,7 +437,7 @@ create table CCM_CORE.APPLICATIONS (
         PERMISSION_ID int8 not null,
         CREATION_DATE timestamp,
         CREATION_IP varchar(255),
-        granted_privilege varchar(255),
+        GRANTED_PRIVILEGE varchar(255),
         INHERITED boolean,
         CREATION_USER_ID int8,
         GRANTEE_ID int8,
@@ -531,11 +530,11 @@ create table CCM_CORE.APPLICATIONS (
         SETTING_ID int8 not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
-        SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
-        SETTING_VALUE_BOOLEAN boolean,
-        SETTING_VALUE_STRING varchar(1024),
         SETTING_VALUE_DOUBLE float8,
+        SETTING_VALUE_STRING varchar(1024),
+        SETTING_VALUE_BOOLEAN boolean,
         SETTING_VALUE_LONG int8,
+        SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
         primary key (SETTING_ID)
     );
 
@@ -651,13 +650,9 @@ create table CCM_CORE.APPLICATIONS (
         primary key (TASK_ID)
     );
 
-    create table CCM_CORE.WORKFLOW_TEMPLATES (
-        WORKFLOW_ID int8 not null,
-        primary key (WORKFLOW_ID)
-    );
-
     create table CCM_CORE.WORKFLOWS (
         WORKFLOW_ID int8 not null,
+        abstract_workflow boolean,
         ACTIVE boolean,
         WORKFLOW_STATE varchar(255),
         TASKS_STATE varchar(255),
@@ -693,7 +688,18 @@ create table CCM_CORE.APPLICATIONS (
 
     alter table CCM_CORE.WORKFLOWS 
         add constraint UK_o113id7d1cxql0edsrohlnn9x unique (UUID);
-create sequence hibernate_sequence start 1 increment 1;
+
+    create table CCM_SHORTCUTS.SHORTCUTS (
+        SHORTCUT_ID int8 not null,
+        REDIRECT varchar(1024),
+        URL_KEY varchar(1024),
+        primary key (SHORTCUT_ID)
+    );
+
+    alter table CCM_SHORTCUTS.SHORTCUTS 
+        add constraint UK_4otuwtog6qqdbg4e6p8xdpw8h unique (URL_KEY);
+
+    create sequence hibernate_sequence start 1 increment 1;
 
     alter table CCM_CORE.APPLICATIONS 
         add constraint FKatcp9ij6mbkx0nfeig1o6n3lm 
@@ -748,11 +754,6 @@ create sequence hibernate_sequence start 1 increment 1;
     alter table CCM_CORE.CCM_OBJECTS_AUD 
         add constraint FKr00eauutiyvocno8ckx6h9nw6 
         foreign key (REV) 
-        references CCM_CORE.CCM_REVISIONS;
-
-    alter table CCM_CORE.CCM_OBJECTS_AUD 
-        add constraint FKo5s37ctcdny7tmewjwv7705h5 
-        foreign key (REVEND) 
         references CCM_CORE.CCM_REVISIONS;
 
     alter table CCM_CORE.DIGESTS 
@@ -1016,7 +1017,7 @@ create sequence hibernate_sequence start 1 increment 1;
         references CCM_CORE.CCM_ROLES;
 
     alter table CCM_CORE.PERMISSIONS 
-        add constraint FKc1x3h1p3o20qiwmonpmva7t5i 
+        add constraint FKg56ujjoe0j30pq579rf0l5yc6 
         foreign key (INHERITED_FROM_ID) 
         references CCM_CORE.CCM_OBJECTS;
 
@@ -1200,28 +1201,12 @@ create sequence hibernate_sequence start 1 increment 1;
         foreign key (WORKFLOW_ID) 
         references CCM_CORE.WORKFLOWS;
 
-    alter table CCM_CORE.WORKFLOW_TEMPLATES 
-        add constraint FK8692vdme4yxnkj1m0k1dw74pk 
-        foreign key (WORKFLOW_ID) 
-        references CCM_CORE.WORKFLOWS;
-
     alter table CCM_CORE.WORKFLOWS 
         add constraint FKrm2yfrs6veoxoy304upq2wc64 
         foreign key (OBJECT_ID) 
         references CCM_CORE.CCM_OBJECTS;
 
     alter table CCM_CORE.WORKFLOWS 
-        add constraint FKeixdxau4jebw682gd49tdbsjy 
+        add constraint FK9ray5beiny6wm2mi0uwyecay2 
         foreign key (TEMPLATE_ID) 
-        references CCM_CORE.WORKFLOW_TEMPLATES;
-
-    create table CCM_SHORTCUTS.SHORTCUTS (
-        SHORTCUT_ID int8 not null,
-        REDIRECT varchar(1024),
-        URL_KEY varchar(1024),
-        primary key (SHORTCUT_ID)
-    );
-
-    alter table CCM_SHORTCUTS.SHORTCUTS 
-        add constraint UK_4otuwtog6qqdbg4e6p8xdpw8h unique (URL_KEY);
-
+        references CCM_CORE.WORKFLOWS;

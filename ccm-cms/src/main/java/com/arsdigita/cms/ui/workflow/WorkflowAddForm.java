@@ -25,8 +25,8 @@ import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.cms.CMS;
 
-import org.libreccm.workflow.WorkflowTemplate;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.workflow.Workflow;
 
 /**
  * @author Uday Mathur
@@ -60,28 +60,8 @@ class WorkflowAddForm extends BaseWorkflowForm {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final WorkflowAdminPaneController controller = cdiUtil.findBean(
                 WorkflowAdminPaneController.class);
-//            final WorkflowTemplateRepository workflowTemplateRepository
-//                                             = cdiUtil.findBean(
-//                    WorkflowTemplateRepository.class);
-//            final ContentSectionManager sectionManager = cdiUtil.findBean(
-//                ContentSectionManager.class);
-//            final ConfigurationManager confManager = cdiUtil.findBean(
-//                ConfigurationManager.class);
-//            final KernelConfig kernelConfig = confManager.findConfiguration(
-//                KernelConfig.class);
-//            final Locale defaultLocale = kernelConfig.getDefaultLocale();
-//
-//            final WorkflowTemplate workflow = new WorkflowTemplate();
-//            workflow.getName().addValue(defaultLocale, label);
-//            workflow.getDescription().addValue(defaultLocale, description);
-//
-//            workflowTemplateRepository.save(workflow);
-//
-//            final ContentSection section = CMS.getContext().getContentSection();
-//            sectionManager
-//                .addWorkflowTemplateToContentSection(workflow, section);
 
-            final WorkflowTemplate workflow = controller.createWorkflow(
+            final Workflow workflow = controller.createWorkflow(
                 CMS.getContext().getContentSection(),
                 label,
                 description);

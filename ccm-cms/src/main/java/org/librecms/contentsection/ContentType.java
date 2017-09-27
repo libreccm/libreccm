@@ -25,7 +25,7 @@ import static org.librecms.CmsConstants.*;
 
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
-import org.libreccm.workflow.WorkflowTemplate;
+import org.libreccm.workflow.Workflow;
 import org.librecms.lifecycle.LifecycleDefinition;
 
 import java.io.Serializable;
@@ -117,14 +117,14 @@ public class ContentType extends CcmObject implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DEFAULT_WORKFLOW")
-    private WorkflowTemplate defaultWorkflow;
+    private Workflow defaultWorkflow;
 
     public ContentType() {
         super();
         label = new LocalizedString();
         description = new LocalizedString();
     }
-    
+
     public String getContentItemClass() {
         return contentItemClass;
     }
@@ -192,11 +192,15 @@ public class ContentType extends CcmObject implements Serializable {
         this.defaultLifecycle = defaultLifecycle;
     }
 
-    public WorkflowTemplate getDefaultWorkflow() {
+    public Workflow getDefaultWorkflow() {
         return defaultWorkflow;
     }
 
-    protected void setDefaultWorkflow(final WorkflowTemplate defaultWorkflow) {
+    protected void setDefaultWorkflow(final Workflow defaultWorkflow) {
+        if (!defaultWorkflow.isAbstractWorkflow()) {
+            throw new IllegalArgumentException(
+                "The provided workflow is not an abstract workflow.");
+        }
         this.defaultWorkflow = defaultWorkflow;
     }
 

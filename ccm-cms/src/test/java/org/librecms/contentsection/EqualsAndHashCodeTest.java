@@ -30,12 +30,11 @@ import org.libreccm.security.User;
 import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.testutils.EqualsVerifier;
 import org.libreccm.web.CcmApplication;
-import org.libreccm.workflow.WorkflowTemplate;
+import org.libreccm.workflow.Workflow;
 import org.librecms.lifecycle.LifecycleDefinition;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Locale;
 
 /**
  *
@@ -143,14 +142,12 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
 
         final LifecycleDefinition lifecycleDef2 = new LifecycleDefinition();
         lifecycleDef2.setDefinitionId(-110);
-
-        final WorkflowTemplate workflowTemplate1 = new WorkflowTemplate();
-        workflowTemplate1.getName().addValue(Locale.ENGLISH,
-                                             "Workflow Template 1");
-
-        final WorkflowTemplate workflowTemplate2 = new WorkflowTemplate();
-        workflowTemplate2.getName().addValue(Locale.ENGLISH, 
-                                             "Workflow Template 2");
+        
+        final Workflow workflow1 = new Workflow();
+        workflow1.setAbstractWorkflow(true);
+        
+        final Workflow workflow2 = new Workflow();
+        workflow2.setAbstractWorkflow(false);
 
         verifier
             .withPrefabValues(ContentItem.class, item1, item2)
@@ -167,9 +164,7 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
             .withPrefabValues(LifecycleDefinition.class,
                               lifecycleDef1,
                               lifecycleDef2)
-            .withPrefabValues(WorkflowTemplate.class,
-                              workflowTemplate1,
-                              workflowTemplate2);
+            .withPrefabValues(Workflow.class, workflow1, workflow2);
     }
 
     /**

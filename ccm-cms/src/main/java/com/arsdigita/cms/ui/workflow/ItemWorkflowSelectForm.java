@@ -30,16 +30,19 @@ import com.arsdigita.bebop.parameters.NotNullValidationListener;
 import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ui.CMSForm;
 import com.arsdigita.web.Web;
+
 import org.libreccm.workflow.Workflow;
-import org.libreccm.workflow.WorkflowTemplate;
+
 import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.util.TooManyListenersException;
+
 import org.apache.logging.log4j.LogManager;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.workflow.WorkflowManager;
-import org.libreccm.workflow.WorkflowTemplateRepository;
+import org.libreccm.workflow.WorkflowRepository;
+
 import org.librecms.contentsection.ContentItem;
 
 /**
@@ -97,12 +100,13 @@ class ItemWorkflowSelectForm extends CMSForm {
 
             if (item.getWorkflow() == null) {
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final WorkflowTemplateRepository templateRepo = cdiUtil.
-                    findBean(WorkflowTemplateRepository.class);
+                final WorkflowRepository templateRepo = cdiUtil.
+                    findBean(WorkflowRepository.class);
                 final WorkflowManager workflowManager = cdiUtil.findBean(
                     WorkflowManager.class);
 
-                final WorkflowTemplate template = templateRepo.findById(flowId)
+                final Workflow template = templateRepo
+                    .findById(flowId)
                     .get();
                 workflowManager.createWorkflow(template, item);
             }

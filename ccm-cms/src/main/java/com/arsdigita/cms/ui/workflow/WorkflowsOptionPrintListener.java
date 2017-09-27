@@ -29,8 +29,8 @@ import com.arsdigita.kernel.KernelConfig;
 import java.util.List;
 
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.workflow.Workflow;
 import org.librecms.contentsection.ContentSection;
-import org.libreccm.workflow.WorkflowTemplate;
 
 /**
  * Builds a list of workflow templates registered to the current content
@@ -41,7 +41,7 @@ import org.libreccm.workflow.WorkflowTemplate;
  */
 public class WorkflowsOptionPrintListener implements PrintListener {
 
-    protected List<WorkflowTemplate> getCollection(final PageState state) {
+    protected List<Workflow> getCollection(final PageState state) {
       
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final WorkflowsOptionPrintListenerController controller = cdiUtil
@@ -62,9 +62,9 @@ public class WorkflowsOptionPrintListener implements PrintListener {
         final OptionGroup target = (OptionGroup) event.getTarget();
         target.clearOptions();
 
-        final List<WorkflowTemplate> templates = getCollection(state);
+        final List<Workflow> templates = getCollection(state);
 
-        for (final WorkflowTemplate template : templates) {
+        for (final Workflow template : templates) {
             target.addOption(new Option(
                     Long.toString(template.getWorkflowId()),
                     template.getName().getValue(KernelConfig

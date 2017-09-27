@@ -43,7 +43,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
-import org.libreccm.workflow.WorkflowTemplate;
+import org.libreccm.workflow.Workflow;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
@@ -111,7 +111,7 @@ public class ApplyWorkflowFormSection
             LOGGER.error("Too many listeners", ex);
         }
 
-        add(new Label(new GlobalizedMessage("cms.ui.authoring.workflow",
+        super.add(new Label(new GlobalizedMessage("cms.ui.authoring.workflow",
                                             CmsConstants.CMS_BUNDLE)));
         radioGroup.addValidationListener(new NotNullValidationListener() {
 
@@ -125,8 +125,8 @@ public class ApplyWorkflowFormSection
             }
 
         });
-        add(radioGroup);
-        addInitListener(this);
+        super.add(radioGroup);
+        super.addInitListener(this);
     }
 
     /**
@@ -280,7 +280,7 @@ public class ApplyWorkflowFormSection
         }
 
         @Override
-        protected List<WorkflowTemplate> getCollection(final PageState state) {
+        protected List<Workflow> getCollection(final PageState state) {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final ApplyWorkflowController controller = cdiUtil
                 .findBean(ApplyWorkflowController.class);

@@ -39,8 +39,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.libreccm.security.Shiro;
 import org.libreccm.tests.categories.IntegrationTest;
-import org.libreccm.workflow.WorkflowTemplate;
-import org.libreccm.workflow.WorkflowTemplateRepository;
 import org.librecms.contenttypes.Article;
 import org.librecms.contenttypes.Event;
 import org.librecms.lifecycle.LifecycleDefinition;
@@ -52,6 +50,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+
 import org.jboss.arquillian.persistence.CleanupUsingScript;
 import org.jboss.arquillian.persistence.TestExecutionPhase;
 
@@ -59,6 +58,9 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import static org.libreccm.testutils.DependenciesHelpers.*;
+
+import org.libreccm.workflow.Workflow;
+import org.libreccm.workflow.WorkflowRepository;
 
 /**
  * Tests for the {@link ContentItemManager}.
@@ -90,7 +92,7 @@ public class ContentItemManagerTest {
     private Shiro shiro;
 
     @Inject
-    private WorkflowTemplateRepository workflowTemplateRepo;
+    private WorkflowRepository workflowRepo;
 
     @Inject
     private LifecycleDefinitionRepository lifecycleDefinitionRepo;
@@ -194,7 +196,7 @@ public class ContentItemManagerTest {
         assertThat(itemManager, is(not(nullValue())));
         assertThat(folderRepo, is(not(nullValue())));
         assertThat(shiro, is(not(nullValue())));
-        assertThat(workflowTemplateRepo, is(not(nullValue())));
+        assertThat(workflowRepo, is(not(nullValue())));
         assertThat(lifecycleDefinitionRepo, is(not(nullValue())));
         assertThat(entityManager, is(not(nullValue())));
     }
@@ -418,8 +420,9 @@ public class ContentItemManagerTest {
                 .get();
             final Folder folder = section.getRootDocumentsFolder();
 
-            final WorkflowTemplate workflowTemplate = workflowTemplateRepo
-                .findById(-110L).get();
+            final Workflow workflowTemplate = workflowRepo
+                .findById(-110L)
+                .get();
 
             final Article article = itemManager.createContentItem(
                 "new-article",
@@ -466,8 +469,9 @@ public class ContentItemManagerTest {
                 .get();
             final Folder folder = section.getRootDocumentsFolder();
 
-            final WorkflowTemplate workflowTemplate = workflowTemplateRepo
-                .findById(-110L).get();
+            final Workflow workflowTemplate = workflowRepo
+                .findById(-110L)
+                .get();
 
             itemManager.createContentItem("Test",
                                           section,
@@ -499,8 +503,9 @@ public class ContentItemManagerTest {
                 .get();
             final Folder folder = section.getRootDocumentsFolder();
 
-            final WorkflowTemplate workflowTemplate = workflowTemplateRepo
-                .findById(-110L).get();
+            final Workflow workflowTemplate = workflowRepo
+                .findById(-110L)
+                .get();
 
             itemManager.createContentItem(null,
                                           section,
@@ -561,8 +566,9 @@ public class ContentItemManagerTest {
                 .findByLabel("info")
                 .get();
 
-            final WorkflowTemplate workflowTemplate = workflowTemplateRepo
-                .findById(-110L).get();
+            final Workflow workflowTemplate = workflowRepo
+                .findById(-110L)
+                .get();
 
             itemManager.createContentItem("Test",
                                           section,
