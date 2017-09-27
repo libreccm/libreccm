@@ -127,23 +127,13 @@ public class CoreDataImportTest {
 
     @Test
     @InSequence(100)
-    public void objectsShouldBeImported() throws InterruptedException {
+    public void objectsShouldBeImported() {
         // assert for no errors
         Assert.assertFalse(importHelper.importUsers());
         Assert.assertFalse(importHelper.importGroups());
         Assert.assertFalse(importHelper.importGroupMemberships());
-
         Assert.assertFalse(importHelper.importRoles());
         Assert.assertFalse(importHelper.importRoleMemberships());
-
-
-        /*final String name = "research_Administration_Publisher";
-        Group group = groupRepository
-                .findByName(name)
-                .orElseThrow(() -> new IllegalArgumentException(String
-                .format("No Group fount with the name: %s", name)));
-        System.err.println(group.toString());*/
-
 
         Assert.assertFalse(importHelper.importCategories());
         Assert.assertFalse(importHelper.importCategorizations());
@@ -155,9 +145,10 @@ public class CoreDataImportTest {
         Assert.assertFalse(importHelper.importPermissions());
 
         Assert.assertFalse(importHelper.importWorkflowTemplates());
-        //Assert.assertFalse(importHelper.importWorkflows());
-
-
+        Assert.assertFalse(importHelper.importWorkflows());
+        Assert.assertFalse(importHelper.importTaskComments());
+        //Assert.assertFalse(importHelper.importAssignableTasks());
+        //Assert.assertFalse(importHelper.importTaskAssignments());
     }
 
 }

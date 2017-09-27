@@ -22,42 +22,39 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdResolver;
 import org.libreccm.cdi.utils.CdiUtil;
 
-import javax.enterprise.context.RequestScoped;
-
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
- * @version created on 3/23/17
+ * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers<\a>
+ * @version created the 9/27/17
  */
-@RequestScoped
-public class AssignableTaskIdResolver implements ObjectIdResolver {
+public class TaskCommentIdResolver implements ObjectIdResolver {
     @Override
-    public void bindItem(final ObjectIdGenerator.IdKey id,
-                         final Object pojo) {
+    public void bindItem(ObjectIdGenerator.IdKey id,
+                         Object pojo) {
         // According to the Jackson JavaDoc, this method can be used to keep
         // track of objects directly in a resolver implementation. We don't need
         // this here therefore this method is empty.
     }
 
     @Override
-    public Object resolveId(final ObjectIdGenerator.IdKey id) {
+    public Object resolveId(ObjectIdGenerator.IdKey id) {
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final AssignableTaskRepository assignableTaskRepository = cdiUtil
-                .findBean(AssignableTaskRepository.class);
+        final TaskCommentRepository taskCommentRepository = cdiUtil
+                .findBean(TaskCommentRepository.class);
 
-        return assignableTaskRepository
+        return taskCommentRepository
                 .findByUuid(id.key.toString())
                 .orElseThrow(() -> new IllegalArgumentException(String
-                        .format("No assignable tasks with uuid %s in the " +
+                        .format("No task comments with uuid %s in the " +
                                 "database.", id.key.toString())));
     }
 
     @Override
-    public ObjectIdResolver newForDeserialization(final Object context) {
-        return new AssignableTaskIdResolver();
+    public ObjectIdResolver newForDeserialization(Object context) {
+        return new TaskCommentIdResolver();
     }
 
     @Override
-    public boolean canUseFor(final ObjectIdResolver resolverType) {
-        return resolverType instanceof AssignableTaskIdResolver;
+    public boolean canUseFor(ObjectIdResolver resolverType) {
+        return resolverType instanceof TaskCommentIdResolver;
     }
 }
