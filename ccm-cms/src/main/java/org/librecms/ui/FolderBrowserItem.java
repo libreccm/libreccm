@@ -25,8 +25,8 @@ import java.util.Objects;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public final class BrowseDocumentsItem implements
-    Comparable<BrowseDocumentsItem> {
+public final class FolderBrowserItem implements
+    Comparable<FolderBrowserItem> {
 
     private long itemId;
 
@@ -111,7 +111,7 @@ public final class BrowseDocumentsItem implements
     }
 
     @Override
-    public int compareTo(final BrowseDocumentsItem other) {
+    public int compareTo(final FolderBrowserItem other) {
 
         int result = title.compareTo(other.getTitle());
         if (result != 0) {
@@ -157,10 +157,10 @@ public final class BrowseDocumentsItem implements
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof BrowseDocumentsItem)) {
+        if (!(obj instanceof FolderBrowserItem)) {
             return false;
         }
-        final BrowseDocumentsItem other = (BrowseDocumentsItem) obj;
+        final FolderBrowserItem other = (FolderBrowserItem) obj;
         if (itemId != other.getItemId()) {
             return false;
         }

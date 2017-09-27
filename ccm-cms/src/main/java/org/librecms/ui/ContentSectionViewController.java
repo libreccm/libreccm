@@ -36,10 +36,10 @@ import javax.inject.Inject;
 public class ContentSectionViewController {
 
     @Inject
-    private BrowseDocumentsDataProvider browseDocumentsDataProvider;
+    private FolderBrowserDataProvider browseDocumentsDataProvider;
     
     @Inject
-    private BrowseDocumentsFolderTreeDataProvider folderTreeDataProvider;
+    private FolderBrowserFolderTreeDataProvider folderTreeDataProvider;
     
     @Inject
     private ContentTypesManager contentTypesManager;
@@ -59,11 +59,11 @@ public class ContentSectionViewController {
     @Inject
     private ContentSectionViewState contentSectionViewState;
 
-    protected BrowseDocumentsDataProvider getBrowseDocumentsDataProvider() {
+    protected FolderBrowserDataProvider getBrowseDocumentsDataProvider() {
         return browseDocumentsDataProvider;
     }
     
-    protected BrowseDocumentsFolderTreeDataProvider getFolderTreeDataProvider() {
+    protected FolderBrowserFolderTreeDataProvider getFolderTreeDataProvider() {
         return folderTreeDataProvider;
     }
     
