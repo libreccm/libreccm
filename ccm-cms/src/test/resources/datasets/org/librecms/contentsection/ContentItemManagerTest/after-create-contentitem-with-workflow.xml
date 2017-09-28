@@ -3,15 +3,19 @@
     
     <ccm_core.workflows workflow_id="-100"
                         uuid="1d86f6ab-2d6c-4b59-83c1-c6b4bdd1d3dc"
+                        abstract_workflow="true"
                         active="false" />
     <ccm_core.workflows workflow_id="-110"
                         uuid="feaf9c06-62f9-4e83-acc5-d18fd5e69d42"
+                        abstract_workflow="true"
                         active="false" />
     <ccm_core.workflows workflow_id="-120"
                         uuid="017c6c19-db78-46f2-b771-dad2814319d3"
+                        abstract_workflow="true"
                         active="false" />
     <ccm_core.workflows workflow_id="-140"
                         uuid="c6e317a1-88d5-48ab-8896-304d4c8d1f3e"
+                        abstract_workflow="false"
                         active="true" />
 
     <ccm_core.workflow_names workflow_id="-100" 
@@ -26,10 +30,6 @@
     <ccm_core.workflow_names workflow_id="-140" 
                              locale="en"
                              localized_value="Fast workflow" />
-    
-    <ccm_core.workflow_templates workflow_id="-100" />
-    <ccm_core.workflow_templates workflow_id="-110" />
-    <ccm_core.workflow_templates workflow_id="-120" />
     
     <ccm_core.workflow_tasks task_id="-100100"
                              uuid="43db829c-7749-4ca9-8aba-241a9c2d00b3"
