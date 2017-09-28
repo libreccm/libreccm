@@ -1490,7 +1490,7 @@ create schema CCM_CORE;
 
     create table CCM_CORE.WORKFLOWS (
         WORKFLOW_ID bigint not null,
-        abstract_workflow boolean,
+        ABSTRACT_WORKFLOW boolean,
         ACTIVE boolean,
         WORKFLOW_STATE varchar(255),
         TASKS_STATE varchar(255),

@@ -189,7 +189,7 @@ public class ContentTypeRepository
         @RequiresPrivilege(AdminPrivileges.ADMINISTER_CONTENT_TYPES)
         final ContentType type) {
         
-        if (isContentTypeInUse(type)) {
+            if (isContentTypeInUse(type)) {
             throw new IllegalArgumentException(String.format(
                 "Contenttype \"%s\" in section \"%s\" is in use and can't be"
                     + "deleted.",

@@ -102,8 +102,8 @@ public class ContentTypeRepositoryTest {
     public static WebArchive createDeployment() {
         return ShrinkWrap
             .create(WebArchive.class,
-                    "LibreCCM-org.librecms.contentsection.ContentTypeRepositoryTest.war").
-            addClass(com.arsdigita.bebop.AbstractSingleSelectionModel.class)
+                    "LibreCCM-org.librecms.contentsection.ContentTypeRepositoryTest.war")
+            .addClass(com.arsdigita.bebop.AbstractSingleSelectionModel.class)
             .addClass(com.arsdigita.bebop.BaseLink.class)
             .addClass(com.arsdigita.bebop.BasePage.class)
             .addClass(com.arsdigita.bebop.BebopConfig.class)
@@ -174,16 +174,16 @@ public class ContentTypeRepositoryTest {
             .addClass(com.arsdigita.bebop.parameters.BitSetParameter.class)
             .addClass(com.arsdigita.bebop.parameters.EmailParameter.class)
             .addClass(
-                com.arsdigita.bebop.parameters.GlobalizedParameterListener.class).
-            addClass(
+                com.arsdigita.bebop.parameters.GlobalizedParameterListener.class)
+            .addClass(
                 com.arsdigita.bebop.parameters.NotEmptyValidationListener.class)
             .addClass(
                 com.arsdigita.bebop.parameters.NotNullValidationListener.class)
             .addClass(com.arsdigita.bebop.parameters.ParameterData.class)
             .addClass(com.arsdigita.bebop.parameters.ParameterModel.class)
             .addClass(
-                com.arsdigita.bebop.parameters.StringLengthValidationListener.class).
-            addClass(com.arsdigita.bebop.parameters.StringParameter.class)
+                com.arsdigita.bebop.parameters.StringLengthValidationListener.class)
+            .addClass(com.arsdigita.bebop.parameters.StringParameter.class)
             .addClass(com.arsdigita.bebop.parameters.URLParameter.class)
             .addClass(com.arsdigita.bebop.util.Attributes.class)
             .addClass(com.arsdigita.bebop.util.BebopConstants.class)
@@ -196,8 +196,8 @@ public class ContentTypeRepositoryTest {
             .addClass("com.arsdigita.dispatcher.DispatcherConstants")
             .addClass(com.arsdigita.dispatcher.DispatcherHelper.class)
             .addClass(com.arsdigita.dispatcher.InitialRequestContext.class)
-            .addClass(com.arsdigita.dispatcher.MultipartHttpServletRequest.class).
-            addClass(com.arsdigita.dispatcher.RedirectException.class)
+            .addClass(com.arsdigita.dispatcher.MultipartHttpServletRequest.class)
+            .addClass(com.arsdigita.dispatcher.RedirectException.class)
             .addClass(com.arsdigita.dispatcher.RequestContext.class)
             .addClass(com.arsdigita.globalization.Globalization.class)
             .addClass(com.arsdigita.globalization.Globalized.class)
@@ -211,8 +211,8 @@ public class ContentTypeRepositoryTest {
             .addClass(com.arsdigita.mail.Mail.class)
             .addClass(com.arsdigita.mail.MailConfig.class)
             .addClass("com.arsdigita.mail.MimeMessage")
-            .addClass(com.arsdigita.templating.ApplicationPatternGenerator.class).
-            addClass(com.arsdigita.templating.HostPatternGenerator.class)
+            .addClass(com.arsdigita.templating.ApplicationPatternGenerator.class)
+            .addClass(com.arsdigita.templating.HostPatternGenerator.class)
             .addClass(com.arsdigita.templating.LocalePatternGenerator.class)
             .addClass("com.arsdigita.templating.LoggingErrorListener")
             .addClass(com.arsdigita.templating.OutputTypePatternGenerator.class)
@@ -226,18 +226,18 @@ public class ContentTypeRepositoryTest {
             .addClass(com.arsdigita.templating.TemplatingConfig.class)
             .addClass(com.arsdigita.templating.URLPatternGenerator.class)
             .addClass(com.arsdigita.templating.WebAppPatternGenerator.class)
-            .addClass(com.arsdigita.templating.WrappedTransformerException.class).
-            addClass(com.arsdigita.templating.XSLParameterGenerator.class)
+            .addClass(com.arsdigita.templating.WrappedTransformerException.class)
+            .addClass(com.arsdigita.templating.XSLParameterGenerator.class)
             .addClass(com.arsdigita.templating.XSLTemplate.class)
             .addClass(com.arsdigita.ui.SimplePage.class)
             .addClass("com.arsdigita.ui.SimplePageLayout")
             .addClass(com.arsdigita.ui.UI.class)
             .addClass(com.arsdigita.ui.UIConfig.class)
             .addClass(
-                com.arsdigita.ui.admin.applications.AbstractAppInstanceForm.class).
-            addClass(
-                com.arsdigita.ui.admin.applications.AbstractAppSettingsPane.class).
-            addClass(com.arsdigita.ui.login.ChangePasswordForm.class)
+                com.arsdigita.ui.admin.applications.AbstractAppInstanceForm.class)
+            .addClass(
+                com.arsdigita.ui.admin.applications.AbstractAppSettingsPane.class)
+            .addClass(com.arsdigita.ui.login.ChangePasswordForm.class)
             .addClass("com.arsdigita.ui.login.DynamicLink")
             .addClass(com.arsdigita.ui.login.EmailInitListener.class)
             .addClass(com.arsdigita.ui.login.LoginConstants.class)
@@ -327,6 +327,8 @@ public class ContentTypeRepositoryTest {
             .addClass(org.libreccm.core.UnexpectedErrorException.class)
             .addClass(org.libreccm.jpa.EntityManagerProducer.class)
             .addClass(org.libreccm.l10n.GlobalizationHelper.class)
+            .addClass(org.libreccm.l10n.GlobalizedMessagesUtil.class)
+            .addClass(org.libreccm.l10n.LocalizedTextsUtil.class)
             .addClass(org.libreccm.l10n.LocalizedString.class)
             .addClass(org.libreccm.modules.CcmModule.class)
             .addClass(org.libreccm.modules.InitEvent.class)
@@ -395,8 +397,8 @@ public class ContentTypeRepositoryTest {
             .addClass(org.librecms.contentsection.ContentItem.class)
             .addClass(org.librecms.contentsection.ContentItemVersion.class)
             .addClass(org.librecms.contentsection.ContentSection.class)
-            .addClass(org.librecms.contentsection.ContentSectionRepository.class).
-            addClass(org.librecms.contentsection.ContentType.class)
+            .addClass(org.librecms.contentsection.ContentSectionRepository.class)
+            .addClass(org.librecms.contentsection.ContentType.class)
             .addClass(org.librecms.contentsection.ContentTypeMode.class)
             .addClass(org.librecms.contentsection.ContentTypeRepository.class)
             .addClass(org.librecms.contentsection.Folder.class)
