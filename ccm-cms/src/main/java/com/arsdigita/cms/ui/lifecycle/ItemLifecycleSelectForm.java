@@ -257,25 +257,28 @@ class ItemLifecycleSelectForm extends BaseForm {
         addAction(new Submit("finish", gz("cms.ui.item.lifecycle.publish")));
 
         // Form listeners
-        addValidationListener(new ValidationListener());
-        addSecurityListener(ItemPrivileges.PUBLISH, item);
-        addInitListener(new InitListener());
-        addProcessListener(new ProcessListener());
+        super.addValidationListener(new ValidationListener());
+        super.addSecurityListener(ItemPrivileges.PUBLISH, item);
+        super.addInitListener(new InitListener());
+        super.addProcessListener(new ProcessListener());
     }
 
     private class OptionPrinter implements PrintListener {
 
         @Override
-        public final void prepare(final PrintEvent e) {
+        public final void prepare(final PrintEvent event) {
             final ContentSection section = CMS.getContext().getContentSection();
 
-            final List<LifecycleDefinition> definitions = section
-                .getLifecycleDefinitions();
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final ItemLifecycleAdminController controller = cdiUtil
+                .findBean(ItemLifecycleAdminController.class);
 
-            final SingleSelect target = (SingleSelect) e.getTarget();
+            final List<LifecycleDefinition> definitions = controller
+                .getLifecycleDefinitions(section);
+
+            final SingleSelect target = (SingleSelect) event.getTarget();
             target.clearOptions();
 
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final GlobalizationHelper globalizationHelper = cdiUtil.findBean(
                 GlobalizationHelper.class);
             final Locale locale = globalizationHelper.getNegotiatedLocale();
@@ -305,6 +308,8 @@ class ItemLifecycleSelectForm extends BaseForm {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final ContentItemManager itemManager = cdiUtil.findBean(
                 ContentItemManager.class);
+            final ItemLifecycleAdminController controller = cdiUtil
+                .findBean(ItemLifecycleAdminController.class);
 
             if (itemManager.isLive(item)) {
                 // If the item is published, select the currently
@@ -315,11 +320,8 @@ class ItemLifecycleSelectForm extends BaseForm {
                 cycleSelect.setValue(state, definition.getDefinitionId());
             } else {
                 // Set the default lifecycle (if it exists).
-
-                final ContentSection section = CMS.getContext()
-                    .getContentSection();
-                final LifecycleDefinition definition = item.getContentType()
-                    .getDefaultLifecycle();
+                final LifecycleDefinition definition = controller
+                    .getDefaultLifecycle(item);
 
                 if (definition != null) {
                     cycleSelect.setValue(state, definition.getDefinitionId());
