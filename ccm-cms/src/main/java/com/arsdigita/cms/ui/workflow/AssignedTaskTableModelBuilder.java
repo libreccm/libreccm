@@ -14,6 +14,8 @@
  */
 package com.arsdigita.cms.ui.workflow;
 
+import com.arsdigita.bebop.ControlLink;
+import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Table;
 import com.arsdigita.bebop.table.AbstractTableModelBuilder;
@@ -25,11 +27,11 @@ import com.arsdigita.util.Assert;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.workflow.Workflow;
-import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
 
 import java.util.Collections;
 import java.util.Iterator;
+
 import org.libreccm.workflow.WorkflowState;
 
 class AssignedTaskTableModelBuilder extends AbstractTableModelBuilder {
@@ -43,7 +45,8 @@ class AssignedTaskTableModelBuilder extends AbstractTableModelBuilder {
 
     @Override
     public TableModel makeModel(final Table table, final PageState state) {
-        return new AssignedTaskTableModel(workflowRequestLocal.getWorkflow(state));
+        return new AssignedTaskTableModel(workflowRequestLocal
+            .getWorkflow(state));
     }
 
     private static class AssignedTaskTableModel implements TableModel {
@@ -95,7 +98,14 @@ class AssignedTaskTableModelBuilder extends AbstractTableModelBuilder {
                 case 1:
                     return rowData.getColData(1);
                 case 2:
-                    return rowData.getColData(2);
+//                    return rowData.getColData(2);
+                    if (rowData.getColData(2) == null) {
+                        return "";
+                    } else {
+//                        return rowData.getColData(2);
+                        return new ControlLink(new Label(new GlobalizedMessage(
+                            rowData.getColData(2), CmsConstants.CMS_BUNDLE)));
+                    }
                 default:
                     throw new IllegalArgumentException(String.format(
                         "Illegal column index %d. Valid column index: 0, 1, 2",
