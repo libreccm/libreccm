@@ -18,11 +18,17 @@
  */
 package com.arsdigita.cms.ui.lifecycle;
 
-import org.hibernate.boot.archive.scan.spi.ClassDescriptor;
 import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemRepository;
+import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.ContentSectionRepository;
+import org.librecms.lifecycle.LifecycleDefinition;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -37,6 +43,9 @@ public class ItemLifecycleAdminController {
 
     @Inject
     private ContentItemRepository itemRepo;
+
+    @Inject
+    private ContentSectionRepository sectionRepo;
 
     @Transactional(Transactional.TxType.REQUIRED)
     public boolean isAssignedToAbstractCategory(final ContentItem item) {
@@ -55,6 +64,34 @@ public class ItemLifecycleAdminController {
             .count();
 
         return count > 0;
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<LifecycleDefinition> getLifecycleDefinitions(
+        final ContentSection section) {
+
+        final ContentSection contentSection = sectionRepo
+            .findById(section.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No ContentSection with ID %d in the database.",
+                    section.getObjectId())));
+
+        return contentSection
+            .getLifecycleDefinitions()
+            .stream()
+            .collect(Collectors.toList());
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public LifecycleDefinition getDefaultLifecycle(final ContentItem item) {
+
+        final ContentItem contentItem = itemRepo
+            .findById(item.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No ContentItem with ID %d in the database.",
+                    item.getObjectId())));
+
+        return contentItem.getContentType().getDefaultLifecycle();
     }
 
 }
