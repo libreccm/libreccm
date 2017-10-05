@@ -28,6 +28,8 @@ import org.libreccm.workflow.AssignableTask;
 import org.libreccm.workflow.AssignableTaskRepository;
 import org.libreccm.workflow.Workflow;
 import org.libreccm.workflow.WorkflowManager;
+import org.librecms.workflow.CmsTask;
+import org.librecms.workflow.CmsTaskType;
 
 import java.util.List;
 import java.util.Locale;
@@ -95,7 +97,12 @@ public class AssignedTaskController {
             rowData.setColData(1, "");
         }
 
-        rowData.setColData(2, "");
+        if (task instanceof CmsTask
+                && ((CmsTask) task).getTaskType() == CmsTaskType.DEPLOY) {
+            rowData.setColData(2, null);
+        } else {
+            rowData.setColData(2, "cms.ui.workflow.task.finish");
+        }
 
         return rowData;
     }
