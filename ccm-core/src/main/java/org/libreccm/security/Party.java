@@ -22,10 +22,10 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
@@ -34,6 +34,21 @@ import java.util.Set;
 
 import static org.libreccm.core.CoreConstants.CORE_XML_NS;
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 /**
  * Party is a base class for {@link User} and {@link Group} defining some common
@@ -178,13 +193,11 @@ public class Party implements Serializable {
     public String toString(final String data) {
         return String.format("%s{ "
                                  + "partyId = %d, "
-                                 + "name = \"%s\", "
-                                 + "roles = { %s }%s"
+                                 + "name = \"%s\"%s"
                                  + " }",
                              super.toString(),
                              partyId,
                              name,
-                             Objects.toString(roleMemberships),
                              data);
     }
 

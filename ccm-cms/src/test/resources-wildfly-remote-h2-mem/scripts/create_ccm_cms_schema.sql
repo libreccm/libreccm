@@ -3,8 +3,8 @@ drop schema if exists CCM_CORE;
 
 drop sequence if exists HIBERNATE_SEQUENCE;
 
-create schema CCM_CMS;
-create schema CCM_CORE;
+    create schema CCM_CMS;
+    create schema CCM_CORE;
 
     create table CCM_CMS.ARTICLE_TEXTS (
         OBJECT_ID bigint not null,
@@ -814,6 +814,14 @@ create schema CCM_CORE;
         primary key (OBJECT_ID, REV)
     );
 
+    create table CCM_CMS.SITES (
+        DEFAULT_SITE boolean,
+        NAME varchar(255),
+        OBJECT_ID bigint not null,
+        CATEGORY_DOMAIN_ID bigint,
+        primary key (OBJECT_ID)
+    );
+
     create table CCM_CMS.VIDEO_ASSETS (
         HEIGHT bigint,
         WIDTH bigint,
@@ -842,6 +850,9 @@ create schema CCM_CORE;
 
     alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
         add constraint UK_goj42ghwu4tf1akfb2r6ensns unique (WORKFLOW_TEMPLATE_ID);
+
+    alter table CCM_CMS.SITES 
+        add constraint UK_fgjx0nuuxlgnuit724a96vw81 unique (NAME);
 
     create table CCM_CORE.APPLICATIONS (
         APPLICATION_TYPE varchar(1024) not null,
@@ -1368,11 +1379,11 @@ create schema CCM_CORE;
         SETTING_ID bigint not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
-        SETTING_VALUE_DOUBLE double,
-        SETTING_VALUE_LONG bigint,
         SETTING_VALUE_BOOLEAN boolean,
-        SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         SETTING_VALUE_STRING varchar(1024),
+        SETTING_VALUE_BIG_DECIMAL decimal(19,2),
+        SETTING_VALUE_LONG bigint,
+        SETTING_VALUE_DOUBLE double,
         primary key (SETTING_ID)
     );
 
@@ -1490,7 +1501,7 @@ create schema CCM_CORE;
 
     create table CCM_CORE.WORKFLOWS (
         WORKFLOW_ID bigint not null,
-        ABSTRACT_WORKFLOW boolean,
+        abstract_workflow boolean,
         ACTIVE boolean,
         WORKFLOW_STATE varchar(255),
         TASKS_STATE varchar(255),
@@ -2253,6 +2264,16 @@ create schema CCM_CORE;
         add constraint FKl5pkg9mp2ymc2uo4kmlubyp3m 
         foreign key (OBJECT_ID, REV) 
         references CCM_CMS.ASSETS_AUD;
+
+    alter table CCM_CMS.SITES 
+        add constraint FKmiysfmv1nkcso6bm18sjhvtm8 
+        foreign key (CATEGORY_DOMAIN_ID) 
+        references CCM_CORE.CATEGORY_DOMAINS;
+
+    alter table CCM_CMS.SITES 
+        add constraint FK5kmn26x72uue9t3dfnjwes45 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.APPLICATIONS;
 
     alter table CCM_CMS.VIDEO_ASSETS 
         add constraint FKjuywvv7wq9pyid5b6ivyrc0yk 

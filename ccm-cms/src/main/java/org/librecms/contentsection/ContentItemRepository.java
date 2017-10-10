@@ -192,7 +192,7 @@ public class ContentItemRepository
         final TypedQuery<ContentItem> query = getEntityManager()
             .createNamedQuery("ContentItem.findByUuid",
                               ContentItem.class);
-        query.setParameter("objectId", uuid);
+        query.setParameter("uuid", uuid);
         setAuthorizationParameters(query);
 
         try {

@@ -28,8 +28,7 @@ import javax.enterprise.context.RequestScoped;
  *
  * An implementation should add all default components which have to be present
  * in page. The {@link PageModel} should only specify
- * <strong>additional</strong>
- * components.
+ * <strong>additional</strong> components.
  *
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -39,7 +38,7 @@ public interface PageBuilder<P> {
 
     /**
      * Build a page for the view technology supported by this page builder
-     * without an additional components.
+     * without any additional components.
      * {@link #buildPage(org.libreccm.pagemodel.PageModel)} should use this
      * method for creating the default page.
      *

@@ -65,7 +65,10 @@ import org.apache.logging.log4j.LogManager;
 import org.arsdigita.cms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.workflow.Task;
+import org.libreccm.workflow.TaskRepository;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contenttypes.AuthoringKit;
@@ -576,7 +579,17 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
                 .getSelectedKey(state)
                 .toString();
 
-            return CmsTaskType.valueOf(key);
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final TaskRepository taskRepo = cdiUtil
+                .findBean(TaskRepository.class);
+
+            final Task task = taskRepo
+                .findById(Long.parseLong(key))
+                .orElseThrow(() -> new UnexpectedErrorException(String
+                .format("No Task with ID %s in the database.",
+                        key)));
+
+            return task;
         }
 
     }

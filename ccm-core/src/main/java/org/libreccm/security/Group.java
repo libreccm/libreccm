@@ -162,11 +162,4 @@ public class Group extends Party implements Serializable, Portable {
         return super.hashCode();
     }
 
-    @Override
-    public String toString(final String data) {
-        return super.toString(String.format(", members = { %s }%s",
-                                            Objects.toString(memberships),
-                                            data));
-    }
-
 }
