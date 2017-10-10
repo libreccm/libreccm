@@ -84,6 +84,7 @@ import org.librecms.workflow.CmsTaskType;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -284,14 +285,16 @@ class ItemLifecycleSelectForm extends BaseForm {
             final Locale locale = globalizationHelper.getNegotiatedLocale();
 
             for (final LifecycleDefinition definition : definitions) {
-                final List<PhaseDefinition> phaseDefinitions = definition
-                    .getPhaseDefinitions();
-
-                if (!phaseDefinitions.isEmpty()) {
-                    target.addOption(new Option(
+//                final List<PhaseDefinition> phaseDefinitions = definition
+//                    .getPhaseDefinitions();
+//
+//                if (!phaseDefinitions.isEmpty()) {
+                target.addOption(
+                    new Option(
                         Long.toString(definition.getDefinitionId()),
-                        new Text(definition.getLabel().getValue(locale))));
-                }
+                        new Text(globalizationHelper
+                            .getValueFromLocalizedString(definition.getLabel()))));
+//                }
             }
         }
 
@@ -301,13 +304,14 @@ class ItemLifecycleSelectForm extends BaseForm {
 
         @Override
         public final void init(final FormSectionEvent event) {
+
             final PageState state = event.getPageState();
 
             final ContentItem item = itemRequestLocal.getContentItem(state);
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final ContentItemManager itemManager = cdiUtil.findBean(
-                ContentItemManager.class);
+            final ContentItemManager itemManager = cdiUtil
+                .findBean(ContentItemManager.class);
             final ItemLifecycleAdminController controller = cdiUtil
                 .findBean(ItemLifecycleAdminController.class);
 
@@ -315,8 +319,11 @@ class ItemLifecycleSelectForm extends BaseForm {
                 // If the item is published, select the currently
                 // associated lifecycle.
 
-                final LifecycleDefinition definition = item.getLifecycle()
-                    .getDefinition();
+                final LifecycleDefinition definition = controller
+                .getDefinitionOfLifecycle(item);
+//                final LifecycleDefinition definition = item
+//                    .getLifecycle()
+//                    .getDefinition();
                 cycleSelect.setValue(state, definition.getDefinitionId());
             } else {
                 // Set the default lifecycle (if it exists).
@@ -382,7 +389,9 @@ class ItemLifecycleSelectForm extends BaseForm {
             final PageState state = event.getPageState();
             final ContentItem item = itemRequestLocal.getContentItem(state);
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-
+            final ItemLifecycleAdminController controller = cdiUtil
+            .findBean(ItemLifecycleAdminController.class);
+            
             final Publisher publisher = new Publisher(state);
             if (CMSConfig.getConfig().isThreadPublishing()) {
                 final Runnable threadAction = new Runnable() {
@@ -467,8 +476,7 @@ class ItemLifecycleSelectForm extends BaseForm {
             if (CMSConfig.getConfig().isThreadPublishing()) {
                 throw new RedirectSignal(
                     URL.getDispatcherPath()
-                        + ContentItemPage.getItemURL(item,
-                                                     ContentItemPage.PUBLISHING_TAB),
+                        + controller.getPublishingTabUrl(item),
                     true);
             } else {
                 if (CMSConfig.getConfig().isUseStreamlinedCreation()) {
@@ -649,7 +657,13 @@ class ItemLifecycleSelectForm extends BaseForm {
             //item = m_item.getContentItem(state);
             itemUuid = itemRequestLocal.getContentItem(state).getItemUuid();
 
-            defID = (Long) cycleSelect.getValue(state);
+            if (cycleSelect.getValue(state) instanceof BigDecimal) {
+                defID = ((Number) cycleSelect.getValue(state)).longValue();
+            } else if (cycleSelect.getValue(state) instanceof Long) {
+                defID = (Long) cycleSelect.getValue(state);
+            } else {
+                defID = Long.parseLong(cycleSelect.getValue(state).toString());
+            }
 
             final Calendar start = Calendar.getInstance();
             start.setTime((java.util.Date) startDateField.getValue(state));
@@ -715,79 +729,84 @@ class ItemLifecycleSelectForm extends BaseForm {
         public void publish() {
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final ContentItemRepository itemRepo = cdiUtil.findBean(
-                ContentItemRepository.class);
-            final ContentItemManager itemManager = cdiUtil.findBean(
-                ContentItemManager.class);
-            final PhaseRepository phaseRepo = cdiUtil.findBean(
-                PhaseRepository.class);
-            final LifecycleDefinitionRepository lifecycleDefRepo = cdiUtil
-                .findBean(LifecycleDefinitionRepository.class);
-            final LifecycleManager lifecycleManager = cdiUtil.findBean(
-                LifecycleManager.class);
-
-            final ContentItem item = itemRepo.findByUuid(itemUuid).get();
-
-            // If the item is already published, remove the current lifecycle.
-            // Do not touch the live version.
-            if (itemManager.isLive(item)) {
-                item.setLifecycle(null);
-                itemRepo.save(item);
-            }
-
-            ContentItem pending;
-            final LifecycleDefinition cycleDef;
-            final Lifecycle lifecycle;
-            // Apply the new lifecycle.
-            cycleDef = lifecycleDefRepo.findById(defID).get();
-            pending = itemManager.publish(item, cycleDef);
-            lifecycle = pending.getLifecycle();
-
-            if (endDate != null) {
-
-                // update individual phases
-                final List<Phase> phases = lifecycle.getPhases();
-
-                for (final Phase phase : phases) {
-                    final java.util.Date thisEnd = phase.getEndDateTime();
-                    final java.util.Date thisStart = phase.getStartDateTime();
-                    if (thisStart.compareTo(endDate) > 0) {
-                        phase.setStartDateTime(endDate);
-                        phaseRepo.save(phase);
-                    }
-                }
-            }
-
-            // endOfCycle may be the original date according to lifecycle phase definitions, or endDate if that was before
-            // natural end of lifecycle
-            final java.util.Date endOfCycle = lifecycle.getEndDateTime();
-            if (endOfCycle != null) {
-
-                // if advance notification is requested (!= 0)
-                // add another phase at the start of which the user is notified
-                java.util.Date notificationDate;
-
-                int notificationPeriod = 0;
-                if (notificationDays != null) {
-                    notificationPeriod += notificationDays * 24;
-                }
-                if (notificationHours != null) {
-                    notificationPeriod += notificationHours;
-                }
-            }
-
-            // Force the lifecycle scheduler to run to avoid any
-            // scheduler delay for items that should be published
-            // immediately.
-            lifecycleManager.startLifecycle(pending.getLifecycle());
-
-            if (workflowUuid != null) {
-                final WorkflowRepository workflowRepo = cdiUtil.findBean(
-                    WorkflowRepository.class);
-                final Workflow workflow = workflowRepo.findByUuid(workflowUuid)
-                    .get();
-                finish(workflow, item, user);
-            }
+            final ItemLifecycleAdminController controller = cdiUtil
+            .findBean(ItemLifecycleAdminController.class);
+            
+            controller.publish(itemUuid, defID, endDate, workflowUuid, user);
+            
+//            final ContentItemRepository itemRepo = cdiUtil.findBean(
+//                ContentItemRepository.class);
+//            final ContentItemManager itemManager = cdiUtil.findBean(
+//                ContentItemManager.class);
+//            final PhaseRepository phaseRepo = cdiUtil.findBean(
+//                PhaseRepository.class);
+//            final LifecycleDefinitionRepository lifecycleDefRepo = cdiUtil
+//                .findBean(LifecycleDefinitionRepository.class);
+//            final LifecycleManager lifecycleManager = cdiUtil.findBean(
+//                LifecycleManager.class);
+//
+//            final ContentItem item = itemRepo.findByUuid(itemUuid).get();
+//
+//            // If the item is already published, remove the current lifecycle.
+//            // Do not touch the live version.
+//            if (itemManager.isLive(item)) {
+//                item.setLifecycle(null);
+//                itemRepo.save(item);
+//            }
+//
+//            ContentItem pending;
+//            final LifecycleDefinition cycleDef;
+//            final Lifecycle lifecycle;
+//            // Apply the new lifecycle.
+//            cycleDef = lifecycleDefRepo.findById(defID).get();
+//            pending = itemManager.publish(item, cycleDef);
+//            lifecycle = pending.getLifecycle();
+//
+//            if (endDate != null) {
+//
+//                // update individual phases
+//                final List<Phase> phases = lifecycle.getPhases();
+//
+//                for (final Phase phase : phases) {
+//                    final java.util.Date thisEnd = phase.getEndDateTime();
+//                    final java.util.Date thisStart = phase.getStartDateTime();
+//                    if (thisStart.compareTo(endDate) > 0) {
+//                        phase.setStartDateTime(endDate);
+//                        phaseRepo.save(phase);
+//                    }
+//                }
+//            }
+//
+//            // endOfCycle may be the original date according to lifecycle phase definitions, or endDate if that was before
+//            // natural end of lifecycle
+//            final java.util.Date endOfCycle = lifecycle.getEndDateTime();
+//            if (endOfCycle != null) {
+//
+//                // if advance notification is requested (!= 0)
+//                // add another phase at the start of which the user is notified
+//                java.util.Date notificationDate;
+//
+//                int notificationPeriod = 0;
+//                if (notificationDays != null) {
+//                    notificationPeriod += notificationDays * 24;
+//                }
+//                if (notificationHours != null) {
+//                    notificationPeriod += notificationHours;
+//                }
+//            }
+//
+//            // Force the lifecycle scheduler to run to avoid any
+//            // scheduler delay for items that should be published
+//            // immediately.
+//            lifecycleManager.startLifecycle(pending.getLifecycle());
+//
+//            if (workflowUuid != null) {
+//                final WorkflowRepository workflowRepo = cdiUtil.findBean(
+//                    WorkflowRepository.class);
+//                final Workflow workflow = workflowRepo.findByUuid(workflowUuid)
+//                    .get();
+//                finish(workflow, item, user);
+//            }
         }
 
     }

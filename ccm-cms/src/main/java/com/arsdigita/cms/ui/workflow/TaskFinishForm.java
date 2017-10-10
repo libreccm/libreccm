@@ -50,11 +50,7 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.workflow.AssignableTask;
-import org.libreccm.workflow.AssignableTaskManager;
-import org.libreccm.workflow.TaskManager;
-import org.libreccm.workflow.TaskRepository;
 import org.libreccm.workflow.Workflow;
-import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemRepository;
@@ -170,13 +166,8 @@ public final class TaskFinishForm extends CommentAddForm {
             permissionChecker.checkPermission(task.getTaskType().getPrivilege(),
                                               item.get());
 
-            final TaskRepository taskRepo = cdiUtil.findBean(
-                TaskRepository.class);
-            final WorkflowManager workflowManager = cdiUtil.findBean(
-                WorkflowManager.class);
-            final TaskManager taskManager = cdiUtil.findBean(TaskManager.class);
-            final AssignableTaskManager assignableTaskManager = cdiUtil
-                .findBean(AssignableTaskManager.class);
+            final TaskFinishFormController controller = cdiUtil
+                .findBean(TaskFinishFormController.class);
             final ConfigurationManager confManager = cdiUtil.findBean(
                 ConfigurationManager.class);
             final KernelConfig kernelConfig = confManager.findConfiguration(
@@ -194,7 +185,7 @@ public final class TaskFinishForm extends CommentAddForm {
                 if (isApproved.equals(Boolean.TRUE)) {
                     LOGGER.debug("The task is approved; finishing the task");
 
-                    taskManager.finish(task);
+                    controller.finish(task);
                     finishedTask = true;
                 } else {
                     LOGGER.debug("The task is rejected; reenabling dependent "
@@ -206,17 +197,16 @@ public final class TaskFinishForm extends CommentAddForm {
                                      dependent.getLabel().getValue(
                                          kernelConfig.getDefaultLocale()));
 
-                        taskManager.enable(dependent);
+                        controller.enable(dependent);
                     }
                 }
             } else {
                 LOGGER.debug("The task does not require approval; finishing it");
 
-                taskManager.disable(task);
+                controller.finish(task);
+                finishedTask = true;
             }
             if (finishedTask) {
-                final TaskFinishFormController controller = cdiUtil.findBean(
-                    TaskFinishFormController.class);
                 final Workflow workflow = task.getWorkflow();
                 final List<AssignableTask> tasks = controller.findEnabledTasks(
                     workflow);
@@ -231,16 +221,16 @@ public final class TaskFinishForm extends CommentAddForm {
                     if (permissionChecker.isPermitted(privilege,
                                                       workflow.getObject())) {
                         //Lock task for current user
-                        assignableTaskManager.lockTask(currentCmsTask);
+                        controller.lock(currentCmsTask);
 
                         if (CmsTaskType.DEPLOY == currentCmsTask.getTaskType()) {
 
                         } else {
                             throw new RedirectSignal(
-                                URL.there(state.getRequest(),
-                                          ContentItemPage.getItemURL(
-                                              item.get(),
-                                              ContentItemPage.PUBLISHING_TAB)),
+                                URL.there(
+                                    state.getRequest(),
+                                    controller
+                                        .getContentItemPublishUrl(item.get())),
                                 true);
                         }
 

@@ -321,7 +321,7 @@ public class CMSConfig {
     private boolean useOldStyleItemLifecycleItemPane = false;
 
     @Setting
-    private boolean threadPublishing = true;
+    private boolean threadPublishing = false;
 
     @Setting
     private String publishingFailureSender = "";

@@ -43,6 +43,8 @@ public class ConfirmDialog extends Window {
     private Button cancelButton;
 
     public ConfirmDialog(final Callable<Void> confirmedAction) {
+        super();
+        
         this.confirmedAction = confirmedAction;
         this.cancelAction = () -> {
             close();
@@ -53,6 +55,8 @@ public class ConfirmDialog extends Window {
 
     public ConfirmDialog(final Callable<Void> confirmedAction,
                          final Callable<Void> cancelAction) {
+        super();
+        
         this.confirmedAction = confirmedAction;
         this.cancelAction = cancelAction;
         addWidgets();
