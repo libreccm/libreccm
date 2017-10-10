@@ -545,6 +545,7 @@ public class ContentItemPage extends CMSPage implements ActionListener {
      */
     public static String getItemURL(final ContentItem item,
                                     final int tab) {
+        
         final ContentSection section = item.getContentType().getContentSection();
 
         if (section == null) {

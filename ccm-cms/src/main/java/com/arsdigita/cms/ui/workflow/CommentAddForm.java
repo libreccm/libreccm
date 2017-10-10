@@ -29,7 +29,6 @@ import org.librecms.workflow.CmsTask;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.workflow.TaskComment;
 import org.libreccm.workflow.TaskManager;
 import org.libreccm.workflow.TaskRepository;
 
@@ -39,7 +38,8 @@ import org.libreccm.workflow.TaskRepository;
  */
 class CommentAddForm extends BaseForm {
 
-    private static final Logger LOGGER = LogManager.getLogger(CommentAddForm.class);
+    private static final Logger LOGGER = LogManager.getLogger(
+        CommentAddForm.class);
 
     private final TaskRequestLocal selectedTask;
     private final TextArea comment;
@@ -63,17 +63,23 @@ class CommentAddForm extends BaseForm {
     }
 
     private class ProcessListener implements FormProcessListener {
+
         @Override
         public final void process(final FormSectionEvent event)
-                throws FormProcessException {
+            throws FormProcessException {
             LOGGER.debug("Processing comment add");
 
             final PageState state = event.getPageState();
-            final CmsTask task = selectedTask.getTask(state);
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final TaskRepository taskRepo = cdiUtil.findBean(TaskRepository.class);
-            final TaskManager taskManager = cdiUtil.findBean(TaskManager.class);
-            taskManager.addComment(task, (String) comment.getValue(state));
+            if (comment.getValue(state) != null
+                    && !((String) comment.getValue(state)).isEmpty()) {
+                final CmsTask task = selectedTask.getTask(state);
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final TaskFinishFormController controller = cdiUtil
+                    .findBean(TaskFinishFormController.class);
+                controller.addComment(task, (String) comment.getValue(state));
+            }
         }
+
     }
+
 }

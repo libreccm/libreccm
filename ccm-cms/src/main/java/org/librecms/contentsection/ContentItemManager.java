@@ -345,7 +345,7 @@ public class ContentItemManager {
         if (item.getWorkflow() != null) {
             workflowManager.start(item.getWorkflow());
         }
-        
+
         permissionManager.copyPermissions(folder, item, true);
 
         return item;
@@ -880,8 +880,8 @@ public class ContentItemManager {
         liveItem.setItemUuid(draftItem.getItemUuid());
         liveItem.setContentType(draftItem.getContentType());
 
-        final Lifecycle lifecycle = lifecycleManager.createLifecycle(
-            lifecycleDefinition);
+        final Lifecycle lifecycle = lifecycleManager
+            .createLifecycle(lifecycleDefinition);
 
         liveItem.setLifecycle(lifecycle);
         liveItem.setWorkflow(draftItem.getWorkflow());

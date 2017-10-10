@@ -127,8 +127,11 @@ public class LifecycleManager {
                 phaseRepo.save(phase);
             });
 
-            lifecycle.getPhases().get(0).setStarted(true);
-            phaseRepo.save(lifecycle.getPhases().get(0));
+            if (lifecycle.getPhases() != null
+                    && !lifecycle.getPhases().isEmpty()) {
+                lifecycle.getPhases().get(0).setStarted(true);
+                phaseRepo.save(lifecycle.getPhases().get(0));
+            }
 
             lifecycleRepo.save(lifecycle);
 
@@ -166,8 +169,8 @@ public class LifecycleManager {
             }
 
             lifecycle.getPhases().get(current).setFinished(true);
-            invokePhaseEventListener(lifecycle, 
-                                     lifecycle.getPhases().get(current), 
+            invokePhaseEventListener(lifecycle,
+                                     lifecycle.getPhases().get(current),
                                      PhaseEvent.FINISHED);
             //Check for last phase, if not set next phase to started
             if (current < lifecycle.getPhases().size() - 1) {
@@ -201,6 +204,11 @@ public class LifecycleManager {
     private void invokeLifecycleEventListener(final Lifecycle lifecycle,
                                               final LifecycleEvent event) {
         final String listenerClassName = lifecycle.getListener();
+        
+        if (listenerClassName == null || listenerClassName.isEmpty()) {
+            return;
+        }
+        
         final Class<?> listenerClass;
         try {
             listenerClass = Class.forName(listenerClassName);
@@ -208,6 +216,7 @@ public class LifecycleManager {
             LOGGER.error("Failed to find LifecycleListener class \"{}\". "
                              + "Listener is ignored.",
                          listenerClassName);
+            LOGGER.error(ex);
             return;
         }
 
@@ -222,8 +231,8 @@ public class LifecycleManager {
         final Object object;
         try {
             object = listenerClass.newInstance();
-        } catch (IllegalAccessException |
-                 InstantiationException ex) {
+        } catch (IllegalAccessException
+                 | InstantiationException ex) {
             LOGGER.error("Failed to create instance of LifecycleEventListener "
                              + "of class \"{}\".",
                          listenerClass.getName());
@@ -267,8 +276,8 @@ public class LifecycleManager {
         final Object object;
         try {
             object = listenerClass.newInstance();
-        } catch (IllegalAccessException |
-                 InstantiationException ex) {
+        } catch (IllegalAccessException
+                 | InstantiationException ex) {
             LOGGER.error("Failed to create instance of PhaseEventListener "
                              + "of class \"{}\".",
                          listenerClass.getName());

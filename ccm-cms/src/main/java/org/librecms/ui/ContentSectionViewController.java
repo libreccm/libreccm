@@ -21,7 +21,6 @@ package org.librecms.ui;
 import com.vaadin.cdi.ViewScoped;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.PermissionChecker;
-import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.FolderRepository;
 import org.librecms.contenttypes.ContentTypesManager;
