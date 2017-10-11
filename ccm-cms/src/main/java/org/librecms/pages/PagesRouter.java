@@ -21,10 +21,22 @@ package org.librecms.pages;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.CategoryRepository;
+import org.libreccm.pagemodel.PageModel;
 import org.libreccm.pagemodel.PageModelManager;
+import org.libreccm.pagemodel.PageModelVersion;
+import org.libreccm.sites.Site;
+import org.libreccm.sites.SiteRepository;
+import org.libreccm.theming.ThemeInfo;
+import org.libreccm.theming.ThemeVersion;
+import org.libreccm.theming.Themes;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.NotFoundException;
@@ -32,7 +44,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 /**
@@ -48,27 +62,58 @@ public class PagesRouter {
 
     @Inject
     private CategoryRepository categoryRepo;
-    
 
+    @Inject
+    private CmsPageBuilder pageBuilder;
+
+    @Inject
+    private EntityManager entityManager;
+
+    @Inject
+    private PagesRepository pagesRepo;
 
     @Inject
     private PageModelManager pageModelManager;
 
     @Inject
-    private PagesRepository siteRepo;
+    private SiteRepository siteRepo;
+
+    @Inject
+    private Themes themes;
 
     @Path("/index.{lang}.html")
     @Produces("text/html")
     @Transactional(Transactional.TxType.REQUIRED)
     public String getCategoryIndexPage(
-        @Context final UriInfo uriInfo,
-        @PathParam("page") final String page,
-        @PathParam("lang") final String language,
-        @QueryParam("theme") @DefaultValue("--DEFAULT--") final String theme) {
+        @Context
+        final UriInfo uriInfo,
+        @PathParam("page")
+        final String page,
+        @PathParam("lang")
+        final String language,
+        @QueryParam("theme")
+        @DefaultValue("--DEFAULT--")
+        final String theme,
+        @QueryParam("theme-version")
+        @DefaultValue("LIVE")
+        final String themeVersion,
+        @QueryParam("pagemodel-version")
+        @DefaultValue("LIVE")
+        final String pageModelVersion) {
 
         final String domain = uriInfo.getBaseUri().getHost();
 
-        final Pages pages = siteRepo
+        final Site site;
+        if (siteRepo.hasSiteForDomain(domain)) {
+            site = siteRepo.findByDomain(domain).get();
+        } else {
+            site = siteRepo
+                .findDefaultSite()
+                .orElseThrow(() -> new NotFoundException(
+                "No matching Site and no default Site."));
+        }
+
+        final Pages pages = pagesRepo
             .findPagesForSite(domain)
             .orElseThrow(() -> new NotFoundException(String
             .format("No Pages for domain \"%s\" available.",
@@ -81,13 +126,64 @@ public class PagesRouter {
             page,
             domain)));
 
+        final Optional<PageModel> pageModel = pagesRepo
+            .findPageModelForIndexPage(category,
+                                       PageModelVersion
+                                           .valueOf(pageModelVersion));
 
+        final Map<String, Object> parameters = new HashMap<>();
+        parameters.put("currentCategory", category);
+
+        final Map<String, Object> buildResult;
+        if (pageModel.isPresent()) {
+            buildResult = pageBuilder.buildPage(pageModel.get(), parameters);
+        } else {
+            buildResult = pageBuilder.buildPage(parameters);
+        }
+
+        final ThemeInfo themeInfo;
+        if ("--DEFAULT--".equals(theme)) {
+            themeInfo = themes
+                .getTheme(site.getDefaultTheme(),
+                          ThemeVersion.valueOf(themeVersion))
+                .orElseThrow(() -> new WebApplicationException(
+                String.format("The configured default theme \"%s\" for "
+                                  + "site \"%s\" is not available.",
+                              site.getDomainOfSite(),
+                              site.getDefaultTheme()),
+                Response.Status.INTERNAL_SERVER_ERROR));
+        } else {
+            themeInfo = themes.getTheme(theme,
+                                        ThemeVersion.valueOf(themeVersion))
+                .orElseThrow(() -> new WebApplicationException(
+                String.format("The theme \"%s\" is not available.",
+                              theme),
+                Response.Status.BAD_REQUEST));
+        }
+
+        return themes.process(buildResult, themeInfo);
+    }
+    
+    @Path("/index.{lang}.tree")
+    @Produces("text/html")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String getCategoryIndexPageTree(
+        @Context
+        final UriInfo uriInfo,
+        @PathParam("page")
+        final String page,
+        @PathParam("lang")
+        final String language,
+        @QueryParam("theme")
+        @DefaultValue("--DEFAULT--")
+        final String theme,
+        @QueryParam("theme-version")
+        @DefaultValue("LIVE")
+        final String themeVersion,
+        @QueryParam("pagemodel-version")
+        @DefaultValue("LIVE")
+        final String pageModelVersion) {
         
-        // ToDo Get PageModelBuilder
-        // ToDo Build page
-        // ToDo Get Theme Processor 
-        // ToDo Pass page to theme processor
-        // ToDo Return result of ThemeProcessor
         throw new UnsupportedOperationException();
     }
 
@@ -97,7 +193,7 @@ public class PagesRouter {
         @PathParam("page") final String page,
         @PathParam("lang") final String language,
         @QueryParam("theme") @DefaultValue("--DEFAULT--") final String theme) {
-        
+
         throw new UnsupportedOperationException();
     }
 
