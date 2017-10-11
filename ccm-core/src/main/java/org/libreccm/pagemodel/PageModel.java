@@ -18,6 +18,7 @@
  */
 package org.libreccm.pagemodel;
 
+import org.libreccm.core.CcmObject;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.web.CcmApplication;
@@ -25,6 +26,7 @@ import org.libreccm.web.CcmApplication;
 import javax.validation.constraints.NotNull;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -35,9 +37,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -110,26 +109,9 @@ import javax.persistence.Table;
                     + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE"
     )
 })
-public class PageModel implements Serializable {
+public class PageModel extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 7252512839926020978L;
-
-    /**
-     * The ID of the entity in the database.
-     */
-    @Id
-    @Column(name = "PAGE_MODEL_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long pageModelId;
-
-    /**
-     * The UUID of this {@code PageModel}. Please note that this UUID identifies
-     * the dataset not the model. Therefore the draft and the live version have
-     * different values for this field.
-     */
-    @Column(name = "UUID", length = 255, nullable = false)
-    @NotNull
-    private String uuid;
 
     /**
      * The UUID of the model. Same for draft and live version.
@@ -203,22 +185,6 @@ public class PageModel implements Serializable {
         description = new LocalizedString();
     }
 
-    public long getPageModelId() {
-        return pageModelId;
-    }
-
-    protected void setPageModelId(final long pageModelId) {
-        this.pageModelId = pageModelId;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    protected void setUuid(final String uuid) {
-        this.uuid = uuid;
-    }
-
     public String getModelUuid() {
         return modelUuid;
     }
@@ -282,7 +248,7 @@ public class PageModel implements Serializable {
     }
 
     protected void setComponents(final List<ComponentModel> components) {
-        this.components = components;
+        this.components = new ArrayList<>(components);
     }
 
     protected void addComponent(final ComponentModel component) {
@@ -299,9 +265,7 @@ public class PageModel implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 71 * hash + (int) (pageModelId ^ (pageModelId >>> 32));
-        hash = 71 * hash + Objects.hashCode(uuid);
+        int hash = super.hashCode();
         hash = 71 * hash + Objects.hashCode(name);
         hash = 71 * hash + Objects.hashCode(title);
         hash = 71 * hash + Objects.hashCode(description);
@@ -317,17 +281,16 @@ public class PageModel implements Serializable {
         if (obj == null) {
             return false;
         }
+
+        if (!super.equals(obj)) {
+            return false;
+        }
+
         if (!(obj instanceof PageModel)) {
             return false;
         }
         final PageModel other = (PageModel) obj;
         if (!other.canEqual(this)) {
-            return false;
-        }
-        if (pageModelId != other.getPageModelId()) {
-            return false;
-        }
-        if (!Objects.equals(uuid, other.getUuid())) {
             return false;
         }
         if (!Objects.equals(name, other.getName())) {
@@ -342,31 +305,21 @@ public class PageModel implements Serializable {
         return Objects.equals(description, other.getDescription());
     }
 
+    @Override
     public boolean canEqual(final Object obj) {
         return obj instanceof PageModel;
     }
 
     @Override
-    public final String toString() {
-        return toString("");
-    }
-
     public String toString(final String data) {
-        return String.format("%s{ "
-                                 + "pageModelId = %d, "
-                                 + "uuid = %s, "
-                                 + "name = \"%s\", "
-                                 + "title = %s, "
-                                 + "description = %s, "
-                                 + "type = \"%s\""
-                                 + " }",
-                             super.toString(),
-                             pageModelId,
-                             uuid,
-                             name,
-                             Objects.toString(title),
-                             Objects.toString(description),
-                             type);
+        return super.toString(String.format(", name = \"%s\", "
+                                                + "title = %s, "
+                                                + "description = %s%s",
+                                            super.toString(),
+                                            name,
+                                            Objects.toString(title),
+                                            Objects.toString(description),
+                                            data));
     }
 
 }
