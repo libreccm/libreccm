@@ -37,6 +37,5 @@ public @interface ComponentModelType {
 
     Class<? extends ComponentModel> componentModel();
     
-    String type();
 
 }
