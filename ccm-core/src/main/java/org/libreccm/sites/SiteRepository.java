@@ -19,7 +19,6 @@
 package org.libreccm.sites;
 
 import org.libreccm.core.AbstractEntityRepository;
-import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.security.RequiresPrivilege;
 
@@ -52,6 +51,18 @@ public class SiteRepository extends AbstractEntityRepository<Long, Site> {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
+    public Optional<Site> findDefaultSite() {
+        final TypedQuery<Site> query = getEntityManager()
+            .createNamedQuery("Site.findDefaultSite", Site.class);
+
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
     public boolean hasSiteForDomain(final String domain) {
 
         final TypedQuery<Boolean> query = getEntityManager()
@@ -66,7 +77,7 @@ public class SiteRepository extends AbstractEntityRepository<Long, Site> {
     public void save(final Site site) {
         super.save(site);
     }
-    
+
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Override
     public void delete(final Site site) {
@@ -82,5 +93,5 @@ public class SiteRepository extends AbstractEntityRepository<Long, Site> {
     public boolean isNew(final Site site) {
         return site.getObjectId() == 0;
     }
-    
+
 }

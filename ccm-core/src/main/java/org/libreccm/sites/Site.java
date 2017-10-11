@@ -43,6 +43,11 @@ import javax.persistence.Table;
     )
     ,
     @NamedQuery(
+        name = "Site.findDefaultSite",
+        query = "SELECT s FROM Site s WHERE s.defaultSite = true"
+    )
+    ,
+    @NamedQuery(
         name = "Site.hasSiteForDomain",
         query = "SELECT (CASE WHEN COUNT(s) > 0 THEN true ELSE false END) "
                     + "FROM Site s "

@@ -18,15 +18,14 @@
  */
 package org.librecms.pages;
 
-import com.arsdigita.ui.admin.AdminUiConstants;
+import org.libreccm.categorization.Category;
 
 import org.libreccm.core.AbstractEntityRepository;
-import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.core.CoreConstants;
+import org.libreccm.pagemodel.PageModelVersion;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.sites.SiteRepository;
-import org.librecms.CmsConstants;
-import org.librecms.contentsection.privileges.AdminPrivileges;
+import org.libreccm.pagemodel.PageModel;
 
 import java.util.Optional;
 
@@ -51,12 +50,12 @@ public class PagesRepository extends AbstractEntityRepository<Long, Pages> {
 
         if (siteRepo.hasSiteForDomain(domainOfSite)) {
             final TypedQuery<Pages> query = getEntityManager()
-            .createNamedQuery("Pages.findForSite", Pages.class);
+                .createNamedQuery("Pages.findForSite", Pages.class);
             query.setParameter("domain", domainOfSite);
-            
+
             try {
                 return Optional.of(query.getSingleResult());
-            } catch(NoResultException ex) {
+            } catch (NoResultException ex) {
                 return Optional.empty();
             }
         } else {
@@ -67,6 +66,40 @@ public class PagesRepository extends AbstractEntityRepository<Long, Pages> {
             } catch (NoResultException ex) {
                 return Optional.empty();
             }
+        }
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public Optional<PageModel> findPageModelForIndexPage(
+        final Category category,
+        final PageModelVersion version) {
+
+        final TypedQuery<PageModel> query = getEntityManager()
+            .createNamedQuery("Pages.findPageModelForIndexPage", PageModel.class);
+        query.setParameter("category", category);
+        query.setParameter("version", version.toString());
+        
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch(NoResultException ex) {
+            return Optional.empty();
+        }
+    }
+    
+    @Transactional(Transactional.TxType.REQUIRED)
+    public Optional<PageModel> findPageModelForItemPage(
+        final Category category,
+        final PageModelVersion version) {
+
+        final TypedQuery<PageModel> query = getEntityManager()
+            .createNamedQuery("Pages.findPageModelForItemPage", PageModel.class);
+        query.setParameter("category", category);
+        query.setParameter("version", version.toString());
+        
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch(NoResultException ex) {
+            return Optional.empty();
         }
     }
 
@@ -85,11 +118,11 @@ public class PagesRepository extends AbstractEntityRepository<Long, Pages> {
     public void save(final Pages pages) {
         super.save(pages);
     }
-    
+
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Override
     public void delete(final Pages pages) {
         super.delete(pages);
     }
-    
+
 }

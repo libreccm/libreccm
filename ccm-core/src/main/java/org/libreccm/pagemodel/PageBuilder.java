@@ -20,13 +20,11 @@ package org.libreccm.pagemodel;
 
 import java.util.Map;
 
-import javax.enterprise.context.RequestScoped;
 
 /**
  * Interface for page builders. A page builder is invoked to build a page a
- * specific type. An implementation must be a CDI bean which is annotated with
- * the qualifier {@link PageModelType}. The recommended scope is
- * {@link RequestScoped}.
+ * specific type. An implementation should be a CDI bean which is annotated with
+ * the qualifier {@link PageModelType}. 
  *
  * An implementation should add all default components which have to be present
  * in page. The {@link PageModel} should only specify

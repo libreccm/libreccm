@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 LibreCCM Foundation.
+ * Copyright (C) 2017 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,18 +16,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.pagemodel;
+package org.librecms.pages;
 
-import com.arsdigita.bebop.Page;
+import org.libreccm.pagemodel.AbstractPageBuilder;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.enterprise.context.RequestScoped;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class BasePage extends Page {
-    
-    public void setPageAttribute(final String name, final String value) {
-        super.setAttribute(name, value);
+@RequestScoped
+public class CmsPageBuilder extends AbstractPageBuilder {
+
+    @Override
+    public Map<String, Object> buildPage(final Map<String, Object> parameters) {
+        
+        final Map<String, Object> result = new HashMap<>();
+        
+        return result;
+        
     }
+    
+    
     
 }
