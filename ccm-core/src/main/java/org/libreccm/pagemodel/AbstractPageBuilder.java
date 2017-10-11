@@ -18,7 +18,10 @@
  */
 package org.libreccm.pagemodel;
 
+import java.util.Map;
+
 import javax.inject.Inject;
+
 import java.util.Optional;
 
 /**
@@ -32,7 +35,7 @@ import java.util.Optional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  *
  */
-public abstract class AbstractPageBuilder<P> implements PageBuilder<P> {
+public abstract class AbstractPageBuilder implements PageBuilder {
 
     @Inject
     private ComponentBuilderManager componentBuilderManager;
@@ -49,14 +52,16 @@ public abstract class AbstractPageBuilder<P> implements PageBuilder<P> {
      * @return A page containing all components from the {@link PageModel}.
      */
     @Override
-    public P buildPage(final PageModel pageModel) {
-        final P page = buildPage();
+    public Map<String, Object> buildPage(final PageModel pageModel) {
+        
+        final Map<String, Object> page = buildPage();
 
         for (final ComponentModel componentModel : pageModel.getComponents()) {
             final Optional<Object> component = buildComponent(
                 componentModel, componentModel.getClass());
             if (component.isPresent()) {
-                addComponent(page, component);
+                page.put(componentModel.getIdAttribute(),
+                         component);
             }
         }
 
@@ -77,35 +82,18 @@ public abstract class AbstractPageBuilder<P> implements PageBuilder<P> {
         final ComponentModel componentModel,
         final Class<M> componentModelClass) {
 
-        componentBuilderManager.findComponentBuilder(componentModel.getClass(),
-                                                     getType());
+        componentBuilderManager.findComponentBuilder(componentModel.getClass());
 
-        final Optional<ComponentBuilder<M, ?>> builder = componentBuilderManager
-            .findComponentBuilder(componentModelClass, getType());
+        final Optional<ComponentBuilder<M>> builder = componentBuilderManager
+            .findComponentBuilder(componentModelClass);
 
         if (builder.isPresent()) {
-            return Optional.of(builder.get().buildComponent((M) componentModel));
+            @SuppressWarnings("unchecked")
+            final M model = (M) componentModel;
+            return Optional.of(builder.get().buildComponent(model));
         } else {
             return Optional.empty();
         }
     }
-
-    /**
-     * Abstract method returning the type (view technology) for which the
-     * {@link PageBuilder} processes {@link PageModel}s.
-     *
-     * @return
-     */
-    protected abstract String getType();
-
-    /**
-     * A helper method for adding components to the page. How this is done
-     * depends on the view technology, therefore this method must be implemented
-     * by the implementations of this abstract class.
-     *
-     * @param page The page to which the component is added.
-     * @param component The component to add to the page.
-     */
-    protected abstract void addComponent(P page, Object component);
 
 }

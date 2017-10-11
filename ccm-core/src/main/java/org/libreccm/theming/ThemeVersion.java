@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 LibreCCM Foundation.
+ * Copyright (C) 2017 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,20 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.pagemodel;
-
-import java.util.Map;
+package org.libreccm.theming;
 
 /**
- * A {@code ComponentBuilder} transforms a {@link ComponentModel} into a
- * component.
- *
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * @param <M> Type of the model the component builder processes.
  */
-public interface ComponentBuilder<M extends ComponentModel> {
-
-    Map<String, Object> buildComponent(M componentModel);
-
+public enum ThemeVersion {
+    
+    DRAFT,
+    LIVE
+    
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 LibreCCM Foundation.
+ * Copyright (C) 2017 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,29 +16,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.pagemodel;
-
-import org.libreccm.web.CcmApplication;
-
-import javax.inject.Qualifier;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package org.libreccm.theming;
 
 /**
- * Specifies for which application type and which  view technology a 
- * {@link PageBuilder} builds the pages.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Qualifier
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface PageModelType {
-
-    String type();
-
-    Class<? extends CcmApplication> applicationType();
+public @interface ThemeType {
+    
+    String value();
     
 }
