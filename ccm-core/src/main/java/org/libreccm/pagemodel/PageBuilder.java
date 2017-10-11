@@ -18,6 +18,8 @@
  */
 package org.libreccm.pagemodel;
 
+import java.util.Map;
+
 import javax.enterprise.context.RequestScoped;
 
 /**
@@ -32,9 +34,8 @@ import javax.enterprise.context.RequestScoped;
  *
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * @param <P> The type of page the page builder creates.
  */
-public interface PageBuilder<P> {
+public interface PageBuilder {
 
     /**
      * Build a page for the view technology supported by this page builder
@@ -44,7 +45,7 @@ public interface PageBuilder<P> {
      *
      * @return A page with the default components.
      */
-    P buildPage();
+    Map<String, Object> buildPage();
 
     /**
      * Build a page of type {@code P} using the provided {@link PageModel}.
@@ -55,7 +56,7 @@ public interface PageBuilder<P> {
      *
      * @return The page generated from the provided {@link PageModel}.
      */
-    P buildPage(PageModel pageModel);
+    Map<String, Object> buildPage(PageModel pageModel);
     
     
 
