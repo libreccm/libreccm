@@ -43,21 +43,27 @@ public interface PageBuilder {
      * {@link #buildPage(org.libreccm.pagemodel.PageModel)} should use this
      * method for creating the default page.
      *
+     * @param parameters Parameters provided by application which wants to
+     *                   render a {@link PageModel}. The parameters are passed
+     *                   the {@link ComponentBuilder}s.
+     *
      * @return A page with the default components.
      */
-    Map<String, Object> buildPage();
+    Map<String, Object> buildPage(Map<String, Object> parameters);
 
     /**
      * Build a page of type {@code P} using the provided {@link PageModel}.
      * Implementations should call the implementation of {@link #buildPage()}
      * for creating the basic page with the default components.
      *
-     * @param pageModel The {@link PageModel} from which the page is generated.
+     * @param pageModel  The {@link PageModel} from which the page is generated.
+     * @param parameters Parameters provided by application which wants to
+     *                   render a {@link PageModel}. The parameters are passed
+     *                   the {@link ComponentBuilder}s.
      *
      * @return The page generated from the provided {@link PageModel}.
      */
-    Map<String, Object> buildPage(PageModel pageModel);
-    
-    
+    Map<String, Object> buildPage(PageModel pageModel,
+                                  Map<String, Object> parameters);
 
 }

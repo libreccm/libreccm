@@ -16,22 +16,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.sites;
+package org.librecms.pages;
 
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.pagemodel.PageModelManager;
 
-import java.util.Optional;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
@@ -41,44 +41,64 @@ import javax.ws.rs.core.UriInfo;
  */
 @RequestScoped
 @Path("/{page:.+}")
-public class Pages {
-    
+public class PagesRouter {
+
     @Inject
     private CategoryManager categoryManager;
 
     @Inject
     private CategoryRepository categoryRepo;
     
+
+
     @Inject
     private PageModelManager pageModelManager;
-    
-    @Inject
-    private SiteRepository siteRepo;
 
-    @Path("/")
+    @Inject
+    private PagesRepository siteRepo;
+
+    @Path("/index.{lang}.html")
     @Produces("text/html")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String getPage(@Context final UriInfo uriInfo,
-                          @PathParam("page") final String page) {
+    public String getCategoryIndexPage(
+        @Context final UriInfo uriInfo,
+        @PathParam("page") final String page,
+        @PathParam("lang") final String language,
+        @QueryParam("theme") @DefaultValue("--DEFAULT--") final String theme) {
 
-        final String siteName = uriInfo.getBaseUri().getHost();
-        
-        final Site site = siteRepo.findByName(siteName);
-        final Category category  =categoryRepo
-            .findByPath(site.getCategoryDomain(), page)
-        .orElseThrow(() -> new NotFoundException(String.format(
+        final String domain = uriInfo.getBaseUri().getHost();
+
+        final Pages pages = siteRepo
+            .findPagesForSite(domain)
+            .orElseThrow(() -> new NotFoundException(String
+            .format("No Pages for domain \"%s\" available.",
+                    domain)));
+
+        final Category category = categoryRepo
+            .findByPath(pages.getCategoryDomain(), page)
+            .orElseThrow(() -> new NotFoundException(String.format(
             "No page for path \"%s\" in site \"%s\"",
             page,
-            siteName)));
+            domain)));
+
+
         
         // ToDo Get PageModelBuilder
         // ToDo Build page
         // ToDo Get Theme Processor 
         // ToDo Pass page to theme processor
         // ToDo Return result of ThemeProcessor
+        throw new UnsupportedOperationException();
+    }
+
+    @Path("/{name}.{lang}.html")
+    public String getPage(
+        @Context final UriInfo uriInfo,
+        @PathParam("page") final String page,
+        @PathParam("lang") final String language,
+        @QueryParam("theme") @DefaultValue("--DEFAULT--") final String theme) {
         
         throw new UnsupportedOperationException();
-
     }
 
 }

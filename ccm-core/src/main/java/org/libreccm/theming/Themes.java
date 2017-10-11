@@ -25,6 +25,7 @@ import org.libreccm.core.UnexpectedErrorException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Instance;
@@ -64,6 +65,17 @@ public class Themes {
         }
 
         return themes;
+    }
+    
+    public Optional<ThemeInfo> getTheme(final String name, final ThemeVersion version) {
+        
+        for(final ThemeProvider provider : providers) {
+            if (provider.providesTheme(name, version)) {
+                return provider.getThemeInfo(name, version);
+            }
+        }
+        
+        return Optional.empty();
     }
 
     public String process(Map<String, Object> page, ThemeInfo theme) {

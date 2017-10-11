@@ -65,6 +65,19 @@ public interface ThemeProvider {
     Optional<ThemeInfo> getThemeInfo(String theme, ThemeVersion version);
 
     /**
+     * This method can be used to determine if a theme provider provides a
+     * specific theme.
+     *
+     * @param theme   The name of the theme.
+     * @param version The version. Implementations which do not support
+     *                live/draft themes should ignore this parameter.
+     *
+     * @return {@code true} if the provider has a theme with the provided name
+     *         in the provided version, {@code false} otherwise.
+     */
+    boolean providesTheme(String theme, ThemeVersion version);
+
+    /**
      * List all files in a theme at the specified path.
      *
      * @param theme   The theme of which the files are listed.

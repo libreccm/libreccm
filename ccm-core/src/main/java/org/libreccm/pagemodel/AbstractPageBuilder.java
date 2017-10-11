@@ -29,9 +29,6 @@ import java.util.Optional;
  * interface providing some functionality needed by all implementations of the
  * {@link PageBuilder} interface.
  *
- * @param <P> Generics variable for the class which represents the page created
- *            by the {@link PageBuilder}.
- *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  *
  */
@@ -47,18 +44,23 @@ public abstract class AbstractPageBuilder implements PageBuilder {
      * the component objects created by the {@link ComponentBuilder}s are added
      * to the page.
      *
-     * @param pageModel The {@link PageModel\ to process.
+     * @param pageModel  The {@link PageModel} to process.
+     * @param parameters Parameters provided by application which wants to
+     *                   render a {@link PageModel}. The parameters are passed
+     *                   the {@link ComponentBuilder}s.
      *
      * @return A page containing all components from the {@link PageModel}.
      */
     @Override
-    public Map<String, Object> buildPage(final PageModel pageModel) {
-        
-        final Map<String, Object> page = buildPage();
+    public Map<String, Object> buildPage(final PageModel pageModel,
+                                         final Map<String, Object> parameters) {
+
+        final Map<String, Object> page = buildPage(parameters);
 
         for (final ComponentModel componentModel : pageModel.getComponents()) {
             final Optional<Object> component = buildComponent(
-                componentModel, componentModel.getClass());
+                componentModel, componentModel.getClass(),
+                parameters);
             if (component.isPresent()) {
                 page.put(componentModel.getIdAttribute(),
                          component);
@@ -75,12 +77,16 @@ public abstract class AbstractPageBuilder implements PageBuilder {
      *                            created.
      * @param componentModel      The {@link ComponentModel} to process.
      * @param componentModelClass The class of the {@link ComponentModel}.
+     * @param parameters          Parameters provided by application which wants
+     *                            to render a {@link PageModel}. The parameters
+     *                            are passed the {@link ComponentBuilder}s.
      *
      * @return The components described by the {@code componentModel}.
      */
     protected <M extends ComponentModel> Optional<Object> buildComponent(
         final ComponentModel componentModel,
-        final Class<M> componentModelClass) {
+        final Class<M> componentModelClass,
+        final Map<String, Object> parameters) {
 
         componentBuilderManager.findComponentBuilder(componentModel.getClass());
 
@@ -90,7 +96,7 @@ public abstract class AbstractPageBuilder implements PageBuilder {
         if (builder.isPresent()) {
             @SuppressWarnings("unchecked")
             final M model = (M) componentModel;
-            return Optional.of(builder.get().buildComponent(model));
+            return Optional.of(builder.get().buildComponent(model, parameters));
         } else {
             return Optional.empty();
         }
