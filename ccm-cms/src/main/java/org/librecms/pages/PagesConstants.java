@@ -16,29 +16,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.sites;
-
-import org.libreccm.core.CcmObjectRepository;
-
-import javax.enterprise.context.RequestScoped;
-import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
+package org.librecms.pages;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@RequestScoped
-public class SiteRepository extends CcmObjectRepository {
+public final class PagesConstants {
 
-    @Transactional(Transactional.TxType.REQUIRED)
-    public Site findByName(final String name) {
-
-        final TypedQuery<Site> query = getEntityManager()
-            .createNamedQuery("Site.findByName", Site.class);
-        query.setParameter("name", name);
-
-        return query.getSingleResult();
+    private PagesConstants() {
+        //Nothing
     }
+
+    public static final String CATEGORIZATION_TYPE_PAGE_MODEL_INDEX
+                               = "page_model_index";
+    public static final String CATEGORIZATION_TYPE_PAGE_MODEL_ITEM
+                               = "page_model_item";
 
 }

@@ -16,15 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.sites;
+package org.librecms.pages;
 
 import org.libreccm.categorization.Domain;
+import org.libreccm.sites.Site;
 import org.libreccm.web.CcmApplication;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
@@ -39,48 +39,50 @@ import static org.librecms.CmsConstants.*;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "SITES", schema = DB_SCHEMA)
+@Table(name = "PAGES", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(
-        name = "Site.findByName",
-        query = "SELECT s FROM Site s WHERE s.name = :name"
+        name = "Pages.findForSite",
+        query = "SELECT p FROM Pages p JOIN p.site s "
+                    + "WHERE s.domainOfSite = :domain")
+    ,
+    @NamedQuery(
+        name = "Pages.findForDefaultSite",
+        query = "SELECT p FROM Pages p JOIN p.site s "
+                    + "WHERE s.defaultSite = true"
     )
+    ,
+    @NamedQuery(
+        name = "Pages.availableForSite",
+        query = "SELECT (CASE WHEN COUNT(s) > 0 THEN true ELSE false END) "
+                    + "FROM Pages p JOIN p.site s "
+                    + "WHERE s.domainOfSite = :domain")
+    ,
+    @NamedQuery(
+        name = "Pages.availableForDefaultSite",
+        query = "SELECT (CASE WHEN COUNT(p) > 0 THEN true ELSE false END) "
+                    + "FROM Pages p JOIN p.site s "
+                    + "WHERE s.defaultSite = true"),
+
 })
-public class Site extends CcmApplication implements Serializable {
+public class Pages extends CcmApplication implements Serializable {
 
     private static final long serialVersionUID = -352205318143692477L;
 
-    /**
-     * The domain of the site.
-     */
-    @Column(name = "NAME", unique = true)
-    private String name;
-
-    /**
-     * Should this be the default site which is used when there is no matching
-     * site?
-     */
-    @Column(name = "DEFAULT_SITE")
-    private boolean defaultSite;
+    @OneToOne
+    @JoinColumn(name = "SITE_ID")
+    private Site site;
 
     @OneToOne
     @JoinColumn(name = "CATEGORY_DOMAIN_ID")
     private Domain categoryDomain;
 
-    public String getName() {
-        return name;
+    public Site getSite() {
+        return site;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public boolean isDefaultSite() {
-        return defaultSite;
-    }
-
-    public void setDefaultSite(boolean defaultSite) {
-        this.defaultSite = defaultSite;
+    protected void setSite(final Site site) {
+        this.site = site;
     }
 
     public Domain getCategoryDomain() {
@@ -94,9 +96,8 @@ public class Site extends CcmApplication implements Serializable {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 17 * hash + Objects.hashCode(name);
-        hash = 17 * hash + (defaultSite ? 1 : 0);
         hash = 17 * hash + Objects.hashCode(categoryDomain);
+        hash = 17 * hash + Objects.hashCode(site);
         return hash;
     }
 
@@ -115,19 +116,16 @@ public class Site extends CcmApplication implements Serializable {
             return false;
         }
 
-        if (!(obj instanceof Site)) {
+        if (!(obj instanceof Pages)) {
             return false;
         }
 
-        final Site other = (Site) obj;
+        final Pages other = (Pages) obj;
         if (!other.canEqual(this)) {
             return false;
         }
 
-        if (!Objects.equals(name, other.getName())) {
-            return false;
-        }
-        if (defaultSite != other.isDefaultSite()) {
+        if (!Objects.equals(site, other.getSite())) {
             return false;
         }
 
@@ -136,17 +134,15 @@ public class Site extends CcmApplication implements Serializable {
 
     @Override
     public boolean canEqual(final Object obj) {
-        return obj instanceof Site;
+        return obj instanceof Pages;
     }
 
     @Override
     public String toString(final String data) {
 
         return super.toString(String.format(
-            ", name = \"%s\","
-                + "defaultSite = %b%s",
-            name,
-            defaultSite,
+            ", site = \"%s\"%s",
+            Objects.toString(site),
             data
         ));
     }

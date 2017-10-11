@@ -30,6 +30,7 @@ import java.util.Map;
  */
 public interface ComponentBuilder<M extends ComponentModel> {
 
-    Map<String, Object> buildComponent(M componentModel);
+    Map<String, Object> buildComponent(M componentModel,
+                                       final Map<String, Object> parameters);
 
 }
