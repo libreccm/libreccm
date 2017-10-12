@@ -50,7 +50,7 @@ public class PageModelRepository extends AbstractEntityRepository<Long, PageMode
             throw new IllegalArgumentException("PageModel can't be null.");
         }
 
-        return pageModel.getObjectId() == 0;
+        return pageModel.getPageModelId() == 0;
     }
 
     /**
