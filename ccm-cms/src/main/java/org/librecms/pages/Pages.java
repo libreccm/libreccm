@@ -63,26 +63,6 @@ import static org.librecms.CmsConstants.*;
         query = "SELECT (CASE WHEN COUNT(p) > 0 THEN true ELSE false END) "
                     + "FROM Pages p JOIN p.site s "
                     + "WHERE s.defaultSite = true")
-    ,
-    @NamedQuery(
-        name = "Pages.findPageModelForIndexPage",
-        query = "SELECT DISTINCT m "
-                    + "FROM PageModel m "
-                    + "JOIN m.categories c "
-                    + "WHERE c.category = :category "
-                    + "AND c.type = '"
-                + PagesConstants.CATEGORIZATION_TYPE_PAGE_MODEL_INDEX + "' "
-                    + "AND m.version = :version")
-    ,
-    @NamedQuery(
-        name = "Pages.findPageModelForItemPage",
-        query = "SELECT DISTINCT m "
-                    + "FROM PageModel m "
-                    + "JOIN m.categories c "
-                    + "WHERE c.category = :category "
-                    + "AND c.type = '"
-                + PagesConstants.CATEGORIZATION_TYPE_PAGE_MODEL_ITEM + "' "
-                    + "AND m.version = :version")
 })
 public class Pages extends CcmApplication implements Serializable {
 
