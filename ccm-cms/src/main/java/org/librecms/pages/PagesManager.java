@@ -18,19 +18,29 @@
  */
 package org.librecms.pages;
 
+import org.libreccm.categorization.Domain;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public final class PagesConstants {
-
-    private PagesConstants() {
-        //Nothing
+@RequestScoped
+public class PagesManager {
+    
+    @Inject
+    private PagesRepository pagesRepo; 
+    
+    public Pages createPages(final Domain domain) {
+        
+        final Pages pages = new Pages();
+        pages.setCategoryDomain(domain);
+        
+        pagesRepo.save(pages);
+        
+        return pages;
     }
-
-    public static final String CATEGORIZATION_TYPE_PAGE_MODEL_INDEX
-                               = "page_model_index";
-    public static final String CATEGORIZATION_TYPE_PAGE_MODEL_ITEM
-                               = "page_model_item";
-
+    
 }

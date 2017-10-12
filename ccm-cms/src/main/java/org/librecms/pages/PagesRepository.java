@@ -69,40 +69,6 @@ public class PagesRepository extends AbstractEntityRepository<Long, Pages> {
         }
     }
 
-    @Transactional(Transactional.TxType.REQUIRED)
-    public Optional<PageModel> findPageModelForIndexPage(
-        final Category category,
-        final PageModelVersion version) {
-
-        final TypedQuery<PageModel> query = getEntityManager()
-            .createNamedQuery("Pages.findPageModelForIndexPage", PageModel.class);
-        query.setParameter("category", category);
-        query.setParameter("version", version.toString());
-        
-        try {
-            return Optional.of(query.getSingleResult());
-        } catch(NoResultException ex) {
-            return Optional.empty();
-        }
-    }
-    
-    @Transactional(Transactional.TxType.REQUIRED)
-    public Optional<PageModel> findPageModelForItemPage(
-        final Category category,
-        final PageModelVersion version) {
-
-        final TypedQuery<PageModel> query = getEntityManager()
-            .createNamedQuery("Pages.findPageModelForItemPage", PageModel.class);
-        query.setParameter("category", category);
-        query.setParameter("version", version.toString());
-        
-        try {
-            return Optional.of(query.getSingleResult());
-        } catch(NoResultException ex) {
-            return Optional.empty();
-        }
-    }
-
     @Override
     public Class<Pages> getEntityClass() {
         return Pages.class;
