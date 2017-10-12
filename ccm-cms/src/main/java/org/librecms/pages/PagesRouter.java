@@ -23,7 +23,6 @@ import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.pagemodel.PageModel;
 import org.libreccm.pagemodel.PageModelManager;
-import org.libreccm.pagemodel.PageModelVersion;
 import org.libreccm.sites.Site;
 import org.libreccm.sites.SiteRepository;
 import org.libreccm.theming.ThemeInfo;
@@ -32,7 +31,6 @@ import org.libreccm.theming.Themes;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -76,6 +74,12 @@ public class PagesRouter {
     private PageModelManager pageModelManager;
 
     @Inject
+    private PageRepository pageRepo;
+
+    @Inject
+    private PageManager pageManager;
+
+    @Inject
     private SiteRepository siteRepo;
 
     @Inject
@@ -84,7 +88,7 @@ public class PagesRouter {
     @Path("/index.{lang}.html")
     @Produces("text/html")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String getCategoryIndexPage(
+    public String getCategoryIndexPageAsHtml(
         @Context
         final UriInfo uriInfo,
         @PathParam("page")
@@ -126,19 +130,18 @@ public class PagesRouter {
             page,
             domain)));
 
-        final Optional<PageModel> pageModel = pagesRepo
-            .findPageModelForIndexPage(category,
-                                       PageModelVersion
-                                           .valueOf(pageModelVersion));
+        final Page pageConf = pageManager.findPageForCategory(category);
+
+        final PageModel pageModel = pageConf.getIndexPageModel();
 
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("currentCategory", category);
 
         final Map<String, Object> buildResult;
-        if (pageModel.isPresent()) {
-            buildResult = pageBuilder.buildPage(pageModel.get(), parameters);
-        } else {
+        if (pageModel == null) {
             buildResult = pageBuilder.buildPage(parameters);
+        } else {
+            buildResult = pageBuilder.buildPage(pageModel, parameters);
         }
 
         final ThemeInfo themeInfo;
@@ -163,11 +166,11 @@ public class PagesRouter {
 
         return themes.process(buildResult, themeInfo);
     }
-    
-    @Path("/index.{lang}.tree")
+
+    @Path("/index.{lang}.json")
     @Produces("text/html")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String getCategoryIndexPageTree(
+    public String getCategoryIndexPageAsJson(
         @Context
         final UriInfo uriInfo,
         @PathParam("page")
@@ -183,7 +186,30 @@ public class PagesRouter {
         @QueryParam("pagemodel-version")
         @DefaultValue("LIVE")
         final String pageModelVersion) {
-        
+
+        throw new UnsupportedOperationException();
+    }
+    
+    @Path("/index.{lang}.xml")
+    @Produces("text/html")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String getCategoryIndexPageAsXml(
+        @Context
+        final UriInfo uriInfo,
+        @PathParam("page")
+        final String page,
+        @PathParam("lang")
+        final String language,
+        @QueryParam("theme")
+        @DefaultValue("--DEFAULT--")
+        final String theme,
+        @QueryParam("theme-version")
+        @DefaultValue("LIVE")
+        final String themeVersion,
+        @QueryParam("pagemodel-version")
+        @DefaultValue("LIVE")
+        final String pageModelVersion) {
+
         throw new UnsupportedOperationException();
     }
 
