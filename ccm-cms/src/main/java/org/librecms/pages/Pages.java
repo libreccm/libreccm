@@ -39,7 +39,7 @@ import static org.librecms.CmsConstants.*;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "PAGES", schema = DB_SCHEMA)
+@Table(name = "PAGES_APP", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(
         name = "Pages.findForSite",
