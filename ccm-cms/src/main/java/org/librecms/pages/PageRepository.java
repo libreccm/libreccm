@@ -69,7 +69,7 @@ public class PageRepository extends AbstractEntityRepository<Long, Page>{
 
     @Override
     public boolean isNew(final Page page) {
-        return page.getPageId() == 0;
+        return page.getObjectId() == 0;
     }
     
     

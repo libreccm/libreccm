@@ -2,7 +2,8 @@ drop schema if exists CCM_CORE;
 
 drop sequence if exists HIBERNATE_SEQUENCE;
 
-create schema CCM_CORE;
+
+    create schema CCM_CORE;
 
     create table CCM_CORE.APPLICATIONS (
         APPLICATION_TYPE varchar(1024) not null,
@@ -529,11 +530,11 @@ create schema CCM_CORE;
         SETTING_ID bigint not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
-        SETTING_VALUE_BOOLEAN boolean,
-        SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         SETTING_VALUE_LONG bigint,
+        SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         SETTING_VALUE_DOUBLE double,
         SETTING_VALUE_STRING varchar(1024),
+        SETTING_VALUE_BOOLEAN boolean,
         primary key (SETTING_ID)
     );
 
@@ -552,6 +553,14 @@ create schema CCM_CORE;
     create table CCM_CORE.SETTINGS_STRING_LIST (
         LIST_ID bigint not null,
         value varchar(255)
+    );
+
+    create table CCM_CORE.SITES (
+        DEFAULT_SITE boolean,
+        DEFAULT_THEME varchar(255),
+        DOMAIN_OF_SITE varchar(255),
+        OBJECT_ID bigint not null,
+        primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.THREADS (
@@ -678,6 +687,9 @@ create schema CCM_CORE;
 
     alter table CCM_CORE.SETTINGS 
         add constraint UK5whinfxdaepqs09e5ia9y71uk unique (CONFIGURATION_CLASS, NAME);
+
+    alter table CCM_CORE.SITES 
+        add constraint UK_kou1h4y4st2m173he44yy8grx unique (DOMAIN_OF_SITE);
 
     alter table CCM_CORE.WORKFLOW_TASK_COMMENTS 
         add constraint UK_4nnedf08odyjxalfkg16fmjoi unique (UUID);
@@ -1104,6 +1116,11 @@ create schema CCM_CORE;
         add constraint FKqeclqa5sf1g53vxs857tpwrus 
         foreign key (LIST_ID) 
         references CCM_CORE.SETTINGS;
+
+    alter table CCM_CORE.SITES 
+        add constraint FKrca95c6p023men53b8ayu26kp 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.CCM_OBJECTS;
 
     alter table CCM_CORE.THREADS 
         add constraint FKsx08mpwvwnw97uwdgjs76q39g 

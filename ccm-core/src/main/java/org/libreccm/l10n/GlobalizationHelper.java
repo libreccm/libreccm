@@ -178,6 +178,12 @@ public class GlobalizationHelper {
 
         return selected;
     }
+    
+    public void setSelectedLocale(final Locale locale) {
+        
+        final HttpSession session = request.getSession(true);
+        session.setAttribute(LANG_PARAM, locale.toString());
+    }
 
     /**
      * Retrieve the {@link ResourceBundle} identified by {@code name} for the
