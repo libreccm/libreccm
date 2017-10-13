@@ -1203,4 +1203,3 @@ drop sequence if exists HIBERNATE_SEQUENCE;
     alter table CCM_CORE.WORKFLOWS 
         add constraint FK9ray5beiny6wm2mi0uwyecay2 
         foreign key (TEMPLATE_ID) 
-        references CCM_CORE.WORKFLOWS;

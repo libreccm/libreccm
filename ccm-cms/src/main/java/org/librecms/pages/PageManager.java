@@ -19,6 +19,7 @@
 package org.librecms.pages;
 
 import org.libreccm.categorization.Category;
+import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.CategoryRepository;
 
 import java.util.Optional;
@@ -35,8 +36,11 @@ import javax.transaction.Transactional;
 public class PageManager {
 
     @Inject
+    private CategoryManager categoryManager;
+    
+    @Inject
     private CategoryRepository categoryRepo;
-
+    
     @Inject
     private PageRepository pageRepo;
 
@@ -66,9 +70,8 @@ public class PageManager {
     public Page createPageForCategory(final Category category) {
 
         final Page page = new Page();
-        page.setCategory(category);
-
         pageRepo.save(page);
+        categoryManager.addObjectToCategory(page, category);
 
         return page;
     }

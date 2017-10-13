@@ -18,14 +18,11 @@
  */
 package org.librecms.pages;
 
-import org.libreccm.categorization.Category;
 
 import org.libreccm.core.AbstractEntityRepository;
 import org.libreccm.core.CoreConstants;
-import org.libreccm.pagemodel.PageModelVersion;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.sites.SiteRepository;
-import org.libreccm.pagemodel.PageModel;
 
 import java.util.Optional;
 

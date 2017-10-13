@@ -4,6 +4,7 @@ drop schema if exists CCM_CORE cascade;
 drop sequence if exists HIBERNATE_SEQUENCE;
 
     create schema CCM_CMS;
+
     create schema CCM_CORE;
 
     create table CCM_CMS.ARTICLE_TEXTS (
@@ -771,6 +772,28 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         primary key (REV, OBJECT_ID, LOCALIZED_VALUE, LOCALE)
     );
 
+    create table CCM_CMS.PAGE_THEME_CONFIGURATIONS (
+        PAGE_ID int8 not null,
+        INDEX_PAGE_TEMPLATE varchar(255),
+        ITEM_PAGE_TEMPLATE varchar(255),
+        THEME varchar(255) not null,
+        primary key (PAGE_ID, THEME)
+    );
+
+    create table CCM_CMS.PAGES (
+        OBJECT_ID int8 not null,
+        INDEX_PAGE_MODEL_ID int8,
+        ITEM_PAGE_MODEL_ID int8,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CMS.PAGES_APP (
+        OBJECT_ID int8 not null,
+        CATEGORY_DOMAIN_ID int8,
+        SITE_ID int8,
+        primary key (OBJECT_ID)
+    );
+
     create table CCM_CMS.RELATED_LINKS (
         OBJECT_ID int8 not null,
         BOOKMARK_ID int8,
@@ -814,14 +837,6 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         primary key (OBJECT_ID, REV)
     );
 
-    create table CCM_CMS.SITES (
-        DEFAULT_SITE boolean,
-        NAME varchar(255),
-        OBJECT_ID int8 not null,
-        CATEGORY_DOMAIN_ID int8,
-        primary key (OBJECT_ID)
-    );
-
     create table CCM_CMS.VIDEO_ASSETS (
         HEIGHT int8,
         WIDTH int8,
@@ -850,9 +865,6 @@ drop sequence if exists HIBERNATE_SEQUENCE;
 
     alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
         add constraint UK_goj42ghwu4tf1akfb2r6ensns unique (WORKFLOW_TEMPLATE_ID);
-
-    alter table CCM_CMS.SITES 
-        add constraint UK_fgjx0nuuxlgnuit724a96vw81 unique (NAME);
 
     create table CCM_CORE.APPLICATIONS (
         APPLICATION_TYPE varchar(1024) not null,
@@ -1379,11 +1391,11 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         SETTING_ID int8 not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
-        SETTING_VALUE_BOOLEAN boolean,
-        SETTING_VALUE_STRING varchar(1024),
         SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
-        SETTING_VALUE_LONG int8,
+        SETTING_VALUE_STRING varchar(1024),
         SETTING_VALUE_DOUBLE float8,
+        SETTING_VALUE_LONG int8,
+        SETTING_VALUE_BOOLEAN boolean,
         primary key (SETTING_ID)
     );
 
@@ -1402,6 +1414,14 @@ drop sequence if exists HIBERNATE_SEQUENCE;
     create table CCM_CORE.SETTINGS_STRING_LIST (
         LIST_ID int8 not null,
         value varchar(255)
+    );
+
+    create table CCM_CORE.SITES (
+        DEFAULT_SITE boolean,
+        DEFAULT_THEME varchar(255),
+        DOMAIN_OF_SITE varchar(255),
+        OBJECT_ID int8 not null,
+        primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.THREADS (
@@ -1528,6 +1548,9 @@ drop sequence if exists HIBERNATE_SEQUENCE;
 
     alter table CCM_CORE.SETTINGS 
         add constraint UK5whinfxdaepqs09e5ia9y71uk unique (CONFIGURATION_CLASS, NAME);
+
+    alter table CCM_CORE.SITES 
+        add constraint UK_kou1h4y4st2m173he44yy8grx unique (DOMAIN_OF_SITE);
 
     alter table CCM_CORE.WORKFLOW_TASK_COMMENTS 
         add constraint UK_4nnedf08odyjxalfkg16fmjoi unique (UUID);
@@ -2220,6 +2243,41 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         foreign key (REVEND) 
         references CCM_CORE.CCM_REVISIONS;
 
+    alter table CCM_CMS.PAGE_THEME_CONFIGURATIONS 
+        add constraint FK6l6xp6ex6sh2uuxfmeekf6ckn 
+        foreign key (PAGE_ID) 
+        references CCM_CMS.PAGES;
+
+    alter table CCM_CMS.PAGES 
+        add constraint FKqweb08d151ot4ij9io72w3yhx 
+        foreign key (INDEX_PAGE_MODEL_ID) 
+        references CCM_CORE.PAGE_MODELS;
+
+    alter table CCM_CMS.PAGES 
+        add constraint FKg2p2ahbayc2coei72pk1lnenf 
+        foreign key (ITEM_PAGE_MODEL_ID) 
+        references CCM_CORE.PAGE_MODELS;
+
+    alter table CCM_CMS.PAGES 
+        add constraint FKmgmth087tmxwieujn2vs5opbo 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.CCM_OBJECTS;
+
+    alter table CCM_CMS.PAGES_APP 
+        add constraint FK5swx0e8pj0mm5t1es0lj4nwlx 
+        foreign key (CATEGORY_DOMAIN_ID) 
+        references CCM_CORE.CATEGORY_DOMAINS;
+
+    alter table CCM_CMS.PAGES_APP 
+        add constraint FK3wkyn4oxa65f7svtj917m61jc 
+        foreign key (SITE_ID) 
+        references CCM_CORE.SITES;
+
+    alter table CCM_CMS.PAGES_APP 
+        add constraint FKrrk4g7my3e4qkdoeiygkqxduy 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.APPLICATIONS;
+
     alter table CCM_CMS.RELATED_LINKS 
         add constraint FKb517dnfj56oby2s34jp1omuim 
         foreign key (BOOKMARK_ID) 
@@ -2264,16 +2322,6 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         add constraint FKl5pkg9mp2ymc2uo4kmlubyp3m 
         foreign key (OBJECT_ID, REV) 
         references CCM_CMS.ASSETS_AUD;
-
-    alter table CCM_CMS.SITES 
-        add constraint FKmiysfmv1nkcso6bm18sjhvtm8 
-        foreign key (CATEGORY_DOMAIN_ID) 
-        references CCM_CORE.CATEGORY_DOMAINS;
-
-    alter table CCM_CMS.SITES 
-        add constraint FK5kmn26x72uue9t3dfnjwes45 
-        foreign key (OBJECT_ID) 
-        references CCM_CORE.APPLICATIONS;
 
     alter table CCM_CMS.VIDEO_ASSETS 
         add constraint FKjuywvv7wq9pyid5b6ivyrc0yk 
@@ -2709,6 +2757,11 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         add constraint FKqeclqa5sf1g53vxs857tpwrus 
         foreign key (LIST_ID) 
         references CCM_CORE.SETTINGS;
+
+    alter table CCM_CORE.SITES 
+        add constraint FKrca95c6p023men53b8ayu26kp 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.CCM_OBJECTS;
 
     alter table CCM_CORE.THREADS 
         add constraint FKsx08mpwvwnw97uwdgjs76q39g 
