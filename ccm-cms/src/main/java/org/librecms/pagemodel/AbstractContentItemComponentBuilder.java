@@ -18,19 +18,19 @@
  */
 package org.librecms.pagemodel;
 
-import org.libreccm.categorization.Category;
+import com.arsdigita.kernel.KernelConfig;
+
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.CategoryRepository;
-import org.libreccm.core.CcmObject;
+import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.UnexpectedErrorException;
-import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.l10n.LocalizedString;
 import org.libreccm.pagemodel.ComponentBuilder;
-import org.libreccm.pagemodel.ComponentModelType;
+import org.libreccm.pagemodel.ComponentModel;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemL10NManager;
 import org.librecms.contentsection.ContentItemManager;
-import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import java.beans.BeanInfo;
@@ -39,14 +39,14 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
@@ -58,119 +58,93 @@ import static org.librecms.pages.PagesConstants.*;
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * @param <T>
  */
-@RequestScoped
-@ComponentModelType(componentModel = GreetingItem.class)
-public class GreetingItemBuilder implements ComponentBuilder<GreetingItem> {
+public abstract class AbstractContentItemComponentBuilder<T extends ContentItemComponent>
+    implements ComponentBuilder<T> {
 
     @Inject
-    private GlobalizationHelper globalizationHelper;
-
-    @Inject
-    private CategoryRepository categoryRepo;
+    private ConfigurationManager confManager;
 
     @Inject
     private ContentItemL10NManager iteml10nManager;
 
     @Inject
-    private CategoryManager categoryManager;
-
-    @Inject
     private ContentItemManager itemManager;
-
-    @Inject
-    private ContentItemRepository itemRepo;
 
     @Inject
     private PermissionChecker permissionChecker;
 
+    protected abstract ContentItem getContentItem(
+        T componentModel, final Map<String, Object> parameters);
+
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public Map<String, Object> buildComponent(
-        final GreetingItem componentModel,
+        final T componentModel,
         final Map<String, Object> parameters) {
 
         Objects.requireNonNull(componentModel);
         Objects.requireNonNull(parameters);
 
-        if (!parameters.containsKey(PARAMETER_CATEGORY)) {
-            throw new IllegalArgumentException("The parameters map passed to "
-                                                   + "this GreetingItem component does not include the parameter "
-                                               + "\"category\"");
-        }
+        final ContentItem contentItem = getContentItem(componentModel,
+                                                       parameters);
 
-        if (!(parameters.get(PARAMETER_CATEGORY) instanceof Category)) {
-            throw new IllegalArgumentException(String
-                .format("The parameters map passed to "
-                            + "this GreetingItem component contains the parameter "
-                        + "\"category\", but the parameter is not of type"
-                            + "\"%s\" but of type \"%s\".",
-                        Category.class.getName(),
-                        parameters.get(PARAMETER_CATEGORY).getClass().getName()));
-        }
+        if (Boolean.TRUE.equals(parameters.get("showDraftItem"))) {
 
-        final Category category = categoryRepo
-            .findById(((CcmObject) parameters.get(PARAMETER_CATEGORY))
-                .getObjectId())
-            .orElseThrow(() -> new IllegalArgumentException(String.format(
-            "No category with ID %d in the database.",
-            ((CcmObject) parameters.get(PARAMETER_CATEGORY)).getObjectId())));
+            final ContentItem draftItem = itemManager
+                .getDraftVersion(contentItem, contentItem.getClass());
 
-        final Optional<CcmObject> indexObj = categoryManager
-            .getIndexObject(category);
+            if (permissionChecker.isPermitted(ItemPrivileges.PREVIEW, draftItem)) {
+                final Map<String, Object> result = generateItem(componentModel,
+                                                                parameters,
+                                                                draftItem);
+                result.put("showDraftItem", Boolean.TRUE);
 
-        if (indexObj.isPresent()) {
-
-            if (indexObj.get() instanceof ContentItem) {
-
-                final ContentItem indexItem;
-                if (itemManager.isLive((ContentItem) indexObj.get())) {
-                    indexItem = itemManager
-                        .getLiveVersion((ContentItem) indexObj.get(),
-                                        ContentItem.class)
-                        .get();
-                } else {
-                    throw new NotFoundException(String
-                        .format(
-                            "The index item %s of category %s does not have "
-                                + "a live version.",
-                            Objects.toString(indexObj),
-                            Objects.toString(category)));
-                }
-
-                if (permissionChecker.isPermitted(ItemPrivileges.VIEW_PUBLISHED,
-                                                  indexItem)) {
-                    return generateGreetingItem(componentModel,
-                                                parameters,
-                                                indexItem);
-                } else {
-                    throw new WebApplicationException(
-                        "You are not permitted to view the view version of this item.",
-                        Response.Status.UNAUTHORIZED);
-                }
+                return result;
             } else {
-                throw new NotFoundException(String
-                    .format("The index object %s of category %s is not a "
-                                + "ContentItem.",
-                            Objects.toString(indexObj),
-                            Objects.toString(category)));
+                throw new WebApplicationException(
+                    "You are not permitted to view the draft version of this item.",
+                    Response.Status.UNAUTHORIZED);
             }
+
         } else {
-            throw new NotFoundException(String
-                .format("The category %s does not have a index item.",
-                        Objects.toString(category)));
+
+            final ContentItem liveItem = itemManager
+                .getLiveVersion(contentItem, contentItem.getClass())
+                .orElseThrow(() -> new NotFoundException(
+                "This content item does not "
+                    + "have a live version."));
+
+            if (permissionChecker.isPermitted(ItemPrivileges.VIEW_PUBLISHED,
+                                              liveItem)) {
+                return generateItem(componentModel,
+                                    parameters,
+                                    liveItem);
+            } else {
+                throw new WebApplicationException(
+                    "You are not permitted to view the live version of "
+                        + "this item.",
+                    Response.Status.UNAUTHORIZED);
+            }
         }
     }
 
-    private Map<String, Object> generateGreetingItem(
-        final GreetingItem componentModel,
+    protected Map<String, Object> generateItem(
+        final T componentModel,
         final Map<String, Object> parameters,
         final ContentItem item) {
 
-        final String language = (String) parameters.get(PARAMETER_LANGUAGE);
+        final Locale language;
+        if (parameters.containsKey("language")) {
+            language = new Locale((String) parameters.get(PARAMETER_LANGUAGE));
+        } else {
+            final KernelConfig kernelConfig = confManager
+                .findConfiguration(KernelConfig.class);
+            language = kernelConfig.getDefaultLocale();
+        }
 
-        if (iteml10nManager.hasLanguage(item, new Locale(language))) {
-
+        if (iteml10nManager.hasLanguage(item, language)) {
             final BeanInfo beanInfo;
             try {
                 beanInfo = Introspector.getBeanInfo(item.getClass());
@@ -184,7 +158,11 @@ public class GreetingItemBuilder implements ComponentBuilder<GreetingItem> {
             final Map<String, Object> result = new HashMap<>();
 
             for (final PropertyDescriptor propertyDescriptor : properties) {
-                renderProperty(propertyDescriptor, componentModel, item, result);
+                renderProperty(propertyDescriptor,
+                               componentModel,
+                               language,
+                               item,
+                               result);
             }
 
             return result;
@@ -193,10 +171,11 @@ public class GreetingItemBuilder implements ComponentBuilder<GreetingItem> {
         }
     }
 
-    private void renderProperty(final PropertyDescriptor propertyDescriptor,
-                                final GreetingItem componentModel,
-                                final ContentItem item,
-                                final Map<String, Object> result) {
+    protected void renderProperty(final PropertyDescriptor propertyDescriptor,
+                                  final T componentModel,
+                                  final Locale language,
+                                  final ContentItem item,
+                                  final Map<String, Object> result) {
 
         final String propertyName = propertyDescriptor.getName();
         if (componentModel.getExcludedPropertyPaths().contains(propertyName)) {
@@ -207,26 +186,50 @@ public class GreetingItemBuilder implements ComponentBuilder<GreetingItem> {
         if (Collection.class.isAssignableFrom(propertyDescriptor
             .getPropertyType())) {
 
-            final Map<String, Object> associated;
+            final Collection<?> collection;
             try {
-                associated = generateAssociatedObject(readMethod.invoke(item));
+                collection = (Collection<?>) readMethod.invoke(item);
             } catch (IllegalAccessException | InvocationTargetException ex) {
-                throw new UnsupportedOperationException(ex);
+                throw new UnexpectedErrorException(ex);
             }
-            result.put(propertyName, associated);
+
+            final List<Map<String, Object>> associatedObjs = new ArrayList<>();
+            for (final Object obj : collection) {
+                associatedObjs.add(generateAssociatedObject(obj));
+            }
+
+            result.put(propertyName, associatedObjs);
         } else if (isValueType(propertyDescriptor.getPropertyType())) {
             try {
                 result.put(propertyName, readMethod.invoke(item));
             } catch (IllegalAccessException | InvocationTargetException ex) {
                 throw new UnexpectedErrorException(ex);
             }
+        } else if (LocalizedString.class.isAssignableFrom(propertyDescriptor
+            .getPropertyType())) {
+
+            final LocalizedString localizedString;
+            try {
+                localizedString = (LocalizedString) readMethod.invoke(item);
+            } catch (IllegalAccessException | InvocationTargetException ex) {
+                throw new UnexpectedErrorException(ex);
+            }
+
+            result.put(propertyName, localizedString.getValue(language));
         } else {
-            //ToDo
+            final Map<String, Object> associatedObj;
+            try {
+                associatedObj
+                    = generateAssociatedObject(readMethod.invoke(item));
+            } catch (IllegalAccessException | InvocationTargetException ex) {
+                throw new UnexpectedErrorException(ex);
+            }
+            result.put(propertyName, associatedObj);
         }
 
     }
 
-    private Map<String, Object> generateAssociatedObject(final Object obj) {
+    protected Map<String, Object> generateAssociatedObject(final Object obj) {
 
         final BeanInfo beanInfo;
         try {
@@ -247,7 +250,7 @@ public class GreetingItemBuilder implements ComponentBuilder<GreetingItem> {
                     result.put(propertyDescriptor.getName(),
                                readMethod.invoke(obj));
                 } catch (IllegalAccessException
-                         | InvocationTargetException ex) {
+                             | InvocationTargetException ex) {
                     throw new UnexpectedErrorException(ex);
                 }
             }
@@ -256,7 +259,7 @@ public class GreetingItemBuilder implements ComponentBuilder<GreetingItem> {
         return result;
     }
 
-    private boolean isValueType(final Class<?> typeToTest) {
+    protected boolean isValueType(final Class<?> typeToTest) {
         final Class<?>[] types = new Class<?>[]{
             Boolean.class,
             Boolean.TYPE,

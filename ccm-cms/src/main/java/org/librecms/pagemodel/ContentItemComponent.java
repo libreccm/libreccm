@@ -18,7 +18,6 @@
  */
 package org.librecms.pagemodel;
 
-import org.libreccm.categorization.Category;
 import org.libreccm.pagemodel.ComponentModel;
 import org.libreccm.pagemodel.PageModel;
 
@@ -36,16 +35,16 @@ import javax.persistence.Table;
 import static org.librecms.CmsConstants.*;
 
 /**
- * A {@link PageModel} component model for displaying the Greeting/Index item of
- * a {@link Category}.
+ * Basic {@link PageModel} component for displaying a content item. This class
+ * is not indented for direct use. The subclasses should be used instead.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "GREETING_ITEMS", schema = DB_SCHEMA)
-public class GreetingItem extends ComponentModel {
+@Table(name = "CONTENT_ITEM_COMPONENTS", schema = DB_SCHEMA)
+public class ContentItemComponent extends ComponentModel {
 
-    private static final long serialVersionUID = -5509783666595294223L;
+    private static final long serialVersionUID = 4904530823926147281L;
 
     @ElementCollection
     @CollectionTable(name = "GREETING_ITEM_INCLUDED_PATHS",
@@ -63,7 +62,7 @@ public class GreetingItem extends ComponentModel {
                      })
     private Set<String> excludedProperties;
 
-    public GreetingItem() {
+    public ContentItemComponent() {
         includedPropertyPaths = new HashSet<>();
         excludedProperties = new HashSet<>();
     }
@@ -121,10 +120,10 @@ public class GreetingItem extends ComponentModel {
         if (!super.equals(obj)) {
             return false;
         }
-        if (!(obj instanceof GreetingItem)) {
+        if (!(obj instanceof ContentItemComponent)) {
             return false;
         }
-        final GreetingItem other = (GreetingItem) obj;
+        final ContentItemComponent other = (ContentItemComponent) obj;
         if (!other.canEqual(this)) {
             return false;
         }
@@ -139,7 +138,7 @@ public class GreetingItem extends ComponentModel {
 
     @Override
     public boolean canEqual(final Object obj) {
-        return obj instanceof GreetingItem;
+        return obj instanceof ContentItemComponent;
     }
 
     @Override
