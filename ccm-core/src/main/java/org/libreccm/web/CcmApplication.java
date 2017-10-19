@@ -27,10 +27,10 @@ import org.libreccm.categorization.DomainOwnership;
 import org.libreccm.core.Resource;
 import org.libreccm.portation.Portable;
 
-import javax.persistence.*;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +39,16 @@ import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 import static org.libreccm.web.WebConstants.WEB_XML_NS;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 /**
  *
