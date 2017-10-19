@@ -20,13 +20,10 @@ package org.librecms.pagemodel;
 
 import com.arsdigita.kernel.KernelConfig;
 
-import org.libreccm.categorization.CategoryManager;
-import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.pagemodel.ComponentBuilder;
-import org.libreccm.pagemodel.ComponentModel;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemL10NManager;
@@ -40,12 +37,16 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -195,7 +196,7 @@ public abstract class AbstractContentItemComponentBuilder<T extends ContentItemC
 
             final List<Map<String, Object>> associatedObjs = new ArrayList<>();
             for (final Object obj : collection) {
-                associatedObjs.add(generateAssociatedObject(obj));
+                associatedObjs.add(generateAssociatedObject(obj, language));
             }
 
             result.put(propertyName, associatedObjs);
@@ -219,17 +220,115 @@ public abstract class AbstractContentItemComponentBuilder<T extends ContentItemC
         } else {
             final Map<String, Object> associatedObj;
             try {
-                associatedObj
-                    = generateAssociatedObject(readMethod.invoke(item));
+                associatedObj = generateAssociatedObject(
+                    readMethod.invoke(item), language);
             } catch (IllegalAccessException | InvocationTargetException ex) {
                 throw new UnexpectedErrorException(ex);
             }
             result.put(propertyName, associatedObj);
         }
 
+        final Set<String> includedPropertyPaths = componentModel
+            .getIncludedPropertyPaths();
+        final BeanInfo beanInfo;
+        try {
+            beanInfo = Introspector.getBeanInfo(item.getClass());
+        } catch (IntrospectionException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+        final Map<String, PropertyDescriptor> propertyDescriptors = Arrays
+            .stream(beanInfo.getPropertyDescriptors())
+            .collect(Collectors.toMap(PropertyDescriptor::getName,
+                                      descriptor -> descriptor));
+        for (final String propertyPath : includedPropertyPaths) {
+            final String[] pathTokens = propertyPath.split(".");
+            if (pathTokens.length < 3) {
+                continue;
+            }
+            if (!propertyDescriptors.containsKey(pathTokens[0])) {
+                continue;
+            }
+            final Object propResult = renderPropertyPath(
+                propertyDescriptors.get(pathTokens[0]),
+                Arrays.copyOfRange(pathTokens, 1, pathTokens.length),
+                language,
+                item);
+            if (propResult != null) {
+                result.put(propertyPath, propResult);
+            }
+        }
     }
 
-    protected Map<String, Object> generateAssociatedObject(final Object obj) {
+    protected Object renderPropertyPath(
+        final PropertyDescriptor propertyDescriptor,
+        final String[] propertyPath,
+        final Locale language,
+        final Object item) {
+
+        if (propertyPath.length == 1) {
+
+            final BeanInfo beanInfo;
+            try {
+                beanInfo = Introspector.getBeanInfo(item.getClass());
+            } catch (IntrospectionException ex) {
+                throw new UnexpectedErrorException(ex);
+            }
+            final Map<String, PropertyDescriptor> propertyDescriptors = Arrays
+                .stream(beanInfo.getPropertyDescriptors())
+                .collect(Collectors.toMap(PropertyDescriptor::getName,
+                                          descriptor -> descriptor));
+            if (propertyDescriptors.containsKey(propertyPath[0])) {
+                final Method readMethod = propertyDescriptors
+                .get(propertyPath[0])
+                .getReadMethod();
+                try {
+                    return readMethod.invoke(item);
+                } catch(IllegalAccessException | InvocationTargetException ex) {
+                    throw new UnexpectedErrorException(ex);
+                }
+            } else {
+                return null;
+            }
+            
+        } else {
+            final Method readMethod = propertyDescriptor.getReadMethod();
+            final Object obj;
+            try {
+                obj = readMethod.invoke(item);
+            } catch (IllegalAccessException | InvocationTargetException ex) {
+                throw new UnexpectedErrorException(ex);
+            }
+
+            if (isValueType(obj.getClass())) {
+                return null;
+            }
+
+            final BeanInfo beanInfo;
+            try {
+                beanInfo = Introspector.getBeanInfo(obj.getClass());
+            } catch (IntrospectionException ex) {
+                throw new UnexpectedErrorException(ex);
+            }
+
+            final Map<String, PropertyDescriptor> propertyDescriptors = Arrays
+                .stream(beanInfo.getPropertyDescriptors())
+                .collect(Collectors.toMap(PropertyDescriptor::getName,
+                                          descriptor -> descriptor));
+
+            if (propertyDescriptors.containsKey(propertyPath[0])) {
+                return renderPropertyPath(
+                    propertyDescriptors.get(propertyPath[0]),
+                    Arrays.copyOfRange(propertyPath, 1, propertyPath.length),
+                    language,
+                    item);
+            } else {
+                return null;
+            }
+        }
+    }
+
+    protected Map<String, Object> generateAssociatedObject(
+        final Object obj, final Locale language) {
 
         final BeanInfo beanInfo;
         try {
@@ -249,8 +348,17 @@ public abstract class AbstractContentItemComponentBuilder<T extends ContentItemC
                 try {
                     result.put(propertyDescriptor.getName(),
                                readMethod.invoke(obj));
-                } catch (IllegalAccessException
-                             | InvocationTargetException ex) {
+                } catch (IllegalAccessException | InvocationTargetException ex) {
+                    throw new UnexpectedErrorException(ex);
+                }
+            } else if (LocalizedString.class.isAssignableFrom(type)) {
+                final Method readMethod = propertyDescriptor.getReadMethod();
+                try {
+                    final LocalizedString str = (LocalizedString) readMethod
+                        .invoke(obj);
+                    result.put(propertyDescriptor.getName(),
+                               str.getValue(language));
+                } catch (IllegalAccessException | InvocationTargetException ex) {
                     throw new UnexpectedErrorException(ex);
                 }
             }
