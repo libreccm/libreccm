@@ -16,38 +16,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.pagemodel.contentitems;
+package org.librecms.pagemodel.assets;
 
-import org.librecms.contentsection.ContentItem;
+import org.librecms.assets.SideNote;
+import org.librecms.contentsection.Asset;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Locale;
+import java.util.Map;
 
-import javax.inject.Qualifier;
+import javax.enterprise.context.RequestScoped;
 
 /**
- * Qualifier annotation for implementations of
- * {@link AbstractContentItemRenderer}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Qualifier
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, 
-         ElementType.FIELD, 
-         ElementType.PARAMETER, 
-         ElementType.TYPE})
-public @interface ContentItemRenderer {
+@RequestScoped
+@AssetRenderer(renders = SideNote.class)
+public class SideNoteRenderer extends AbstractAssetRenderer {
 
-    /**
-     * The type of Item which can be rendered by the annotated content item
-     * renderer.
-     *
-     * @return
-     */
-    Class<? extends ContentItem> renders();
-
-    String mode() default "--DEFAULT--";
+    @Override
+    protected void renderAsset(final Asset asset, 
+                               final Locale language,
+                               final Map<String, Object> result) {
+        
+        final SideNote siteNote;
+        if (asset instanceof SideNote) {
+            siteNote = (SideNote) asset;
+        } else {
+            return;
+        }
+        
+        result.put("text", siteNote.getText().getValue(language));
+    }
+    
+    
+    
 }

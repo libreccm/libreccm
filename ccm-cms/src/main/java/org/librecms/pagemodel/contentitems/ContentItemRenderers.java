@@ -91,14 +91,7 @@ public class ContentItemRenderers {
                 return findRenderer(itemType);
             }
         } else {
-            final AbstractContentItemRenderer renderer = instance
-                .iterator()
-                .next();
-
-            @SuppressWarnings("unchecked")
-            final AbstractContentItemRenderer result
-                                                     = renderer;
-            return result;
+            return instance.iterator().next();
         }
 
     }
