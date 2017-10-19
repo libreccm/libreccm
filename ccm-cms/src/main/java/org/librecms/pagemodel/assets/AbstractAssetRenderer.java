@@ -16,38 +16,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.pagemodel.contentitems;
+package org.librecms.pagemodel.assets;
 
-import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.Asset;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import javax.inject.Qualifier;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 /**
- * Qualifier annotation for implementations of
- * {@link AbstractContentItemRenderer}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Qualifier
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, 
-         ElementType.FIELD, 
-         ElementType.PARAMETER, 
-         ElementType.TYPE})
-public @interface ContentItemRenderer {
+public abstract class AbstractAssetRenderer {
 
-    /**
-     * The type of Item which can be rendered by the annotated content item
-     * renderer.
-     *
-     * @return
-     */
-    Class<? extends ContentItem> renders();
+    public Map<String, Object> render(final Asset asset,
+                                      final Locale language) {
 
-    String mode() default "--DEFAULT--";
+        final Map<String, Object> result = new HashMap<>();
+
+        result.put("objectId", asset.getObjectId());
+        result.put("uuid", asset.getUuid());
+        result.put("displayName", asset.getDisplayName());
+        result.put("title", asset.getTitle().getValue(language));
+
+        renderAsset(asset, language, result);
+
+        return result;
+    }
+
+    protected abstract void renderAsset(final Asset asset,
+                                        final Locale language,
+                                        final Map<String, Object> result);
+
 }

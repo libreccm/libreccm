@@ -38,14 +38,14 @@ import java.util.ResourceBundle;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class ContentItemEditor extends Window {
+public class ContentItemEditor<T extends ContentItem> extends Window {
 
     private static final long serialVersionUID = 3341827053652019616L;
 
     private List<Component> authoringsSteps;
 
     public ContentItemEditor(final ContentSectionViewController controller,
-                             final ContentItem item) {
+                             final T item) {
 
         super();
 
@@ -101,7 +101,7 @@ public class ContentItemEditor extends Window {
 
     private Component createAuthoringStep(
         final ContentSectionViewController controller,
-        final ContentItem item,
+        final T item,
         final String componentClassName) {
 
         try {
@@ -111,7 +111,7 @@ public class ContentItemEditor extends Window {
 
             return stepClass
                 .getDeclaredConstructor(ContentSectionViewController.class,
-                                        ContentItem.class)
+                                        item.getClass())
                 .newInstance(controller, item);
         } catch (ClassNotFoundException
                  | NoSuchMethodException

@@ -21,6 +21,7 @@ package org.librecms.ui;
 import com.vaadin.cdi.ViewScoped;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.PermissionChecker;
+import org.libreccm.ui.LocalizedStringWidgetController;
 import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.FolderRepository;
 import org.librecms.contenttypes.ContentTypesManager;
@@ -50,6 +51,9 @@ public class ContentSectionViewController {
     private GlobalizationHelper globalizationHelper;
 
     @Inject
+    private LocalizedStringWidgetController localizedStringWidgetController;
+    
+    @Inject
     private PermissionChecker permissionChecker;
 
     @Inject
@@ -62,27 +66,31 @@ public class ContentSectionViewController {
         return browseDocumentsDataProvider;
     }
     
-    protected FolderBrowserFolderTreeDataProvider getFolderTreeDataProvider() {
+    public FolderBrowserFolderTreeDataProvider getFolderTreeDataProvider() {
         return folderTreeDataProvider;
     }
     
-    protected ContentTypesManager getContentTypesManager() {
+    public ContentTypesManager getContentTypesManager() {
         return contentTypesManager;
     }
 
-    protected FolderRepository getFolderRepository() {
+    public FolderRepository getFolderRepository() {
         return folderRepository;
     }
 
-    protected GlobalizationHelper getGlobalizationHelper() {
+    public GlobalizationHelper getGlobalizationHelper() {
         return globalizationHelper;
     }
 
-    protected PermissionChecker getPermissionChecker() {
+    public LocalizedStringWidgetController getLocalizedStringWidgetController() {
+        return localizedStringWidgetController;
+    }
+    
+    public PermissionChecker getPermissionChecker() {
         return permissionChecker;
     }
 
-    protected ContentSectionRepository getSectionRepository() {
+    public ContentSectionRepository getSectionRepository() {
         return sectionRepository;
     }
 

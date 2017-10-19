@@ -18,12 +18,19 @@
  */
 package org.librecms.pagemodel.contentitems;
 
+import org.librecms.pagemodel.assets.AbstractAssetRenderer;
+import org.librecms.contentsection.AttachmentList;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentType;
+import org.librecms.contentsection.ItemAttachment;
+import org.librecms.pagemodel.assets.AssetRenderers;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
 
 /**
  *
@@ -31,7 +38,10 @@ import java.util.Map;
  */
 public abstract class AbstractContentItemRenderer {
 
-    public Map<String, Object> render(final ContentItem item, 
+    @Inject
+    private AssetRenderers assetRenderers;
+
+    public Map<String, Object> render(final ContentItem item,
                                       final Locale language) {
 
         final Map<String, Object> result = new HashMap<>();
@@ -49,15 +59,21 @@ public abstract class AbstractContentItemRenderer {
         result.put("lastModified", item.getLastModified());
         result.put("creationUserName", item.getCreationUserName());
         result.put("lastModifyingUserName", item.getLastModifyingUserName());
+        result.put("attachments",
+                   item
+                       .getAttachments()
+                       .stream()
+                       .map(list -> renderAttachmentList(list, language))
+                       .collect(Collectors.toList()));
 
         renderItem(item, language, result);
-        
+
         return result;
     }
 
     protected abstract void renderItem(final ContentItem item,
-                                    final Locale language,
-                                    final Map<String, Object> result);
+                                       final Locale language,
+                                       final Map<String, Object> result);
 
     protected Map<String, Object> renderContentType(
         final ContentType contentType, final Locale language) {
@@ -68,6 +84,47 @@ public abstract class AbstractContentItemRenderer {
         result.put("uuid", contentType.getUuid());
         result.put("displayName", contentType.getDisplayName());
         result.put("label", contentType.getLabel().getValue(language));
+
+        return result;
+    }
+
+    protected Map<String, Object> renderAttachmentList(
+        final AttachmentList attachmentList,
+        final Locale language) {
+
+        final Map<String, Object> result = new HashMap<>();
+
+        result.put("listId", attachmentList.getListId());
+        result.put("uuid", attachmentList.getUuid());
+        result.put("name", attachmentList.getName());
+        result.put("order", attachmentList.getOrder());
+        result.put("title", attachmentList.getTitle().getValue(language));
+        result.put("description",
+                   attachmentList.getDescription().getValue(language));
+
+        result.put("attachments",
+                   attachmentList
+                       .getAttachments()
+                       .stream()
+                       .map(attachment -> renderAttachment(attachment, language))
+                       .collect(Collectors.toList()));
+
+        return result;
+    }
+
+    protected Map<String, Object> renderAttachment(
+        final ItemAttachment<?> attachment,
+        final Locale language) {
+
+        final Map<String, Object> result = new HashMap<>();
+
+        result.put("attachmentId", attachment.getAttachmentId());
+        result.put("uuid", attachment.getUuid());
+        result.put("sortKey", attachment.getSortKey());
+
+        final AbstractAssetRenderer renderer = assetRenderers
+            .findRenderer(attachment.getAsset().getClass());
+        result.put("asset", renderer.render(attachment.getAsset(), language));
 
         return result;
     }

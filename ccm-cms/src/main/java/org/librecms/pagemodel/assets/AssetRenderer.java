@@ -16,9 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.pagemodel.contentitems;
+package org.librecms.pagemodel.assets;
 
-import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.Asset;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -28,8 +28,6 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- * Qualifier annotation for implementations of
- * {@link AbstractContentItemRenderer}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -39,15 +37,8 @@ import javax.inject.Qualifier;
          ElementType.FIELD, 
          ElementType.PARAMETER, 
          ElementType.TYPE})
-public @interface ContentItemRenderer {
-
-    /**
-     * The type of Item which can be rendered by the annotated content item
-     * renderer.
-     *
-     * @return
-     */
-    Class<? extends ContentItem> renders();
-
-    String mode() default "--DEFAULT--";
+public @interface AssetRenderer {
+    
+    Class<? extends Asset> renders();
+    
 }
