@@ -18,6 +18,7 @@
  */
 package org.librecms.pagemodel.contentitems;
 
+import org.librecms.contentsection.ContentItem;
 import org.librecms.contenttypes.News;
 
 import java.util.Locale;
@@ -31,13 +32,20 @@ import javax.enterprise.context.RequestScoped;
  */
 @ContentItemRenderer(renders = News.class)
 @RequestScoped
-public class NewsRenderer extends AbstractContentItemRenderer<News> {
+public class NewsRenderer extends AbstractContentItemRenderer {
 
     @Override
-    public void renderItem(final News news,
+    public void renderItem(final ContentItem item,
                            final Locale language,
                            final Map<String, Object> result) {
 
+        final News news;
+        if (item instanceof News) {
+            news = (News) item;
+        } else {
+            return;
+        }
+        
         result.put("text", news.getText().getValue(language));
         result.put("releaseDate", news.getReleaseDate());
     }

@@ -18,6 +18,7 @@
  */
 package org.librecms.pagemodel.contentitems;
 
+import org.librecms.contentsection.ContentItem;
 import org.librecms.contenttypes.Article;
 
 import java.util.Locale;
@@ -31,13 +32,20 @@ import javax.enterprise.context.RequestScoped;
  */
 @ContentItemRenderer(renders = Article.class)
 @RequestScoped
-public class ArticleRenderer extends AbstractContentItemRenderer<Article> {
+public class ArticleRenderer extends AbstractContentItemRenderer {
 
     @Override
-    public void renderItem(final Article article,
+    public void renderItem(final ContentItem item,
                            final Locale language,
                            final Map<String, Object> result) {
 
+        final Article article;
+        if (item instanceof Article) {
+            article = (Article) item;
+        } else {
+            return;
+        }
+        
         result.put("text", article.getText().getValue(language));
 
     }

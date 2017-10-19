@@ -18,6 +18,7 @@
  */
 package org.librecms.pagemodel.contentitems;
 
+import org.librecms.contentsection.ContentItem;
 import org.librecms.contenttypes.MultiPartArticle;
 import org.librecms.contenttypes.MultiPartArticleSection;
 
@@ -31,14 +32,20 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ContentItemRenderer(renders = MultiPartArticle.class)
-public class MultiPartArticleRenderer
-    extends AbstractContentItemRenderer<MultiPartArticle> {
+public class MultiPartArticleRenderer    extends AbstractContentItemRenderer {
 
     @Override
-    public void renderItem(final MultiPartArticle article,
+    public void renderItem(final ContentItem item,
                            final Locale language,
                            final Map<String, Object> result) {
 
+        final MultiPartArticle article;
+        if (item instanceof MultiPartArticle) {
+            article = (MultiPartArticle) item;
+        } else {
+            return;
+        }
+        
         result.put("summary", article.getSummary().getValue(language));
         result.put("sections",
                    article

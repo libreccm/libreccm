@@ -18,6 +18,7 @@
  */
 package org.librecms.pagemodel.contentitems;
 
+import org.librecms.contentsection.ContentItem;
 import org.librecms.contenttypes.Event;
 
 import java.util.Locale;
@@ -28,12 +29,19 @@ import java.util.Map;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ContentItemRenderer(renders = Event.class)
-public class EventRenderer extends AbstractContentItemRenderer<Event> {
+public class EventRenderer extends AbstractContentItemRenderer {
 
     @Override
-    public void renderItem(final Event event,
+    public void renderItem(final ContentItem item,
                            final Locale language,
                            final Map<String, Object> result) {
+
+        final Event event;
+        if (item instanceof Event) {
+            event = (Event) item;
+        } else {
+            return;
+        }
 
         result.put("text", event.getText().getValue(language));
         result.put("startDate", event.getStartDate());
