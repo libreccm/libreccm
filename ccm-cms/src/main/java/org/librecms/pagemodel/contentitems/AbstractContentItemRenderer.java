@@ -28,11 +28,11 @@ import java.util.Map;
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * @param <T>
  */
-public abstract class AbstractContentItemRenderer<T extends ContentItem> {
+public abstract class AbstractContentItemRenderer {
 
-    public Map<String, Object> render(final T item, final Locale language) {
+    public Map<String, Object> render(final ContentItem item, 
+                                      final Locale language) {
 
         final Map<String, Object> result = new HashMap<>();
 
@@ -55,7 +55,7 @@ public abstract class AbstractContentItemRenderer<T extends ContentItem> {
         return result;
     }
 
-    public abstract void renderItem(final T item,
+    protected abstract void renderItem(final ContentItem item,
                                     final Locale language,
                                     final Map<String, Object> result);
 

@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -46,66 +47,21 @@ public class ContentItemComponent extends ComponentModel {
 
     private static final long serialVersionUID = 4904530823926147281L;
 
-    @ElementCollection
-    @CollectionTable(name = "GREETING_ITEM_INCLUDED_PATHS",
-                     schema = DB_SCHEMA,
-                     joinColumns = {
-                         @JoinColumn(name = "GREETING_ITEM_ID")
-                     })
-    private Set<String> includedPropertyPaths;
+    @Column(name = "MODE")
+    private String mode;
 
-    @ElementCollection
-    @CollectionTable(name = "GREETING_ITEM_EXCLUDED_PATHS",
-                     schema = DB_SCHEMA,
-                     joinColumns = {
-                         @JoinColumn(name = "GREETING_ITEM_ID")
-                     })
-    private Set<String> excludedProperties;
-
-    public ContentItemComponent() {
-        includedPropertyPaths = new HashSet<>();
-        excludedProperties = new HashSet<>();
+    public String getMode() {
+        return mode;
     }
 
-    public Set<String> getIncludedPropertyPaths() {
-        return Collections.unmodifiableSet(includedPropertyPaths);
-    }
-
-    protected void setIncludedPropertyPaths(
-        final Set<String> includePropertyPaths) {
-        this.includedPropertyPaths = new HashSet<>(includePropertyPaths);
-    }
-
-    public void addIncludedPropertyPath(final String path) {
-        includedPropertyPaths.add(path);
-    }
-
-    public void removeIncludedPropertyPath(final String path) {
-        includedPropertyPaths.remove(path);
-    }
-
-    public Set<String> getExcludedPropertyPaths() {
-        return Collections.unmodifiableSet(excludedProperties);
-    }
-
-    protected void setExcludedPropertyPaths(
-        final Set<String> excludedProperties) {
-        this.excludedProperties = new HashSet<>(excludedProperties);
-    }
-
-    public void addExcludedProperty(final String path) {
-        excludedProperties.add(path);
-    }
-
-    public void removeExcludedProperty(final String path) {
-        excludedProperties.remove(path);
+    public void setMode(final String mode) {
+        this.mode = mode;
     }
 
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 13 * hash + Objects.hashCode(includedPropertyPaths);
-        hash = 13 * hash + Objects.hashCode(excludedProperties);
+        hash = 13 * hash + Objects.hashCode(mode);
         return hash;
     }
 
@@ -128,12 +84,7 @@ public class ContentItemComponent extends ComponentModel {
             return false;
         }
 
-        if (!Objects.equals(includedPropertyPaths,
-                            other.getIncludedPropertyPaths())) {
-            return false;
-        }
-        return Objects.equals(excludedProperties,
-                              other.getExcludedPropertyPaths());
+        return Objects.equals(mode, other.getMode());
     }
 
     @Override
@@ -144,10 +95,8 @@ public class ContentItemComponent extends ComponentModel {
     @Override
     public String toString(final String data) {
         return super.toString(String
-            .format(", includedPropertyPaths = %s, "
-                        + "excludedProperties = %s%s",
-                    Objects.toString(includedPropertyPaths),
-                    Objects.toString(excludedProperties),
+            .format(", mode = \"%s\"",
+                    Objects.toString(mode),
                     data));
     }
 

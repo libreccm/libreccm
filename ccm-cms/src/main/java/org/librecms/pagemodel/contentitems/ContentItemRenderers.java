@@ -41,18 +41,18 @@ public class ContentItemRenderers {
         .getLogger(ContentItemRenderers.class);
 
     @Inject
-    private Instance<AbstractContentItemRenderer<?>> renderers;
+    private Instance<AbstractContentItemRenderer> renderers;
 
-    public <T extends ContentItem> AbstractContentItemRenderer<T> findRenderer(
-        final Class<T> itemType) {
+    public AbstractContentItemRenderer findRenderer(
+        final Class<? extends ContentItem> itemType) {
 
         LOGGER.debug("Trying to find default renderer for item type \"{}\"...",
                      itemType.getName());
         return findRenderer(itemType, "--DEFAULT--");
     }
 
-    public <T extends ContentItem> AbstractContentItemRenderer<T> findRenderer(
-        final Class<T> itemType, final String mode) {
+    public AbstractContentItemRenderer findRenderer(
+        final Class<? extends ContentItem> itemType, final String mode) {
 
         LOGGER.debug("Trying to find default renderer for item type \"{}\""
                          + "and mode \"{}\"...",
@@ -63,7 +63,7 @@ public class ContentItemRenderers {
                                              = new ContentItemRendererLiteral(
                 itemType, mode);
 
-        final Instance<AbstractContentItemRenderer<?>> instance = renderers
+        final Instance<AbstractContentItemRenderer> instance = renderers
             .select(literal);
 
         if (instance.isUnsatisfied()) {
@@ -72,10 +72,10 @@ public class ContentItemRenderers {
                 LOGGER.warn("No renderer for item type \"{}\" and mode "
                                 + "\"--DEFAULT--\". Returning default renderer.",
                             itemType.getName());
-                return new AbstractContentItemRenderer<T>() {
+                return new AbstractContentItemRenderer() {
 
                     @Override
-                    public void renderItem(final T item,
+                    public void renderItem(final ContentItem item,
                                            final Locale language,
                                            final Map<String, Object> result) {
                         //Nothing here.
@@ -91,13 +91,13 @@ public class ContentItemRenderers {
                 return findRenderer(itemType);
             }
         } else {
-            final AbstractContentItemRenderer<?> renderer = instance
+            final AbstractContentItemRenderer renderer = instance
                 .iterator()
                 .next();
 
             @SuppressWarnings("unchecked")
-            final AbstractContentItemRenderer<T> result
-                                                     = (AbstractContentItemRenderer<T>) renderer;
+            final AbstractContentItemRenderer result
+                                                     = renderer;
             return result;
         }
 
