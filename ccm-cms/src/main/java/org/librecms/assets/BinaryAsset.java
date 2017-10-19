@@ -35,12 +35,10 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.libreccm.jpa.utils.MimeTypeConverter;
 import org.libreccm.l10n.LocalizedString;
 
 import javax.persistence.Convert;
-import javax.validation.constraints.NotNull;
 
 import static org.librecms.CmsConstants.*;
 
