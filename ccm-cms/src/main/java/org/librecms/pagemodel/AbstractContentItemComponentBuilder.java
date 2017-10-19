@@ -21,32 +21,18 @@ package org.librecms.pagemodel;
 import com.arsdigita.kernel.KernelConfig;
 
 import org.libreccm.configuration.ConfigurationManager;
-import org.libreccm.core.UnexpectedErrorException;
-import org.libreccm.l10n.LocalizedString;
 import org.libreccm.pagemodel.ComponentBuilder;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemL10NManager;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.privileges.ItemPrivileges;
+import org.librecms.pagemodel.contentitems.AbstractContentItemRenderer;
+import org.librecms.pagemodel.contentitems.ContentItemRenderers;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -66,6 +52,9 @@ public abstract class AbstractContentItemComponentBuilder<T extends ContentItemC
 
     @Inject
     private ConfigurationManager confManager;
+    
+    @Inject
+    private ContentItemRenderers contentItemRenderers;
 
     @Inject
     private ContentItemL10NManager iteml10nManager;
@@ -84,7 +73,7 @@ public abstract class AbstractContentItemComponentBuilder<T extends ContentItemC
     public Map<String, Object> buildComponent(
         final T componentModel,
         final Map<String, Object> parameters) {
-
+        
         Objects.requireNonNull(componentModel);
         Objects.requireNonNull(parameters);
 
@@ -146,259 +135,13 @@ public abstract class AbstractContentItemComponentBuilder<T extends ContentItemC
         }
 
         if (iteml10nManager.hasLanguage(item, language)) {
-            final BeanInfo beanInfo;
-            try {
-                beanInfo = Introspector.getBeanInfo(item.getClass());
-            } catch (IntrospectionException ex) {
-                throw new UnexpectedErrorException(ex);
-            }
-
-            final PropertyDescriptor[] properties = beanInfo
-                .getPropertyDescriptors();
-
-            final Map<String, Object> result = new HashMap<>();
-
-            for (final PropertyDescriptor propertyDescriptor : properties) {
-                renderProperty(propertyDescriptor,
-                               componentModel,
-                               language,
-                               item,
-                               result);
-            }
-
-            return result;
+            
+            final AbstractContentItemRenderer renderer = contentItemRenderers
+            .findRenderer(item.getClass(), componentModel.getMode());
+            
+            return renderer.render(item, language);            
         } else {
             throw new NotFoundException("Requested language is not available.");
         }
     }
-
-    protected void renderProperty(final PropertyDescriptor propertyDescriptor,
-                                  final T componentModel,
-                                  final Locale language,
-                                  final ContentItem item,
-                                  final Map<String, Object> result) {
-
-        final String propertyName = propertyDescriptor.getName();
-        if (componentModel.getExcludedPropertyPaths().contains(propertyName)) {
-            return;
-        }
-
-        final Method readMethod = propertyDescriptor.getReadMethod();
-        if (Collection.class.isAssignableFrom(propertyDescriptor
-            .getPropertyType())) {
-
-            final Collection<?> collection;
-            try {
-                collection = (Collection<?>) readMethod.invoke(item);
-            } catch (IllegalAccessException | InvocationTargetException ex) {
-                throw new UnexpectedErrorException(ex);
-            }
-
-            final List<Map<String, Object>> associatedObjs = new ArrayList<>();
-            for (final Object obj : collection) {
-                associatedObjs.add(generateAssociatedObject(obj, language));
-            }
-
-            result.put(propertyName, associatedObjs);
-        } else if (isValueType(propertyDescriptor.getPropertyType())) {
-            try {
-                result.put(propertyName, readMethod.invoke(item));
-            } catch (IllegalAccessException | InvocationTargetException ex) {
-                throw new UnexpectedErrorException(ex);
-            }
-        } else if (LocalizedString.class.isAssignableFrom(propertyDescriptor
-            .getPropertyType())) {
-
-            final LocalizedString localizedString;
-            try {
-                localizedString = (LocalizedString) readMethod.invoke(item);
-            } catch (IllegalAccessException | InvocationTargetException ex) {
-                throw new UnexpectedErrorException(ex);
-            }
-
-            result.put(propertyName, localizedString.getValue(language));
-        } else {
-            final Map<String, Object> associatedObj;
-            try {
-                associatedObj = generateAssociatedObject(
-                    readMethod.invoke(item), language);
-            } catch (IllegalAccessException | InvocationTargetException ex) {
-                throw new UnexpectedErrorException(ex);
-            }
-            result.put(propertyName, associatedObj);
-        }
-
-        final Set<String> includedPropertyPaths = componentModel
-            .getIncludedPropertyPaths();
-        final BeanInfo beanInfo;
-        try {
-            beanInfo = Introspector.getBeanInfo(item.getClass());
-        } catch (IntrospectionException ex) {
-            throw new UnexpectedErrorException(ex);
-        }
-        final Map<String, PropertyDescriptor> propertyDescriptors = Arrays
-            .stream(beanInfo.getPropertyDescriptors())
-            .collect(Collectors.toMap(PropertyDescriptor::getName,
-                                      descriptor -> descriptor));
-        for (final String propertyPath : includedPropertyPaths) {
-            final String[] pathTokens = propertyPath.split(".");
-            if (pathTokens.length < 3) {
-                continue;
-            }
-            if (!propertyDescriptors.containsKey(pathTokens[0])) {
-                continue;
-            }
-            final Object propResult = renderPropertyPath(
-                propertyDescriptors.get(pathTokens[0]),
-                Arrays.copyOfRange(pathTokens, 1, pathTokens.length),
-                language,
-                item);
-            if (propResult != null) {
-                result.put(propertyPath, propResult);
-            }
-        }
-    }
-
-    protected Object renderPropertyPath(
-        final PropertyDescriptor propertyDescriptor,
-        final String[] propertyPath,
-        final Locale language,
-        final Object item) {
-
-        if (propertyPath.length == 1) {
-
-            final BeanInfo beanInfo;
-            try {
-                beanInfo = Introspector.getBeanInfo(item.getClass());
-            } catch (IntrospectionException ex) {
-                throw new UnexpectedErrorException(ex);
-            }
-            final Map<String, PropertyDescriptor> propertyDescriptors = Arrays
-                .stream(beanInfo.getPropertyDescriptors())
-                .collect(Collectors.toMap(PropertyDescriptor::getName,
-                                          descriptor -> descriptor));
-            if (propertyDescriptors.containsKey(propertyPath[0])) {
-                final Method readMethod = propertyDescriptors
-                .get(propertyPath[0])
-                .getReadMethod();
-                try {
-                    return readMethod.invoke(item);
-                } catch(IllegalAccessException | InvocationTargetException ex) {
-                    throw new UnexpectedErrorException(ex);
-                }
-            } else {
-                return null;
-            }
-            
-        } else {
-            final Method readMethod = propertyDescriptor.getReadMethod();
-            final Object obj;
-            try {
-                obj = readMethod.invoke(item);
-            } catch (IllegalAccessException | InvocationTargetException ex) {
-                throw new UnexpectedErrorException(ex);
-            }
-
-            if (isValueType(obj.getClass())) {
-                return null;
-            }
-
-            final BeanInfo beanInfo;
-            try {
-                beanInfo = Introspector.getBeanInfo(obj.getClass());
-            } catch (IntrospectionException ex) {
-                throw new UnexpectedErrorException(ex);
-            }
-
-            final Map<String, PropertyDescriptor> propertyDescriptors = Arrays
-                .stream(beanInfo.getPropertyDescriptors())
-                .collect(Collectors.toMap(PropertyDescriptor::getName,
-                                          descriptor -> descriptor));
-
-            if (propertyDescriptors.containsKey(propertyPath[0])) {
-                return renderPropertyPath(
-                    propertyDescriptors.get(propertyPath[0]),
-                    Arrays.copyOfRange(propertyPath, 1, propertyPath.length),
-                    language,
-                    item);
-            } else {
-                return null;
-            }
-        }
-    }
-
-    protected Map<String, Object> generateAssociatedObject(
-        final Object obj, final Locale language) {
-
-        final BeanInfo beanInfo;
-        try {
-            beanInfo = Introspector.getBeanInfo(obj.getClass());
-        } catch (IntrospectionException ex) {
-            throw new UnexpectedErrorException(ex);
-        }
-
-        final PropertyDescriptor[] properties = beanInfo
-            .getPropertyDescriptors();
-
-        final Map<String, Object> result = new HashMap<>();
-        for (final PropertyDescriptor propertyDescriptor : properties) {
-            final Class<?> type = propertyDescriptor.getPropertyType();
-            if (isValueType(type)) {
-                final Method readMethod = propertyDescriptor.getReadMethod();
-                try {
-                    result.put(propertyDescriptor.getName(),
-                               readMethod.invoke(obj));
-                } catch (IllegalAccessException | InvocationTargetException ex) {
-                    throw new UnexpectedErrorException(ex);
-                }
-            } else if (LocalizedString.class.isAssignableFrom(type)) {
-                final Method readMethod = propertyDescriptor.getReadMethod();
-                try {
-                    final LocalizedString str = (LocalizedString) readMethod
-                        .invoke(obj);
-                    result.put(propertyDescriptor.getName(),
-                               str.getValue(language));
-                } catch (IllegalAccessException | InvocationTargetException ex) {
-                    throw new UnexpectedErrorException(ex);
-                }
-            }
-        }
-
-        return result;
-    }
-
-    protected boolean isValueType(final Class<?> typeToTest) {
-        final Class<?>[] types = new Class<?>[]{
-            Boolean.class,
-            Boolean.TYPE,
-            Character.class,
-            Character.TYPE,
-            Byte.class,
-            Byte.TYPE,
-            Double.class,
-            Double.TYPE,
-            Float.class,
-            Float.TYPE,
-            Integer.class,
-            Integer.TYPE,
-            Long.class,
-            Long.TYPE,
-            Short.class,
-            Short.TYPE,
-            String.class
-        };
-
-        for (final Class<?> type : types) {
-            if (type.isAssignableFrom(typeToTest)) {
-                return true;
-            }
-        }
-
-        return typeToTest.isArray()
-                   && (typeToTest.getComponentType()
-                           .isAssignableFrom(Byte.class)
-                       || typeToTest.getComponentType()
-                       .isAssignableFrom(Byte.TYPE));
-    }
-
 }
