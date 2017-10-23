@@ -56,15 +56,17 @@ public class ItemListComponent extends ComponentModel {
     private boolean descending;
 
     /**
-     * Include only the types listed here into the list
+     * Include only items of the specified type into the list. This must be a
+     * subtype of {@link ContentItem}.
      */
-    @ElementCollection
-    @CollectionTable(name = "ITEM_LIST_LIMIT_TO_TYPES",
-                     schema = DB_SCHEMA,
-                     joinColumns = {
-                         @JoinColumn(name = "ITEM_LIST_ID")
-                     })
-    private Set<String> limitToTypes;
+    @Column(name = "LIMIT_TO_TYPE")
+    private String limitToType;
+
+    /**
+     * Maximum number of items shown on one page.
+     */
+    @Column(name = "PAGE_SIZE")
+    private int pageSize;
 
     /**
      * Order the list by this properties. Warning: All items must have the
@@ -87,22 +89,22 @@ public class ItemListComponent extends ComponentModel {
         this.descending = descending;
     }
 
-    public Set<String> getLimitToTypes() {
-        return Collections.unmodifiableSet(limitToTypes);
+    public String getLimitToType() {
+        return limitToType;
     }
 
-    public void addLimitToTypes(final String type) {
-        limitToTypes.add(type);
+    public void setLimitToTypes(final String limitToType) {
+        this.limitToType = limitToType;
     }
 
-    public void removeLimitToType(final String type) {
-        limitToTypes.remove(type);
+    public int getPageSize() {
+        return pageSize;
     }
-
-    public void setLimitToTypes(final Set<String> limitToTypes) {
-        this.limitToTypes = new HashSet<>(limitToTypes);
+    
+    public void setPageSize(final int pageSize) {
+        this.pageSize = pageSize;
     }
-
+    
     public List<String> getListOrder() {
         return Collections.unmodifiableList(listOrder);
     }
@@ -123,7 +125,7 @@ public class ItemListComponent extends ComponentModel {
     public int hashCode() {
         int hash = super.hashCode();
         hash = 41 * hash + (descending ? 1 : 0);
-        hash = 41 * hash + Objects.hashCode(limitToTypes);
+        hash = 41 * hash + Objects.hashCode(limitToType);
         hash = 41 * hash + Objects.hashCode(listOrder);
         return hash;
     }
@@ -152,7 +154,7 @@ public class ItemListComponent extends ComponentModel {
         if (descending != other.isDescending()) {
             return false;
         }
-        if (!Objects.equals(limitToTypes, other.getLimitToTypes())) {
+        if (!Objects.equals(limitToType, other.getLimitToType())) {
             return false;
         }
         return Objects.equals(listOrder, other.getListOrder());
@@ -169,7 +171,7 @@ public class ItemListComponent extends ComponentModel {
                                                 + "limitToTypes = %s, "
                                                 + "listOrder = %s%s",
                                             descending,
-                                            Objects.toString(limitToTypes),
+                                            limitToType,
                                             Objects.toString(listOrder),
                                             data));
     }
