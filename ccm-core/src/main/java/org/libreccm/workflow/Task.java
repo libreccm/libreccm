@@ -376,10 +376,7 @@ public class Task implements Identifiable, Serializable {
                                  + "uuid = \"%s\", "
                                  + "label = %s, "
                                  + "active = %b, "
-                                 + "taskState = \"%s\", "
-//                                 + "workflow = %s, "
-//                                 + "dependentTasks = %s, "
-//                                 + "dependsOn = %s%s"
+                                 + "taskState = \"%s\"%s"
                                  + " }",
                              super.toString(),
                              taskId,
@@ -387,9 +384,6 @@ public class Task implements Identifiable, Serializable {
                              Objects.toString(label),
                              active,
                              taskState,
-//                             Objects.toString(workflow),
-//                             Objects.toString(dependentTasks),
-//                             Objects.toString(dependsOn),
                              data);
     }
 

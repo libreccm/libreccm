@@ -1,7 +1,6 @@
 package org.libreccm.l10n.ui;
 
 import com.vaadin.data.provider.QuerySortOrder;
-import com.vaadin.server.SerializableSupplier;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Grid;
 import org.libreccm.l10n.GlobalizationHelper;
@@ -10,7 +9,6 @@ import org.libreccm.l10n.LocalizedString;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -55,7 +53,7 @@ public class LocalizedStringEditor extends CustomComponent {
     private static final String COL_VALUE = "col_value";
     private static final String COL_EDIT = "col_edit";
     private static final String COL_REMOVE = "col_remove";
-    
+
     private final GlobalizationHelper globalizationHelper;
 
     private boolean multiline;
@@ -76,7 +74,7 @@ public class LocalizedStringEditor extends CustomComponent {
         grid.addColumn(LocalizedStringValue::getLocaleLabel)
             .setCaption("Language")
             .setId(COL_LOCALE);
-        
+
     }
 
     public LocalizedStringEditor(final LocalizedString localizedString,
@@ -145,15 +143,15 @@ public class LocalizedStringEditor extends CustomComponent {
         public String getValue() {
             return value;
         }
-        
+
         public String getText() {
             if (multiline) {
                 final String withoutHtml = value
                     .replaceAll("<[\\w/]*>", " ")
                     .replaceAll("\\s{2,}", " ").trim();
-                
+
                 return String.format("%s...", withoutHtml.substring(0, 256));
-                
+
             } else {
                 return value;
             }
@@ -178,9 +176,8 @@ public class LocalizedStringEditor extends CustomComponent {
                 .compareTo(Objects.toString(locale2));
         });
 
-        locales.subList(offset, limit);
-
         return locales
+            .subList(offset, limit)
             .stream()
             .map(locale -> new LocalizedStringValue(
             locale, localizedString.getValue(locale)));

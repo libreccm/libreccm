@@ -23,7 +23,9 @@ import org.libreccm.configuration.ConfigurationManager;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -78,14 +80,17 @@ public class NIOFileSystemAdapter implements FileSystemAdapter {
             throw new InsufficientPermissionsException(path);
         }
 
-        final FileReader fileReader;
+        final InputStreamReader reader;
         try {
-            fileReader = new FileReader(nioPath.toFile());
+            final FileInputStream inputStream = new FileInputStream(
+                nioPath.toFile());
+            reader = new InputStreamReader(inputStream,
+                                           Charset.forName("UTF-8"));
         } catch (FileNotFoundException ex) {
             throw new FileDoesNotExistException(path, ex);
         }
 
-        return fileReader;
+        return reader;
     }
 
     @Override
@@ -107,14 +112,17 @@ public class NIOFileSystemAdapter implements FileSystemAdapter {
             throw new InsufficientPermissionsException(path);
         }
 
-        final FileWriter fileWriter;
+        final OutputStreamWriter writer;
         try {
-            fileWriter = new FileWriter(nioPath.toFile());
+            final FileOutputStream outputStream = new FileOutputStream(nioPath
+                .toFile());
+            writer = new OutputStreamWriter(outputStream,
+                                            Charset.forName("UTF-8"));
         } catch (IOException ex) {
             throw new FileAccessException(path, ex);
         }
 
-        return fileWriter;
+        return writer;
     }
 
     @Override

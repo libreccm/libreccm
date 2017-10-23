@@ -126,7 +126,7 @@ public class Themes {
         return processor.process(page, theme, provider);
     }
 
-    private class ThemeTypeLiteral extends AnnotationLiteral<ThemeType>
+    private static class ThemeTypeLiteral extends AnnotationLiteral<ThemeType>
         implements ThemeType {
 
         private static final long serialVersionUID = 3377237291286175824L;

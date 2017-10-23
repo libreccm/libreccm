@@ -163,7 +163,7 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
         final String[] tokens = normalizedPath.split("/");
         Category current = domain.getRoot();
         for (final String token : tokens) {
-            if (current.getSubCategories() == null) {
+            if (current.getSubCategories().isEmpty()) {
                 return Optional.empty();
             }
             final Optional<Category> result = current.getSubCategories()

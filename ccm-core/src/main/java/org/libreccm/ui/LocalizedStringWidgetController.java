@@ -22,6 +22,7 @@ import com.arsdigita.kernel.KernelConfig;
 
 import org.libreccm.configuration.ConfigurationManager;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -38,7 +39,9 @@ import javax.inject.Inject;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class LocalizedStringWidgetController {
+public class LocalizedStringWidgetController implements Serializable {
+
+    private static final long serialVersionUID = -8390792440087872905L;
 
     @Inject
     private ConfigurationManager confManager;
@@ -47,23 +50,22 @@ public class LocalizedStringWidgetController {
 
         final KernelConfig kernelConfig = confManager
             .findConfiguration(KernelConfig.class);
-        
+
         return kernelConfig.getDefaultLocale();
     }
-    
+
     public List<Locale> getSupportedLocales() {
-        
-         final KernelConfig kernelConfig = confManager
+
+        final KernelConfig kernelConfig = confManager
             .findConfiguration(KernelConfig.class);
-         
-         return kernelConfig
-             .getSupportedLanguages()
-             .stream()
-             .sorted((lang1, lang2) -> lang1.compareTo(lang2))
-             .map(Locale::new)
-             .collect(Collectors.toList());
-        
+
+        return kernelConfig
+            .getSupportedLanguages()
+            .stream()
+            .sorted((lang1, lang2) -> lang1.compareTo(lang2))
+            .map(Locale::new)
+            .collect(Collectors.toList());
+
     }
-  
 
 }

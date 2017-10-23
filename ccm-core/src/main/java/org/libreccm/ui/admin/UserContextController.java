@@ -43,7 +43,7 @@ public class UserContextController implements Serializable {
     private Shiro shiro;
 
     @Inject
-    private Subject subject;
+    private transient Subject subject;
 
     public boolean isLoggedIn() {
         return subject.isAuthenticated();

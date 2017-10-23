@@ -94,7 +94,7 @@ public class ComponentRendererManager {
     /**
      * Annotation literal for the {@link ComponentModelType} annotation.
      */
-    private class ComponentModelTypeLiteral
+    private static class ComponentModelTypeLiteral
         extends AnnotationLiteral<ComponentModelType>
         implements ComponentModelType {
 
