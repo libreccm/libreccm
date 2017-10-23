@@ -44,12 +44,13 @@ public abstract class AbstractPageRenderer implements PageRenderer {
      * the component objects created by the {@link ComponentRenderer}s are added
      * to the page.
      *
-     * @param pageModel  The {@link PageModel} to process.
+     * @param pageModel  The {@link PageModel} to render.
      * @param parameters Parameters provided by application which wants to
      *                   render a {@link PageModel}. The parameters are passed
      *                   the {@link ComponentRenderer}s.
      *
-     * @return A page containing all components from the {@link PageModel}.
+     * @return A map containing the results from rendering the components of the
+     *         page model.
      */
     @Override
     public Map<String, Object> renderPage(final PageModel pageModel,
@@ -73,22 +74,24 @@ public abstract class AbstractPageRenderer implements PageRenderer {
     /**
      * Helper method for rendering the components.
      *
-     * @param <M>                 Generics variable for the type the component
-     *                            created.
+     * @param <M>                 Generics variable for the type of rendered
+     *                            component
      * @param componentModel      The {@link ComponentModel} to process.
      * @param componentModelClass The class of the {@link ComponentModel}.
      * @param parameters          Parameters provided by application which wants
      *                            to render a {@link PageModel}. The parameters
      *                            are passed the {@link ComponentRenderer}s.
      *
-     * @return The components described by the {@code componentModel}.
+     * @return A map containing the results from rendering the components of the
+     *         page model.
      */
     protected <M extends ComponentModel> Optional<Object> renderComponent(
         final ComponentModel componentModel,
         final Class<M> componentModelClass,
         final Map<String, Object> parameters) {
 
-        componentRendererManager.findComponentRenderer(componentModel.getClass());
+        componentRendererManager
+            .findComponentRenderer(componentModel.getClass());
 
         final Optional<ComponentRenderer<M>> renderer = componentRendererManager
             .findComponentRenderer(componentModelClass);
@@ -96,7 +99,8 @@ public abstract class AbstractPageRenderer implements PageRenderer {
         if (renderer.isPresent()) {
             @SuppressWarnings("unchecked")
             final M model = (M) componentModel;
-            return Optional.of(renderer.get().renderComponent(model, parameters));
+            return Optional
+                .of(renderer.get().renderComponent(model, parameters));
         } else {
             return Optional.empty();
         }

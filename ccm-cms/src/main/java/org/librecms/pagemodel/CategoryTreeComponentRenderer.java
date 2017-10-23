@@ -23,10 +23,8 @@ import com.arsdigita.kernel.KernelConfig;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.CategoryRepository;
-import org.libreccm.categorization.DomainRepository;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CcmObject;
-import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.pagemodel.ComponentModelType;
 
 import java.util.HashMap;
@@ -45,7 +43,8 @@ import static org.librecms.pages.PagesConstants.*;
 import org.libreccm.pagemodel.ComponentRenderer;
 
 /**
- *
+ * Renderer for the {@link CategoryTreeComponent}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

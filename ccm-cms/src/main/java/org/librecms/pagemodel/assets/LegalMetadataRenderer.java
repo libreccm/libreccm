@@ -28,6 +28,7 @@ import java.util.Map;
 import javax.enterprise.context.RequestScoped;
 
 /**
+ * Renderer for {@link LegalMetadata} assets.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -35,24 +36,40 @@ import javax.enterprise.context.RequestScoped;
 @AssetRenderer(renders = LegalMetadata.class)
 public class LegalMetadataRenderer extends AbstractAssetRenderer {
 
+    /**
+     * Render the provided {@link LegalMetadata} asset. The following properties
+     * are added to the {@code result} map:
+     *
+     * <pre>
+     *      "rightsHolder": {@link LegalMetadata#getRightsHolder()}
+     *      "rights": {@link LegalMetadata#getRights()}
+     *      "publisher": {@link LegalMetadata#getPublisher()}
+     *      "creator": {@link LegalMetadata#getCreator()}
+     *      "contributors": {@link LegalMetadata#getContributors()}
+     * </pre>
+     *
+     * @param asset    The asset to renderer.
+     * @param language The current language.
+     * @param result   The map into which the result is placed.
+     */
     @Override
-    protected void renderAsset(final Asset asset, 
+    protected void renderAsset(final Asset asset,
                                final Locale language,
                                final Map<String, Object> result) {
-        
+
         final LegalMetadata legalMetadata;
         if (asset instanceof LegalMetadata) {
             legalMetadata = (LegalMetadata) asset;
         } else {
             return;
         }
-        
+
         result.put("rightsHolder", legalMetadata.getRightsHolder());
         result.put("rights", legalMetadata.getRights().getValue(language));
         result.put("publisher", legalMetadata.getPublisher());
         result.put("creator", legalMetadata.getCreator());
-        result.put("contributors", 
+        result.put("contributors",
                    new ArrayList<>(legalMetadata.getContributors()));
     }
-    
+
 }

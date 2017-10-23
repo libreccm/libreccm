@@ -25,12 +25,35 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
+ * Renderer for {@link Event} items.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ContentItemRenderer(renders = Event.class)
 public class EventRenderer extends AbstractContentItemRenderer {
 
+    /**
+     * Render the provided {@link Event}. The following values are put into
+     * {@code result}:
+     * 
+     * <pre>
+     *  {
+     *      "text": {@link Event#getText()}
+     *      "startDate": {@link Event#getStartDate()}
+     *      "endDate": {@link Event#getEndDate()}
+     *      "eventDate": {@link Event#getEventType()}
+     *      "location": {@link Event#getLocation()}
+     *      "mainContributor": {@link Event#getMainContributor()}
+     *      "eventType": {@link Event#getEventType()}
+     *      "mapLink": {@link Event#getMapLink()}
+     *      "cost": {@link Event#getCost()}
+     *  }
+     * </pre>
+     *
+     * @param item     The item to render.
+     * @param language The current language.
+     * @param result   The map into which the result is placed.
+     */
     @Override
     public void renderItem(final ContentItem item,
                            final Locale language,

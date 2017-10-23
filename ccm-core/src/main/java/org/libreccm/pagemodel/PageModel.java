@@ -137,7 +137,7 @@ public class PageModel implements Serializable {
     private String uuid;
 
     /**
-     * The UUID of the model. Same for draft and live version.
+     * The UUID of the model. Same for draft and live versions.
      */
     @Column(name = "MODEL_UUID", length = 255, nullable = false)
     @NotNull

@@ -19,7 +19,8 @@
 package org.librecms.pages;
 
 /**
- *
+ * Constants used by the classes in the package.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public final class PagesConstants {

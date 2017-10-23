@@ -30,12 +30,19 @@ import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 /**
- *
+ * Repository for {@link Page} entities.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 public class PageRepository extends AbstractEntityRepository<Long, Page>{
 
+    /**
+     * Find the {@link Page} associated with a {@link Category}.
+     * 
+     * @param category The {@link Category} associated with the {@link Page}.
+     * @return 
+     */
     public Optional<Page> findPageForCategory(final Category category) {
         
         final TypedQuery<Page> query = getEntityManager()

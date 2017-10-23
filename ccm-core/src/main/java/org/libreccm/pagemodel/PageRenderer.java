@@ -35,10 +35,13 @@ import java.util.Map;
 public interface PageRenderer {
 
     /**
-     * Render a page for the view technology supported by this page renderer
-     * without any additional components.
-     * {@link #renderPage(org.libreccm.pagemodel.PageModel)} should use this
-     * method for creating the default page.
+     * Render a page with the default components for a application. An
+     * implementation of {@link #renderPage(org.libreccm.pagemodel.PageModel)}
+     * should use this method for creating the default page.
+     *
+     * The result of the rendering process is a map with the values of the
+     * {@link ComponentModel#key} property as key and the result of rendering
+     * the component as value.
      *
      * @param parameters Parameters provided by application which wants to
      *                   render a {@link PageModel}. The parameters are passed
@@ -49,9 +52,14 @@ public interface PageRenderer {
     Map<String, Object> renderPage(Map<String, Object> parameters);
 
     /**
-     * Render a page of type {@code P} using the provided {@link PageModel}.
+     * Render a page using the provided {@link PageModel}.
      * Implementations should call the implementation of {@link #renderPage()}
      * for creating the basic page with the default components.
+     *
+     * The result of the rendering process is a map with the values of the
+     * {@link ComponentModel#key} property as key and the result of rendering
+     * the component as value.
+     *
      *
      * @param pageModel  The {@link PageModel} from which the page is generated.
      * @param parameters Parameters provided by application which wants to

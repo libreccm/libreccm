@@ -18,11 +18,13 @@
  */
 package org.librecms.pagemodel.contentitems;
 
+import org.libreccm.messaging.Attachment;
 import org.librecms.pagemodel.assets.AbstractAssetRenderer;
 import org.librecms.contentsection.AttachmentList;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentType;
 import org.librecms.contentsection.ItemAttachment;
+import org.librecms.contentsection.rs.ContentItems;
 import org.librecms.pagemodel.assets.AssetRenderers;
 
 import java.util.HashMap;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 /**
+ * Base class for the renderers for {@link ContentItems}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -41,6 +44,44 @@ public abstract class AbstractContentItemRenderer {
     @Inject
     private AssetRenderers assetRenderers;
 
+    /**
+     * This method should be called to render a {@link ContentItem}. The method
+     * puts the common properties for {@link ContentItem}s into {@code result}
+     * and than calls
+     * {@link #renderItem(org.librecms.contentsection.ContentItem, java.util.Locale, java.util.Map)}
+     * to put the special properties of provided item into {@code result}.
+     *
+     * The common properties put into {@code result} are:
+     *
+     * <pre>
+     *  {
+     *      "objectId": {@link ContentItem#getObjectId()}
+     *      "uuid": {@link ContentItem#getUuid()}
+     *      "displayName": {@link ContentItem#getDisplayName()}
+     *      "itemUuid": {@link ContentItem#getItemUuid()}
+     *      "name": {@link ContentItem#getName()}
+     *      "title": {@link ContentItem#getTitle()}
+     *      "contentType": {@link ContentItem#getContentType()}
+     *      "description": {@link ContentItem#getDescription()}
+     *      "creationDate": {@link ContentItem#getCreationDate()}
+     *      "lastModified": {@link ContentItem#getLastModified()}
+     *      "creationUserName": {@link ContentItem#getCreationUserName()}
+     *      "lastModifyingUserName": {@link ContentItem#getLastModifyingUserName()}
+     *      "attachments": {@link ContentItem#getAttachments()}.
+     *  }
+     * </pre>
+     *
+     * The value of {@link ContentItem#getContentType} is rendered by
+     * {@link #renderContentType(org.librecms.contentsection.ContentType, java.util.Locale)}.
+     *
+     * The value of {@link ContentItem#getAttachments()} is rendered using
+     * {@link #renderAttachmentList(org.librecms.contentsection.AttachmentList, java.util.Locale)}.
+     *
+     * @param item     The item to render.
+     * @param language The current language.
+     *
+     * @return A map with the data of the provided {@link ContentItem}.
+     */
     public Map<String, Object> render(final ContentItem item,
                                       final Locale language) {
 
@@ -75,6 +116,24 @@ public abstract class AbstractContentItemRenderer {
                                        final Locale language,
                                        final Map<String, Object> result);
 
+    /**
+     * Renders the {@link ContentType} of an {@link ContentItem}. The generated
+     * map contains the following values:
+     *
+     * <pre>
+     *  {
+     *      "objectId": {@link ContentType#getObjectId()}
+     *      "uuid": {@link ContentType#getUuid()}
+     *      "displayName": {@link ContentType#getDisplayName()}
+     *      "label": {@link ContentType#getLabel()}
+     *  }
+     * </pre>
+     *
+     * @param contentType The {@link ContentType} to render.
+     * @param language    The current language.
+     *
+     * @return A map with the properties of the {@link ContentType}.
+     */
     protected Map<String, Object> renderContentType(
         final ContentType contentType, final Locale language) {
 
@@ -88,6 +147,31 @@ public abstract class AbstractContentItemRenderer {
         return result;
     }
 
+    /**
+     * Renders a {@link AttachmentList} and all {@link ItemAttachment}s. in the
+     * list. The map contains the following values:
+     *
+     * <pre>
+     *  {
+     *      "listId": {@link AttachmentList#getListId()}
+     *      "uuid": {@link AttachmentList#getUuid()}
+     *      "name": {@link AttachmentList#getName()}
+     *      "order": {@link AttachmentList#getOrder()}
+     *      "title": {@link AttachmentList#getTitle()}
+     *      "description": {@link AttachmentList#getDescription()}
+     *      "attachments": {@link AttachmentList#getAttachments()}
+     *  }
+     * </pre>
+     *
+     * The attachments of the list are rendered using
+     * {@link #renderAttachment(org.librecms.contentsection.ItemAttachment, java.util.Locale)}.
+     *
+     * @param attachmentList The {@link AttachmentList} to render.
+     * @param language       The current language.
+     *
+     * @return A map containing the data of the {@link AttachmentList} and its
+     *         {@link Attachment}s.
+     */
     protected Map<String, Object> renderAttachmentList(
         final AttachmentList attachmentList,
         final Locale language) {
@@ -112,6 +196,29 @@ public abstract class AbstractContentItemRenderer {
         return result;
     }
 
+    /**
+     * Renders an {@link ItemAttachment}. The generated map contains the
+     * following values:
+     *
+     * <pre>
+     *  {
+     *      "attachmentId": {@link ItemAttachment#getAttachmentId()}
+     *      "uuid": {@link ItemAttachment#getUuid()}
+     *      "sortKey": {@link ItemAttachment#getSortKey()}
+     *      "asset": {@link ItemAttachment#getAsset()}
+     *  }
+     * </pre>
+     *
+     * The associated {@link Asset} is rendered using the appropriate
+     * {@link AbstractAssetRenderer} implementation. The
+     * {@link AbstractAssetRenderer} to use is retrieved using
+     * {@link AssetRenderers#findRenderer(java.lang.Class)}.
+     *
+     * @param attachment The {@link ItemAttachment} to render.
+     * @param language   The current language.
+     *
+     * @return A map with the data of the {@link ItemAttachment}.
+     */
     protected Map<String, Object> renderAttachment(
         final ItemAttachment<?> attachment,
         final Locale language) {

@@ -22,8 +22,6 @@ import com.arsdigita.kernel.KernelConfig;
 
 import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
-import org.libreccm.categorization.CategoryManager;
-import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.pagemodel.ComponentModelType;
@@ -57,7 +55,8 @@ import javax.servlet.http.HttpServletRequest;
 import static org.librecms.pages.PagesConstants.*;
 
 /**
- *
+ * Renderer for the {@link ItemListComponent}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -166,7 +165,10 @@ public class ItemListComponentRenderer
         final Join<? extends ContentItem, Categorization> catJoin = from
             .join("categories");
 
-        criteriaQuery.where(catJoin.get("category").in(categories));
+        criteriaQuery
+            .where(criteriaBuilder
+                .and(catJoin.get("category").in(categories),
+                     criteriaBuilder.equal(catJoin.get("index"), false)));
 
         criteriaQuery
             .orderBy(listOrder

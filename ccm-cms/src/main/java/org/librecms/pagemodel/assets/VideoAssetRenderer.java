@@ -29,36 +29,53 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 /**
+ * Renderer for {@link VideoAsset}s.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 @AssetRenderer(renders = VideoAsset.class)
 public class VideoAssetRenderer extends BinaryAssetRenderer {
-    
+
     @Inject
     @AssetRenderer(renders = LegalMetadata.class)
     private AbstractAssetRenderer legalMetadataRenderer;
-    
+
+    /**
+     * Renders the provided {@link VideoAsset}. The following properties a put
+     * into {@code result}:
+     *
+     * <pre>
+     *  {
+     *      width: {@link VideoAsset#getWidth()}
+     *      height: {@link VideoAsset#getHeight()}
+     *      legalMetadata: {@link VideoAsset#getLegalMetadata()}
+     *  }
+     * </pre>
+     *
+     * @param asset    The asset to render.
+     * @param language The current language.
+     * @param result   The map into which the result is put.
+     */
     @Override
     protected void renderAsset(final Asset asset,
-                               final Locale locale,
+                               final Locale language,
                                final Map<String, Object> result) {
-        
-        super.renderAsset(asset, locale, result);
-        
+
+        super.renderAsset(asset, language, result);
+
         final VideoAsset videoAsset;
         if (asset instanceof VideoAsset) {
             videoAsset = (VideoAsset) asset;
         } else {
             return;
         }
-        
+
         result.put("width", videoAsset.getWidth());
         result.put("height", videoAsset.getHeight());
         result.put("legalMetadata",
-                   legalMetadataRenderer.render(videoAsset.getLegalMetadata(), 
-                                                locale));
+                   legalMetadataRenderer.render(videoAsset.getLegalMetadata(),
+                                                language));
     }
-    
+
 }

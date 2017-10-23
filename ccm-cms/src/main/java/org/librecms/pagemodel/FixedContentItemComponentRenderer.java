@@ -30,7 +30,8 @@ import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 
 /**
- *
+ * Renderer for the {@link FixedContentItemComponent}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

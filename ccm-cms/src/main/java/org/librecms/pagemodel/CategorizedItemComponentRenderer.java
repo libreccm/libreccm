@@ -43,7 +43,8 @@ import javax.ws.rs.NotFoundException;
 import static org.librecms.pages.PagesConstants.*;
 
 /**
- *
+ * Renderer for the {@link CategorizedItemComponent}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
