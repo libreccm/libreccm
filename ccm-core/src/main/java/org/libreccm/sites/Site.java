@@ -116,6 +116,10 @@ public class Site extends CcmObject {
             return false;
         }
         final Site other = (Site) obj;
+        if (!other.canEqual(this)) {
+            return false;
+        }
+        
         if (defaultSite != other.isDefaultSite()) {
             return false;
         }

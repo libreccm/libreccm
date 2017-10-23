@@ -336,7 +336,9 @@ public class LocalizedStringWidget extends CustomComponent {
         UI.getCurrent().addWindow(window);
     }
 
-    private class SimpleTextEditor extends TextArea implements TextEditor {
+    private static class SimpleTextEditor 
+        extends TextArea 
+        implements TextEditor {
 
         private static final long serialVersionUID = -1189747199799719077L;
 

@@ -42,7 +42,7 @@ class PageTreeModel implements TreeModel {
     public boolean hasChildren(final TreeNode node, final PageState state) {
         if (node instanceof RootNode) {
             return true;
-        } else if (node instanceof ApplicationTypeTreeNode) {
+        } else if (node instanceof ApplicationTreeNode) {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final PageModelRepository pageModelRepo = cdiUtil.findBean(
                 PageModelRepository.class);

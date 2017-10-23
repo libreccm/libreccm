@@ -37,6 +37,8 @@ import java.util.Optional;
 @RequestScoped
 public class RoleRepository extends AbstractEntityRepository<Long, Role> {
 
+    private static final long serialVersionUID = 2285369521940062504L;
+
     @Override
     public Class<Role> getEntityClass() {
         return Role.class;

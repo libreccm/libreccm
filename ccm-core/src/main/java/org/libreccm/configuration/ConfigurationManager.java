@@ -27,11 +27,20 @@ import org.libreccm.modules.Module;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
+import java.io.Serializable;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ServiceLoader;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
@@ -40,7 +49,9 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class ConfigurationManager {
+public class ConfigurationManager implements Serializable {
+
+    private static final long serialVersionUID = 5453012565110339303L;
 
     private static final Logger LOGGER = LogManager.getLogger(
         ConfigurationManager.class);
@@ -50,7 +61,7 @@ public class ConfigurationManager {
 
     @Inject
     private SettingConverter settingConverter;
-    
+
     /**
      * Map used to cache configuration during a request.
      */
@@ -190,7 +201,7 @@ public class ConfigurationManager {
                                                 ex);
             }
         }
-        
+
         /**
          * If the configuration is cached remove the cached version.
          */
@@ -360,7 +371,7 @@ public class ConfigurationManager {
         final Map<String, AbstractSetting> settings = settingList.stream()
             .collect(Collectors.toMap(setting -> setting.getName(),
                                       setting -> setting));
-        
+
         final Field[] fields = confClass.getDeclaredFields();
         for (final Field field : fields) {
             field.setAccessible(true);
@@ -378,7 +389,7 @@ public class ConfigurationManager {
                                  settingName,
                                  setting.getValue());
                     field.set(conf, setting.getValue());
-                } catch(IllegalAccessException ex) {
+                } catch (IllegalAccessException ex) {
                     LOGGER.warn(
                         "Failed to set value of configuration class \"{}\". "
                             + "Ignoring.",

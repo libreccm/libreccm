@@ -19,6 +19,7 @@
 package org.libreccm.security;
 
 import com.arsdigita.kernel.KernelConfig;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
@@ -26,10 +27,13 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 
+import java.io.Serializable;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -50,7 +54,9 @@ import java.util.Optional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ApplicationScoped
-public class Shiro {
+public class Shiro implements Serializable {
+
+    private static final long serialVersionUID = -3270585472267405099L;
 
     /**
      * Principal used for the public user if
@@ -67,7 +73,8 @@ public class Shiro {
      *
      * @see #getPublicUser()
      */
-    public static final String PUBLIC_USER_PRINCIPAL_EMAIL = "public-user@localhost";
+    public static final String PUBLIC_USER_PRINCIPAL_EMAIL
+                               = "public-user@localhost";
 
     /**
      * Principal used for the system user if
@@ -84,7 +91,8 @@ public class Shiro {
      *
      * @see #getSystemUser()
      */
-    public static final String SYSTEM_USER_PRINCIPAL_EMAIL = "system-user@localhost";
+    public static final String SYSTEM_USER_PRINCIPAL_EMAIL
+                               = "system-user@localhost";
 
     @Inject
     private UserRepository userRepository;
@@ -171,8 +179,9 @@ public class Shiro {
      * subject.
      *
      * @return An {@link Optional} containing the {@link User} entity for the
-     * current subject. If the current subject is a virtual user which has no
-     * representation in the database the returned {@link Optional} is empty.
+     *         current subject. If the current subject is a virtual user which
+     *         has no representation in the database the returned
+     *         {@link Optional} is empty.
      *
      * @see #getSubject()
      * @see #getSystemUser()
@@ -223,6 +232,7 @@ public class Shiro {
                 throw ex.getTargetException();
             }
         }
+
     }
 
     private static class SubjectInvocationHandler extends Handler {
@@ -233,6 +243,7 @@ public class Shiro {
                                     final Object[] args) throws Throwable {
             return method.invoke(SecurityUtils.getSubject(), args);
         }
+
     }
 
     private static class SecurityManagerInvocationHandler extends Handler {
@@ -254,6 +265,7 @@ public class Shiro {
                                     final Object[] args) throws Throwable {
             return method.invoke(SecurityUtils.getSubject().getSession(), args);
         }
+
     }
 
 }

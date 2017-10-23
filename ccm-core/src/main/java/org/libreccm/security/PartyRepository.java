@@ -35,6 +35,8 @@ import java.util.Optional;
 @RequestScoped
 public class PartyRepository extends AbstractEntityRepository<Long, Party> {
 
+    private static final long serialVersionUID = -8056652791690243141L;
+
     @Override
     public Class<Party> getEntityClass() {
         return Party.class;
@@ -72,7 +74,7 @@ public class PartyRepository extends AbstractEntityRepository<Long, Party> {
         final TypedQuery<Party> query = getEntityManager()
             .createNamedQuery("Party.findByRole", Party.class);
         query.setParameter("role", role);
-        
+
         return query.getResultList();
     }
 
