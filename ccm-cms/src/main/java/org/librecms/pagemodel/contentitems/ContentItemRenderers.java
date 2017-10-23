@@ -31,6 +31,9 @@ import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
 /**
+ * Provides access to all available implementations of
+ * {@link AbstractContentItemRenderer}.
+ *
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -43,6 +46,13 @@ public class ContentItemRenderers {
     @Inject
     private Instance<AbstractContentItemRenderer> renderers;
 
+    /**
+     * Tries to find the renderer for provided type and the default mode.
+     *
+     * @param itemType The type for which the renderer is retrieved.
+     *
+     * @return The renderer for the provided type.
+     */
     public AbstractContentItemRenderer findRenderer(
         final Class<? extends ContentItem> itemType) {
 
@@ -51,6 +61,18 @@ public class ContentItemRenderers {
         return findRenderer(itemType, "--DEFAULT--");
     }
 
+    /**
+     * Tries to find the renderer for provided type and the provided mode. If a
+     * appropriate renderer is found an default renderer with an empty
+     * implementation of
+     * {@link AbstractContentItemRenderer#renderItem(org.librecms.contentsection.ContentItem, java.util.Locale, java.util.Map)}
+     * is returned.
+     *
+     * @param itemType The type for which the renderer is retrieved.
+     * @param mode The render mode.
+     *
+     * @return The renderer for the provided type.
+     */
     public AbstractContentItemRenderer findRenderer(
         final Class<? extends ContentItem> itemType, final String mode) {
 

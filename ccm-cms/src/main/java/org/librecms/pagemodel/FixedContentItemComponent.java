@@ -30,7 +30,8 @@ import javax.persistence.Table;
 import static org.librecms.CmsConstants.*;
 
 /**
- *
+ * Component for showing a specific {@link ContentItem}. 
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity

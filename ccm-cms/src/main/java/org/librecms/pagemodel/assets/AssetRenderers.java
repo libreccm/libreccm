@@ -31,6 +31,8 @@ import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
 /**
+ * Provides access to all available implementations of
+ * {@link AbstractAssetRenderer}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -43,6 +45,17 @@ public class AssetRenderers {
     @Inject
     private Instance<AbstractAssetRenderer> renderers;
 
+    /**
+     * Tries to find an implementation of {@link AbstractAssetRenderer} for the
+     * provided asset type. If no renderer is found for the provided
+     * {@code assetType} an noop implementation of {@link AbstractAssetRenderer}
+     * is returned. This means that only the common properties of the asset are
+     * rendered.
+     *
+     * @param assetType The asset type.
+     *
+     * @return An renderer for the provided asset type.
+     */
     public AbstractAssetRenderer findRenderer(
         final Class<? extends Asset> assetType) {
 

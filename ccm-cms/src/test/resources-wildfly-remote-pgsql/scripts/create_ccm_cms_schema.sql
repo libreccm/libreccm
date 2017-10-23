@@ -218,6 +218,23 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         primary key (OBJECT_ID, REV)
     );
 
+    create table CCM_CMS.CATEGORIZED_ITEM_COMPONENTS (
+        COMPONENT_MODEL_ID int8 not null,
+        primary key (COMPONENT_MODEL_ID)
+    );
+
+    create table CCM_CMS.CATEGORY_TREE_COMPONENTS (
+        SHOW_FULL_TREE boolean,
+        COMPONENT_MODEL_ID int8 not null,
+        primary key (COMPONENT_MODEL_ID)
+    );
+
+    create table CCM_CMS.CONTENT_ITEM_COMPONENTS (
+        MODE varchar(255),
+        COMPONENT_MODEL_ID int8 not null,
+        primary key (COMPONENT_MODEL_ID)
+    );
+
     create table CCM_CMS.CONTENT_ITEM_DESCRIPTIONS (
         OBJECT_ID int8 not null,
         LOCALIZED_VALUE text,
@@ -508,6 +525,12 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         primary key (OBJECT_ID, REV)
     );
 
+    create table CCM_CMS.FIXED_CONTENT_ITEM_COMPONENTS (
+        COMPONENT_MODEL_ID int8 not null,
+        CONTENT_ITEM_ID int8,
+        primary key (COMPONENT_MODEL_ID)
+    );
+
     create table CCM_CMS.FOLDER_CONTENT_SECTION_MAP (
         CONTENT_SECTION_ID int8,
         FOLDER_ID int8 not null,
@@ -518,6 +541,11 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         TYPE varchar(255) not null,
         OBJECT_ID int8 not null,
         primary key (OBJECT_ID)
+    );
+
+    create table CCM_CMS.GREETING_ITEM_COMPONENTS (
+        COMPONENT_MODEL_ID int8 not null,
+        primary key (COMPONENT_MODEL_ID)
     );
 
     create table CCM_CMS.IMAGES (
@@ -535,6 +563,19 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         WIDTH int8,
         LEGAL_METADATA_ID int8,
         primary key (OBJECT_ID, REV)
+    );
+
+    create table CCM_CMS.ITEM_LIST_COMPONENTS (
+        DESCINDING boolean,
+        LIMIT_TO_TYPE varchar(255),
+        PAGE_SIZE int4,
+        COMPONENT_MODEL_ID int8 not null,
+        primary key (COMPONENT_MODEL_ID)
+    );
+
+    create table CCM_CMS.ITEM_LIST_ORDER (
+        ITEM_LIST_ID int8 not null,
+        LIST_ORDER varchar(255)
     );
 
     create table CCM_CMS.LEGAL_METADATA (
@@ -1391,11 +1432,11 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         SETTING_ID int8 not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
+        SETTING_VALUE_DOUBLE float8,
         SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
         SETTING_VALUE_STRING varchar(1024),
-        SETTING_VALUE_DOUBLE float8,
-        SETTING_VALUE_LONG int8,
         SETTING_VALUE_BOOLEAN boolean,
+        SETTING_VALUE_LONG int8,
         primary key (SETTING_ID)
     );
 
@@ -1743,6 +1784,21 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         foreign key (OBJECT_ID, REV) 
         references CCM_CMS.ASSETS_AUD;
 
+    alter table CCM_CMS.CATEGORIZED_ITEM_COMPONENTS 
+        add constraint FKlraxqtl9cnntdo0qovq340y7b 
+        foreign key (COMPONENT_MODEL_ID) 
+        references CCM_CMS.CONTENT_ITEM_COMPONENTS;
+
+    alter table CCM_CMS.CATEGORY_TREE_COMPONENTS 
+        add constraint FKfhc51tkdf705o0sy8sndqpkqa 
+        foreign key (COMPONENT_MODEL_ID) 
+        references CCM_CORE.PAGE_MODEL_COMPONENT_MODELS;
+
+    alter table CCM_CMS.CONTENT_ITEM_COMPONENTS 
+        add constraint FKp83o82kxo2ipa0xo03wxp4dcr 
+        foreign key (COMPONENT_MODEL_ID) 
+        references CCM_CORE.PAGE_MODEL_COMPONENT_MODELS;
+
     alter table CCM_CMS.CONTENT_ITEM_DESCRIPTIONS 
         add constraint FK6mt4tjnenr79o52wcj99tpeu4 
         foreign key (OBJECT_ID) 
@@ -2028,6 +2084,16 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         foreign key (OBJECT_ID, REV) 
         references CCM_CMS.BINARY_ASSETS_AUD;
 
+    alter table CCM_CMS.FIXED_CONTENT_ITEM_COMPONENTS 
+        add constraint FKlfv2clu7ubk18unio8fyvlbnf 
+        foreign key (CONTENT_ITEM_ID) 
+        references CCM_CMS.CONTENT_ITEMS;
+
+    alter table CCM_CMS.FIXED_CONTENT_ITEM_COMPONENTS 
+        add constraint FKkpiuth8e994phxy1x1drh2wf5 
+        foreign key (COMPONENT_MODEL_ID) 
+        references CCM_CMS.CONTENT_ITEM_COMPONENTS;
+
     alter table CCM_CMS.FOLDER_CONTENT_SECTION_MAP 
         add constraint FKnof2m7o4f0ufrugeh4g5wt3g9 
         foreign key (CONTENT_SECTION_ID) 
@@ -2043,6 +2109,11 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         foreign key (OBJECT_ID) 
         references CCM_CORE.CATEGORIES;
 
+    alter table CCM_CMS.GREETING_ITEM_COMPONENTS 
+        add constraint FK3fble8pmmolb7lmsca8akmb94 
+        foreign key (COMPONENT_MODEL_ID) 
+        references CCM_CMS.CONTENT_ITEM_COMPONENTS;
+
     alter table CCM_CMS.IMAGES 
         add constraint FK51ja1101epvl74auenv6sqyev 
         foreign key (LEGAL_METADATA_ID) 
@@ -2057,6 +2128,16 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         add constraint FK4jsrdpe6d8is0ybx2p7sxivwf 
         foreign key (OBJECT_ID, REV) 
         references CCM_CMS.BINARY_ASSETS_AUD;
+
+    alter table CCM_CMS.ITEM_LIST_COMPONENTS 
+        add constraint FKje8r8nvkqv8fj7i0eo1pew2yq 
+        foreign key (COMPONENT_MODEL_ID) 
+        references CCM_CORE.PAGE_MODEL_COMPONENT_MODELS;
+
+    alter table CCM_CMS.ITEM_LIST_ORDER 
+        add constraint FKisnil2ibh98y2ws8or6guij21 
+        foreign key (ITEM_LIST_ID) 
+        references CCM_CMS.ITEM_LIST_COMPONENTS;
 
     alter table CCM_CMS.LEGAL_METADATA 
         add constraint FKnxl7uyv1ks0qabgeienx2t9d1 

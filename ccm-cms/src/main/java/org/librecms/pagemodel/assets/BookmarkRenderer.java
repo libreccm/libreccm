@@ -19,8 +19,6 @@
 package org.librecms.pagemodel.assets;
 
 import org.librecms.contentsection.Asset;
-import org.librecms.pagemodel.assets.AbstractAssetRenderer;
-import org.librecms.pagemodel.assets.AssetRenderer;
 
 import java.util.Locale;
 import java.util.Map;
@@ -30,6 +28,7 @@ import javax.enterprise.context.RequestScoped;
 import org.librecms.assets.Bookmark;
 
 /**
+ * Renderer for {@link Bookmark} assets.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -37,20 +36,35 @@ import org.librecms.assets.Bookmark;
 @AssetRenderer(renders = Bookmark.class)
 public class BookmarkRenderer extends AbstractAssetRenderer {
 
+    /**
+     * Renders the provided {@link BookmarkAsset}. The following properties
+     * are put into {@code result}:
+     * 
+     * <pre>
+     *  {
+     *      "description": {@link Bookmark#getDescription()}
+     *      "url": {@link Bookmark#getUrl()}.
+     *  }
+     * </pre>
+     *
+     * @param asset    The asset to render.
+     * @param language The current language.
+     * @param result   The map into which the result is placed.
+     */
     @Override
-    protected void renderAsset(final Asset asset, 
+    protected void renderAsset(final Asset asset,
                                final Locale language,
                                final Map<String, Object> result) {
-        
+
         final Bookmark bookmark;
         if (asset instanceof Bookmark) {
             bookmark = (Bookmark) asset;
         } else {
             return;
         }
-        
+
         result.put("description", bookmark.getDescription().getValue(language));
         result.put("url", bookmark.getUrl());
     }
-    
+
 }

@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.enterprise.context.RequestScoped;
 
 /**
+ * Renderer for {@link SideNote} assets.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -34,21 +35,33 @@ import javax.enterprise.context.RequestScoped;
 @AssetRenderer(renders = SideNote.class)
 public class SideNoteRenderer extends AbstractAssetRenderer {
 
+    /**
+     * Renderer to provided {@link SideNote}. The only property put into
+     * {@code result} by this renderer is {@code text}:
+     *
+     * <pre>
+     *  {
+     *      "text": {@link SideNote#getText()}
+     *  }
+     * </pre>
+     *
+     * @param asset    The {@link SideNote} to render.
+     * @param language The current language.
+     * @param result   The into which the result is placed.
+     */
     @Override
-    protected void renderAsset(final Asset asset, 
+    protected void renderAsset(final Asset asset,
                                final Locale language,
                                final Map<String, Object> result) {
-        
+
         final SideNote siteNote;
         if (asset instanceof SideNote) {
             siteNote = (SideNote) asset;
         } else {
             return;
         }
-        
+
         result.put("text", siteNote.getText().getValue(language));
     }
-    
-    
-    
+
 }

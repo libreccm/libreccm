@@ -529,11 +529,11 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         SETTING_ID int8 not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
-        SETTING_VALUE_BOOLEAN boolean,
+        SETTING_VALUE_STRING varchar(1024),
+        SETTING_VALUE_DOUBLE float8,
         SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
         SETTING_VALUE_LONG int8,
-        SETTING_VALUE_DOUBLE float8,
-        SETTING_VALUE_STRING varchar(1024),
+        SETTING_VALUE_BOOLEAN boolean,
         primary key (SETTING_ID)
     );
 
@@ -552,6 +552,14 @@ drop sequence if exists HIBERNATE_SEQUENCE;
     create table CCM_CORE.SETTINGS_STRING_LIST (
         LIST_ID int8 not null,
         value varchar(255)
+    );
+
+    create table CCM_CORE.SITES (
+        DEFAULT_SITE boolean,
+        DEFAULT_THEME varchar(255),
+        DOMAIN_OF_SITE varchar(255),
+        OBJECT_ID int8 not null,
+        primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.THREADS (
@@ -678,6 +686,9 @@ drop sequence if exists HIBERNATE_SEQUENCE;
 
     alter table CCM_CORE.SETTINGS 
         add constraint UK5whinfxdaepqs09e5ia9y71uk unique (CONFIGURATION_CLASS, NAME);
+
+    alter table CCM_CORE.SITES 
+        add constraint UK_kou1h4y4st2m173he44yy8grx unique (DOMAIN_OF_SITE);
 
     alter table CCM_CORE.WORKFLOW_TASK_COMMENTS 
         add constraint UK_4nnedf08odyjxalfkg16fmjoi unique (UUID);
@@ -1105,6 +1116,11 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         foreign key (LIST_ID) 
         references CCM_CORE.SETTINGS;
 
+    alter table CCM_CORE.SITES 
+        add constraint FKrca95c6p023men53b8ayu26kp 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.CCM_OBJECTS;
+
     alter table CCM_CORE.THREADS 
         add constraint FKsx08mpwvwnw97uwdgjs76q39g 
         foreign key (ROOT_ID) 
@@ -1203,3 +1219,4 @@ drop sequence if exists HIBERNATE_SEQUENCE;
     alter table CCM_CORE.WORKFLOWS 
         add constraint FK9ray5beiny6wm2mi0uwyecay2 
         foreign key (TEMPLATE_ID) 
+        references CCM_CORE.WORKFLOWS;

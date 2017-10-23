@@ -36,7 +36,8 @@ import javax.ws.rs.NotFoundException;
 import static org.librecms.pages.PagesConstants.*;
 
 /**
- *
+ * Renderer for the {@link GreetingItemComponent}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

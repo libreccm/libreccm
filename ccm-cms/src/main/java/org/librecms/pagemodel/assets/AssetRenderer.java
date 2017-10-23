@@ -28,7 +28,8 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- *
+ * Annotation for marking asset renderers.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Qualifier

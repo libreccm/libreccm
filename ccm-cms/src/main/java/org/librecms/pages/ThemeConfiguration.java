@@ -25,7 +25,8 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 /**
- *
+ * Configuration for the {@link Page} and a {@link Site}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Embeddable
@@ -33,12 +34,21 @@ public class ThemeConfiguration implements Serializable {
 
     private static final long serialVersionUID = -989896906728810984L;
 
+    /**
+     * The theme associated with this configuration.
+     */
     @Column(name = "THEME")
     private String theme;
 
+    /**
+     * The template provided by the theme to use for index pages.
+     */
     @Column(name = "INDEX_PAGE_TEMPLATE")
     private String indexPageTemplate;
 
+    /**
+     * The template provided by the theme to use for item pages.
+     */
     @Column(name = "ITEM_PAGE_TEMPLATE")
     private String itemPageTemplate;
 

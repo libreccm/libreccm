@@ -56,6 +56,7 @@ import javax.ws.rs.core.UriInfo;
 import static org.librecms.pages.PagesConstants.*;
 
 /**
+ * JAX-RS class providing access to the pages.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -99,6 +100,15 @@ public class PagesRouter {
         defaultLocale = kernelConfig.getDefaultLocale();
     }
 
+    /**
+     * Retrieve the index page of a category. Redirects to
+     * {@link #getCategoryIndexPageAsHtml(javax.ws.rs.core.UriInfo, java.lang.String)}.
+     *
+     * @param uriInfo
+     * @param page
+     *
+     * @return
+     */
     @Path("/")
     public Response getCategoryIndexPage(
         @Context
@@ -127,6 +137,15 @@ public class PagesRouter {
         return Response.temporaryRedirect(uri).build();
     }
 
+    /**
+     * Retrieves the category index page. Redirects to
+     * {@link #getCategoryIndexPageAsHtml(javax.ws.rs.core.UriInfo, java.lang.String)}.
+     *
+     * @param uriInfo
+     * @param page
+     *
+     * @return
+     */
     @Path("/index.html")
     public Response getCategoryIndexPageAsHtml(
         @Context
@@ -156,6 +175,18 @@ public class PagesRouter {
         return Response.temporaryRedirect(uri).build();
     }
 
+    /**
+     * Retrieves the category index page.
+     *
+     * @param uriInfo          Data about the URI called.
+     * @param page             The path of the category to show.
+     * @param language         The selected language.
+     * @param theme            The theme to use.
+     * @param themeVersion     The version of the theme to use.
+     * @param pageModelVersion The version of the page model to use.
+     *
+     * @return The HTML representation of the index page.
+     */
     @Path("/index.{lang}.html")
     @Produces("text/html")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -184,6 +215,16 @@ public class PagesRouter {
         return themes.process(buildResult, themeInfo);
     }
 
+    /**
+     * Retrieves the category index page as JSON:
+     *
+     * @param uriInfo
+     * @param page
+     * @param language
+     * @param pageModelVersion
+     *
+     * @return
+     */
     @Path("/index.{lang}.json")
     @Produces("text/html")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -201,6 +242,16 @@ public class PagesRouter {
         return getCategoryIndexPage(uriInfo, page, language, pageModelVersion);
     }
 
+    /**
+     * Retrieves the category index page as XML.
+     *
+     * @param uriInfo
+     * @param page
+     * @param language
+     * @param pageModelVersion
+     *
+     * @return
+     */
     @Path("/index.{lang}.xml")
     @Produces("text/html")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -218,6 +269,19 @@ public class PagesRouter {
         return getCategoryIndexPage(uriInfo, page, language, pageModelVersion);
     }
 
+    /**
+     * Retrieve the item page for a category and the content item associated
+     * with the category and identified by {@code itemName}.
+     *
+     * Redirects to
+     * {@link #getItemPageAsHtml(javax.ws.rs.core.UriInfo, java.lang.String, java.lang.String)}.
+     *
+     * @param uriInfo
+     * @param page
+     * @param itemName
+     *
+     * @return
+     */
     @Path("/{name}")
     public Response getItemPage(
         @Context final UriInfo uriInfo,
@@ -245,6 +309,17 @@ public class PagesRouter {
         return Response.temporaryRedirect(uri).build();
     }
 
+    /**
+     * Retrieve the item page for a category and the content item associated
+     * with the category and identified by {@code itemName}. Redirects to
+     * {@link #getItemPageAsHtml(javax.ws.rs.core.UriInfo, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
+     *
+     * @param uriInfo
+     * @param page
+     * @param itemName
+     *
+     * @return
+     */
     @Path("/{name},html")
     public Response getItemPageAsHtml(
         @Context final UriInfo uriInfo,
@@ -276,6 +351,20 @@ public class PagesRouter {
         return Response.temporaryRedirect(uri).build();
     }
 
+    /**
+     * Retrieve the item page as HTML for a category and the content item
+     * associated with the category and identified by {@code itemName}.
+     *
+     * @param uriInfo
+     * @param page
+     * @param itemName
+     * @param language
+     * @param theme
+     * @param themeVersion
+     * @param pageModelVersion
+     *
+     * @return
+     */
     @Path("/{name}.{lang}.html")
     public String getItemPageAsHtml(
         @Context
@@ -304,6 +393,18 @@ public class PagesRouter {
         return themes.process(buildResult, themeInfo);
     }
 
+    /**
+     * Retrieve the item page as JSON for a category and the content item
+     * associated with the category and identified by {@code itemName}.
+     *
+     * @param uriInfo
+     * @param page
+     * @param itemName
+     * @param language
+     * @param pageModelVersion
+     *
+     * @return
+     */
     @Path("/{name}.{lang}.html")
     public Map<String, Object> getItemPageAsJson(
         @Context
@@ -325,6 +426,18 @@ public class PagesRouter {
                                    pageModelVersion);
     }
 
+    /**
+     * Retrieve the item page as XML for a category and the content item
+     * associated with the category and identified by {@code itemName}.
+     *
+     * @param uriInfo
+     * @param page
+     * @param itemName
+     * @param language
+     * @param pageModelVersion
+     *
+     * @return
+     */
     @Path("/{name}.{lang}.html")
     public Map<String, Object> getItemPageAsXml(
         @Context

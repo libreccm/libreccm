@@ -30,13 +30,10 @@ import java.util.Objects;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
-import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -45,7 +42,8 @@ import static org.librecms.CmsConstants.*;
 import static org.librecms.pages.PagesConstants.*;
 
 /**
- *
+ * A CMS page is a container which contains several data how a page is displayed.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -64,20 +62,24 @@ public class Page extends CcmObject implements Serializable {
 
     private static final long serialVersionUID = 5108486858438122008L;
 
+    /**
+     * The page model for the index item of the associated category.
+     */
     @ManyToOne
     @JoinColumn(name = "INDEX_PAGE_MODEL_ID")
     private PageModel indexPageModel;
 
+    /**
+     * The page model for other items in the associated category.
+     */
     @ManyToOne
     @JoinColumn(name = "ITEM_PAGE_MODEL_ID")
     private PageModel itemPageModel;
 
+    /**
+     * The configurations for this page.
+     */
     @ElementCollection
-//    @JoinTable(name = "PAGE_THEME_CONFIGURATIONS",
-//               schema = DB_SCHEMA,
-//               joinColumns = {
-//                   @JoinColumn(name = "PAGE_ID")
-//               })
     @CollectionTable(name = "PAGE_THEME_CONFIGURATIONS", 
                      schema = DB_SCHEMA,
                      joinColumns = {
