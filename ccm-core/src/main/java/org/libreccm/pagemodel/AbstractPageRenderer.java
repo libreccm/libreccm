@@ -25,40 +25,40 @@ import javax.inject.Inject;
 import java.util.Optional;
 
 /**
- * An abstract base class for implementations of the {@link PageBuilder}
+ * An abstract base class for implementations of the {@link PageRenderer}
  * interface providing some functionality needed by all implementations of the
- * {@link PageBuilder} interface.
+ * {@link PageRenderer} interface.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  *
  */
-public abstract class AbstractPageBuilder implements PageBuilder {
+public abstract class AbstractPageRenderer implements PageRenderer {
 
     @Inject
-    private ComponentBuilderManager componentBuilderManager;
+    private ComponentRendererManager componentRendererManager;
 
     /**
-     * Build a {@code Page} based on a {@link PageModel}. This implementation
-     * first calls {@link #buildPage()} to create the page object. After that
+     * Renders a {@code Page} based on a {@link PageModel}. This implementation
+     * first calls {@link #renderPage()} to create the page object. After that
      * all {@link ComponentModel}s of the {@link PageModel} are processed and
-     * the component objects created by the {@link ComponentBuilder}s are added
+     * the component objects created by the {@link ComponentRenderer}s are added
      * to the page.
      *
      * @param pageModel  The {@link PageModel} to process.
      * @param parameters Parameters provided by application which wants to
      *                   render a {@link PageModel}. The parameters are passed
-     *                   the {@link ComponentBuilder}s.
+     *                   the {@link ComponentRenderer}s.
      *
      * @return A page containing all components from the {@link PageModel}.
      */
     @Override
-    public Map<String, Object> buildPage(final PageModel pageModel,
-                                         final Map<String, Object> parameters) {
+    public Map<String, Object> renderPage(final PageModel pageModel,
+                                          final Map<String, Object> parameters) {
 
-        final Map<String, Object> page = buildPage(parameters);
+        final Map<String, Object> page = renderPage(parameters);
 
         for (final ComponentModel componentModel : pageModel.getComponents()) {
-            final Optional<Object> component = buildComponent(
+            final Optional<Object> component = renderComponent(
                 componentModel, componentModel.getClass(),
                 parameters);
             if (component.isPresent()) {
@@ -71,7 +71,7 @@ public abstract class AbstractPageBuilder implements PageBuilder {
     }
 
     /**
-     * Helper method for building the components.
+     * Helper method for rendering the components.
      *
      * @param <M>                 Generics variable for the type the component
      *                            created.
@@ -79,24 +79,24 @@ public abstract class AbstractPageBuilder implements PageBuilder {
      * @param componentModelClass The class of the {@link ComponentModel}.
      * @param parameters          Parameters provided by application which wants
      *                            to render a {@link PageModel}. The parameters
-     *                            are passed the {@link ComponentBuilder}s.
+     *                            are passed the {@link ComponentRenderer}s.
      *
      * @return The components described by the {@code componentModel}.
      */
-    protected <M extends ComponentModel> Optional<Object> buildComponent(
+    protected <M extends ComponentModel> Optional<Object> renderComponent(
         final ComponentModel componentModel,
         final Class<M> componentModelClass,
         final Map<String, Object> parameters) {
 
-        componentBuilderManager.findComponentBuilder(componentModel.getClass());
+        componentRendererManager.findComponentRenderer(componentModel.getClass());
 
-        final Optional<ComponentBuilder<M>> builder = componentBuilderManager
-            .findComponentBuilder(componentModelClass);
+        final Optional<ComponentRenderer<M>> renderer = componentRendererManager
+            .findComponentRenderer(componentModelClass);
 
-        if (builder.isPresent()) {
+        if (renderer.isPresent()) {
             @SuppressWarnings("unchecked")
             final M model = (M) componentModel;
-            return Optional.of(builder.get().buildComponent(model, parameters));
+            return Optional.of(renderer.get().renderComponent(model, parameters));
         } else {
             return Optional.empty();
         }

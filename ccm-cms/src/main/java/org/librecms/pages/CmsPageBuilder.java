@@ -18,7 +18,7 @@
  */
 package org.librecms.pages;
 
-import org.libreccm.pagemodel.AbstractPageBuilder;
+import org.libreccm.pagemodel.AbstractPageRenderer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,10 +30,10 @@ import javax.enterprise.context.RequestScoped;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class CmsPageBuilder extends AbstractPageBuilder {
+public class CmsPageBuilder extends AbstractPageRenderer {
 
     @Override
-    public Map<String, Object> buildPage(final Map<String, Object> parameters) {
+    public Map<String, Object> renderPage(final Map<String, Object> parameters) {
         
         final Map<String, Object> result = new HashMap<>();
         

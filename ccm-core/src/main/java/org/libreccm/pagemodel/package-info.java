@@ -24,19 +24,19 @@
  * </p>
  * <p>
  * The Page Model system allows it to specify which components are used on a
- * page are therefore which information is displayed on a page. It is intended
+ * page and therefore which information is displayed on a page. It is intended
  * to be used for public pages (like the item page of a content item category
  * page in ccm-cms. The Page Model system uses data containers which are read by
- * some builder classes. Because we are not using any active code in the page
+ * a renderer class. Because we are not using any active code in the page
  * models this avoids a potential attack point.
  * </p>
  * <p>
- * The central interface is the {@link org.libreccm.pagemodel.PageBuilder}
+ * The central interface is the {@link org.libreccm.pagemodel.PageRenderer}
  * interface. An implementation of this interface will take a
  * {@link org.libreccm.pagemodel.PageModel} and process it and create a page
  * from it using the view technology supported by the implementation.
- * {@code PageBuilder}s are CDI beans. Implementations can be retrieved using
- * the {@link org.libreccm.pagemodel.PageBuilderManager#findPageBuilder(String, Class)} method.
+ * {@code PageRenderer}s are CDI beans. Implementations can be retrieved using
+ * the {@link org.libreccm.pagemodel.PageRendererManager#findPageRenderer(String, Class)} method.
  * </p>
  *
  */
