@@ -28,7 +28,10 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import static org.librecms.pages.PagesConstants.*;
+
 /**
+ * Manager for {@link Page} entities.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -37,13 +40,22 @@ public class PageManager {
 
     @Inject
     private CategoryManager categoryManager;
-    
+
     @Inject
     private CategoryRepository categoryRepo;
-    
+
     @Inject
     private PageRepository pageRepo;
 
+    /**
+     * Finds the {@link Page} associated with an {@link Category}. If there is
+     * no {@link Page} associated with the provided {@link Category} this method
+     * will return the {@link Page} associated with the parent category.
+     *
+     * @param category The {@link Category} which is associated with the {@link Page}.
+     *
+     * @return The {@link Page} associated with the provided {@code category}.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     public Page findPageForCategory(final Category category) {
 
@@ -66,12 +78,19 @@ public class PageManager {
         }
     }
 
+    /**
+     * Create 
+     * @param category
+     * @return 
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     public Page createPageForCategory(final Category category) {
 
         final Page page = new Page();
         pageRepo.save(page);
-        categoryManager.addObjectToCategory(page, category);
+        categoryManager.addObjectToCategory(page, 
+                                            category, 
+                                            CATEGORIZATION_TYPE_PAGE_CONF);
 
         return page;
     }

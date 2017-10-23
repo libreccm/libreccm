@@ -18,7 +18,6 @@
  */
 package org.librecms.pages;
 
-
 import org.libreccm.core.AbstractEntityRepository;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.security.RequiresPrivilege;
@@ -33,6 +32,7 @@ import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 /**
+ * Repository for {@link Pages}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -42,6 +42,14 @@ public class PagesRepository extends AbstractEntityRepository<Long, Pages> {
     @Inject
     private SiteRepository siteRepo;
 
+    /**
+     * Retrieves the {@link Pages} instance for the site identified by the
+     * provided domain.
+     *
+     * @param domainOfSite The domain of the site.
+     *
+     * @return The {@link Pages} instance for the site if any.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<Pages> findPagesForSite(final String domainOfSite) {
 

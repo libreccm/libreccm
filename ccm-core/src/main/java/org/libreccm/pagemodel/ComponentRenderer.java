@@ -18,6 +18,7 @@
  */
 package org.libreccm.pagemodel;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -30,7 +31,36 @@ import java.util.Map;
  */
 public interface ComponentRenderer<M extends ComponentModel> {
 
+    /**
+     * Renders a {@link ComponentModel}.
+     *
+     * The result of the rendering process is a map which uses strings as key.
+     * The values are either Java primitive types or Collections. More exactly
+     * the values are objects of one the following types:
+     *
+     * <ul>
+     * <li>{@link Double}</li>
+     * <li>{@link Float}</li>
+     * <li>{@link Integer}</li>
+     * <li>{@link Long}</li>
+     * <li>{@link Short}</li>
+     * <li>{@link String}</li>
+     * <li>{@link List}</li>
+     * <li>{@link Map}</li>
+     * </ul>
+     *
+     * Other subtypes {@link Collection} are might be supported but there is no
+     * grantee for that. The values in a collection must be one of the types in
+     * the list above. Collections might contain multiple types from the list
+     * above. The keys for a map should always be strings.
+     *
+     * @param componentModel The component model to render.
+     * @param parameters     Parameters provided by the calling
+     *                       {@link PageRenderer}.
+     *
+     * @return A map representing the rendered component.
+     */
     Map<String, Object> renderComponent(M componentModel,
-                                       final Map<String, Object> parameters);
+                                        Map<String, Object> parameters);
 
 }

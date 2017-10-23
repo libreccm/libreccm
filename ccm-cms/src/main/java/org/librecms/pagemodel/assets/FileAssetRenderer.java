@@ -27,21 +27,29 @@ import java.util.Map;
 import javax.enterprise.context.RequestScoped;
 
 /**
+ * Renderer for {@link FileAsset}s.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 @AssetRenderer(renders = FileAsset.class)
 public class FileAssetRenderer extends BinaryAssetRenderer {
-    
+
+    /**
+     * Renders the provided {@link FileAsset}. No additional data.
+     *
+     * @param asset
+     * @param locale
+     * @param result
+     */
     @Override
     protected void renderAsset(final Asset asset,
                                final Locale locale,
                                final Map<String, Object> result) {
-        
+
         super.renderAsset(asset, locale, result);
-        
+
         //Nothing more yet
     }
-    
+
 }

@@ -20,6 +20,8 @@ package org.libreccm.modules;
 
 import org.libreccm.configuration.Configuration;
 import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.pagemodel.ComponentModel;
+import org.libreccm.pagemodel.PageModel;
 import org.libreccm.pagemodel.PageModelComponentModel;
 import org.libreccm.web.ApplicationType;
 
@@ -84,12 +86,19 @@ public @interface Module {
      *
      * @return An array containing all configuration classes provided by the
      *         module.
-     * 
+     *
      * @see Configuration
      * @see ConfigurationManager
      */
     Class<?>[] configurations() default {};
 
+    /**
+     * Components for use in {@link PageModel}s provided by the annotated
+     * module.
+     *
+     * @return An array containing all {@link ComponentModel}s provided by the
+     *         annotated module.
+     */
     PageModelComponentModel[] pageModelComponentModels() default {};
-    
+
 }

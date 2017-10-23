@@ -35,7 +35,9 @@ import javax.persistence.Table;
 import static org.librecms.CmsConstants.*;
 
 /**
- *
+ * The {@code Pages} application. Each instance of this application provides
+ * the page tree for specific site.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -68,10 +70,16 @@ public class Pages extends CcmApplication implements Serializable {
 
     private static final long serialVersionUID = -352205318143692477L;
 
+    /**
+     * The {@link Site} to which this pages instance belongs.
+     */
     @OneToOne
     @JoinColumn(name = "SITE_ID")
     private Site site;
 
+    /**
+     * The category {@link Domain} which is used the model the page tree.
+     */
     @OneToOne
     @JoinColumn(name = "CATEGORY_DOMAIN_ID")
     private Domain categoryDomain;

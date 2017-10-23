@@ -29,6 +29,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 /**
+ * Renderer for {@link ImageRenderer}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -40,6 +41,26 @@ public class ImageRenderer extends BinaryAssetRenderer {
     @AssetRenderer(renders = LegalMetadata.class)
     private AbstractAssetRenderer legalMetadataRenderer;
 
+    /**
+     * Renders the provided {@link ImageAsset}. The following data is put into
+     * the map:
+     *
+     * <pre>
+     *  {
+     *      "width": {@link Image#getWidth()}
+     *      "height": {@link Image#getHeight()}
+     *      "legalMetadata": {@link LegalMetadataRenderer#render(org.librecms.contentsection.Asset, java.util.Locale)} using {@link Image#getLegalMetadata()}.
+     *  }
+     * </pre>
+     *
+     * The associated {@link LegalMetadata} asset is rendered using
+     * {@link LegalMetadataRenderer} and the result is put into map under the
+     * key {@code legalMetadata}.
+     *
+     * @param asset    The asset to render.
+     * @param language The current language.
+     * @param result   The map into which the result is put.
+     */
     @Override
     protected void renderAsset(final Asset asset,
                                final Locale language,

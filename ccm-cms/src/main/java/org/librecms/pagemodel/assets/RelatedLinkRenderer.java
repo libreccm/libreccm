@@ -31,6 +31,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 /**
+ * Renderer for {@link RelatedLink} assets.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -42,6 +43,36 @@ public class RelatedLinkRenderer extends AbstractAssetRenderer {
     @AssetRenderer(renders = Bookmark.class)
     private AbstractAssetRenderer bookmarkRenderer;
 
+    /**
+     * Render the provided {@link RelatedLink}.
+     *
+     * Depending on the type of the {@link RelatedLink} (internal or external)
+     * different properties are placed into {@code result}.
+     *
+     * For internal links: An entry with the key {@code targetItem} and a map
+     * containing the following properties of the target item:
+     *
+     * <pre>
+     *      {
+     *          "objectId": {@link ContentItem#getObjectId()}
+     *          "itemUuid": {@link ContentItem#getItemUuid()}
+     *          "displayName": {@link ContentItem#getDisplayName()}
+     *          "name": {@link ContentItem#getName()}
+     *          "title": {@link ContentItem#getTitle()}
+     *          "description": {@link ContentItem#getDescription()}
+     *      }
+     * </pre>
+     *
+     * For external links an {@link RelatedLink} uses a association with a
+     * {@link Bookmark}. The {@code Bookmark} is rendered using the
+     * {@link BookmarkRenderer}. The result is put into {@code result} with the
+     * key {@code bookmark}.
+     *
+     *
+     * @param asset    The asset to render.
+     * @param language The current language.
+     * @param result   The map is which to result is stored.
+     */
     @Override
     protected void renderAsset(final Asset asset,
                                final Locale language,

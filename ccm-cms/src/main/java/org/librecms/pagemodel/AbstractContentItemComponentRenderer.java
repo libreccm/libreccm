@@ -42,8 +42,13 @@ import javax.ws.rs.core.Response;
 import static org.librecms.pages.PagesConstants.*;
 
 import org.libreccm.pagemodel.ComponentRenderer;
+import org.librecms.pagemodel.contentitems.ContentItemRenderer;
 
 /**
+ *
+ * Abstract base class for rendering an {@link ContentItemComponent} which
+ * provides some logic useful for most implementations of
+ * {@link ContentItemComponentRenderer}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @param <T>
@@ -53,7 +58,7 @@ public abstract class AbstractContentItemComponentRenderer<T extends ContentItem
 
     @Inject
     private ConfigurationManager confManager;
-    
+
     @Inject
     private ContentItemRenderers contentItemRenderers;
 
@@ -66,15 +71,46 @@ public abstract class AbstractContentItemComponentRenderer<T extends ContentItem
     @Inject
     private PermissionChecker permissionChecker;
 
+    /**
+     * Retrieves the content item to render.
+     *
+     * @param componentModel The {@link ComponentModel} which is rendered.
+     * @param parameters     Additional parameters.
+     *
+     * @return The {@link ContentItem} to render.
+     */
     protected abstract ContentItem getContentItem(
         T componentModel, final Map<String, Object> parameters);
 
+    /**
+     * Renders the provided {@link ContentItemComponent} and the
+     * {@link ContentItem} retrieved by
+     * {@link #getContentItem(org.librecms.pagemodel.ContentItemComponent, java.util.Map)}.
+     *
+     * The {@link ContentItem} is rendered using an appropriate implementation
+     * of {@link ContentItemRenderer}. This method use the draft version of the
+     * item there is an parameters {@code showDraftItem} in the
+     * {@code parameters} map with the value {@code true}. If
+     * {@code showDraftItem} is set to {@code true} and the current user is not
+     * permitted to new the draft version of the item an
+     * {@link WebApplicationException} with the correct HTTP response code is
+     * thrown.
+     *
+     * Likewise of the current user is not permitted to view the view version of
+     * the item an {@link WebApplicationException} with the correct HTTP
+     * response code is thrown.
+     *
+     * @param componentModel The {@link ComponentModel} to render.
+     * @param parameters     Additional parameters.
+     *
+     * @return The rendered component.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public Map<String, Object> renderComponent(
         final T componentModel,
         final Map<String, Object> parameters) {
-        
+
         Objects.requireNonNull(componentModel);
         Objects.requireNonNull(parameters);
 
@@ -121,6 +157,17 @@ public abstract class AbstractContentItemComponentRenderer<T extends ContentItem
         }
     }
 
+    /**
+     * A helper method for rendering the {@link ContentItem}. There should be no
+     * need to overwrite this method, but maybe there are scenarios where this
+     * is necessary.
+     *
+     * @param componentModel The component model to render.
+     * @param parameters Additional parameters.
+     * @param item The item to render.
+     * 
+     * @return The rendered content item.
+     */
     protected Map<String, Object> generateItem(
         final T componentModel,
         final Map<String, Object> parameters,
@@ -136,13 +183,14 @@ public abstract class AbstractContentItemComponentRenderer<T extends ContentItem
         }
 
         if (iteml10nManager.hasLanguage(item, language)) {
-            
+
             final AbstractContentItemRenderer renderer = contentItemRenderers
-            .findRenderer(item.getClass(), componentModel.getMode());
-            
-            return renderer.render(item, language);            
+                .findRenderer(item.getClass(), componentModel.getMode());
+
+            return renderer.render(item, language);
         } else {
             throw new NotFoundException("Requested language is not available.");
         }
     }
+
 }

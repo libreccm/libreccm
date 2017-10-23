@@ -25,7 +25,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Specifies which type of components a {@link ComponentRenderer} implenentation
+ * Specifies which type of components a {@link ComponentRenderer} implementation
  * renders.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>

@@ -29,6 +29,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 /**
+ * Renderer for {@link ExternalVideoAsset}s.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -40,12 +41,31 @@ public class ExternalVideoAssetRenderer extends BookmarkRenderer {
     @AssetRenderer(renders = LegalMetadata.class)
     private AbstractAssetRenderer legalMetadataRenderer;
 
+    /**
+     * Renders the provided {@link ExternalVideoAsset}. In addition to the data
+     * put into {@code result} by the {@link BookmarkRenderer} the following
+     * properties are put into the map:
+     *
+     * <pre>
+     *  {
+     *      "legalMetadata": {@link ExternalVideoAsset#getLegalMetadata()}
+     *  }
+     * </pre>
+     *
+     * The associated {@link LegalMetadata} asset is rendered using the
+     * {@link LegalMetadata} and the result is put into the map under the key
+     * {@code legalMetadata}.
+     *
+     * @param asset    The asset to render.
+     * @param language The current language
+     * @param result   The map into which the result is put.
+     */
     @Override
     protected void renderAsset(final Asset asset,
-                               final Locale locale,
+                               final Locale language,
                                final Map<String, Object> result) {
 
-        super.renderAsset(asset, locale, result);
+        super.renderAsset(asset, language, result);
 
         final ExternalVideoAsset externalVideoAsset;
         if (asset instanceof ExternalVideoAsset) {
@@ -56,7 +76,7 @@ public class ExternalVideoAssetRenderer extends BookmarkRenderer {
 
         result.put("legalMetadata",
                    legalMetadataRenderer
-                       .render(externalVideoAsset.getLegalMetadata(), locale));
+                       .render(externalVideoAsset.getLegalMetadata(), language));
     }
 
 }

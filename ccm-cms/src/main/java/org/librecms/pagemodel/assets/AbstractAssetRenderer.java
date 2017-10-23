@@ -25,11 +25,33 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
+ * Abstract base class for rendering {@link Asset}s.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public abstract class AbstractAssetRenderer {
 
+    /**
+     * Basic implementation rendering the common properties of an asset. For
+     * rendering the specific properties of the asset this method calls
+     * {@link #renderAsset(org.librecms.contentsection.Asset, java.util.Locale, java.util.Map)}.
+     *
+     * The common properties put into {@code result} are:
+     * 
+     * <pre>
+     *  {
+     *      "objectId": {@link Asset#getObjectId()}
+     *      "uuid": {@link Asset#getUuid()}
+     *      "displayName": {@link Asset#getDisplayName()}
+     *      "title": {@link Asset#getTitle()}
+     *  }
+     * </pre>
+     *
+     * @param asset    The {@link Asset} to render.
+     * @param language The current language.
+     *
+     * @return The rendered asset.
+     */
     public Map<String, Object> render(final Asset asset,
                                       final Locale language) {
 
@@ -45,6 +67,15 @@ public abstract class AbstractAssetRenderer {
         return result;
     }
 
+    /**
+     * Renders the special properties of an specific asset type. If the provided
+     * asset is not of the correct type for the renderer this an implementation
+     * of this method should return without doing anything.
+     *
+     * @param asset    The {@link Asset} to render.
+     * @param language The current language.
+     * @param result   The map in which the rendered properties are stored.
+     */
     protected abstract void renderAsset(final Asset asset,
                                         final Locale language,
                                         final Map<String, Object> result);

@@ -29,6 +29,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 /**
+ * Renderer for {@link AudioAsset}s.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -39,23 +40,42 @@ public class AudioAssetRenderer extends BinaryAssetRenderer {
     @Inject
     @AssetRenderer(renders = LegalMetadata.class)
     private AbstractAssetRenderer legalMetadataRenderer;
-    
+
+    /**
+     * Renders to provided {@link AudioAsset}. The following properties are put
+     * into {@code result}:
+     *
+     * <pre>
+     *  {
+     *      "legamMetadata": {@link AudioAsset#getLegalMetadata()}.
+     *  }
+     * </pre>
+     *
+     * The associated {@link LegalMetadata} asset is rendered using
+     * {@link LegalMetadataRenderer} and the result is put {@code result} under
+     * the key {@code legalMetadata}.
+     *
+     * @param asset    The asset to render.
+     * @param language The current language.
+     * @param result   The map into which the result is placed.
+     */
     @Override
-    protected void renderAsset(final Asset asset, 
+    protected void renderAsset(final Asset asset,
                                final Locale language,
                                final Map<String, Object> result) {
-        
+
         super.renderAsset(asset, language, result);
-        
+
         final AudioAsset audioAsset;
         if (asset instanceof AudioAsset) {
             audioAsset = (AudioAsset) asset;
         } else {
             return;
         }
-        
-        result.put("legalMetadata", 
-                   legalMetadataRenderer.render(audioAsset.getLegalMetadata(), language));
+
+        result.put("legalMetadata",
+                   legalMetadataRenderer.render(audioAsset.getLegalMetadata(),
+                                                language));
     }
-    
+
 }

@@ -27,13 +27,28 @@ import java.util.Map;
 import javax.enterprise.context.RequestScoped;
 
 /**
- *
+ * Renderer for {@link News} items.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ContentItemRenderer(renders = News.class)
 @RequestScoped
 public class NewsRenderer extends AbstractContentItemRenderer {
 
+    /**
+     * Renders the provided {@link News} item. The following values are put into {@code result}:
+     * 
+     * <pre>
+     *  {
+     *      "text": {@link News#getText()}
+     *      "releaseDate": {@link News#getReleaseDate()}
+     *  }
+     * </pre>
+     * 
+     * @param item     The item to render.
+     * @param language The current language.
+     * @param result   The map into which the result is placed.
+     */
     @Override
     public void renderItem(final ContentItem item,
                            final Locale language,
@@ -45,7 +60,7 @@ public class NewsRenderer extends AbstractContentItemRenderer {
         } else {
             return;
         }
-        
+
         result.put("text", news.getText().getValue(language));
         result.put("releaseDate", news.getReleaseDate());
     }

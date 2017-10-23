@@ -530,10 +530,10 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         SETTING_ID bigint not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
-        SETTING_VALUE_LONG bigint,
-        SETTING_VALUE_BIG_DECIMAL decimal(19,2),
-        SETTING_VALUE_DOUBLE double,
         SETTING_VALUE_STRING varchar(1024),
+        SETTING_VALUE_DOUBLE double,
+        SETTING_VALUE_BIG_DECIMAL decimal(19,2),
+        SETTING_VALUE_LONG bigint,
         SETTING_VALUE_BOOLEAN boolean,
         primary key (SETTING_ID)
     );
