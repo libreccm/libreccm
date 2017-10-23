@@ -34,7 +34,7 @@ import static org.librecms.CmsConstants.*;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "FIXED_CONTENT_ITEM_COMPONENT", schema = DB_SCHEMA)
+@Table(name = "FIXED_CONTENT_ITEM_COMPONENTS", schema = DB_SCHEMA)
 public class FixedContentItemComponent extends ContentItemComponent {
 
     private static final long serialVersionUID = -4518031021801472455L;
