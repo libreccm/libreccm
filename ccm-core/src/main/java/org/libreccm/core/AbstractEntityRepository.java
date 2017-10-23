@@ -18,8 +18,13 @@
  */
 package org.libreccm.core;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.persistence.EntityGraph;
@@ -29,7 +34,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
-import java.util.*;
 
 /**
  * A base class providing common method needed by every repository.
@@ -38,13 +42,12 @@ import java.util.*;
  * @param <K> Type of the primary key of the entity
  * @param <E> Type of the entity.
  */
-public abstract class AbstractEntityRepository<K, E> {
+public abstract class AbstractEntityRepository<K, E> implements Serializable {
 
-    private static final Logger LOGGER = LogManager.getLogger(
-            AbstractEntityRepository.class);
+    private static final long serialVersionUID = 8462548002420023652L;
 
     protected static final String FETCH_GRAPH_HINT_KEY
-                                  = "javax.persistence.fetchgraph";
+                                      = "javax.persistence.fetchgraph";
 
     /**
      * The {@link EntityManager} instance to use. Provided by the container via
@@ -83,7 +86,7 @@ public abstract class AbstractEntityRepository<K, E> {
      * @param query The query from which the result is retrieved.
      *
      * @return An {@link Optional} instance wrapping the first result of the
-     * query. If there is no result the {@code Optional} is empty.
+     *         query. If there is no result the {@code Optional} is empty.
      */
     protected Optional<E> getSingleResult(final TypedQuery<E> query) {
         final List<E> result = query.getResultList();
@@ -104,12 +107,13 @@ public abstract class AbstractEntityRepository<K, E> {
      * @param entityGraphName The name of the named entity graph.
      *
      * @return A mutable copy of the named entity graph identified by the
-     * provided name or {@code null} if there is no such named entity graph.
+     *         provided name or {@code null} if there is no such named entity
+     *         graph.
      */
     @SuppressWarnings("unchecked")
     public EntityGraph<E> createEntityGraph(final String entityGraphName) {
         return (EntityGraph<E>) entityManager.createEntityGraph(
-                entityGraphName);
+            entityGraphName);
     }
 
     /**
@@ -117,7 +121,7 @@ public abstract class AbstractEntityRepository<K, E> {
      * a repository class overwrite this method.
      *
      * @return The {@code Class} of the Entity which are managed by this
-     * repository.
+     *         repository.
      */
     public abstract Class<E> getEntityClass();
 
@@ -127,28 +131,29 @@ public abstract class AbstractEntityRepository<K, E> {
      * @param entityId The ID of the entity to retrieve.
      *
      * @return An {@link Optional} containing the entity identified by the
-     * provided ID or am empty {@link Optional} if there is no such entity.
+     *         provided ID or am empty {@link Optional} if there is no such
+     *         entity.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<E> findById(final K entityId) {
-        
+
         return Optional.ofNullable(entityManager.find(getEntityClass(),
                                                       entityId));
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<E> findById(final K entityId, final String entityGraphName) {
-        
+
         @SuppressWarnings("unchecked")
         final EntityGraph<E> entityGraph = (EntityGraph<E>) entityManager.
-                getEntityGraph(entityGraphName);
+            getEntityGraph(entityGraphName);
         return findById(entityId, entityGraph);
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<E> findById(final K entityId,
                                 final EntityGraph<E> entityGraph) {
-        
+
         final Map<String, Object> hints = new HashMap<>();
         hints.put(FETCH_GRAPH_HINT_KEY, entityGraph);
         return Optional.ofNullable(entityManager.find(getEntityClass(),
@@ -161,7 +166,7 @@ public abstract class AbstractEntityRepository<K, E> {
      * responsible for.
      *
      * @return The list of entities in the database which are of the type
-     * provided by {@link #getEntityClass()}.
+     *         provided by {@link #getEntityClass()}.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public List<E> findAll() {
@@ -174,7 +179,7 @@ public abstract class AbstractEntityRepository<K, E> {
     public List<E> findAll(final String entityGraphName) {
         @SuppressWarnings("unchecked")
         final EntityGraph<E> entityGraph = (EntityGraph<E>) entityManager
-                .getEntityGraph(entityGraphName);
+            .getEntityGraph(entityGraphName);
 
         return findAll(entityGraph);
     }
@@ -188,9 +193,9 @@ public abstract class AbstractEntityRepository<K, E> {
 
     public CriteriaQuery<E> createCriteriaQuery() {
         final CriteriaBuilder criteriaBuilder = entityManager
-                .getCriteriaBuilder();
+            .getCriteriaBuilder();
         final CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(
-                getEntityClass());
+            getEntityClass());
         final Root<E> root = criteriaQuery.from(getEntityClass());
         return criteriaQuery.select(root);
     }
@@ -208,8 +213,8 @@ public abstract class AbstractEntityRepository<K, E> {
                                         final String graphName) {
         @SuppressWarnings("unchecked")
         final EntityGraph<E> entityGraph = (EntityGraph< E>) entityManager
-                .getEntityGraph(
-                        graphName);
+            .getEntityGraph(
+                graphName);
         return executeCriteriaQuery(criteriaQuery, entityGraph);
     }
 
@@ -228,7 +233,7 @@ public abstract class AbstractEntityRepository<K, E> {
      * @param entity The entity to check.
      *
      * @return {@code true} if the entity is new (isn't in the database yet),
-     * {@code false} otherwise.
+     *         {@code false} otherwise.
      */
     public abstract boolean isNew(final E entity);
 
@@ -239,9 +244,9 @@ public abstract class AbstractEntityRepository<K, E> {
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public void save(final E entity) {
-        
+
         Objects.requireNonNull(entity, "Can't save null.");
-        
+
         if (isNew(entity)) {
             initNewEntity(entity);
             entityManager.persist(entity);
@@ -268,10 +273,10 @@ public abstract class AbstractEntityRepository<K, E> {
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public void delete(final E entity) {
-        
-        Objects.requireNonNull(entity, 
+
+        Objects.requireNonNull(entity,
                                "Can't delete a null entity.");
-        
+
         //We need to make sure we use a none detached entity, therefore the merge
         entityManager.remove(entityManager.merge(entity));
     }

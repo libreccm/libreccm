@@ -18,6 +18,8 @@
  */
 package org.libreccm.ui;
 
+import java.io.Serializable;
+
 /**
  * A functional interface which can be used by other components which embed 
  * a text editor.
@@ -25,7 +27,7 @@ package org.libreccm.ui;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @FunctionalInterface
-public interface TextEditorBuilder {
+public interface TextEditorBuilder extends Serializable {
     
     /**
      * Create the text editor component.

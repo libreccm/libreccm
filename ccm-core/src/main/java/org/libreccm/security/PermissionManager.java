@@ -416,12 +416,6 @@ public class PermissionManager {
                                 final Role grantee,
                                 final CcmObject object) {
 
-        LOGGER.debug("Revoking permission granting privilege \"{}\" "
-                         + "on object \"{}\" to role \"{}\"...",
-                     privilege,
-                     grantee.getName(),
-                     object.getUuid());
-
         if (privilege == null || privilege.isEmpty()) {
             throw new IllegalArgumentException(
                 "Can't revoke a permission without a privilege.");
@@ -436,6 +430,12 @@ public class PermissionManager {
             throw new IllegalArgumentException(
                 "Can't revoke a permission from object NULL.");
         }
+        
+        LOGGER.debug("Revoking permission granting privilege \"{}\" "
+                         + "on object \"{}\" to role \"{}\"...",
+                     privilege,
+                     grantee.getName(),
+                     object.getUuid());
 
         if (existsPermission(privilege, grantee, object)
             || existsInheritedPermission(privilege, grantee, object)) {

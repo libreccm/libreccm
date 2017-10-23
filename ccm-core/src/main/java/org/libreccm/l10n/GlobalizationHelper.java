@@ -25,6 +25,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.configuration.ConfigurationManager;
 
+import java.io.Serializable;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -68,7 +70,9 @@ import java.util.ResourceBundle;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class GlobalizationHelper {
+public class GlobalizationHelper implements Serializable {
+
+    private static final long serialVersionUID = 3988918294651460360L;
 
     private static final Logger LOGGER = LogManager
         .getLogger(GlobalizationHelper.class);
@@ -76,7 +80,7 @@ public class GlobalizationHelper {
     private static final String LANG_PARAM = "lang";
 
     @Inject
-    private HttpServletRequest request;
+    private transient HttpServletRequest request;
 
     @Inject
     private ConfigurationManager confManager;
@@ -178,9 +182,9 @@ public class GlobalizationHelper {
 
         return selected;
     }
-    
+
     public void setSelectedLocale(final Locale locale) {
-        
+
         final HttpSession session = request.getSession(true);
         session.setAttribute(LANG_PARAM, locale.toString());
     }

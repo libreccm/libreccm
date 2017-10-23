@@ -20,12 +20,15 @@ package org.libreccm.security;
 
 import org.libreccm.core.CoreConstants;
 
+import java.io.Serializable;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -39,7 +42,9 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class RoleManager {
+public class RoleManager implements Serializable {
+
+    private static final long serialVersionUID = -3012991584385998270L;
 
     @Inject
     private RoleRepository roleRepository;
@@ -49,7 +54,7 @@ public class RoleManager {
 
     @Inject
     private EntityManager entityManager;
-    
+
     @Inject
     private PermissionChecker permissionChecker;
 
@@ -166,7 +171,7 @@ public class RoleManager {
             .map(membership -> membership.getRole())
             .collect(Collectors.toList());
 
-        final Set<Role> roles = new HashSet<>();
+        final Set<Role> roles = new HashSet<>(directlyAssigned);
 
         final List<Group> groups = user
             .getGroupMemberships()
@@ -181,7 +186,7 @@ public class RoleManager {
                 .map(membership -> membership.getRole())
                 .collect(Collectors.toList()));
         }
-        
+
         return new ArrayList<>(roles);
     }
 
