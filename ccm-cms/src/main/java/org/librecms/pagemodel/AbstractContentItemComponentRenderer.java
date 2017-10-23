@@ -21,7 +21,6 @@ package org.librecms.pagemodel;
 import com.arsdigita.kernel.KernelConfig;
 
 import org.libreccm.configuration.ConfigurationManager;
-import org.libreccm.pagemodel.ComponentBuilder;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemL10NManager;
@@ -42,13 +41,15 @@ import javax.ws.rs.core.Response;
 
 import static org.librecms.pages.PagesConstants.*;
 
+import org.libreccm.pagemodel.ComponentRenderer;
+
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @param <T>
  */
-public abstract class AbstractContentItemComponentBuilder<T extends ContentItemComponent>
-    implements ComponentBuilder<T> {
+public abstract class AbstractContentItemComponentRenderer<T extends ContentItemComponent>
+    implements ComponentRenderer<T> {
 
     @Inject
     private ConfigurationManager confManager;
@@ -70,7 +71,7 @@ public abstract class AbstractContentItemComponentBuilder<T extends ContentItemC
 
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
-    public Map<String, Object> buildComponent(
+    public Map<String, Object> renderComponent(
         final T componentModel,
         final Map<String, Object> parameters) {
         

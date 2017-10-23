@@ -18,19 +18,26 @@
  */
 package org.librecms.pagemodel;
 
+import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
-import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.core.CcmObject;
 import org.libreccm.pagemodel.ComponentModelType;
 import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentItemVersion;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
 import javax.ws.rs.NotFoundException;
 
 import static org.librecms.pages.PagesConstants.*;
@@ -40,28 +47,36 @@ import static org.librecms.pages.PagesConstants.*;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@ComponentModelType(componentModel = GreetingItemComponent.class)
-public class GreetingItemComponentBuilder
-    extends AbstractContentItemComponentBuilder<GreetingItemComponent> {
+@ComponentModelType(componentModel = CategorizedItemComponent.class)
+public class CategorizedItemComponentRenderer
+    extends AbstractContentItemComponentRenderer<CategorizedItemComponent> {
 
     @Inject
     private CategoryRepository categoryRepo;
 
     @Inject
-    private CategoryManager categoryManager;
+    private EntityManager entityManager;
 
     @Override
     protected ContentItem getContentItem(
-        final GreetingItemComponent componentModel,
+        final CategorizedItemComponent componentModel,
         final Map<String, Object> parameters) {
 
         Objects.requireNonNull(componentModel);
         Objects.requireNonNull(parameters);
 
         if (!parameters.containsKey(PARAMETER_CATEGORY)) {
-            throw new IllegalArgumentException(
-                "The parameters map passed to this GreetingItem component does "
-                    + "not include the parameter \"category\"");
+            throw new IllegalArgumentException(String
+                .format("The parameters map passed to this component does "
+                            + "not include the parameter \"%s\"",
+                        PARAMETER_CATEGORY));
+        }
+
+        if (!parameters.containsKey(PARAMETER_ITEMNAME)) {
+            throw new IllegalArgumentException(String
+                .format("The parameters map passed to this component does "
+                            + "not include the parameter \"%s\"",
+                        PARAMETER_ITEMNAME));
         }
 
         if (!(parameters.get(PARAMETER_CATEGORY) instanceof Category)) {
@@ -80,24 +95,31 @@ public class GreetingItemComponentBuilder
             "No category with ID %d in the database.",
             ((CcmObject) parameters.get(PARAMETER_CATEGORY)).getObjectId())));
 
-        final Optional<CcmObject> indexObj = categoryManager
-            .getIndexObject(category);
+        final String itemName = (String) parameters.get(PARAMETER_ITEMNAME);
 
-        if (indexObj.isPresent()) {
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<ContentItem> criteriaQuery = builder
+            .createQuery(ContentItem.class);
 
-            if (indexObj.get() instanceof ContentItem) {
-                return (ContentItem) indexObj.get();
-            } else {
-                throw new NotFoundException(String
-                    .format(
-                        "The index item %s of category %s does not have "
-                            + "a live version.",
-                        Objects.toString(indexObj),
-                        Objects.toString(category)));
-            }
-        } else {
+        final Root<ContentItem> from = criteriaQuery.from(ContentItem.class);
+        final Join<ContentItem, Categorization> join = from
+            .join("categories");
+
+        final TypedQuery<ContentItem> query = entityManager
+            .createQuery(criteriaQuery
+                .select(from)
+                .where(builder.and(
+                    builder.equal(from.get("displayName"), itemName),
+                    builder.equal(from.get("version"), ContentItemVersion.DRAFT),
+                    builder.equal(join.get("category"), category)
+                )));
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException ex) {
             throw new NotFoundException(String
-                .format("The category %s does not have a index item.",
+                .format("No ContentItem with name \"%s\" in Category \"%s\".",
+                        itemName,
                         Objects.toString(category)));
         }
     }

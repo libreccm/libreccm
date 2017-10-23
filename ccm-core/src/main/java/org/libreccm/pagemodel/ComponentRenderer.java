@@ -21,16 +21,16 @@ package org.libreccm.pagemodel;
 import java.util.Map;
 
 /**
- * A {@code ComponentBuilder} transforms a {@link ComponentModel} into a
+ * A {@code ComponentRenderer} transforms a {@link ComponentModel} into a
  * component.
  *
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * @param <M> Type of the model the component builder processes.
+ * @param <M> Type of the model the component renderer processes.
  */
-public interface ComponentBuilder<M extends ComponentModel> {
+public interface ComponentRenderer<M extends ComponentModel> {
 
-    Map<String, Object> buildComponent(M componentModel,
+    Map<String, Object> renderComponent(M componentModel,
                                        final Map<String, Object> parameters);
 
 }

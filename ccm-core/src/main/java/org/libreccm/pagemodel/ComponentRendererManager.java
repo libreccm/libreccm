@@ -30,63 +30,63 @@ import java.util.Optional;
 
 /**
  * Provides access to all available implementations of the
- * {@link ComponentBuilder} interface.
+ * {@link ComponentRenderer} interface.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class ComponentBuilderManager {
+public class ComponentRendererManager {
 
     private static final Logger LOGGER = LogManager.getLogger(
-        ComponentBuilderManager.class);
+        ComponentRendererManager.class);
 
     @Inject
-    private Instance<ComponentBuilder<?>> componentBuilders;
+    private Instance<ComponentRenderer<?>> componentRenderers;
 
     /**
-     * Find an implementation of the {@link ComponentBuilder} interface for a
+     * Find an implementation of the {@link ComponentRenderer} interface for a
      * specific {@link ComponentModel}.
      *
      * @param <M>                 Generic variable for the subtype of
      *                            {@link ComponentModel} which is produced by
-     *                            the {@link ComponentBuilder} implementation.
+     *                            the {@link ComponentRenderer} implementation.
      * @param componentModelClass The sub class of the {@link ComponentModel}
      *                            for which is processed by the
-     *                            {@link ComponentBuilder}.
+     *                            {@link ComponentRenderer}.
      *
      * @return An {@link Optional} containing the implementation of the
-     *         {@link ComponentBuilder} interface for the specified parameters.
+     *         {@link ComponentRenderer} interface for the specified parameters.
      *         If there is no implementation for the specified parameters an
      *         empty {@link Optional} is returned.
      */
     @SuppressWarnings("unchecked")
-    public <M extends ComponentModel> Optional<ComponentBuilder<M>> findComponentBuilder(
+    public <M extends ComponentModel> Optional<ComponentRenderer<M>> findComponentRenderer(
         final Class<M> componentModelClass) {
 
-        LOGGER.debug("Trying to find ComponentBuilder for ComponentModel\"{}\""
+        LOGGER.debug("Trying to find ComponentRenderer for ComponentModel\"{}\""
                          + "and type \"{}\"...",
                      componentModelClass.getName());
 
         final ComponentModelTypeLiteral literal = new ComponentModelTypeLiteral(
             componentModelClass);
 
-        final Instance<ComponentBuilder<?>> instance = componentBuilders
+        final Instance<ComponentRenderer<?>> instance = componentRenderers
             .select(literal);
         if (instance.isUnsatisfied()) {
-            LOGGER.warn("No ComponentBuilder for component model \"%s\" "
+            LOGGER.warn("No ComponentRenderer for component model \"%s\" "
                             + "and type \"%s\". Ignoring component model.");
             return Optional.empty();
         } else if (instance.isAmbiguous()) {
             throw new IllegalStateException(String.format(
-                "Multiple ComponentBuilders for component model \"%s\"available. "
-                    + "Something is wrong",
+                "Multiple ComponentRenderers for component model \"%s\"available. "
+                + "Something is wrong",
                 componentModelClass.getName()));
         } else {
-            final Iterator<ComponentBuilder<?>> iterator = instance.
+            final Iterator<ComponentRenderer<?>> iterator = instance.
                 iterator();
-            final ComponentBuilder<?> componentBuilder = iterator.next();
+            final ComponentRenderer<?> componentRenderer = iterator.next();
 
-            return Optional.of((ComponentBuilder<M>) componentBuilder);
+            return Optional.of((ComponentRenderer<M>) componentRenderer);
         }
 
     }
