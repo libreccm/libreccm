@@ -35,8 +35,8 @@ import javax.ws.rs.NotFoundException;
  */
 @RequestScoped
 @ComponentModelType(componentModel = FixedContentItemComponent.class)
-public class FixedContentItemComponentBuilder
-    extends AbstractContentItemComponentBuilder<FixedContentItemComponent> {
+public class FixedContentItemComponentRenderer
+    extends AbstractContentItemComponentRenderer<FixedContentItemComponent> {
 
     @Inject
     private ContentItemRepository itemRepo;

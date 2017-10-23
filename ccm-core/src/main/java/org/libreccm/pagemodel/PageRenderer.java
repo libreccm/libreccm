@@ -20,11 +20,10 @@ package org.libreccm.pagemodel;
 
 import java.util.Map;
 
-
 /**
- * Interface for page builders. A page builder is invoked to build a page a
+ * Interface for page renderers. A page renderer is invoked to render a page of
  * specific type. An implementation should be a CDI bean which is annotated with
- * the qualifier {@link PageModelType}. 
+ * the qualifier {@link PageModelType}.
  *
  * An implementation should add all default components which have to be present
  * in page. The {@link PageModel} should only specify
@@ -33,35 +32,35 @@ import java.util.Map;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public interface PageBuilder {
+public interface PageRenderer {
 
     /**
-     * Build a page for the view technology supported by this page builder
+     * Render a page for the view technology supported by this page renderer
      * without any additional components.
-     * {@link #buildPage(org.libreccm.pagemodel.PageModel)} should use this
+     * {@link #renderPage(org.libreccm.pagemodel.PageModel)} should use this
      * method for creating the default page.
      *
      * @param parameters Parameters provided by application which wants to
      *                   render a {@link PageModel}. The parameters are passed
-     *                   the {@link ComponentBuilder}s.
+     *                   the {@link ComponentRenderer}s.
      *
      * @return A page with the default components.
      */
-    Map<String, Object> buildPage(Map<String, Object> parameters);
+    Map<String, Object> renderPage(Map<String, Object> parameters);
 
     /**
-     * Build a page of type {@code P} using the provided {@link PageModel}.
-     * Implementations should call the implementation of {@link #buildPage()}
+     * Render a page of type {@code P} using the provided {@link PageModel}.
+     * Implementations should call the implementation of {@link #renderPage()}
      * for creating the basic page with the default components.
      *
      * @param pageModel  The {@link PageModel} from which the page is generated.
      * @param parameters Parameters provided by application which wants to
      *                   render a {@link PageModel}. The parameters are passed
-     *                   the {@link ComponentBuilder}s.
+     *                   the {@link ComponentRenderer}s.
      *
      * @return The page generated from the provided {@link PageModel}.
      */
-    Map<String, Object> buildPage(PageModel pageModel,
-                                  Map<String, Object> parameters);
+    Map<String, Object> renderPage(PageModel pageModel,
+                                   Map<String, Object> parameters);
 
 }

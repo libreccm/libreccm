@@ -76,6 +76,7 @@ public class ItemListComponent extends ComponentModel {
                      joinColumns = {
                          @JoinColumn(name = "ITEM_LIST_ID")
                      })
+    @Column(name = "LIST_ORDER")
     private List<String> listOrder;
 
     public boolean isDescending() {

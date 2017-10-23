@@ -21,16 +21,10 @@ package org.librecms.pagemodel;
 import org.libreccm.pagemodel.ComponentModel;
 import org.libreccm.pagemodel.PageModel;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
 import static org.librecms.CmsConstants.*;

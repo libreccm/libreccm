@@ -444,9 +444,9 @@ public class PagesRouter {
 
         final Map<String, Object> result;
         if (pageModel == null) {
-            result = pageBuilder.buildPage(parameters);
+            result = pageBuilder.renderPage(parameters);
         } else {
-            result = pageBuilder.buildPage(pageModel, parameters);
+            result = pageBuilder.renderPage(pageModel, parameters);
         }
 
         return result;

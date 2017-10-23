@@ -50,14 +50,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
- * A {@link PageModel} is used by a {@link PageBuilder} implementation to build
+ * A {@link PageModel} is used by a {@link PageRenderer} implementation to render
  * a page. The {@code PageModel} specifics which components are used on a page.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  *
  * @see PageModelRepository
  * @see PageModelManager
- * @see PageBuilder
+ * @see PageRenderer
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)

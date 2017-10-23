@@ -25,8 +25,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Specifies for which component and view technology a {@link ComponentBuilder} builds the
- * components.
+ * Specifies which type of components a {@link ComponentRenderer} implenentation
+ * renders.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -36,6 +36,5 @@ import java.lang.annotation.Target;
 public @interface ComponentModelType {
 
     Class<? extends ComponentModel> componentModel();
-    
 
 }
