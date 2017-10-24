@@ -67,7 +67,8 @@ public class Themes {
         return themes;
     }
     
-    public Optional<ThemeInfo> getTheme(final String name, final ThemeVersion version) {
+    public Optional<ThemeInfo> getTheme(final String name, 
+                                        final ThemeVersion version) {
         
         for(final ThemeProvider provider : providers) {
             if (provider.providesTheme(name, version)) {
