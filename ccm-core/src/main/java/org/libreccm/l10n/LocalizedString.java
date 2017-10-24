@@ -23,12 +23,12 @@ import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Field;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import java.io.Serializable;
 
 import static org.libreccm.l10n.L10NConstants.L10N_XML_NS;
+
+import org.libreccm.l10n.jaxb.LocalizedStringValuesAdapter;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,6 +44,9 @@ import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.MapKeyColumn;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * A helper class for localisable string properties. This class is declared as
@@ -54,7 +57,8 @@ import javax.persistence.MapKeyColumn;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Embeddable
-@XmlRootElement(name = "localized-string", namespace = L10N_XML_NS)
+//@XmlRootElement(name = "localized-string", namespace = L10N_XML_NS)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class LocalizedString implements Serializable {
 
     private static final long serialVersionUID = 7378282657084330425L;
@@ -69,8 +73,9 @@ public class LocalizedString implements Serializable {
     @Lob
     @Type(type = "org.hibernate.type.TextType")
     @Field
-    @XmlElementWrapper(name = "values", namespace = L10N_XML_NS)
+//    @XmlElementWrapper(name = "values", namespace = L10N_XML_NS)
     @XmlElement(name = "values", namespace = L10N_XML_NS)
+    @XmlJavaTypeAdapter(LocalizedStringValuesAdapter.class)
     private Map<Locale, String> values;
 
     /**
@@ -101,7 +106,7 @@ public class LocalizedString implements Serializable {
      * @param values The new map of values.
      */
     protected void setValues(final Map<Locale, String> values) {
-        this.values = values;
+        this.values = new HashMap<>(values);
     }
 
     /**
