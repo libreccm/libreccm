@@ -18,6 +18,8 @@
  */
 package org.libreccm.theming;
 
+import org.libreccm.theming.manifest.ThemeManifest;
+
 import java.util.Objects;
 
 /**
@@ -26,22 +28,35 @@ import java.util.Objects;
  */
 public class ThemeInfo {
 
-    private String name;
+    private ThemeManifest manifest;
 
+//    private String name;
     private ThemeVersion version;
 
-    private String type;
-
+//    private String type;
     private Class<ThemeProvider> provider;
 
+    public ThemeManifest getManifest() {
+        return manifest;
+    }
+
+    public void setManifest(final ThemeManifest manifest) {
+        this.manifest = manifest;
+    }
+
+    /**
+     * Convenient getter for name of theme.
+     *
+     * @return {@link ThemeManifest#getName()}
+     */
     public String getName() {
-        return name;
+//        return name;
+        return manifest.getName();
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
+//    public void setName(final String name) {
+//        this.name = name;
+//    }
     public ThemeVersion getVersion() {
         return version;
     }
@@ -50,14 +65,19 @@ public class ThemeInfo {
         this.version = version;
     }
 
+    /**
+     * Convenient getter for type of theme.
+     *
+     * @return {@link ThemeManifest#getType()}
+     */
     public String getType() {
-        return type;
+//        return type;
+        return manifest.getType();
     }
 
-    public void setType(final String type) {
-        this.type = type;
-    }
-
+//    public void setType(final String type) {
+//        this.type = type;
+//    }
     public Class<ThemeProvider> getProvider() {
         return provider;
     }
@@ -69,14 +89,18 @@ public class ThemeInfo {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 73 * hash + Objects.hashCode(name);
+        hash = 73 * hash + Objects.hashCode(manifest);
+//        hash = 73 * hash + Objects.hashCode(name);
         hash = 73 * hash + Objects.hashCode(version);
-        hash = 73 * hash + Objects.hashCode(type);
+//        hash = 73 * hash + Objects.hashCode(type);
+        if (provider != null) {
+            hash = 73 * hash + Objects.hashCode(provider.getName());
+        }
         return hash;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -90,12 +114,25 @@ public class ThemeInfo {
         if (!other.canEqual(this)) {
             return false;
         }
-        if (!Objects.equals(name, other.getName())) {
+        if (!Objects.equals(manifest, other.getManifest())) {
             return false;
         }
-        if (!Objects.equals(type, other.getType())) {
+        if (provider != null && other.getProvider() == null) {
             return false;
+        } else if (provider == null && other.getProvider() != null) {
+            return false;
+        } else {
+            if (!Objects.equals(provider.getName(),
+                                other.getProvider().getName())) {
+                return false;
+            }
         }
+//        if (!Objects.equals(name, other.getName())) {
+//            return false;
+//        }
+//        if (!Objects.equals(type, other.getType())) {
+//            return false;
+//        }
         return version == other.getVersion();
     }
 
@@ -109,15 +146,27 @@ public class ThemeInfo {
     }
 
     public String toString(final String data) {
+        
+        final String providerClassName;
+        if (provider == null) {
+            providerClassName = ""; 
+        } else {
+            providerClassName = provider.getName();
+        }
+        
         return String.format("%s{ "
-                                 + "name = \"%s\", "
+                                 + "mainfest = %s, "
+                                 //                                 + "name = \"%s\", "
                                  + "version = %s, "
-                                 + "type = \"%s\"%s"
-                                 + " }",
+                                 + "provider = %s, "
+                                 //                                 + "type = \"%s\"%s"
+                                 + "%s }",
                              super.toString(),
-                             name,
+                             Objects.toString(manifest),
+                             //                             name,
                              Objects.toString(version),
-                             type,
+                             providerClassName,
+                             //                             type,
                              data);
     }
 
