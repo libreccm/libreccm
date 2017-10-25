@@ -204,7 +204,8 @@ public class XML {
             // configuration (affecting all CCM instances which may run in a
             // container).
             // Requires additional modifications in c.ad.util.xml.XML
-            SAXParserFactory spf = SAXParserFactory.class.getDeclaredConstructor().newInstance();
+            SAXParserFactory spf = SAXParserFactory
+                .newInstance();
             spf.setFeature("http://xml.org/sax/features/namespaces", true);
             SAXParser parser = spf.newSAXParser();
             parser.parse(source, handler);
@@ -219,9 +220,7 @@ public class XML {
             }
         } catch (IOException e) {
             throw new UncheckedWrapperException("error parsing stream", e);
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-            LOGGER.error(e);
-        }
+        } 
     }
 
     /**

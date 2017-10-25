@@ -35,19 +35,20 @@ import java.util.List;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Attr;
 
-
 /**
  * A wrapper class that implements some functionality of
  * <code>org.jdom.Element</code> using <code>org.w3c.dom.Element</code>.
  *
- * @author Patrick McNeill 
+ * @author Patrick McNeill
  * @since ACS 4.5a
- * @version $Revision$ $Date$
+ * @version $Revision$ $Date: 2017-10-25 15:26:01 +0200 (Mi, 25 Okt 2017)
+ * $
  * @version $Id$
  */
 public class Element {
 
-    private static final Logger LOGGER = LogManager.getLogger(Element.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(Element.class
+        .getName());
     protected org.w3c.dom.Element m_element;
     /* DOM element that is being wrapped */
     /**
@@ -56,21 +57,19 @@ public class Element {
     private org.w3c.dom.Document m_doc;
 
     private static ThreadLocal s_localDocument = new ThreadLocal() {
+
         @Override
         public Object initialValue() {
             try {
-                DocumentBuilderFactory builder =
-                                       DocumentBuilderFactory.class.getDeclaredConstructor().newInstance();
+                DocumentBuilderFactory builder = DocumentBuilderFactory
+                    .newInstance();
                 builder.setNamespaceAware(true);
                 return builder.newDocumentBuilder().newDocument();
             } catch (ParserConfigurationException e) {
                 LOGGER.error(e);
                 throw new UncheckedWrapperException(
-                        "INTERNAL: Could not create thread local DOM document.", 
-                        e);
-            } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-                LOGGER.error(e);
-                return null; // This shouldn't be possible
+                    "INTERNAL: Could not create thread local DOM document.",
+                    e);
             }
         }
 
@@ -92,7 +91,6 @@ public class Element {
 //                            .getOwnerDocument().importNode(element.m_element, 
 //                            true);
 //    }
-
     public void syncDocs() {
         if (m_doc == null) {
             m_doc = (org.w3c.dom.Document) s_localDocument.get();
@@ -104,9 +102,9 @@ public class Element {
     }
 
     /**
-     * Protected constructor to set up factories, etc. Does not actually
-     * create a new element.  Used if we are programatically setting the
-     * m_element field later.
+     * Protected constructor to set up factories, etc. Does not actually create
+     * a new element. Used if we are programatically setting the m_element field
+     * later.
      */
     protected Element() {
     }
@@ -125,11 +123,11 @@ public class Element {
 
     /**
      * Creates a new element with the given name, and assigns it to the
-     * namespace defined at <code>uri</code>.  The namespace prefix is
+     * namespace defined at <code>uri</code>. The namespace prefix is
      * automatically determined.
      *
      * @param name the name of the element
-     * @param uri the URI for the namespace definition
+     * @param uri  the URI for the namespace definition
      */
     public Element(String name, String uri) {
         Assert.exists(name, String.class);
@@ -139,16 +137,17 @@ public class Element {
     }
 
     /**
-     * Creates a new element and adds it as a child to this
-     * element.  <code>elt.newChildElement("newElt")</code> is
-     *  equivalent to
+     * Creates a new element and adds it as a child to this element.
+     * <code>elt.newChildElement("newElt")</code> is equivalent to
      * <pre>
      * Element newElt = new Element("newElt");
      * elt.addChild(newElt);
      * </pre>
      *
      * @param name the name of the element
+     *
      * @return the created child element.
+     *
      * @pre m_element != null
      */
     public Element newChildElement(String name) {
@@ -165,18 +164,19 @@ public class Element {
     }
 
     /**
-     * Creates a new element. Adds it as a child to this element
-     * element and assigns it to the namespace defined at <code>uri</code>.
-     *  <code>elt.newChildElement("newElt", namespace)</code> is
-     *  equivalent to
+     * Creates a new element. Adds it as a child to this element element and
+     * assigns it to the namespace defined at <code>uri</code>.
+     * <code>elt.newChildElement("newElt", namespace)</code> is equivalent to
      * <pre>
      * Element newElt = new Element("newElt", namespace);
      * elt.addChild(newElt);
      * </pre>
      *
      * @param name the name of the Element
-     * @param uri the URI for the namespace definition
+     * @param uri  the URI for the namespace definition
+     *
      * @return the created child element.
+     *
      * @pre m_element != null
      */
     public Element newChildElement(String name, String uri) {
@@ -194,11 +194,11 @@ public class Element {
     }
 
     /**
-     * Copies the passed in element and all of its children to a new
-     * Element.
-     * 
+     * Copies the passed in element and all of its children to a new Element.
+     *
      * @param copyFrom
-     * @return 
+     *
+     * @return
      */
     public Element newChildElement(Element copyFrom) {
         Assert.exists(copyFrom, Element.class);
@@ -208,19 +208,21 @@ public class Element {
         }
 
         Element copyTo = new Element();
-        copyTo.m_element = m_doc.createElementNS(copyFrom.m_element.getNamespaceURI(), copyFrom.getName());
+        copyTo.m_element = m_doc.createElementNS(copyFrom.m_element
+            .getNamespaceURI(), copyFrom.getName());
         this.m_element.appendChild(copyTo.m_element);
         newChildElementHelper(copyFrom, copyTo);
         return copyTo;
     }
 
     /**
-     * Copies the passed in element and all of its children to a new
-     * Element using the passed-in name.
-     * 
+     * Copies the passed in element and all of its children to a new Element
+     * using the passed-in name.
+     *
      * @param name
      * @param copyFrom
-     * @return 
+     *
+     * @return
      */
     public Element newChildElement(String name, Element copyFrom) {
         if (m_doc == null) {
@@ -235,13 +237,14 @@ public class Element {
     }
 
     /**
-     * Copies the passed in element and all of its children to a new
-     * Element using the passed-in name.
-     * 
+     * Copies the passed in element and all of its children to a new Element
+     * using the passed-in name.
+     *
      * @param name
      * @param uri
      * @param copyFrom
-     * @return 
+     *
+     * @return
      */
     public Element newChildElement(String name, String uri, Element copyFrom) {
         if (m_doc == null) {
@@ -257,7 +260,6 @@ public class Element {
 
     private void newChildElementHelper(Element copyFrom, Element copyTo) {
         copyTo.setText(copyFrom.getText());
-
 
         NamedNodeMap nnm = copyFrom.m_element.getAttributes();
 
@@ -280,8 +282,9 @@ public class Element {
     /**
      * Adds an attribute to the element.
      *
-     * @param name the name of the attribute
+     * @param name  the name of the attribute
      * @param value the value of the attribute
+     *
      * @return this element.
      */
     public Element addAttribute(String name, String value) {
@@ -307,6 +310,7 @@ public class Element {
      * Adds a child element to this element.
      *
      * @param newContent the new child element
+     *
      * @return this element.
      */
     public Element addContent(Element newContent) {
@@ -319,11 +323,11 @@ public class Element {
     }
 
     /**
-     * Sets the text value of the current element (the part between the
-     * tags).  If the passed in text is null then it is converted to
-     * the empty string.
+     * Sets the text value of the current element (the part between the tags).
+     * If the passed in text is null then it is converted to the empty string.
      *
      * @param text the text to include
+     *
      * @return this element.
      */
     public Element setText(String text) {
@@ -334,18 +338,18 @@ public class Element {
             // is to throw the NPE which causes other problems
             text = "";
         }
-        org.w3c.dom.Text textElem =
-                         m_element.getOwnerDocument().createTextNode(text);
+        org.w3c.dom.Text textElem = m_element.getOwnerDocument().createTextNode(
+            text);
         m_element.appendChild(textElem);
 
         return this;
     }
 
     /**
-     * Returns the concatenation of all the text in all child nodes
-     * of the current element.
-     * 
-     * @return 
+     * Returns the concatenation of all the text in all child nodes of the
+     * current element.
+     *
+     * @return
      */
     public String getText() {
         StringBuilder result = new StringBuilder();
@@ -370,8 +374,8 @@ public class Element {
             cdata = "";
         }
 
-        org.w3c.dom.CDATASection cdataSection =
-                                 m_element.getOwnerDocument().createCDATASection(cdata);
+        org.w3c.dom.CDATASection cdataSection = m_element.getOwnerDocument()
+            .createCDATASection(cdata);
 
         m_element.appendChild(cdataSection);
 
@@ -399,15 +403,15 @@ public class Element {
     }
 
     /**
-     * Returns a <code>List</code> of all the child elements nested
-     * directly (one level deep) within this element, as <code>Element</code>
-     * objects. If this target element has no nested elements, an empty
-     * <code>List</code> is returned. The returned list is "live", so
-     * changes to it affect the element's actual contents.
+     * Returns a <code>List</code> of all the child elements nested directly
+     * (one level deep) within this element, as <code>Element</code> objects. If
+     * this target element has no nested elements, an empty <code>List</code> is
+     * returned. The returned list is "live", so changes to it affect the
+     * element's actual contents.
      * <p>
      *
-     * This performs no recursion, so elements nested two levels deep would
-     * have to be obtained with:
+     * This performs no recursion, so elements nested two levels deep would have
+     * to be obtained with:
      * <pre>
      * Iterator itr = currentElement.getChildren().iterator();
      * while (itr.hasNext()) {
@@ -416,6 +420,7 @@ public class Element {
      *      // Do something with these children
      *    }
      * </pre>
+     *
      * @return list of child <code>Element</code> objects for this element.
      */
     public java.util.List getChildren() {
@@ -434,8 +439,7 @@ public class Element {
 
     public java.util.Map getAttributes() {
         // Retrieve the attributes of the DOM Element
-        org.w3c.dom.NamedNodeMap attributeNodeMap =
-                                 m_element.getAttributes();
+        org.w3c.dom.NamedNodeMap attributeNodeMap = m_element.getAttributes();
 
         // Create the HashMap that we will return the attributes
         // in
@@ -457,10 +461,11 @@ public class Element {
 
     /**
      * Retrieves an attribute value by name.
+     *
      * @param name The name of the attribute to retrieve
-     * @return The Attr value as a string,
-     * or the empty string if that attribute does not have a specified
-     * or default value.
+     *
+     * @return The Attr value as a string, or the empty string if that attribute
+     *         does not have a specified or default value.
      */
     public String getAttribute(String name) {
         return m_element.getAttribute(name);
@@ -475,9 +480,8 @@ public class Element {
     }
 
     /**
-     * Functions to allow this class to interact appropriately with the
-     * Document class (for example, allows nodes to be moved around,
-     * and so on).
+     * Functions to allow this class to interact appropriately with the Document
+     * class (for example, allows nodes to be moved around, and so on).
      *
      * @return the internal DOM Element.
      */
@@ -486,9 +490,9 @@ public class Element {
     }
 
     /**
-     * Imports the internal node into another document.
-     * This could also be done with a combination of getInternalElement
-     * and a setInternalElement function.
+     * Imports the internal node into another document. This could also be done
+     * with a combination of getInternalElement and a setInternalElement
+     * function.
      *
      * @param doc the org.w3c.dom.Document to import into
      */
@@ -504,14 +508,13 @@ public class Element {
     }
 
     /**
-     * Workaround for bug in some versions of Xerces.
-     * For some reason, importNode doesn't also copy attribute
-     * values unless you call getValue() on them first.  This may
-     * be fixed in a later version of Xerces.  In the meantime,
-     * calling visitAllAttributes(node) before importNode should
-     * help.
+     * Workaround for bug in some versions of Xerces. For some reason,
+     * importNode doesn't also copy attribute values unless you call getValue()
+     * on them first. This may be fixed in a later version of Xerces. In the
+     * meantime, calling visitAllAttributes(node) before importNode should help.
      *
      * @param node the org.w3c.dom.Node about to be imported
+     *
      * @deprecated with no replacement, 1 May 2003
      */
     public static void visitAllAttributes(org.w3c.dom.Node node) {
@@ -531,9 +534,10 @@ public class Element {
     }
 
     /**
-     * retrieve an unordered list of strings relating to node tree including
-     * and below the current element. Strings include element names, attribute names,
-     * attribute values, text and CData sections
+     * retrieve an unordered list of strings relating to node tree including and
+     * below the current element. Strings include element names, attribute
+     * names, attribute values, text and CData sections
+     *
      * @return
      */
     private List getXMLFragments() {
@@ -559,9 +563,10 @@ public class Element {
     }
 
     /**
-     * retrieve a string that is an ordered concatenation of all information describing
-     * this node and its subnodes, suitable as the basis of a hashCode or equals
-     * implementation.
+     * retrieve a string that is an ordered concatenation of all information
+     * describing this node and its subnodes, suitable as the basis of a
+     * hashCode or equals implementation.
+     *
      * @return
      */
     protected String getXMLHashString() {
@@ -585,7 +590,7 @@ public class Element {
         Date start = new Date();
         String hashString = getXMLHashString();
         LOGGER.debug(
-                "hashCode: getXMLString took "
+            "hashCode: getXMLString took "
                 + (new Date().getTime() - start.getTime())
                 + " millisecs");
 
@@ -607,7 +612,7 @@ public class Element {
         String thisXML = getXMLHashString();
         String otherXML = otherElement.getXMLHashString();
         LOGGER.debug(
-                "Equals: getXMLString twice took "
+            "Equals: getXMLString twice took "
                 + (new Date().getTime() - start.getTime())
                 + " millisecs");
         return thisXML.equals(otherXML);
