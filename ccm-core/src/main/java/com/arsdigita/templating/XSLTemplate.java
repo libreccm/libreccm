@@ -26,6 +26,7 @@ import java.io.PrintWriter;
 import java.io.OutputStream;
 import java.io.IOException;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Date;
 import java.util.Iterator;
@@ -97,7 +98,7 @@ public final class XSLTemplate {
         try {
             LOGGER.debug("Getting new templates object");
 
-            final TransformerFactory factory = TransformerFactory.newInstance();
+            final TransformerFactory factory = TransformerFactory.class.getDeclaredConstructor().newInstance();
             factory.setURIResolver(resolver);
             factory.setErrorListener(listener);
 
@@ -109,6 +110,9 @@ public final class XSLTemplate {
             throw new WrappedTransformerException(ex);
         } catch (TransformerException ex) {
             throw new WrappedTransformerException(ex);
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+            LOGGER.error(e);
+            throw new RuntimeException(e);
         }
 
         // List contains each include/import URL found in the style sheet

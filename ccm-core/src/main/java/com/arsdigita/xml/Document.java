@@ -34,6 +34,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.stream.StreamResult;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * A wrapper class that implements some functionality of
@@ -41,7 +42,7 @@ import java.io.UnsupportedEncodingException;
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  * pboy (Jan. 09)
- * Class uses "DocumentBuilderFactory.newInstance()" to setup the parser
+ * Class uses "DocumentBuilderFactory.class.getDeclaredConstructor().newInstance()" to setup the parser
  * (according to the javax.xml specification). This is a simple and
  * straightforward, but rather thumb method. It requires a JVM wide acceptable
  * configuration (using a system.property or a static JRE configuration file) and
@@ -116,21 +117,25 @@ public class Document {
     // instead to achieve independence from a JVM wide configuration.
     // Requires additional modifications in c.ad.util.xml.XML
     static {
-        LOGGER.debug("Static initalizer starting...");
-        s_builder = DocumentBuilderFactory.newInstance();
-        s_builder.setNamespaceAware(true);
-        s_db = new ThreadLocal() {
+        try {
+            LOGGER.debug("Static initalizer starting...");
+            s_builder = DocumentBuilderFactory.class.getDeclaredConstructor().newInstance();
+            s_builder.setNamespaceAware(true);
+            s_db = new ThreadLocal() {
 
-            @Override
-            public Object initialValue() {
-                try {
-                    return s_builder.newDocumentBuilder();
-                } catch (ParserConfigurationException pce) {
-                    return null;
+                @Override
+                public Object initialValue() {
+                    try {
+                        return s_builder.newDocumentBuilder();
+                    } catch (ParserConfigurationException pce) {
+                        return null;
+                    }
                 }
-            }
-        };
-        LOGGER.debug("Static initalized finished.");
+            };
+            LOGGER.debug("Static initalized finished.");
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+            LOGGER.error(e);
+        }
     }
 
     /* Used to build the DOM Documents that this class wraps */
@@ -311,7 +316,7 @@ public class Document {
         try {
             StreamSource identitySource =
                          new StreamSource(new StringReader(identityXSL));
-            identity = TransformerFactory.newInstance().newTransformer(
+            identity = TransformerFactory.class.getDeclaredConstructor().newInstance().newTransformer(
                     identitySource);
             identity.setOutputProperty("method", "xml");
             identity.setOutputProperty("indent", (indent ? "yes" : "no"));
@@ -320,6 +325,9 @@ public class Document {
         } catch (javax.xml.transform.TransformerException e) {
             LOGGER.error("error in toString", e);
             return document.toString();
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+            LOGGER.error(e);
+            return null; // This shouldn't be possible
         }
 
         try {

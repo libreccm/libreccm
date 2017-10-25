@@ -30,6 +30,7 @@ import com.arsdigita.bebop.parameters.LongParameter;
 import com.arsdigita.util.Assert;
 import com.arsdigita.util.UncheckedWrapperException;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
@@ -338,9 +339,9 @@ public class ACSObjectSelectionModel implements SingleSelectionModel {
         Assert.exists(javaClassName, Class.class);
 
         try {
-            final CcmObject object = (CcmObject) javaClassName.newInstance();
+            final CcmObject object = (CcmObject) javaClassName.getDeclaredConstructor().newInstance();
             return object;
-        } catch (InstantiationException | IllegalAccessException ex) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
             throw new ServletException(ex);
         }
     }

@@ -47,7 +47,7 @@ public class EntitiesTestCore {
                                         IllegalAccessException,
                                         IllegalArgumentException,
                                         InvocationTargetException {
-        final Object obj = entityClass.newInstance();
+        final Object obj = entityClass.class.getDeclaredConstructor().newInstance();
 
         final Field[] fields = entityClass.getDeclaredFields();
         for (Field field : fields) {

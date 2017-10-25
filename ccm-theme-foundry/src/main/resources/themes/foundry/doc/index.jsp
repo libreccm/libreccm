@@ -33,7 +33,7 @@
     response.getOutputStream().print("requestURI = " + request.getRequestURI());
     response.getOutputStream().print("requestURL = " + request.getRequestURL());*/
 
-    TransformerFactory factory = TransformerFactory.newInstance();
+    TransformerFactory factory = TransformerFactory.class.getDeclaredConstructor().newInstance();
     Transformer transformer = factory.newTransformer(new StreamSource(themeURL + "/start.xsl"));
     transformer.setParameter("theme-prefix", themeURL);
     transformer.transform(new StreamSource(themeURL + "/doc/foundry-documentation.xml"), 

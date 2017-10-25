@@ -185,8 +185,8 @@ public class WorkflowManager {
         final Class<? extends Task> templateClass = template.getClass();
         final Task task;
         try {
-            task = templateClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException ex) {
+            task = templateClass.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
             throw new RuntimeException(ex);
         }
 

@@ -20,10 +20,13 @@ package com.arsdigita.xml;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import com.arsdigita.util.Assert;
 import com.arsdigita.util.UncheckedWrapperException;
+
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -31,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Attr;
+
 
 /**
  * A wrapper class that implements some functionality of
@@ -56,7 +60,7 @@ public class Element {
         public Object initialValue() {
             try {
                 DocumentBuilderFactory builder =
-                                       DocumentBuilderFactory.newInstance();
+                                       DocumentBuilderFactory.class.getDeclaredConstructor().newInstance();
                 builder.setNamespaceAware(true);
                 return builder.newDocumentBuilder().newDocument();
             } catch (ParserConfigurationException e) {
@@ -64,6 +68,9 @@ public class Element {
                 throw new UncheckedWrapperException(
                         "INTERNAL: Could not create thread local DOM document.", 
                         e);
+            } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+                LOGGER.error(e);
+                return null; // This shouldn't be possible
             }
         }
 
