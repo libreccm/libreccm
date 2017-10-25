@@ -230,7 +230,7 @@ public class LifecycleManager {
 
         final Object object;
         try {
-            object = listenerClass.newInstance();
+            object = listenerClass.class.getDeclaredConstructor().newInstance();
         } catch (IllegalAccessException
                  | InstantiationException ex) {
             LOGGER.error("Failed to create instance of LifecycleEventListener "
@@ -275,7 +275,7 @@ public class LifecycleManager {
 
         final Object object;
         try {
-            object = listenerClass.newInstance();
+            object = listenerClass.class.getDeclaredConstructor().newInstance();
         } catch (IllegalAccessException
                  | InstantiationException ex) {
             LOGGER.error("Failed to create instance of PhaseEventListener "

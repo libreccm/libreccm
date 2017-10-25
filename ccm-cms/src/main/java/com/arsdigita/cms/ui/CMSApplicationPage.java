@@ -133,7 +133,7 @@ public class CMSApplicationPage extends Page {
             .getConfig().getPresenterClass();
         final PresentationManager presenter;
         try {
-            presenter = presenterClass.newInstance();
+            presenter = presenterClass.class.getDeclaredConstructor().newInstance();
         } catch (InstantiationException |
                  IllegalAccessException ex) {
             throw new RuntimeException("Failed to create PresentationManager",

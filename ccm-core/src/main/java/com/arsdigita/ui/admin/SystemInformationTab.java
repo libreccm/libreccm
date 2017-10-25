@@ -27,6 +27,8 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.LayoutPanel;
 import com.arsdigita.util.LockableImpl;
 import com.arsdigita.util.SystemInformation;
+
+import java.lang.reflect.InvocationTargetException;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
@@ -251,29 +253,41 @@ public class SystemInformationTab extends LayoutPanel {
         public String getValue() {
             switch (currentIndex) {
                 case TRANSFORMER_FACTORY_INDEX:
-                    return TransformerFactory.newInstance().getClass().getName();
+                    try {
+                        return TransformerFactory.class.getDeclaredConstructor().newInstance().getClass().getName();
+                    } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+                    }
                 case TRANSFORMER_INDEX:
                     try {
-                    return TransformerFactory.newInstance().newTransformer().getClass().getName();
+                    return TransformerFactory.class.getDeclaredConstructor().newInstance().newTransformer().getClass().getName();
                     } catch(TransformerConfigurationException ex) {
                         return "???";
+                    } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
                     }
                 case DOCUMENT_BUILDER_FACTORY_INDEX:
-                    return DocumentBuilderFactory.newInstance().getClass().getName();
+                    try {
+                        return DocumentBuilderFactory.class.getDeclaredConstructor().newInstance().getClass().getName();
+                    } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+                    }
                 case DOCUMENT_BUILDER_INDEX:
                     try{
-                    return DocumentBuilderFactory.newInstance().newDocumentBuilder().getClass()
+                    return DocumentBuilderFactory.class.getDeclaredConstructor().newInstance().newDocumentBuilder().getClass()
                         .getName();
                     } catch(ParserConfigurationException ex) {
                         return "???";
+                    } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
                     }
                 case SAX_PARSER_FACTORY_INDEX:
-                    return SAXParserFactory.newInstance().getClass().getName();
+                    try {
+                        return SAXParserFactory.class.getDeclaredConstructor().newInstance().getClass().getName();
+                    } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+                    }
                 case SAX_PARSER_INDEX:
                     try {
-                    return SAXParserFactory.newInstance().newSAXParser().getClass().getName();
+                    return SAXParserFactory.class.getDeclaredConstructor().newInstance().newSAXParser().getClass().getName();
                     } catch(ParserConfigurationException | SAXException ex) {
                         return "???";
+                    } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
                     }
                 default:
                     return "";

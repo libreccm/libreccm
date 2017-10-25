@@ -45,7 +45,7 @@ public class CmsTaskManager {
             .getTaskType().getUrlGenerator();
         final TaskURLGenerator urlGenerator;
         try {
-            urlGenerator = urlGeneratorClass.newInstance();
+            urlGenerator = urlGeneratorClass.class.getDeclaredConstructor().newInstance();
         } catch (IllegalAccessException
                  | InstantiationException ex) {
             throw new UnexpectedErrorException(ex);
