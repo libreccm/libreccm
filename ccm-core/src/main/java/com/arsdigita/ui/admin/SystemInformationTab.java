@@ -51,14 +51,18 @@ public class SystemInformationTab extends LayoutPanel {
 
         final SegmentedPanel panel = new SegmentedPanel();
 
-        panel.addSegment(new Label(GlobalizationUtil.globalize("ui.admin.sysinfo.appinfo")),
-                         new PropertySheet(new CCMSysInfoPropertySheetModelBuilder()));
+        panel.addSegment(new Label(GlobalizationUtil.globalize(
+            "ui.admin.sysinfo.appinfo")),
+                         new PropertySheet(
+                             new CCMSysInfoPropertySheetModelBuilder()));
 
         panel.addSegment(new Label(GlobalizationUtil.globalize(
             "ui.admin.sysinfo.java_system_properties")),
-                         new PropertySheet(new JavaSystemPropertiesSheetModelBuilder()));
-        
-        panel.addSegment(new Label(GlobalizationUtil.globalize("ui.admin.sysinfo.xml_config")),
+                         new PropertySheet(
+                             new JavaSystemPropertiesSheetModelBuilder()));
+
+        panel.addSegment(new Label(GlobalizationUtil.globalize(
+            "ui.admin.sysinfo.xml_config")),
                          new PropertySheet(new XMLConfigSheetModelBuilder()));
 
         setRight(panel);
@@ -73,7 +77,8 @@ public class SystemInformationTab extends LayoutPanel {
         }
 
         @Override
-        public PropertySheetModel makeModel(final PropertySheet sheet, final PageState state) {
+        public PropertySheetModel makeModel(final PropertySheet sheet,
+                                            final PageState state) {
             return new CCMSysInfoPropertySheetModel();
         }
 
@@ -130,7 +135,8 @@ public class SystemInformationTab extends LayoutPanel {
         }
 
         @Override
-        public PropertySheetModel makeModel(final PropertySheet sheet, final PageState state) {
+        public PropertySheetModel makeModel(final PropertySheet sheet,
+                                            final PageState state) {
             return new JavaSystemPropertiesSheetModel();
         }
 
@@ -182,7 +188,8 @@ public class SystemInformationTab extends LayoutPanel {
         }
 
         @Override
-        public PropertySheetModel makeModel(final PropertySheet sheet, final PageState state) {
+        public PropertySheetModel makeModel(final PropertySheet sheet,
+                                            final PageState state) {
             return new XMLConfigSheetModel();
         }
 
@@ -232,18 +239,23 @@ public class SystemInformationTab extends LayoutPanel {
         public GlobalizedMessage getGlobalizedLabel() {
             switch (currentIndex) {
                 case TRANSFORMER_FACTORY_INDEX:
-                    return GlobalizationUtil.globalize("ui.admin.sysinfo.xml_transformer_factory");
+                    return GlobalizationUtil.globalize(
+                        "ui.admin.sysinfo.xml_transformer_factory");
                 case TRANSFORMER_INDEX:
-                    return GlobalizationUtil.globalize("ui.admin.sysinfo.xml_transformer");
+                    return GlobalizationUtil.globalize(
+                        "ui.admin.sysinfo.xml_transformer");
                 case DOCUMENT_BUILDER_FACTORY_INDEX:
                     return GlobalizationUtil.globalize(
                         "ui.admin.sysinfo.xml_document_builder_factory");
                 case DOCUMENT_BUILDER_INDEX:
-                    return GlobalizationUtil.globalize("ui.admin.sysinfo.xml_document_builder");
+                    return GlobalizationUtil.globalize(
+                        "ui.admin.sysinfo.xml_document_builder");
                 case SAX_PARSER_FACTORY_INDEX:
-                    return GlobalizationUtil.globalize("ui.admin.sysinfo.sax_parser_factory");
+                    return GlobalizationUtil.globalize(
+                        "ui.admin.sysinfo.sax_parser_factory");
                 case SAX_PARSER_INDEX:
-                    return GlobalizationUtil.globalize("ui.admin.sysinfo.sax_parser");
+                    return GlobalizationUtil.globalize(
+                        "ui.admin.sysinfo.sax_parser");
                 default:
                     return GlobalizationUtil.globalize("unknown");
             }
@@ -253,42 +265,48 @@ public class SystemInformationTab extends LayoutPanel {
         public String getValue() {
             switch (currentIndex) {
                 case TRANSFORMER_FACTORY_INDEX:
-                    try {
-                        return TransformerFactory.class.getDeclaredConstructor().newInstance().getClass().getName();
-                    } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-                    }
+                    return TransformerFactory
+                        .newInstance()
+                        .getClass()
+                        .getName();
                 case TRANSFORMER_INDEX:
                     try {
-                    return TransformerFactory.class.getDeclaredConstructor().newInstance().newTransformer().getClass().getName();
-                    } catch(TransformerConfigurationException ex) {
+                        return TransformerFactory
+                            .newInstance()
+                            .newTransformer()
+                            .getClass()
+                            .getName();
+                    } catch (TransformerConfigurationException ex) {
                         return "???";
-                    } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
                     }
                 case DOCUMENT_BUILDER_FACTORY_INDEX:
-                    try {
-                        return DocumentBuilderFactory.class.getDeclaredConstructor().newInstance().getClass().getName();
-                    } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-                    }
-                case DOCUMENT_BUILDER_INDEX:
-                    try{
-                    return DocumentBuilderFactory.class.getDeclaredConstructor().newInstance().newDocumentBuilder().getClass()
+                    return DocumentBuilderFactory.newInstance().getClass()
                         .getName();
-                    } catch(ParserConfigurationException ex) {
+                case DOCUMENT_BUILDER_INDEX:
+                    try {
+                        return DocumentBuilderFactory
+                            .newInstance()
+                            .newDocumentBuilder()
+                            .getClass()
+                            .getName();
+                    } catch (ParserConfigurationException ex) {
                         return "???";
-                    } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
                     }
                 case SAX_PARSER_FACTORY_INDEX:
-                    try {
-                        return SAXParserFactory.class.getDeclaredConstructor().newInstance().getClass().getName();
-                    } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-                    }
+                        return SAXParserFactory
+                            .newInstance()
+                            .getClass()
+                            .getName();
                 case SAX_PARSER_INDEX:
                     try {
-                    return SAXParserFactory.class.getDeclaredConstructor().newInstance().newSAXParser().getClass().getName();
-                    } catch(ParserConfigurationException | SAXException ex) {
+                        return SAXParserFactory
+                            .newInstance()
+                            .newSAXParser()
+                            .getClass()
+                            .getName();
+                    } catch (ParserConfigurationException | SAXException ex) {
                         return "???";
-                    } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-                    }
+                    } 
                 default:
                     return "";
             }
