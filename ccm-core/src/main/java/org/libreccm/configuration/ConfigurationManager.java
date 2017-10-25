@@ -34,6 +34,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -357,13 +358,16 @@ public class ConfigurationManager implements Serializable {
         final T conf;
 
         try {
-            conf = confClass.newInstance();
+            conf = confClass.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
             LOGGER.warn(String.format(
                 "Failed to instantiate configuration \"%s\".",
                 confClass.getName()),
                         ex);
             return null;
+        } catch (InvocationTargetException | NoSuchMethodException e) {
+            LOGGER.error(e);
+            return  null;
         }
 
         final List<AbstractSetting> settingList = settingManager

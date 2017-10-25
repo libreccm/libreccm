@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -203,7 +204,7 @@ public class XML {
             // configuration (affecting all CCM instances which may run in a
             // container).
             // Requires additional modifications in c.ad.util.xml.XML
-            SAXParserFactory spf = SAXParserFactory.newInstance();
+            SAXParserFactory spf = SAXParserFactory.class.getDeclaredConstructor().newInstance();
             spf.setFeature("http://xml.org/sax/features/namespaces", true);
             SAXParser parser = spf.newSAXParser();
             parser.parse(source, handler);
@@ -218,6 +219,8 @@ public class XML {
             }
         } catch (IOException e) {
             throw new UncheckedWrapperException("error parsing stream", e);
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+            LOGGER.error(e);
         }
     }
 

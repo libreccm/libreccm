@@ -29,6 +29,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -79,47 +80,54 @@ public class SysInfoController {
 
         final ResourceBundle texts = ResourceBundle.getBundle(
             "com.arsdigita.ui.admin.AdminResources");
-
-        xmlProps.add(new SysInfoProperty(
-            texts.getString("ui.admin.sysinfo.xml_transformer_factory"),
-            TransformerFactory.newInstance().getClass().getName()));
+        try {
+            xmlProps.add(new SysInfoProperty(
+                    texts.getString("ui.admin.sysinfo.xml_transformer_factory"),
+                    TransformerFactory.class.getDeclaredConstructor().newInstance().getClass().getName()));
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+        }
         try {
             xmlProps.add(new SysInfoProperty(
                 texts.getString("ui.admin.sysinfo.xml_transformer"),
-                TransformerFactory.newInstance().newTransformer().getClass()
+                TransformerFactory.class.getDeclaredConstructor().newInstance().newTransformer().getClass()
                 .getName()));
         } catch (TransformerConfigurationException ex) {
             xmlProps.add(new SysInfoProperty(
                 texts.getString("ui.admin.sysinfo.xml_transformer"), "???"));
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
         }
-
-        xmlProps.add(new SysInfoProperty(
-            texts.getString("ui.admin.sysinfo.xml_document_builder_factory"),
-            DocumentBuilderFactory.newInstance().getClass().getName()));
-
+        try {
+            xmlProps.add(new SysInfoProperty(
+                    texts.getString("ui.admin.sysinfo.xml_document_builder_factory"),
+                    DocumentBuilderFactory.class.getDeclaredConstructor().newInstance().getClass().getName()));
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+        }
         try {
             xmlProps.add(new SysInfoProperty(
                 texts.getString("ui.admin.sysinfo.xml_document_builder"),
-                DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                DocumentBuilderFactory.class.getDeclaredConstructor().newInstance().newDocumentBuilder()
                 .getClass().getName()));
         } catch (ParserConfigurationException ex) {
             xmlProps.add(new SysInfoProperty(
                 texts.getString("ui.admin.sysinfo.xml_document_builder"),
                 "???"));
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
         }
-
-        xmlProps.add(new SysInfoProperty(
-            texts.getString("ui.admin.sysinfo.sax_parser_factory"),
-            SAXParserFactory.newInstance().getClass().getName()));
-
+        try {
+            xmlProps.add(new SysInfoProperty(
+                    texts.getString("ui.admin.sysinfo.sax_parser_factory"),
+                    SAXParserFactory.class.getDeclaredConstructor().newInstance().getClass().getName()));
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+        }
         try {
             xmlProps.add(new SysInfoProperty(
                 texts.getString("ui.admin.sysinfo.sax_parser"),
-                SAXParserFactory.newInstance().newSAXParser().getClass()
+                SAXParserFactory.class.getDeclaredConstructor().newInstance().newSAXParser().getClass()
                 .getName()));
         } catch (ParserConfigurationException | SAXException ex) {
             xmlProps.add(new SysInfoProperty(
                 texts.getString("ui.admin.sysinfo.sax_parser"), "???"));
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
         }
 
         return xmlProps;

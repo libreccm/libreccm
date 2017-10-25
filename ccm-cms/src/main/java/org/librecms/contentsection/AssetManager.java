@@ -108,7 +108,7 @@ public class AssetManager {
 
         final T asset;
         try {
-            asset = assetType.newInstance();
+            asset = assetType.class.getDeclaredConstructor().newInstance();
         } catch (IllegalAccessException | InstantiationException ex) {
             throw new UnexpectedErrorException(ex);
         }
