@@ -18,9 +18,13 @@
  */
 package org.libreccm.theming;
 
+import static org.libreccm.theming.ThemeConstants.*;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.core.UnexpectedErrorException;
+import org.libreccm.theming.manifest.ThemeManifest;
+import org.libreccm.theming.manifest.ThemeManifestUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,28 +40,40 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 
 /**
  * A theme provider implementation which serves themes from the class path
- * ({@code /themes)}.
+ * ({@code /themes)}. This implementation does not support changes to the
+ * theme(s) and files.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+@RequestScoped
 public class StaticThemeProvider implements ThemeProvider {
 
     private static final Logger LOGGER = LogManager
         .getLogger(StaticThemeProvider.class);
 
+    /**
+     * Path the the static themes.
+     */
     private static final String THEMES_DIR = "/themes";
-    private static final String THEME_XML = "theme.xml";
-    private static final String THEME_JSON = "theme.json";
+
+    @Inject
+    private ThemeFileInfoUtil themeFileInfoUtil;
+
+    @Inject
+    private ThemeManifestUtil themeManifests;
 
     @Override
     public List<ThemeInfo> getThemes() {
 
         LOGGER.debug("Retrieving info about all static themes...");
 
-        final List<ThemeInfo> themeInfos = new ArrayList<>();
         try (final FileSystem jarFileSystem = FileSystems.newFileSystem(
             getJarUri(), Collections.emptyMap())) {
 
@@ -85,31 +101,195 @@ public class StaticThemeProvider implements ThemeProvider {
     }
 
     @Override
-    public Optional<ThemeInfo> getThemeInfo(String theme, ThemeVersion version) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Optional<ThemeInfo> getThemeInfo(final String theme,
+                                            final ThemeVersion version) {
+
+        Objects.requireNonNull(theme);
+        Objects.requireNonNull(version);
+
+        if (theme.matches("\\s*")) {
+            throw new IllegalArgumentException(
+                "The name of the theme can't be empty.");
+        }
+
+        LOGGER.debug("Trying to find static theme \"{}\"...",
+                     theme);
+
+        try (final FileSystem jarFileSystem = FileSystems
+            .newFileSystem(getJarUri(), Collections.emptyMap())) {
+
+            final Path themePath = jarFileSystem
+                .getPath(String.format(THEMES_DIR + "/%s", theme));
+
+            if (isTheme(themePath)) {
+                return Optional.of(generateThemeInfo(themePath));
+            } else {
+                return Optional.empty();
+            }
+
+        } catch (IOException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
     }
 
     @Override
-    public boolean providesTheme(String theme, ThemeVersion version) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean providesTheme(final String theme,
+                                 final ThemeVersion version) {
+
+        Objects.requireNonNull(theme);
+        Objects.requireNonNull(version);
+
+        if (theme.isEmpty() || theme.matches("\\s*")) {
+            throw new IllegalArgumentException(
+                "The name of the theme can't be empty.");
+        }
+
+        LOGGER.debug("Determining if there is static theme \"{}\"...",
+                     theme);
+
+        try (final FileSystem jarFileSystem = FileSystems
+            .newFileSystem(getJarUri(), Collections.emptyMap())) {
+
+            final Path themePath = jarFileSystem
+                .getPath(String.format(THEMES_DIR + "/%s", theme));
+
+            LOGGER.debug("Is there a static theme \"{}\": {}",
+                         theme,
+                         isTheme(themePath));
+            return isTheme(themePath);
+
+        } catch (IOException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
     }
 
     @Override
-    public List<ThemeFileInfo> listThemeFiles(String theme, ThemeVersion version,
-                                              String path) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<ThemeFileInfo> listThemeFiles(final String theme,
+                                              final ThemeVersion version,
+                                              final String path) {
+
+        Objects.requireNonNull(theme);
+        Objects.requireNonNull(version);
+        Objects.requireNonNull(path);
+
+        if (theme.isEmpty() || theme.matches("\\s*")) {
+            throw new IllegalArgumentException(
+                "The name of the theme can't be empty.");
+        }
+
+        final String pathToDir;
+        if ("".equals(path)) {
+            pathToDir = "/";
+        } else {
+            pathToDir = path;
+        }
+
+        LOGGER.debug("Listing all files in path \"{]\" of theme \"{}\"...",
+                     path,
+                     theme);
+
+        final List<ThemeFileInfo> infos;
+        try (final FileSystem jarFileSystem = FileSystems
+            .newFileSystem(getJarUri(), Collections.emptyMap())) {
+
+            final Path themePath = jarFileSystem
+                .getPath(String.format(THEMES_DIR + "/%s", theme));
+
+            if (!isTheme(themePath)) {
+                throw new IllegalArgumentException(String
+                    .format("Theme \"%s\" does not exist.",
+                            theme));
+            }
+
+            final Path dirPath = themePath.resolve(pathToDir);
+            if (Files.exists(dirPath)) {
+
+                if (Files.isDirectory(dirPath)) {
+
+                    try (final Stream<Path> stream = Files.list(dirPath)) {
+                        infos = stream
+                            .map(themeFileInfoUtil::buildThemeInfo)
+                            .collect(Collectors.toList());
+                    }
+                } else {
+                    infos = new ArrayList<>();
+                    infos.add(themeFileInfoUtil.buildThemeInfo(dirPath));
+                }
+            } else {
+                throw new IllegalArgumentException(String
+                    .format("No file/directory \"%s\" in theme \"%s\".",
+                            path,
+                            theme));
+            }
+
+        } catch (IOException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+
+        LOGGER.debug("Files in path \"{}\" of static theme \"{}\": {}",
+                     pathToDir,
+                     theme,
+                     Objects.toString(infos));
+        return infos;
     }
 
     @Override
-    public Optional<InputStream> getThemeFileAsStream(String theme,
-                                                      ThemeVersion version,
-                                                      String path) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Optional<InputStream> getThemeFileAsStream(final String theme,
+                                                      final ThemeVersion version,
+                                                      final String path) {
+        Objects.requireNonNull(theme);
+        Objects.requireNonNull(version);
+        Objects.requireNonNull(path);
+
+        if (theme.isEmpty() || theme.matches("\\s*")) {
+            throw new IllegalArgumentException(
+                "The name of the theme can't be empty.");
+        }
+
+        if (path.isEmpty() || path.matches("\\s*")) {
+            throw new IllegalArgumentException(
+                "The name of the theme can't be empty.");
+        }
+
+        try (final FileSystem jarFileSystem = FileSystems
+            .newFileSystem(getJarUri(), Collections.emptyMap())) {
+
+            final Path themePath = jarFileSystem
+                .getPath(String.format(THEMES_DIR + "/%s", theme));
+
+            final Path filePath;
+            if (path.charAt(0) == '/') {
+                filePath = themePath.resolve(path.substring(1));
+            } else {
+                filePath = themePath.resolve(path);
+            }
+
+            if (!Files.isRegularFile(filePath)) {
+                throw new IllegalArgumentException(String
+                    .format("The provided path \"%s\" in theme \"%s\" points "
+                                + "not to a regular file.",
+                            path,
+                            theme));
+            }
+
+            if (Files.exists(filePath)) {
+                return Optional.of(Files.newInputStream(filePath));
+            } else {
+                return Optional.empty();
+            }
+
+        } catch (IOException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+
     }
 
     @Override
-    public OutputStream getOutputStreamForThemeFile(String theme, String path) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public OutputStream getOutputStreamForThemeFile(final String theme,
+                                                    final String path) {
+
+        throw new UnsupportedOperationException("Not supported by this"
+                                                    + " implemetentation");
     }
 
     @Override
@@ -152,8 +332,8 @@ public class StaticThemeProvider implements ThemeProvider {
             return false;
         }
 
-        final Path manifestPathJson = path.resolve(THEME_JSON);
-        final Path manifestPathXml = path.resolve(THEME_XML);
+        final Path manifestPathJson = path.resolve(THEME_MANIFEST_JSON);
+        final Path manifestPathXml = path.resolve(THEME_MANIFEST_XML);
 
         return Files.exists(manifestPathJson) || Files.exists(manifestPathXml);
     }
@@ -169,27 +349,27 @@ public class StaticThemeProvider implements ThemeProvider {
                         path.toString()));
         }
 
-        final Path manifestPathJson = path.resolve(THEME_JSON);
-        final Path manifestPathXml = path.resolve(THEME_XML);
+        final Path manifestPathJson = path.resolve(THEME_MANIFEST_JSON);
+        final Path manifestPathXml = path.resolve(THEME_MANIFEST_XML);
 
+        final ThemeManifest manifest;
         if (Files.exists(manifestPathJson)) {
-            return generateThemeInfoFromJson(manifestPathJson);
+            manifest = themeManifests.loadManifest(manifestPathJson);
         } else if (Files.exists(manifestPathXml)) {
-            return generateThemeInfoFromXml(manifestPathXml);
+            manifest = themeManifests.loadManifest(manifestPathXml);
         } else {
             throw new IllegalArgumentException(String
                 .format("The provided path \"%s\" does "
                             + "contain a theme manifest file.",
                         path.toString()));
         }
-    }
 
-    private ThemeInfo generateThemeInfoFromJson(final Path path) {
-        throw new UnsupportedOperationException();
-    }
+        final ThemeInfo themeInfo = new ThemeInfo();
+        themeInfo.setVersion(ThemeVersion.LIVE);
+        themeInfo.setProvider(getClass());
+        themeInfo.setManifest(manifest);
 
-    private ThemeInfo generateThemeInfoFromXml(final Path path) {
-        throw new UnsupportedOperationException();
+        return themeInfo;
     }
 
 }

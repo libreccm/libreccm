@@ -23,18 +23,27 @@ import org.libreccm.theming.manifest.ThemeManifest;
 import java.util.Objects;
 
 /**
+ * Informations about a theme.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ThemeInfo {
 
+    /**
+     * The manifest of the theme.
+     */
     private ThemeManifest manifest;
 
-//    private String name;
+    /**
+     * The version of the theme.
+     */
     private ThemeVersion version;
 
-//    private String type;
-    private Class<ThemeProvider> provider;
+    /**
+     * The {@link ThemeProvider} implementation which is responsible for the
+     * theme.
+     */
+    private Class<? extends ThemeProvider> provider;
 
     public ThemeManifest getManifest() {
         return manifest;
@@ -47,16 +56,12 @@ public class ThemeInfo {
     /**
      * Convenient getter for name of theme.
      *
-     * @return {@link ThemeManifest#getName()}
+     * @return {@link #manifest#getName()}
      */
     public String getName() {
-//        return name;
         return manifest.getName();
     }
 
-//    public void setName(final String name) {
-//        this.name = name;
-//    }
     public ThemeVersion getVersion() {
         return version;
     }
@@ -68,21 +73,17 @@ public class ThemeInfo {
     /**
      * Convenient getter for type of theme.
      *
-     * @return {@link ThemeManifest#getType()}
+     * @return {@link #manifest#getType()}
      */
     public String getType() {
-//        return type;
         return manifest.getType();
     }
 
-//    public void setType(final String type) {
-//        this.type = type;
-//    }
-    public Class<ThemeProvider> getProvider() {
+    public Class<? extends ThemeProvider> getProvider() {
         return provider;
     }
 
-    public void setProvider(final Class<ThemeProvider> provider) {
+    public void setProvider(final Class<? extends ThemeProvider> provider) {
         this.provider = provider;
     }
 
@@ -90,9 +91,7 @@ public class ThemeInfo {
     public int hashCode() {
         int hash = 5;
         hash = 73 * hash + Objects.hashCode(manifest);
-//        hash = 73 * hash + Objects.hashCode(name);
         hash = 73 * hash + Objects.hashCode(version);
-//        hash = 73 * hash + Objects.hashCode(type);
         if (provider != null) {
             hash = 73 * hash + Objects.hashCode(provider.getName());
         }
@@ -127,12 +126,6 @@ public class ThemeInfo {
                 return false;
             }
         }
-//        if (!Objects.equals(name, other.getName())) {
-//            return false;
-//        }
-//        if (!Objects.equals(type, other.getType())) {
-//            return false;
-//        }
         return version == other.getVersion();
     }
 
@@ -146,27 +139,23 @@ public class ThemeInfo {
     }
 
     public String toString(final String data) {
-        
+
         final String providerClassName;
         if (provider == null) {
-            providerClassName = ""; 
+            providerClassName = "";
         } else {
             providerClassName = provider.getName();
         }
-        
+
         return String.format("%s{ "
                                  + "mainfest = %s, "
-                                 //                                 + "name = \"%s\", "
                                  + "version = %s, "
                                  + "provider = %s, "
-                                 //                                 + "type = \"%s\"%s"
                                  + "%s }",
                              super.toString(),
                              Objects.toString(manifest),
-                             //                             name,
                              Objects.toString(version),
                              providerClassName,
-                             //                             type,
                              data);
     }
 

@@ -19,6 +19,7 @@
 package org.libreccm.theming;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Optional;
@@ -86,7 +87,7 @@ public interface ThemeProvider {
      *                will ignore this parameter.
      * @param path    The path of the directory of which the files are listed.
      *                The path is relative to the root of the theme.To get the
-     *                root directory provided an empty string. Implementations
+     *                root directory provide an empty string. Implementations
      *                should throw an NullPointerException if {@code null} is
      *                provided as path.
      *
@@ -94,6 +95,10 @@ public interface ThemeProvider {
      *         path in the theme the list is empty. If the path is the path of a
      *         file and not a directory the list should have one element, the
      *         data about the file itself.
+     * 
+     * @throws IllegalArgumentException If {@code theme} is an empty string,
+     * if there is no theme with the name provided by {@code theme} or
+     * if there is no file/directory with the provided path in the theme.
      */
     List<ThemeFileInfo> listThemeFiles(String theme,
                                        ThemeVersion version,
@@ -102,7 +107,11 @@ public interface ThemeProvider {
     /**
      * Retrieve a file from a theme. We use an {@link InputStream} here because
      * that is the most universal interface in the Java API which works for all
-     * sorts of resources and is independent from any other API.
+     * sorts of resources and is independent from any other API. Hint: In most
+     * cases it is recommended to wrap the {@link InputStream} provided by this
+     * method in a {@link InputStreamReader} by using one of constructors of
+     * {@link InputStreamReader} which allows the caller to set the charset of
+     * the data read (which should be UTF-8 in most cases).
      *
      * @param theme   The theme from which the file is retrieved.
      * @param version The version of the theme from which the file is retrieved.

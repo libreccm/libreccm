@@ -34,25 +34,43 @@ import javax.xml.bind.annotation.XmlRootElement;
 import static org.libreccm.theming.ThemeConstants.*;
 
 /**
- *
+ * Each theme contains a Manifest (either in XML or JSON format) which provides
+ * informations about the theme.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @XmlRootElement(name = "theme", namespace = THEMES_XML_NS)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThemeManifest {
 
+    /**
+     * The name of the theme. Usually the same as the name of directory which 
+     * contains the theme.
+     */
     @XmlElement(name = "name", namespace = THEMES_XML_NS)
     private String name;
     
+    /**
+     * The type of the theme, for example XSLT.
+     */
     @XmlElement(name = "type", namespace = THEMES_XML_NS)
     private String type;
 
+    /**
+     * The (localised) title of the theme.
+     */
     @XmlElement(name = "title", namespace = THEMES_XML_NS)
     private LocalizedString title;
 
+    /**
+     * A (localised) description of the theme.
+     */
     @XmlElement(name = "description", namespace = THEMES_XML_NS)
     private LocalizedString description;
 
+    /**
+     * The templates provided by the theme.
+     */
     @XmlElementWrapper(name = "templates", namespace = THEMES_XML_NS)
     @XmlElement(name = "template", namespace = THEMES_XML_NS)
     private List<ThemeTemplate> templates;

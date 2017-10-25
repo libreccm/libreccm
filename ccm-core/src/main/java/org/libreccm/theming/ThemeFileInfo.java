@@ -27,10 +27,29 @@ import java.util.Objects;
  */
 public class ThemeFileInfo {
 
+    /**
+     * The name of the file.
+     */
     private String name;
+    
+    /**
+     * Is the file a directory?
+     */
     private boolean directory;
+    
+    /**
+     * The type of the file (for example {@code text/xml} or {@code image/jpeg}.
+     */
     private String mimeType;
+    
+    /**
+     * The size of the file. For directories this will be {@code 0}.
+     */
     private long size;
+    
+    /**
+     * Is the file writable?
+     */
     private boolean writable;
 
     public String getName() {
