@@ -37,7 +37,7 @@ public class ThemeConfiguration implements Serializable {
     /**
      * The theme associated with this configuration.
      */
-    @Column(name = "THEME")
+    @Column(name = "THEME_NAME")
     private String theme;
 
     /**

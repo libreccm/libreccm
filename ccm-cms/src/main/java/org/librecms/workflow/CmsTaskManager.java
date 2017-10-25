@@ -23,6 +23,8 @@ import com.arsdigita.cms.workflow.TaskURLGenerator;
 import org.libreccm.core.UnexpectedErrorException;
 import org.librecms.contentsection.ContentItem;
 
+import java.lang.reflect.InvocationTargetException;
+
 import javax.enterprise.context.RequestScoped;
 
 /**
@@ -45,9 +47,11 @@ public class CmsTaskManager {
             .getTaskType().getUrlGenerator();
         final TaskURLGenerator urlGenerator;
         try {
-            urlGenerator = urlGeneratorClass.class.getDeclaredConstructor().newInstance();
+            urlGenerator = urlGeneratorClass.getDeclaredConstructor().newInstance();
         } catch (IllegalAccessException
-                 | InstantiationException ex) {
+                 | InstantiationException 
+                 | NoSuchMethodException 
+                 | InvocationTargetException ex) {
             throw new UnexpectedErrorException(ex);
         }
         

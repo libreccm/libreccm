@@ -46,8 +46,9 @@ public class EntitiesTestCore {
                                         InstantiationException,
                                         IllegalAccessException,
                                         IllegalArgumentException,
+                                        NoSuchMethodException,
                                         InvocationTargetException {
-        final Object obj = entityClass.class.getDeclaredConstructor().newInstance();
+        final Object obj = entityClass.getDeclaredConstructor().newInstance();
 
         final Field[] fields = entityClass.getDeclaredFields();
         for (Field field : fields) {

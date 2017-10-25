@@ -36,6 +36,7 @@ import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
 import org.libreccm.web.CcmApplication;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -133,9 +134,11 @@ public class CMSApplicationPage extends Page {
             .getConfig().getPresenterClass();
         final PresentationManager presenter;
         try {
-            presenter = presenterClass.class.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException |
-                 IllegalAccessException ex) {
+            presenter = presenterClass.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException
+                 | IllegalAccessException
+                 | NoSuchMethodException
+                 | InvocationTargetException ex) {
             throw new RuntimeException("Failed to create PresentationManager",
                                        ex);
         }
@@ -197,20 +200,22 @@ public class CMSApplicationPage extends Page {
     public void setXMLParameter(String name, String value) {
         parameters.put(name, value);
     }
-    
-/**
+
+    /**
      * Overwrites bebop.Page#generateXMLHelper to add the name of the user
      * logged in to the pageElement (displayed as part of the header).
+     *
      * @param state
      * @param parent
+     *
      * @return pageElement for use in generateXML
      */
     @Override
-    protected Element generateXMLHelper(final PageState state, 
+    protected Element generateXMLHelper(final PageState state,
                                         final Document parent) {
 
         /* Retain elements already included.                                  */
-        Element pageElement = super.generateXMLHelper(state,parent);
+        Element pageElement = super.generateXMLHelper(state, parent);
 
         /* Add name of user logged in.                                        */
         // Note: There are at least 2 ways in the API to determin the user
@@ -221,7 +226,7 @@ public class CMSApplicationPage extends Page {
         final Optional<User> user = shiro.getUser();
         // User user = Web.getWebContext().getUser();
         if (user.isPresent()) {
-            pageElement.addAttribute("name",user.get().getName());
+            pageElement.addAttribute("name", user.get().getName());
         }
 
         return pageElement;
