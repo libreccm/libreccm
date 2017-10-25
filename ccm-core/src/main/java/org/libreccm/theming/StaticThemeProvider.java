@@ -62,6 +62,7 @@ public class StaticThemeProvider implements ThemeProvider {
      * Path the the static themes.
      */
     private static final String THEMES_DIR = "/themes";
+    private static final long serialVersionUID = -8701021965452233811L;
 
     @Inject
     private ThemeFileInfoUtil themeFileInfoUtil;

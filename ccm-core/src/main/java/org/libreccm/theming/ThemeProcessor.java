@@ -18,6 +18,7 @@
  */
 package org.libreccm.theming;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
@@ -32,16 +33,17 @@ import javax.enterprise.context.RequestScoped;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public interface ThemeProcessor {
+public interface ThemeProcessor extends Serializable {
 
     /**
      * Process the provided {@link PageModel} {@code page} and convert into HTML
      * using the theme {@code theme} provided by the
      * {@link ThemeProvider} {@code themeProvider}.
      *
-     * @param page The page to convert the HTML.
-     * @param theme The theme to use.
-     * @param themeProvider The {@link ThemeProvider} which provides the the theme.
+     * @param page          The page to convert the HTML.
+     * @param theme         The theme to use.
+     * @param themeProvider The {@link ThemeProvider} which provides the the
+     *                      theme.
      *
      * @return The HTML for the provided {@code page}.
      */

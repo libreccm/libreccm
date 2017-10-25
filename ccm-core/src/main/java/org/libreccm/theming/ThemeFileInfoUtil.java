@@ -21,6 +21,7 @@ package org.libreccm.theming;
 import org.libreccm.core.UnexpectedErrorException;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -33,7 +34,9 @@ import javax.enterprise.context.RequestScoped;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class ThemeFileInfoUtil {
+public class ThemeFileInfoUtil implements Serializable {
+
+    private static final long serialVersionUID = -3382896567742774318L;
 
     /**
      * Build a {@link ThemeFileInfo} object for a file. Before calling this

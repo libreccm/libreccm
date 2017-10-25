@@ -21,6 +21,7 @@ package org.libreccm.theming;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +31,7 @@ import java.util.Optional;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public interface ThemeProvider {
+public interface ThemeProvider extends Serializable {
 
     /**
      * Provides a list of all themes provided by this theme provider. The list
