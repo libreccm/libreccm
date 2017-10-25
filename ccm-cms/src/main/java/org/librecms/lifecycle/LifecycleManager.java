@@ -25,6 +25,7 @@ import org.libreccm.security.RequiresPrivilege;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -230,9 +231,12 @@ public class LifecycleManager {
 
         final Object object;
         try {
-            object = listenerClass.class.getDeclaredConstructor().newInstance();
+            object = listenerClass.getDeclaredConstructor().newInstance();
         } catch (IllegalAccessException
-                 | InstantiationException ex) {
+                 | InstantiationException 
+                 | NoSuchMethodException 
+                 | SecurityException 
+                 | InvocationTargetException ex) {
             LOGGER.error("Failed to create instance of LifecycleEventListener "
                              + "of class \"{}\".",
                          listenerClass.getName());
@@ -275,9 +279,11 @@ public class LifecycleManager {
 
         final Object object;
         try {
-            object = listenerClass.class.getDeclaredConstructor().newInstance();
+            object = listenerClass.getDeclaredConstructor().newInstance();
         } catch (IllegalAccessException
-                 | InstantiationException ex) {
+                 | InstantiationException 
+                 | InvocationTargetException 
+                 | NoSuchMethodException ex) {
             LOGGER.error("Failed to create instance of PhaseEventListener "
                              + "of class \"{}\".",
                          listenerClass.getName());

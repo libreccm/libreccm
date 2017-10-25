@@ -33,8 +33,6 @@ import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.LayoutPanel;
 
-import org.libreccm.categorization.Category;
-
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**

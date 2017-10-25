@@ -34,6 +34,11 @@ create table CCM_CMS.ITEM_LIST_COMPONENTS (
     primary key (COMPONENT_MODEL_ID)
 );
 
+create table CCM_CMS.ITEM_LIST_ORDER (
+    ITEM_LIST_ID bigint not null,
+    LIST_ORDER varchar(255)
+);
+
 alter table CCM_CMS.CATEGORIZED_ITEM_COMPONENT 
     add constraint FKr9w6qafqrbi83nncn7f6ufas7 
     foreign key (COMPONENT_MODEL_ID) 

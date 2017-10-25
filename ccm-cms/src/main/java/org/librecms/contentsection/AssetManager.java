@@ -108,8 +108,12 @@ public class AssetManager {
 
         final T asset;
         try {
-            asset = assetType.class.getDeclaredConstructor().newInstance();
-        } catch (IllegalAccessException | InstantiationException ex) {
+            asset = assetType.getDeclaredConstructor().newInstance();
+        } catch (IllegalAccessException
+                 | InstantiationException
+                 | NoSuchMethodException 
+                 | SecurityException 
+                 | InvocationTargetException ex) {
             throw new UnexpectedErrorException(ex);
         }
 
@@ -117,11 +121,11 @@ public class AssetManager {
         asset.getTitle().addValue(locale, title);
         assetRepo.save(asset);
 
-        categoryManager.addObjectToCategory(asset, 
-                                            folder, 
+        categoryManager.addObjectToCategory(asset,
+                                            folder,
                                             CmsConstants.CATEGORIZATION_TYPE_FOLDER);
         permissionManager.copyPermissions(folder, asset, true);
-        
+
         return asset;
     }
 
