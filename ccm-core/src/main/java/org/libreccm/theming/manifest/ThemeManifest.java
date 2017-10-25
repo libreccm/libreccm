@@ -33,23 +33,27 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import static org.libreccm.theming.ThemeConstants.*;
 
+import java.io.Serializable;
+
 /**
  * Each theme contains a Manifest (either in XML or JSON format) which provides
  * informations about the theme.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @XmlRootElement(name = "theme", namespace = THEMES_XML_NS)
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ThemeManifest {
+public class ThemeManifest implements Serializable {
+
+    private static final long serialVersionUID = 699497658459398231L;
 
     /**
-     * The name of the theme. Usually the same as the name of directory which 
+     * The name of the theme. Usually the same as the name of directory which
      * contains the theme.
      */
     @XmlElement(name = "name", namespace = THEMES_XML_NS)
     private String name;
-    
+
     /**
      * The type of the theme, for example XSLT.
      */
@@ -75,6 +79,12 @@ public class ThemeManifest {
     @XmlElement(name = "template", namespace = THEMES_XML_NS)
     private List<ThemeTemplate> templates;
 
+    /**
+     * Path of the default template.
+     */
+    @XmlElement(name = "default-template", namespace = THEMES_XML_NS)
+    private String defaultTemplate;
+
     public ThemeManifest() {
         templates = new ArrayList<>();
     }
@@ -90,10 +100,11 @@ public class ThemeManifest {
     public String getType() {
         return type;
     }
-    
+
     public void setType(final String type) {
-        this.type  =type;
+        this.type = type;
     }
+
     public LocalizedString getTitle() {
         return title;
     }
@@ -126,6 +137,14 @@ public class ThemeManifest {
         templates.remove(template);
     }
 
+    public String getDefaultTemplate() {
+        return defaultTemplate;
+    }
+
+    public void setDefaultTemplate(final String defaultTemplate) {
+        this.defaultTemplate = defaultTemplate;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -134,6 +153,7 @@ public class ThemeManifest {
         hash = 83 * hash + Objects.hashCode(title);
         hash = 83 * hash + Objects.hashCode(description);
         hash = 83 * hash + Objects.hashCode(templates);
+        hash = 83 * hash + Objects.hashCode(defaultTemplate);
         return hash;
     }
 
@@ -164,7 +184,10 @@ public class ThemeManifest {
         if (!Objects.equals(description, other.getDescription())) {
             return false;
         }
-        return Objects.equals(templates, other.getTemplates());
+        if (!Objects.equals(templates, other.getTemplates())) {
+            return false;
+        }
+        return Objects.equals(defaultTemplate, other.getDefaultTemplate());
     }
 
     public boolean canEqual(final Object obj) {
@@ -182,13 +205,15 @@ public class ThemeManifest {
                                  + "name = \"%s\", "
                                  + "title = \"%s\", "
                                  + "description = \"%s\", "
-                                 + "templates = %s%s"
+                                 + "templates = %s, "
+                                 + "defaultTemplate%s"
                                  + " }",
                              super.toString(),
                              name,
                              Objects.toString(title),
                              Objects.toString(description),
                              Objects.toString(templates),
+                             defaultTemplate,
                              data);
 
     }
