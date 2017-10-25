@@ -33,6 +33,7 @@ import com.arsdigita.ui.admin.applications.ApplicationsTab;
 import com.arsdigita.ui.admin.categories.CategoriesTab;
 import com.arsdigita.ui.admin.configuration.ConfigurationTab;
 import com.arsdigita.ui.admin.importexport.ImportExportTab;
+import com.arsdigita.ui.admin.sites.SitesTab;
 import com.arsdigita.web.BaseApplicationServlet;
 import com.arsdigita.web.LoginSignal;
 import com.arsdigita.xml.Document;
@@ -134,6 +135,11 @@ public class AdminServlet extends BaseApplicationServlet {
             new Label(new GlobalizedMessage("ui.admin.tab.configuration.title",
                                             ADMIN_BUNDLE)),
             new ConfigurationTab());
+
+        tabbedPane.addTab(
+            new Label(new GlobalizedMessage("ui.admin.tab.sites.title",
+                                            ADMIN_BUNDLE)), 
+            new SitesTab());
 
         tabbedPane.addTab(
             new Label(new GlobalizedMessage("ui.admin.tab.workflows.title",
