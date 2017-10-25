@@ -18,6 +18,7 @@
  */
 package org.libreccm.theming;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -25,28 +26,30 @@ import java.util.Objects;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class ThemeFileInfo {
+public class ThemeFileInfo implements Serializable {
+
+    private static final long serialVersionUID = 2880986115955856570L;
 
     /**
      * The name of the file.
      */
     private String name;
-    
+
     /**
      * Is the file a directory?
      */
     private boolean directory;
-    
+
     /**
      * The type of the file (for example {@code text/xml} or {@code image/jpeg}.
      */
     private String mimeType;
-    
+
     /**
      * The size of the file. For directories this will be {@code 0}.
      */
     private long size;
-    
+
     /**
      * Is the file writable?
      */

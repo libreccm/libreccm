@@ -20,6 +20,7 @@ package org.libreccm.theming;
 
 import org.libreccm.theming.manifest.ThemeManifest;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -27,7 +28,9 @@ import java.util.Objects;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class ThemeInfo {
+public class ThemeInfo implements Serializable {
+
+    private static final long serialVersionUID = -518244930947022256L;
 
     /**
      * The manifest of the theme.

@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.pagemodel.PageModel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,9 @@ import javax.inject.Inject;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class Themes {
+public class Themes implements Serializable {
+
+    private static final long serialVersionUID = 6861457919635241221L;
 
     private static final Logger LOGGER = LogManager.getLogger(Themes.class);
 
@@ -138,6 +141,5 @@ public class Themes {
 
         return processor.process(page, theme, provider);
     }
-
 
 }

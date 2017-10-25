@@ -24,6 +24,8 @@ package org.libreccm.theming;
  */
 public final class ThemeConstants {
 
+    public static final String PAGE_PARAMETER_TEMPLATE  = "template";
+
     public final static String THEME_MANIFEST_JSON = "theme.json";
     public final static String THEME_MANIFEST_XML = "theme.xml";
 
