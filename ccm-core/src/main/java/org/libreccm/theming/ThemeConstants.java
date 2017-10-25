@@ -23,10 +23,14 @@ package org.libreccm.theming;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public final class ThemeConstants {
-    
+
+    public final static String THEME_MANIFEST_JSON = "theme.json";
+    public final static String THEME_MANIFEST_XML = "theme.xml";
+
+    public final static String THEMES_XML_NS = "http://themes.libreccm.org";
+
     private ThemeConstants() {
         //Nothing
     }
-    
-    public final static String THEMES_XML_NS = "http://themes.libreccm.org";
+
 }
