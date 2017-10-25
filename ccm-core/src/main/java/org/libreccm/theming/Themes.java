@@ -21,6 +21,7 @@ package org.libreccm.theming;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.core.UnexpectedErrorException;
+import org.libreccm.pagemodel.PageModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +30,12 @@ import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Instance;
-import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
 /**
+ * Central interface for using themes. In most cases users of the theming system
+ * will use this class instead of directly working with {@link ThemeProvider}s
+ * and {@link ThemeProcessor}s.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -43,10 +46,19 @@ public class Themes {
 
     @Inject
     private Instance<ThemeProvider> providers;
+//
+//    @Inject
+//    private Instance<ThemeProcessor> processors;
 
     @Inject
-    private Instance<ThemeProcessor> processors;
+    private ThemeProcessors themeProcessors;
 
+    /**
+     * Retrieve all available themes.
+     *
+     * @return A list with information about all available themes (draft
+     *         versions).
+     */
     public List<ThemeInfo> getAvailableThemes() {
 
         final List<ThemeInfo> themes = new ArrayList<>();
@@ -57,6 +69,11 @@ public class Themes {
         return themes;
     }
 
+    /**
+     * Retrieve all available live themes.
+     *
+     * @return A list with informations about all live themes.
+     */
     public List<ThemeInfo> getLiveThemes() {
 
         final List<ThemeInfo> themes = new ArrayList<>();
@@ -66,52 +83,41 @@ public class Themes {
 
         return themes;
     }
-    
-    public Optional<ThemeInfo> getTheme(final String name, 
+
+    /**
+     * Get information about a specific theme.
+     *
+     * @param name    Then name of the theme.
+     * @param version The version of the theme.
+     *
+     * @return An {@link Optional} with informations about theme {@code theme}
+     *         or an empty optional if there is no such theme.
+     */
+    public Optional<ThemeInfo> getTheme(final String name,
                                         final ThemeVersion version) {
-        
-        for(final ThemeProvider provider : providers) {
+
+        for (final ThemeProvider provider : providers) {
             if (provider.providesTheme(name, version)) {
                 return provider.getThemeInfo(name, version);
             }
         }
-        
+
         return Optional.empty();
     }
 
-    public String process(Map<String, Object> page, ThemeInfo theme) {
+    /**
+     * Creates HTML from the result of rendering a {@link PageModel}.
+     *
+     * @param page  The page to convert to HTML.
+     * @param theme The theme to use.
+     *
+     * @return The HTML representation of the page.
+     */
+    public String process(final Map<String, Object> page,
+                          final ThemeInfo theme) {
 
-        final ThemeTypeLiteral themeType = new ThemeTypeLiteral(theme.getType());
-
-        final Instance<ThemeProcessor> forType = processors.select(themeType);
-        if (forType.isUnsatisfied()) {
-            LOGGER.error("No ThemeProcessor implementation for type \"{}\" of "
-                             + "theme \"{}\".",
-                         theme.getType(),
-                         theme.getName());
-            throw new UnexpectedErrorException(String
-                .format("No ThemeProcessor implementation for type \"%s\" of "
-                            + "theme \"%s\".",
-                        theme.getType(),
-                        theme.getName()));
-        }
-
-        if (forType.isAmbiguous()) {
-            LOGGER.error(
-                "Mutiple ThemeProcessor implementations for type \"{}\" of "
-                    + "theme \"{}\".",
-                theme.getType(),
-                theme.getName());
-            throw new UnexpectedErrorException(String
-                .format(
-                    "Mutiple ThemeProcessor implementations for type \"%s\" of "
-                        + "theme \"%s\".",
-                    theme.getType(),
-                    theme.getName()));
-        }
-
-        final Instance<ThemeProvider> forTheme = providers.select(theme
-            .getProvider());
+        final Instance<? extends ThemeProvider> forTheme = providers.select(
+            theme.getProvider());
 
         if (forTheme.isUnsatisfied()) {
             LOGGER.error("ThemeProvider \"{}\" not found.",
@@ -121,28 +127,17 @@ public class Themes {
                 theme.getProvider().getName()));
         }
 
-        final ThemeProcessor processor = forType.get();
+        final ThemeProcessor processor = themeProcessors
+            .findThemeProcessorForType(theme.getType())
+            .orElseThrow(() -> new UnexpectedErrorException(String
+            .format("No ThemeProcessor implementation for type \"%s\" of "
+                        + "theme \"%s\".",
+                    theme.getType(),
+                    theme.getName())));
         final ThemeProvider provider = forTheme.get();
 
         return processor.process(page, theme, provider);
     }
 
-    private static class ThemeTypeLiteral extends AnnotationLiteral<ThemeType>
-        implements ThemeType {
-
-        private static final long serialVersionUID = 3377237291286175824L;
-
-        private final String value;
-
-        public ThemeTypeLiteral(final String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String value() {
-            return value;
-        }
-
-    }
 
 }

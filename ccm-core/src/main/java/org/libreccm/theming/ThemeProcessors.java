@@ -29,6 +29,7 @@ import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
 /**
+ * Provides access to the available implementations of {@link ThemeProcessor}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -37,9 +38,22 @@ public class ThemeProcessors implements Serializable {
 
     private static final long serialVersionUID = -2019759931022734946L;
 
+    /**
+     * All available implementations of {@link ThemeProcessor}.
+     */
     @Inject
     private Instance<ThemeProcessor> processors;
 
+    /**
+     * Find the implementation of {@link ThemeProcessor} for {@code type}.
+     *
+     * @param type The type of the theme to process.
+     *
+     * @return The implementation {@link ThemeProcessor} which can process
+     *         themes of the provided {@code type} or an empty {@code Optional}
+     *         if there is no suitable implementation of {@link ThemeProcessor}
+     *         is available.
+     */
     public Optional<ThemeProcessor> findThemeProcessorForType(final String type) {
 
         final ProcessesThemeLiteral literal = new ProcessesThemeLiteral(type);

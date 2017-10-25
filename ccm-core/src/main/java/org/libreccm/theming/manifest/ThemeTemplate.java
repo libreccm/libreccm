@@ -29,7 +29,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
+ * Informations about a template provided by a theme.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @XmlRootElement(name = "template", namespace = "http://themes.libreccm.org")
@@ -38,15 +39,27 @@ public class ThemeTemplate implements Serializable {
 
     private static final long serialVersionUID = -9034588759798295569L;
 
+    /**
+     * The name of the template (usually the filename).
+     */
     @XmlElement(name = "name", namespace = "http://themes.libreccm.org")
     private String name;
 
+    /**
+     * The (localised) title of the template.
+     */
     @XmlElement(name = "title", namespace = "http://themes.libreccm.org")
     private LocalizedString title;
 
+    /**
+     * A (localised) description of the template.
+     */
     @XmlElement(name = "description", namespace = "http://themes.libreccm.org")
     private LocalizedString description;
 
+    /**
+     * Path of template relative to the directory of the theme.
+     */
     @XmlElement(name = "path", namespace = "http://themes.libreccm.org")
     private String path;
 
