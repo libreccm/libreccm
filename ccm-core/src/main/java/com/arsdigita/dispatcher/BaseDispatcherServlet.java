@@ -155,7 +155,8 @@ public abstract class BaseDispatcherServlet extends HttpServlet
             File file = new File(getServletContext().getRealPath(
                 "/WEB-INF/web.xml"));
             // all we care about is the welcome-file-list element
-            SAXParserFactory spf = SAXParserFactory.class.getDeclaredConstructor().newInstance();
+            SAXParserFactory spf = SAXParserFactory
+                .newInstance();
             spf.setValidating(false);
             SAXParser parser = spf.newSAXParser();
             parser.parse(file, new WebXMLReader());
@@ -165,8 +166,6 @@ public abstract class BaseDispatcherServlet extends HttpServlet
             LOGGER.error("error in init", pce);
         } catch (IOException ioe) {
             LOGGER.error("error in init", ioe);
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-            LOGGER.error(e);
         }
         // default to index.jsp, index.html
         if (m_welcomeFiles.isEmpty()) {

@@ -41,31 +41,30 @@ import java.lang.reflect.InvocationTargetException;
  * <code>org.jdom.Document</code> using <code>org.w3c.dom.Document</code>.
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * pboy (Jan. 09)
- * Class uses "DocumentBuilderFactory.class.getDeclaredConstructor().newInstance()" to setup the parser
- * (according to the javax.xml specification). This is a simple and
+ * pboy (Jan. 09) Class uses "DocumentBuilderFactory.newInstance()" to setup the
+ * parser (according to the javax.xml specification). This is a simple and
  * straightforward, but rather thumb method. It requires a JVM wide acceptable
- * configuration (using a system.property or a static JRE configuration file) and
- * contrains all programms in a JVM (e.g. multiple CCM running in a container)
- * to use the same configuration.
+ * configuration (using a system.property or a static JRE configuration file)
+ * and contrains all programms in a JVM (e.g. multiple CCM running in a
+ * container) to use the same configuration.
  *
  * Other methods are available but we have to dig deeper into the CCM code.
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  *
- * @author Patrick McNeill 
+ * @author Patrick McNeill
  * @since ACS 4.5a
  * @version $Id$
  */
 public class Document {
 
-    private static final Logger LOGGER =
-                                LogManager.getLogger(Document.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(Document.class
+        .getName());
     /**
-     * this is the identity XSL stylesheet.  We need to provide the
-     * identity transform as XSL explicitly because the default
-     * transformer (newTransformer()) strips XML namespace attributes.
-     * Also, this XSLT will strip the <bebop:structure> debugging info
-     * from the XML document if present.
+     * this is the identity XSL stylesheet. We need to provide the identity
+     * transform as XSL explicitly because the default transformer
+     * (newTransformer()) strips XML namespace attributes. Also, this XSLT will
+     * strip the <bebop:structure> debugging info from the XML document if
+     * present.
      */
     // XXX For some reason JD.XSLT doesn't copy xmlns: attributes
     // to the output doc with <xsl:copy>
@@ -84,31 +83,29 @@ public class Document {
      */
     // Explicitly create elements & attributes to avoid namespace
     // problems
-    private final static String identityXSL =
-                                "<xsl:stylesheet version=\"2.0\""
-                                + " xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n"
-                                + "<xsl:output method=\"xml\"/>\n"
-                                + "<xsl:template match=\"text()|comment()|processing-instruction()\">\n"
-                                + "  <xsl:copy/>\n"
-                                + "</xsl:template>\n"
-                                + "<xsl:template match=\"*\">\n"
-                                + "  <xsl:element name=\"{name()}\" namespace=\"{namespace-uri()}\"><xsl:apply-templates select=\"node()|@*\"/></xsl:element>\n"
-                                + "</xsl:template>\n"
-                                + "<xsl:template match=\"@*\">\n"
-                                + "  <xsl:attribute name=\"{name()}\" namespace=\"{namespace-uri()}\"><xsl:value-of select=\".\"/></xsl:attribute>\n"
-                                + "</xsl:template>\n"
-                                + "<xsl:template match=\"bebop:structure\" "
-                                + " xmlns:bebop=\"http://www.arsdigita.com/bebop/1.0\">\n"
-                                + "</xsl:template>\n"
-                                + "</xsl:stylesheet>";
+    private final static String identityXSL = "<xsl:stylesheet version=\"2.0\""
+                                                  + " xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n"
+                                              + "<xsl:output method=\"xml\"/>\n"
+                                                  + "<xsl:template match=\"text()|comment()|processing-instruction()\">\n"
+                                              + "  <xsl:copy/>\n"
+                                                  + "</xsl:template>\n"
+                                                  + "<xsl:template match=\"*\">\n"
+                                              + "  <xsl:element name=\"{name()}\" namespace=\"{namespace-uri()}\"><xsl:apply-templates select=\"node()|@*\"/></xsl:element>\n"
+                                              + "</xsl:template>\n"
+                                                  + "<xsl:template match=\"@*\">\n"
+                                              + "  <xsl:attribute name=\"{name()}\" namespace=\"{namespace-uri()}\"><xsl:value-of select=\".\"/></xsl:attribute>\n"
+                                              + "</xsl:template>\n"
+                                                  + "<xsl:template match=\"bebop:structure\" "
+                                              + " xmlns:bebop=\"http://www.arsdigita.com/bebop/1.0\">\n"
+                                              + "</xsl:template>\n"
+                                                  + "</xsl:stylesheet>";
     /**
-     * A single <code>DocumentBuilderFactory</code> to use for
-     * creating Documents.
+     * A single <code>DocumentBuilderFactory</code> to use for creating
+     * Documents.
      */
     protected static DocumentBuilderFactory s_builder = null;
     /**
-     * A single <code>DocumentBuilder</code> to use for
-     * creating Documents.
+     * A single <code>DocumentBuilder</code> to use for creating Documents.
      */
     protected static ThreadLocal s_db = null;
 
@@ -117,25 +114,27 @@ public class Document {
     // instead to achieve independence from a JVM wide configuration.
     // Requires additional modifications in c.ad.util.xml.XML
     static {
-        try {
-            LOGGER.debug("Static initalizer starting...");
-            s_builder = DocumentBuilderFactory.class.getDeclaredConstructor().newInstance();
-            s_builder.setNamespaceAware(true);
-            s_db = new ThreadLocal() {
+//        try {
+        LOGGER.debug("Static initalizer starting...");
+        s_builder = DocumentBuilderFactory.newInstance();
+        s_builder.setNamespaceAware(true);
+        s_db = new ThreadLocal() {
 
-                @Override
-                public Object initialValue() {
-                    try {
-                        return s_builder.newDocumentBuilder();
-                    } catch (ParserConfigurationException pce) {
-                        return null;
-                    }
+            @Override
+            public Object initialValue() {
+                try {
+                    return s_builder.newDocumentBuilder();
+                } catch (ParserConfigurationException pce) {
+                    return null;
                 }
-            };
-            LOGGER.debug("Static initalized finished.");
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-            LOGGER.error(e);
-        }
+            }
+
+        };
+        LOGGER.debug("Static initalized finished.");
+//        } 
+//        catch ( e) {
+//            LOGGER.error(e);
+//        }
     }
 
     /* Used to build the DOM Documents that this class wraps */
@@ -146,14 +145,14 @@ public class Document {
 
     /**
      * Creates a new Document class with no root element.
-     * 
+     *
      * @throws javax.xml.parsers.ParserConfigurationException
      */
     public Document() throws ParserConfigurationException {
         DocumentBuilder db = (DocumentBuilder) s_db.get();
         if (db == null) {
             throw new ParserConfigurationException(
-                    "Unable to create a DocumentBuilder");
+                "Unable to create a DocumentBuilder");
         }
         m_document = db.newDocument();
     }
@@ -173,13 +172,14 @@ public class Document {
      * Creates a new Document class with the given root element.
      *
      * @param rootNode the element to use as the root node
+     *
      * @throws javax.xml.parsers.ParserConfigurationException
      */
     public Document(Element rootNode) throws ParserConfigurationException {
         DocumentBuilder db = (DocumentBuilder) s_db.get();
         if (db == null) {
             throw new ParserConfigurationException(
-                    "Unable to create a DocumentBuilder");
+                "Unable to create a DocumentBuilder");
         }
 
         m_document = db.newDocument();
@@ -188,30 +188,31 @@ public class Document {
     }
 
     /**
-     * Creates a document from the passed in string that should
-     * be properly formatted XML
-     * 
+     * Creates a document from the passed in string that should be properly
+     * formatted XML
+     *
      * @param xmlString
+     *
      * @throws javax.xml.parsers.ParserConfigurationException
      * @throws org.xml.sax.SAXException
      */
     public Document(String xmlString)
-            throws ParserConfigurationException, org.xml.sax.SAXException {
+        throws ParserConfigurationException, org.xml.sax.SAXException {
         this(new org.xml.sax.InputSource(new java.io.StringReader(xmlString)));
     }
 
     public Document(byte[] xmlBytes)
-            throws ParserConfigurationException, org.xml.sax.SAXException {
+        throws ParserConfigurationException, org.xml.sax.SAXException {
         this(new org.xml.sax.InputSource(new java.io.ByteArrayInputStream(
-                xmlBytes)));
+            xmlBytes)));
     }
 
     private Document(org.xml.sax.InputSource inputSource)
-            throws ParserConfigurationException, org.xml.sax.SAXException {
+        throws ParserConfigurationException, org.xml.sax.SAXException {
         DocumentBuilder db = (DocumentBuilder) s_db.get();
         if (db == null) {
             throw new ParserConfigurationException(
-                    "Unable to create a DocumentBuilder");
+                "Unable to create a DocumentBuilder");
         }
 
         org.w3c.dom.Document domDoc;
@@ -227,6 +228,7 @@ public class Document {
      * Sets the root element.
      *
      * @param rootNode the element to use as the root node
+     *
      * @return this document.
      */
     public Document setRootElement(Element rootNode) {
@@ -237,14 +239,15 @@ public class Document {
     }
 
     /**
-     * Creates a new element and sets it as the root.
-     * Equivalent to
+     * Creates a new element and sets it as the root. Equivalent to
      * <pre>
      * Element root = new Element("name", NS);
      * doc.setRootElement(root);
      * </pre>
+     *
      * @param elt the element name
-     * @param ns the element's namespace URI
+     * @param ns  the element's namespace URI
+     *
      * @return The newly created root element.
      */
     public Element createRootElement(String elt, String ns) {
@@ -256,13 +259,14 @@ public class Document {
     }
 
     /**
-     * Creates a new element and sets it as the root.
-     * Equivalent to
+     * Creates a new element and sets it as the root. Equivalent to
      * <pre>
      * Element root = new Element("name", NS);
      * doc.setRootElement(root);
      * </pre>
+     *
      * @param elt the element name
+     *
      * @return The newly created root element.
      */
     public Element createRootElement(String elt) {
@@ -274,8 +278,9 @@ public class Document {
     }
 
     /**
-     * Returns the root element for the document.  This is the top-level
-     * element (the "HTML" element in an HTML document).
+     * Returns the root element for the document. This is the top-level element
+     * (the "HTML" element in an HTML document).
+     *
      * @return the document's root element.
      */
     public Element getRootElement() {
@@ -285,10 +290,10 @@ public class Document {
     }
 
     /**
-     * Not a part of <code>org.jdom.Document</code>, this function returns
-     * the internal DOM representation of this document.  This method should
-     * only be used when passing the DOM to the translator. It will require
-     * changes once JDOM replaces this class.
+     * Not a part of <code>org.jdom.Document</code>, this function returns the
+     * internal DOM representation of this document. This method should only be
+     * used when passing the DOM to the translator. It will require changes once
+     * JDOM replaces this class.
      *
      * @return this document.
      */
@@ -297,16 +302,16 @@ public class Document {
     }
 
     /**
-     * General toString() method for org.w3c.domDocument.
-     *  Not really related to xml.Document, but needed here.
-     * Converts an XML in-memory DOM to String representation, using
-     * an XSLT identity transformation.
+     * General toString() method for org.w3c.domDocument. Not really related to
+     * xml.Document, but needed here. Converts an XML in-memory DOM to String
+     * representation, using an XSLT identity transformation.
      *
-     * @param document the <code>org.w3c.dom.Document</code> object
-     * to convert to a String representation
-     * @param indent if <code>true</code>, try to indent elements according to normal
-     * XML/SGML indentation conventions (may only work with certain
-     * XSLT engines)
+     * @param document the <code>org.w3c.dom.Document</code> object to convert
+     *                 to a String representation
+     * @param indent   if <code>true</code>, try to indent elements according to
+     *                 normal XML/SGML indentation conventions (may only work
+     *                 with certain XSLT engines)
+     *
      * @return a String representation of <code>document</code>.
      */
     public static String toString(org.w3c.dom.Document document,
@@ -314,10 +319,11 @@ public class Document {
         Transformer identity;
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-            StreamSource identitySource =
-                         new StreamSource(new StringReader(identityXSL));
-            identity = TransformerFactory.class.getDeclaredConstructor().newInstance().newTransformer(
-                    identitySource);
+            StreamSource identitySource = new StreamSource(new StringReader(
+                identityXSL));
+            identity = TransformerFactory
+                .newInstance()
+                .newTransformer(identitySource);
             identity.setOutputProperty("method", "xml");
             identity.setOutputProperty("indent", (indent ? "yes" : "no"));
             identity.setOutputProperty("encoding", "UTF-8");
@@ -325,10 +331,7 @@ public class Document {
         } catch (javax.xml.transform.TransformerException e) {
             LOGGER.error("error in toString", e);
             return document.toString();
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-            LOGGER.error(e);
-            return null; // This shouldn't be possible
-        }
+        } 
 
         try {
             return os.toString("UTF-8");
@@ -338,9 +341,12 @@ public class Document {
         }
     }
 
-    /** Convenience wrapper for static toString(Document, boolean),
-     *  without additional indenting.
+    /**
+     * Convenience wrapper for static toString(Document, boolean), without
+     * additional indenting.
+     *
      * @param document the <code>org.w3c.dom.Document</code> to output
+     *
      * @return a String representation of <code>document</code>.
      */
     public static String toString(org.w3c.dom.Document document) {
@@ -349,20 +355,25 @@ public class Document {
 
     /**
      * Generates an XML text representation of this document.
+     *
      * @param indent if <code>true</code>, try to indent XML elements according
-     * to XML/SGML convention
+     *               to XML/SGML convention
+     *
      * @return a String representation of <code>this</code>.
      */
     public String toString(boolean indent) {
         return toString(m_document, indent);
     }
 
-    /** Generates an XML text representation of this document,
-     *  without additional indenting.
+    /**
+     * Generates an XML text representation of this document, without additional
+     * indenting.
+     *
      * @return a String representation of <code>this</code>.
      */
     @Override
     public String toString() {
         return toString(m_document, false);
     }
+
 }

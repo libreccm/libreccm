@@ -98,7 +98,8 @@ public final class XSLTemplate {
         try {
             LOGGER.debug("Getting new templates object");
 
-            final TransformerFactory factory = TransformerFactory.class.getDeclaredConstructor().newInstance();
+            final TransformerFactory factory = TransformerFactory
+                .newInstance();
             factory.setURIResolver(resolver);
             factory.setErrorListener(listener);
 
@@ -110,10 +111,7 @@ public final class XSLTemplate {
             throw new WrappedTransformerException(ex);
         } catch (TransformerException ex) {
             throw new WrappedTransformerException(ex);
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-            LOGGER.error(e);
-            throw new RuntimeException(e);
-        }
+        } 
 
         // List contains each include/import URL found in the style sheet
         // recursively(!) (i.e. scanning each style sheet whose URL has been
