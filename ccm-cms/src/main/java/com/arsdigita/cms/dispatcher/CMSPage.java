@@ -55,19 +55,19 @@ import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import java.util.Optional;
 
-
 /**
- * <p>A <tt>CMSPage</tt> is a Bebop {@link com.arsdigita.bebop.Page}
- * implementation of the {@link com.arsdigita.cms.dispatcher.ResourceHandler}
- * interface.</p>
+ * <p>
+ * A <tt>CMSPage</tt> is a Bebop {@link com.arsdigita.bebop.Page} implementation
+ * of the {@link com.arsdigita.cms.dispatcher.ResourceHandler} interface.</p>
  *
- * <p>It stores the current {@link com.arsdigita.cms.ContentSection} and, if
+ * <p>
+ * It stores the current {@link com.arsdigita.cms.ContentSection} and, if
  * applicable, the {@link com.arsdigita.cms.ContentItem} in the page state as
  * request local objects. Components that are part of the <tt>CMSPage</tt>
  * may access these objects by calling:</p>
- *     <blockquote><code><pre>
+ * <blockquote><code><pre>
  *     getContentSection(PageState state);
- *     </pre></code></blockquote>
+ * </pre></code></blockquote>
  *
  * @author Michael Pih (pihman@arsdigita.com)
  * @author Uday Mathur (umathur@arsdigita.com)
@@ -76,16 +76,23 @@ public class CMSPage extends Page implements ResourceHandler {
 
     private static final Logger LOGGER = LogManager.getLogger(CMSPage.class);
 
-    /** The global assets URL stub XML parameter name.    */
+    /**
+     * The global assets URL stub XML parameter name.
+     */
     public final static String ASSETS = "ASSETS";
 
-    /** The XML page class.     */
+    /**
+     * The XML page class.
+     */
     public final static String PAGE_CLASS = "CMS";
 
-    /** Map of XML parameters   */
+    /**
+     * Map of XML parameters
+     */
     private HashMap m_params;
 
-    /**    */
+    /**
+     *   */
     private PageTransformer m_transformer;
 
     public CMSPage() {
@@ -135,18 +142,21 @@ public class CMSPage extends Page implements ResourceHandler {
         // Make sure the error display gets rendered.
         getErrorDisplay().setIdAttr("page-body");
 
-        final Class<PresentationManager> presenterClass = BebopConfig.getConfig().getPresenterClass();
+        final Class<PresentationManager> presenterClass = BebopConfig
+            .getConfig().getPresenterClass();
         final PresentationManager pm;
         try {
             pm = presenterClass.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
+        } catch (InstantiationException
+                     | IllegalAccessException
+                     | InvocationTargetException
+                     | NoSuchMethodException ex) {
             throw new RuntimeException(ex);
         }
 
         if (pm instanceof PageTransformer) {
             m_transformer = (PageTransformer) pm;
-        }
-        else {
+        } else {
             m_transformer = new PageTransformer();
         }
     }
@@ -172,7 +182,9 @@ public class CMSPage extends Page implements ResourceHandler {
      * Fetches the value of the XML parameter.
      *
      * @param name The parameter name
+     *
      * @return The parameter value
+     *
      * @pre (name != null)
      */
     public String getXMLParameter(String name) {
@@ -182,8 +194,9 @@ public class CMSPage extends Page implements ResourceHandler {
     /**
      * Set an XML parameter.
      *
-     * @param name The parameter name
+     * @param name  The parameter name
      * @param value The parameter value
+     *
      * @pre (name != null)
      */
     public void setXMLParameter(String name, String value) {
@@ -194,20 +207,19 @@ public class CMSPage extends Page implements ResourceHandler {
      * Fetch the request-local content section.
      *
      * @param request The HTTP request
+     *
      * @return The current content section
      *
-     * @deprecated use com.arsdigita.cms.CMS.getContext().getContentSection() 
-     *             instead
-     *             Despite of being deprecated it can not be removed because it
-     *             is required by the interface Resourcehandler which is
-     *             implemented by this class.
-     *             On the other hand, if deprecated, implementing ResourceHandler
-     *             may not be required
+     * @deprecated use com.arsdigita.cms.CMS.getContext().getContentSection()
+     * instead Despite of being deprecated it can not be removed because it is
+     * required by the interface Resourcehandler which is implemented by this
+     * class. On the other hand, if deprecated, implementing ResourceHandler may
+     * not be required
      */
     @Override
     public ContentSection getContentSection(HttpServletRequest request) {
         // Resets all content sections associations.
-     // return ContentSectionDispatcher.getContentSection(request);
+        // return ContentSectionDispatcher.getContentSection(request);
         return ContentSectionServlet.getContentSection(request);
     }
 
@@ -215,13 +227,12 @@ public class CMSPage extends Page implements ResourceHandler {
      * Fetch the request-local content section.
      *
      * @param state The page state
+     *
      * @return The current content section
      *
      * @deprecated use com.arsdigita.cms.CMS.getContext().getContentSection()
-     *             instead
-     *             Despite of being deprecated it can not be removed because it
-     *             is required by ContentItemPage which extends CMSPage and
-     *             uses this method.
+     * instead Despite of being deprecated it can not be removed because it is
+     * required by ContentItemPage which extends CMSPage and uses this method.
      */
     public ContentSection getContentSection(PageState state) {
         return getContentSection(state.getRequest());
@@ -231,15 +242,14 @@ public class CMSPage extends Page implements ResourceHandler {
      * Fetch the request-local content item.
      *
      * @param request The HTTP request
+     *
      * @return The current content item
      *
      * @deprecated use com.arsdigita.cms.CMS.getContext().getContentItem()
-     *             instead
-     *             Despite of being deprecated it can not be removed because it
-     *             is required by the interface Resourcehandler which is
-     *             implemented by this class.
-     *             On the other hand, if deprecated, implementing ResourceHandler
-     *             may not be required
+     * instead Despite of being deprecated it can not be removed because it is
+     * required by the interface Resourcehandler which is implemented by this
+     * class. On the other hand, if deprecated, implementing ResourceHandler may
+     * not be required
      */
     public ContentItem getContentItem(HttpServletRequest request) {
         // resets all content item associations
@@ -250,12 +260,12 @@ public class CMSPage extends Page implements ResourceHandler {
      * Fetch the request-local content item.
      *
      * @param state The page state
+     *
      * @return The current content item
+     *
      * @deprecated use com.arsdigita.cms.CMS.getContext().getContentItem()
-     *             instead.
-     *             Despite of being deprecated it can not be removed because it
-     *             is required by ContentItemPage which extends CMSPage and
-     *             uses this method.
+     * instead. Despite of being deprecated it can not be removed because it is
+     * required by ContentItemPage which extends CMSPage and uses this method.
      */
     public ContentItem getContentItem(PageState state) {
         return getContentItem(state.getRequest());
@@ -264,65 +274,70 @@ public class CMSPage extends Page implements ResourceHandler {
     /**
      * Services the Bebop page.
      *
-     * @param request The servlet request object
+     * @param request  The servlet request object
      * @param response the servlet response object
-     * @param actx The request context
+     * @param actx     The request context
      *
      * @pre m_transformer != null
      */
     @Override
     public void dispatch(final HttpServletRequest request,
-                         final HttpServletResponse response ,
+                         final HttpServletResponse response,
                          final RequestContext actx)
         throws IOException, ServletException {
 
         final CcmApplication app = Web.getWebContext().getApplication();
         ContentSection section = null;
-        
+
         if (app == null) {
             //Nothing to do
-        } else if(app instanceof ContentSection) {
+        } else if (app instanceof ContentSection) {
             section = (ContentSection) app;
-        } 
-        
+        }
+
         if (section != null) {
             CMS.getContext().setContentSection(section);
         }
-        
+
         final String itemId = request.getParameter("item_id");
-        
+
         if (itemId != null) {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final ContentItemRepository itemRepo = cdiUtil.findBean(ContentItemRepository.class);
+            final ContentItemRepository itemRepo = cdiUtil.findBean(
+                ContentItemRepository.class);
             final ContentItem item = itemRepo
                 .findById(Long.parseLong(itemId)).get();
             final PermissionChecker permissionChecker = cdiUtil.findBean(
                 PermissionChecker.class);
-            permissionChecker.checkPermission(ItemPrivileges.PREVIEW, 
+            permissionChecker.checkPermission(ItemPrivileges.PREVIEW,
                                               item);
             CMS.getContext().setContentItem(item);
         }
-        
+
         final Document document = buildDocument(request, response);
-        
+
         m_transformer.servePage(document, request, response);
     }
 
     /**
      * Overwrites bebop.Page#generateXMLHelper to add the name of the user
      * logged in to the page (displayed as part of the header).
+     *
      * @param ps
      * @param parent
-     * @return 
+     *
+     * @return
      */
     @Override
     protected Element generateXMLHelper(PageState ps, Document parent) {
-        Element page = super.generateXMLHelper(ps,parent);
-        final Optional<User> user = CdiUtil.createCdiUtil().findBean(Shiro.class).getUser();
-        if ( user.isPresent()) {
-            page.addAttribute("name",user.get().getName());
+        Element page = super.generateXMLHelper(ps, parent);
+        final Optional<User> user = CdiUtil.createCdiUtil()
+            .findBean(Shiro.class).getUser();
+        if (user.isPresent()) {
+            page.addAttribute("name", user.get().getName());
         }
 
         return page;
     }
+
 }

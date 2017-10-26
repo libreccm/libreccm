@@ -36,6 +36,8 @@ import javax.transaction.Transactional;
 @RequestScoped
 public class SiteRepository extends AbstractEntityRepository<Long, Site> {
 
+    private static final long serialVersionUID = 3120528987720524155L;
+
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<Site> findByDomain(final String domain) {
 

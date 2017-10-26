@@ -19,8 +19,7 @@
 package org.librecms.pages;
 
 import org.libreccm.categorization.Domain;
-import org.libreccm.sites.Site;
-import org.libreccm.web.CcmApplication;
+import org.libreccm.sites.SiteAwareApplication;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -35,9 +34,9 @@ import javax.persistence.Table;
 import static org.librecms.CmsConstants.*;
 
 /**
- * The {@code Pages} application. Each instance of this application provides
- * the page tree for specific site.
- * 
+ * The {@code Pages} application. Each instance of this application provides the
+ * page tree for specific site.
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -66,16 +65,9 @@ import static org.librecms.CmsConstants.*;
                     + "FROM Pages p JOIN p.site s "
                     + "WHERE s.defaultSite = true")
 })
-public class Pages extends CcmApplication implements Serializable {
+public class Pages extends SiteAwareApplication implements Serializable {
 
     private static final long serialVersionUID = -352205318143692477L;
-
-    /**
-     * The {@link Site} to which this pages instance belongs.
-     */
-    @OneToOne
-    @JoinColumn(name = "SITE_ID")
-    private Site site;
 
     /**
      * The category {@link Domain} which is used the model the page tree.
@@ -83,14 +75,6 @@ public class Pages extends CcmApplication implements Serializable {
     @OneToOne
     @JoinColumn(name = "CATEGORY_DOMAIN_ID")
     private Domain categoryDomain;
-
-    public Site getSite() {
-        return site;
-    }
-
-    protected void setSite(final Site site) {
-        this.site = site;
-    }
 
     public Domain getCategoryDomain() {
         return categoryDomain;
@@ -104,7 +88,6 @@ public class Pages extends CcmApplication implements Serializable {
     public int hashCode() {
         int hash = 7;
         hash = 17 * hash + Objects.hashCode(categoryDomain);
-        hash = 17 * hash + Objects.hashCode(site);
         return hash;
     }
 
@@ -132,10 +115,6 @@ public class Pages extends CcmApplication implements Serializable {
             return false;
         }
 
-        if (!Objects.equals(site, other.getSite())) {
-            return false;
-        }
-
         return Objects.equals(categoryDomain, other.getCategoryDomain());
     }
 
@@ -143,15 +122,4 @@ public class Pages extends CcmApplication implements Serializable {
     public boolean canEqual(final Object obj) {
         return obj instanceof Pages;
     }
-
-    @Override
-    public String toString(final String data) {
-
-        return super.toString(String.format(
-            ", site = \"%s\"%s",
-            Objects.toString(site),
-            data
-        ));
-    }
-
 }

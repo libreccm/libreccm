@@ -22,12 +22,16 @@ import static org.libreccm.core.CoreConstants.*;
 
 import org.libreccm.core.CcmObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -66,6 +70,14 @@ public class Site extends CcmObject {
     @Column(name = "DEFAULT_THEME")
     private String defaultTheme;
 
+    @OneToMany(mappedBy = "site")
+    private List<SiteAwareApplication> applications;
+    
+    public Site() {
+        super();
+        applications = new ArrayList<>();
+    }
+    
     public String getDomainOfSite() {
         return domainOfSite;
     }
@@ -89,7 +101,23 @@ public class Site extends CcmObject {
     public void setDefaultTheme(final String defaultTheme) {
         this.defaultTheme = defaultTheme;
     }
+    
+    public List<SiteAwareApplication> getApplications() {
+        return Collections.unmodifiableList(applications);
+    }
+    
+    protected void setApplications(final List<SiteAwareApplication> applications) {
+        this.applications = new ArrayList<>(applications);
+    }
 
+    protected void addApplication(final SiteAwareApplication application) {
+        applications.add(application);
+    }
+    
+    protected void removeApplication(final SiteAwareApplication application) {
+        applications.remove(application);
+    }
+    
     @Override
     public int hashCode() {
         int hash = 3;

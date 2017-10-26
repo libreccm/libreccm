@@ -16,12 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.pages;
+package org.libreccm.sites;
 
-import org.libreccm.categorization.Domain;
+import static org.libreccm.core.CoreConstants.*;
+
 import org.libreccm.security.RequiresPrivilege;
-import org.libreccm.sites.Site;
-import org.libreccm.sites.SiteManager;
+import org.libreccm.web.ApplicationRepository;
 
 import java.io.Serializable;
 
@@ -30,34 +30,42 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 /**
- * Manager class for {@link Pages}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class PagesManager implements Serializable {
+public class SiteManager implements Serializable {
 
-    private static final long serialVersionUID = 888880071212859827L;
-
-    @Inject
-    private PagesRepository pagesRepo;
+    private static final long serialVersionUID = 1834820718630385805L;
 
     @Inject
-    private SiteManager siteManager;
+    private ApplicationRepository applicationRepo;
+    
+    @Inject
+    private SiteRepository siteRepo;
 
-    @RequiresPrivilege(PagesPrivileges.ADMINISTER_PAGES)
+    @RequiresPrivilege(PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
-    public Pages createPages(final Site site,
-                             final Domain domain) {
-
-        final Pages pages = new Pages();
-        pages.setCategoryDomain(domain);
-
-        siteManager.addApplicationToSite(site, pages);
-
-        pagesRepo.save(pages);
-
-        return pages;
+    public void addApplicationToSite(final Site site, 
+                                     final SiteAwareApplication application) {
+        
+        site.addApplication(application);
+        application.setSite(site);
+        
+        siteRepo.save(site);
+        applicationRepo.save(application);
+    }
+    
+    @RequiresPrivilege(PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void removeApplicationFromSite(final Site site,
+                                     final SiteAwareApplication application) {
+        
+        site.removeApplication(application);
+        application.setSite(null);
+        
+        siteRepo.save(site);
+        applicationRepo.save(application);
     }
 
 }
