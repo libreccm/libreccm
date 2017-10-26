@@ -20,7 +20,6 @@ package org.librecms.pages;
 
 import org.libreccm.categorization.Category;
 import org.libreccm.core.AbstractEntityRepository;
-import org.libreccm.core.CoreConstants;
 import org.libreccm.security.RequiresPrivilege;
 
 import java.util.Optional;
@@ -28,6 +27,7 @@ import java.util.Optional;
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 /**
  * Repository for {@link Page} entities.
@@ -37,12 +37,16 @@ import javax.persistence.TypedQuery;
 @RequestScoped
 public class PageRepository extends AbstractEntityRepository<Long, Page>{
 
+    private static final long serialVersionUID = -338101684757468443L;
+
     /**
      * Find the {@link Page} associated with a {@link Category}.
      * 
      * @param category The {@link Category} associated with the {@link Page}.
      * @return 
      */
+    @RequiresPrivilege(PagesPrivileges.ADMINISTER_PAGES)
+    @Transactional(Transactional.TxType.REQUIRED)
     public Optional<Page> findPageForCategory(final Category category) {
         
         final TypedQuery<Page> query = getEntityManager()
@@ -56,14 +60,14 @@ public class PageRepository extends AbstractEntityRepository<Long, Page>{
         }
     }
     
-    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    @Override
+    @RequiresPrivilege(PagesPrivileges.ADMINISTER_PAGES)
+    @Transactional(Transactional.TxType.REQUIRED)
     public void save(final Page page) {
         super.save(page);
     }
     
-    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    @Override
+    @RequiresPrivilege(PagesPrivileges.ADMINISTER_PAGES)
+    @Transactional(Transactional.TxType.REQUIRED)
     public void delete(final Page page) {
         super.delete(page);
     }
