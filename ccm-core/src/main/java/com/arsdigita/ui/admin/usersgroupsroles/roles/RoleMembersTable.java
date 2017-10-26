@@ -34,7 +34,6 @@ import com.arsdigita.bebop.table.TableModelBuilder;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.LockableImpl;
 
-import org.libreccm.admin.ui.UsersGroupsRolesTab;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Group;
 import org.libreccm.security.Party;
@@ -44,7 +43,6 @@ import org.libreccm.security.RoleManager;
 import org.libreccm.security.RoleRepository;
 import org.libreccm.security.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
