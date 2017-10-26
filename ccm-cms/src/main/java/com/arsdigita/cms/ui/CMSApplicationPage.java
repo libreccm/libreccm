@@ -131,14 +131,15 @@ public class CMSApplicationPage extends Page {
         getErrorDisplay().setIdAttr("page-body");
 
         final Class<PresentationManager> presenterClass = BebopConfig
-            .getConfig().getPresenterClass();
+            .getConfig()
+            .getPresenterClass();
         final PresentationManager presenter;
         try {
             presenter = presenterClass.getDeclaredConstructor().newInstance();
         } catch (InstantiationException
-                 | IllegalAccessException
-                 | NoSuchMethodException
-                 | InvocationTargetException ex) {
+                     | IllegalAccessException
+                     | NoSuchMethodException
+                     | InvocationTargetException ex) {
             throw new RuntimeException("Failed to create PresentationManager",
                                        ex);
         }
