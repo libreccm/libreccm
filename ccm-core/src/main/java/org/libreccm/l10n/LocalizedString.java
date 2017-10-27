@@ -73,7 +73,6 @@ public class LocalizedString implements Serializable {
     @Lob
     @Type(type = "org.hibernate.type.TextType")
     @Field
-//    @XmlElementWrapper(name = "values", namespace = L10N_XML_NS)
     @XmlElement(name = "values", namespace = L10N_XML_NS)
     @XmlJavaTypeAdapter(LocalizedStringValuesAdapter.class)
     private Map<Locale, String> values;

@@ -104,7 +104,7 @@ public class Group extends Party implements Serializable, Portable {
      * The memberships of the group. For adding or removing memberships the
      * methods provided by the {@link GroupManager} should be used.
      */
-    @OneToMany(mappedBy = "group")
+    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
     @XmlElementWrapper(name = "group-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "group-membership", namespace = CORE_XML_NS)
     @JsonIgnore

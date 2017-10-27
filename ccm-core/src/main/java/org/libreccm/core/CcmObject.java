@@ -112,7 +112,7 @@ public class CcmObject implements Identifiable, Serializable {
     /**
      * Permissions granted on this object.
      */
-    @OneToMany(mappedBy = "object")
+    @OneToMany(mappedBy = "object", fetch = FetchType.LAZY)
     @IndexedEmbedded(includePaths = {"grantedPrivilege", "grantee.name"})
     @XmlElementWrapper(name = "permissions", namespace = CORE_XML_NS)
     @XmlElement(name = "permission", namespace = CORE_XML_NS)
@@ -122,7 +122,7 @@ public class CcmObject implements Identifiable, Serializable {
     /**
      * Categories which have been assigned to this {@code CcmObject}.
      */
-    @OneToMany(mappedBy = "categorizedObject")
+    @OneToMany(mappedBy = "categorizedObject", fetch = FetchType.LAZY)
     @XmlElementWrapper(name = "categories", namespace = CORE_XML_NS)
     @XmlElement(name = "category", namespace = CORE_XML_NS)
     @JsonIgnore

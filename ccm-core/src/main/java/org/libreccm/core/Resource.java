@@ -39,6 +39,7 @@ import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
@@ -114,7 +115,7 @@ public class Resource extends CcmObject implements Serializable {
     /**
      * The child resources of this resource.
      */
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Resource> childs;
 

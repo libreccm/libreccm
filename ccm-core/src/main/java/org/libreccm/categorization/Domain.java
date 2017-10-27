@@ -30,6 +30,7 @@ import org.libreccm.portation.Portable;
 import org.libreccm.security.RecursivePermissions;
 import org.libreccm.web.CcmApplication;
 
+import javax.persistence.FetchType;
 import javax.validation.constraints.Pattern;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -210,7 +211,7 @@ public class Domain extends CcmObject implements Serializable, Portable {
     /**
      * The owners of the domain.
      */
-    @OneToMany(mappedBy = "domain")
+    @OneToMany(mappedBy = "domain", fetch = FetchType.LAZY)
     @XmlElementWrapper(name = "owners", namespace = CAT_XML_NS)
     @JsonIgnore
     private List<DomainOwnership> owners;
