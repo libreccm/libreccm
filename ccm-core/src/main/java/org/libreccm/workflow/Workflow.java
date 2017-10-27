@@ -27,9 +27,27 @@ import org.libreccm.core.Identifiable;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.portation.Portable;
 
-import javax.persistence.*;
+import javax.persistence.AssociationOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,8 +55,6 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
-
-import java.util.Locale;
 
 /**
  * A workflow is a collection of tasks which are performed on an object. Tasks
@@ -92,6 +108,7 @@ public class Workflow implements Identifiable, Serializable, Portable {
      */
     @ManyToOne
     @JoinColumn(name = "TEMPLATE_ID")
+    @JsonIdentityReference(alwaysAsId = true)
     private Workflow template;
 
     /**
@@ -152,7 +169,7 @@ public class Workflow implements Identifiable, Serializable, Portable {
     /**
      * The tasks belonging to this workflow.
      */
-    @OneToMany(mappedBy = "workflow")
+    @OneToMany(mappedBy = "workflow", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Task> tasks;
 
@@ -244,9 +261,9 @@ public class Workflow implements Identifiable, Serializable, Portable {
     }
 
     protected void setObject(final CcmObject object) {
-        if (abstractWorkflow) {
+        if (abstractWorkflow && object != null) {
             throw new AbstractWorkflowException(String.format(
-                "Workflow %s is abstrct and can not assigned to an object.",
+                "Workflow %s is abstract and can not assigned to an object.",
                 uuid));
         }
         this.object = object;

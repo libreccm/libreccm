@@ -60,13 +60,13 @@ public class WorkflowRepository extends AbstractEntityRepository<Long, Workflow>
      *         the provided UUID.
      */
     public Optional<Workflow> findByUuid(final String uuid) {
-        if (uuid == null || uuid.trim().isEmpty()) {
+        if (uuid == null) {
             throw new IllegalArgumentException(
                 "The UUID of the Workflow to retrieve can't be null or empty.");
         }
         
-        final TypedQuery<Workflow> query = getEntityManager().createNamedQuery(
-            "Workflow.findByUuid", Workflow.class);
+        final TypedQuery<Workflow> query = getEntityManager()
+                .createNamedQuery("Workflow.findByUuid", Workflow.class);
         query.setParameter("uuid", uuid);
         
         try {

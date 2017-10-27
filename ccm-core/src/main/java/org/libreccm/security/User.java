@@ -195,7 +195,7 @@ public class User extends Party implements Serializable, Portable {
     /**
      * The groups of which the user is a member.
      */
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     @XmlElementWrapper(name = "group-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "group-membership", namespace = CORE_XML_NS)
     @JsonIgnore

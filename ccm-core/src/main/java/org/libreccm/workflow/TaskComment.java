@@ -19,6 +19,7 @@
 package org.libreccm.workflow;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.Type;
 import org.libreccm.core.CoreConstants;
@@ -80,6 +81,7 @@ public class TaskComment implements Identifiable, Serializable, Portable {
      */
     @OneToOne
     @JoinColumn(name = "AUTHOR_ID")
+    @JsonIdentityReference(alwaysAsId = true)
     private User author;
 
     public long getCommentId() {

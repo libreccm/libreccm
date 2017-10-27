@@ -153,16 +153,16 @@ public class Task implements Identifiable, Serializable {
     private Workflow workflow;
 
     /**
-     * Tasks which the depends of this task.
+     * Tasks which depend on this task.
      */
-    @ManyToMany(mappedBy = "dependsOn")
+    @ManyToMany(mappedBy = "dependsOn", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Task> dependentTasks;
 
     /**
-     * The task of this task depends.
+     * The dependencies of this task.
      */
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "WORKFLOW_TASK_DEPENDENCIES",
                schema = DB_SCHEMA,
                joinColumns = {
@@ -175,8 +175,9 @@ public class Task implements Identifiable, Serializable {
     /**
      * Comments for the task.
      */
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "TASK_ID")
+    @JsonIdentityReference(alwaysAsId = true)
     private List<TaskComment> comments;
 
     public Task() {
