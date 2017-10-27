@@ -162,7 +162,7 @@ public class Role implements Serializable, Portable {
     /**
      * All memberships of the roles.
      */
-    @OneToMany(mappedBy = "role")
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
     @XmlElementWrapper(name = "role-memberships", namespace = CORE_XML_NS)
     @XmlElement(name = "role-membership", namespace = CORE_XML_NS)
     @JsonIgnore
@@ -177,7 +177,7 @@ public class Role implements Serializable, Portable {
     @JsonIgnore
     private List<Permission> permissions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "role")
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<TaskAssignment> assignedTasks = new ArrayList<>();
 

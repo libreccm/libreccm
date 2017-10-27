@@ -27,6 +27,7 @@ import org.libreccm.categorization.DomainOwnership;
 import org.libreccm.core.Resource;
 import org.libreccm.portation.Portable;
 
+import javax.persistence.FetchType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -97,7 +98,7 @@ public class CcmApplication extends Resource implements Serializable, Portable {
     /**
      * Category Domains owned by this {@code CcmObject}.
      */
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
     @XmlElementWrapper(name = "domains", namespace = WEB_XML_NS)
     @XmlElement(name = "domain", namespace = WEB_XML_NS)
     @JsonIgnore
