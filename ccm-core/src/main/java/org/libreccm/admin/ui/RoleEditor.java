@@ -19,11 +19,18 @@
 package org.libreccm.admin.ui;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
+
 import com.vaadin.data.HasValue;
 import com.vaadin.server.UserError;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import org.libreccm.security.Role;
-import org.libreccm.security.RoleManager;
 import org.libreccm.security.RoleRepository;
 
 import java.util.ResourceBundle;
@@ -32,45 +39,35 @@ import java.util.ResourceBundle;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class RoleEditor extends Window {
+class RoleEditor extends Window {
 
     private static final long serialVersionUID = -2982855646090602847L;
 
-    private final UsersGroupsRolesTab usersGroupsRoles;
     private final Role role;
     private final RoleRepository roleRepo;
-    private final RoleManager roleManager;
 
     private boolean dataHasChanged = false;
 
     private TextField roleName;
     private TextArea roleDescription;
 
-    public RoleEditor(final UsersGroupsRolesTab usersGroupsRoles,
-                      final RoleRepository roleRepo,
-                      final RoleManager roleManager) {
+    protected RoleEditor(final RoleRepository roleRepo) {
 
         super("Create new role");
 
-        this.usersGroupsRoles = usersGroupsRoles;
         role = null;
         this.roleRepo = roleRepo;
-        this.roleManager = roleManager;
 
         addWidgets();
     }
 
     public RoleEditor(final Role role,
-                      final UsersGroupsRolesTab usersGroupsRoles,
-                      final RoleRepository roleRepo,
-                      final RoleManager roleManager) {
+                      final RoleRepository roleRepo) {
 
         super(String.format("Edit role %s", role.getName()));
 
         this.role = role;
-        this.usersGroupsRoles = usersGroupsRoles;
         this.roleRepo = roleRepo;
-        this.roleManager = roleManager;
 
         addWidgets();
     }
@@ -135,7 +132,7 @@ public class RoleEditor extends Window {
         }
 
         setContent(layout);
-        
+
         dataHasChanged = false;
     }
 
@@ -195,9 +192,6 @@ public class RoleEditor extends Window {
         roleRepo.save(currentRole);
 
         dataHasChanged = false;
-        if (usersGroupsRoles != null) {
-            usersGroupsRoles.refreshRoles();
-        }
         close();
     }
 

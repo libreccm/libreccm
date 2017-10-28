@@ -35,15 +35,14 @@ import java.util.List;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class GroupSelector extends Window {
+class GroupSelector extends Window {
 
     private static final long serialVersionUID = -6227551833159691370L;
 
     private static final String COL_NAME = "groupname";
 
-    public GroupSelector(final String caption,
+    protected GroupSelector(final String caption,
                          final String actionLabel,
-                         final UsersGroupsRolesTab usersGroupsRoles,
                          final List<Group> excludedGroups,
                          final GroupSelectionAction action) {
 

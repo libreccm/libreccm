@@ -21,18 +21,14 @@ package org.librecms.ui;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.contentsection.ContentSection;
-import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 

@@ -19,15 +19,28 @@
 package org.libreccm.admin.ui;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
+
 import com.vaadin.data.HasValue;
 import com.vaadin.data.ValueProvider;
 import com.vaadin.server.UserError;
-import com.vaadin.ui.*;
+import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.persistence.Id;
 import javax.persistence.PersistenceException;
+
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -35,19 +48,29 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.primefaces.component.schedule.Schedule.PropertyKeys.*;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class JpqlConsole extends CustomComponent {
+class JpqlConsole extends CustomComponent {
 
     private static final long serialVersionUID = 2585630538827827614L;
     private static final Logger LOGGER = LogManager.getLogger(JpqlConsole.class);
 
-    private final AdminView view;
+    private final JpqlConsoleController controller;
 
     private final TextArea queryArea;
     private final TextField maxResults;
@@ -58,10 +81,10 @@ public class JpqlConsole extends CustomComponent {
     private final Label noResultsLabel;
     private final Panel resultsPanel;
 
-    public JpqlConsole(final AdminView view) {
+    JpqlConsole(final JpqlConsoleController controller) {
 
-        this.view = view;
-
+        this.controller = controller;
+        
         final ResourceBundle bundle = ResourceBundle.getBundle(
             AdminUiConstants.ADMIN_BUNDLE, UI.getCurrent().getLocale());
 
@@ -119,8 +142,7 @@ public class JpqlConsole extends CustomComponent {
 
         final List<?> result;
         try {
-            result = view
-                .getJpqlConsoleController()
+            result = controller
                 .executeQuery(queryStr,
                               Integer.parseInt(maxResults.getValue()),
                               Integer.parseInt(offset.getValue()));

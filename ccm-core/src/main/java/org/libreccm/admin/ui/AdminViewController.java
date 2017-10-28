@@ -32,46 +32,36 @@ import javax.inject.Inject;
 @ViewScoped
 class AdminViewController {
 
-    protected AdminViewController() {
-        super();
-    }
-        
-    
     @Inject
-    private GlobalizationHelper globalizationHelper;
+    private ConfigurationsTabController confTabController;
 
     @Inject
-    private GroupsController groupsController;
+    private GlobalizationHelper globalizationHelper;
 
     @Inject
     private JpqlConsoleController jpqlConsoleController;
 
     @Inject
-    private RolesManager rolesManager;
+    private UsersGroupsRolesController usersGroupsRolesController;
 
-    @Inject
-    private UsersController usersController;
+    protected AdminViewController() {
+        super();
+    }
+
+    public ConfigurationsTabController getConfTabController() {
+        return confTabController;
+    }
 
     protected GlobalizationHelper getGlobalizationHelper() {
         return globalizationHelper;
-    }
-
-    protected GroupsController getGroupsController() {
-        return groupsController;
     }
 
     protected JpqlConsoleController getJpqlConsoleController() {
         return jpqlConsoleController;
     }
 
-    protected RolesManager getRolesManager() {
-        return rolesManager;
+    protected UsersGroupsRolesController getUsersGroupsRolesController() {
+        return usersGroupsRolesController;
     }
-
-    protected UsersController getUsersController() {
-        return usersController;
-    }
-    
-    
 
 }

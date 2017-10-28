@@ -19,8 +19,13 @@
 package org.libreccm.admin.ui;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
+
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
@@ -34,15 +39,14 @@ import java.util.ResourceBundle;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class PartySelector extends Window {
+class PartySelector extends Window {
 
     private static final long serialVersionUID = 6915710902238111484L;
 
     private static final String COL_PARTY_NAME = "partyname";
 
-    public PartySelector(final String caption,
+    protected PartySelector(final String caption,
                          final String actionLabel,
-                         final UsersGroupsRolesTab usersGroupsRoles,
                          final List<Party> excludedParties,
                          final PartySelectionAction action) {
 
