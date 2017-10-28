@@ -19,12 +19,20 @@
 package org.libreccm.admin.ui;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
+
 import com.vaadin.data.HasValue;
 import com.vaadin.server.Page;
 import com.vaadin.server.UserError;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import org.libreccm.security.Group;
-import org.libreccm.security.GroupManager;
 import org.libreccm.security.GroupRepository;
 
 import java.util.ResourceBundle;
@@ -33,44 +41,34 @@ import java.util.ResourceBundle;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class GroupEditor extends Window {
+class GroupEditor extends Window {
 
     private static final long serialVersionUID = -5834095844674226692L;
 
-    private final UsersGroupsRolesTab usersGroupsRoles;
     private final Group group;
     private final GroupRepository groupRepo;
-    private final GroupManager groupManager;
 
     private boolean dataHasChanged = false;
 
     private TextField groupName;
 
-    public GroupEditor(final UsersGroupsRolesTab usersGroupsRoles,
-                       final GroupRepository groupRepo,
-                       final GroupManager groupManager) {
+    protected GroupEditor(final GroupRepository groupRepo) {
 
         super("Create new group");
 
-        this.usersGroupsRoles = usersGroupsRoles;
         group = null;
         this.groupRepo = groupRepo;
-        this.groupManager = groupManager;
 
         addWidgets();
     }
 
     public GroupEditor(final Group group,
-                       final UsersGroupsRolesTab usersGroupsRoles,
-                       final GroupRepository groupRepo,
-                       final GroupManager groupManager) {
+                       final GroupRepository groupRepo) {
 
         super(String.format("Edit group %s", group.getName()));
 
         this.group = group;
-        this.usersGroupsRoles = usersGroupsRoles;
         this.groupRepo = groupRepo;
-        this.groupManager = groupManager;
 
         addWidgets();
     }
@@ -179,9 +177,6 @@ public class GroupEditor extends Window {
         groupRepo.save(currentGroup);
 
         dataHasChanged = false;
-        if (usersGroupsRoles != null) {
-            usersGroupsRoles.refreshGroups();
-        }
         close();
         new Notification(notificationText, Notification.Type.TRAY_NOTIFICATION)
             .show(Page.getCurrent());

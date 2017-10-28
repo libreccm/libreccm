@@ -35,15 +35,14 @@ import java.util.List;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class RoleSelector extends Window {
+class RoleSelector extends Window {
 
     private static final long serialVersionUID = -6893510634359633368L;
 
     private static final String COL_NAME = "rolename";
     
-    public RoleSelector(final String caption,
+    protected RoleSelector(final String caption,
                         final String actionLabel,
-                        final UsersGroupsRolesTab usersGroupsRoles,
                         final List<Role> excludedRoles,
                         final RoleSelectionAction action) {
 
@@ -56,10 +55,6 @@ public class RoleSelector extends Window {
                             final RoleSelectionAction action) {
 
         setCaption(caption);
-
-//        final ResourceBundle bundle = ResourceBundle
-//            .getBundle(AdminUiConstants.ADMIN_BUNDLE,
-//                       UI.getCurrent().getLocale());
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 

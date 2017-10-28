@@ -19,8 +19,13 @@
 package org.libreccm.admin.ui;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
+
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
@@ -34,7 +39,7 @@ import java.util.ResourceBundle;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class UserSelector extends Window {
+class UserSelector extends Window {
 
     private static final long serialVersionUID = -6227551833159691370L;
 
@@ -43,12 +48,10 @@ public class UserSelector extends Window {
     private static final String COL_FAMILY_NAME = "family_name";
     private static final String COL_EMAIL = "email";
 
-
-    public UserSelector(final String caption,
-                        final String actionLabel,
-                        final UsersGroupsRolesTab usersGroupsRoles,
-                        final List<User> excludedUsers,
-                        final UserSelectionAction action) {
+    protected UserSelector(final String caption,
+                           final String actionLabel,
+                           final List<User> excludedUsers,
+                           final UserSelectionAction action) {
 
         addWidgets(caption, actionLabel, excludedUsers, action);
     }

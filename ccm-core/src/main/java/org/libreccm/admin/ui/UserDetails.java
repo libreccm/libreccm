@@ -19,14 +19,29 @@
 package org.libreccm.admin.ui;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
+
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.security.*;
+import org.libreccm.security.Group;
+import org.libreccm.security.GroupRepository;
+import org.libreccm.security.Role;
+import org.libreccm.security.RoleRepository;
+import org.libreccm.security.User;
+import org.libreccm.security.UserManager;
+import org.libreccm.security.UserRepository;
 
 import java.util.ResourceBundle;
 
@@ -34,7 +49,7 @@ import java.util.ResourceBundle;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class UserDetails extends Window {
+class UserDetails extends Window {
 
     private static final long serialVersionUID = 7852981019990845392L;
 
@@ -44,19 +59,16 @@ public class UserDetails extends Window {
     private static final String COL_ROLE_NAME = "role_name";
     private static final String COL_ROLE_REMOVE = "role_remove";
 
-    private final UsersGroupsRolesTab usersGroupsRoles;
     private final User user;
     private final UserRepository userRepo;
     private final UserManager userManager;
 
-    public UserDetails(final User user,
-                       final UsersGroupsRolesTab usersGroupsRoles,
-                       final UserRepository userRepo,
-                       final UserManager userManager) {
+    protected UserDetails(final User user,
+                          final UserRepository userRepo,
+                          final UserManager userManager) {
 
         super(String.format("Details of user %s", user.getName()));
 
-        this.usersGroupsRoles = usersGroupsRoles;
         this.user = user;
         this.userRepo = userRepo;
         this.userManager = userManager;
@@ -115,7 +127,6 @@ public class UserDetails extends Window {
             bundle.getString("ui.admin.users.table.edit"),
             event -> {
                 final UserEditor editor = new UserEditor(user,
-                                                         usersGroupsRoles,
                                                          userRepo,
                                                          userManager);
                 editor.center();
@@ -157,7 +168,6 @@ public class UserDetails extends Window {
             final GroupSelector groupSelector = new GroupSelector(
                 "Select group(s) to which the user is added.",
                 "Add user to selected groups",
-                usersGroupsRoles,
                 groupRepo.findByMember(user),
                 selectedGroups -> {
                     selectedGroups.forEach(group -> {
@@ -167,6 +177,9 @@ public class UserDetails extends Window {
                 });
             groupSelector.center();
             groupSelector.setWidth("80%");
+            groupSelector.addCloseListener(closeEvent -> {
+                groupsGrid.getDataProvider().refreshAll();
+            });
             UI.getCurrent().addWindow(groupSelector);
         });
         final HeaderCell groupsGridHeaderCell = groupsGridHeader
@@ -208,7 +221,6 @@ public class UserDetails extends Window {
             final RoleSelector roleSelector = new RoleSelector(
                 "Select role(s) to add to group",
                 "Add selected role(s) to group",
-                usersGroupsRoles,
                 roleRepo.findByParty(user),
                 (selectedRoles -> {
                     selectedRoles.forEach(role -> {
@@ -216,6 +228,9 @@ public class UserDetails extends Window {
                     });
                     rolesGrid.getDataProvider().refreshAll();
                 }));
+            roleSelector.addCloseListener(closeEvent -> {
+                rolesGrid.getDataProvider().refreshAll();
+            });
             roleSelector.center();
             roleSelector.setWidth("80%");
             UI.getCurrent().addWindow(roleSelector);

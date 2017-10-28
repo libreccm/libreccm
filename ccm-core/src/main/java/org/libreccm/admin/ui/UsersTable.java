@@ -19,8 +19,14 @@
 package org.libreccm.admin.ui;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
+
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ButtonRenderer;
@@ -33,7 +39,7 @@ import java.util.ResourceBundle;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class UsersTable extends Grid<User> {
+class UsersTable extends Grid<User> {
 
     private static final long serialVersionUID = -6535913368522021496L;
 
@@ -50,28 +56,29 @@ public class UsersTable extends Grid<User> {
     private final Button clearFiltersButton;
     private final Button createUserButton;
 
-    public UsersTable(final AdminView view,
-                      final UsersGroupsRolesTab usersGroupsRoles) {
+    protected UsersTable(final UsersGroupsRolesController controller) {
 
         super();
 
+        setDataProvider(controller.getUsersTableDataProvider());
+        
         final ResourceBundle bundle = ResourceBundle
             .getBundle(AdminUiConstants.ADMIN_BUNDLE,
                        UI.getCurrent().getLocale());
 
-        addColumn(User::getName)
+        super.addColumn(User::getName)
             .setId(COL_USER_NAME)
-            .setCaption("User Name");
-        addColumn(User::getGivenName)
+            .setCaption(bundle.getString("ui.admin.users.table.screenname"));
+        super.addColumn(User::getGivenName)
             .setId(COL_GIVEN_NAME)
-            .setCaption("Given name");
-        addColumn(User::getFamilyName)
+            .setCaption(bundle.getString("ui.admin.users.table.givenname"));
+        super.addColumn(User::getFamilyName)
             .setId(COL_FAMILY_NAME)
-            .setCaption("Family name");
-        addColumn(user -> user.getPrimaryEmailAddress().getAddress())
+            .setCaption(bundle.getString("ui.admin.users.table.familyname"));
+        super.addColumn(user -> user.getPrimaryEmailAddress().getAddress())
             .setId(COL_EMAIL)
-            .setCaption("E-Mail");
-        addColumn(user -> {
+            .setCaption(bundle.getString("ui.admin.users.table.primary_email"));
+        super.addColumn(user -> {
             if (user.isBanned()) {
                 return bundle.getString("ui.admin.user.banned_yes");
             } else {
@@ -80,7 +87,7 @@ public class UsersTable extends Grid<User> {
         })
             .setId(COL_BANNED)
             .setCaption("Banned?");
-        addColumn(user -> {
+        super.addColumn(user -> {
             if (user.isPasswordResetRequired()) {
                 return bundle.getString(
                     "ui.admin.user.password_reset_required_yes");
@@ -90,8 +97,9 @@ public class UsersTable extends Grid<User> {
             }
         })
             .setId(COL_PASSWORD_RESET_REQUIRED)
-            .setCaption("Password reset required");
-        addColumn(user -> bundle.getString("ui.admin.users.table.edit"),
+            .setCaption(bundle
+                .getString("ui.admin.users.table.password_reset_required"));
+        super.addColumn(user -> bundle.getString("ui.admin.users.table.edit"),
                   new ButtonRenderer<>(event -> {
 //                      final UserEditor editor = new UserEditor(
 //                          event.getItem(),
@@ -102,11 +110,13 @@ public class UsersTable extends Grid<User> {
 //                      UI.getCurrent().addWindow(editor);
                       final UserDetails details = new UserDetails(
                           event.getItem(),
-                          usersGroupsRoles,
-                          view.getUserRepository(),
-                          view.getUserManager());
+                          controller.getUserRepository(),
+                          controller.getUserManager());
                       details.center();
                       details.setWidth("66.6%");
+                      details.addCloseListener(closeEvent -> {
+                          getDataProvider().refreshAll();
+                      });
                       UI.getCurrent().addWindow(details);
                   }))
             .setId(COL_EDIT);
@@ -114,8 +124,10 @@ public class UsersTable extends Grid<User> {
         final HeaderRow filterRow = appendHeaderRow();
         final HeaderCell userNameFilterCell = filterRow.getCell(COL_USER_NAME);
         userNameFilter = new TextField();
-        userNameFilter.setPlaceholder("User name");
-        userNameFilter.setDescription("Filter users by username");
+        userNameFilter.setPlaceholder(bundle
+            .getString("ui.admin.users.table.filter.screenname.placeholder"));
+        userNameFilter.setDescription(bundle
+            .getString("ui.admin.users.table.filter.screenname.description"));
         userNameFilter.addStyleName(ValoTheme.TEXTFIELD_TINY);
         userNameFilter
             .addValueChangeListener(event -> {
@@ -130,7 +142,8 @@ public class UsersTable extends Grid<User> {
                                                        COL_FAMILY_NAME,
                                                        COL_EMAIL,
                                                        COL_BANNED);
-        clearFiltersButton = new Button("Clear filters");
+        clearFiltersButton = new Button(bundle
+            .getString("ui.admin.users.table.filter.clear"));
         clearFiltersButton.addStyleName(ValoTheme.BUTTON_TINY);
         clearFiltersButton.addClickListener(event -> {
             userNameFilter.setValue("");
@@ -141,9 +154,11 @@ public class UsersTable extends Grid<User> {
         createUserButton.setIcon(VaadinIcons.PLUS);
         createUserButton.addClickListener(event -> {
             final UserEditor userEditor = new UserEditor(
-                usersGroupsRoles,
-                view.getUserRepository(),
-                view.getUserManager());
+                controller.getUserRepository(),
+                controller.getUserManager());
+            userEditor.addCloseListener(closeEvent -> {
+                getDataProvider().refreshAll();
+            });
             userEditor.center();
             UI.getCurrent().addWindow(userEditor);
         });
@@ -153,34 +168,34 @@ public class UsersTable extends Grid<User> {
         actionsCell.setComponent(actionsLayout);
     }
 
-    public void localize() {
-
-        final ResourceBundle bundle = ResourceBundle
-            .getBundle(AdminUiConstants.ADMIN_BUNDLE,
-                       UI.getCurrent().getLocale());
-
-        getColumn(COL_USER_NAME)
-            .setCaption(bundle.getString("ui.admin.users.table.screenname"));
-        getColumn(COL_GIVEN_NAME)
-            .setCaption(bundle.getString("ui.admin.users.table.givenname"));
-        getColumn(COL_FAMILY_NAME)
-            .setCaption(bundle.getString("ui.admin.users.table.familyname"));
-        getColumn(COL_EMAIL)
-            .setCaption(bundle.getString("ui.admin.users.table.primary_email"));
-        getColumn(COL_BANNED)
-            .setCaption(bundle.getString("ui.admin.users.table.banned"));
-        getColumn(COL_PASSWORD_RESET_REQUIRED)
-            .setCaption(bundle.getString(
-                "ui.admin.users.table.password_reset_required"));
-
-        userNameFilter.setPlaceholder(bundle
-            .getString("ui.admin.users.table.filter.screenname.placeholder"));
-        userNameFilter.setDescription(bundle
-            .getString("ui.admin.users.table.filter.screenname.description"));
-
-        clearFiltersButton.setCaption(bundle
-            .getString("ui.admin.users.table.filter.clear"));
-
-    }
+//    public void localize() {
+//
+//        final ResourceBundle bundle = ResourceBundle
+//            .getBundle(AdminUiConstants.ADMIN_BUNDLE,
+//                       UI.getCurrent().getLocale());
+//
+//        getColumn(COL_USER_NAME)
+//            .setCaption(bundle.getString("ui.admin.users.table.screenname"));
+//        getColumn(COL_GIVEN_NAME)
+//            .setCaption(bundle.getString("ui.admin.users.table.givenname"));
+//        getColumn(COL_FAMILY_NAME)
+//            .setCaption(bundle.getString("ui.admin.users.table.familyname"));
+//        getColumn(COL_EMAIL)
+//            .setCaption(bundle.getString("ui.admin.users.table.primary_email"));
+//        getColumn(COL_BANNED)
+//            .setCaption(bundle.getString("ui.admin.users.table.banned"));
+//        getColumn(COL_PASSWORD_RESET_REQUIRED)
+//            .setCaption(bundle.getString(
+//                "ui.admin.users.table.password_reset_required"));
+//
+//        userNameFilter.setPlaceholder(bundle
+//            .getString("ui.admin.users.table.filter.screenname.placeholder"));
+//        userNameFilter.setDescription(bundle
+//            .getString("ui.admin.users.table.filter.screenname.description"));
+//
+//        clearFiltersButton.setCaption(bundle
+//            .getString("ui.admin.users.table.filter.clear"));
+//
+//    }
 
 }
