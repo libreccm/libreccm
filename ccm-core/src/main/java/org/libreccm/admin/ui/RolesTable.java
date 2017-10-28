@@ -19,8 +19,17 @@
 package org.libreccm.admin.ui;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
+
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
+
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ButtonRenderer;
@@ -37,7 +46,7 @@ import java.util.ResourceBundle;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class RolesTable extends Grid<Role> {
+class RolesTable extends Grid<Role> {
 
     private static final long serialVersionUID = 8298191390811634176L;
 
@@ -50,10 +59,11 @@ public class RolesTable extends Grid<Role> {
     private final Button clearFiltersButton;
     private final Button createRoleButton;
 
-    public RolesTable(final AdminView view,
-                      final UsersGroupsRolesTab usersGroupsRoles) {
+    protected RolesTable(final UsersGroupsRolesController controller) {
 
         super();
+        
+        super.setDataProvider(controller.getRolesTableDataProvider());
 
         final ResourceBundle bundle = ResourceBundle
             .getBundle(AdminUiConstants.ADMIN_BUNDLE,
@@ -61,7 +71,7 @@ public class RolesTable extends Grid<Role> {
 
         addColumn(Role::getName)
             .setId(COL_NAME)
-            .setCaption("Name");
+            .setCaption(bundle.getString("ui.admin.roles.table.name"));
         addColumn(role -> {
             if (role.getDescription().hasValue(UI.getCurrent().getLocale())) {
                 return role.getDescription()
@@ -83,24 +93,16 @@ public class RolesTable extends Grid<Role> {
             }
         })
             .setId(COL_DESCRIPTION)
-            .setCaption("Description");
+            .setCaption(bundle.getString("ui.admin.roles.table.description"));
         addColumn(user -> bundle.getString("ui.admin.roles.table.edit"),
                   new ButtonRenderer<>(event -> {
                       final RoleDetails roleDetails = new RoleDetails(
                           event.getItem(),
-                          usersGroupsRoles,
-                          view.getRoleRepository(),
-                          view.getRoleManager());
+                          controller.getRoleRepository(),
+                          controller.getRoleManager());
                       roleDetails.center();
                       roleDetails.setWidth("80%");
                       UI.getCurrent().addWindow(roleDetails);
-//                      final RoleEditor roleEditor = new RoleEditor(
-//                          event.getItem(),
-//                          usersGroupsRoles,
-//                          view.getRoleRepository(),
-//                          view.getRoleManager());
-//                      roleEditor.center();
-//                      UI.getCurrent().addWindow(roleEditor);
                   }))
             .setId(COL_EDIT);
         addColumn(user -> bundle.getString("ui.admin.roles.table.delete"),
@@ -108,8 +110,7 @@ public class RolesTable extends Grid<Role> {
                       final ConfirmDeleteDialog dialog
                                                     = new ConfirmDeleteDialog(
                               event.getItem(),
-                              usersGroupsRoles,
-                              view.getRoleRepository());
+                              controller.getRoleRepository());
                       dialog.center();
                       UI.getCurrent().addWindow(dialog);
                   }))
@@ -118,8 +119,10 @@ public class RolesTable extends Grid<Role> {
         final HeaderRow filterRow = appendHeaderRow();
         final HeaderCell GroupNameFilterCell = filterRow.getCell(COL_NAME);
         roleNameFilter = new TextField();
-        roleNameFilter.setPlaceholder("Role name");
-        roleNameFilter.setDescription("Filter Roles by name");
+        roleNameFilter.setPlaceholder(bundle
+            .getString("ui.admin.users.table.filter.rolename.placeholder"));
+        roleNameFilter.setDescription(bundle
+            .getString("ui.admin.users.table.filter.rolename.description"));
         roleNameFilter.addStyleName(ValoTheme.TEXTFIELD_TINY);
         roleNameFilter
             .addValueChangeListener(event -> {
@@ -133,7 +136,8 @@ public class RolesTable extends Grid<Role> {
                                                        COL_DESCRIPTION,
                                                        COL_EDIT,
                                                        COL_DELETE);
-        clearFiltersButton = new Button("Clear filters");
+        clearFiltersButton = new Button(bundle
+            .getString("ui.admin.users.table.filter.clear"));
         clearFiltersButton.setStyleName(ValoTheme.BUTTON_TINY);
         clearFiltersButton.setIcon(VaadinIcons.BACKSPACE);
         clearFiltersButton.addClickListener(event -> {
@@ -145,10 +149,11 @@ public class RolesTable extends Grid<Role> {
         createRoleButton.setIcon(VaadinIcons.PLUS);
         createRoleButton.addClickListener(event -> {
             final RoleEditor roleEditor = new RoleEditor(
-                usersGroupsRoles,
-                view.getRoleRepository(),
-                view.getRoleManager());
+                controller.getRoleRepository());
             roleEditor.center();
+            roleEditor.addCloseListener(closeEvent -> {
+                getDataProvider().refreshAll();
+            });
             UI.getCurrent().addWindow(roleEditor);
         });
         final HorizontalLayout actionsLayout = new HorizontalLayout(
@@ -157,42 +162,16 @@ public class RolesTable extends Grid<Role> {
         actionsCell.setComponent(actionsLayout);
     }
 
-    public void localize() {
-
-        final ResourceBundle bundle = ResourceBundle
-            .getBundle(AdminUiConstants.ADMIN_BUNDLE,
-                       UI.getCurrent().getLocale());
-
-        getColumn(COL_NAME)
-            .setCaption(bundle.getString("ui.admin.roles.table.name"));
-
-        getColumn(COL_DESCRIPTION)
-            .setCaption(bundle.getString("ui.admin.roles.table.description"));
-
-        roleNameFilter.setPlaceholder(
-            bundle
-                .getString("ui.admin.users.table.filter.rolename.placeholder"));
-        roleNameFilter.setDescription(bundle
-            .getString("ui.admin.users.table.filter.rolename.description"));
-
-        clearFiltersButton.setCaption(bundle
-            .getString("ui.admin.users.table.filter.clear"));
-
-    }
-
     private class ConfirmDeleteDialog extends Window {
 
         private static final long serialVersionUID = -1315311220464298282L;
 
         private final Role role;
-        private final UsersGroupsRolesTab usersGroupsRoles;
         private final RoleRepository roleRepo;
 
         public ConfirmDeleteDialog(final Role role,
-                                   final UsersGroupsRolesTab usersGroupsRoles,
                                    final RoleRepository roleRepo) {
             this.role = role;
-            this.usersGroupsRoles = usersGroupsRoles;
             this.roleRepo = roleRepo;
 
             final ResourceBundle bundle = ResourceBundle
@@ -222,7 +201,7 @@ public class RolesTable extends Grid<Role> {
 
         private void deleteRole() {
             roleRepo.delete(role);
-            usersGroupsRoles.refreshRoles();
+            getDataProvider().refreshAll();
             close();
         }
 

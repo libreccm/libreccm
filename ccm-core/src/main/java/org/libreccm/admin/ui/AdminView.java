@@ -19,6 +19,7 @@
 package org.libreccm.admin.ui;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
+
 import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -27,13 +28,11 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
-import org.apache.shiro.subject.Subject;
-import org.libreccm.l10n.GlobalizationHelper;
-import org.libreccm.security.*;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
+
 import java.util.ResourceBundle;
 
 /**
@@ -48,116 +47,49 @@ public class AdminView extends CustomComponent implements View {
 
     public static final String VIEWNAME = "admin";
 
-    @Inject
-    private JpqlConsoleController jpqlConsoleController;
-
-    @Inject
-    private Subject subject;
-
-    @Inject
-    private PermissionChecker permissionChecker;
-
-    @Inject
-    private GlobalizationHelper globalizationHelper;
-
-    @Inject
-    private UserRepository userRepo;
-
-    @Inject
-    private UserManager userManager;
-
-    @Inject
-    private GroupRepository groupRepo;
-
-    @Inject
-    private GroupManager groupManager;
-
-    @Inject
-    private RoleRepository roleRepo;
-
-    @Inject
-    private RoleManager roleManager;
-
-    @Inject
-    private UsersTableDataProvider usersTableDataProvider;
-
-    @Inject
-    private GroupsTableDataProvider groupsTableDataProvider;
-
-    @Inject
-    private RolesTableDataProvider rolesTableDataProvider;
-
-    @Inject
-    private ConfigurationsTabController configurationsTabController;
-    
     private ResourceBundle bundle;
 
+    private final AdminViewController controller;
+
     private final TabSheet tabSheet;
-//    private final Grid<User> usersTable;
     private final TabSheet.Tab tabUsersGroupsRoles;
     private final UsersGroupsRolesTab usersGroupsRoles;
 
     private final JpqlConsole jpqlConsole;
 
     private final ConfigurationTab configurationTab;
-    
-    public AdminView() {
+
+    @Inject
+    protected AdminView(final AdminViewController controller) {
+
+        this.controller = controller;
+
+        bundle = ResourceBundle
+            .getBundle(AdminUiConstants.ADMIN_BUNDLE,
+                       controller.getGlobalizationHelper().getNegotiatedLocale());
 
         tabSheet = new TabSheet();
 
-        usersGroupsRoles = new UsersGroupsRolesTab(this);
-        tabUsersGroupsRoles = tabSheet.addTab(usersGroupsRoles,
-                                              "Users/Groups/Roles");
-
+        usersGroupsRoles = new UsersGroupsRolesTab(controller
+            .getUsersGroupsRolesController());
+        tabUsersGroupsRoles = tabSheet
+            .addTab(usersGroupsRoles,
+                    bundle.getString("ui.admin.tab.users_groups_roles.title"));
+        
         final ServletContext servletContext = VaadinServlet
             .getCurrent()
             .getServletContext();
         if ("true".equals(servletContext.getInitParameter("ccm.develmode"))) {
-            jpqlConsole = new JpqlConsole(this);
+            jpqlConsole = new JpqlConsole(controller.getJpqlConsoleController());
             tabSheet.addTab(jpqlConsole, "JPQL Console");
         } else {
             jpqlConsole = null;
         }
-        
+
         configurationTab = new ConfigurationTab();
         tabSheet.addTab(configurationTab, "Configuration");
 
-//        final GridLayout header = new GridLayout(5, 1);
-//        header.setWidth("100%");
-//        header.addStyleName("libreccm-header");
-//
-//        final Label headerInfoLine = new Label("LibreCCM");
-//        headerInfoLine.setId("libreccm-headerinfoline");
-//        header.addComponent(headerInfoLine, 3, 0, 4, 0);
-//        header.setComponentAlignment(headerInfoLine, Alignment.TOP_RIGHT);
-//
-//        final String logoPath;
-//        switch (servletContext.getInitParameter("ccm.distribution")
-//            .toLowerCase()) {
-//            case "libreccm":
-//                logoPath = "/themes/libreccm-default/images/libreccm.png";
-//                break;
-//            case "librecms":
-//                logoPath = "/themes/libreccm-default/images/librecms.png";
-//                break;
-//            case "aplaws":
-//                logoPath = "/themes/libreccm-default/images/aplaws.png";
-//                break;
-//            case "scientificcms":
-//                logoPath = "/themes/libreccm-default/images/scientificcms.png";
-//                break;
-//            default:
-//                logoPath = "/themes/libreccm-default/images/libreccm.png";
-//                break;
-//        }
-//
-//        final Image logo = new Image(null, new ClassResource(logoPath));
-//        logo.setId("libreccm-logo");
-//        logo.addStyleName("libreccm-logo");
-//        header.addComponent(logo, 0, 0);
-//        header.setComponentAlignment(logo, Alignment.MIDDLE_LEFT);
         final CssLayout footer = new CssLayout();
-//        footer.setWidth("100%");
         footer.setHeight("5em");
 
         final VerticalLayout viewLayout = new VerticalLayout(new Header(),
@@ -169,64 +101,7 @@ public class AdminView extends CustomComponent implements View {
         super.setCompositionRoot(viewLayout);
     }
 
-    @PostConstruct
-    public void postConstruct() {
-        bundle = ResourceBundle
-            .getBundle(AdminUiConstants.ADMIN_BUNDLE,
-                       globalizationHelper.getNegotiatedLocale());
-
-        usersGroupsRoles.setUsersTableDataProvider(usersTableDataProvider);
-        usersGroupsRoles.setGroupsTableDataProvider(groupsTableDataProvider);
-        usersGroupsRoles.setRolesTableDataProvider(rolesTableDataProvider);
-
-        tabUsersGroupsRoles.setCaption(bundle
-            .getString("ui.admin.tab.users_groups_roles.title"));
-
-        usersGroupsRoles.localize();
-        
-        configurationTab.init(configurationsTabController);
-    }
-
-    @Override
-    public void enter(final ViewChangeListener.ViewChangeEvent event) {
-
-//        usersGroupsRoles.setUsers(userRepo.findAll());
-    }
-
-    protected GlobalizationHelper getGlobalizationHelper() {
-        return globalizationHelper;
-    }
     
-    protected JpqlConsoleController getJpqlConsoleController() {
-        return jpqlConsoleController;
-    }
+
     
-    protected ConfigurationsTabController getConfigurationsTabController() {
-        return configurationsTabController;
-    }
-
-    public UserRepository getUserRepository() {
-        return userRepo;
-    }
-
-    public UserManager getUserManager() {
-        return userManager;
-    }
-
-    public GroupRepository getGroupRepository() {
-        return groupRepo;
-    }
-
-    public GroupManager getGroupManager() {
-        return groupManager;
-    }
-
-    public RoleRepository getRoleRepository() {
-        return roleRepo;
-    }
-
-    public RoleManager getRoleManager() {
-        return roleManager;
-    }
-
 }

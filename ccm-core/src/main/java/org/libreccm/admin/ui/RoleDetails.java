@@ -19,14 +19,27 @@
 package org.libreccm.admin.ui;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
+
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.security.*;
+import org.libreccm.security.Party;
+import org.libreccm.security.PartyRepository;
+import org.libreccm.security.Role;
+import org.libreccm.security.RoleManager;
+import org.libreccm.security.RoleRepository;
 
 import java.util.ResourceBundle;
 
@@ -34,26 +47,26 @@ import java.util.ResourceBundle;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class RoleDetails extends Window {
+class RoleDetails extends Window {
 
     private static final long serialVersionUID = 8109931561947913438L;
 
     private static final String COL_MEMBER_NAME = "partyname";
     private static final String COL_MEMBER_REMOVE = "member_remove";
 
-    private final UsersGroupsRolesTab usersGroupsRoles;
+//    private final UsersGroupsRolesTab usersGroupsRoles;
     private final Role role;
     private final RoleRepository roleRepo;
     private final RoleManager roleManager;
 
-    public RoleDetails(final Role role,
-                       final UsersGroupsRolesTab usersGroupsRoles,
+    protected RoleDetails(final Role role,
+//                       final UsersGroupsRolesTab usersGroupsRoles,
                        final RoleRepository roleRepo,
                        final RoleManager roleManager) {
 
         super(String.format("Details of role %s", role.getName()));
 
-        this.usersGroupsRoles = usersGroupsRoles;
+//        this.usersGroupsRoles = usersGroupsRoles;
         this.role = role;
         this.roleRepo = roleRepo;
         this.roleManager = roleManager;
@@ -83,9 +96,8 @@ public class RoleDetails extends Window {
             bundle.getString("ui.admin.roles.table.edit"),
             event -> {
                 final RoleEditor editor = new RoleEditor(role,
-                                                         usersGroupsRoles,
-                                                         roleRepo,
-                                                         roleManager);
+//                                                         usersGroupsRoles,
+                                                         roleRepo);
                 editor.center();
                 UI.getCurrent().addWindow(editor);
             });
@@ -125,7 +137,6 @@ public class RoleDetails extends Window {
             final PartySelector partySelector = new PartySelector(
                 "Select parties to add to role", 
                 "Add selected parties to role", 
-                usersGroupsRoles,
                 partyRepo.findByRole(role), 
                 selectedParties -> {
                     selectedParties.forEach(party -> {
@@ -133,6 +144,9 @@ public class RoleDetails extends Window {
                     });
                     partiesGrid.getDataProvider().refreshAll();
                 });
+            partySelector.addCloseListener(closeEvent -> {
+                partiesGrid.getDataProvider().refreshAll();
+            });
             partySelector.center();
             partySelector.setWidth("80%");
             UI.getCurrent().addWindow(partySelector);

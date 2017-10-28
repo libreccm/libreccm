@@ -19,11 +19,23 @@
 package org.libreccm.admin.ui;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
+
 import com.vaadin.data.HasValue;
 import com.vaadin.data.provider.AbstractDataProvider;
 import com.vaadin.data.provider.Query;
 import com.vaadin.server.UserError;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.PasswordField;
+import com.vaadin.ui.RadioButtonGroup;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
@@ -35,6 +47,7 @@ import org.libreccm.security.UserManager;
 import org.libreccm.security.UserRepository;
 
 import javax.mail.MessagingException;
+
 import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
@@ -44,7 +57,7 @@ import java.util.stream.Stream;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class UserEditor extends Window {
+class UserEditor extends Window {
 
     private static final long serialVersionUID = 7024424532574023431L;
 
@@ -58,7 +71,6 @@ public class UserEditor extends Window {
 
     }
 
-    private final UsersGroupsRolesTab usersGroupsRoles;
     private final User user;
     private final UserRepository userRepo;
     private final UserManager userManager;
@@ -75,13 +87,11 @@ public class UserEditor extends Window {
     private CheckBox passwordResetRequired;
     private CheckBox banned;
 
-    public UserEditor(final UsersGroupsRolesTab usersGroupsRoles,
-                      final UserRepository userRepo,
-                      final UserManager userManager) {
+    protected UserEditor(final UserRepository userRepo,
+                         final UserManager userManager) {
 
         super("Create new user");
 
-        this.usersGroupsRoles = usersGroupsRoles;
         user = null;
         this.userRepo = userRepo;
         this.userManager = userManager;
@@ -90,14 +100,12 @@ public class UserEditor extends Window {
     }
 
     public UserEditor(final User user,
-                      final UsersGroupsRolesTab usersGroupsRoles,
                       final UserRepository userRepo,
                       final UserManager userManager) {
 
         super(String.format("Edit user %s", user.getName()));
 
         this.user = user;
-        this.usersGroupsRoles = usersGroupsRoles;
         this.userRepo = userRepo;
         this.userManager = userManager;
 
@@ -425,9 +433,6 @@ public class UserEditor extends Window {
         }
 
         dataHasChanged = false;
-        if (usersGroupsRoles != null) {
-            usersGroupsRoles.refreshUsers();
-        }
         close();
     }
 

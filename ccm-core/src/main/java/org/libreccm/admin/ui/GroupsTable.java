@@ -19,8 +19,16 @@
 package org.libreccm.admin.ui;
 
 import com.arsdigita.ui.admin.AdminUiConstants;
+
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ButtonRenderer;
@@ -35,7 +43,7 @@ import java.util.ResourceBundle;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class GroupsTable extends Grid<Group> {
+class GroupsTable extends Grid<Group> {
 
     private static final long serialVersionUID = 2731047837262813862L;
 
@@ -47,10 +55,11 @@ public class GroupsTable extends Grid<Group> {
     private final Button clearFiltersButton;
     private final Button createGroupButton;
 
-    public GroupsTable(final AdminView view,
-                       final UsersGroupsRolesTab usersGroupsRoles) {
+    protected GroupsTable(final UsersGroupsRolesController controller) {
 
         super();
+        
+        super.setDataProvider(controller.getGroupsTableDataProvider());
 
         final ResourceBundle bundle = ResourceBundle
             .getBundle(AdminUiConstants.ADMIN_BUNDLE,
@@ -58,14 +67,13 @@ public class GroupsTable extends Grid<Group> {
 
         addColumn(Group::getName)
             .setId(COL_NAME)
-            .setCaption("Name");
+            .setCaption(bundle.getString("ui.admin.groups.table.name"));
         addColumn(user -> bundle.getString("ui.admin.groups.table.edit"),
                   new ButtonRenderer<>(event -> {
 //                      final GroupEditor groupEditor = new GroupEditor(
-                        final GroupDetails groupDetails = new GroupDetails(
+                      final GroupDetails groupDetails = new GroupDetails(
                           event.getItem(),
-                          usersGroupsRoles,
-                          view.getGroupRepository());
+                          controller.getGroupRepository());
                       groupDetails.center();
                       groupDetails.setWidth("50%");
                       groupDetails.setHeight("100%");
@@ -77,8 +85,7 @@ public class GroupsTable extends Grid<Group> {
                       final ConfirmDeleteDialog dialog
                                                     = new ConfirmDeleteDialog(
                               event.getItem(),
-                              usersGroupsRoles,
-                              view.getGroupRepository());
+                              controller.getGroupRepository());
                       dialog.center();
                       UI.getCurrent().addWindow(dialog);
                   }))
@@ -87,8 +94,10 @@ public class GroupsTable extends Grid<Group> {
         final HeaderRow filterRow = appendHeaderRow();
         final HeaderCell GroupNameFilterCell = filterRow.getCell(COL_NAME);
         groupNameFilter = new TextField();
-        groupNameFilter.setPlaceholder("Group name");
-        groupNameFilter.setDescription("Filter Groups by name");
+        groupNameFilter.setPlaceholder(bundle
+            .getString("ui.admin.users.table.filter.groupname.placeholder"));
+        groupNameFilter.setDescription(bundle
+            .getString("ui.admin.users.table.filter.groupname.description"));
         groupNameFilter.addStyleName(ValoTheme.TEXTFIELD_TINY);
         groupNameFilter
             .addValueChangeListener(event -> {
@@ -101,7 +110,8 @@ public class GroupsTable extends Grid<Group> {
         final HeaderCell actionsCell = actionsRow.join(COL_NAME,
                                                        COL_EDIT,
                                                        COL_DELETE);
-        clearFiltersButton = new Button("Clear filters");
+        clearFiltersButton = new Button(bundle
+            .getString("ui.admin.users.table.filter.clear"));
         clearFiltersButton.setStyleName(ValoTheme.BUTTON_TINY);
         clearFiltersButton.setIcon(VaadinIcons.BACKSPACE);
         clearFiltersButton.addClickListener(event -> {
@@ -113,9 +123,10 @@ public class GroupsTable extends Grid<Group> {
         createGroupButton.setIcon(VaadinIcons.PLUS);
         createGroupButton.addClickListener(event -> {
             final GroupEditor groupEditor = new GroupEditor(
-                usersGroupsRoles,
-                view.getGroupRepository(),
-                view.getGroupManager());
+                controller.getGroupRepository());
+            groupEditor.addCloseListener(closeEvent -> {
+                getDataProvider().refreshAll();
+            });
             groupEditor.center();
             UI.getCurrent().addWindow(groupEditor);
         });
@@ -125,39 +136,17 @@ public class GroupsTable extends Grid<Group> {
         actionsCell.setComponent(actionsLayout);
     }
 
-    public void localize() {
-
-        final ResourceBundle bundle = ResourceBundle
-            .getBundle(AdminUiConstants.ADMIN_BUNDLE,
-                       UI.getCurrent().getLocale());
-
-        getColumn(COL_NAME)
-            .setCaption(bundle.getString("ui.admin.groups.table.name"));
-
-        groupNameFilter.setPlaceholder(
-            bundle
-                .getString("ui.admin.users.table.filter.groupname.placeholder"));
-        groupNameFilter.setDescription(bundle
-            .getString("ui.admin.users.table.filter.groupname.description"));
-
-        clearFiltersButton.setCaption(bundle
-            .getString("ui.admin.users.table.filter.clear"));
-    }
-
     private class ConfirmDeleteDialog extends Window {
 
         private static final long serialVersionUID = -1168912882249598278L;
 
         private final Group group;
-        private final UsersGroupsRolesTab usersGroupsRoles;
         private final GroupRepository groupRepo;
 
         public ConfirmDeleteDialog(final Group group,
-                                   final UsersGroupsRolesTab usersGroupsRoles,
                                    final GroupRepository groupRepo) {
 
             this.group = group;
-            this.usersGroupsRoles = usersGroupsRoles;
             this.groupRepo = groupRepo;
 
             final ResourceBundle bundle = ResourceBundle
@@ -182,15 +171,12 @@ public class GroupsTable extends Grid<Group> {
 
             final VerticalLayout layout = new VerticalLayout(text, buttons);
 
-//            final Panel panel = new Panel(
-//                bundle.getString("ui.admin.groups.delete.confirm.title"),
-//                layout);
-            setContent(layout);
+            super.setContent(layout);
         }
 
         private void deleteGroup() {
             groupRepo.delete(group);
-            usersGroupsRoles.refreshGroups();
+            getDataProvider().refreshAll();
             close();
         }
 
