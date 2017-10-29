@@ -32,13 +32,10 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
-import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.themes.ValoTheme;
-import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Party;
 import org.libreccm.security.PartyRepository;
 import org.libreccm.security.Role;
-import org.libreccm.security.RoleManager;
 import org.libreccm.security.RoleRepository;
 
 import java.util.ResourceBundle;
@@ -54,22 +51,16 @@ class RoleDetails extends Window {
     private static final String COL_MEMBER_NAME = "partyname";
     private static final String COL_MEMBER_REMOVE = "member_remove";
 
-//    private final UsersGroupsRolesTab usersGroupsRoles;
     private final Role role;
-    private final RoleRepository roleRepo;
-    private final RoleManager roleManager;
+    private final RolesController controller;
 
     protected RoleDetails(final Role role,
-//                       final UsersGroupsRolesTab usersGroupsRoles,
-                       final RoleRepository roleRepo,
-                       final RoleManager roleManager) {
+                          final RolesController controller) {
 
         super(String.format("Details of role %s", role.getName()));
 
-//        this.usersGroupsRoles = usersGroupsRoles;
         this.role = role;
-        this.roleRepo = roleRepo;
-        this.roleManager = roleManager;
+        this.controller = controller;
 
         addWidgets();
     }
@@ -95,9 +86,9 @@ class RoleDetails extends Window {
         final Button editButton = new Button(
             bundle.getString("ui.admin.roles.table.edit"),
             event -> {
-                final RoleEditor editor = new RoleEditor(role,
-//                                                         usersGroupsRoles,
-                                                         roleRepo);
+                final RoleEditor editor = new RoleEditor(
+                    role,
+                    controller.getRoleRepository());
                 editor.center();
                 UI.getCurrent().addWindow(editor);
             });
@@ -105,29 +96,32 @@ class RoleDetails extends Window {
         final VerticalLayout layout = new VerticalLayout(formLayout,
                                                          editButton);
 
-        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final RolePartiesController partiesController = controller
+            .getPartiesController();
 
-        final RolePartiesController partiesController = cdiUtil.findBean(
-            RolePartiesController.class);
         final Grid<Party> partiesGrid = new Grid<>();
         partiesGrid
             .addColumn(Party::getName)
             .setId(COL_MEMBER_NAME)
             .setCaption("Name");
         partiesGrid
-            .addColumn(party -> bundle
-            .getString("ui.role.parties.remove"),
-                       new ButtonRenderer<>(event -> {
-                           partiesController
-                               .removePartyFromRole(event.getItem(), role);
-                           partiesGrid.getDataProvider().refreshAll();
-                       }))
+            .addComponentColumn(party -> {
+                final Button removeButton = new Button(
+                    bundle.getString("ui.role.parties.remove"),
+                    VaadinIcons.CLOSE_CIRCLE_O);
+                removeButton.addClickListener(event -> {
+                    partiesController.removePartyFromRole(party, role);
+                    partiesGrid.getDataProvider().refreshAll();
+                });
+                removeButton.addStyleNames(ValoTheme.BUTTON_TINY,
+                                           ValoTheme.BUTTON_DANGER);
+                return removeButton;
+            })
             .setId(COL_MEMBER_REMOVE);
 
         partiesGrid.setWidth("100%");
 
-        final PartyRepository partyRepo = cdiUtil
-            .findBean(PartyRepository.class);
+        final PartyRepository partyRepo = controller.getPartyRepository();
 
         final HeaderRow partiesGridHeader = partiesGrid.prependHeaderRow();
         final Button addPartyButton = new Button("Add member");
@@ -135,9 +129,10 @@ class RoleDetails extends Window {
         addPartyButton.setStyleName(ValoTheme.BUTTON_TINY);
         addPartyButton.addClickListener(event -> {
             final PartySelector partySelector = new PartySelector(
-                "Select parties to add to role", 
-                "Add selected parties to role", 
-                partyRepo.findByRole(role), 
+                "Select parties to add to role",
+                "Add selected parties to role",
+                controller.getPartySelectorDataProvider(),
+                partyRepo.findByRole(role),
                 selectedParties -> {
                     selectedParties.forEach(party -> {
                         partiesController.assignPartyToRole(party, role);
@@ -152,20 +147,19 @@ class RoleDetails extends Window {
             UI.getCurrent().addWindow(partySelector);
         });
         final HeaderCell partiesGridHeaderCell = partiesGridHeader
-        .join(COL_MEMBER_NAME, COL_MEMBER_REMOVE);
+            .join(COL_MEMBER_NAME, COL_MEMBER_REMOVE);
         partiesGridHeaderCell
             .setComponent(new HorizontalLayout(addPartyButton));
-        
-        final RolePartiesDataProvider partiesDataProvider = cdiUtil
-        .findBean(RolePartiesDataProvider.class);
+
+        final RolePartiesDataProvider partiesDataProvider = controller
+            .getRolePartiesDataProvider();
         partiesDataProvider.setRole(role);
         partiesGrid.setDataProvider(partiesDataProvider);
-        
+
         final TabSheet tabs = new TabSheet();
         tabs.addTab(layout, "Details");
         tabs.addTab(partiesGrid, "Members");
-        
-        
+
         setContent(tabs);
     }
 

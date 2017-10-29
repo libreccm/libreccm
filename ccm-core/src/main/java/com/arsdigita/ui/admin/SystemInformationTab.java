@@ -28,16 +28,17 @@ import com.arsdigita.toolbox.ui.LayoutPanel;
 import com.arsdigita.util.LockableImpl;
 import com.arsdigita.util.SystemInformation;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
+
 import org.xml.sax.SAXException;
 
 /**
@@ -280,7 +281,9 @@ public class SystemInformationTab extends LayoutPanel {
                         return "???";
                     }
                 case DOCUMENT_BUILDER_FACTORY_INDEX:
-                    return DocumentBuilderFactory.newInstance().getClass()
+                    return DocumentBuilderFactory
+                        .newInstance()
+                        .getClass()
                         .getName();
                 case DOCUMENT_BUILDER_INDEX:
                     try {

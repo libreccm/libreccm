@@ -22,14 +22,12 @@ import com.arsdigita.ui.admin.AdminUiConstants;
 
 import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 
@@ -47,7 +45,7 @@ public class AdminView extends CustomComponent implements View {
 
     public static final String VIEWNAME = "admin";
 
-    private ResourceBundle bundle;
+    private final ResourceBundle bundle;
 
     private final AdminViewController controller;
 
@@ -58,6 +56,8 @@ public class AdminView extends CustomComponent implements View {
     private final JpqlConsole jpqlConsole;
 
     private final ConfigurationTab configurationTab;
+    
+    private final SystemInformationTab sysInfoTab;
 
     @Inject
     protected AdminView(final AdminViewController controller) {
@@ -89,6 +89,9 @@ public class AdminView extends CustomComponent implements View {
         configurationTab = new ConfigurationTab();
         tabSheet.addTab(configurationTab, "Configuration");
 
+        sysInfoTab = new SystemInformationTab(controller);
+        tabSheet.addTab(sysInfoTab, "System Information");
+        
         final CssLayout footer = new CssLayout();
         footer.setHeight("5em");
 

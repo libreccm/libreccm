@@ -38,7 +38,6 @@ import com.vaadin.ui.Window;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.EmailAddress;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.security.ChallengeManager;
@@ -68,12 +67,12 @@ class UserEditor extends Window {
         DO_NOTHING,
         GENERATE_AND_SEND,
         SET,
-
     }
 
     private final User user;
     private final UserRepository userRepo;
     private final UserManager userManager;
+    private final ChallengeManager challengeManager;
 
     private boolean dataHasChanged = false;
 
@@ -87,27 +86,27 @@ class UserEditor extends Window {
     private CheckBox passwordResetRequired;
     private CheckBox banned;
 
-    protected UserEditor(final UserRepository userRepo,
-                         final UserManager userManager) {
+    protected UserEditor(final UsersController controller) {
 
         super("Create new user");
 
         user = null;
-        this.userRepo = userRepo;
-        this.userManager = userManager;
+        userRepo = controller.getUserRepository();
+        userManager = controller.getUserManager();
+        challengeManager = controller.getChallengeManager();
 
         addWidgets();
     }
 
     public UserEditor(final User user,
-                      final UserRepository userRepo,
-                      final UserManager userManager) {
+                      final UsersController controller) {
 
         super(String.format("Edit user %s", user.getName()));
 
         this.user = user;
-        this.userRepo = userRepo;
-        this.userManager = userManager;
+        userRepo = controller.getUserRepository();
+        userManager = controller.getUserManager();
+        challengeManager = controller.getChallengeManager();
 
         addWidgets();
     }
@@ -411,9 +410,6 @@ class UserEditor extends Window {
         switch (passwordOptions.getValue()) {
             case GENERATE_AND_SEND: {
                 userManager.updatePassword(currentUser, null);
-                final ChallengeManager challengeManager = CdiUtil
-                    .createCdiUtil()
-                    .findBean(ChallengeManager.class);
                 try {
                     challengeManager.sendPasswordRecover(currentUser);
                 } catch (MessagingException ex) {

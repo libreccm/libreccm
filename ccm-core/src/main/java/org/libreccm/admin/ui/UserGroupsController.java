@@ -18,11 +18,19 @@
  */
 package org.libreccm.admin.ui;
 
-import org.libreccm.security.*;
+import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.security.Group;
+import org.libreccm.security.GroupManager;
+import org.libreccm.security.GroupRepository;
+import org.libreccm.security.User;
+import org.libreccm.security.UserRepository;
+
+import java.io.Serializable;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+
 import java.util.Set;
 
 /**
@@ -30,7 +38,12 @@ import java.util.Set;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-class UserGroupsController {
+class UserGroupsController implements Serializable {
+
+    private static final long serialVersionUID = -3226620773017042743L;
+
+    @Inject
+    private GlobalizationHelper globalizationHelper;
 
     @Inject
     private GroupRepository groupRepo;
@@ -40,6 +53,10 @@ class UserGroupsController {
 
     @Inject
     private UserRepository userRepo;
+
+    protected GlobalizationHelper getGlobalizationHelper() {
+        return globalizationHelper;
+    }
 
     @Transactional(Transactional.TxType.REQUIRED)
     protected void addUserToGroups(final User user, final Set<Group> groups) {
@@ -55,31 +72,31 @@ class UserGroupsController {
             .orElseThrow(() -> new IllegalArgumentException(String
             .format("No Group with ID %d in the database.",
                     group.getPartyId())));
-        
+
         final User theUser = userRepo
             .findById(user.getPartyId())
             .orElseThrow(() -> new IllegalArgumentException(String
             .format("No user with ID %d in the database. ",
                     user.getPartyId())));
-        
+
         groupManager.addMemberToGroup(theUser, theGroup);
     }
-    
+
     @Transactional(Transactional.TxType.REQUIRED)
     protected void removeUserFromGroup(final User user, final Group group) {
-        
+
         final Group theGroup = groupRepo
             .findById(group.getPartyId())
             .orElseThrow(() -> new IllegalArgumentException(String
             .format("No Group with ID %d in the database.",
                     group.getPartyId())));
-        
+
         final User theUser = userRepo
             .findById(user.getPartyId())
             .orElseThrow(() -> new IllegalArgumentException(String
             .format("No user with ID %d in the database. ",
                     user.getPartyId())));
-        
+
         groupManager.removeMemberFromGroup(theUser, theGroup);
     }
 

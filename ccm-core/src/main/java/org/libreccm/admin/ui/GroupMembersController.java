@@ -18,11 +18,18 @@
  */
 package org.libreccm.admin.ui;
 
-import org.libreccm.security.*;
+import org.libreccm.security.Group;
+import org.libreccm.security.GroupManager;
+import org.libreccm.security.GroupRepository;
+import org.libreccm.security.User;
+import org.libreccm.security.UserRepository;
+
+import java.io.Serializable;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+
 import java.util.Set;
 
 /**
@@ -30,7 +37,9 @@ import java.util.Set;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-class GroupMembersController {
+class GroupMembersController implements Serializable {
+
+    private static final long serialVersionUID = 9206311321172059643L;
 
     @Inject
     private UserRepository userRepo;

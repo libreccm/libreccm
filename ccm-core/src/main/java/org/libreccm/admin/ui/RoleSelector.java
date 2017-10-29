@@ -26,7 +26,6 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
-import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Role;
 
 import java.util.List;
@@ -43,20 +42,20 @@ class RoleSelector extends Window {
     
     protected RoleSelector(final String caption,
                         final String actionLabel,
+                        final RoleSelectorDataProvider dataProvider,
                         final List<Role> excludedRoles,
                         final RoleSelectionAction action) {
 
-        addWidgets(caption, actionLabel, excludedRoles, action);
+        addWidgets(caption, actionLabel, dataProvider, excludedRoles, action);
     }
 
     private void addWidgets(final String caption,
                             final String actionLabel,
+                            final RoleSelectorDataProvider dataProvider,
                             final List<Role> excludedRoles,
                             final RoleSelectionAction action) {
 
         setCaption(caption);
-
-        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 
         final Grid<Role> rolesGrid = new Grid<>();
         rolesGrid
@@ -87,11 +86,8 @@ class RoleSelector extends Window {
         actionsCell.setComponent(new HorizontalLayout(actionButton,
                                                       clearButton));
 
-        final RoleSelectorDataProvider dataProvider = cdiUtil
-            .findBean(RoleSelectorDataProvider.class);
         
         dataProvider.setExcludedRoles(excludedRoles);
-
         rolesGrid.setDataProvider(dataProvider);
 
         setContent(rolesGrid);
