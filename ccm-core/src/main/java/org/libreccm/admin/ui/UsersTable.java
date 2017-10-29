@@ -29,11 +29,10 @@ import com.vaadin.ui.UI;
 
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
-import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.themes.ValoTheme;
+import org.libreccm.l10n.LocalizedTextsUtil;
 import org.libreccm.security.User;
 
-import java.util.ResourceBundle;
 
 /**
  *
@@ -61,73 +60,75 @@ class UsersTable extends Grid<User> {
         super();
 
         setDataProvider(controller.getUsersTableDataProvider());
-        
-        final ResourceBundle bundle = ResourceBundle
-            .getBundle(AdminUiConstants.ADMIN_BUNDLE,
-                       UI.getCurrent().getLocale());
+
+        final LocalizedTextsUtil adminTextsUtil = controller
+            .getGlobalizationHelper()
+            .getLocalizedTextsUtil(AdminUiConstants.ADMIN_BUNDLE);
 
         super.addColumn(User::getName)
             .setId(COL_USER_NAME)
-            .setCaption(bundle.getString("ui.admin.users.table.screenname"));
+            .setCaption(adminTextsUtil
+                .getText("ui.admin.users.table.screenname"));
         super.addColumn(User::getGivenName)
             .setId(COL_GIVEN_NAME)
-            .setCaption(bundle.getString("ui.admin.users.table.givenname"));
+            .setCaption(adminTextsUtil.getText("ui.admin.users.table.givenname"));
         super.addColumn(User::getFamilyName)
             .setId(COL_FAMILY_NAME)
-            .setCaption(bundle.getString("ui.admin.users.table.familyname"));
+            .setCaption(adminTextsUtil
+                .getText("ui.admin.users.table.familyname"));
         super.addColumn(user -> user.getPrimaryEmailAddress().getAddress())
             .setId(COL_EMAIL)
-            .setCaption(bundle.getString("ui.admin.users.table.primary_email"));
+            .setCaption(adminTextsUtil.getText(
+                "ui.admin.users.table.primary_email"));
         super.addColumn(user -> {
             if (user.isBanned()) {
-                return bundle.getString("ui.admin.user.banned_yes");
+                return adminTextsUtil.getText("ui.admin.user.banned_yes");
             } else {
-                return bundle.getString("ui.admin.user.banned_no");
+                return adminTextsUtil.getText("ui.admin.user.banned_no");
             }
         })
             .setId(COL_BANNED)
             .setCaption("Banned?");
         super.addColumn(user -> {
             if (user.isPasswordResetRequired()) {
-                return bundle.getString(
+                return adminTextsUtil.getText(
                     "ui.admin.user.password_reset_required_yes");
             } else {
-                return bundle.getString(
+                return adminTextsUtil.getText(
                     "ui.admin.user.password_reset_required_no");
             }
         })
             .setId(COL_PASSWORD_RESET_REQUIRED)
-            .setCaption(bundle
-                .getString("ui.admin.users.table.password_reset_required"));
-        super.addColumn(user -> bundle.getString("ui.admin.users.table.edit"),
-                  new ButtonRenderer<>(event -> {
-//                      final UserEditor editor = new UserEditor(
-//                          event.getItem(),
-//                          usersGroupsRoles,
-//                          view.getUserRepository(),
-//                          view.getUserManager());
-//                      editor.center();
-//                      UI.getCurrent().addWindow(editor);
-                      final UserDetails details = new UserDetails(
-                          event.getItem(),
-                          controller.getUserRepository(),
-                          controller.getUserManager());
-                      details.center();
-                      details.setWidth("66.6%");
-                      details.addCloseListener(closeEvent -> {
-                          getDataProvider().refreshAll();
-                      });
-                      UI.getCurrent().addWindow(details);
-                  }))
+            .setCaption(adminTextsUtil.getText(
+                "ui.admin.users.table.password_reset_required"));
+        super.addComponentColumn(user -> {
+            final Button editButton = new Button(
+                adminTextsUtil.getText("ui.admin.users.table.edit"),
+                VaadinIcons.EDIT);
+            editButton.addClickListener(event -> {
+                final UserDetails details = new UserDetails(
+                    user,
+                controller.getUsersController());
+                details.setModal(true);
+                details.center();
+                details.setWidth("66.6%");
+                details.addCloseListener(closeEvent -> {
+                    getDataProvider().refreshAll();
+                });
+                UI.getCurrent().addWindow(details);
+            });
+            editButton.addStyleName(ValoTheme.BUTTON_TINY);
+            return editButton;
+        })
             .setId(COL_EDIT);
 
         final HeaderRow filterRow = appendHeaderRow();
         final HeaderCell userNameFilterCell = filterRow.getCell(COL_USER_NAME);
         userNameFilter = new TextField();
-        userNameFilter.setPlaceholder(bundle
-            .getString("ui.admin.users.table.filter.screenname.placeholder"));
-        userNameFilter.setDescription(bundle
-            .getString("ui.admin.users.table.filter.screenname.description"));
+        userNameFilter.setPlaceholder(adminTextsUtil
+            .getText("ui.admin.users.table.filter.screenname.placeholder"));
+        userNameFilter.setDescription(adminTextsUtil
+            .getText("ui.admin.users.table.filter.screenname.description"));
         userNameFilter.addStyleName(ValoTheme.TEXTFIELD_TINY);
         userNameFilter
             .addValueChangeListener(event -> {
@@ -142,8 +143,8 @@ class UsersTable extends Grid<User> {
                                                        COL_FAMILY_NAME,
                                                        COL_EMAIL,
                                                        COL_BANNED);
-        clearFiltersButton = new Button(bundle
-            .getString("ui.admin.users.table.filter.clear"));
+        clearFiltersButton = new Button(adminTextsUtil
+            .getText("ui.admin.users.table.filter.clear"));
         clearFiltersButton.addStyleName(ValoTheme.BUTTON_TINY);
         clearFiltersButton.addClickListener(event -> {
             userNameFilter.setValue("");
@@ -153,9 +154,8 @@ class UsersTable extends Grid<User> {
         createUserButton.addStyleName(ValoTheme.BUTTON_TINY);
         createUserButton.setIcon(VaadinIcons.PLUS);
         createUserButton.addClickListener(event -> {
-            final UserEditor userEditor = new UserEditor(
-                controller.getUserRepository(),
-                controller.getUserManager());
+            final UserEditor userEditor = new UserEditor(controller
+                .getUsersController());
             userEditor.addCloseListener(closeEvent -> {
                 getDataProvider().refreshAll();
             });
@@ -167,35 +167,5 @@ class UsersTable extends Grid<User> {
             createUserButton);
         actionsCell.setComponent(actionsLayout);
     }
-
-//    public void localize() {
-//
-//        final ResourceBundle bundle = ResourceBundle
-//            .getBundle(AdminUiConstants.ADMIN_BUNDLE,
-//                       UI.getCurrent().getLocale());
-//
-//        getColumn(COL_USER_NAME)
-//            .setCaption(bundle.getString("ui.admin.users.table.screenname"));
-//        getColumn(COL_GIVEN_NAME)
-//            .setCaption(bundle.getString("ui.admin.users.table.givenname"));
-//        getColumn(COL_FAMILY_NAME)
-//            .setCaption(bundle.getString("ui.admin.users.table.familyname"));
-//        getColumn(COL_EMAIL)
-//            .setCaption(bundle.getString("ui.admin.users.table.primary_email"));
-//        getColumn(COL_BANNED)
-//            .setCaption(bundle.getString("ui.admin.users.table.banned"));
-//        getColumn(COL_PASSWORD_RESET_REQUIRED)
-//            .setCaption(bundle.getString(
-//                "ui.admin.users.table.password_reset_required"));
-//
-//        userNameFilter.setPlaceholder(bundle
-//            .getString("ui.admin.users.table.filter.screenname.placeholder"));
-//        userNameFilter.setDescription(bundle
-//            .getString("ui.admin.users.table.filter.screenname.description"));
-//
-//        clearFiltersButton.setCaption(bundle
-//            .getString("ui.admin.users.table.filter.clear"));
-//
-//    }
 
 }

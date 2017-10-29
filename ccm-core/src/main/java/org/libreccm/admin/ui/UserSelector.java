@@ -18,22 +18,18 @@
  */
 package org.libreccm.admin.ui;
 
-import com.arsdigita.ui.admin.AdminUiConstants;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
-import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.User;
 
 import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  *
@@ -50,24 +46,20 @@ class UserSelector extends Window {
 
     protected UserSelector(final String caption,
                            final String actionLabel,
+                           final UserSelectorDataProvider dataProvider,
                            final List<User> excludedUsers,
                            final UserSelectionAction action) {
 
-        addWidgets(caption, actionLabel, excludedUsers, action);
+        addWidgets(caption, actionLabel, dataProvider, excludedUsers, action);
     }
 
     private void addWidgets(final String caption,
                             final String actionLabel,
+                            final UserSelectorDataProvider dataProvider,
                             final List<User> excludedUsers,
                             final UserSelectionAction action) {
 
         setCaption(caption);
-
-        final ResourceBundle bundle = ResourceBundle
-            .getBundle(AdminUiConstants.ADMIN_BUNDLE,
-                       UI.getCurrent().getLocale());
-
-        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 
         final Grid<User> usersGrid = new Grid<>();
         usersGrid
@@ -113,8 +105,6 @@ class UserSelector extends Window {
         actionsCell.setComponent(new HorizontalLayout(actionButton,
                                                       clearButton));
 
-        final UserSelectorDataProvider dataProvider = cdiUtil
-            .findBean(UserSelectorDataProvider.class);
         dataProvider.setExcludedUsers(excludedUsers);
         usersGrid.setDataProvider(dataProvider);
 

@@ -18,6 +18,8 @@
  */
 package org.libreccm.sites;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import org.libreccm.web.CcmApplication;
 
 import java.util.Objects;
@@ -33,7 +35,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "SITE_AWARE_APPLICATIONS")
+@Table(name = "SITE_AWARE_APPLICATIONS", schema = DB_SCHEMA)
 public class SiteAwareApplication extends CcmApplication {
 
     private static final long serialVersionUID = -8892544588904174406L;

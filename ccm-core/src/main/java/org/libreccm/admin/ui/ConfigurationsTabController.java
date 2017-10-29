@@ -19,12 +19,16 @@
 package org.libreccm.admin.ui;
 
 import com.arsdigita.kernel.KernelConfig;
+
 import com.vaadin.cdi.ViewScoped;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.configuration.SettingManager;
 import org.libreccm.l10n.GlobalizationHelper;
 
+import java.io.Serializable;
+
 import javax.inject.Inject;
+
 import java.util.Locale;
 
 /**
@@ -32,7 +36,9 @@ import java.util.Locale;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ViewScoped
-class ConfigurationsTabController {
+class ConfigurationsTabController implements Serializable {
+
+    private static final long serialVersionUID = -5492006905558481631L;
 
     @Inject
     private GlobalizationHelper globalizationHelper;

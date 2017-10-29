@@ -36,7 +36,8 @@ import java.util.stream.Stream;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ViewScoped
-class ConfigurationsTableDataProvider extends AbstractDataProvider<ConfigurationsGridRowData, String> {
+class ConfigurationsTableDataProvider 
+    extends AbstractDataProvider<ConfigurationsGridRowData, String> {
 
     private static final long serialVersionUID = -7001151229931864885L;
 

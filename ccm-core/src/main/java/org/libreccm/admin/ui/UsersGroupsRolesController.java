@@ -18,12 +18,15 @@
  */
 package org.libreccm.admin.ui;
 
+import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.GroupManager;
 import org.libreccm.security.GroupRepository;
 import org.libreccm.security.RoleManager;
 import org.libreccm.security.RoleRepository;
 import org.libreccm.security.UserManager;
 import org.libreccm.security.UserRepository;
+
+import java.io.Serializable;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -33,7 +36,12 @@ import javax.inject.Inject;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-class UsersGroupsRolesController {
+class UsersGroupsRolesController implements Serializable {
+
+    private static final long serialVersionUID = -1994224681148412678L;
+
+    @Inject
+    private GlobalizationHelper globalizationHelper;
 
     @Inject
     private GroupManager groupManager;
@@ -42,7 +50,13 @@ class UsersGroupsRolesController {
     private GroupRepository groupRepository;
 
     @Inject
+    private GroupsController groupsController;
+
+    @Inject
     private GroupsTableDataProvider groupsTableDataProvider;
+
+    @Inject
+    private RolesController rolesController;
 
     @Inject
     private RoleManager roleManager;
@@ -60,41 +74,60 @@ class UsersGroupsRolesController {
     private UserRepository userRepository;
 
     @Inject
+    private UsersController usersController;
+
+    @Inject
     private UsersTableDataProvider usersTableDataProvider;
 
-    public GroupManager getGroupManager() {
+    protected GlobalizationHelper getGlobalizationHelper() {
+        return globalizationHelper;
+    }
+
+    protected GroupManager getGroupManager() {
         return groupManager;
     }
 
-    public GroupRepository getGroupRepository() {
+    protected GroupRepository getGroupRepository() {
         return groupRepository;
     }
 
-    public GroupsTableDataProvider getGroupsTableDataProvider() {
+    protected GroupsController getGroupsController() {
+        return groupsController;
+    }
+
+    protected GroupsTableDataProvider getGroupsTableDataProvider() {
         return groupsTableDataProvider;
     }
 
-    public RoleManager getRoleManager() {
+    protected RolesController getRolesController() {
+        return rolesController;
+    }
+
+    protected RoleManager getRoleManager() {
         return roleManager;
     }
 
-    public RoleRepository getRoleRepository() {
+    protected RoleRepository getRoleRepository() {
         return RoleRepository;
     }
 
-    public RolesTableDataProvider getRolesTableDataProvider() {
+    protected RolesTableDataProvider getRolesTableDataProvider() {
         return rolesTableDataProvider;
     }
 
-    public UserManager getUserManager() {
+    protected UserManager getUserManager() {
         return userManager;
     }
 
-    public UserRepository getUserRepository() {
+    protected UserRepository getUserRepository() {
         return userRepository;
     }
 
-    public UsersTableDataProvider getUsersTableDataProvider() {
+    protected UsersController getUsersController() {
+        return usersController;
+    }
+
+    protected UsersTableDataProvider getUsersTableDataProvider() {
         return usersTableDataProvider;
     }
 

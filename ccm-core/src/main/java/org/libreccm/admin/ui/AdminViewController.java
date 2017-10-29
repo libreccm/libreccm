@@ -21,6 +21,8 @@ package org.libreccm.admin.ui;
 import com.vaadin.cdi.ViewScoped;
 import org.libreccm.l10n.GlobalizationHelper;
 
+import java.io.Serializable;
+
 import javax.inject.Inject;
 
 /**
@@ -30,7 +32,9 @@ import javax.inject.Inject;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ViewScoped
-class AdminViewController {
+class AdminViewController implements Serializable {
+
+    private static final long serialVersionUID = 4880298854970416968L;
 
     @Inject
     private ConfigurationsTabController confTabController;

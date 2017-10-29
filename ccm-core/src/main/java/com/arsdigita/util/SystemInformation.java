@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Provides the system name of the CCM Spin off (eg aplaws or ScientificCMS) and
@@ -110,7 +112,7 @@ public class SystemInformation {
      *
      * @throws IllegalArgumentException if key is null or empty
      */
-    final public String get(final String key) throws IllegalArgumentException {
+    public final String get(final String key) throws IllegalArgumentException {
         if (key == null || key.isEmpty()) {
             throw new IllegalArgumentException(
                     "Parameter key must not be null or empty.");
@@ -123,15 +125,27 @@ public class SystemInformation {
      *
      * @return iterator of map
      */
-    final public Iterator<Map.Entry<String, String>> iterator() {
+    public final Iterator<Map.Entry<String, String>> iterator() {
         return sysInfo.entrySet().iterator();
     }
+    
+    public final Set<Map.Entry<String, String>> getEntries() {
+        return sysInfo.entrySet();
+    }
+    
+    public final Stream<Map.Entry<String, String>> getEntriesAsStream() {
+        return sysInfo.entrySet().stream();
+    }
 
+    public final int size() {
+        return sysInfo.size();
+    }
+    
     /**
      *
      * @return
      */
-    final public boolean isEmpty() {
+    public final boolean isEmpty() {
         return sysInfo.isEmpty();
 
     }

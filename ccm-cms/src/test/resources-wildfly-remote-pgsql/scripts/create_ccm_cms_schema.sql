@@ -817,6 +817,7 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         PAGE_ID int8 not null,
         INDEX_PAGE_TEMPLATE varchar(255),
         ITEM_PAGE_TEMPLATE varchar(255),
+        THEME_NAME varchar(255),
         THEME varchar(255) not null,
         primary key (PAGE_ID, THEME)
     );
@@ -831,7 +832,6 @@ drop sequence if exists HIBERNATE_SEQUENCE;
     create table CCM_CMS.PAGES_APP (
         OBJECT_ID int8 not null,
         CATEGORY_DOMAIN_ID int8,
-        SITE_ID int8,
         primary key (OBJECT_ID)
     );
 
@@ -1432,10 +1432,10 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         SETTING_ID int8 not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
+        SETTING_VALUE_BOOLEAN boolean,
         SETTING_VALUE_DOUBLE float8,
         SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
         SETTING_VALUE_STRING varchar(1024),
-        SETTING_VALUE_BOOLEAN boolean,
         SETTING_VALUE_LONG int8,
         primary key (SETTING_ID)
     );
@@ -1455,6 +1455,12 @@ drop sequence if exists HIBERNATE_SEQUENCE;
     create table CCM_CORE.SETTINGS_STRING_LIST (
         LIST_ID int8 not null,
         value varchar(255)
+    );
+
+    create table CCM_CORE.SITE_AWARE_APPLICATIONS (
+        OBJECT_ID int8 not null,
+        SITE_ID int8,
+        primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.SITES (
@@ -2350,14 +2356,9 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         references CCM_CORE.CATEGORY_DOMAINS;
 
     alter table CCM_CMS.PAGES_APP 
-        add constraint FK3wkyn4oxa65f7svtj917m61jc 
-        foreign key (SITE_ID) 
-        references CCM_CORE.SITES;
-
-    alter table CCM_CMS.PAGES_APP 
-        add constraint FKrrk4g7my3e4qkdoeiygkqxduy 
+        add constraint FKk4jb5fylibg2pbbaypyt6f8lb 
         foreign key (OBJECT_ID) 
-        references CCM_CORE.APPLICATIONS;
+        references CCM_CORE.SITE_AWARE_APPLICATIONS;
 
     alter table CCM_CMS.RELATED_LINKS 
         add constraint FKb517dnfj56oby2s34jp1omuim 
@@ -2838,6 +2839,16 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         add constraint FKqeclqa5sf1g53vxs857tpwrus 
         foreign key (LIST_ID) 
         references CCM_CORE.SETTINGS;
+
+    alter table CCM_CORE.SITE_AWARE_APPLICATIONS 
+        add constraint FKopo91c29jaunpcusjwlphhxkd 
+        foreign key (SITE_ID) 
+        references CCM_CORE.SITES;
+
+    alter table CCM_CORE.SITE_AWARE_APPLICATIONS 
+        add constraint FKslbu2qagg23dmdu01lun7oh7x 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.APPLICATIONS;
 
     alter table CCM_CORE.SITES 
         add constraint FKrca95c6p023men53b8ayu26kp 
