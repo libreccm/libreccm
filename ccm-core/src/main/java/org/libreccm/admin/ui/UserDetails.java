@@ -32,16 +32,12 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
-import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.themes.ValoTheme;
-import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Group;
 import org.libreccm.security.GroupRepository;
 import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
 import org.libreccm.security.User;
-import org.libreccm.security.UserManager;
-import org.libreccm.security.UserRepository;
 
 import java.util.ResourceBundle;
 
@@ -60,18 +56,14 @@ class UserDetails extends Window {
     private static final String COL_ROLE_REMOVE = "role_remove";
 
     private final User user;
-    private final UserRepository userRepo;
-    private final UserManager userManager;
+    private final UsersController controller;
 
-    protected UserDetails(final User user,
-                          final UserRepository userRepo,
-                          final UserManager userManager) {
+    protected UserDetails(final User user, final UsersController controller) {
 
         super(String.format("Details of user %s", user.getName()));
 
         this.user = user;
-        this.userRepo = userRepo;
-        this.userManager = userManager;
+        this.controller = controller;
 
         addWidgets();
     }
@@ -127,8 +119,8 @@ class UserDetails extends Window {
             bundle.getString("ui.admin.users.table.edit"),
             event -> {
                 final UserEditor editor = new UserEditor(user,
-                                                         userRepo,
-                                                         userManager);
+                                                         controller);
+                editor.setModal(true);
                 editor.center();
                 UI.getCurrent().addWindow(editor);
             });
@@ -136,29 +128,31 @@ class UserDetails extends Window {
         final VerticalLayout layout = new VerticalLayout(formLayout,
                                                          editButton);
 
-        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-
-        final UserGroupsController groupsController = cdiUtil
-            .findBean(UserGroupsController.class);
+        final UserGroupsController groupsController = controller
+            .getGroupsController();
         final Grid<Group> groupsGrid = new Grid<>();
         groupsGrid
             .addColumn(Group::getName)
             .setId(COL_GROUP_NAME)
             .setCaption("Group");
         groupsGrid
-            .addColumn(group -> bundle
-            .getString("ui.user.groups.remove"),
-                       new ButtonRenderer<>(event -> {
-                           groupsController
-                               .removeUserFromGroup(user, event.getItem());
-                           groupsGrid.getDataProvider().refreshAll();
-                       }))
+            .addComponentColumn(group -> {
+                final Button removeButton = new Button(
+                    bundle.getString("ui.user.groups.remove"),
+                    VaadinIcons.MINUS_CIRCLE_O);
+                removeButton.addClickListener(event -> {
+                    groupsController.removeUserFromGroup(user, group);
+                    groupsGrid.getDataProvider().refreshAll();
+                });
+                removeButton.addStyleNames(ValoTheme.BUTTON_TINY,
+                                           ValoTheme.BUTTON_DANGER);
+                return removeButton;
+            })
             .setId(COL_GROUP_REMOVE);
 
         groupsGrid.setWidth("100%");
 
-        final GroupRepository groupRepo = cdiUtil
-            .findBean(GroupRepository.class);
+        final GroupRepository groupRepo = controller.getGroupRepository();
 
         final HeaderRow groupsGridHeader = groupsGrid.prependHeaderRow();
         final Button addGroupButton = new Button("Add group");
@@ -168,6 +162,7 @@ class UserDetails extends Window {
             final GroupSelector groupSelector = new GroupSelector(
                 "Select group(s) to which the user is added.",
                 "Add user to selected groups",
+                controller.getGroupSelectorDataProvider(),
                 groupRepo.findByMember(user),
                 selectedGroups -> {
                     selectedGroups.forEach(group -> {
@@ -187,31 +182,36 @@ class UserDetails extends Window {
         groupsGridHeaderCell
             .setComponent(new HorizontalLayout(addGroupButton));
 
-        final UserGroupsTableDataProvider groupsDataProvider = cdiUtil
-            .findBean(UserGroupsTableDataProvider.class);
+        final UserGroupsTableDataProvider groupsDataProvider = controller
+            .getGroupsTableDataProvider();
         groupsDataProvider.setUser(user);
         groupsGrid.setDataProvider(groupsDataProvider);
 
-        final UserRolesController rolesController = cdiUtil
-            .findBean(UserRolesController.class);
+        final UserRolesController rolesController = controller
+            .getRolesController();
         final Grid<Role> rolesGrid = new Grid<>();
         rolesGrid
             .addColumn(Role::getName)
             .setId(COL_ROLE_NAME)
             .setCaption("Role");
         rolesGrid
-            .addColumn(role -> bundle
-            .getString("ui.user.roles.remove"),
-                       new ButtonRenderer<>(event -> {
-                           rolesController
-                               .removeRoleFromUser(event.getItem(), user);
-                           rolesGrid.getDataProvider().refreshAll();
-                       }))
-            .setId(COL_ROLE_REMOVE);
+            .addComponentColumn(role -> {
+                final Button removeButton = new Button(
+                    bundle.getString("ui.user.roles.remove"),
+                    VaadinIcons.MINUS_CIRCLE_O);
+                removeButton.addClickListener(event -> {
+                    rolesController.removeRoleFromUser(role, user);
+                    rolesGrid.getDataProvider().refreshAll();
+                });
+                removeButton.addStyleNames(ValoTheme.BUTTON_TINY,
+                                           ValoTheme.BUTTON_DANGER);
+                return removeButton;
+            })
+            .setId(COL_ROLE_NAME);
 
         rolesGrid.setWidth("100%");
 
-        final RoleRepository roleRepo = cdiUtil.findBean(RoleRepository.class);
+        final RoleRepository roleRepo = controller.getRoleRepository();
 
         final HeaderRow rolesGridHeader = rolesGrid.prependHeaderRow();
         final Button addRoleButton = new Button("Add role");
@@ -221,6 +221,7 @@ class UserDetails extends Window {
             final RoleSelector roleSelector = new RoleSelector(
                 "Select role(s) to add to group",
                 "Add selected role(s) to group",
+                controller.getRoleSelectorDataProvider(),
                 roleRepo.findByParty(user),
                 (selectedRoles -> {
                     selectedRoles.forEach(role -> {
@@ -241,8 +242,8 @@ class UserDetails extends Window {
         rolesGridHeaderCell
             .setComponent(new HorizontalLayout(addRoleButton));
 
-        final UserRolesTableDataProvider rolesDataProvider = cdiUtil
-            .findBean(UserRolesTableDataProvider.class);
+        final UserRolesTableDataProvider rolesDataProvider = controller
+            .getRolesTableDataProvider();
         rolesDataProvider.setUser(user);
         rolesGrid.setDataProvider(rolesDataProvider);
 

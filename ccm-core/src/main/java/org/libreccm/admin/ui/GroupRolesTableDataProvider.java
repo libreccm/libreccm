@@ -40,8 +40,7 @@ import java.util.stream.Stream;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ViewScoped
-class GroupRolesTableDataProvider
-    extends AbstractDataProvider<Role, String> {
+class GroupRolesTableDataProvider extends AbstractDataProvider<Role, String> {
 
     private static final long serialVersionUID = 7981493169013788121L;
 

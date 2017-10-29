@@ -26,7 +26,6 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
-import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Group;
 
 import java.util.List;
@@ -42,21 +41,21 @@ class GroupSelector extends Window {
     private static final String COL_NAME = "groupname";
 
     protected GroupSelector(final String caption,
-                         final String actionLabel,
-                         final List<Group> excludedGroups,
-                         final GroupSelectionAction action) {
+                            final String actionLabel,
+                            final GroupSelectorDataProvider dataProvider,
+                            final List<Group> excludedGroups,
+                            final GroupSelectionAction action) {
 
-        addWidgets(caption, actionLabel, excludedGroups, action);
+        addWidgets(caption, actionLabel, dataProvider, excludedGroups, action);
     }
 
     private void addWidgets(final String caption,
                             final String actionLabel,
+                            final GroupSelectorDataProvider dataProvider,
                             final List<Group> excludedGroups,
                             final GroupSelectionAction action) {
 
         setCaption(caption);
-
-        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 
         final Grid<Group> groupsGrid = new Grid<>();
         groupsGrid
@@ -86,14 +85,10 @@ class GroupSelector extends Window {
         final HeaderCell actionsCell = actions.getCell(COL_NAME);
         actionsCell.setComponent(new HorizontalLayout(actionButton,
                                                       clearButton));
-        
-        final GroupSelectorDataProvider dataProvider = cdiUtil
-        .findBean(GroupSelectorDataProvider.class);
-        
+
         dataProvider.setExcludedGroups(excludedGroups);
-        
         groupsGrid.setDataProvider(dataProvider);
-        
+
         setContent(groupsGrid);
     }
 

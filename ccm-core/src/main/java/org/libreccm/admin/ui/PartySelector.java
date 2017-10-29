@@ -18,22 +18,18 @@
  */
 package org.libreccm.admin.ui;
 
-import com.arsdigita.ui.admin.AdminUiConstants;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
-import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.Party;
 
 import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  *
@@ -46,25 +42,21 @@ class PartySelector extends Window {
     private static final String COL_PARTY_NAME = "partyname";
 
     protected PartySelector(final String caption,
-                         final String actionLabel,
-                         final List<Party> excludedParties,
-                         final PartySelectionAction action) {
+                            final String actionLabel,
+                            final PartySelectorDataProvider dataProvider,
+                            final List<Party> excludedParties,
+                            final PartySelectionAction action) {
 
-        addWidgets(caption, actionLabel, excludedParties, action);
+        addWidgets(caption, actionLabel, dataProvider, excludedParties, action);
     }
 
     private void addWidgets(final String caption,
                             final String actionLabel,
+                            final PartySelectorDataProvider dataProvider,
                             final List<Party> excludedParties,
                             final PartySelectionAction action) {
 
         setCaption(caption);
-
-        final ResourceBundle bundle = ResourceBundle
-            .getBundle(AdminUiConstants.ADMIN_BUNDLE,
-                       UI.getCurrent().getLocale());
-
-        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 
         final Grid<Party> partiesGrid = new Grid<>();
         partiesGrid
@@ -94,12 +86,10 @@ class PartySelector extends Window {
         final HeaderCell actionsCell = actions.getCell(COL_PARTY_NAME);
         actionsCell.setComponent(new HorizontalLayout(actionButton,
                                                       clearButton));
-        
-        final PartySelectorDataProvider dataProvider = cdiUtil
-        .findBean(PartySelectorDataProvider.class);
+
         dataProvider.setExcludedParties(excludedParties);
         partiesGrid.setDataProvider(dataProvider);
-        
+
         setContent(partiesGrid);
     }
 

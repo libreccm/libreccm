@@ -19,8 +19,13 @@
 package org.libreccm.admin.ui;
 
 import com.vaadin.cdi.ViewScoped;
+import org.libreccm.security.ChallengeManager;
+import org.libreccm.security.GroupRepository;
+import org.libreccm.security.RoleRepository;
 import org.libreccm.security.UserManager;
 import org.libreccm.security.UserRepository;
+
+import java.io.Serializable;
 
 import javax.inject.Inject;
 
@@ -30,7 +35,33 @@ import javax.inject.Inject;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ViewScoped
-class UsersController {
+class UsersController implements Serializable {
+
+    private static final long serialVersionUID = -3133073086999101093L;
+
+    @Inject
+    private GroupRepository groupRepository;
+
+    @Inject
+    private GroupSelectorDataProvider groupSelectorDataProvider;
+
+    @Inject
+    private UserGroupsController groupsController;
+
+    @Inject
+    private UserGroupsTableDataProvider groupsTableDataProvider;
+
+    @Inject
+    private UserRolesController rolesController;
+
+    @Inject
+    private UserRolesTableDataProvider rolesTableDataProvider;
+
+    @Inject
+    private RoleRepository roleRepository;
+
+    @Inject
+    private RoleSelectorDataProvider roleSelectorDataProvider;
 
     @Inject
     private UserManager userManager;
@@ -41,8 +72,23 @@ class UsersController {
     @Inject
     private UsersTableDataProvider usersTableDataProvider;
 
-    protected UsersController() {
-        super();
+    @Inject
+    private ChallengeManager challengeManager;
+
+    protected GroupRepository getGroupRepository() {
+        return groupRepository;
+    }
+
+    protected GroupSelectorDataProvider getGroupSelectorDataProvider() {
+        return groupSelectorDataProvider;
+    }
+
+    protected UserGroupsController getGroupsController() {
+        return groupsController;
+    }
+
+    protected UserGroupsTableDataProvider getGroupsTableDataProvider() {
+        return groupsTableDataProvider;
     }
 
     protected UserManager getUserManager() {
@@ -53,10 +99,28 @@ class UsersController {
         return userRepository;
     }
 
+    protected RoleRepository getRoleRepository() {
+        return roleRepository;
+    }
+
+    protected UserRolesTableDataProvider getRolesTableDataProvider() {
+        return rolesTableDataProvider;
+    }
+
+    protected UserRolesController getRolesController() {
+        return rolesController;
+    }
+
+    protected RoleSelectorDataProvider getRoleSelectorDataProvider() {
+        return roleSelectorDataProvider;
+    }
+
     protected UsersTableDataProvider getUsersTableDataProvider() {
         return usersTableDataProvider;
     }
-    
-    
-    
+
+    public ChallengeManager getChallengeManager() {
+        return challengeManager;
+    }
+
 }

@@ -18,11 +18,14 @@
  */
 package org.libreccm.admin.ui;
 
+import java.io.Serializable;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -31,7 +34,9 @@ import java.util.Objects;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-class JpqlConsoleController {
+class JpqlConsoleController implements Serializable {
+
+    private static final long serialVersionUID = 1625999285594476564L;
 
     @Inject
     private EntityManager entityManager;

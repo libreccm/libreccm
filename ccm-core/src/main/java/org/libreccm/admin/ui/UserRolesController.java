@@ -18,11 +18,18 @@
  */
 package org.libreccm.admin.ui;
 
-import org.libreccm.security.*;
+import org.libreccm.security.Role;
+import org.libreccm.security.RoleManager;
+import org.libreccm.security.RoleRepository;
+import org.libreccm.security.User;
+import org.libreccm.security.UserRepository;
+
+import java.io.Serializable;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+
 import java.util.Set;
 
 /**
@@ -30,7 +37,9 @@ import java.util.Set;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-class UserRolesController {
+class UserRolesController implements Serializable {
+
+    private static final long serialVersionUID = 1136907020235869523L;
 
     @Inject
     private RoleRepository roleRepo;

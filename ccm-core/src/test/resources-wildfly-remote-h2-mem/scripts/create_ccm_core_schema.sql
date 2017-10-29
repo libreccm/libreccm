@@ -2,7 +2,6 @@ drop schema if exists CCM_CORE;
 
 drop sequence if exists HIBERNATE_SEQUENCE;
 
-
     create schema CCM_CORE;
 
     create table CCM_CORE.APPLICATIONS (
@@ -531,10 +530,10 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
         SETTING_VALUE_STRING varchar(1024),
+        SETTING_VALUE_BOOLEAN boolean,
         SETTING_VALUE_DOUBLE double,
         SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         SETTING_VALUE_LONG bigint,
-        SETTING_VALUE_BOOLEAN boolean,
         primary key (SETTING_ID)
     );
 
@@ -553,6 +552,12 @@ drop sequence if exists HIBERNATE_SEQUENCE;
     create table CCM_CORE.SETTINGS_STRING_LIST (
         LIST_ID bigint not null,
         value varchar(255)
+    );
+
+    create table CCM_CORE.SITE_AWARE_APPLICATIONS (
+        OBJECT_ID bigint not null,
+        SITE_ID bigint,
+        primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.SITES (
@@ -1116,6 +1121,16 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         add constraint FKqeclqa5sf1g53vxs857tpwrus 
         foreign key (LIST_ID) 
         references CCM_CORE.SETTINGS;
+
+    alter table CCM_CORE.SITE_AWARE_APPLICATIONS 
+        add constraint FKopo91c29jaunpcusjwlphhxkd 
+        foreign key (SITE_ID) 
+        references CCM_CORE.SITES;
+
+    alter table CCM_CORE.SITE_AWARE_APPLICATIONS 
+        add constraint FKslbu2qagg23dmdu01lun7oh7x 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.APPLICATIONS;
 
     alter table CCM_CORE.SITES 
         add constraint FKrca95c6p023men53b8ayu26kp 

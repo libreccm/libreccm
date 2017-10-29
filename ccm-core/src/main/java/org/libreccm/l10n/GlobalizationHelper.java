@@ -130,17 +130,19 @@ public class GlobalizationHelper implements Serializable {
     }
 
     public Locale getNegotiatedLocale() {
+        
         final KernelConfig kernelConfig = confManager.findConfiguration(
             KernelConfig.class);
 
         Locale preferred = kernelConfig.getDefaultLocale();
 
         final Locale selectedLocale = getSelectedLocale();
-        if (selectedLocale == null || !kernelConfig.hasLanguage(selectedLocale
-            .getLanguage())) {
+        if (selectedLocale == null
+                || !kernelConfig.hasLanguage(selectedLocale.getLanguage())) {
+            
             final Enumeration<Locale> acceptedLocales = request.getLocales();
-
             while (acceptedLocales.hasMoreElements()) {
+                
                 final Locale current = acceptedLocales.nextElement();
                 if (kernelConfig.hasLanguage(current.getLanguage())) {
                     preferred = new Locale(current.getLanguage());
