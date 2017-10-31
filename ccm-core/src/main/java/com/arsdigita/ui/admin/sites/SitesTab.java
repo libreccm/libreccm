@@ -55,6 +55,10 @@ public class SitesTab extends LayoutPanel {
         final ActionLink addNewSite = new ActionLink(new GlobalizedMessage(
             "ui.admin.sites.add_new_site_link",
             ADMIN_BUNDLE));
+        addNewSite
+            .addActionListener(event -> {
+                showSiteForm(event.getPageState());
+            });
 
         final BoxPanel right = new BoxPanel(BoxPanel.VERTICAL);
         right.add(addNewSite);
@@ -67,15 +71,15 @@ public class SitesTab extends LayoutPanel {
 
     @Override
     public void register(final Page page) {
-        
+
         super.register(page);
-        
+
         page.addGlobalStateParam(selectedSiteId.getStateParameter());
-        
+
         page.setVisibleDefault(sitesTable, true);
         page.setVisibleDefault(sitesForm, false);
     }
-    
+
     protected void showSiteForm(final PageState state) {
         sitesTable.setVisible(state, false);
         sitesForm.setVisible(state, true);
