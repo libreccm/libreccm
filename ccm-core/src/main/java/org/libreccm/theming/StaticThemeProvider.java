@@ -27,6 +27,7 @@ import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +36,7 @@ import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
@@ -60,10 +62,13 @@ public class StaticThemeProvider implements ThemeProvider {
         StaticThemeProvider.class);
 
     private static final String THEMES_DIR = "/themes";
-    private static final String THEME_MANIFEST_JSON = THEMES_DIR
-                                                          + "/%s/theme.json";
-    private static final String THEME_MANIFEST_XML = THEMES_DIR
-                                                         + "/%s/theme.xml";
+    private static final String THEMES_PACKAGE = "themes";
+    private static final String THEME_MANIFEST_JSON_PATH = THEMES_DIR
+                                                               + "/%s/theme.json";
+    private static final String THEME_MANIFEST_XML_PATH = THEMES_DIR
+                                                              + "/%s/theme.xml";
+    private static final String THEME_MANIFEST_JSON = "theme.json";
+    private static final String THEME_MANIFEST_XML = "theme.xml";
 
     @Inject
     private ThemeManifestUtil manifestUtil;
@@ -71,116 +76,104 @@ public class StaticThemeProvider implements ThemeProvider {
     @Override
     public List<ThemeInfo> getThemes() {
 
+        LOGGER.debug("Retrieving static themes...");
+
         final Reflections reflections = new Reflections(
             new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage("themes"))
-                .setScanners(new ResourcesScanner()));
-        final Set<String> resources = reflections
-            .getResources(Pattern.compile("themes/.*/theme.json"));
-        LOGGER.debug("Found resources:");
-        for (final String resource : resources) {
-            LOGGER.debug("\t{}", resource);
-        }
+                .setUrls(ClasspathHelper.forPackage(""))
+                .setScanners(new ResourcesScanner()
+                //                    .filterResultsBy(new FilterBuilder()
+                //                        .include(THEMES_PACKAGE)
+                //                        .include(THEMES_PACKAGE + "/([\\w\\d\\s\\.]*)/theme.json")
+                //                        .include(THEMES_PACKAGE + "/([\\w\\d\\s\\.]*)/theme.xml")
+                //                    .exclude(THEMES_PACKAGE + "(.*)/(.*)")
+                //                    )
+                ));
 
-        final URL themesUrl = StaticThemeProvider.class.getResource(THEMES_DIR);
-
-        if (themesUrl == null) {
-            throw new UnexpectedErrorException(
-                "Static themes directory does not"
-                    + "exist in class path. Something is wrong.");
-        }
-
-        File directory;
-        try {
-            directory = new File(themesUrl.toURI());
-        } catch (URISyntaxException ex) {
-            throw new UnexpectedErrorException(ex);
-        } catch (IllegalArgumentException ex) {
-            directory = null;
-        }
-
-        final List<String> themeDirs = new ArrayList<>();
-        if (directory != null && directory.exists()) {
-            final String[] files = directory.list();
-            for (final String file : files) {
-                themeDirs.add(file);
-            }
-        } else {
-            final String jarPath = themesUrl
-                .getFile()
-                .replaceFirst("[.]jar[!].*", ".jar")
-                .replaceFirst("file:", "");
-
-            final JarFile jarFile;
-            try {
-                jarFile = new JarFile(jarPath);
-            } catch (IOException ex) {
-                throw new UnexpectedErrorException(ex);
-            }
-            final Enumeration<JarEntry> jarEntries = jarFile.entries();
-            while (jarEntries.hasMoreElements()) {
-                final JarEntry jarEntry = jarEntries.nextElement();
-                final String jarEntryName = jarEntry.getName();
-
-                if (jarEntryName.startsWith("themes")
-                        && jarEntryName.length() > "themes/".length()
-                        && jarEntryName.endsWith("/")) {
-                    themeDirs.add(jarEntryName);
-                }
-            }
-        }
-
-        return themeDirs
+        final Set<String> jsonThemes = reflections
+            .getResources(Pattern.compile(THEME_MANIFEST_JSON));
+        final Set<String> xmlThemes = reflections
+            .getResources(Pattern.compile(THEME_MANIFEST_XML));
+        final List<String> themes = new ArrayList<>();
+        themes.addAll(jsonThemes
             .stream()
-            .filter(dirPath -> isThemeDir(dirPath))
-            .map(dirPath -> loadThemeManifest(dirPath))
+            .filter(themePackage -> {
+                return themePackage
+                    .matches(THEMES_PACKAGE + "/([\\w\\d\\s\\.])*/theme.json");
+            })
+            //            .map(themePackage -> {
+            //                return themePackage
+            //                    .substring((THEMES_PACKAGE + "/").length(),
+            //                               ("/" + THEME_MANIFEST_JSON).length() - 1);
+            //            })
+            .collect(Collectors.toList()));
+        themes.addAll(xmlThemes
+            .stream()
+            .filter(themePackage -> {
+                return themePackage
+                    .matches(THEMES_PACKAGE + "/([\\w\\d\\s\\.])*/theme.xml");
+            })
+            //            .map(themePackage -> {
+            //                return themePackage
+            //                    .substring((THEMES_PACKAGE + "/").length(),
+            //                               ("/" + THEME_MANIFEST_XML).length() - 1);
+            //            })
+            .collect(Collectors.toList()));
+        Collections.sort(themes);
+
+        LOGGER.debug("Found static themes:");
+        themes.forEach(theme -> LOGGER.debug("\t{}", theme));
+
+        for (final String theme : themes) {
+            final InputStream inputStream = StaticThemeProvider.class
+                .getResourceAsStream(String.format("/%s", theme));
+            final ThemeManifest manifest = manifestUtil
+                .loadManifest(inputStream,
+                              theme);
+            LOGGER.debug("Got manifest: {}", Objects.toString(manifest));
+        }
+
+        return themes
+            .stream()
+            .map(theme -> loadThemeManifest(theme))
             .map(manifest -> generateThemeInfo(manifest))
             .collect(Collectors.toList());
+
     }
 
-    private boolean isThemeDir(final String dirPath) {
+//    private boolean isThemeDir(final String dirPath) {
+//
+//        Objects.requireNonNull(dirPath);
+//
+//        final URL manifestJsonUrl = StaticThemeProvider.class.getResource(
+//            String.format(THEME_MANIFEST_JSON_PATH, dirPath));
+//        final URL manifestXmlUrl = StaticThemeProvider.class.getResource(
+//            String.format(THEME_MANIFEST_XML_PATH, dirPath));
+//
+//        return (manifestJsonUrl != null) || (manifestXmlUrl != null);
+//    }
+    private ThemeManifest loadThemeManifest(final String manifestPath) {
 
-        Objects.requireNonNull(dirPath);
+        Objects.requireNonNull(manifestPath);
 
-        final URL manifestJsonUrl = StaticThemeProvider.class.getResource(
-            String.format(THEME_MANIFEST_JSON, dirPath));
-        final URL manifestXmlUrl = StaticThemeProvider.class.getResource(
-            String.format(THEME_MANIFEST_XML, dirPath));
-
-        return (manifestJsonUrl != null) || (manifestXmlUrl != null);
-    }
-
-    private ThemeManifest loadThemeManifest(final String dirPath) {
-
-        Objects.requireNonNull(dirPath);
-
-        final URL manifestJsonUrl = StaticThemeProvider.class.getResource(
-            String.format(THEME_MANIFEST_JSON, dirPath));
-        final URL manifestXmlUrl = StaticThemeProvider.class.getResource(
-            String.format(THEME_MANIFEST_XML, dirPath));
-
-        final URL manifestUrl;
-        if (manifestJsonUrl != null) {
-            manifestUrl = manifestJsonUrl;
-        } else if (manifestXmlUrl != null) {
-            manifestUrl = manifestXmlUrl;
+        final String pathToManifest;
+        if (manifestPath.startsWith("/")) {
+            pathToManifest = manifestPath;
         } else {
-            throw new IllegalArgumentException(String
-                .format("Path \"%s\" does not point to a valid theme manifest.",
-                        dirPath));
+            pathToManifest = String.format("/%s", manifestPath);
         }
 
-        final ThemeManifest themeManifest;
-        try (final InputStream inputStream = manifestUrl.openStream()) {
+        final ThemeManifest manifest;
+        try (final InputStream inputStream = StaticThemeProvider.class
+            .getResourceAsStream(pathToManifest)) {
 
-            themeManifest = manifestUtil.loadManifest(inputStream,
-                                                      manifestUrl.toString());
+            manifest = manifestUtil.loadManifest(inputStream, manifestPath);
 
         } catch (IOException ex) {
             throw new UnexpectedErrorException(ex);
         }
 
-        return themeManifest;
+        return manifest;
     }
 
     private ThemeInfo generateThemeInfo(final ThemeManifest manifest) {
@@ -206,12 +199,31 @@ public class StaticThemeProvider implements ThemeProvider {
 
         Objects.requireNonNull(theme);
 
-        if (isThemeDir(theme)) {
-            return Optional.of(generateThemeInfo(loadThemeManifest(theme)));
-        } else {
-            return Optional.empty();
+        final String manifestJsonPath = String.format("/" + THEMES_PACKAGE
+                                                          + "%s/"
+                                                          + THEME_MANIFEST_JSON,
+                                                      theme);
+        final String manifestXmlPath = String.format("/" + THEMES_PACKAGE
+                                                         + "%s/"
+                                                         + THEME_MANIFEST_XML,
+                                                     theme);
+
+        final URL manifestJsonUrl = StaticThemeProvider.class
+            .getResource(manifestJsonPath);
+        final URL manifestXmlUrl = StaticThemeProvider.class
+            .getResource(manifestXmlPath);
+
+        if (manifestJsonUrl != null) {
+            return Optional
+                .of(generateThemeInfo(loadThemeManifest(manifestJsonPath)));
         }
 
+        if (manifestXmlUrl != null) {
+            return Optional
+                .of(generateThemeInfo(loadThemeManifest(manifestXmlPath)));
+        }
+
+        return Optional.empty();
     }
 
     @Override
@@ -220,8 +232,21 @@ public class StaticThemeProvider implements ThemeProvider {
 
         Objects.requireNonNull(theme);
 
-        return isThemeDir(theme);
+        final String manifestJsonPath = String.format("/" + THEMES_PACKAGE
+                                                          + "%s/"
+                                                          + THEME_MANIFEST_JSON,
+                                                      theme);
+        final String manifestXmlPath = String.format("/" + THEMES_PACKAGE
+                                                         + "%s/"
+                                                         + THEME_MANIFEST_XML,
+                                                     theme);
 
+        final URL manifestJsonUrl = StaticThemeProvider.class
+            .getResource(manifestJsonPath);
+        final URL manifestXmlUrl = StaticThemeProvider.class
+            .getResource(manifestXmlPath);
+
+        return manifestJsonUrl != null || manifestXmlUrl != null;
     }
 
     @Override
