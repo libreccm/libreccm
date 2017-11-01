@@ -100,16 +100,14 @@ public class SitesForm extends Form {
         domainOfSiteField.setLabel(new GlobalizedMessage(
             "ui.admin.sites.domain_of_site",
             ADMIN_BUNDLE));
-        domainOfSiteField
-            .addValidationListener(new NotEmptyValidationListener());
         super.add(domainOfSiteField);
 
         defaultSiteCheckbox = new CheckboxGroup(DEFAULT_SITE);
-        defaultSiteCheckbox.addOption(new Option("isDefault",
-                                                 new Label(
-                                                     new GlobalizedMessage(
-                                                         "ui.admin.sites.is_default_site",
-                                                         ADMIN_BUNDLE))));
+        defaultSiteCheckbox
+            .addOption(new Option("isDefault",
+                                  new Label(new GlobalizedMessage(
+                                      "ui.admin.sites.is_default_site",
+                                      ADMIN_BUNDLE))));
         super.add(defaultSiteCheckbox);
 
         defaultThemeSelect = new SingleSelect(THEME_SELECT);
@@ -157,6 +155,17 @@ public class SitesForm extends Form {
 
                 final String domainOfSite = data.getString(DOMAIN_OF_SITE);
 
+                if (domainOfSite == null
+                        || domainOfSite.isEmpty()
+                        || domainOfSite.matches("\\s*")) {
+
+                    data.addError(
+                        DOMAIN_OF_SITE,
+                        new GlobalizedMessage(
+                            "ui.admin.sites.domain_of_site.error.empty",
+                            ADMIN_BUNDLE));
+                }
+
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final SitesController controller = cdiUtil
                     .findBean(SitesController.class);
@@ -164,7 +173,7 @@ public class SitesForm extends Form {
                     data.addError(
                         DOMAIN_OF_SITE,
                         new GlobalizedMessage(
-                            "ui.admin.sites.domain_of_site.error.not:unique",
+                            "ui.admin.sites.domain_of_site.error.not_unique",
                             ADMIN_BUNDLE));
                 }
             }
@@ -232,7 +241,11 @@ public class SitesForm extends Form {
                 if (selectedSiteIdStr == null || selectedSiteIdStr.isEmpty()) {
                     site = new Site();
                     site.setDomainOfSite(domainOfSite);
-                    site.setDefaultSite(defaultSite[0]);
+                    if (defaultSite == null || defaultSite.length == 0) {
+                        site.setDefaultSite(false);
+                    } else {
+                        site.setDefaultSite(defaultSite[0]);
+                    }
                     site.setDefaultTheme(defaultTheme);
                 } else {
                     site = siteRepo

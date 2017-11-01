@@ -211,7 +211,7 @@ public class SitesTable extends Table {
 
             switch (columnIndex) {
                 case COL_SITE_DOMAIN:
-                    return currentRow.getSiteId();
+                    return currentRow.getDomainOfSite();
                 case COL_IS_DEFAULT_SITE:
                     return currentRow.isDefaultSite();
                 case COL_DEFAULT_THEME:
