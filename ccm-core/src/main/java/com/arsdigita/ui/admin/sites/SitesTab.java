@@ -36,6 +36,7 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
 public class SitesTab extends LayoutPanel {
 
     private final ParameterSingleSelectionModel<String> selectedSiteId;
+    private final ActionLink addNewSite;
     private final SitesTable sitesTable;
     private final SitesForm sitesForm;
 
@@ -52,7 +53,7 @@ public class SitesTab extends LayoutPanel {
         sitesTable = new SitesTable(this, selectedSiteId);
         sitesForm = new SitesForm(this, selectedSiteId);
 
-        final ActionLink addNewSite = new ActionLink(new GlobalizedMessage(
+        addNewSite = new ActionLink(new GlobalizedMessage(
             "ui.admin.sites.add_new_site_link",
             ADMIN_BUNDLE));
         addNewSite
@@ -76,16 +77,19 @@ public class SitesTab extends LayoutPanel {
 
         page.addGlobalStateParam(selectedSiteId.getStateParameter());
 
+        page.setVisibleDefault(addNewSite, true);
         page.setVisibleDefault(sitesTable, true);
         page.setVisibleDefault(sitesForm, false);
     }
 
     protected void showSiteForm(final PageState state) {
+        addNewSite.setVisible(state, false);
         sitesTable.setVisible(state, false);
         sitesForm.setVisible(state, true);
     }
 
     protected void hideSiteForm(final PageState state) {
+        addNewSite.setVisible(state, true);
         sitesTable.setVisible(state, true);
         sitesForm.setVisible(state, false);
     }

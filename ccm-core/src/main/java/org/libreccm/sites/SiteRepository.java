@@ -23,6 +23,7 @@ import org.libreccm.core.CoreConstants;
 import org.libreccm.security.RequiresPrivilege;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
@@ -75,6 +76,7 @@ public class SiteRepository extends AbstractEntityRepository<Long, Site> {
     }
 
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void save(final Site site) {
         super.save(site);
@@ -94,6 +96,11 @@ public class SiteRepository extends AbstractEntityRepository<Long, Site> {
     @Override
     public boolean isNew(final Site site) {
         return site.getObjectId() == 0;
+    }
+    
+    @Override
+    public void initNewEntity(final Site site) {
+        site.setUuid(UUID.randomUUID().toString());
     }
 
 }

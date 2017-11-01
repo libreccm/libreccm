@@ -65,7 +65,7 @@ class SitesController implements Serializable {
     @Transactional(Transactional.TxType.REQUIRED)
     protected boolean isUnique(final String domainOfSite) {
 
-        return sitesRepo.findByDomain(domainOfSite).isPresent();
+        return !sitesRepo.findByDomain(domainOfSite).isPresent();
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
