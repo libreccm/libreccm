@@ -71,23 +71,28 @@ public class SitesTable extends Table {
         columnModel.add(new TableColumn(
             COL_SITE_DOMAIN,
             new Label(new GlobalizedMessage(
-                "ui.admin.sites.table.columns.domain.header"))));
+                "ui.admin.sites.table.columns.domain.header",
+                ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
             COL_IS_DEFAULT_SITE,
             new Label(new GlobalizedMessage(
-                "ui.admin.sites.table.columns.default_site.header"))));
+                "ui.admin.sites.table.columns.default_site.header",
+                ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
             COL_DEFAULT_THEME,
             new Label(new GlobalizedMessage(
-                "ui.admin.sites.table.columns.default_theme.header"))));
+                "ui.admin.sites.table.columns.default_theme.header",
+                ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
             COL_APPLICATIONS,
             new Label(new GlobalizedMessage(
-                "ui.admin.sites.table.columns.applications.header"))));
+                "ui.admin.sites.table.columns.applications.header",
+                ADMIN_BUNDLE))));
         columnModel.add(new TableColumn(
-            COL_APPLICATIONS,
+            COL_REMOVE,
             new Label(new GlobalizedMessage(
-                "ui.admin.sites.table.columns.delete.header"))));
+                "ui.admin.sites.table.columns.delete.header",
+                ADMIN_BUNDLE))));
 
         columnModel
             .get(COL_SITE_DOMAIN)
