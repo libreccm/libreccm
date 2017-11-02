@@ -112,6 +112,9 @@ public class SitesForm extends Form {
         super.add(defaultSiteCheckbox);
 
         defaultThemeSelect = new SingleSelect(THEME_SELECT);
+        defaultThemeSelect.setLabel(new GlobalizedMessage(
+            "ui.admin.sites.default_theme",
+            ADMIN_BUNDLE));
         try {
             defaultThemeSelect.addPrintListener(event -> {
 

@@ -16,41 +16,47 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.ui.admin.sites;
+package org.libreccm.admin.ui;
 
+import com.vaadin.cdi.ViewScoped;
 import org.libreccm.sites.Site;
 import org.libreccm.sites.SiteRepository;
+import org.libreccm.theming.Themes;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.stream.Collectors;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@RequestScoped
+@ViewScoped
 class SitesController implements Serializable {
 
-    private static final long serialVersionUID = -7758130361475180380L;
+    private static final long serialVersionUID = 112502641827852807L;
 
     @Inject
-    private SiteRepository sitesRepo;
+    private SiteRepository siteRepository;
 
-    @Transactional(Transactional.TxType.REQUIRED)
-    protected List<SitesTableRow> findSites() {
+    @Inject
+    private SitesTableDataProvider sitesTableDataProvider;
 
-        return sitesRepo
-            .findAll()
-            .stream()
-            .map(this::buildRow)
-            .sorted()
-            .collect(Collectors.toList());
+    @Inject
+    private Themes themes;
 
+    protected SitesTableDataProvider getSitesTableDataProvider() {
+        return sitesTableDataProvider;
+    }
+
+    protected Themes getThemes() {
+        return themes;
+    }
+
+    protected SiteRepository getSiteRepository() {
+        return siteRepository;
     }
 
     /**
@@ -64,40 +70,18 @@ class SitesController implements Serializable {
     @Transactional(Transactional.TxType.REQUIRED)
     protected boolean isUnique(final String domainOfSite) {
 
-        return !sitesRepo.findByDomain(domainOfSite).isPresent();
+        return !siteRepository.findByDomain(domainOfSite).isPresent();
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    protected void deleteSite(final long siteId) {
-
-        final Site site = sitesRepo
+    protected void delete(final long siteId) {
+        final Site site = siteRepository
             .findById(siteId)
             .orElseThrow(() -> new IllegalArgumentException(String
-            .format("No Site with ID %d in the database.",
+            .format("No site with ID %d in the database.",
                     siteId)));
-
-        sitesRepo.delete(site);
-    }
-
-    private SitesTableRow buildRow(final Site site) {
-
-        final SitesTableRow row = new SitesTableRow();
-
-        row.setSiteId(Long.toString(site.getObjectId()));
-        row.setDomainOfSite(site.getDomainOfSite());
-        row.setDefaultSite(site.isDefaultSite());
-        row.setDefaultTheme(site.getDefaultTheme());
-        row.setDeletable(site.getApplications().isEmpty());
-
-        final List<String> applications = site
-            .getApplications()
-            .stream()
-            .map(application -> application.getPrimaryUrl())
-            .collect(Collectors.toList());
-
-        row.setApplications(applications);
-
-        return row;
+        siteRepository.delete(site);
+        sitesTableDataProvider.refreshAll();
     }
 
 }
