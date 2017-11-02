@@ -34,7 +34,6 @@ import com.arsdigita.bebop.form.CheckboxGroup;
 import com.arsdigita.bebop.form.Option;
 import com.arsdigita.bebop.form.SingleSelect;
 import com.arsdigita.bebop.form.TextField;
-import com.arsdigita.bebop.parameters.NotEmptyValidationListener;
 import com.arsdigita.globalization.GlobalizedMessage;
 
 import org.libreccm.cdi.utils.CdiUtil;
@@ -58,6 +57,8 @@ public class SitesForm extends Form {
     private static final String DOMAIN_OF_SITE = "domainOfSite";
     private static final String DEFAULT_SITE = "defaultSite";
     private static final String THEME_SELECT = "themeSelect";
+
+    private static final String IS_DEFAULT = "isDefault";
 
     private final SitesTab sitesTab;
     private final ParameterSingleSelectionModel<String> selectedSiteId;
@@ -104,7 +105,7 @@ public class SitesForm extends Form {
 
         defaultSiteCheckbox = new CheckboxGroup(DEFAULT_SITE);
         defaultSiteCheckbox
-            .addOption(new Option("isDefault",
+            .addOption(new Option(IS_DEFAULT,
                                   new Label(new GlobalizedMessage(
                                       "ui.admin.sites.is_default_site",
                                       ADMIN_BUNDLE))));
@@ -152,29 +153,51 @@ public class SitesForm extends Form {
             if (saveCancelSection.getSaveButton().isSelected(state)) {
 
                 final FormData data = event.getFormData();
-
                 final String domainOfSite = data.getString(DOMAIN_OF_SITE);
 
-                if (domainOfSite == null
-                        || domainOfSite.isEmpty()
-                        || domainOfSite.matches("\\s*")) {
+                final String selectedSiteIdStr = selectedSiteId
+                    .getSelectedKey(state);
+                final boolean domainEditedOrNewSite;
 
-                    data.addError(
-                        DOMAIN_OF_SITE,
-                        new GlobalizedMessage(
-                            "ui.admin.sites.domain_of_site.error.empty",
-                            ADMIN_BUNDLE));
+                if (selectedSiteIdStr == null || selectedSiteIdStr.isEmpty()) {
+                    domainEditedOrNewSite = true;
+                } else {
+                    final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                    final SiteRepository siteRepo = cdiUtil
+                        .findBean(SiteRepository.class);
+                    final Site site = siteRepo
+                        .findById(Long.parseLong(selectedSiteIdStr))
+                        .orElseThrow(() -> new IllegalArgumentException(String
+                        .format("No Site with ID %s in in the database.",
+                                selectedSiteIdStr)));
+
+                    domainEditedOrNewSite = !site
+                        .getDomainOfSite()
+                        .equals(domainOfSite);
                 }
 
-                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final SitesController controller = cdiUtil
-                    .findBean(SitesController.class);
-                if (!controller.isUnique(domainOfSite)) {
-                    data.addError(
-                        DOMAIN_OF_SITE,
-                        new GlobalizedMessage(
-                            "ui.admin.sites.domain_of_site.error.not_unique",
-                            ADMIN_BUNDLE));
+                if (domainEditedOrNewSite) {
+                    if (domainOfSite == null
+                            || domainOfSite.isEmpty()
+                            || domainOfSite.matches("\\s*")) {
+
+                        data.addError(
+                            DOMAIN_OF_SITE,
+                            new GlobalizedMessage(
+                                "ui.admin.sites.domain_of_site.error.empty",
+                                ADMIN_BUNDLE));
+                    }
+
+                    final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                    final SitesController controller = cdiUtil
+                        .findBean(SitesController.class);
+                    if (!controller.isUnique(domainOfSite)) {
+                        data.addError(
+                            DOMAIN_OF_SITE,
+                            new GlobalizedMessage(
+                                "ui.admin.sites.domain_of_site.error.not_unique",
+                                ADMIN_BUNDLE));
+                    }
                 }
             }
         }
@@ -205,8 +228,10 @@ public class SitesForm extends Form {
                             selectedSiteIdStr)));
 
                 domainOfSiteField.setValue(state, site.getDomainOfSite());
-                defaultSiteCheckbox
-                    .setValue(state, new Boolean[]{site.isDefaultSite()});
+                if (site.isDefaultSite()) {
+                    defaultSiteCheckbox.setValue(state,
+                                                 new String[]{IS_DEFAULT});
+                }
                 defaultThemeSelect.setValue(state, site.getDefaultTheme());
             }
         }
@@ -226,8 +251,8 @@ public class SitesForm extends Form {
                 final FormData data = event.getFormData();
 
                 final String domainOfSite = data.getString(DOMAIN_OF_SITE);
-                final Boolean[] defaultSite = ((Boolean[]) data
-                                               .get(DEFAULT_SITE));
+                final String[] defaultSite = ((String[]) data
+                                              .get(DEFAULT_SITE));
                 final String defaultTheme = data.getString(THEME_SELECT);
 
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
@@ -240,13 +265,6 @@ public class SitesForm extends Form {
                 final Site site;
                 if (selectedSiteIdStr == null || selectedSiteIdStr.isEmpty()) {
                     site = new Site();
-                    site.setDomainOfSite(domainOfSite);
-                    if (defaultSite == null || defaultSite.length == 0) {
-                        site.setDefaultSite(false);
-                    } else {
-                        site.setDefaultSite(defaultSite[0]);
-                    }
-                    site.setDefaultTheme(defaultTheme);
                 } else {
                     site = siteRepo
                         .findById(Long.parseLong(selectedSiteIdStr))
@@ -254,9 +272,17 @@ public class SitesForm extends Form {
                         .format("No Site with ID %s in in the database.",
                                 selectedSiteIdStr)));
                 }
+                site.setDomainOfSite(domainOfSite);
+                if (defaultSite == null || defaultSite.length == 0) {
+                    site.setDefaultSite(false);
+                } else {
+                    site.setDefaultSite(defaultSite[0].equals(IS_DEFAULT));
+                }
+                site.setDefaultTheme(defaultTheme);
                 siteRepo.save(site);
             }
 
+            selectedSiteId.clearSelection(state);
             sitesTab.hideSiteForm(state);
         }
 

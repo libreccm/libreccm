@@ -20,11 +20,9 @@ package com.arsdigita.ui.admin.sites;
 
 import org.libreccm.sites.Site;
 import org.libreccm.sites.SiteRepository;
-import org.libreccm.web.CcmApplication;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
