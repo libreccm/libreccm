@@ -54,6 +54,8 @@ class SystemInformationTab extends CustomComponent {
 
     protected SystemInformationTab(final AdminViewController controller) {
 
+        super();
+        
         final LocalizedTextsUtil adminTextsUtil = controller
             .getGlobalizationHelper()
             .getLocalizedTextsUtil(AdminUiConstants.ADMIN_BUNDLE);

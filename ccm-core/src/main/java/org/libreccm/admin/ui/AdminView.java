@@ -56,7 +56,7 @@ public class AdminView extends CustomComponent implements View {
     private final JpqlConsole jpqlConsole;
 
     private final ConfigurationTab configurationTab;
-    
+
     private final SystemInformationTab sysInfoTab;
 
     @Inject
@@ -75,7 +75,7 @@ public class AdminView extends CustomComponent implements View {
         tabUsersGroupsRoles = tabSheet
             .addTab(usersGroupsRoles,
                     bundle.getString("ui.admin.tab.users_groups_roles.title"));
-        
+
         final ServletContext servletContext = VaadinServlet
             .getCurrent()
             .getServletContext();
@@ -86,12 +86,15 @@ public class AdminView extends CustomComponent implements View {
             jpqlConsole = null;
         }
 
+        final SitesTab sitesTab = new SitesTab(controller);
+        tabSheet.addTab(sitesTab, "Sites");
+
         configurationTab = new ConfigurationTab();
         tabSheet.addTab(configurationTab, "Configuration");
 
         sysInfoTab = new SystemInformationTab(controller);
         tabSheet.addTab(sysInfoTab, "System Information");
-        
+
         final CssLayout footer = new CssLayout();
         footer.setHeight("5em");
 
@@ -104,7 +107,4 @@ public class AdminView extends CustomComponent implements View {
         super.setCompositionRoot(viewLayout);
     }
 
-    
-
-    
 }
