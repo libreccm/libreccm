@@ -43,7 +43,9 @@ import javax.persistence.Table;
 @NamedQueries({
     @NamedQuery(
         name = "Site.findByDomain",
-        query = "SELECT s FROM Site s WHERE s.domainOfSite = :domain"
+        query = "SELECT s FROM Site s "
+                    + "WHERE s.domainOfSite = :domain "
+                    + "ORDER BY s.domainOfSite"
     )
     ,
     @NamedQuery(
@@ -72,12 +74,12 @@ public class Site extends CcmObject {
 
     @OneToMany(mappedBy = "site")
     private List<SiteAwareApplication> applications;
-    
+
     public Site() {
         super();
         applications = new ArrayList<>();
     }
-    
+
     public String getDomainOfSite() {
         return domainOfSite;
     }
@@ -101,11 +103,11 @@ public class Site extends CcmObject {
     public void setDefaultTheme(final String defaultTheme) {
         this.defaultTheme = defaultTheme;
     }
-    
+
     public List<SiteAwareApplication> getApplications() {
         return Collections.unmodifiableList(applications);
     }
-    
+
     protected void setApplications(final List<SiteAwareApplication> applications) {
         this.applications = new ArrayList<>(applications);
     }
@@ -113,11 +115,11 @@ public class Site extends CcmObject {
     protected void addApplication(final SiteAwareApplication application) {
         applications.add(application);
     }
-    
+
     protected void removeApplication(final SiteAwareApplication application) {
         applications.remove(application);
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 3;
@@ -147,7 +149,7 @@ public class Site extends CcmObject {
         if (!other.canEqual(this)) {
             return false;
         }
-        
+
         if (defaultSite != other.isDefaultSite()) {
             return false;
         }

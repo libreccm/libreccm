@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.ui.admin.sites;
+package org.libreccm.admin.ui;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,12 +27,12 @@ import java.util.List;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-class SitesTableRow implements Comparable<SitesTableRow>, Serializable {
+public class SitesTableRowData implements Comparable<SitesTableRowData>, Serializable {
 
-    private static final long serialVersionUID = -8913595737414248135L;
-    
-    private String siteId;
-    
+    private static final long serialVersionUID = 4023882563583816258L;
+
+    private long siteId;
+
     private String domainOfSite;
 
     private boolean defaultSite;
@@ -43,18 +43,18 @@ class SitesTableRow implements Comparable<SitesTableRow>, Serializable {
 
     private List<String> applications;
 
-    protected SitesTableRow() {
+    protected SitesTableRowData() {
         applications = new ArrayList<>();
     }
-    
-    public String getSiteId() {
+
+    public long getSiteId() {
         return siteId;
     }
-    
-    public void setSiteId(final String siteId) {
+
+    public void setSiteId(final long siteId) {
         this.siteId = siteId;
     }
-    
+
     public String getDomainOfSite() {
         return domainOfSite;
     }
@@ -94,13 +94,13 @@ class SitesTableRow implements Comparable<SitesTableRow>, Serializable {
     protected void setApplications(final List<String> applications) {
         this.applications = new ArrayList<>(applications);
     }
-    
+
     protected void addApplication(final String application) {
         applications.add(application);
     }
-    
+
     @Override
-    public int compareTo(final SitesTableRow other) {
+    public int compareTo(final SitesTableRowData other) {
         return domainOfSite.compareTo(other.getDomainOfSite());
     }
 

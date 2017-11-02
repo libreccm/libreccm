@@ -46,6 +46,9 @@ class AdminViewController implements Serializable {
     private JpqlConsoleController jpqlConsoleController;
 
     @Inject
+    private SitesController sitesController;
+
+    @Inject
     private UsersGroupsRolesController usersGroupsRolesController;
 
     protected AdminViewController() {
@@ -62,6 +65,10 @@ class AdminViewController implements Serializable {
 
     protected JpqlConsoleController getJpqlConsoleController() {
         return jpqlConsoleController;
+    }
+
+    protected SitesController getSitesController() {
+        return sitesController;
     }
 
     protected UsersGroupsRolesController getUsersGroupsRolesController() {
