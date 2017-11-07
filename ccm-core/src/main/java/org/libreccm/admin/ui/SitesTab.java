@@ -27,11 +27,11 @@ import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
-import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.LocalizedTextsUtil;
 import org.libreccm.sites.Site;
 import org.libreccm.ui.ConfirmDialog;
@@ -115,9 +115,10 @@ class SitesTab extends CustomComponent {
         sitesGrid
             .addComponentColumn(row -> {
                 if (row.isDeletable()) {
-                    final Button deleteButton = new Button(adminTextsUtil
-                        .getText("ui.admin.sites.table.buttons.delete"),
-                                                           VaadinIcons.EDIT);
+                    final Button deleteButton = new Button(
+                        adminTextsUtil
+                            .getText("ui.admin.sites.table.buttons.delete"),
+                        VaadinIcons.MINUS_CIRCLE_O);
                     deleteButton.addClickListener(event -> {
 
                         final ConfirmDialog dialog = new ConfirmDialog(() -> {
@@ -125,8 +126,18 @@ class SitesTab extends CustomComponent {
                                 .getSitesController()
                                 .delete(row.getSiteId());
 
+                            Notification.show(adminTextsUtil
+                                .getText("ui.admin.sites.site_deleted",
+                                         new Object[]{row.getDomainOfSite()}),
+                                              Notification.Type.TRAY_NOTIFICATION);
                             return null;
                         });
+                        dialog.setMessage(adminTextsUtil
+                            .getText("ui.admin.sites.site_delete.confirm",
+                                     new Object[]{row.getDomainOfSite()}));
+                        dialog.setModal(true);
+                        dialog.center();
+                        UI.getCurrent().addWindow(dialog);
                     });
                     deleteButton.addStyleNames(ValoTheme.BUTTON_TINY,
                                                ValoTheme.BUTTON_DANGER);
