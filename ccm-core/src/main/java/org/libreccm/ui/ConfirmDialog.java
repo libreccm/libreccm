@@ -47,7 +47,6 @@ public class ConfirmDialog extends Window {
         
         this.confirmedAction = confirmedAction;
         this.cancelAction = () -> {
-            close();
             return null;
         };
         addWidgets();
@@ -70,6 +69,7 @@ public class ConfirmDialog extends Window {
         confirmButton.addClickListener(event -> {
             try {
                 confirmedAction.call();
+                close();
             } catch (Exception ex) {
                 throw new UnexpectedErrorException(ex);
             }
@@ -79,6 +79,7 @@ public class ConfirmDialog extends Window {
         cancelButton.addClickListener(event -> {
             try {
                 cancelAction.call();
+                close();
             } catch (Exception ex) {
                 throw new UnexpectedErrorException(ex);
             }
