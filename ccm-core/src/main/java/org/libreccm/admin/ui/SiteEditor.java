@@ -26,14 +26,18 @@ import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.NativeSelect;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
 import org.libreccm.l10n.LocalizedTextsUtil;
 import org.libreccm.sites.Site;
 import org.libreccm.theming.ThemeInfo;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -47,12 +51,14 @@ class SiteEditor extends Window {
     private final Site site;
     private final AdminViewController controller;
 
+    private final boolean isNewSite;
     private boolean dataHasChanged = false;
 
     public SiteEditor(final AdminViewController controller) {
         super();
 
-        this.site = null;
+        this.site = new Site();
+        isNewSite = true;
         this.controller = controller;
 
         addWidgets();
@@ -63,6 +69,7 @@ class SiteEditor extends Window {
         super();
 
         this.site = site;
+        isNewSite = false;
         this.controller = controller;
 
         addWidgets();
@@ -82,12 +89,14 @@ class SiteEditor extends Window {
 
         final TextField domainOfSiteField = new TextField(
             adminTextsUtil.getText("ui.admin.sites.domain_of_site"));
+        domainOfSiteField.setValue(site.getDomainOfSite());
         domainOfSiteField.addValueChangeListener(event -> {
             dataHasChanged = true;
         });
 
         final CheckBox isDefaultSiteCheckBox = new CheckBox(
             adminTextsUtil.getText("ui.admin.sites.is_default_site"));
+        isDefaultSiteCheckBox.setValue(site.isDefaultSite());
         isDefaultSiteCheckBox.addValueChangeListener(event -> {
             dataHasChanged = true;
         });
@@ -102,6 +111,7 @@ class SiteEditor extends Window {
 
         final NativeSelect<String> defaultThemeSelect = new NativeSelect<>(
             adminTextsUtil.getText("ui.admin.sites.default_theme"), themes);
+        defaultThemeSelect.setValue(site.getDefaultTheme());
         defaultThemeSelect.addValueChangeListener(event -> {
             dataHasChanged = true;
         });
@@ -114,6 +124,7 @@ class SiteEditor extends Window {
             saveButton.setCaption(adminTextsUtil.getText(
                 "ui.admin.sites.buttons.save.changed"));
         }
+        saveButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
         saveButton.addClickListener(event -> {
             if (dataHasChanged) {
 
@@ -127,18 +138,20 @@ class SiteEditor extends Window {
                             "ui.admin.sites.domain_of_site.error.empty")));
                     return;
                 }
-                
-                if (!controller.getSitesController().isUnique(domainOfSite)) {
+
+                if (!controller.getSitesController().isUnique(domainOfSite)
+                        && (!Objects.equals(site.getDomainOfSite(),
+                                            domainOfSiteField.getValue()))) {
                     domainOfSiteField.setComponentError(new UserError(
                         adminTextsUtil.getText(
                             "ui.admin.sites.domain_of_site.error.not_unique")));
                     return;
                 }
-                
+
                 site.setDomainOfSite(domainOfSite);
                 site.setDefaultSite(isDefaultSiteCheckBox.getValue());
                 site.setDefaultTheme(defaultThemeSelect.getValue());
-                
+
                 controller
                     .getSitesController()
                     .getSiteRepository()
@@ -148,6 +161,17 @@ class SiteEditor extends Window {
                     .getSitesTableDataProvider()
                     .refreshAll();
                 close();
+                if (isNewSite) {
+                    Notification.show(adminTextsUtil
+                        .getText("ui.admin.sites.created_new_site",
+                                 new Object[]{domainOfSite}),
+                                      Notification.Type.TRAY_NOTIFICATION);
+                } else {
+                    Notification.show(adminTextsUtil
+                        .getText("ui.admin.sites.save_changes",
+                                 new Object[]{domainOfSite}),
+                                      Notification.Type.TRAY_NOTIFICATION);
+                }
             }
         });
 
