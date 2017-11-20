@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.ui.admin.sites;
+package com.arsdigita.ui.admin.pagemodels;
 
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.ControlLink;
@@ -34,6 +34,7 @@ import com.arsdigita.bebop.table.TableColumnModel;
 import com.arsdigita.bebop.table.TableModel;
 import com.arsdigita.bebop.table.TableModelBuilder;
 import com.arsdigita.globalization.GlobalizedMessage;
+import com.arsdigita.ui.admin.AdminUiConstants;
 import com.arsdigita.util.LockableImpl;
 
 import org.libreccm.cdi.utils.CdiUtil;
@@ -41,61 +42,65 @@ import org.libreccm.cdi.utils.CdiUtil;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.arsdigita.ui.admin.AdminUiConstants.*;
-
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-class SitesTable extends Table {
+class PageModelsTable extends Table {
 
-    public static final int COL_SITE_DOMAIN = 0;
-    public static final int COL_IS_DEFAULT_SITE = 1;
-    public static final int COL_DEFAULT_THEME = 2;
-    public static final int COL_APPLICATIONS = 3;
+    public static final int COL_MODEL_APPLICATION = 0;
+    public static final int COL_MODEL_NAME = 1;
+    public static final int COL_MODEL_TITLE = 2;
+    public static final int COL_MODEL_DESC = 3;
     public static final int COL_REMOVE = 4;
 
-    public SitesTable(
-        final SitesTab parent,
-        final ParameterSingleSelectionModel<String> selectedSiteId) {
+    public PageModelsTable(
+        final PageModelTab parent,
+        final ParameterSingleSelectionModel<String> selectedPageModelId) {
 
         super();
 
-        super.setIdAttr("sitesTable");
-        super.setStyleAttr("width: 30em");
+        super.setIdAttr("pageModelsTable");
+        super.setStyleAttr("wdith: 30em");
 
-        setEmptyView(new Label(new GlobalizedMessage("ui.admin.sites.no_sites",
-                                                     ADMIN_BUNDLE)));
+        setEmptyView(new Label(
+            new GlobalizedMessage("ui.admin.pagemodels.table.empty_view",
+                                  AdminUiConstants.ADMIN_BUNDLE)));
 
         final TableColumnModel columnModel = getColumnModel();
         columnModel.add(new TableColumn(
-            COL_SITE_DOMAIN,
+            COL_MODEL_APPLICATION,
             new Label(new GlobalizedMessage(
-                "ui.admin.sites.table.columns.domain.header",
-                ADMIN_BUNDLE))));
+                "ui.admin.pagemodels.table.columns.headers.application",
+                AdminUiConstants.ADMIN_BUNDLE))
+        ));
         columnModel.add(new TableColumn(
-            COL_IS_DEFAULT_SITE,
+            COL_MODEL_NAME,
             new Label(new GlobalizedMessage(
-                "ui.admin.sites.table.columns.default_site.header",
-                ADMIN_BUNDLE))));
+                "ui.admin.pagemodels.table.columns.headers.name",
+                AdminUiConstants.ADMIN_BUNDLE))
+        ));
         columnModel.add(new TableColumn(
-            COL_DEFAULT_THEME,
+            COL_MODEL_TITLE,
             new Label(new GlobalizedMessage(
-                "ui.admin.sites.table.columns.default_theme.header",
-                ADMIN_BUNDLE))));
+                "ui.admin.pagemodels.table.columns.headers.title",
+                AdminUiConstants.ADMIN_BUNDLE))
+        ));
         columnModel.add(new TableColumn(
-            COL_APPLICATIONS,
+            COL_MODEL_DESC,
             new Label(new GlobalizedMessage(
-                "ui.admin.sites.table.columns.applications.header",
-                ADMIN_BUNDLE))));
+                "ui.admin.pagemodels.table.columns.headers.desc",
+                AdminUiConstants.ADMIN_BUNDLE))
+        ));
         columnModel.add(new TableColumn(
             COL_REMOVE,
             new Label(new GlobalizedMessage(
-                "ui.admin.sites.table.columns.delete.header",
-                ADMIN_BUNDLE))));
+                "ui.admin.pagemodels.table.columns.headers.remove",
+                AdminUiConstants.ADMIN_BUNDLE))
+        ));
 
         columnModel
-            .get(COL_SITE_DOMAIN)
+            .get(COL_MODEL_NAME)
             .setCellRenderer(new TableCellRenderer() {
 
                 @Override
@@ -112,28 +117,32 @@ class SitesTable extends Table {
 
             });
 
-        columnModel.get(COL_REMOVE).setCellRenderer(new TableCellRenderer() {
+        columnModel
+            .get(COL_REMOVE)
+            .setCellRenderer(new TableCellRenderer() {
 
-            @Override
-            public Component getComponent(final Table table,
-                                          final PageState state,
-                                          final Object value,
-                                          final boolean isSelected,
-                                          final Object key,
-                                          final int row,
-                                          final int column) {
+                @Override
+                public Component getComponent(final Table table,
+                                              final PageState state,
+                                              final Object value,
+                                              final boolean isSelected,
+                                              final Object key,
+                                              final int row,
+                                              final int column) {
 
-                if (value == null) {
-                    return new Text("");
-                } else {
-                    final ControlLink link = new ControlLink((Component) value);
-                    link.setConfirmation(new GlobalizedMessage(
-                        "ui.admin.sites.delete.confirm", ADMIN_BUNDLE));
-                    return link;
+                    if (value == null) {
+                        return new Text("");
+                    } else {
+                        final ControlLink link = new ControlLink(
+                            (Component) value);
+                        link.setConfirmation(new GlobalizedMessage(
+                            "ui.admin.pagemodels.delete.confirm",
+                            AdminUiConstants.ADMIN_BUNDLE));
+                        return link;
+                    }
                 }
-            }
 
-        });
+            });
 
         super.addTableActionListener(new TableActionListener() {
 
@@ -145,54 +154,57 @@ class SitesTable extends Table {
                 final String key = (String) event.getRowKey();
 
                 switch (event.getColumn()) {
-                    case COL_SITE_DOMAIN:
-                        selectedSiteId.setSelectedKey(state, key);
-                        parent.showSiteForm(state);
+                    case COL_MODEL_NAME:
+                        selectedPageModelId.setSelectedKey(state, key);
+                        parent.showPageModelDetails(state);
                         break;
                     case COL_REMOVE:
                         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                        final SitesController controller = cdiUtil
-                            .findBean(SitesController.class);
-                        controller.deleteSite(Long.parseLong(key));
+                        final PageModelsController controller = cdiUtil
+                            .findBean(PageModelsController.class);
+                        controller.deletePageModel(Long.parseLong(key));
                         break;
                     default:
                         throw new IllegalArgumentException(
                             "Invalid value for column.");
                 }
+
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
 
             @Override
             public void headSelected(final TableActionEvent event) {
 
-                //Nothing
+                // Nothing
             }
 
         });
 
-        super.setModelBuilder(new SitesTableModelBuilder());
+        super.setModelBuilder(new PageModelsTableModelBuilder());
     }
 
-    private class SitesTableModelBuilder
+    private class PageModelsTableModelBuilder
         extends LockableImpl
         implements TableModelBuilder {
 
         @Override
         public TableModel makeModel(final Table table,
                                     final PageState state) {
+
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final SitesController controller = cdiUtil
-                .findBean(SitesController.class);
-            return new SitesTableModel(controller.findSites());
+            final PageModelsController controller = cdiUtil
+                .findBean(PageModelsController.class);
+            return new PageModelsTableModel(controller.findPageModels());
         }
 
     }
 
-    private class SitesTableModel implements TableModel {
+    private class PageModelsTableModel implements TableModel {
 
-        private final Iterator<SitesTableRow> iterator;
-        private SitesTableRow currentRow;
+        private final Iterator<PageModelsTableRow> iterator;
+        private PageModelsTableRow currentRow;
 
-        public SitesTableModel(final List<SitesTableRow> rows) {
+        public PageModelsTableModel(final List<PageModelsTableRow> rows) {
             iterator = rows.iterator();
         }
 
@@ -203,6 +215,7 @@ class SitesTable extends Table {
 
         @Override
         public boolean nextRow() {
+
             if (iterator.hasNext()) {
                 currentRow = iterator.next();
                 return true;
@@ -215,36 +228,27 @@ class SitesTable extends Table {
         public Object getElementAt(final int columnIndex) {
 
             switch (columnIndex) {
-                case COL_SITE_DOMAIN:
-                    return currentRow.getDomainOfSite();
-                case COL_IS_DEFAULT_SITE:
-                    return currentRow.isDefaultSite();
-                case COL_DEFAULT_THEME:
-                    return currentRow.getDefaultTheme();
-                case COL_APPLICATIONS:
-                    final String apps = String
-                        .join(",\n",
-                              currentRow
-                                  .getApplications()
-                                  .toArray(new String[]{}));
-                    return new Label(apps, false);
+                case COL_MODEL_APPLICATION:
+                    return currentRow.getApplicationName();
+                case COL_MODEL_DESC:
+                    return currentRow.getDescription();
+                case COL_MODEL_NAME:
+                    return currentRow.getName();
+                case COL_MODEL_TITLE:
+                    return currentRow.getTitle();
                 case COL_REMOVE:
-                    if (currentRow.isDeletable()) {
-                        return new Label(new GlobalizedMessage(
-                            "ui.admin.sites.table.columns.remove.label",
-                            ADMIN_BUNDLE));
-                    } else {
-                        return null;
-                    }
+                    return new Label(new GlobalizedMessage(
+                        "ui.admin.pagemodels.table.columns.remove.label",
+                        AdminUiConstants.ADMIN_BUNDLE));
                 default:
-                    throw new IllegalArgumentException(
-                        "Not a valid column index");
+                    throw new IllegalArgumentException("No a valid column index");
             }
         }
 
         @Override
         public Object getKeyAt(final int columnIndex) {
-            return currentRow.getSiteId();
+
+            return currentRow.getModelId();
         }
 
     }

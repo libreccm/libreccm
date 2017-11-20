@@ -52,7 +52,7 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class SitesForm extends Form {
+class SitesForm extends Form {
 
     private static final String DOMAIN_OF_SITE = "domainOfSite";
     private static final String DEFAULT_SITE = "defaultSite";

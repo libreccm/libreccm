@@ -48,56 +48,58 @@ class RoleDetails extends BoxPanel {
         final ActionLink backLink = new ActionLink(new GlobalizedMessage(
             "ui.admin.role_details.back", ADMIN_BUNDLE));
         backLink.setClassAttr("back-link");
-        backLink.addActionListener(e -> {
-            roleAdmin.hideRoleDetails(e.getPageState());
+        backLink.addActionListener(event -> {
+            roleAdmin.hideRoleDetails(event.getPageState());
         });
-        add(backLink);
+        super.add(backLink);
 
         final Label heading = new Label();
         heading.setClassAttr("heading");
-        heading.addPrintListener(e -> {
-            final PageState state = e.getPageState();
-            final Label target = (Label) e.getTarget();
-            final RoleRepository roleRepository = CdiUtil.createCdiUtil()
+        heading.addPrintListener(event -> {
+            final PageState state = event.getPageState();
+            final Label target = (Label) event.getTarget();
+            final RoleRepository roleRepository = CdiUtil
+                .createCdiUtil()
                 .findBean(RoleRepository.class);
-            final Role role = roleRepository.findById(Long.parseLong(
-                selectedRoleId.getSelectedKey(state))).get();
+            final Role role = roleRepository
+                .findById(Long.parseLong(selectedRoleId.getSelectedKey(state)))
+                .get();
             target.setLabel(new GlobalizedMessage(
                 "ui.admin.role_details.heading",
                 ADMIN_BUNDLE,
                 new String[]{role.getName()}));
         });
-        add(heading);
+        super.add(heading);
 
         final PropertySheet propertySheet = new PropertySheet(
             new RolePropertySheetModelBuilder(selectedRoleId));
-        add(propertySheet);
+        super.add(propertySheet);
 
         final BoxPanel links = new BoxPanel(BoxPanel.HORIZONTAL);
         
         final ActionLink editProperties = new ActionLink(new GlobalizedMessage(
         "ui.admin.role_details.edit_properties", ADMIN_BUNDLE));
-        editProperties.addActionListener(e -> {
-            roleAdmin.showRoleForm(e.getPageState());
+        editProperties.addActionListener(event -> {
+            roleAdmin.showRoleForm(event.getPageState());
         });
         links.add(editProperties);
         
         final ActionLink manageMembers = new ActionLink(new GlobalizedMessage(
             "ui.admin.role_details.manage_members", ADMIN_BUNDLE));
-        manageMembers.addActionListener(e -> {
-            roleAdmin.showRoleMembersPanel(e.getPageState());
+        manageMembers.addActionListener(event -> {
+            roleAdmin.showRoleMembersPanel(event.getPageState());
         });
         links.add(manageMembers);
         
           
         final ActionLink managePermissions = new ActionLink(new GlobalizedMessage(
             "ui.admin.role_details.manage_permissions", ADMIN_BUNDLE));
-        managePermissions.addActionListener(e -> {
-            roleAdmin.showRolePermissionsPanel(e.getPageState());
+        managePermissions.addActionListener(event -> {
+            roleAdmin.showRolePermissionsPanel(event.getPageState());
         });
         links.add(managePermissions);
         
-        add(links);
+        super.add(links);
     }
 
 }
