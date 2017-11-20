@@ -39,6 +39,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import static org.libreccm.theming.ThemeConstants.*;
 
+import org.libreccm.theming.ThemeVersion;
 import org.libreccm.theming.manifest.ThemeTemplate;
 
 import java.io.InputStream;
@@ -49,6 +50,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Optional;
 
 import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -59,7 +61,7 @@ import javax.xml.transform.stream.StreamSource;
 
 /**
  * A {@link ThemeProcessor} implementation for XSLT based themes.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -147,10 +149,13 @@ public class XsltThemeProcessor implements ThemeProcessor {
         final Transformer transformer;
         try {
             transformer = transformerFactory.newTransformer(xslFileStreamSource);
+            transformer.setURIResolver(new CcmUriResolver(theme.getName(),
+                                                          theme.getVersion(),
+                                                          themeProvider));
         } catch (TransformerConfigurationException ex) {
             throw new UnexpectedErrorException(ex);
         }
-        
+
         final StringWriter resultWriter = new StringWriter();
         final Result result = new StreamResult(resultWriter);
         try {
@@ -158,7 +163,7 @@ public class XsltThemeProcessor implements ThemeProcessor {
         } catch (TransformerException ex) {
             throw new UnexpectedErrorException(ex);
         }
-        
+
         return resultWriter.toString();
     }
 

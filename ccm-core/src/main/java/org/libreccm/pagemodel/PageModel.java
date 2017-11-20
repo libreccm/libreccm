@@ -270,7 +270,7 @@ public class PageModel implements Serializable {
         return application;
     }
 
-    protected void setApplication(final CcmApplication application) {
+    public void setApplication(final CcmApplication application) {
         this.application = application;
     }
 
