@@ -6,6 +6,12 @@ package org.librecms;
 import com.arsdigita.cms.ContentCenterAppCreator;
 import com.arsdigita.cms.ContentCenterServlet;
 import com.arsdigita.cms.ContentCenterSetup;
+import com.arsdigita.cms.ui.authoring.ItemCategoryForm;
+import com.arsdigita.cms.ui.pagemodel.CategorizedItemComponentForm;
+import com.arsdigita.cms.ui.pagemodel.CategoryTreeComponentForm;
+import com.arsdigita.cms.ui.pagemodel.FixedContentItemComponentForm;
+import com.arsdigita.cms.ui.pagemodel.GreetingItemComponentForm;
+import com.arsdigita.cms.ui.pagemodel.ItemListComponentForm;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,6 +23,7 @@ import org.libreccm.modules.Module;
 import org.libreccm.modules.RequiredModule;
 import org.libreccm.modules.ShutdownEvent;
 import org.libreccm.modules.UnInstallEvent;
+import org.libreccm.pagemodel.PageModelComponentModel;
 import org.libreccm.web.ApplicationType;
 import org.libreccm.web.CcmApplication;
 import org.librecms.assets.*;
@@ -30,6 +37,11 @@ import org.librecms.contenttypes.ContentTypes;
 import org.librecms.contenttypes.Event;
 import org.librecms.contenttypes.MultiPartArticle;
 import org.librecms.contenttypes.News;
+import org.librecms.pagemodel.CategorizedItemComponent;
+import org.librecms.pagemodel.CategoryTreeComponent;
+import org.librecms.pagemodel.FixedContentItemComponent;
+import org.librecms.pagemodel.GreetingItemComponent;
+import org.librecms.pagemodel.ItemListComponent;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,6 +69,48 @@ import java.util.Properties;
             creator = ContentSectionCreator.class,
             servletPath = "/templates/servlet/content-section"
         )
+    },
+    pageModelComponentModels = {
+        @PageModelComponentModel(
+            modelClass = CategorizedItemComponent.class,
+            editor = CategorizedItemComponentForm.class,
+            descBundle = CmsConstants.CMS_BUNDLE,
+            titleKey
+                = "cms.ui.pagemodel.components.categorized_item_component.title",
+            descKey
+                = "cms.ui.pagemodel.components.categorized_item_component.desc")
+        ,
+        @PageModelComponentModel(
+            modelClass = CategoryTreeComponent.class,
+            editor = CategoryTreeComponentForm.class,
+            descBundle = CmsConstants.CMS_BUNDLE,
+            titleKey
+                = "cms.ui.pagemodel.components.category_tree_component.title",
+            descKey = "cms.ui.pagemodel.components.category_tree_component.desc")
+        ,
+        @PageModelComponentModel(
+            modelClass = FixedContentItemComponent.class,
+            editor = FixedContentItemComponentForm.class,
+            descBundle = CmsConstants.CMS_BUNDLE,
+            titleKey
+                = "cms.ui.pagemodel.components.fixed_contentitem_component.title",
+            descKey
+                = "cms.ui.pagemodel.components.fixed_contentitem_component.desc")
+        ,
+        @PageModelComponentModel(
+            modelClass = GreetingItemComponent.class,
+            editor = GreetingItemComponentForm.class,
+            descBundle = CmsConstants.CMS_BUNDLE,
+            titleKey
+                = "cms.ui.pagemodel.components.greetingitem_component.title",
+            descKey = "cms.ui.pagemodel.components.greetingitem_component.desc")
+        ,
+        @PageModelComponentModel(
+            modelClass = ItemListComponent.class,
+            editor = ItemListComponentForm.class,
+            descBundle = CmsConstants.CMS_BUNDLE,
+            titleKey = "cms.ui.pagemodel.components.itemlist_component.title",
+            descKey = "cms.ui.pagemodel.components.itemlist_component.desc")
     }
 )
 @ContentTypes({Article.class,

@@ -163,17 +163,17 @@ class ComponentsTable extends Table {
 
         });
 
-        super.setModelBuilder(new PageModelComponentsTableModelBuilder(
+        super.setModelBuilder(new ComponentsTableModelBuilder(
             selectedModelId));
     }
 
-    private class PageModelComponentsTableModelBuilder
+    private class ComponentsTableModelBuilder
         extends LockableImpl
         implements TableModelBuilder {
 
         private final ParameterSingleSelectionModel<String> selectedModelId;
 
-        public PageModelComponentsTableModelBuilder(
+        public ComponentsTableModelBuilder(
             final ParameterSingleSelectionModel<String> selectedModelId) {
 
             this.selectedModelId = selectedModelId;
@@ -193,17 +193,17 @@ class ComponentsTable extends Table {
             final List<ComponentModel> components = controller
                 .retrieveComponents(Long.parseLong(selectedModelIdStr));
 
-            return new PageModelComponentsTableModel(components);
+            return new ComponentsTableModel(components);
         }
 
     }
 
-    private class PageModelComponentsTableModel implements TableModel {
+    private class ComponentsTableModel implements TableModel {
 
         private final Iterator<ComponentModel> iterator;
         private ComponentModel currentComponent;
 
-        public PageModelComponentsTableModel(
+        public ComponentsTableModel(
             final List<ComponentModel> components) {
 
             iterator = components.iterator();
