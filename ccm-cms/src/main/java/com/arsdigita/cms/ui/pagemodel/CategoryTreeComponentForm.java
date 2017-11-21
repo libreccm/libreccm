@@ -60,7 +60,7 @@ public class CategoryTreeComponentForm extends AbstractComponentModelForm<Catego
         showFullTreeCheckbox.addOption(new Option(
             SHOW_FULL_TREE,
             new Label(new GlobalizedMessage(
-                "cms.ui.pagemodel.category_tree_component.show_full_tree.label",
+                "cms.ui.pagemodel.category_tree_component_form.show_full_tree.label",
                 CmsConstants.CMS_BUNDLE))));
         add(showFullTreeCheckbox);
     }
