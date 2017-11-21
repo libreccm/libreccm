@@ -33,6 +33,7 @@ import com.arsdigita.ui.admin.applications.ApplicationsTab;
 import com.arsdigita.ui.admin.categories.CategoriesTab;
 import com.arsdigita.ui.admin.configuration.ConfigurationTab;
 import com.arsdigita.ui.admin.importexport.ImportExportTab;
+import com.arsdigita.ui.admin.pagemodels.PageModelTab;
 import com.arsdigita.ui.admin.sites.SitesTab;
 import com.arsdigita.web.BaseApplicationServlet;
 import com.arsdigita.web.LoginSignal;
@@ -121,6 +122,16 @@ public class AdminServlet extends BaseApplicationServlet {
             new ApplicationsTab());
 
         tabbedPane.addTab(
+            new Label(new GlobalizedMessage("ui.admin.tab.sites.title",
+                                            ADMIN_BUNDLE)),
+            new SitesTab());
+
+        tabbedPane.addTab(
+            new Label(new GlobalizedMessage("ui.admin.tab.pagemodels.title",
+                                            ADMIN_BUNDLE)),
+            new PageModelTab());
+
+        tabbedPane.addTab(
             new Label(new GlobalizedMessage(
                 "ui.admin.tab.users_groups_roles.title",
                 ADMIN_BUNDLE)),
@@ -135,11 +146,6 @@ public class AdminServlet extends BaseApplicationServlet {
             new Label(new GlobalizedMessage("ui.admin.tab.configuration.title",
                                             ADMIN_BUNDLE)),
             new ConfigurationTab());
-
-        tabbedPane.addTab(
-            new Label(new GlobalizedMessage("ui.admin.tab.sites.title",
-                                            ADMIN_BUNDLE)), 
-            new SitesTab());
 
         tabbedPane.addTab(
             new Label(new GlobalizedMessage("ui.admin.tab.workflows.title",
