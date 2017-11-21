@@ -102,11 +102,21 @@ public class PageModelManager {
                      components.size());
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    public PageModel createPageModel(final String name,
+                                     final CcmApplication application) {
+
+        return createPageModel(name, application, "");
+    }
+
     /**
      * Creates a new {@link PageModel} for the provided application. The method
-     * tries to retrieve the appropriate page model by using
+     * tries to retrieve the appropriate application by using
      * {@link PageModelRepository#findByApplicationAndName(org.libreccm.web.CcmApplication, java.lang.String)}.
-     * Please note that this method will always return the <strong>live</strong>
+     * Please note that this method will always return the
+     * <strong>draft</strong>
      * version of the page model.
      *
      * @param name        The name of the new page model. Must be unique for the

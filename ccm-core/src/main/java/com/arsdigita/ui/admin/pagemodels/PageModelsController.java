@@ -31,6 +31,7 @@ import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.CcmApplication;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -154,7 +155,11 @@ class PageModelsController implements Serializable {
             .format("No PageModel with ID %d in the database.",
                     pageModelId)));
 
-        return model.getComponents();
+        final List<ComponentModel> components = new ArrayList<>();
+        for(final ComponentModel component : model.getComponents()) {
+            components.add(component);
+        }
+        return components;
     }
 
     @Transactional(Transactional.TxType.REQUIRED)

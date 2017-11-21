@@ -123,7 +123,6 @@ class PageModelForm extends Form {
         applicationSelect.setLabel(new GlobalizedMessage(
             "ui.admin.pagemodels.application",
             AdminUiConstants.ADMIN_BUNDLE));
-        super.add(applicationSelect);
         try {
             applicationSelect.addPrintListener(event -> {
 
@@ -324,6 +323,8 @@ class PageModelForm extends Form {
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final PageModelRepository pageModelRepo = cdiUtil
                     .findBean(PageModelRepository.class);
+                final PageModelManager pageModelManager = cdiUtil
+                .findBean(PageModelManager.class);
                 final ConfigurationManager confManager = cdiUtil
                     .findBean(ConfigurationManager.class);
                 final ApplicationRepository appRepo = cdiUtil
@@ -335,9 +336,17 @@ class PageModelForm extends Form {
                 final String selectedModelIdStr = selectedModelId
                     .getSelectedKey(state);
 
+                final CcmApplication application = appRepo
+                    .retrieveApplicationForPath(appValue)
+                    .orElseThrow(() -> new IllegalArgumentException(String
+                    .format("No CcmApplication with primary URL \"%s\" in the "
+                                + "database.",
+                            appValue)));
+                
                 final PageModel pageModel;
                 if (selectedModelIdStr == null || selectedModelIdStr.isEmpty()) {
-                    pageModel = new PageModel();
+                    pageModel = pageModelManager.createPageModel(nameValue, 
+                                                                 application);
                 } else {
                     pageModel = pageModelRepo
                         .findById(Long.parseLong(selectedModelIdStr))
@@ -350,20 +359,13 @@ class PageModelForm extends Form {
 
                 pageModel.getTitle().addValue(defaultLocale, titleValue);
                 pageModel.getDescription().addValue(defaultLocale, descValue);
-
-                final CcmApplication application = appRepo
-                    .retrieveApplicationForPath(appValue)
-                    .orElseThrow(() -> new IllegalArgumentException(String
-                    .format("No CcmApplication with primary URL \"%s\" in the "
-                                + "database.",
-                            appValue)));
                 
                 pageModel.setApplication(application);
                 
                 pageModelRepo.save(pageModel);
             }
             
-            pageModelTab.showPageModelDetails(state);
+            pageModelTab.showPageModelsTable(state);
         }
 
     }
