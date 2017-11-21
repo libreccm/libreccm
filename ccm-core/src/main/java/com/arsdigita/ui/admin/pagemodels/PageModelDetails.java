@@ -145,6 +145,8 @@ class PageModelDetails extends BoxPanel {
                 "ui.admin.pagemodels.add_new_component.submit",
                 AdminUiConstants.ADMIN_BUNDLE));
             super.add(submit);
+            
+            super.addProcessListener(this);
         }
 
         @Override

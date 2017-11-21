@@ -158,9 +158,9 @@ public class PageModelTab extends LayoutPanel {
     protected void showComponentForm(final PageState state) {
         addNewModel.setVisible(state, false);
         pageModelsTable.setVisible(state, false);
-        pageModelDetails.setVisible(state, true);
+        pageModelDetails.setVisible(state, false);
         pageModelForm.setVisible(state, false);
-        componentForm.setVisible(state, false);
+        componentForm.setVisible(state, true);
     }
 
     protected void showPageModelDetails(final PageState state) {
