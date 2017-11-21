@@ -631,10 +631,10 @@ public class PermissionManagerTest {
      *
      * @throws Throwable
      */
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
-    @ShouldThrowException(NullPointerException.class)
+    @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(345)
     public void revokePermissionOnObjectFromRoleNull() throws Throwable {
         final CcmObject object1 = ccmObjectRepository.findById(-20001L).get();
@@ -657,10 +657,10 @@ public class PermissionManagerTest {
      *
      * @throws Throwable
      */
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
-    @ShouldThrowException(NullPointerException.class)
+    @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(350)
     public void revokePermissionNullObject() throws Throwable {
         final Role role1 = roleRepository.findByName("role1").get();
