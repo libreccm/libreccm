@@ -60,6 +60,9 @@ public class ThemeManifest implements Serializable {
     @XmlElement(name = "type", namespace = THEMES_XML_NS)
     private String type;
 
+    @XmlElement(name = "master-theme", namespace = THEMES_XML_NS)
+    private String masterTheme;
+
     /**
      * The (localised) title of the theme.
      */
@@ -103,6 +106,14 @@ public class ThemeManifest implements Serializable {
 
     public void setType(final String type) {
         this.type = type;
+    }
+
+    public String getMasterTheme() {
+        return masterTheme;
+    }
+
+    public void setMasterTheme(final String masterTheme) {
+        this.masterTheme = masterTheme;
     }
 
     public LocalizedString getTitle() {
@@ -150,6 +161,7 @@ public class ThemeManifest implements Serializable {
         int hash = 7;
         hash = 83 * hash + Objects.hashCode(name);
         hash = 83 * hash + Objects.hashCode(type);
+        hash = 83 * hash + Objects.hashCode(masterTheme);
         hash = 83 * hash + Objects.hashCode(title);
         hash = 83 * hash + Objects.hashCode(description);
         hash = 83 * hash + Objects.hashCode(templates);
@@ -178,6 +190,9 @@ public class ThemeManifest implements Serializable {
         if (!Objects.equals(type, other.getType())) {
             return false;
         }
+        if (!Objects.equals(masterTheme, other.getMasterTheme())) {
+            return false;
+        }
         if (!Objects.equals(title, other.getTitle())) {
             return false;
         }
@@ -203,6 +218,8 @@ public class ThemeManifest implements Serializable {
 
         return String.format("%s{ "
                                  + "name = \"%s\", "
+                                 + "type = \"%s\", "
+                                 + "masterTheme = \"%s\", "
                                  + "title = \"%s\", "
                                  + "description = \"%s\", "
                                  + "templates = %s, "
@@ -210,6 +227,8 @@ public class ThemeManifest implements Serializable {
                                  + " }",
                              super.toString(),
                              name,
+                             type,
+                             masterTheme,
                              Objects.toString(title),
                              Objects.toString(description),
                              Objects.toString(templates),
