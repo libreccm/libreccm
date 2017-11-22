@@ -88,37 +88,33 @@ public class PageModelTab extends LayoutPanel {
                     .findBean(PageModelsController.class);
 
                 try {
+                    final Class<? extends Form> formClass;
                     if (selectedComponentId.getSelectedKey(state) == null
                             || selectedComponentId.getSelectedKey(state)
                             .isEmpty()) {
-
-                        final Class<? extends Form> formClass = controller
+                        formClass = controller
                             .getComponentModelForm(componentModelClass);
-                        formClass
-                            .getDeclaredConstructor()
-                            .newInstance();
                     } else {
-
-                        final Class<? extends Form> formClass = controller
+                        formClass = controller
                             .getComponentModelForm(Long
                                 .parseLong(selectedComponentId
                                     .getSelectedKey(state)));
-
-                        return formClass
-                            .getDeclaredConstructor(
-                                ParameterSingleSelectionModel.class)
-                            .newInstance(selectedComponentId);
                     }
+                    return formClass
+                        .getDeclaredConstructor(
+                            PageModelTab.class,
+                            ParameterSingleSelectionModel.class,
+                            ParameterSingleSelectionModel.class)
+                        .newInstance(PageModelTab.this,
+                                     selectedModelId,
+                                     selectedComponentId);
                 } catch (InstantiationException
-                         | InvocationTargetException
-                         | IllegalAccessException
-                         | NoSuchMethodException ex) {
+                             | InvocationTargetException
+                             | IllegalAccessException
+                             | NoSuchMethodException ex) {
                     throw new UnexpectedErrorException(ex);
                 }
-
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
-
         };
 
         final BoxPanel right = new BoxPanel(BoxPanel.VERTICAL);
@@ -138,6 +134,7 @@ public class PageModelTab extends LayoutPanel {
         super.register(page);
 
         page.addGlobalStateParam(selectedModelId.getStateParameter());
+        page.addGlobalStateParam(selectedComponentId.getStateParameter());
 
         page.setVisibleDefault(addNewModel, true);
         page.setVisibleDefault(pageModelsTable, true);

@@ -231,8 +231,13 @@ class ComponentsTable extends Table {
             switch (columnIndex) {
                 case ComponentsTable.COL_COMPONENT_KEY:
                     return currentComponent.getKey();
-                case ComponentsTable.COL_COMPONENT_TYPE:
-                    return currentComponent.getClass().getName();
+                case ComponentsTable.COL_COMPONENT_TYPE: {
+                    final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                    final PageModelsController controller = cdiUtil
+                        .findBean(PageModelsController.class);
+                    return controller
+                        .getComponentModelTitle(currentComponent.getClass());
+                }
                 case ComponentsTable.COL_EDIT:
                     return new Label(new GlobalizedMessage(
                         "ui.admin.pagemodels.components.edit",

@@ -59,7 +59,7 @@ public abstract class AbstractContentItemComponentForm<T extends ContentItemComp
         modeField = new TextField(ITEM_MODE);
         modeField.setLabel(new GlobalizedMessage(
             "cms.ui.pagemodel.contentitem_component_form.mode.label",
-        CmsConstants.CMS_BUNDLE));
+            CmsConstants.CMS_BUNDLE));
         add(modeField);
     }
 
@@ -73,15 +73,17 @@ public abstract class AbstractContentItemComponentForm<T extends ContentItemComp
     }
 
     @Override
-    public void init(final FormSectionEvent event) 
+    public void init(final FormSectionEvent event)
         throws FormProcessException {
-        
+
         super.init(event);
-        
+
         final PageState state = event.getPageState();
         final ContentItemComponent component = getComponentModel();
-        
-        modeField.setValue(state, component.getMode());
+
+        if (getComponentModel() != null) {
+            modeField.setValue(state, component.getMode());
+        }
     }
-    
+
 }
