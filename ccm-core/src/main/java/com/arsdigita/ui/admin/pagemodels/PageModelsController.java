@@ -23,6 +23,7 @@ import com.arsdigita.bebop.Form;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.pagemodel.ComponentModel;
 import org.libreccm.pagemodel.ComponentModelRepository;
+import org.libreccm.pagemodel.ComponentModels;
 import org.libreccm.pagemodel.PageModel;
 import org.libreccm.pagemodel.PageModelComponentModel;
 import org.libreccm.pagemodel.PageModelManager;
@@ -33,6 +34,9 @@ import org.libreccm.web.CcmApplication;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -53,6 +57,9 @@ class PageModelsController implements Serializable {
 
     @Inject
     private ComponentModelRepository componentModelRepo;
+
+    @Inject
+    private ComponentModels componentModels;
 
     @Inject
     private GlobalizationHelper globalizationHelper;
@@ -117,6 +124,22 @@ class PageModelsController implements Serializable {
         return row;
     }
 
+    protected String getComponentModelTitle(
+        final Class<? extends ComponentModel> clazz) {
+
+        final Optional<PageModelComponentModel> info = componentModels
+        .getComponentModelInfo(clazz);
+        
+        if (info.isPresent()) {
+            final ResourceBundle bundle = ResourceBundle
+                .getBundle(info.get().descBundle());
+            
+            return bundle.getString(info.get().titleKey());
+        } else {
+            return clazz.getName();
+        }
+    }
+
     protected Class<? extends Form> getComponentModelForm(
         final long componentModelId) {
 
@@ -135,15 +158,16 @@ class PageModelsController implements Serializable {
     protected Class<? extends Form> getComponentModelForm(
         final Class<? extends ComponentModel> clazz) {
 
-        if (clazz.isAnnotationPresent(PageModelComponentModel.class)) {
+        Objects.requireNonNull(clazz);
 
-            final PageModelComponentModel annotation = clazz
-                .getAnnotation(PageModelComponentModel.class);
+        final Optional<PageModelComponentModel> info = componentModels
+            .getComponentModelInfo(clazz);
 
-            return annotation.editor();
-        } else {
-            return null;
-        }
+        return info
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No data about ComponentModel class \"%s\" available.",
+                    clazz.getName())))
+            .editor();
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -156,10 +180,24 @@ class PageModelsController implements Serializable {
                     pageModelId)));
 
         final List<ComponentModel> components = new ArrayList<>();
-        for(final ComponentModel component : model.getComponents()) {
+        for (final ComponentModel component : model.getComponents()) {
             components.add(component);
         }
         return components;
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void addComponentModel(final long pageModelId,
+                                     final ComponentModel componentModel) {
+
+        final PageModel model = pageModelRepo
+            .findById(pageModelId)
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No PageModel with ID %d in the database.",
+                    pageModelId)));
+
+        pageModelManager.addComponentModel(model, componentModel);
+
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
