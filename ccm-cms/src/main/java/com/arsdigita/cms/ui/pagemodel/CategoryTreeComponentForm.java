@@ -92,18 +92,18 @@ public class CategoryTreeComponentForm extends AbstractComponentModelForm<Catego
         throws FormProcessException {
 
         super.init(event);
-        
+
         final PageState state = event.getPageState();
 
         final CategoryTreeComponent component = getComponentModel();
 
         final Object[] showFullTreeValue;
-        if (component.isShowFullTree()) {
+        if (component != null && component.isShowFullTree()) {
             showFullTreeValue = new Object[]{SHOW_FULL_TREE};
         } else {
             showFullTreeValue = new Object[]{};
         }
-        
+
         showFullTreeCheckbox.setValue(state, showFullTreeValue);
     }
 

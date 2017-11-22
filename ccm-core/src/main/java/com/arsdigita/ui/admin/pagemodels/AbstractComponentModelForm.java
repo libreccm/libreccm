@@ -96,17 +96,20 @@ public abstract class AbstractComponentModelForm<T extends ComponentModel>
         this.selectedModelId = selectedModelId;
         this.selectedComponentId = selectedComponentId;
 
-        keyField = new TextField(COMPONENT_KEY);
-        keyField.setLabel(new GlobalizedMessage(
-            "ui.admin.pagemodels.components.key.label",
-            AdminUiConstants.ADMIN_BUNDLE));
-        super.add(keyField);
+//        keyField = new TextField(COMPONENT_KEY);
+//        keyField.setLabel(new GlobalizedMessage(
+//            "ui.admin.pagemodels.components.key.label",
+//            AdminUiConstants.ADMIN_BUNDLE));
+//        super.add(keyField);
+        createWidgets();
 
-        addBasicWidgets();
+        super.addInitListener(this);
+        super.addValidationListener(this);
+        super.addProcessListener(this);
     }
 
-    private void addBasicWidgets() {
-        keyField = new TextField("componentModelKey");
+    private void createWidgets() {
+        keyField = new TextField(COMPONENT_KEY);
         keyField.setLabel(new GlobalizedMessage(
             "ui.admin.pagemodels.components.key.label",
             AdminUiConstants.ADMIN_BUNDLE));
@@ -133,7 +136,7 @@ public abstract class AbstractComponentModelForm<T extends ComponentModel>
     protected final SaveCancelSection getSaveCancelSection() {
         return saveCancelSection;
     }
-    
+
     protected final T getComponentModel() {
         return componentModel;
     }
@@ -226,10 +229,8 @@ public abstract class AbstractComponentModelForm<T extends ComponentModel>
                 .getSelectedKey(state);
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final PageModelRepository pageModelRepo = cdiUtil
-                .findBean(PageModelRepository.class);
-            final PageModelManager pageModelManager = cdiUtil
-                .findBean(PageModelManager.class);
+            final PageModelsController controller = cdiUtil
+                .findBean(PageModelsController.class);
 
             final FormData data = event.getFormData();
             final String keyValue = data.getString(COMPONENT_KEY);
@@ -241,13 +242,8 @@ public abstract class AbstractComponentModelForm<T extends ComponentModel>
                 componentModel.setKey(keyValue);
                 updateComponentModel(componentModel, state, data);
 
-                final PageModel pageModel = pageModelRepo
-                    .findById(Long.parseLong(selectedModelIdStr))
-                    .orElseThrow(() -> new IllegalArgumentException(String
-                    .format("No PageModel with ID %s in the database.",
-                            selectedModelIdStr)));
-
-                pageModelManager.addComponentModel(pageModel, componentModel);
+                controller.addComponentModel(Long.parseLong(selectedModelIdStr),
+                                             componentModel);
             } else {
 
                 componentModel = retrieveComponentModel(selectedComponentIdStr);

@@ -23,7 +23,10 @@ import org.libreccm.modules.Module;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.ServiceLoader;
 
 import javax.annotation.PostConstruct;
@@ -36,8 +39,12 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class ComponentModels {
 
-    private final List<PageModelComponentModel> availableComponentModels = new ArrayList<>();
-    
+    private final List<PageModelComponentModel> availableComponentModels
+                                                = new ArrayList<>();
+
+    private final Map<String, PageModelComponentModel> componentInfos
+                                                       = new HashMap<>();
+
     @PostConstruct
     private void init() {
 
@@ -49,18 +56,36 @@ public class ComponentModels {
             final Module moduleData = module
                 .getClass()
                 .getAnnotation(Module.class);
-            
+
             final PageModelComponentModel[] componentModels = moduleData
-            .pageModelComponentModels();
-            
-            for(final PageModelComponentModel componentModel : componentModels) {
+                .pageModelComponentModels();
+
+            for (final PageModelComponentModel componentModel : componentModels) {
                 availableComponentModels.add(componentModel);
+                componentInfos.put(componentModel.modelClass().getName(),
+                                   componentModel);
             }
         }
     }
 
     public List<PageModelComponentModel> findAvailableComponentModels() {
         return Collections.unmodifiableList(availableComponentModels);
+    }
+
+    public Optional<PageModelComponentModel> getComponentModelInfo(
+        final Class<? extends ComponentModel> clazz) {
+
+        return getComponentModelInfo(clazz.getName());
+    }
+    
+    public Optional<PageModelComponentModel> getComponentModelInfo(
+    final String className) {
+        
+        if (componentInfos.containsKey(className)) {
+            return Optional.of(componentInfos.get(className));
+        } else {
+            return Optional.empty();
+        }
     }
 
 }
