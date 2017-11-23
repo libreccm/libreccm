@@ -33,7 +33,7 @@ import com.arsdigita.ui.admin.applications.ApplicationsTab;
 import com.arsdigita.ui.admin.categories.CategoriesTab;
 import com.arsdigita.ui.admin.configuration.ConfigurationTab;
 import com.arsdigita.ui.admin.importexport.ImportExportTab;
-import com.arsdigita.ui.admin.pagemodels.PageModelTab;
+import com.arsdigita.ui.admin.pagemodels.PageModelsTab;
 import com.arsdigita.ui.admin.sites.SitesTab;
 import com.arsdigita.web.BaseApplicationServlet;
 import com.arsdigita.web.LoginSignal;
@@ -126,10 +126,9 @@ public class AdminServlet extends BaseApplicationServlet {
                                             ADMIN_BUNDLE)),
             new SitesTab());
 
-        tabbedPane.addTab(
-            new Label(new GlobalizedMessage("ui.admin.tab.pagemodels.title",
+        tabbedPane.addTab(new Label(new GlobalizedMessage("ui.admin.tab.pagemodels.title",
                                             ADMIN_BUNDLE)),
-            new PageModelTab());
+            new PageModelsTab());
 
         tabbedPane.addTab(
             new Label(new GlobalizedMessage(

@@ -21,7 +21,8 @@ package com.arsdigita.ui.admin.pagemodels;
 import java.io.Serializable;
 
 /**
- *
+ * Data for one row of the {@link PageModelsTable}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class PageModelsTableRow implements Comparable<PageModelsTableRow>,

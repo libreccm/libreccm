@@ -48,13 +48,15 @@ import java.util.List;
 import java.util.TooManyListenersException;
 
 /**
+ * Shows the details about a {@link PageModel} including the
+ * {@link ComponentModel}s assigned to the {@link PageModel}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class PageModelDetails extends BoxPanel {
 
     public PageModelDetails(
-        final PageModelTab pageModelTab,
+        final PageModelsTab pageModelTab,
         final ParameterSingleSelectionModel<String> selectedModelId,
         final ParameterSingleSelectionModel<String> selectedComponentId) {
 
@@ -110,14 +112,18 @@ class PageModelDetails extends BoxPanel {
         super.add(componentsTable);
     }
 
+    /**
+     * Form for selecting the type of {@link ComponentModel} to add to the
+     * {@link PageModel}.
+     */
     private class AddComponentForm
         extends Form
         implements FormProcessListener {
 
-        private final PageModelTab pageModelTab;
+        private final PageModelsTab pageModelTab;
         private final SingleSelect selectType;
 
-        public AddComponentForm(final PageModelTab pageModelTab) {
+        public AddComponentForm(final PageModelsTab pageModelTab) {
 
             super("pagemodel_add_component_form",
                   new BoxPanel(BoxPanel.HORIZONTAL));
@@ -145,7 +151,7 @@ class PageModelDetails extends BoxPanel {
                 "ui.admin.pagemodels.add_new_component.submit",
                 AdminUiConstants.ADMIN_BUNDLE));
             super.add(submit);
-            
+
             super.addProcessListener(this);
         }
 
@@ -171,6 +177,10 @@ class PageModelDetails extends BoxPanel {
 
     }
 
+    /**
+     * {@link PrintListener} implementation for the select box in the
+     * {@link AddComponentForm}.
+     */
     private class ComponentModelSelectPrintListener implements PrintListener {
 
         @Override

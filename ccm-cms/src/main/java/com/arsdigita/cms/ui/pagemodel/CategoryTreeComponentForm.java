@@ -28,13 +28,14 @@ import com.arsdigita.bebop.form.CheckboxGroup;
 import com.arsdigita.bebop.form.Option;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.ui.admin.pagemodels.AbstractComponentModelForm;
-import com.arsdigita.ui.admin.pagemodels.PageModelTab;
+import com.arsdigita.ui.admin.pagemodels.PageModelsTab;
 
 import org.librecms.CmsConstants;
 import org.librecms.pagemodel.CategoryTreeComponent;
 
 /**
- *
+ * Form for creating/editing a {@link CategoryTreeComponent}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class CategoryTreeComponentForm extends AbstractComponentModelForm<CategoryTreeComponent> {
@@ -45,7 +46,7 @@ public class CategoryTreeComponentForm extends AbstractComponentModelForm<Catego
     private CheckboxGroup showFullTreeCheckbox;
 
     public CategoryTreeComponentForm(
-        final PageModelTab pageModelTab,
+        final PageModelsTab pageModelTab,
         final ParameterSingleSelectionModel<String> selectedModelId,
         final ParameterSingleSelectionModel<String> selectedComponentId) {
 

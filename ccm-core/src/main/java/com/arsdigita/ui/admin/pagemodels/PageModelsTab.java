@@ -37,10 +37,11 @@ import org.libreccm.pagemodel.ComponentModel;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- *
+ * Tab for {@code /ccm/admin} for managing {@link PageModel}s.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class PageModelTab extends LayoutPanel {
+public class PageModelsTab extends LayoutPanel {
 
     private final ParameterSingleSelectionModel<String> selectedModelId;
     private final ParameterSingleSelectionModel<String> selectedComponentId;
@@ -52,7 +53,7 @@ public class PageModelTab extends LayoutPanel {
 
     private Class<? extends ComponentModel> componentModelClass;
 
-    public PageModelTab() {
+    public PageModelsTab() {
 
         super();
 
@@ -101,11 +102,10 @@ public class PageModelTab extends LayoutPanel {
                                     .getSelectedKey(state)));
                     }
                     return formClass
-                        .getDeclaredConstructor(
-                            PageModelTab.class,
+                        .getDeclaredConstructor(PageModelsTab.class,
                             ParameterSingleSelectionModel.class,
                             ParameterSingleSelectionModel.class)
-                        .newInstance(PageModelTab.this,
+                        .newInstance(PageModelsTab.this,
                                      selectedModelId,
                                      selectedComponentId);
                 } catch (InstantiationException

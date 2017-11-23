@@ -32,6 +32,9 @@ import java.util.Iterator;
 import java.util.Locale;
 
 /**
+ * Implementation of {@link PropertySheetModel} for the the property sheet used
+ * in {@link PageModelDetails} for displaying the basic properties of a
+ * {@link PageModel}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
