@@ -26,15 +26,23 @@ import com.arsdigita.ui.login.LoginApplicationCreator;
 import com.arsdigita.ui.login.LoginApplicationSetup;
 import com.arsdigita.ui.login.LoginConstants;
 import com.arsdigita.ui.login.LoginServlet;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.admin.ui.AdminJsfApplicationCreator;
 import org.libreccm.admin.ui.AdminJsfApplicationSetup;
-import org.libreccm.modules.*;
+import org.libreccm.modules.CcmModule;
+import org.libreccm.modules.InitEvent;
+import org.libreccm.modules.InstallEvent;
+import org.libreccm.modules.Module;
+import org.libreccm.modules.ShutdownEvent;
+import org.libreccm.modules.UnInstallEvent;
+
 import org.libreccm.security.SystemUsersSetup;
 import org.libreccm.web.ApplicationType;
 
 import javax.persistence.EntityManager;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 LibreCCM Foundation.
+ * Copyright (C) 2017 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,18 +16,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.cms;
+package org.libreccm.admin.ui;
 
-import org.libreccm.web.CcmApplication;
+import com.vaadin.ui.Window;
+import org.libreccm.pagemodel.PageModel;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class ContentCenter extends CcmApplication {
+ class PageModelDetails extends Window {
 
-    private static final long serialVersionUID = 6672720141286517654L;
+    private static final long serialVersionUID = -3617001410191320596L;
     
-    
+    PageModelDetails(final PageModel pageModel,
+                     final AdminViewController controller) {
+        
+        super();
+        
+    }
     
 }

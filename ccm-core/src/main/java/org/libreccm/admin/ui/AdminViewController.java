@@ -37,6 +37,9 @@ class AdminViewController implements Serializable {
     private static final long serialVersionUID = 4880298854970416968L;
 
     @Inject
+    private ApplicationTreeDataProvider applicationTreeDataProvider;
+    
+    @Inject
     private ConfigurationsTabController confTabController;
 
     @Inject
@@ -45,6 +48,9 @@ class AdminViewController implements Serializable {
     @Inject
     private JpqlConsoleController jpqlConsoleController;
 
+    @Inject
+    private PageModelsController pageModelsController;
+    
     @Inject
     private SitesController sitesController;
 
@@ -55,6 +61,10 @@ class AdminViewController implements Serializable {
         super();
     }
 
+    public ApplicationTreeDataProvider getApplicationTreeDataProvider() {
+        return applicationTreeDataProvider;
+    }
+    
     public ConfigurationsTabController getConfTabController() {
         return confTabController;
     }
@@ -65,6 +75,10 @@ class AdminViewController implements Serializable {
 
     protected JpqlConsoleController getJpqlConsoleController() {
         return jpqlConsoleController;
+    }
+    
+    protected PageModelsController getPageModelsController() {
+        return pageModelsController;
     }
 
     protected SitesController getSitesController() {
