@@ -18,9 +18,12 @@
  */
 package org.libreccm.l10n;
 
+import static org.libreccm.l10n.L10NConstants.*;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Field;
+import org.libreccm.l10n.jaxb.LocalizedStringValuesAdapter;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -28,6 +31,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.MapKeyColumn;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,6 +39,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * A helper class for localisable string properties. This class is declared as
@@ -45,8 +55,8 @@ import java.util.Set;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Embeddable
-//@XmlRootElement(name = "localized-string", namespace = L10N_XML_NS)
-//@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "localized-string", namespace = L10N_XML_NS)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class LocalizedString implements Serializable {
 
     private static final long serialVersionUID = 7378282657084330425L;
@@ -60,8 +70,8 @@ public class LocalizedString implements Serializable {
     @Lob
     @Type(type = "org.hibernate.type.TextType")
     @Field
-    //@XmlElement(name = "values", namespace = L10N_XML_NS)
-    //@XmlJavaTypeAdapter(LocalizedStringValuesAdapter.class)
+    @XmlElement(name = "values", namespace = L10N_XML_NS)
+    @XmlJavaTypeAdapter(LocalizedStringValuesAdapter.class)
     private Map<Locale, String> values;
 
     /**
@@ -92,7 +102,11 @@ public class LocalizedString implements Serializable {
      * @param values The new map of values.
      */
     protected void setValues(final Map<Locale, String> values) {
-        this.values = new HashMap<>(values);
+        if (values == null) {
+            this.values = values;
+        } else {
+            this.values = new HashMap<>(values);
+        }
     }
 
     /**
