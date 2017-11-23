@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -76,11 +77,11 @@ public abstract class AbstractMarshaller<P extends Portable> {
                 JacksonXmlModule module = new JacksonXmlModule();
                 module.setDefaultUseWrapper(false);
                 xmlMapper = new XmlMapper(module);
-
                 if (indentation) {
                     xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);
                 }
-
+                //xmlMapper.registerModule(new JaxbAnnotationModule());
+                xmlMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
                 break;
 
             default:
