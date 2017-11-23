@@ -22,31 +22,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Field;
 
-import javax.xml.bind.annotation.XmlElement;
-
-import java.io.Serializable;
-
-import static org.libreccm.l10n.L10NConstants.L10N_XML_NS;
-
-import org.libreccm.l10n.jaxb.LocalizedStringValuesAdapter;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.MapKeyColumn;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * A helper class for localisable string properties. This class is declared as
@@ -58,7 +46,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  */
 @Embeddable
 //@XmlRootElement(name = "localized-string", namespace = L10N_XML_NS)
-@XmlAccessorType(XmlAccessType.FIELD)
+//@XmlAccessorType(XmlAccessType.FIELD)
 public class LocalizedString implements Serializable {
 
     private static final long serialVersionUID = 7378282657084330425L;
@@ -69,12 +57,11 @@ public class LocalizedString implements Serializable {
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "LOCALE")
     @Column(name = "LOCALIZED_VALUE")
-    @Basic
     @Lob
     @Type(type = "org.hibernate.type.TextType")
     @Field
-    @XmlElement(name = "values", namespace = L10N_XML_NS)
-    @XmlJavaTypeAdapter(LocalizedStringValuesAdapter.class)
+    //@XmlElement(name = "values", namespace = L10N_XML_NS)
+    //@XmlJavaTypeAdapter(LocalizedStringValuesAdapter.class)
     private Map<Locale, String> values;
 
     /**
