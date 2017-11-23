@@ -103,7 +103,7 @@ public class LocalizedString implements Serializable {
      */
     protected void setValues(final Map<Locale, String> values) {
         if (values == null) {
-            this.values = values;
+            this.values = new HashMap<>();
         } else {
             this.values = new HashMap<>(values);
         }
