@@ -43,7 +43,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- *
+ * Table showing all available {@link PageModels}. 
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class PageModelsTable extends Table {
@@ -55,7 +56,7 @@ class PageModelsTable extends Table {
     public static final int COL_REMOVE = 4;
 
     public PageModelsTable(
-        final PageModelTab parent,
+        final PageModelsTab parent,
         final ParameterSingleSelectionModel<String> selectedPageModelId) {
 
         super();

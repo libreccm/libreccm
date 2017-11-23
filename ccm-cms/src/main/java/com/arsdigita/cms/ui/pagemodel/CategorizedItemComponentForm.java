@@ -19,19 +19,20 @@
 package com.arsdigita.cms.ui.pagemodel;
 
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
-import com.arsdigita.ui.admin.pagemodels.PageModelTab;
+import com.arsdigita.ui.admin.pagemodels.PageModelsTab;
 
 import org.librecms.pagemodel.CategorizedItemComponent;
 
 /**
- *
+ * Form for editing/creating a {@link CategorizedItemComponent}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class CategorizedItemComponentForm
     extends AbstractContentItemComponentForm<CategorizedItemComponent> {
 
     public CategorizedItemComponentForm(
-        final PageModelTab pageModelTab,
+        final PageModelsTab pageModelTab,
         final ParameterSingleSelectionModel<String> selectedModelId,
         final ParameterSingleSelectionModel<String> selectedComponentId) {
         

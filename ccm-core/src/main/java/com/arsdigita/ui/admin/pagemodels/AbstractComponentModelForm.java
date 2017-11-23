@@ -36,12 +36,31 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.pagemodel.ComponentModel;
 import org.libreccm.pagemodel.ComponentModelRepository;
 import org.libreccm.pagemodel.PageModel;
-import org.libreccm.pagemodel.PageModelManager;
-import org.libreccm.pagemodel.PageModelRepository;
 
 /**
  * Base form for creating forms for editing/creating components of a
  * {@link PageModel}.
+ *
+ * Subclasses must provided a constructor with the following signature:
+ * {@code SomeComponentModelForm(PageModelTab, ParameterSingleSelectionModel, ParameterSingleSelectionModel)}.
+ *
+ * This constructor has to call
+ * {@link #AbstractComponentModelForm(java.lang.String, com.arsdigita.ui.admin.pagemodels.PageModelsTab, com.arsdigita.bebop.ParameterSingleSelectionModel, com.arsdigita.bebop.ParameterSingleSelectionModel)}
+ *
+ * with the provided parameters and a unique name for the form. Usually this be
+ * the name of the component model which is associated with the form and the
+ * suffix {@code Form}.
+ *
+ * The constructor is called is using reflection. The parameters passed to the
+ * constructor are:
+ * <ol>
+ * <li>The {@link PageModelsTab} in which the form is displayed.</li>
+ * <li>The {@link ParameterSingleSelectionModel} which holds the ID of the
+ * currently selected {@link PageModel}.</li>
+ * <li>The {@link ParameterSingleSelectionModel} which holds the ID of the
+ * currently selected {@link ComponentModel}. The selected key of the selection
+ * model might be null if a new component model is created.</li>
+ * </ol>
  *
  * @param <T>
  *
@@ -59,9 +78,9 @@ public abstract class AbstractComponentModelForm<T extends ComponentModel>
     private static final String COMPONENT_KEY = "componentKey";
 
     /**
-     * The {@link PageModelTab} in which the form is used
+     * The {@link PageModelsTab} in which the form is used
      */
-    private final PageModelTab pageModelTab;
+    private final PageModelsTab pageModelTab;
     /**
      * ID of the selected {@link PageModel}.
      */
@@ -86,7 +105,7 @@ public abstract class AbstractComponentModelForm<T extends ComponentModel>
 
     public AbstractComponentModelForm(
         final String name,
-        final PageModelTab pageModelTab,
+        final PageModelsTab pageModelTab,
         final ParameterSingleSelectionModel<String> selectedModelId,
         final ParameterSingleSelectionModel<String> selectedComponentId) {
 
@@ -96,11 +115,6 @@ public abstract class AbstractComponentModelForm<T extends ComponentModel>
         this.selectedModelId = selectedModelId;
         this.selectedComponentId = selectedComponentId;
 
-//        keyField = new TextField(COMPONENT_KEY);
-//        keyField.setLabel(new GlobalizedMessage(
-//            "ui.admin.pagemodels.components.key.label",
-//            AdminUiConstants.ADMIN_BUNDLE));
-//        super.add(keyField);
         createWidgets();
 
         super.addInitListener(this);
@@ -108,6 +122,12 @@ public abstract class AbstractComponentModelForm<T extends ComponentModel>
         super.addProcessListener(this);
     }
 
+    /**
+     * Helper method called by the constructor to create the widgets of the
+     * form. The method also calls the {@link #addWidgets()} after the basic
+     * widgets have been created and adds the {@link SaveCancelSection} at the
+     * end.
+     */
     private void createWidgets() {
         keyField = new TextField(COMPONENT_KEY);
         keyField.setLabel(new GlobalizedMessage(
@@ -121,22 +141,57 @@ public abstract class AbstractComponentModelForm<T extends ComponentModel>
         super.add(saveCancelSection);
     }
 
-    protected final PageModelTab getPageModelTab() {
+    /**
+     * Provides access to the {@link PageModelsTab}.
+     *
+     * @return
+     */
+    protected final PageModelsTab getPageModelTab() {
         return pageModelTab;
     }
 
+    /**
+     * Provides access the {@link ParameterSingleSelectionModel} holding the ID
+     * of the currently selected {@link ComponentModel}. The selected key of the
+     * selection model is {@code null} if a new {@link ComponentModel} is
+     * created.
+     *
+     * @return
+     */
     protected final ParameterSingleSelectionModel<String> getSelectedComponentId() {
         return selectedComponentId;
     }
 
+    /**
+     * Provides access to the {@link ParameterSingleSelectionModel} holding the
+     * ID of the currently selected {@link PageModel}.
+     *
+     * @return
+     */
     protected final ParameterSingleSelectionModel<String> getSelectedModelId() {
         return selectedModelId;
     }
 
+    /**
+     * Provides access to the {@link SaveCancelSection} of the form allowing
+     * subclasses to check if the <em>Save</em> button of the
+     * {@link SaveCancelSection} has been pressed.
+     *
+     * @return
+     */
     protected final SaveCancelSection getSaveCancelSection() {
         return saveCancelSection;
     }
 
+    /**
+     * Provides access to the currently selected {@link PageModel}. The
+     * implementation for the init and validation listeners
+     * ({@link #init(com.arsdigita.bebop.event.FormSectionEvent)} and
+     * {@link #validate(com.arsdigita.bebop.event.FormSectionEvent)} initialise
+     * this field.
+     *
+     * @return
+     */
     protected final T getComponentModel() {
         return componentModel;
     }
@@ -168,6 +223,21 @@ public abstract class AbstractComponentModelForm<T extends ComponentModel>
                                                  PageState state,
                                                  FormData data);
 
+    /**
+     * Init listener for the component form. Subclasses should override this
+     * method to initialise their fields. If this method is overridden the
+     * overriding method <strong>must</strong> call {@code super.init(event)}.
+     * Otherwise the {@link #keyField} will not be initialised properly. Also
+     * the method loads the selected current component model from the database
+     * and stores it in the {@link #componentModel} field. Overriding methods
+     * can access the field using the {@link #getComponentModel()} method. If
+     * {@link super.init(event)} is not called the {@link #componentModel} field
+     * will not be initialised.
+     *
+     * @param event The event which caused the listener to be invoked.
+     *
+     * @throws FormProcessException
+     */
     @Override
     public void init(final FormSectionEvent event) throws FormProcessException {
 
@@ -192,6 +262,17 @@ public abstract class AbstractComponentModelForm<T extends ComponentModel>
         }
     }
 
+    /**
+     * Validation listener for the component form. Subclasses should override
+     * this method to validate their fields if necessary.. If this method is
+     * overridden the overriding method <strong>must</strong> call
+     * {@code super.validate(event)}. Otherwise the {@link #keyField} will not
+     * be validated properly.
+     *
+     * @param event The event which caused the listener to be invoked.
+     *
+     * @throws FormProcessException
+     */
     @Override
     public void validate(final FormSectionEvent event)
         throws FormProcessException {
@@ -215,8 +296,19 @@ public abstract class AbstractComponentModelForm<T extends ComponentModel>
         }
     }
 
+    /**
+     * Process listener for the component form. This method can't be overridden.
+     * Instead subclasses have to implement
+     * {@link #updateComponentModel(org.libreccm.pagemodel.ComponentModel, com.arsdigita.bebop.PageState, com.arsdigita.bebop.FormData)}
+     * to set their specific values on the current component model. The
+     * implementation of that method is called by the this method.
+     *
+     * @param event The event which caused the listener to be invoked.
+     *
+     * @throws FormProcessException
+     */
     @Override
-    public void process(final FormSectionEvent event)
+    public final void process(final FormSectionEvent event)
         throws FormProcessException {
 
         final PageState state = event.getPageState();
@@ -263,6 +355,13 @@ public abstract class AbstractComponentModelForm<T extends ComponentModel>
 
     }
 
+    /**
+     * Helper method for retrieving the component model from the database.
+     *
+     * @param componentModelId The ID of the component model to retrieve.
+     *
+     * @return The component model.
+     */
     @SuppressWarnings("unchecked")
     private T retrieveComponentModel(final String componentModelId) {
 

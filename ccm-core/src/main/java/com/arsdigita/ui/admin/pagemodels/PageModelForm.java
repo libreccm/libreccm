@@ -53,7 +53,8 @@ import java.util.Optional;
 import java.util.TooManyListenersException;
 
 /**
- *
+ * Form for creating a new {@link PageModel}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class PageModelForm extends Form {
@@ -63,7 +64,7 @@ class PageModelForm extends Form {
     private static final String MODEL_TITLE = "model_title";
     private static final String MODEL_DESC = "model_desc";
 
-    private final PageModelTab pageModelTab;
+    private final PageModelsTab pageModelTab;
     private final ParameterSingleSelectionModel<String> selectedModelId;
 
     private final TextField nameField;
@@ -73,7 +74,7 @@ class PageModelForm extends Form {
     private final SaveCancelSection saveCancelSection;
 
     public PageModelForm(
-        final PageModelTab pageModelTab,
+        final PageModelsTab pageModelTab,
         final ParameterSingleSelectionModel<String> selectedModelId) {
 
         super("pagemodelsform");

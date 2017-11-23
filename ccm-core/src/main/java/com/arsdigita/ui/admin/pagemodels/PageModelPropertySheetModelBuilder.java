@@ -22,6 +22,7 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
 import com.arsdigita.bebop.PropertySheet;
 import com.arsdigita.bebop.PropertySheetModel;
+import com.arsdigita.bebop.PropertySheetModelBuilder;
 import com.arsdigita.util.LockableImpl;
 
 import org.libreccm.cdi.utils.CdiUtil;
@@ -29,6 +30,9 @@ import org.libreccm.pagemodel.PageModel;
 import org.libreccm.pagemodel.PageModelRepository;
 
 /**
+ * Implementation of {@link PropertySheetModelBuilder} for the the property
+ * sheet used in {@link PageModelDetails} for displaying the basic properties of
+ * a {@link PageModel}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

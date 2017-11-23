@@ -44,6 +44,8 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 /**
+ * CDI bean encapsulating some actions for the components of the
+ * {@link PageModelTab}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -128,12 +130,12 @@ class PageModelsController implements Serializable {
         final Class<? extends ComponentModel> clazz) {
 
         final Optional<PageModelComponentModel> info = componentModels
-        .getComponentModelInfo(clazz);
-        
+            .getComponentModelInfo(clazz);
+
         if (info.isPresent()) {
             final ResourceBundle bundle = ResourceBundle
                 .getBundle(info.get().descBundle());
-            
+
             return bundle.getString(info.get().titleKey());
         } else {
             return clazz.getName();

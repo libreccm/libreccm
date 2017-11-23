@@ -26,12 +26,14 @@ import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.ui.admin.pagemodels.AbstractComponentModelForm;
-import com.arsdigita.ui.admin.pagemodels.PageModelTab;
+import com.arsdigita.ui.admin.pagemodels.PageModelsTab;
 
 import org.librecms.CmsConstants;
 import org.librecms.pagemodel.ContentItemComponent;
 
 /**
+ * Basic form for all subclasses of {@link ContentItemComponent}.
+ * 
  * @param <T>
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -40,13 +42,19 @@ import org.librecms.pagemodel.ContentItemComponent;
 public abstract class AbstractContentItemComponentForm<T extends ContentItemComponent>
     extends AbstractComponentModelForm<T> {
 
+    /**
+     * Constant for the name of the {@link #modeField}.
+     */
     private static final String ITEM_MODE = "itemMode";
 
+    /**
+     * Text field for {@link ContentItemComponent#mode}.
+     */
     private TextField modeField;
 
     public AbstractContentItemComponentForm(
         final String name,
-        final PageModelTab pageModelTab,
+        final PageModelsTab pageModelTab,
         final ParameterSingleSelectionModel<String> selectedModelId,
         final ParameterSingleSelectionModel<String> selectedComponentId) {
 
