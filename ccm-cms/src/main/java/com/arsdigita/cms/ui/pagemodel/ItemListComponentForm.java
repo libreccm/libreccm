@@ -30,18 +30,18 @@ import com.arsdigita.bebop.form.TextArea;
 import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.ui.admin.pagemodels.AbstractComponentModelForm;
-import com.arsdigita.ui.admin.pagemodels.PageModelTab;
+import com.arsdigita.ui.admin.pagemodels.PageModelsTab;
 
 import org.librecms.CmsConstants;
 import org.librecms.pagemodel.ItemListComponent;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- *
+ * Form for adding/editing a {@link ItemListComponent}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ItemListComponentForm
@@ -59,7 +59,7 @@ public class ItemListComponentForm
     private TextArea listOrderArea;
 
     public ItemListComponentForm(
-        final PageModelTab pageModelTab,
+        final PageModelsTab pageModelTab,
         final ParameterSingleSelectionModel<String> selectedModelId,
         final ParameterSingleSelectionModel<String> selectedComponentId) {
 

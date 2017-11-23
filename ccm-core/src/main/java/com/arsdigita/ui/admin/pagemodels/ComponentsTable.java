@@ -43,7 +43,9 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- *
+ * Table used in the {@link PageModelDetails} component to list the components 
+ * assigned to a {@link PageModel}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class ComponentsTable extends Table {
@@ -54,7 +56,7 @@ class ComponentsTable extends Table {
     protected static final int COL_DELETE = 3;
 
     public ComponentsTable(
-        final PageModelTab pageModelTab,
+        final PageModelsTab pageModelTab,
         final ParameterSingleSelectionModel<String> selectedModelId,
         final ParameterSingleSelectionModel<String> selectedComponentId) {
 

@@ -25,7 +25,7 @@ import com.arsdigita.bebop.ParameterSingleSelectionModel;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.cms.ui.assets.ItemSearchWidget;
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.ui.admin.pagemodels.PageModelTab;
+import com.arsdigita.ui.admin.pagemodels.PageModelsTab;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
@@ -34,7 +34,8 @@ import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.pagemodel.FixedContentItemComponent;
 
 /**
- *
+ * Form for creating/editing a {@link FixedContentItemComponent}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class FixedContentItemComponentForm
@@ -45,7 +46,7 @@ public class FixedContentItemComponentForm
     private ItemSearchWidget itemSearchWidget;
 
     public FixedContentItemComponentForm(
-        final PageModelTab pageModelTab,
+        final PageModelsTab pageModelTab,
         final ParameterSingleSelectionModel<String> selectedModelId,
         final ParameterSingleSelectionModel<String> selectedComponentId) {
 
