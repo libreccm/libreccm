@@ -30,7 +30,7 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.*;
+
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.security.GroupRepository;
@@ -39,6 +39,13 @@ import org.libreccm.tests.categories.IntegrationTest;
 import javax.inject.Inject;
 
 import static org.libreccm.testutils.DependenciesHelpers.getModuleDependencies;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 
 /**

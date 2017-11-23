@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 LibreCCM Foundation.
+ * Copyright (C) 2017 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,18 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.cms;
-
-import org.libreccm.web.CcmApplication;
+package org.libreccm.admin.ui;
 
 /**
- *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * Enum of the possible types of a node.
  */
-public class ContentCenter extends CcmApplication {
+enum ApplicationTreeNodeType {
+    ROOT_NODE, 
+    APPLICATION_TYPE_NODE, 
+    APPLICATION_NODE,
+    SINGLETON_APPLICATION_NODE
 
-    private static final long serialVersionUID = 6672720141286517654L;
-    
-    
-    
 }

@@ -74,6 +74,12 @@ public class ApplicationManager {
         }
     }
 
+    /**
+     * Get all available application types.
+     *
+     * @return An unmodifiable {@link Map} containing all available application
+     *         types. The key of the map is the name of the application.
+     */
     public Map<String, ApplicationType> getApplicationTypes() {
         return Collections.unmodifiableMap(applicationTypes);
     }

@@ -103,6 +103,7 @@ class SitesTab extends CustomComponent {
                     final SiteEditor editor = new SiteEditor(
                         site, adminViewController);
                     editor.center();
+                    editor.setModal(true);
                     editor.setWidth("66%");
                     editor.setHeight("80%");
                     UI.getCurrent().addWindow(editor);
