@@ -26,7 +26,6 @@ import org.libreccm.theming.Themes;
 import java.io.Serializable;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 /**

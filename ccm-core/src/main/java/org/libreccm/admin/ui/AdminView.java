@@ -60,7 +60,7 @@ public class AdminView extends CustomComponent implements View {
     private final SystemInformationTab sysInfoTab;
 
     @Inject
-    protected AdminView(final AdminViewController controller) {
+    AdminView(final AdminViewController controller) {
 
         this.controller = controller;
 
@@ -89,6 +89,9 @@ public class AdminView extends CustomComponent implements View {
         final SitesTab sitesTab = new SitesTab(controller);
         tabSheet.addTab(sitesTab, "Sites");
 
+        final PageModelsTab pageModelsTab = new PageModelsTab(controller);
+        tabSheet.addTab(pageModelsTab, "PageModels");
+        
         configurationTab = new ConfigurationTab();
         tabSheet.addTab(configurationTab, "Configuration");
 
