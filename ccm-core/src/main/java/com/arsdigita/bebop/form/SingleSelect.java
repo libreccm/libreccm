@@ -29,7 +29,6 @@ import com.arsdigita.bebop.parameters.ParameterModel;
  * @author Rory Solomon
  * @author Michael Pih
  * @author Christian Brechb&uuml;hler (christian@arsdigita.com)
- * @version $Id$
  */
 public class SingleSelect extends Select {
 

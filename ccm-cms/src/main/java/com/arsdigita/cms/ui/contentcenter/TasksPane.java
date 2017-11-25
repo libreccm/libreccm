@@ -48,11 +48,7 @@ import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentType;
 
-/**
- *
- * @version $Id$
- */
-public class TasksPanel extends CMSContainer {
+public class TasksPane extends CMSContainer {
 
     // The default number of rows to show
     private static final int DEFAULT_MAX_ROWS = 15;
@@ -110,7 +106,7 @@ public class TasksPanel extends CMSContainer {
      * @param sectionModel
      *
      */
-    public TasksPanel(CcmObjectSelectionModel typeModel,
+    public TasksPane(CcmObjectSelectionModel typeModel,
                       CcmObjectSelectionModel sectionModel) {
         this(DEFAULT_MAX_ROWS, typeModel, sectionModel);
     }
@@ -125,7 +121,7 @@ public class TasksPanel extends CMSContainer {
      * @pre maxRows != null
      *
      */
-    public TasksPanel(int maxRows, 
+    public TasksPane(int maxRows, 
                       CcmObjectSelectionModel typeModel,
                       CcmObjectSelectionModel sectionModel) {
         super();
