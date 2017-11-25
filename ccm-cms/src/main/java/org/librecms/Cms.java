@@ -6,7 +6,6 @@ package org.librecms;
 import com.arsdigita.cms.ContentCenterAppCreator;
 import com.arsdigita.cms.ContentCenterServlet;
 import com.arsdigita.cms.ContentCenterSetup;
-import com.arsdigita.cms.ui.authoring.ItemCategoryForm;
 import com.arsdigita.cms.ui.pagemodel.CategorizedItemComponentForm;
 import com.arsdigita.cms.ui.pagemodel.CategoryTreeComponentForm;
 import com.arsdigita.cms.ui.pagemodel.FixedContentItemComponentForm;
@@ -26,7 +25,17 @@ import org.libreccm.modules.UnInstallEvent;
 import org.libreccm.pagemodel.PageModelComponentModel;
 import org.libreccm.web.ApplicationType;
 import org.libreccm.web.CcmApplication;
-import org.librecms.assets.*;
+import org.librecms.assets.AssetTypes;
+import org.librecms.assets.AudioAsset;
+import org.librecms.assets.Bookmark;
+import org.librecms.assets.ExternalAudioAsset;
+import org.librecms.assets.ExternalVideoAsset;
+import org.librecms.assets.FileAsset;
+import org.librecms.assets.Image;
+import org.librecms.assets.LegalMetadata;
+import org.librecms.assets.SideNote;
+import org.librecms.assets.VideoAsset;
+
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionCreator;
 import org.librecms.contentsection.ContentSectionSetup;
@@ -42,6 +51,8 @@ import org.librecms.pagemodel.CategoryTreeComponent;
 import org.librecms.pagemodel.FixedContentItemComponent;
 import org.librecms.pagemodel.GreetingItemComponent;
 import org.librecms.pagemodel.ItemListComponent;
+import org.librecms.pages.Pages;
+import org.librecms.pages.PagesCreator;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,6 +79,16 @@ import java.util.Properties;
             descBundle = CmsConstants.CONTENT_SECTION_DESC_BUNDLE,
             creator = ContentSectionCreator.class,
             servletPath = "/templates/servlet/content-section"
+        )
+        ,
+        @ApplicationType(
+            name = "org.librecms.pages.Pages",
+            applicationClass = Pages.class,
+            instanceForm = ApplicationInstanceForm.class,
+            settingsPane = SettingsPane.class,
+            descBundle = CmsConstants.CMS_BUNDLE,
+            creator = PagesCreator.class,
+            servletPath = "/templates/servlet/pages"
         )
     },
     pageModelComponentModels = {

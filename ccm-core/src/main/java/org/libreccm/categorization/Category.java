@@ -55,6 +55,7 @@ import javax.persistence.NamedEntityGraphs;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 /**
@@ -235,6 +236,7 @@ public class Category extends CcmObject implements Serializable, Portable {
      */
     @RecursivePermissions
     @OneToMany(mappedBy = "parentCategory", fetch = FetchType.LAZY)
+    @OrderBy("categoryOrder ASC")
     @XmlElementWrapper(name = "subcategories", namespace = CAT_XML_NS)
     @XmlElement(name = "category")
     @JsonIgnore
