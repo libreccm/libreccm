@@ -18,14 +18,17 @@
  */
 package com.arsdigita.ui.admin.categories;
 
+import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.CategoryRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 /**
  *
@@ -33,25 +36,51 @@ import javax.inject.Inject;
  */
 @RequestScoped
 class CategoriesController {
-    
+
     @Inject
     private CategoryRepository categoryRepo;
-    
+
     @Inject
     private CategoryManager categoryManager;
-    
+
+    @Transactional(Transactional.TxType.REQUIRED)
     protected List<Category> getSubCategories(final Category ofCategory) {
-        
+
         final Category category = categoryRepo
-        .findById(ofCategory.getObjectId())
-        .orElseThrow(() -> new IllegalArgumentException(String
+            .findById(ofCategory.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String
             .format("No Category with ID %d in the database.",
                     ofCategory.getObjectId())));
-        
-        return category.getSubCategories();
+
+        return new ArrayList<>(category.getSubCategories());
     }
-    
+
+    @Transactional(Transactional.TxType.REQUIRED)
     protected boolean hasChildren(final Category category) {
-        return categoryManager.hasSubCategories(category);
+        
+        final Category categoryToCheck = categoryRepo
+            .findById(category.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No Category with ID %d in the database.",
+                    category.getObjectId())));
+        
+        return categoryManager.hasSubCategories(categoryToCheck);
     }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected boolean isDeletable(final Category category) {
+
+        final Category categoryToCheck = categoryRepo
+            .findById(category.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No Category with ID %d in the database.",
+                    category.getObjectId())));
+
+        final List<Category> subCats = categoryToCheck.getSubCategories();
+        final List<Categorization> objects = categoryToCheck.getObjects();
+
+        return (subCats == null || subCats.isEmpty())
+                   && (objects == null || objects.isEmpty());
+    }
+
 }

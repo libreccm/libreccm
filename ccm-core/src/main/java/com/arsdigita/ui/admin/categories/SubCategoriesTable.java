@@ -268,16 +268,20 @@ public class SubCategoriesTable extends Table {
         private int index = -1;
 
         public SubCategoriesTableModel(final PageState state) {
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final CategoriesController controller = cdiUtil
+                .findBean(CategoriesController.class);
             final CategoryRepository categoryRepo = CdiUtil.
                 createCdiUtil().findBean(CategoryRepository.class);
             final Category category = categoryRepo.findById(Long.parseLong(
                 selectedCategoryId.getSelectedKey(state))).get();
 
-            subCategories = new ArrayList<>(category.getSubCategories());
-            subCategories.sort((c1, c2) -> {
-                return Long.compare(c1.getCategoryOrder(),
-                                    c2.getCategoryOrder());
-            });
+            subCategories = controller.getSubCategories(category);
+
+//            subCategories.sort((c1, c2) -> {
+//                return Long.compare(c1.getCategoryOrder(),
+//                                    c2.getCategoryOrder());
+//            });
         }
 
         @Override
@@ -333,11 +337,11 @@ public class SubCategoriesTable extends Table {
         }
 
         private boolean isDeletable(final Category category) {
-            final List<Category> subCats = category.getSubCategories();
-            final List<Categorization> objects = category.getObjects();
-
-            return (subCats == null || subCats.isEmpty())
-                       && (objects == null || objects.isEmpty());
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final CategoriesController controller = cdiUtil
+            .findBean(CategoriesController.class);
+            
+            return controller.isDeletable(category);
         }
 
         @Override
