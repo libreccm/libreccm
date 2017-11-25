@@ -42,7 +42,6 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.Shiro;
 import org.libreccm.web.CcmApplication;
-import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.privileges.ItemPrivileges;
