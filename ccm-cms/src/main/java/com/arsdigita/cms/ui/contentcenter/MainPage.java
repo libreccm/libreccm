@@ -31,9 +31,12 @@ import com.arsdigita.cms.ui.WorkspaceContextBar;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.ui.CcmObjectSelectionModel;
 
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.security.PermissionChecker;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentType;
+import org.librecms.pages.PagesPrivileges;
 
 //  ////////////////////////////////////////////////////////////////////////////
 //
@@ -59,16 +62,17 @@ public class MainPage extends CMSApplicationPage implements ActionListener {
 
     private final static String XSL_CLASS = "CMS Admin";
 
-    private TabbedPane m_tabbedPane;
-
-    private TasksPanel m_tasks;
-//    private ItemSearch m_search;
-//    private IdSearchTab m_IdSearch;
-    private CcmObjectSelectionModel<ContentType> m_typeSel;
-    private CcmObjectSelectionModel<ContentSection> m_sectionSel;
-
     public static final String CONTENT_TYPE = "type_id";
     public static final String CONTENT_SECTION = "section_id";
+
+    private final CcmObjectSelectionModel<ContentType> typeSelection;
+    private final CcmObjectSelectionModel<ContentSection> sectionSelection;
+
+    private final TabbedPane tabbedPane;
+
+    private TasksPane tasksPanel;
+//    private ItemSearch m_search;
+//    private IdSearchTab m_IdSearch;
 
     /**
      * Construct a new MainPage.
@@ -84,29 +88,28 @@ public class MainPage extends CMSApplicationPage implements ActionListener {
 
 
         /* Set the class attribute value (down in SimpleComponent).           */
-        setClassAttr("cms-admin");
+        super.setClassAttr("cms-admin");
 
-        LongParameter typeId = new LongParameter(CONTENT_TYPE);
-        addGlobalStateParam(typeId);
-        m_typeSel = new CcmObjectSelectionModel(ContentType.class, typeId);
+        final LongParameter typeId = new LongParameter(CONTENT_TYPE);
+        super.addGlobalStateParam(typeId);
+        typeSelection = new CcmObjectSelectionModel<>(ContentType.class, typeId);
 
-        LongParameter sectionId = new LongParameter(CONTENT_SECTION);
-        addGlobalStateParam(sectionId);
-        m_sectionSel = new CcmObjectSelectionModel(
-            ContentSection.class,
-            sectionId
+        final LongParameter sectionId = new LongParameter(CONTENT_SECTION);
+        super.addGlobalStateParam(sectionId);
+        sectionSelection = new CcmObjectSelectionModel<>(ContentSection.class,
+                                                         sectionId
         );
 
-        add(new WorkspaceContextBar());
-        add(new GlobalNavigation());
+        super.add(new WorkspaceContextBar());
+        super.add(new GlobalNavigation());
 
-        m_tasks = getTasksPane(m_typeSel, m_sectionSel);
+        tasksPanel = getTasksPane(typeSelection, sectionSelection);
 //        m_search = getSearchPane();
 //        m_IdSearch = getIdSearchPane();
 
-        m_tabbedPane = createTabbedPane();
-        m_tabbedPane.setIdAttr("page-body");
-        add(m_tabbedPane);
+        tabbedPane = createTabbedPane();
+        tabbedPane.setIdAttr("page-body");
+        super.add(tabbedPane);
 
 //        add(new DebugPanel());
     }
@@ -114,14 +117,20 @@ public class MainPage extends CMSApplicationPage implements ActionListener {
     /**
      * Creates, and then caches, the Tasks pane. Overriding this method to
      * return null will prevent this tab from appearing.
+     *
+     * @param typeModel
+     * @param sectionModel
+     *
+     * @return
      */
-    protected TasksPanel getTasksPane(
-        CcmObjectSelectionModel<ContentType> typeModel,
-        CcmObjectSelectionModel<ContentSection> sectionModel) {
-        if (m_tasks == null) {
-            m_tasks = new TasksPanel(typeModel, sectionModel);
+    protected TasksPane getTasksPane(
+        final CcmObjectSelectionModel<ContentType> typeModel,
+        final CcmObjectSelectionModel<ContentSection> sectionModel) {
+
+        if (tasksPanel == null) {
+            tasksPanel = new TasksPane(typeModel, sectionModel);
         }
-        return m_tasks;
+        return tasksPanel;
     }
 
 //    /**
@@ -154,20 +163,35 @@ public class MainPage extends CMSApplicationPage implements ActionListener {
      * Developers can override this method to add only the tabs they want, or to
      * add additional tabs after the default CMS tabs are added.
      *
+     * @return
      */
     protected TabbedPane createTabbedPane() {
-        TabbedPane tabbedPane = new TabbedPane();
-        tabbedPane.setClassAttr(XSL_CLASS);
+
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final PermissionChecker permissionChecker = cdiUtil
+            .findBean(PermissionChecker.class);
+
+        final TabbedPane pane = new TabbedPane();
+        pane.setClassAttr(XSL_CLASS);
         Label taskLabel = new Label(new GlobalizedMessage(
             "cms.ui.contentcenter.mainpage.taskssections",
+            CmsConstants.CMS_BUNDLE));
+        Label pagesLabel = new Label(new GlobalizedMessage(
+            "cms.ui.contentcenter.mainpage.pages",
             CmsConstants.CMS_BUNDLE));
         Label searchLabel = new Label(new GlobalizedMessage(
             "cms.ui.contentcenter.mainpage.search", CmsConstants.CMS_BUNDLE));
         Label IdsearchLabel = new Label("ID Search");
 
-        addToPane(tabbedPane,
+        addToPane(pane,
                   taskLabel,
-                  getTasksPane(m_typeSel, m_sectionSel));
+                  getTasksPane(typeSelection, sectionSelection));
+        
+//        if (permissionChecker.isPermitted(PagesPrivileges.ADMINISTER_PAGES)) {
+            addToPane(pane,
+                      pagesLabel,
+                      new PagesPane());
+//        }
 //        addToPane(tabbedPane,
 //                  new Label(new GlobalizedMessage(
 //                      "cms.ui.contentcenter.mainpage.search", 
@@ -177,8 +201,8 @@ public class MainPage extends CMSApplicationPage implements ActionListener {
 //                  IdsearchLabel,
 //                  getIdSearchPane());
 
-        tabbedPane.addActionListener(this);
-        return tabbedPane;
+        pane.addActionListener(this);
+        return pane;
     }
 
 //  /**
@@ -200,13 +224,15 @@ public class MainPage extends CMSApplicationPage implements ActionListener {
      * Adds the specified component, with the specified Label as tab name, to
      * the tabbed pane only if it is not null.
      *
-     * @param pane    The pane to which to add the tab
-     * @param tabName The name of the tab if it's added
-     * @param comp    The component to add to the pane
+     * @param pane      The pane to which to add the tab
+     * @param tabName   The name of the tab if it's added
+     * @param component The component to add to the pane
      */
-    protected void addToPane(TabbedPane pane, Label tabName, Component comp) {
-        if (comp != null) {
-            pane.addTab(tabName, comp);
+    protected void addToPane(final TabbedPane pane,
+                             final Label tabName,
+                             final Component component) {
+        if (component != null) {
+            pane.addTab(tabName, component);
         }
     }
 
@@ -216,12 +242,14 @@ public class MainPage extends CMSApplicationPage implements ActionListener {
      *
      * @param event The event fired by selecting a tab
      */
-    public void actionPerformed(ActionEvent event) {
-        PageState state = event.getPageState();
-        Component pane = m_tabbedPane.getCurrentPane(state);
+    @Override
+    public void actionPerformed(final ActionEvent event) {
 
-        if (pane == m_tasks) {
-            m_tasks.reset(state);
+        final PageState state = event.getPageState();
+        final Component pane = tabbedPane.getCurrentPane(state);
+
+        if (pane == tasksPanel) {
+            tasksPanel.reset(state);
         }
 //        else if (pane == m_search) {
 //            m_search.reset(state);

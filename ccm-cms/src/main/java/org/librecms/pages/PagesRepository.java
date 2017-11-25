@@ -24,6 +24,7 @@ import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.sites.SiteRepository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -38,6 +39,8 @@ import javax.transaction.Transactional;
  */
 @RequestScoped
 public class PagesRepository extends AbstractEntityRepository<Long, Pages> {
+
+    private static final long serialVersionUID = 7256268720843315037L;
 
     @Inject
     private SiteRepository siteRepo;
@@ -82,6 +85,15 @@ public class PagesRepository extends AbstractEntityRepository<Long, Pages> {
     @Override
     public boolean isNew(final Pages pages) {
         return pages.getObjectId() == 0;
+    }
+    
+    @Override
+    public void initNewEntity(final Pages pages) {
+        
+        super.initNewEntity(pages);
+        
+        pages.setUuid(UUID.randomUUID().toString());
+        pages.setApplicationType(Pages.class.getName());
     }
 
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)

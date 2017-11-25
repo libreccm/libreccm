@@ -47,15 +47,19 @@ public class PagesManager implements Serializable {
 
     @RequiresPrivilege(PagesPrivileges.ADMINISTER_PAGES)
     @Transactional(Transactional.TxType.REQUIRED)
-    public Pages createPages(final Site site,
+    public Pages createPages(final String primaryUrl,
+                             final Site site,
                              final Domain domain) {
 
         final Pages pages = new Pages();
+        pages.setPrimaryUrl(primaryUrl);
+        
+        pagesRepo.save(pages);
+        
         pages.setCategoryDomain(domain);
+        pagesRepo.save(pages);
 
         siteManager.addApplicationToSite(site, pages);
-
-        pagesRepo.save(pages);
 
         return pages;
     }

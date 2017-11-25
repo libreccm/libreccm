@@ -27,8 +27,10 @@ import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  *
@@ -37,6 +39,8 @@ import java.util.Optional;
 @RequestScoped
 public class ApplicationRepository
     extends AbstractEntityRepository<Long, CcmApplication> {
+
+    private static final long serialVersionUID = 165550885824851765L;
 
     @Override
     public Class<CcmApplication> getEntityClass() {
@@ -48,6 +52,14 @@ public class ApplicationRepository
         return application.getObjectId() == 0;
     }
 
+    @Override
+    public void initNewEntity(final CcmApplication application) {
+        
+        super.initNewEntity(application);
+        application.setUuid(UUID.randomUUID().toString());
+        application.setApplicationType(application.getClass().getName());
+    }
+    
     /**
      * Retrieve the application mounted at the provided {@code path}.
      *
