@@ -53,7 +53,7 @@ class CategoriesTreeModelBuilder
         final Domain domain = domainRepository.findById(Long.parseLong(
                 selectedDomainId.getSelectedKey(state))).get();
         
-        return new CategoriesTreeModel(domain);
+        return new CategoriesTreeModel(tree, domain);
     }
 
 }
