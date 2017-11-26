@@ -973,8 +973,6 @@ public class Page extends SimpleComponent implements Container {
 
     /**
      * Adds a component to the page model.
-     *
-     * @deprecated This method will become private in ACS 5.0.
      */
     public void addComponent(Component c) {
         Assert.isUnlocked(this);
