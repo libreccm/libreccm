@@ -19,6 +19,7 @@
 package com.arsdigita.ui.admin.categories;
 
 import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.Tree;
 import com.arsdigita.bebop.tree.TreeModel;
 import com.arsdigita.bebop.tree.TreeNode;
 
@@ -31,23 +32,29 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- *
+ * A reusable implementation of {@link TreeModel} for creating category trees.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class CategoriesTreeModel implements TreeModel {
 
+    private final Tree tree;
     private final Domain domain;
 
-    public CategoriesTreeModel(final Domain domain) {
+    public CategoriesTreeModel(final Tree tree, final Domain domain) {
+        this.tree = tree;
         this.domain = domain;
     }
 
     @Override
-    public TreeNode getRoot(final PageState data) {
+    public TreeNode getRoot(final PageState state) {
         final CategoryRepository categoryRepository = CdiUtil.createCdiUtil()
             .findBean(CategoryRepository.class);
         final Category category = categoryRepository.findById(domain.getRoot()
             .getObjectId()).get();
+        
+        tree.expand(Long.toString(category.getObjectId()), state);
+        
         return new CategoryTreeNode(category);
     }
 
@@ -65,6 +72,12 @@ public class CategoriesTreeModel implements TreeModel {
     public Iterator getChildren(final TreeNode node,
                                 final PageState state) {
 
+        if (node.getKey().equals(getRoot(state).getKey())
+            && tree.isCollapsed(node.getKey().toString(), state)) {
+            
+            tree.expand(node.getKey().toString(), state);
+        }
+        
         final CategoriesController controller = CdiUtil
             .createCdiUtil()
             .findBean(CategoriesController.class);

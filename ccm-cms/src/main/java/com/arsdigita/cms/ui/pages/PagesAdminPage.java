@@ -31,6 +31,9 @@ import com.arsdigita.bebop.SaveCancelSection;
 import com.arsdigita.bebop.TabbedPane;
 import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.Tree;
+import com.arsdigita.bebop.event.ActionEvent;
+import com.arsdigita.bebop.event.ChangeEvent;
+import com.arsdigita.bebop.event.ChangeListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.PrintEvent;
 import com.arsdigita.bebop.form.Option;
@@ -92,23 +95,24 @@ public class PagesAdminPage extends Page {
         super.addGlobalStateParam(selectedCategory.getStateParameter());
 
         categoryTree = new Tree(new CategoryTreeModelBuilder());
+        categoryTree.addChangeListener(this::categoryTreeStateChanged);
 
         final LayoutPanel panel = new LayoutPanel();
         panel.setLeft(categoryTree);
 
+        nothingSelectedLabel = new Label(new GlobalizedMessage(
+            "cms.ui.pages.no_category_selected",
+            CmsConstants.CMS_BUNDLE));
+//        nothingSelectedLabel.addPrintListener(this::printNothingSelectedLabel);
+        super.setVisibleDefault(nothingSelectedLabel, true);
+
         pageModelForm = new Form("pageModelForm");
+        super.setVisibleDefault(pageModelForm, false);
+
         final Label heading = new Label();
         heading.addPrintListener(this::printPageModelFormHeading);
         heading.setClassAttr("heading");
         pageModelForm.add(heading);
-        super.setVisibleDefault(pageModelForm, false);
-
-        nothingSelectedLabel = new Label(new GlobalizedMessage(
-            "cms.ui.pages.no_category_selected",
-            CmsConstants.CMS_BUNDLE));
-        nothingSelectedLabel.addPrintListener(this::printNothingSelectedLabel);
-        super.setVisibleDefault(nothingSelectedLabel, true);
-        pageModelForm.add(nothingSelectedLabel);
 
         indexPageModelSelect = new SingleSelect(INDEX_PAGE_MODEL_SELECT);
         try {
@@ -117,6 +121,7 @@ public class PagesAdminPage extends Page {
             throw new UnexpectedErrorException(ex);
         }
         pageModelForm.add(indexPageModelSelect);
+//        super.setVisibleDefault(indexPageModelSelect, false);
 
         itemPageModelSelect = new SingleSelect(ITEM_PAGE_MODEL_SELECT);
         try {
@@ -125,25 +130,28 @@ public class PagesAdminPage extends Page {
             throw new UnexpectedErrorException(ex);
         }
         pageModelForm.add(itemPageModelSelect);
+//        super.setVisibleDefault(itemPageModelSelect, false);
 
         saveCancelSection = new SaveCancelSection();
         pageModelForm.add(saveCancelSection);
+//        super.setVisibleDefault(saveCancelSection, false);
 
         pageModelForm.addInitListener(this::initPageModelForm);
         pageModelForm.addValidationListener(this::validatePageModelForm);
         pageModelForm.addProcessListener(this::processPageModelForm);
 
         final BoxPanel rightPanel = new BoxPanel(BoxPanel.VERTICAL);
-//        rightPanel.add(nothingSelectedLabel);
+        rightPanel.add(nothingSelectedLabel);
         rightPanel.add(pageModelForm);
         panel.setRight(rightPanel);
 
         final TabbedPane tabbedPane = new TabbedPane();
         tabbedPane.addTab(new Label(new GlobalizedMessage(
-            "cms.ui.pages.tab.pages",
-            CmsConstants.CMS_BUNDLE)),
+            "cms.ui.pages.tab.pages", CmsConstants.CMS_BUNDLE)),
                           panel);
         super.add(tabbedPane);
+
+        super.addActionListener(this::initPage);
 
         super.lock();
     }
@@ -167,20 +175,33 @@ public class PagesAdminPage extends Page {
 //        page.addGlobalStateParam(selectedCategory.getStateParameter());
 //        
 //    }
-    private void printNothingSelectedLabel(final PrintEvent event) {
+    private void initPage(final ActionEvent event) {
 
         final PageState state = event.getPageState();
-        final Label target = (Label) event.getTarget();
 
-        target.setVisible(state, !selectedCategory.isSelected(state));
+        if (selectedCategory.isSelected(state)) {
+            nothingSelectedLabel.setVisible(state, false);
+            pageModelForm.setVisible(state, true);
+        } else {
+            nothingSelectedLabel.setVisible(state, true);
+            pageModelForm.setVisible(state, false);
+        }
+
     }
 
+//    private void printNothingSelectedLabel(final PrintEvent event) {
+//
+//        final PageState state = event.getPageState();
+//        final Label target = (Label) event.getTarget();
+//
+//        target.setVisible(state, !selectedCategory.isSelected(state));
+//    }
     private void printPageModelFormHeading(final PrintEvent event) {
 
         final PageState state = event.getPageState();
         final Label target = (Label) event.getTarget();
 
-        target.setVisible(state, !selectedCategory.isSelected(state));
+//        target.setVisible(state, !selectedCategory.isSelected(state));
         if (selectedCategory.isSelected(state)) {
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
@@ -202,15 +223,13 @@ public class PagesAdminPage extends Page {
 
     private void populatePageModelSelect(final PrintEvent event) {
 
-        final PageState state = event.getPageState();
-
+//        final PageState state = event.getPageState();
         final SingleSelect target = (SingleSelect) event.getTarget();
 
-        if (!selectedCategory.isSelected(state)) {
-            target.setVisible(state, false);
-            return;
-        }
-
+//        if (!selectedCategory.isSelected(state)) {
+//            target.setVisible(state, false);
+//            return;
+//        }
         target.clearOptions();
 
         target.addOption(new Option(INHERIT_PAGEMODEL,
@@ -236,6 +255,14 @@ public class PagesAdminPage extends Page {
 
     }
 
+    private void categoryTreeStateChanged(final ChangeEvent event) {
+
+        final PageState state = event.getPageState();
+
+        final String selectedKey = (String) categoryTree.getSelectedKey(state);
+        selectedCategory.setSelectedKey(state, selectedKey);
+    }
+
     private void initPageModelForm(final FormSectionEvent event)
         throws FormProcessException {
 
@@ -243,6 +270,10 @@ public class PagesAdminPage extends Page {
 
 //        pageModelForm.setVisible(state, selectedCategory.isSelected(state));
         saveCancelSection.setVisible(state, selectedCategory.isSelected(state));
+
+        if (!selectedCategory.isSelected(state)) {
+            return;
+        }
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final CategoryRepository categoryRepo = cdiUtil
@@ -261,16 +292,25 @@ public class PagesAdminPage extends Page {
 
         if (page.isPresent()) {
 
-            indexPageModelSelect.setValue(state,
-                                          Long.toString(page
-                                              .get()
-                                              .getIndexPageModel()
-                                              .getPageModelId()));
-            itemPageModelSelect.setValue(state,
-                                         Long.toString(page
-                                             .get()
-                                             .getItemPageModel()
-                                             .getPageModelId()));
+            if (page.get().getIndexPageModel() == null) {
+                indexPageModelSelect.setValue(state, INHERIT_PAGEMODEL);
+            } else {
+                indexPageModelSelect.setValue(state,
+                                              Long.toString(page
+                                                  .get()
+                                                  .getIndexPageModel()
+                                                  .getPageModelId()));
+            }
+
+            if (page.get().getItemPageModel() == null) {
+                itemPageModelSelect.setValue(state, INHERIT_PAGEMODEL);
+            } else {
+                itemPageModelSelect.setValue(state,
+                                             Long.toString(page
+                                                 .get()
+                                                 .getItemPageModel()
+                                                 .getPageModelId()));
+            }
         } else {
             indexPageModelSelect.setValue(state, INHERIT_PAGEMODEL);
             itemPageModelSelect.setValue(state, INHERIT_PAGEMODEL);
@@ -328,7 +368,7 @@ public class PagesAdminPage extends Page {
 
             if (!INHERIT_PAGEMODEL.equals(selectedItemPageModelId)) {
                 final PageModel model = pageModelRepo
-                    .findById(Long.parseLong(selectedIndexPageModelId))
+                    .findById(Long.parseLong(selectedItemPageModelId))
                     .orElseThrow(() -> new UnexpectedErrorException(String
                     .format("No PageModel with ID %s in the database.",
                             selectedItemPageModelId)));
@@ -350,7 +390,8 @@ public class PagesAdminPage extends Page {
         public TreeModel makeModel(final Tree tree,
                                    final PageState state) {
 
-            return new CategoriesTreeModel(pagesInstance.getCategoryDomain());
+            return new CategoriesTreeModel(tree,
+                                           pagesInstance.getCategoryDomain());
         }
 
     }
