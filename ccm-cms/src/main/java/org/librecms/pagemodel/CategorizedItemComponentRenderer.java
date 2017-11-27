@@ -22,7 +22,6 @@ import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.core.CcmObject;
-import org.libreccm.pagemodel.ComponentModelType;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemVersion;
 
@@ -42,13 +41,15 @@ import javax.ws.rs.NotFoundException;
 
 import static org.librecms.pages.PagesConstants.*;
 
+import org.libreccm.pagemodel.RendersComponentModel;
+
 /**
  * Renderer for the {@link CategorizedItemComponent}.
  * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@ComponentModelType(componentModel = CategorizedItemComponent.class)
+@RendersComponentModel(componentModel = CategorizedItemComponent.class)
 public class CategorizedItemComponentRenderer
     extends AbstractContentItemComponentRenderer<CategorizedItemComponent> {
 

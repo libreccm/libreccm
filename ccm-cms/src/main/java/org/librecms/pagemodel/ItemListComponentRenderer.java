@@ -24,7 +24,6 @@ import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.UnexpectedErrorException;
-import org.libreccm.pagemodel.ComponentModelType;
 
 import java.util.Map;
 
@@ -54,13 +53,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import static org.librecms.pages.PagesConstants.*;
 
+import org.libreccm.pagemodel.RendersComponentModel;
+
 /**
  * Renderer for the {@link ItemListComponent}.
  * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@ComponentModelType(componentModel = ItemListComponent.class)
+@RendersComponentModel(componentModel = ItemListComponent.class)
 public class ItemListComponentRenderer
     implements ComponentRenderer<ItemListComponent> {
 

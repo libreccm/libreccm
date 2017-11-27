@@ -25,7 +25,6 @@ import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CcmObject;
-import org.libreccm.pagemodel.ComponentModelType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +40,7 @@ import javax.transaction.Transactional;
 import static org.librecms.pages.PagesConstants.*;
 
 import org.libreccm.pagemodel.ComponentRenderer;
+import org.libreccm.pagemodel.RendersComponentModel;
 
 /**
  * Renderer for the {@link CategoryTreeComponent}.
@@ -48,7 +48,7 @@ import org.libreccm.pagemodel.ComponentRenderer;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@ComponentModelType(componentModel = CategoryTreeComponent.class)
+@RendersComponentModel(componentModel = CategoryTreeComponent.class)
 public class CategoryTreeComponentRenderer
     implements ComponentRenderer<CategoryTreeComponent> {
 
