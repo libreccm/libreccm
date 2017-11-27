@@ -25,7 +25,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 /**
- * Configuration for the {@link Page} and a {@link Site}.
+ * Theme configuration for the {@link Page} and a {@link Site}.
  * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

@@ -19,6 +19,7 @@
 package org.librecms.pages;
 
 import org.libreccm.pagemodel.AbstractPageRenderer;
+import org.libreccm.pagemodel.PageRenderer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,11 +27,12 @@ import java.util.Map;
 import javax.enterprise.context.RequestScoped;
 
 /**
- *
+ * Implementation of {@link PageRenderer} for CMS pages.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class CmsPageBuilder extends AbstractPageRenderer {
+public class CmsPageRenderer extends AbstractPageRenderer {
 
     @Override
     public Map<String, Object> renderPage(final Map<String, Object> parameters) {

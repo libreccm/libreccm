@@ -52,7 +52,8 @@ public class PageManager {
      * no {@link Page} associated with the provided {@link Category} this method
      * will return the {@link Page} associated with the parent category.
      *
-     * @param category The {@link Category} which is associated with the {@link Page}.
+     * @param category The {@link Category} which is associated with the
+     *                 {@link Page}.
      *
      * @return The {@link Page} associated with the provided {@code category}.
      */
@@ -79,20 +80,32 @@ public class PageManager {
     }
 
     /**
-     * Create 
-     * @param category
-     * @return 
+     * Creates a new {@link Page} entity for a {@link Category} if there is no
+     * page for that category yet.
+     *
+     * @param category The category for which the new {@link Page} is created.
+     *
+     * @return A new {@link Page} if there is no {@link Page} for the provided 
+     * {@code category}. If there is already a {@link Page} for that category
+     * the existing {@link Page} is returned.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public Page createPageForCategory(final Category category) {
 
-        final Page page = new Page();
-        pageRepo.save(page);
-        categoryManager.addObjectToCategory(page, 
-                                            category, 
-                                            CATEGORIZATION_TYPE_PAGE_CONF);
+        final Optional<Page> pageForCategory = pageRepo
+            .findPageForCategory(category);
 
-        return page;
+        if (pageForCategory.isPresent()) {
+            return pageForCategory.get();
+        } else {
+            final Page page = new Page();
+            pageRepo.save(page);
+            categoryManager.addObjectToCategory(page,
+                                                category,
+                                                CATEGORIZATION_TYPE_PAGE_CONF);
+
+            return page;
+        }
     }
 
 }

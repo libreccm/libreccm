@@ -35,7 +35,7 @@ import static org.librecms.CmsConstants.*;
 
 /**
  * The {@code Pages} application. Each instance of this application provides the
- * page tree for specific site.
+ * page tree for a specific site.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -70,7 +70,7 @@ public class Pages extends SiteAwareApplication implements Serializable {
     private static final long serialVersionUID = -352205318143692477L;
 
     /**
-     * The category {@link Domain} which is used the model the page tree.
+     * The category {@link Domain} which is used to create the page tree.
      */
     @OneToOne
     @JoinColumn(name = "CATEGORY_DOMAIN_ID")
