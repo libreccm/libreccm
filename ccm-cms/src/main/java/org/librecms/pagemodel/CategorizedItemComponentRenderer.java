@@ -41,7 +41,7 @@ import javax.ws.rs.NotFoundException;
 
 import static org.librecms.pages.PagesConstants.*;
 
-import org.libreccm.pagemodel.RendersComponentModel;
+import org.libreccm.pagemodel.RendersComponent;
 
 /**
  * Renderer for the {@link CategorizedItemComponent}.
@@ -49,7 +49,7 @@ import org.libreccm.pagemodel.RendersComponentModel;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@RendersComponentModel(componentModel = CategorizedItemComponent.class)
+@RendersComponent(componentModel = CategorizedItemComponent.class)
 public class CategorizedItemComponentRenderer
     extends AbstractContentItemComponentRenderer<CategorizedItemComponent> {
 

@@ -49,7 +49,8 @@ import java.util.TooManyListenersException;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Form for editing/creating a {@link Site}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class SitesForm extends Form {

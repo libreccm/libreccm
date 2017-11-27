@@ -21,6 +21,7 @@ package org.libreccm.sites;
 import static org.libreccm.core.CoreConstants.*;
 
 import org.libreccm.core.CcmObject;
+import org.libreccm.theming.Themes;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,6 +36,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
+ * An entity for storing the data about a site/virtual host.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -50,7 +52,9 @@ import javax.persistence.Table;
     ,
     @NamedQuery(
         name = "Site.findDefaultSite",
-        query = "SELECT s FROM Site s WHERE s.defaultSite = true"
+        query = "SELECT s FROM Site s "
+                    + "WHERE s.defaultSite = true "
+                    + "ORDER BY s.domain"
     )
     ,
     @NamedQuery(
@@ -63,15 +67,32 @@ public class Site extends CcmObject {
 
     private static final long serialVersionUID = 7993361616050713139L;
 
+    /**
+     * The domain of the site, e.g. {@code www.example.org}.
+     */
     @Column(name = "DOMAIN_OF_SITE", unique = true)
     private String domainOfSite;
 
+    /**
+     * A boolean indicating that the instance is the default site to use if
+     * there is no site with a matching domain.
+     */
     @Column(name = "DEFAULT_SITE")
     private boolean defaultSite;
 
+    /**
+     * The name of the default theme for the site. The default theme is used
+     * when no specific theme is requested. We can't use a reference to some
+     * entity here because not all themes have a representation in the database.
+     *
+     * @see Themes
+     */
     @Column(name = "DEFAULT_THEME")
     private String defaultTheme;
 
+    /**
+     * The applications mapped to this site.
+     */
     @OneToMany(mappedBy = "site")
     private List<SiteAwareApplication> applications;
 

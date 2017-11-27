@@ -28,7 +28,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 
-import org.libreccm.pagemodel.RendersComponentModel;
+import org.libreccm.pagemodel.RendersComponent;
 
 /**
  * Renderer for the {@link FixedContentItemComponent}.
@@ -36,7 +36,7 @@ import org.libreccm.pagemodel.RendersComponentModel;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@RendersComponentModel(componentModel = FixedContentItemComponent.class)
+@RendersComponent(componentModel = FixedContentItemComponent.class)
 public class FixedContentItemComponentRenderer
     extends AbstractContentItemComponentRenderer<FixedContentItemComponent> {
 
