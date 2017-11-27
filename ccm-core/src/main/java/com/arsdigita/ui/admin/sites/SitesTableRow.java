@@ -24,7 +24,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- *
+ * Contains all data for one row of the {@link SitesTable}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class SitesTableRow implements Comparable<SitesTableRow>, Serializable {

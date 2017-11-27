@@ -44,7 +44,9 @@ import java.util.List;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Table which displays data about all available {@link Site}s and provides
+ * links for editing and deleting them.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class SitesTable extends Table {

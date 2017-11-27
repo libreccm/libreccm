@@ -34,7 +34,7 @@ import javax.ws.rs.NotFoundException;
 
 import static org.librecms.pages.PagesConstants.*;
 
-import org.libreccm.pagemodel.RendersComponentModel;
+import org.libreccm.pagemodel.RendersComponent;
 
 /**
  * Renderer for the {@link GreetingItemComponent}.
@@ -42,7 +42,7 @@ import org.libreccm.pagemodel.RendersComponentModel;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@RendersComponentModel(componentModel = GreetingItemComponent.class)
+@RendersComponent(componentModel = GreetingItemComponent.class)
 public class GreetingItemComponentRenderer
     extends AbstractContentItemComponentRenderer<GreetingItemComponent> {
 

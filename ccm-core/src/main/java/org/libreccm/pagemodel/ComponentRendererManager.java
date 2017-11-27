@@ -92,11 +92,11 @@ public class ComponentRendererManager {
     }
 
     /**
-     * Annotation literal for the {@link RendersComponentModel} annotation.
+     * Annotation literal for the {@link RendersComponent} annotation.
      */
     private static class ComponentModelTypeLiteral
-        extends AnnotationLiteral<RendersComponentModel>
-        implements RendersComponentModel {
+        extends AnnotationLiteral<RendersComponent>
+        implements RendersComponent {
 
         private static final long serialVersionUID = -2601632434295178600L;
 

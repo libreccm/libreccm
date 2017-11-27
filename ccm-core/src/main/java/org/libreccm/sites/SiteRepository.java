@@ -22,6 +22,7 @@ import org.libreccm.core.AbstractEntityRepository;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.security.RequiresPrivilege;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,6 +32,7 @@ import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 /**
+ * Repository for {@link Site} entities.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -39,6 +41,16 @@ public class SiteRepository extends AbstractEntityRepository<Long, Site> {
 
     private static final long serialVersionUID = 3120528987720524155L;
 
+    /**
+     * Retrieve the {@link Site} for a specific domain.
+     *
+     * @param domain The domain of site to retrieve.
+     *
+     * @return If there is a {@link Site} for the provided domain an
+     *         {@link Optional} containing the {@link Site} is returned. If
+     *         there is not matching {@link Site} an empty {@link Optional} is
+     *         returned.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<Site> findByDomain(final String domain) {
 
@@ -53,18 +65,36 @@ public class SiteRepository extends AbstractEntityRepository<Long, Site> {
         }
     }
 
+    /**
+     * Finds the default site.
+     *
+     * @return An {@link Optional} containing the default site. If there is no
+     *         default site an empty {@link Optional} is returned. If there
+     *         multiple {@link Site}s marked as default site (which should not
+     *         happen) the first result is returned (the list is ordered by the
+     *         domain).
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<Site> findDefaultSite() {
         final TypedQuery<Site> query = getEntityManager()
             .createNamedQuery("Site.findDefaultSite", Site.class);
 
-        try {
-            return Optional.of(query.getSingleResult());
-        } catch (NoResultException ex) {
+        final List<Site> result = query.getResultList();
+        if (result.isEmpty()) {
             return Optional.empty();
+        } else {
+            return Optional.of(result.get(0));
         }
     }
 
+    /**
+     * Checks if there is a {@link Site} for a domain.
+     *
+     * @param domain The domain to check for.
+     *
+     * @return {@code true} if there is a {@link Site} for that domain,
+     *         {@code false} otherwise.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     public boolean hasSiteForDomain(final String domain) {
 
@@ -97,7 +127,7 @@ public class SiteRepository extends AbstractEntityRepository<Long, Site> {
     public boolean isNew(final Site site) {
         return site.getObjectId() == 0;
     }
-    
+
     @Override
     public void initNewEntity(final Site site) {
         site.setUuid(UUID.randomUUID().toString());

@@ -40,7 +40,7 @@ import javax.transaction.Transactional;
 import static org.librecms.pages.PagesConstants.*;
 
 import org.libreccm.pagemodel.ComponentRenderer;
-import org.libreccm.pagemodel.RendersComponentModel;
+import org.libreccm.pagemodel.RendersComponent;
 
 /**
  * Renderer for the {@link CategoryTreeComponent}.
@@ -48,7 +48,7 @@ import org.libreccm.pagemodel.RendersComponentModel;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@RendersComponentModel(componentModel = CategoryTreeComponent.class)
+@RendersComponent(componentModel = CategoryTreeComponent.class)
 public class CategoryTreeComponentRenderer
     implements ComponentRenderer<CategoryTreeComponent> {
 
