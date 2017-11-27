@@ -25,6 +25,8 @@ import java.util.Map;
  * A {@code ComponentRenderer} transforms a {@link ComponentModel} into a
  * component.
  *
+ * An implementation must be annotation with the {@link ComponentModelType}
+ * qualifier annotation.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @param <M> Type of the model the component renderer processes.
@@ -34,9 +36,9 @@ public interface ComponentRenderer<M extends ComponentModel> {
     /**
      * Renders a {@link ComponentModel}.
      *
-     * The result of the rendering process is a map which uses strings as key.
-     * The values are either Java primitive types or Collections. More exactly
-     * the values are objects of one the following types:
+     * The result of the rendering process is a {@link Map} which uses strings
+     * as key. The values are either Java primitive types or Collections. More
+     * exactly the values are objects of one the following types:
      *
      * <ul>
      * <li>{@link Double}</li>
@@ -50,8 +52,8 @@ public interface ComponentRenderer<M extends ComponentModel> {
      * </ul>
      *
      * Other subtypes {@link Collection} are might be supported but there is no
-     * grantee for that. The values in a collection must be one of the types in
-     * the list above. Collections might contain multiple types from the list
+     * guarantee for that. The values in a collection must be one of the types
+     * in the list above. Collections might contain multiple types from the list
      * above. The keys for a map should always be strings.
      *
      * @param componentModel The component model to render.

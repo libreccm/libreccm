@@ -22,7 +22,6 @@ import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.core.CcmObject;
-import org.libreccm.pagemodel.ComponentModelType;
 import org.librecms.contentsection.ContentItem;
 
 import java.util.Map;
@@ -35,13 +34,15 @@ import javax.ws.rs.NotFoundException;
 
 import static org.librecms.pages.PagesConstants.*;
 
+import org.libreccm.pagemodel.RendersComponentModel;
+
 /**
  * Renderer for the {@link GreetingItemComponent}.
  * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@ComponentModelType(componentModel = GreetingItemComponent.class)
+@RendersComponentModel(componentModel = GreetingItemComponent.class)
 public class GreetingItemComponentRenderer
     extends AbstractContentItemComponentRenderer<GreetingItemComponent> {
 

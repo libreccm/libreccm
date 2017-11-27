@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Interface for page renderers. A page renderer is invoked to render a page of
  * specific type. An implementation should be a CDI bean which is annotated with
- * the qualifier {@link PageModelType}.
+ * the qualifier {@link RendersPageModelType}.
  *
  * An implementation should add all default components which have to be present
  * in page. The {@link PageModel} should only specify

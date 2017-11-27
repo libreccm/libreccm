@@ -35,6 +35,8 @@ import java.util.UUID;
 @RequestScoped
 public class ComponentModelRepository extends AbstractEntityRepository<Long, ComponentModel> {
 
+    private static final long serialVersionUID = -6358512316472857971L;
+
     @Override
     public Class<ComponentModel> getEntityClass() {
         return ComponentModel.class;
