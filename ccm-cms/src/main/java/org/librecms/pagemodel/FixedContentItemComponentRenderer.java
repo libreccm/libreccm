@@ -18,7 +18,6 @@
  */
 package org.librecms.pagemodel;
 
-import org.libreccm.pagemodel.ComponentModelType;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemRepository;
 
@@ -29,13 +28,15 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 
+import org.libreccm.pagemodel.RendersComponentModel;
+
 /**
  * Renderer for the {@link FixedContentItemComponent}.
  * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@ComponentModelType(componentModel = FixedContentItemComponent.class)
+@RendersComponentModel(componentModel = FixedContentItemComponent.class)
 public class FixedContentItemComponentRenderer
     extends AbstractContentItemComponentRenderer<FixedContentItemComponent> {
 

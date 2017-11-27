@@ -33,6 +33,14 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 
 /**
+ * An Utility class which provides access to all component models available.
+ *
+ * This class is an {@link ApplicationScoped} CDI bean. The {@link #init} method
+ * is called by the CDI container after creating an instance of this class. The
+ * {@link #init} method retrieves the informations about the available
+ * {@link ComponentModel}s from the module classes. For exactly from the
+ * {@link Module#pageModelComponentModels()} property of the {@link Module}
+ * annotation of the module class.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -40,11 +48,15 @@ import javax.enterprise.context.ApplicationScoped;
 public class ComponentModels {
 
     private final List<PageModelComponentModel> availableComponentModels
-                                                = new ArrayList<>();
+                                                    = new ArrayList<>();
 
     private final Map<String, PageModelComponentModel> componentInfos
-                                                       = new HashMap<>();
+                                                           = new HashMap<>();
 
+    /**
+     * Creates the list of available {@link ComponentModels}. Called by the CDI
+     * container.
+     */
     @PostConstruct
     private void init() {
 
@@ -68,19 +80,47 @@ public class ComponentModels {
         }
     }
 
+    /**
+     * Get a list of the available {@link ComponentModel}s.
+     *
+     * @return A (unmodifiable) list of all available {@link ComponentModel}s.
+     */
     public List<PageModelComponentModel> findAvailableComponentModels() {
         return Collections.unmodifiableList(availableComponentModels);
     }
 
+    /**
+     * Get the informations about a specific {@link ComponentModel}
+     * implementation.
+     *
+     * @param clazz The class of the {@link ComponentModel} implementation.
+     *
+     * @return An {@link Optional} containing the informations about the
+     *         {@link ComponentModel} implementation. If the class is not a
+     *         {@link ComponentModel} implementation or is an unknown
+     *         implementation an empty {@link Optional} is returned.
+     */
     public Optional<PageModelComponentModel> getComponentModelInfo(
         final Class<? extends ComponentModel> clazz) {
 
         return getComponentModelInfo(clazz.getName());
     }
-    
+
+    /**
+     * Get the informations about a specific {@link ComponentModel}
+     * implementation.
+     *
+     * @param className The name of the class of the {@link ComponentModel}
+     *                  implementation.
+     *
+     * @return An {@link Optional} containing the informations about the
+     *         {@link ComponentModel} implementation. If the class is not a
+     *         {@link ComponentModel} implementation or is an unknown
+     *         implementation an empty {@link Optional} is returned.
+     */
     public Optional<PageModelComponentModel> getComponentModelInfo(
-    final String className) {
-        
+        final String className) {
+
         if (componentInfos.containsKey(className)) {
             return Optional.of(componentInfos.get(className));
         } else {

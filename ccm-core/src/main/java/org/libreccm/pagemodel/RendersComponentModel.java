@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface ComponentModelType {
+public @interface RendersComponentModel {
 
     Class<? extends ComponentModel> componentModel();
 
