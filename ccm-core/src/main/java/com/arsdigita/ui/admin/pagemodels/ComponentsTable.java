@@ -27,7 +27,6 @@ import com.arsdigita.bebop.ParameterSingleSelectionModel;
 import com.arsdigita.bebop.Table;
 import com.arsdigita.bebop.event.TableActionEvent;
 import com.arsdigita.bebop.event.TableActionListener;
-import com.arsdigita.bebop.table.TableCellRenderer;
 import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.table.TableColumnModel;
 import com.arsdigita.bebop.table.TableModel;
@@ -38,14 +37,15 @@ import com.arsdigita.util.LockableImpl;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.pagemodel.ComponentModel;
+import org.libreccm.pagemodel.PageModel;
 
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * Table used in the {@link PageModelDetails} component to list the components 
+ * Table used in the {@link PageModelDetails} component to list the components
  * assigned to a {@link PageModel}.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class ComponentsTable extends Table {
@@ -54,14 +54,41 @@ class ComponentsTable extends Table {
     protected static final int COL_COMPONENT_TYPE = 1;
     protected static final int COL_EDIT = 2;
     protected static final int COL_DELETE = 3;
+    
+    /**
+     * The {@link PageModelsTab} instance in which the table is displayed.
+     */
+    private final PageModelsTab pageModelsTab;
+    /**
+     * The selection model for the ID of the selected page model.
+     */
+    private final ParameterSingleSelectionModel<String> selectedModelId;
+    /**
+     * The selection model for the ID of the selected component.
+     */
+    private final ParameterSingleSelectionModel<String> selectedComponentId;
 
-    public ComponentsTable(
-        final PageModelsTab pageModelTab,
+    /**
+     * Constructor for the table.
+     *
+     * @param pageModelsTab       The {@link PageModelsTab} instance in which
+     *                            the table is displayed.
+     * @param selectedModelId     The selection model for the ID of the selected
+     *                            page model.
+     * @param selectedComponentId The selection model for the ID of the selected
+     *                            component.
+     */
+    ComponentsTable(
+        final PageModelsTab pageModelsTab,
         final ParameterSingleSelectionModel<String> selectedModelId,
         final ParameterSingleSelectionModel<String> selectedComponentId) {
 
         super();
         super.setIdAttr("pageModelComponentModelsTable");
+        
+        this.pageModelsTab = pageModelsTab;
+        this.selectedModelId = selectedModelId;
+        this.selectedComponentId = selectedComponentId;
 
         super.setEmptyView(new Label(new GlobalizedMessage(
             "ui.admin.pagemodels.componentmodels.none",
@@ -89,84 +116,151 @@ class ComponentsTable extends Table {
                 "ui.admin.pagemodels.componentmodels.cols.delete.heading",
                 AdminUiConstants.ADMIN_BUNDLE))));
 
-        columnModel.get(COL_EDIT).setCellRenderer(
-            new TableCellRenderer() {
+        columnModel.get(COL_EDIT).setCellRenderer(this::renderEditCell);
+//        columnModel.get(COL_EDIT).setCellRenderer(
+//            new TableCellRenderer() {
+//
+//            @Override
+//            public Component getComponent(final Table table,
+//                                          final PageState state,
+//                                          final Object value,
+//                                          final boolean isSelected,
+//                                          final Object key,
+//                                          final int row,
+//                                          final int column) {
+//
+//                final ControlLink link = new ControlLink((Component) value);
+//                return link;
+//            }
+//
+//        });
 
-            @Override
-            public Component getComponent(final Table table,
-                                          final PageState state,
-                                          final Object value,
-                                          final boolean isSelected,
-                                          final Object key,
-                                          final int row,
-                                          final int column) {
+        columnModel.get(COL_DELETE).setCellRenderer(this::renderDeleteCell);
+//        columnModel.get(COL_DELETE).setCellRenderer(
+//            new TableCellRenderer() {
+//
+//            @Override
+//            public Component getComponent(final Table table,
+//                                          final PageState state,
+//                                          final Object value,
+//                                          final boolean isSelected,
+//                                          final Object key,
+//                                          final int row,
+//                                          final int column) {
+//
+//                final ControlLink link = new ControlLink((Component) value);
+//                link.setConfirmation(new GlobalizedMessage(
+//                    "ui.admin.pagemodels.componentmodels.cols.delete.confirmation",
+//                    AdminUiConstants.ADMIN_BUNDLE));
+//                return link;
+//            }
+//
+//        });
 
-                final ControlLink link = new ControlLink((Component) value);
-                return link;
-            }
-
-        });
-
-        columnModel.get(COL_DELETE).setCellRenderer(
-            new TableCellRenderer() {
-
-            @Override
-            public Component getComponent(final Table table,
-                                          final PageState state,
-                                          final Object value,
-                                          final boolean isSelected,
-                                          final Object key,
-                                          final int row,
-                                          final int column) {
-
-                final ControlLink link = new ControlLink((Component) value);
-                link.setConfirmation(new GlobalizedMessage(
-                    "ui.admin.pagemodels.componentmodels.cols.delete.confirmation",
-                    AdminUiConstants.ADMIN_BUNDLE));
-                return link;
-            }
-
-        });
-
-        super.addTableActionListener(new TableActionListener() {
-
-            @Override
-            public void cellSelected(final TableActionEvent event)
-                throws FormProcessException {
-
-                final PageState state = event.getPageState();
-                final String selectedModelIdStr = selectedModelId
-                    .getSelectedKey(state);
-                final String key = (String) event.getRowKey();
-
-                switch (event.getColumn()) {
-                    case COL_EDIT:
-                        selectedComponentId.setSelectedKey(state, key);
-                        pageModelTab.showComponentForm(state);
-                        break;
-                    case COL_DELETE:
-                        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                        final PageModelsController controller = cdiUtil
-                            .findBean(PageModelsController.class);
-                        controller.removeComponentModel(
-                            Long.parseLong(selectedModelIdStr),
-                            Long.parseLong(key));
-                        break;
-                    default:
-                        throw new IllegalArgumentException(
-                            "Invalid value for column");
-                }
-            }
-
-            @Override
-            public void headSelected(final TableActionEvent event) {
-                //Nothing
-            }
-
-        });
+        super.addTableActionListener(new ComponentsTableActionListener());
+//        super.addTableActionListener(new TableActionListener() {
+//
+//            @Override
+//            public void cellSelected(final TableActionEvent event)
+//                throws FormProcessException {
+//
+//                final PageState state = event.getPageState();
+//                final String selectedModelIdStr = selectedModelId
+//                    .getSelectedKey(state);
+//                final String key = (String) event.getRowKey();
+//
+//                switch (event.getColumn()) {
+//                    case COL_EDIT:
+//                        selectedComponentId.setSelectedKey(state, key);
+//                        pageModelsTab.showComponentForm(state);
+//                        break;
+//                    case COL_DELETE:
+//                        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+//                        final PageModelsController controller = cdiUtil
+//                            .findBean(PageModelsController.class);
+//                        controller.removeComponentModel(
+//                            Long.parseLong(selectedModelIdStr),
+//                            Long.parseLong(key));
+//                        break;
+//                    default:
+//                        throw new IllegalArgumentException(
+//                            "Invalid value for column");
+//                }
+//            }
+//
+//            @Override
+//            public void headSelected(final TableActionEvent event) {
+//                //Nothing
+//            }
+//
+//        });
 
         super.setModelBuilder(new ComponentsTableModelBuilder(
             selectedModelId));
+    }
+
+    private Component renderEditCell(final Table table,
+                                     final PageState state,
+                                     final Object value,
+                                     final boolean isSelected,
+                                     final Object key,
+                                     final int row,
+                                     final int columnv) {
+
+        final ControlLink link = new ControlLink((Component) value);
+        return link;
+    }
+
+    private Component renderDeleteCell(final Table table,
+                                       final PageState state,
+                                       final Object value,
+                                       final boolean isSelected,
+                                       final Object key,
+                                       final int row,
+                                       final int column) {
+
+        final ControlLink link = new ControlLink((Component) value);
+        link.setConfirmation(new GlobalizedMessage(
+            "ui.admin.pagemodels.componentmodels.cols.delete.confirmation",
+            AdminUiConstants.ADMIN_BUNDLE));
+        return link;
+    }
+
+    private class ComponentsTableActionListener implements TableActionListener {
+
+        @Override
+        public void cellSelected(final TableActionEvent event)
+            throws FormProcessException {
+
+            final PageState state = event.getPageState();
+            final String selectedModelIdStr = selectedModelId
+                .getSelectedKey(state);
+            final String key = (String) event.getRowKey();
+
+            switch (event.getColumn()) {
+                case COL_EDIT:
+                    selectedComponentId.setSelectedKey(state, key);
+                    pageModelsTab.showComponentForm(state);
+                    break;
+                case COL_DELETE:
+                    final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                    final PageModelsController controller = cdiUtil
+                        .findBean(PageModelsController.class);
+                    controller.removeComponentModel(
+                        Long.parseLong(selectedModelIdStr),
+                        Long.parseLong(key));
+                    break;
+                default:
+                    throw new IllegalArgumentException(
+                        "Invalid value for column");
+            }
+        }
+
+        @Override
+        public void headSelected(final TableActionEvent event) {
+            //Nothing
+        }
+
     }
 
     private class ComponentsTableModelBuilder

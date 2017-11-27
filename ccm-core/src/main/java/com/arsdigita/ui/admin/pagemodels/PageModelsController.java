@@ -72,6 +72,12 @@ class PageModelsController implements Serializable {
     @Inject
     private PageModelRepository pageModelRepo;
 
+    /**
+     * Loads the data for rows of the table of page models. Takes care of
+     * loading all required lazily fetched properties.
+     *
+     * @return
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     protected List<PageModelsTableRow> findPageModels() {
 
@@ -83,6 +89,15 @@ class PageModelsController implements Serializable {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Checks if the name of a {@link PageModel} is unique within the page
+     * models for an application.
+     *
+     * @param applicationId The ID of the application.
+     * @param name          The name to check.
+     *
+     * @return {@code true} if the name is unique, {@code false} otherwise.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     protected boolean isUnique(final long applicationId,
                                final String name) {
@@ -98,6 +113,11 @@ class PageModelsController implements Serializable {
             .isPresent();
     }
 
+    /**
+     * Deletes a {@link PageModel}.
+     *
+     * @param pageModelId The ID of the {@link PageModel} to delete.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     protected void deletePageModel(final long pageModelId) {
 
@@ -110,6 +130,16 @@ class PageModelsController implements Serializable {
         pageModelRepo.delete(model);
     }
 
+    /**
+     * Helper method for building the data object containing all data required
+     * for one row the tables of {@link PageModel}s.
+     *
+     * @param model The {@link PageModel} which is represented by the row.
+     *
+     * @return The {@link PageModelsTableRow} containing all data about the
+     *         provided {@link PageModel} required to create the row about the
+     *         {@link PageModel} in the table of {@link PageModel}s.
+     */
     private PageModelsTableRow buildRow(final PageModel model) {
 
         final PageModelsTableRow row = new PageModelsTableRow();
@@ -126,6 +156,13 @@ class PageModelsController implements Serializable {
         return row;
     }
 
+    /**
+     * Retrieves the localised title of the {@link ComponentModel}.
+     *
+     * @param clazz The class of the {@link ComponentModel}.
+     *
+     * @return The localised title of the {@link ComponentModel}.
+     */
     protected String getComponentModelTitle(
         final Class<? extends ComponentModel> clazz) {
 
@@ -142,6 +179,14 @@ class PageModelsController implements Serializable {
         }
     }
 
+    /**
+     * Retrieves the form for editing a {@link ComponentModel}.
+     *
+     * @param componentModelId The ID of the {@link ComponentModel} instance.
+     *
+     * @return The form for editing the properties of the {@link ComponentModel}
+     *         instance.
+     */
     protected Class<? extends Form> getComponentModelForm(
         final long componentModelId) {
 
@@ -157,6 +202,14 @@ class PageModelsController implements Serializable {
         return getComponentModelForm(clazz);
     }
 
+    /**
+     * Retrieves the form for creating/editing an instance of
+     * {@link ComponentModel}.
+     *
+     * @param clazz The class of the {@link ComponentModel}.
+     *
+     * @return The form for the {@link ComponentModel}.
+     */
     protected Class<? extends Form> getComponentModelForm(
         final Class<? extends ComponentModel> clazz) {
 
@@ -172,6 +225,15 @@ class PageModelsController implements Serializable {
             .editor();
     }
 
+    /**
+     * Retrieves a list of all {@link ComponentModel} instances assigned to a
+     * {@link PageModel}.
+     *
+     * @param pageModelId The ID of the {@link PageModel}.
+     *
+     * @return A list of all {@link ComponentModel}s assigned to the
+     *         {@link PageModel}.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     protected List<ComponentModel> retrieveComponents(final long pageModelId) {
 
@@ -188,6 +250,14 @@ class PageModelsController implements Serializable {
         return components;
     }
 
+    /**
+     * Creates an instance of a {@link ComponentModel} and adds the instance to
+     * a {@link PageModel}.
+     *
+     * @param pageModelId    The ID of the {@link PageModel} to which the new
+     *                       {@link ComponentModel} is assigned.
+     * @param componentModel The new {@link ComponentModel}.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     protected void addComponentModel(final long pageModelId,
                                      final ComponentModel componentModel) {
@@ -202,6 +272,14 @@ class PageModelsController implements Serializable {
 
     }
 
+    /**
+     * Removes a {@link ComponentModel} instance from a {@link PageModel}. This
+     * deletes the component model.
+     *
+     * @param pageModelId      The ID of the {@link PageModel} from which the
+     *                         {@link ComponentModel} is removed.
+     * @param componentModelId The ID of the {@link ComponentModel} to remove.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     protected void removeComponentModel(final long pageModelId,
                                         final long componentModelId) {
