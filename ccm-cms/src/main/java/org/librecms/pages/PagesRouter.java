@@ -74,7 +74,7 @@ public class PagesRouter {
     private GlobalizationHelper globalizationHelper;
 
     @Inject
-    private CmsPageBuilder pageBuilder;
+    private CmsPageRenderer pageBuilder;
 
     @Inject
     private PagesRepository pagesRepo;
@@ -226,7 +226,7 @@ public class PagesRouter {
      * @return
      */
     @Path("/index.{lang}.json")
-    @Produces("text/html")
+    @Produces("text/json")
     @Transactional(Transactional.TxType.REQUIRED)
     public Map<String, Object> getCategoryIndexPageAsJson(
         @Context
@@ -253,7 +253,7 @@ public class PagesRouter {
      * @return
      */
     @Path("/index.{lang}.xml")
-    @Produces("text/html")
+    @Produces("text/xml")
     @Transactional(Transactional.TxType.REQUIRED)
     public Map<String, Object> getCategoryIndexPageAsXml(
         @Context
@@ -320,7 +320,7 @@ public class PagesRouter {
      *
      * @return
      */
-    @Path("/{name},html")
+    @Path("/{name}.html")
     public Response getItemPageAsHtml(
         @Context final UriInfo uriInfo,
         @PathParam("page") final String page,
@@ -405,7 +405,8 @@ public class PagesRouter {
      *
      * @return
      */
-    @Path("/{name}.{lang}.html")
+    @Path("/{name}.{lang}.json")
+    @Produces("text/json")
     public Map<String, Object> getItemPageAsJson(
         @Context
         final UriInfo uriInfo,
@@ -438,7 +439,8 @@ public class PagesRouter {
      *
      * @return
      */
-    @Path("/{name}.{lang}.html")
+    @Path("/{name}.{lang}.xml")
+    @Produces("text/xml")
     public Map<String, Object> getItemPageAsXml(
         @Context
         final UriInfo uriInfo,
