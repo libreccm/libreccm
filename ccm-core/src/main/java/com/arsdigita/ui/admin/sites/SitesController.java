@@ -30,7 +30,8 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 /**
- *
+ * Controller for the Admin UI for {@link Site}s.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -41,6 +42,12 @@ class SitesController implements Serializable {
     @Inject
     private SiteRepository sitesRepo;
 
+    /**
+     * Find all sites and transform into {@link SitesTableRow} objects. Also takes
+     * care of loading are required lazily fetched properties.
+     * 
+     * @return A list with the data about all available {@link Site}s.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     protected List<SitesTableRow> findSites() {
 

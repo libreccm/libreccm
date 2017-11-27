@@ -31,6 +31,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
+ * A subtype of {@link CcmApplication} which can be associated with a
+ * {@link Site}.
+ *
+ * Only applications which are different for each site should extend this class.
+ * For example for the Admin application or the Content Center application
+ * provided by the ccm-cms module it makes to sense to make them site aware.
+ * This applications are used to manage objects which are shared by all sites.
+ * Other applications like the Pages application provided by ccm-cms module are
+ * of course site aware. The Pages application for example manages the page tree
+ * of one specific site.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -40,6 +50,9 @@ public class SiteAwareApplication extends CcmApplication {
 
     private static final long serialVersionUID = -8892544588904174406L;
 
+    /**
+     * The {@link Site} with which the application is associated.
+     */
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "SITE_ID")
     private Site site;

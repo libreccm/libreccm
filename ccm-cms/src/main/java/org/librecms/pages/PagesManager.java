@@ -59,7 +59,7 @@ public class PagesManager implements Serializable {
         pages.setCategoryDomain(domain);
         pagesRepo.save(pages);
 
-        siteManager.addApplicationToSite(site, pages);
+        siteManager.addApplicationToSite(pages, site);
 
         return pages;
     }

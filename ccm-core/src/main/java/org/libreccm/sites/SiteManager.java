@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 /**
+ * Manages {@link Site} entities.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -40,30 +41,43 @@ public class SiteManager implements Serializable {
 
     @Inject
     private ApplicationRepository applicationRepo;
-    
+
     @Inject
     private SiteRepository siteRepo;
 
+    /**
+     * Adds an instance of {@link SiteAwareApplication} to a {@link Site}.
+     *
+     * @param application The application to associate with the site.
+     * @param site        The site to which the application instance is added.
+     */
     @RequiresPrivilege(PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
-    public void addApplicationToSite(final Site site, 
-                                     final SiteAwareApplication application) {
-        
+    public void addApplicationToSite(final SiteAwareApplication application,
+                                     final Site site) {
+
         site.addApplication(application);
         application.setSite(site);
-        
+
         siteRepo.save(site);
         applicationRepo.save(application);
     }
-    
+
+    /**
+     * Removes an application from a site. The application instance is
+     * <em>not</em> deleted!
+     *
+     * @param application The application to remove from the site.
+     * @param site        The site from which the application is removed.
+     */
     @RequiresPrivilege(PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
-    public void removeApplicationFromSite(final Site site,
-                                     final SiteAwareApplication application) {
-        
+    public void removeApplicationFromSite(final SiteAwareApplication application,
+                                          final Site site) {
+
         site.removeApplication(application);
         application.setSite(null);
-        
+
         siteRepo.save(site);
         applicationRepo.save(application);
     }

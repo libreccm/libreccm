@@ -30,7 +30,8 @@ import com.arsdigita.toolbox.ui.LayoutPanel;
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
- *
+ * Tab for {@code /ccm/admin} containing the Admin UI for {@link Site}s.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class SitesTab extends LayoutPanel {

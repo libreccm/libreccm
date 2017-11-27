@@ -53,7 +53,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import static org.librecms.pages.PagesConstants.*;
 
-import org.libreccm.pagemodel.RendersComponentModel;
+import org.libreccm.pagemodel.RendersComponent;
 
 /**
  * Renderer for the {@link ItemListComponent}.
@@ -61,7 +61,7 @@ import org.libreccm.pagemodel.RendersComponentModel;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@RendersComponentModel(componentModel = ItemListComponent.class)
+@RendersComponent(componentModel = ItemListComponent.class)
 public class ItemListComponentRenderer
     implements ComponentRenderer<ItemListComponent> {
 
