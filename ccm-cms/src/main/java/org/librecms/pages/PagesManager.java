@@ -24,6 +24,7 @@ import org.libreccm.sites.Site;
 import org.libreccm.sites.SiteManager;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -45,17 +46,36 @@ public class PagesManager implements Serializable {
     @Inject
     private SiteManager siteManager;
 
+    /**
+     * Creates a new {@link Pages} instance.
+     *
+     * @param primaryUrl The primary URL under which the Admin UI for the
+     *                   instance will be available ({@code /ccm/{primaryUrl})
+     * @param site       The {@link Site} with which the new {@link Pages} is associated.
+     * @param domain     The category system which used to model the page tree
+     *                   of the new {@link Pages} instance.
+     *
+     * @return The new {@link Pages} instance.
+     */
     @RequiresPrivilege(PagesPrivileges.ADMINISTER_PAGES)
     @Transactional(Transactional.TxType.REQUIRED)
     public Pages createPages(final String primaryUrl,
                              final Site site,
                              final Domain domain) {
 
+        Objects.requireNonNull(primaryUrl);
+        Objects.requireNonNull(site);
+        Objects.requireNonNull(domain);
+
+        if (primaryUrl.isEmpty() || primaryUrl.matches("\\s*")) {
+            throw new IllegalArgumentException("The primaryUrl can't be empty.");
+        }
+
         final Pages pages = new Pages();
         pages.setPrimaryUrl(primaryUrl);
-        
+
         pagesRepo.save(pages);
-        
+
         pages.setCategoryDomain(domain);
         pagesRepo.save(pages);
 

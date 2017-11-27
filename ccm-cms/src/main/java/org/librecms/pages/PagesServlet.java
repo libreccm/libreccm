@@ -40,7 +40,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
+ * Servlet for the Admin UI for pages a {@link /ccm/{primaryUrl}}. The admin UI
+ * itself is implemented by {@link PagesAdminPage}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @WebServlet(urlPatterns = {"/templates/servlet/pages/*"})
@@ -77,25 +79,6 @@ public class PagesServlet extends BaseApplicationServlet {
 
         final PagesAdminPage page = new PagesAdminPage();
 
-//        final URL originalUrl = (URL) request
-//            .getAttribute(BaseServlet.REQUEST_URL_ATTRIBUTE);
-//        final String pathInfo = originalUrl.getPathInfo();
-
-//        final String appPath;
-//        if (pathInfo.startsWith("/") && pathInfo.endsWith("/")) {
-//            appPath = pathInfo.substring(1, pathInfo.length() - 1);
-//        } else if (pathInfo.startsWith("/")) {
-//            appPath = pathInfo.substring(1);
-//        } else if (pathInfo.endsWith("/")) {
-//            appPath = pathInfo.substring(pathInfo.length() - 1);
-//        } else {
-//            appPath = pathInfo;
-//        }
-//
-//        final CcmApplication application = applicationRepo
-//            .retrieveApplicationForPath(appPath)
-//            .orElseThrow(() -> new ServletException(String
-//            .format("No application for path %s", appPath)));
         if (!(application instanceof Pages)) {
             throw new ServletException(
                 "Provided application is not an instance of Pages");

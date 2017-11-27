@@ -26,7 +26,10 @@ import org.libreccm.web.CcmApplication;
 import javax.inject.Inject;
 
 /**
- *
+ * Implementation of {@link ApplicationCreator} for the {@link Pages} application.
+ * 
+ * Used in by the administration UI.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class PagesCreator implements ApplicationCreator<CcmApplication> {
