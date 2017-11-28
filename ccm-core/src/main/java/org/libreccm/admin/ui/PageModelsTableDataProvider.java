@@ -21,10 +21,12 @@ package org.libreccm.admin.ui;
 import com.vaadin.cdi.ViewScoped;
 import com.vaadin.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.data.provider.Query;
+import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.pagemodel.PageModel;
 import org.libreccm.pagemodel.PageModelManager;
 import org.libreccm.pagemodel.PageModelVersion;
+import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.CcmApplication;
 
 import java.util.stream.Stream;
@@ -47,6 +49,9 @@ class PageModelsTableDataProvider
     private static final long serialVersionUID = 8052894182508842905L;
 
     @Inject
+    private ApplicationRepository applicationRepo;
+    
+    @Inject
     private EntityManager entityManager;
 
     @Inject
@@ -63,6 +68,16 @@ class PageModelsTableDataProvider
 
     public void setApplication(final CcmApplication application) {
         this.application = application;
+        refreshAll();
+    }
+    
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void setApplicationUuid(final String uuid) {
+        application = applicationRepo
+            .findByUuid(uuid)
+            .orElseThrow(() -> new UnexpectedErrorException(String
+            .format("No Application with UUID %s in the database.",
+                    uuid)));
         refreshAll();
     }
 
@@ -86,8 +101,8 @@ class PageModelsTableDataProvider
                     .and(builder.equal(from.get("application"), application),
                          builder.equal(from.get("version"),
                                        PageModelVersion.DRAFT)))
-                .orderBy(builder.asc(from.get("name")))
-                .orderBy(builder.asc(from.get("title")));
+                .orderBy(builder.asc(from.get("name")));
+//                .orderBy(builder.asc(from.get("title")));
 
             return entityManager
                 .createQuery(criteriaQuery)

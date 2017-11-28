@@ -87,6 +87,7 @@ import java.util.Properties;
             instanceForm = ApplicationInstanceForm.class,
             settingsPane = SettingsPane.class,
             descBundle = CmsConstants.CMS_BUNDLE,
+            titleKey = "pages_application.title",
             creator = PagesCreator.class,
             servletPath = "/templates/servlet/pages"
         )

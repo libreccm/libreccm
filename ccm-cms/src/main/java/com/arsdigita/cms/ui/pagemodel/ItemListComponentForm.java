@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 
 /**
  * Form for adding/editing a {@link ItemListComponent}.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ItemListComponentForm
@@ -109,30 +109,27 @@ public class ItemListComponentForm
                                         final PageState state,
                                         final FormData data) {
 
-        final Object[] descendingValues = (Object[]) data.get(DESCENDING);
+        final Object[] descendingValues = (Object[]) data.get(DESCENDING_BOX);
         final String limitToTypeValue = data.getString(LIMIT_TO_TYPE);
         final String pageSizeValue = data.getString(PAGE_SIZE);
         final String listOrderValue = data.getString(LIST_ORDER);
 
-        final boolean descendingValue;
-        if (descendingValues != null
-                && descendingValues.length != 0
-                && DESCENDING.equals(descendingValues[0])) {
-
-            descendingValue = true;
-        } else {
-            descendingValue = false;
-        }
-
+        final boolean descendingValue = isDescending(descendingValues);
         final List<String> listOrder = Arrays
             .stream(listOrderValue.split("\n"))
             .collect(Collectors.toList());
 
         componentModel.setDescending(descendingValue);
-        componentModel.setLimitToTypes(limitToTypeValue);
+        componentModel.setLimitToType(limitToTypeValue);
         componentModel.setPageSize(Integer.parseInt(pageSizeValue));
 
         componentModel.setListOrder(listOrder);
+    }
+
+    private boolean isDescending(final Object[] descendingValues) {
+        return descendingValues != null
+                   && descendingValues.length != 0
+                   && DESCENDING.equals(descendingValues[0]);
     }
 
     @Override
@@ -145,21 +142,23 @@ public class ItemListComponentForm
 
         final ItemListComponent component = getComponentModel();
 
-        final Object[] descendingValue;
-        if (component.isDescending()) {
-            descendingValue = new Object[]{DESCENDING};
-        } else {
-            descendingValue = new Object[]{};
+        if (component != null) {
+            final Object[] descendingValue;
+            if (component.isDescending()) {
+                descendingValue = new Object[]{DESCENDING};
+            } else {
+                descendingValue = new Object[]{};
+            }
+            descendingBox.setValue(state, descendingValue);
+
+            limitToTypeField.setValue(state, component.getLimitToType());
+
+            pageSizeField.setValue(state, Integer.toString(component
+                                   .getPageSize()));
+
+            listOrderArea.setValue(state,
+                                   String.join("\n", component.getListOrder()));
         }
-        descendingBox.setValue(state, descendingValue);
-
-        limitToTypeField.setValue(state, component.getLimitToType());
-
-        pageSizeField.setValue(state, Integer.toString(component.getPageSize()));
-
-        listOrderArea.setValue(state,
-                               String.join("\n", component.getListOrder()));
-
     }
 
     @Override
@@ -186,4 +185,5 @@ public class ItemListComponentForm
             }
         }
     }
+
 }
