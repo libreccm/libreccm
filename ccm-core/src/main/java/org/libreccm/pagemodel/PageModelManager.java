@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -114,7 +115,7 @@ public class PageModelManager {
     /**
      * Creates a new {@link PageModel} for the provided application. The method
      * tries to retrieve the appropriate application by using
-     * {@link PageModelRepository#findByApplicationAndName(org.libreccm.web.CcmApplication, java.lang.String)}.
+     * {@link PageModelRepository#findLiveByApplicationAndName(org.libreccm.web.CcmApplication, java.lang.String)}.
      * Please note that this method will always return the
      * <strong>draft</strong>
      * version of the page model.
@@ -134,23 +135,24 @@ public class PageModelManager {
                                      final CcmApplication application,
                                      final String type) {
 
-        if (application == null) {
+        Objects.requireNonNull(application,
+                               "Can't create a page model for application null");
+        Objects.requireNonNull(name, "Then name of a Pagemodel can't be null.");
+        if (name.isEmpty()
+                || name.matches("\\s*")) {
             throw new IllegalArgumentException(
-                "Can't create a page model for application null");
+                "The name of a PageModel can't be empty.");
         }
 
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException(
-                "The name of a page model can't be null or empty.");
-        }
         LOGGER.debug(
             "Creating new PageModel with name \"{}\" for application \"{}\" and type \"{}\".",
             name,
             application.getPrimaryUrl(),
             type);
 
-        final long count = pageModelRepo.countByApplicationAndName(application,
-                                                                   name);
+        final long count = pageModelRepo.countLiveByApplicationAndName(
+            application,
+            name);
 
         if (count > 0) {
             LOGGER.error("A page model with the name \"{}\" for the "
@@ -257,6 +259,11 @@ public class PageModelManager {
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public PageModel publish(final PageModel pageModel) {
+
+        Objects.requireNonNull(pageModel, "Can't publish PageModel null.");
+
+        LOGGER.debug("Publishing PageModel \"{}\"...", pageModel.getName());
+
         final PageModel draftModel = getDraftVersion(pageModel);
         final PageModel liveModel;
 
@@ -266,6 +273,7 @@ public class PageModelManager {
             liveModel = new PageModel();
         }
 
+        liveModel.setName(draftModel.getName());
         liveModel.setVersion(PageModelVersion.LIVE);
         liveModel.setModelUuid(draftModel.getModelUuid());
 
@@ -274,7 +282,7 @@ public class PageModelManager {
             liveModel.getTitle().addValue(entry.getKey(), entry.getValue());
         }
 
-        for (Map.Entry<Locale, String> entry : liveModel.getDescription()
+        for (Map.Entry<Locale, String> entry : draftModel.getDescription()
             .getValues().entrySet()) {
             liveModel.getDescription().addValue(entry.getKey(),
                                                 entry.getValue());
@@ -283,12 +291,16 @@ public class PageModelManager {
         liveModel.setApplication(draftModel.getApplication());
         liveModel.setType(draftModel.getType());
 
+        LOGGER.debug("Publishing ComponentModels of PageModel \"{}\"...",
+                     draftModel.getName());
         liveModel.clearComponents();
         for (final ComponentModel draft : draftModel.getComponents()) {
             final ComponentModel live = publishComponentModel(draft);
             addComponentModel(liveModel, live);
         }
 
+        LOGGER.debug("Successfully published PageModel \"{}\".",
+                     liveModel.getName());
         return liveModel;
     }
 
@@ -303,6 +315,11 @@ public class PageModelManager {
      */
     @SuppressWarnings("unchecked")
     private ComponentModel publishComponentModel(final ComponentModel draftModel) {
+
+        Objects.requireNonNull(draftModel, "Can't publish ComponentModel null.");
+
+        LOGGER.debug("Publishing ComponentModel \"{}\"...",
+                     draftModel.getKey());
 
         final Class<? extends ComponentModel> clazz = draftModel.getClass();
 
@@ -324,6 +341,12 @@ public class PageModelManager {
 
         for (final PropertyDescriptor propertyDescriptor : beanInfo.
             getPropertyDescriptors()) {
+
+            LOGGER.debug(
+                "Publishing property \"{}\" of ComponentModel \"{}\"...",
+                propertyDescriptor.getName(),
+                draftModel.getKey());
+
             final Class<?> propType = propertyDescriptor.getPropertyType();
             final Method readMethod = propertyDescriptor.getReadMethod();
             final Method writeMethod = propertyDescriptor.getWriteMethod();
@@ -339,18 +362,18 @@ public class PageModelManager {
             if (propType != null
                     && propType.isAssignableFrom(List.class)) {
 
-                final List<Object> source;
-                final List<Object> target;
                 try {
-                    source = (List<Object>) readMethod.invoke(draftModel);
-                    target = (List<Object>) readMethod.invoke(liveModel);
+                    final List<Object> source = (List<Object>) readMethod
+                        .invoke(draftModel);
+                    final List<Object> target = new ArrayList<>();
+                    target.addAll(source);
+                    writeMethod.invoke(draftModel, target);
                 } catch (IllegalAccessException
                          | IllegalArgumentException
                          | InvocationTargetException ex) {
                     throw new UnexpectedErrorException(ex);
                 }
 
-                target.addAll(source);
             } else if (propType != null
                            && propType.isAssignableFrom(Map.class)) {
 
@@ -399,6 +422,8 @@ public class PageModelManager {
 
         componentModelRepo.save(liveModel);
 
+        LOGGER.debug("Successfully published ComponentModel \"{}\".",
+                     liveModel.getKey());
         return liveModel;
     }
 
@@ -413,6 +438,7 @@ public class PageModelManager {
      */
     private boolean propertyIsExcluded(final String name) {
         final String[] excluded = new String[]{
+            "class",
             "uuid",
             "modelUuid"
         };

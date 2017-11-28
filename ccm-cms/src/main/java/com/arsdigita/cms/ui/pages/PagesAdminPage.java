@@ -21,7 +21,6 @@ package com.arsdigita.cms.ui.pages;
 import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormData;
-import com.arsdigita.bebop.FormModel;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.Page;
@@ -33,7 +32,6 @@ import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.Tree;
 import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.event.ChangeEvent;
-import com.arsdigita.bebop.event.ChangeListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.PrintEvent;
 import com.arsdigita.bebop.form.Option;
@@ -241,7 +239,7 @@ public class PagesAdminPage extends Page {
         final PageModelRepository pageModelRepo = cdiUtil
             .findBean(PageModelRepository.class);
         final List<PageModel> pageModels = pageModelRepo
-            .findByApplication(pagesInstance);
+            .findDraftByApplication(pagesInstance);
         final GlobalizationHelper globalizationHelper = cdiUtil
             .findBean(GlobalizationHelper.class);
 

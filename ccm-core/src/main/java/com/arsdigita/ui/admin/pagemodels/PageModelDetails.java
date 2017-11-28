@@ -26,7 +26,7 @@ import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
 import com.arsdigita.bebop.PropertySheet;
-import com.arsdigita.bebop.event.FormProcessListener;
+import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.PrintEvent;
 import com.arsdigita.bebop.event.PrintListener;
@@ -42,6 +42,7 @@ import org.libreccm.pagemodel.ComponentModel;
 import org.libreccm.pagemodel.ComponentModels;
 import org.libreccm.pagemodel.PageModel;
 import org.libreccm.pagemodel.PageModelComponentModel;
+import org.libreccm.pagemodel.PageModelManager;
 import org.libreccm.pagemodel.PageModelRepository;
 
 import java.util.List;
@@ -55,12 +56,20 @@ import java.util.TooManyListenersException;
  */
 class PageModelDetails extends BoxPanel {
 
+    private final PageModelsTab pageModelTab;
+    private final ParameterSingleSelectionModel<String> selectedModelId;
+    private final ParameterSingleSelectionModel<String> selectedComponentId;
+
     public PageModelDetails(
         final PageModelsTab pageModelTab,
         final ParameterSingleSelectionModel<String> selectedModelId,
         final ParameterSingleSelectionModel<String> selectedComponentId) {
 
         super(BoxPanel.VERTICAL);
+
+        this.pageModelTab = pageModelTab;
+        this.selectedModelId = selectedModelId;
+        this.selectedComponentId = selectedComponentId;
 
         final ActionLink backLink = new ActionLink(new GlobalizedMessage(
             "ui.admin.pagemodels.details.back",
@@ -74,20 +83,7 @@ class PageModelDetails extends BoxPanel {
 
         final Label heading = new Label();
         heading.setClassAttr("heading");
-        heading.addPrintListener(event -> {
-            final PageState state = event.getPageState();
-            final Label target = (Label) event.getTarget();
-            final PageModelRepository pageModelRepo = CdiUtil
-                .createCdiUtil()
-                .findBean(PageModelRepository.class);
-            final PageModel pageModel = pageModelRepo
-                .findById(Long.parseLong(selectedModelId.getSelectedKey(state)))
-                .get();
-            target.setLabel(new GlobalizedMessage(
-                "ui.admin.pagemodels.details.heading",
-                AdminUiConstants.ADMIN_BUNDLE,
-                new String[]{pageModel.getName()}));
-        });
+        heading.addPrintListener(this::printHeading);
         super.add(heading);
 
         final PropertySheet propertySheet = new PropertySheet(
@@ -100,7 +96,16 @@ class PageModelDetails extends BoxPanel {
         editProperties.addActionListener(event -> {
             pageModelTab.showPageModelForm(event.getPageState());
         });
-        super.add(editProperties);
+
+        final ActionLink publishLink = new ActionLink(new GlobalizedMessage(
+            "ui.admin.pagemodels.details.publish",
+            AdminUiConstants.ADMIN_BUNDLE));
+        publishLink.addActionListener(this::publishPageModel);
+
+        final BoxPanel actionsPanel = new BoxPanel(BoxPanel.HORIZONTAL);
+        actionsPanel.add(editProperties);
+        actionsPanel.add(publishLink);
+        super.add(actionsPanel);
 
         final AddComponentForm addComponentForm = new AddComponentForm(
             pageModelTab);
@@ -112,13 +117,49 @@ class PageModelDetails extends BoxPanel {
         super.add(componentsTable);
     }
 
+    private void printHeading(final PrintEvent event) {
+        final PageState state = event.getPageState();
+        final Label target = (Label) event.getTarget();
+        final PageModelRepository pageModelRepo = CdiUtil
+            .createCdiUtil()
+            .findBean(PageModelRepository.class);
+        final PageModel pageModel = pageModelRepo
+            .findById(Long.parseLong(selectedModelId.getSelectedKey(state)))
+            .get();
+        target.setLabel(new GlobalizedMessage(
+            "ui.admin.pagemodels.details.heading",
+            AdminUiConstants.ADMIN_BUNDLE,
+            new String[]{pageModel.getName()}));
+    }
+
+    private void publishPageModel(final ActionEvent event) {
+
+        final PageState state = event.getPageState();
+
+        final String selectedPageModelIdStr = selectedModelId
+            .getSelectedKey(state);
+
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final PageModelManager pageModelManager = cdiUtil
+            .findBean(PageModelManager.class);
+        final PageModelRepository pageModelRepo = cdiUtil
+            .findBean(PageModelRepository.class);
+
+        final PageModel pageModel = pageModelRepo
+            .findById(Long.parseLong(selectedPageModelIdStr))
+            .orElseThrow(() -> new UnexpectedErrorException(String
+            .format("No PageModel with ID %s in the database.",
+                    selectedPageModelIdStr)));
+
+        final PageModel draftModel = pageModelManager.getDraftVersion(pageModel);
+        pageModelManager.publish(draftModel);
+    }
+
     /**
      * Form for selecting the type of {@link ComponentModel} to add to the
      * {@link PageModel}.
      */
-    private class AddComponentForm
-        extends Form
-        implements FormProcessListener {
+    private class AddComponentForm extends Form {
 
         private final PageModelsTab pageModelTab;
         private final SingleSelect selectType;
@@ -152,10 +193,9 @@ class PageModelDetails extends BoxPanel {
                 AdminUiConstants.ADMIN_BUNDLE));
             super.add(submit);
 
-            super.addProcessListener(this);
+            super.addProcessListener(this::process);
         }
 
-        @Override
         public void process(final FormSectionEvent event)
             throws FormProcessException {
 

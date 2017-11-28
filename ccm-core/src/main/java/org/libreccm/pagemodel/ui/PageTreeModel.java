@@ -48,7 +48,7 @@ class PageTreeModel implements TreeModel {
                 PageModelRepository.class);
             final CcmApplication application = ((ApplicationTreeNode) node)
                 .getApplication();
-            final long count = pageModelRepo.countByApplication(application);
+            final long count = pageModelRepo.countLiveByApplication(application);
             
             return count > 0;
         } else if (node instanceof PageModelTreeNode) {

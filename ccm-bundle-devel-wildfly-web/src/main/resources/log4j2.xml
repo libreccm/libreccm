@@ -68,6 +68,9 @@
         <Logger name="org.libreccm.modules.CcmIntegrator" 
                 level="debug">
         </Logger>
+        <Logger name="org.libreccm.pagemodel.PageModelManager"
+                level="debug">
+        </Logger>
         <Logger name="org.libreccm.security.OneTimeAuthTokenCleaner"
                 level="debug">
         </Logger>
@@ -92,7 +95,7 @@
         <Logger name="org.librecms.contentsection.rs.Images"
                     level="debug">
         </Logger>
-        <Logger name="com.arsdigita.web.DefaultApplicationFileResolver"
+       <Logger name="com.arsdigita.web.DefaultApplicationFileResolver"
                     level="debug">
         </Logger>
     </Loggers>

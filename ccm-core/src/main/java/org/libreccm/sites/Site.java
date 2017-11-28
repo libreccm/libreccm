@@ -54,7 +54,7 @@ import javax.persistence.Table;
         name = "Site.findDefaultSite",
         query = "SELECT s FROM Site s "
                     + "WHERE s.defaultSite = true "
-                    + "ORDER BY s.domain"
+                    + "ORDER BY s.domainOfSite"
     )
     ,
     @NamedQuery(
