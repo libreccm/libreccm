@@ -50,8 +50,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
- * A {@link PageModel} is used by a {@link PageRenderer} implementation to render
- * a page. The {@code PageModel} specifics which components are used on a page.
+ * A {@link PageModel} is used by a {@link PageRenderer} implementation to
+ * render a page. The {@code PageModel} specifics which components are used on a
+ * page.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  *
@@ -63,6 +64,16 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "PAGE_MODELS", schema = CoreConstants.DB_SCHEMA)
 @NamedQueries({
+    @NamedQuery(
+        name = "PageModel.findAllDraftModels",
+        query = "SELECT p FROM PageModel p "
+                    + "WHERE p.version = org.libreccm.pagemodel.PageModelVersion.DRAFT")
+    ,
+    @NamedQuery(
+        name = "PageModel.findAllLiveModels",
+        query = "SELECT p FROM PageModel p "
+                    + "WHERE p.version = org.libreccm.pagemodel.PageModelVersion.LIVE")
+    ,
     @NamedQuery(
         name = "PageModel.findDraftVersion",
         query = "SELECT p FROM PageModel p "
@@ -84,19 +95,47 @@ import javax.persistence.Table;
                     + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE")
     ,
     @NamedQuery(
-        name = "PageModel.findByApplication",
+        name = "PageModel.findDraftByApplication",
+        query = "SELECT p FROM PageModel p "
+                    + "WHERE p.application = :application "
+                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.DRAFT"
+    )
+    ,
+    @NamedQuery(
+        name = "PageModel.findDraftByApplicationAndName",
+        query = "SELECT p FROM PageModel p "
+                    + "WHERE p.application = :application "
+                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.DRAFT"
+    )
+    ,
+    @NamedQuery(
+        name = "PageModel.countDraftByApplicationAndName",
+        query = "SELECT COUNT(p) FROM PageModel p "
+                    + "WHERE p.application = :application "
+                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.DRAFT"
+    )
+    ,
+    @NamedQuery(
+        name = "PageModel.countDraftByApplication",
+        query = "SELECT COUNT(p) FROM PageModel p "
+                    + "WHERE p.application = :application "
+                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.DRAFT"
+    )
+    ,
+    @NamedQuery(
+        name = "PageModel.findLiveByApplication",
         query = "SELECT p FROM PageModel p "
                     + "WHERE p.application = :application "
                     + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE")
     ,
     @NamedQuery(
-        name = "PageModel.countByApplication",
+        name = "PageModel.countLiveByApplication",
         query = "SELECT COUNT(p) FROM PageModel p "
                     + "WHERE p.application = :application "
                     + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE")
     ,
     @NamedQuery(
-        name = "PageModel.findByApplicationAndName",
+        name = "PageModel.findLiveByApplicationAndName",
         query = "SELECT p FROM PageModel p "
                     + "WHERE p.name = :name "
                     + "AND p.application = :application "
@@ -104,7 +143,7 @@ import javax.persistence.Table;
     )
     ,
     @NamedQuery(
-        name = "PageModel.countByApplicationAndName",
+        name = "PageModel.countLiveByApplicationAndName",
         query = "SELECT COUNT(p) FROM PageModel p "
                     + "WHERE p.name = :name "
                     + "AND p.application = :application "
@@ -206,6 +245,7 @@ public class PageModel implements Serializable {
     public PageModel() {
         title = new LocalizedString();
         description = new LocalizedString();
+        components = new ArrayList<>();
     }
 
     public long getPageModelId() {

@@ -23,6 +23,7 @@ import com.vaadin.data.provider.AbstractBackEndHierarchicalDataProvider;
 import com.vaadin.data.provider.HierarchicalQuery;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.l10n.LocalizedTextsUtil;
 import org.libreccm.web.ApplicationManager;
 import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.ApplicationType;
@@ -99,10 +100,10 @@ class ApplicationTreeDataProvider
     private ApplicationTreeNode buildApplicationTreeNode(
         final ApplicationType type) {
 
-        final ResourceBundle bundle = ResourceBundle
-            .getBundle(type.descBundle());
+        final LocalizedTextsUtil textsUtil = globalizationHelper
+        .getLocalizedTextsUtil(type.descBundle());
 
-        final String title = bundle.getString(type.titleKey());
+        final String title = textsUtil.getText(type.titleKey());
 
         final ApplicationTreeNode node = new ApplicationTreeNode();
         node.setTitle(title);
@@ -155,8 +156,18 @@ class ApplicationTreeDataProvider
 
         node.setNodeId(application.getUuid());
         node.setNodeType(ApplicationTreeNodeType.APPLICATION_NODE);
-        node.setTitle(globalizationHelper
-            .getValueFromLocalizedString(application.getTitle()));
+        final String title;
+        if (globalizationHelper
+            .getValueFromLocalizedString(application.getTitle()) == null
+            || globalizationHelper
+            .getValueFromLocalizedString(application.getTitle()).isEmpty()) {
+            
+            title = application.getPrimaryUrl();
+        } else {
+            title  =globalizationHelper
+            .getValueFromLocalizedString(application.getTitle());
+        }
+        node.setTitle(title);
         
         return node;
     }

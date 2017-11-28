@@ -82,7 +82,7 @@ class PageModelsController implements Serializable {
     protected List<PageModelsTableRow> findPageModels() {
 
         return pageModelRepo
-            .findAll()
+            .findAllDraftModels()
             .stream()
             .map(this::buildRow)
             .sorted()
@@ -109,7 +109,7 @@ class PageModelsController implements Serializable {
                     applicationId)));
 
         return !pageModelRepo
-            .findByApplicationAndName(application, name)
+            .findLiveByApplicationAndName(application, name)
             .isPresent();
     }
 

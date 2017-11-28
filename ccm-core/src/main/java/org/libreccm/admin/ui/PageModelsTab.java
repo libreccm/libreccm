@@ -26,6 +26,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalSplitPanel;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -33,9 +34,6 @@ import com.vaadin.ui.themes.ValoTheme;
 import org.libreccm.l10n.LocalizedTextsUtil;
 import org.libreccm.pagemodel.PageModel;
 import org.libreccm.ui.ConfirmDialog;
-import org.libreccm.web.CcmApplication;
-
-import java.util.concurrent.Callable;
 
 /**
  *
@@ -59,8 +57,8 @@ class PageModelsTab extends CustomComponent {
         final Tree<ApplicationTreeNode> applicationTree = new Tree<>(
             adminViewController.getApplicationTreeDataProvider());
 
-        applicationTree.addItemClickListener(event -> {
-        });
+        applicationTree.setItemCaptionGenerator(ApplicationTreeNode::getTitle);
+
         applicationTree.setItemCollapseAllowedProvider(node -> {
             return !node.getNodeType().equals(ApplicationTreeNodeType.ROOT_NODE);
         });
@@ -102,9 +100,27 @@ class PageModelsTab extends CustomComponent {
                                                          adminViewController))
             .setId(COL_DELETE);
 
-        super.setCompositionRoot(new HorizontalSplitPanel(applicationTree,
-                                                          pageModelsGrid));
+        pageModelsGrid.setVisible(false);
 
+        final Label placeholder = new Label(localizedTextsUtil.getText(
+            "ui.admin.pagemodels.select_application"));
+
+        final VerticalLayout layout = new VerticalLayout(pageModelsGrid,
+                                                         placeholder);
+
+        applicationTree.addItemClickListener(event -> {
+            final PageModelsTableDataProvider dataProvider
+                                              = (PageModelsTableDataProvider) pageModelsGrid
+                    .getDataProvider();
+            dataProvider.setApplicationUuid(event.getItem().getNodeId());
+            pageModelsGrid.setVisible(true);
+            placeholder.setVisible(false);
+        });
+
+        final HorizontalSplitPanel panel = new HorizontalSplitPanel(
+            applicationTree, layout);
+        panel.setSplitPosition(33.0f);
+        super.setCompositionRoot(panel);
     }
 
     private Component buildEditButton(final PageModelsTableRow row,

@@ -79,6 +79,10 @@ public class ItemListComponent extends ComponentModel {
     @Column(name = "LIST_ORDER")
     private List<String> listOrder;
 
+    public ItemListComponent() {
+        listOrder = new ArrayList<>();
+    }
+    
     public boolean isDescending() {
         return descending;
     }
@@ -91,7 +95,7 @@ public class ItemListComponent extends ComponentModel {
         return limitToType;
     }
 
-    public void setLimitToTypes(final String limitToType) {
+    public void setLimitToType(final String limitToType) {
         this.limitToType = limitToType;
     }
 
