@@ -33,10 +33,16 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
-import java.util.*;
 
 import static org.libreccm.categorization.CategorizationConstants.PRIVILEGE_MANAGE_CATEGORY;
 import static org.libreccm.categorization.CategorizationConstants.PRIVILEGE_MANAGE_CATEGORY_OBJECTS;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.StringJoiner;
 
 /**
  * The {@code CategoryManager} provides several helper methods for managing
@@ -119,12 +125,12 @@ public class CategoryManager {
         final String type) {
 
         Objects.requireNonNull(object, "Null can't be added to a category.");
-        Objects.requireNonNull(category, 
+        Objects.requireNonNull(category,
                                "Can't add an object to category 'null'.");
 
         final Category assignedCategory = categoryRepo
-        .findById(category.getObjectId())
-        .orElseThrow(() -> new IllegalArgumentException(String.format(
+            .findById(category.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
             "No Category with ID %d in the database. "
                 + "Where did that ID come from?",
             category.getObjectId())));
@@ -132,7 +138,7 @@ public class CategoryManager {
         final Categorization categorization = new Categorization();
         categorization.setCategorizedObject(object);
         categorization.setCategory(assignedCategory);
-        
+
         final long categoryCount = countAssignedCategories(object);
         categorization.setCategoryOrder(categoryCount + 1);
         final long objectCount = countObjects(assignedCategory);
@@ -904,20 +910,24 @@ public class CategoryManager {
      * @param category The category of which the index object should be
      *                 retrieved.
      *
-     * @return An {@link Optional} containing the index object of the provided
-     *         category if the category has an index object.
+     * @return A list with all objects assigned to the category and marked as
+     *         index object. Usually this should be only one object. But for
+     *         objects which have a draft and a live version this method will
+     *         return two objects. The caller is responsible for filtering the
+     *         list.
      */
     @Transactional(Transactional.TxType.REQUIRED)
-    public Optional<CcmObject> getIndexObject(final Category category) {
-        if (hasIndexObject(category)) {
-            final TypedQuery<CcmObject> query = entityManager.createNamedQuery(
-                "Categorization.findIndexObject", CcmObject.class);
-            query.setParameter("category", category);
+    public List<CcmObject> getIndexObject(final Category category) {
+//        if (hasIndexObject(category)) {
+        final TypedQuery<CcmObject> query = entityManager.createNamedQuery(
+            "Categorization.findIndexObject", CcmObject.class);
+        query.setParameter("category", category);
 
-            return Optional.of(query.getSingleResult());
-        } else {
-            return Optional.empty();
-        }
+        return query.getResultList();
+//            return Optional.of(query.getSingleResult());
+//        } else {
+//            return Optional.empty();
+//        }
     }
 
     /**

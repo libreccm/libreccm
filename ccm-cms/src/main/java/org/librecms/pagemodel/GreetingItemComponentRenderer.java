@@ -18,6 +18,8 @@
  */
 package org.librecms.pagemodel;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.CategoryRepository;
@@ -35,16 +37,20 @@ import javax.ws.rs.NotFoundException;
 import static org.librecms.pages.PagesConstants.*;
 
 import org.libreccm.pagemodel.RendersComponent;
+import org.librecms.contentsection.ContentItemVersion;
 
 /**
  * Renderer for the {@link GreetingItemComponent}.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 @RendersComponent(componentModel = GreetingItemComponent.class)
 public class GreetingItemComponentRenderer
     extends AbstractContentItemComponentRenderer<GreetingItemComponent> {
+
+    private static final Logger LOGGER = LogManager
+        .getLogger(GreetingItemComponentRenderer.class);
 
     @Inject
     private CategoryRepository categoryRepo;
@@ -83,24 +89,39 @@ public class GreetingItemComponentRenderer
             ((CcmObject) parameters.get(PARAMETER_CATEGORY)).getObjectId())));
 
         final Optional<CcmObject> indexObj = categoryManager
-            .getIndexObject(category);
+            .getIndexObject(category)
+            .stream()
+            .filter(object -> object instanceof ContentItem)
+            .filter(item -> {
+                return ((ContentItem) item)
+                    .getVersion() == ContentItemVersion.LIVE;
+            })
+            .findFirst();
 
         if (indexObj.isPresent()) {
 
             if (indexObj.get() instanceof ContentItem) {
                 return (ContentItem) indexObj.get();
             } else {
-                throw new NotFoundException(String
-                    .format(
-                        "The index item %s of category %s does not have "
-                            + "a live version.",
-                        Objects.toString(indexObj),
-                        Objects.toString(category)));
+//                throw new NotFoundException(String
+//                    .format(
+//                        "The index item %s of category %s does not have "
+//                            + "a live version.",
+//                        Objects.toString(indexObj),
+//                        Objects.toString(category)));
+                LOGGER.debug("The index item {} of category {} does not have "
+                                 + "a live version.",
+                             Objects.toString(indexObj),
+                             Objects.toString(category));
+                return null;
             }
         } else {
-            throw new NotFoundException(String
-                .format("The category %s does not have a index item.",
-                        Objects.toString(category)));
+            LOGGER.debug("The category {} does not have a index item.",
+                         Objects.toString(category));
+            return null;
+//            throw new NotFoundException(String
+//                .format("The category %s does not have a index item.",
+//                        Objects.toString(category)));
         }
     }
 

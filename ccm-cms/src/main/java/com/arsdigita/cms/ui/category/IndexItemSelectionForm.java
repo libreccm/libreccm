@@ -50,12 +50,12 @@ import java.util.Optional;
  * browsing by Category
  *
  * @author Randy Graebner (randyg@alum.mit.edu)
- * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
-+ */
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a> +
+ */
 public class IndexItemSelectionForm extends CMSForm {
 
     private static final Logger LOGGER = LogManager.getLogger(
-            IndexItemSelectionForm.class);
+        IndexItemSelectionForm.class);
 
     private final CategoryRequestLocal m_category;
     private RadioGroup m_options;
@@ -68,19 +68,24 @@ public class IndexItemSelectionForm extends CMSForm {
         super("EditCategory");
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final ContentSectionManager sectionManager =
-                cdiUtil.findBean(ContentSectionManager.class);
-        final CategoryManager categoryManager = cdiUtil.findBean(CategoryManager.class);
-        final CategoryRepository categoryRepository = cdiUtil.findBean(CategoryRepository.class);
-        final ContentItemManager contentItemManager = cdiUtil.findBean(ContentItemManager.class);
-        final ContentItemRepository contentItemRepository = cdiUtil.findBean(ContentItemRepository.class);
+        final ContentSectionManager sectionManager = cdiUtil.findBean(
+            ContentSectionManager.class);
+        final CategoryManager categoryManager = cdiUtil.findBean(
+            CategoryManager.class);
+        final CategoryRepository categoryRepository = cdiUtil.findBean(
+            CategoryRepository.class);
+        final ContentItemManager contentItemManager = cdiUtil.findBean(
+            ContentItemManager.class);
+        final ContentItemRepository contentItemRepository = cdiUtil.findBean(
+            ContentItemRepository.class);
 
         setMethod(Form.POST);
 
         m_category = m;
 
         // Form header
-        Label header = new Label(GlobalizationUtil.globalize("cms.ui.category.select_index_item"));
+        Label header = new Label(GlobalizationUtil.globalize(
+            "cms.ui.category.select_index_item"));
         header.setFontWeight(Label.BOLD);
         add(header, ColumnPanel.FULL_WIDTH);
 
@@ -101,47 +106,60 @@ public class IndexItemSelectionForm extends CMSForm {
 
                 // option for NO index Object
                 group.addOption(new Option(NONE_OPTION_VALUE,
-                        new Label(GlobalizationUtil.globalize("cms.ui.category.non_option"))));
+                                           new Label(GlobalizationUtil
+                                               .globalize(
+                                                   "cms.ui.category.non_option"))));
 
                 // option for inheriting from the parent category
                 if (category.getParentCategory() != null) {
                     group.addOption(new Option(NULL_OPTION_VALUE,
-                            new Label(GlobalizationUtil.globalize("cms.ui.category.inherit_parent"))));
+                                               new Label(GlobalizationUtil
+                                                   .globalize(
+                                                       "cms.ui.category.inherit_parent"))));
                 }
 
-                final ContentSection section = CMS.getContext().getContentSection();
-                final ItemResolver itemResolver = sectionManager.getItemResolver(
+                final ContentSection section = CMS.getContext()
+                    .getContentSection();
+                final ItemResolver itemResolver = sectionManager
+                    .getItemResolver(
                         section);
                 for (Categorization child : children) {
-                    ContentItem item = (ContentItem) child.getCategorizedObject();
+                    ContentItem item = (ContentItem) child
+                        .getCategorizedObject();
                     Link link = new Link(
-                            new Text(item.getDisplayName()),
-                            itemResolver.generateItemURL(
-                                    state,
-                                    item.getObjectId(),
-                                    item.getDisplayName(),
-                                    section,
-                                    item.getVersion().name()
-                            )
+                        new Text(item.getDisplayName()),
+                        itemResolver.generateItemURL(
+                            state,
+                            item.getObjectId(),
+                            item.getDisplayName(),
+                            section,
+                            item.getVersion().name()
+                        )
                     );
                     Component linkComponent = link;
                     //add the option with the link
                     group.addOption(new Option(item.getItemUuid(),
-                            linkComponent));
+                                               linkComponent));
                 }
 
                 // get currently selected item
-                Optional<CcmObject> optionalIndexObject = categoryManager.getIndexObject(category);
+                Optional<CcmObject> optionalIndexObject = categoryManager
+                    .getIndexObject(category)
+                    .stream()
+                    .findFirst();
                 if (optionalIndexObject.isPresent()) {
-                    ContentItem indexItem = (ContentItem) optionalIndexObject.get();
+                    ContentItem indexItem = (ContentItem) optionalIndexObject
+                        .get();
                     group.setValue(
-                            state,
-                            contentItemManager.getDraftVersion(indexItem, ContentItem.class).getItemUuid()
+                        state,
+                        contentItemManager.getDraftVersion(indexItem,
+                                                           ContentItem.class)
+                            .getItemUuid()
                     );
                 } else {
                     String value = category.getParentCategory() != null
-                            ? NULL_OPTION_VALUE
-                            : NONE_OPTION_VALUE;
+                                       ? NULL_OPTION_VALUE
+                                       : NONE_OPTION_VALUE;
                     group.setValue(state, value);
                 }
             });
@@ -156,22 +174,26 @@ public class IndexItemSelectionForm extends CMSForm {
         m_saveCancelSection = new SaveCancelSection();
         add(m_saveCancelSection, ColumnPanel.FULL_WIDTH | ColumnPanel.LEFT);
 
-        addSubmissionListener(new FormSecurityListener(AdminPrivileges.ADMINISTER_CATEGORIES));
+        addSubmissionListener(new FormSecurityListener(
+            AdminPrivileges.ADMINISTER_CATEGORIES));
 
         // Process listener
         addProcessListener(event -> {
             PageState state = event.getPageState();
             FormData data = event.getFormData();
-            ParameterData param = data.getParameter(m_options.getParameterModel().getName());
+            ParameterData param = data.getParameter(m_options
+                .getParameterModel().getName());
             String selectedValue = (String) param.getValue();
 
             Category category
-                    = getCategory(event.getPageState());
+                         = getCategory(event.getPageState());
 
             if (selectedValue != null) {
-                Optional<ContentItem> optionalItem = contentItemRepository.findById(Long.parseLong(selectedValue));
+                Optional<ContentItem> optionalItem = contentItemRepository
+                    .findById(Long.parseLong(selectedValue));
                 if (optionalItem.isPresent()) {
-                    ContentItem item = contentItemManager.getDraftVersion(optionalItem.get(), ContentItem.class);
+                    ContentItem item = contentItemManager.getDraftVersion(
+                        optionalItem.get(), ContentItem.class);
                     try {
                         categoryManager.setIndexObject(category, item);
                         categoryRepository.save(category);
@@ -197,7 +219,9 @@ public class IndexItemSelectionForm extends CMSForm {
      * Fetch the selected category.
      *
      * @param state The page state
+     *
      * @return The selected category
+     *
      * @pre ( state != null )
      */
     protected Category getCategory(PageState state) {

@@ -25,7 +25,7 @@ import java.util.Map;
  * A {@code ComponentRenderer} transforms a {@link ComponentModel} into a
  * component.
  *
- * An implementation must be annotation with the {@link ComponentModelType}
+ * An implementation must be annotation with the {@link RendersComponent}
  * qualifier annotation.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>

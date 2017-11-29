@@ -166,10 +166,11 @@ public class ItemListComponentRenderer
         final Join<? extends ContentItem, Categorization> catJoin = from
             .join("categories");
 
-        criteriaQuery
-            .where(criteriaBuilder
-                .and(catJoin.get("category").in(categories),
-                     criteriaBuilder.equal(catJoin.get("index"), false)));
+        criteriaQuery.where(catJoin.get("category").in(categories));
+//        criteriaQuery
+//            .where(criteriaBuilder
+//                .and(catJoin.get("category").in(categories),
+//                     criteriaBuilder.equal(catJoin.get("index"), false)));
 
         criteriaQuery
             .orderBy(listOrder

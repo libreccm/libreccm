@@ -201,11 +201,17 @@ public class PagesRouter {
         final ObjectMapper mapper = new ObjectMapper();
 
         try {
-            return mapper
-                .writeValueAsString(getCategoryIndexPage(uriInfo,
+            final Map<String, Object> result = getCategoryIndexPage(uriInfo,
                                                          "/",
                                                          language,
-                                                         pageModelVersion));
+                                                         pageModelVersion);
+            final String json = mapper.writeValueAsString(result);
+            return json;
+//            return mapper
+//                .writeValueAsString(getCategoryIndexPage(uriInfo,
+//                                                         "/",
+//                                                         language,
+//                                                         pageModelVersion));
         } catch (JsonProcessingException ex) {
             throw new WebApplicationException(ex);
         }
@@ -229,10 +235,17 @@ public class PagesRouter {
         final ObjectMapper mapper = new XmlMapper(xmlModule);
 
         try {
-            return mapper
-                .writeValueAsString(getCategoryIndexPage(uriInfo, "/",
+            final Map<String, Object> result = getCategoryIndexPage(uriInfo, 
+                                                         "/",
                                                          language,
-                                                         pageModelVersion));
+                                                         pageModelVersion);
+            final String html = mapper.writeValueAsString(result);
+            return html;
+//            return mapper
+//                .writeValueAsString(getCategoryIndexPage(uriInfo, 
+//                                                         "/",
+//                                                         language,
+//                                                         pageModelVersion));
         } catch (JsonProcessingException ex) {
             throw new WebApplicationException(ex);
         }
