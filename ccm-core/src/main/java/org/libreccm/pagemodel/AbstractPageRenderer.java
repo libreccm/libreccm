@@ -60,11 +60,12 @@ public abstract class AbstractPageRenderer implements PageRenderer {
 
         for (final ComponentModel componentModel : pageModel.getComponents()) {
             final Optional<Object> component = renderComponent(
-                componentModel, componentModel.getClass(),
+                componentModel, 
+                componentModel.getClass(),
                 parameters);
             if (component.isPresent()) {
-                page.put(componentModel.getIdAttribute(),
-                         component);
+                page.put(componentModel.getKey(),
+                         component.get());
             }
         }
 
@@ -89,9 +90,6 @@ public abstract class AbstractPageRenderer implements PageRenderer {
         final ComponentModel componentModel,
         final Class<M> componentModelClass,
         final Map<String, Object> parameters) {
-
-        componentRendererManager
-            .findComponentRenderer(componentModel.getClass());
 
         final Optional<ComponentRenderer<M>> renderer = componentRendererManager
             .findComponentRenderer(componentModelClass);

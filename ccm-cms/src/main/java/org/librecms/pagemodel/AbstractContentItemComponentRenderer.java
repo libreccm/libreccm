@@ -44,6 +44,8 @@ import static org.librecms.pages.PagesConstants.*;
 import org.libreccm.pagemodel.ComponentRenderer;
 import org.librecms.pagemodel.contentitems.ContentItemRenderer;
 
+import java.util.Collections;
+
 /**
  *
  * Abstract base class for rendering an {@link ContentItemComponent} which
@@ -117,6 +119,10 @@ public abstract class AbstractContentItemComponentRenderer<T extends ContentItem
         final ContentItem contentItem = getContentItem(componentModel,
                                                        parameters);
 
+        if (contentItem == null) {
+            return Collections.emptyMap();
+        }
+
         if (Boolean.TRUE.equals(parameters.get("showDraftItem"))) {
 
             final ContentItem draftItem = itemManager
@@ -163,9 +169,9 @@ public abstract class AbstractContentItemComponentRenderer<T extends ContentItem
      * is necessary.
      *
      * @param componentModel The component model to render.
-     * @param parameters Additional parameters.
-     * @param item The item to render.
-     * 
+     * @param parameters     Additional parameters.
+     * @param item           The item to render.
+     *
      * @return The rendered content item.
      */
     protected Map<String, Object> generateItem(

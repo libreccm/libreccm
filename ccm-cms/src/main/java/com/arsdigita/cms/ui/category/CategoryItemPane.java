@@ -18,11 +18,17 @@
  */
 package com.arsdigita.cms.ui.category;
 
-import com.arsdigita.bebop.*;
-import com.arsdigita.bebop.event.ActionEvent;
-import com.arsdigita.bebop.event.ActionListener;
-import com.arsdigita.bebop.event.ChangeEvent;
-import com.arsdigita.bebop.event.ChangeListener;
+import com.arsdigita.bebop.ActionLink;
+import com.arsdigita.bebop.BaseLink;
+import com.arsdigita.bebop.Component;
+import com.arsdigita.bebop.Form;
+import com.arsdigita.bebop.Label;
+import com.arsdigita.bebop.Link;
+import com.arsdigita.bebop.Page;
+import com.arsdigita.bebop.PageState;
+import com.arsdigita.bebop.ParameterSingleSelectionModel;
+import com.arsdigita.bebop.SimpleContainer;
+import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.form.Submit;
 import com.arsdigita.bebop.parameters.StringParameter;
 
@@ -33,33 +39,24 @@ import com.arsdigita.cms.ui.ContentItemPage;
 import com.arsdigita.cms.ui.VisibilityComponent;
 import com.arsdigita.cms.ui.templates.CategoryTemplates;
 import com.arsdigita.kernel.KernelConfig;
-import com.arsdigita.kernel.ui.ACSObjectSelectionModel;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.Property;
 import com.arsdigita.toolbox.ui.PropertyList;
 import com.arsdigita.toolbox.ui.Section;
-import com.arsdigita.util.Assert;
-import com.arsdigita.web.Web;
 import com.arsdigita.xml.Element;
 
-import java.awt.image.Kernel;
-import java.math.BigDecimal;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
-import org.libreccm.categorization.CategoryRepository;
+
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CcmObject;
-import org.libreccm.security.Permission;
 import org.libreccm.security.PermissionChecker;
-import org.libreccm.security.User;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.privileges.AdminPrivileges;
@@ -75,7 +72,7 @@ import org.librecms.contentsection.privileges.ItemPrivileges;
 class CategoryItemPane extends BaseItemPane {
 
     private static final Logger LOGGER = LogManager.getLogger(
-            CategoryItemPane.class);
+        CategoryItemPane.class);
     private final SingleSelectionModel m_model;
     private final CategoryRequestLocal m_category;
     private final SimpleContainer m_detailPane;
@@ -95,7 +92,8 @@ class CategoryItemPane extends BaseItemPane {
         setDefault(m_detailPane);
 
         final ActionLink orderItemsLink = new ActionLink(new Label(
-                gz("cms.ui.category.categorized_objects"))) {
+            gz("cms.ui.category.categorized_objects"))) {
+
             @Override
             public boolean isVisible(PageState state) {
                 // update for live items only
@@ -114,19 +112,20 @@ class CategoryItemPane extends BaseItemPane {
 
         // Change index item
         final ActionLink indexLink = new ActionLink(new Label(gz(
-                "cms.ui.category.change_index_item")));
+            "cms.ui.category.change_index_item")));
         final Form indexForm = new IndexItemSelectionForm(m_category);
         add(indexForm);
-        
+
         //Move link
-        final ActionLink moveLink = new MoveLink(new Label(gz("cms.ui.category.move")));
+        final ActionLink moveLink = new MoveLink(new Label(gz(
+            "cms.ui.category.move")));
         final Form moveForm = new CategoryMoveForm(m_category, contextModel);
         add(moveForm);
 
         ViewItemLink viewIndexLink = new ViewItemLink(new Label(gz(
-                "cms.ui.category.view_index_item")), "");
+            "cms.ui.category.view_index_item")), "");
         EditItemLink editIndexLink = new EditItemLink(new Label(gz(
-                "cms.ui.category.edit_index_item")), "");
+            "cms.ui.category.edit_index_item")), "");
 
         // Summary
         m_detailPane.add(new SummarySection(editLink,
@@ -139,25 +138,29 @@ class CategoryItemPane extends BaseItemPane {
 
         // Quasimodo: BEGIN
         // Localizations
-
         ActionLink addCategoryLocalizationLink = new ActionLink(new Label(gz(
-                "cms.ui.category.localization_add"))) {
+            "cms.ui.category.localization_add"))) {
+
             @Override
             public boolean isVisible(PageState state) {
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final ConfigurationManager manager = cdiUtil.findBean(
-                        ConfigurationManager.class);
+                    ConfigurationManager.class);
                 final KernelConfig config = manager.findConfiguration(
-                        KernelConfig.class);
-                final PermissionChecker permissionChecker =
-                        cdiUtil.findBean(PermissionChecker.class);
+                    KernelConfig.class);
+                final PermissionChecker permissionChecker = cdiUtil.findBean(
+                    PermissionChecker.class);
                 // Only show addLanguage button, if there are langauges to add
-                int countSupportedLanguages = config.getSupportedLanguages().size();
+                int countSupportedLanguages = config.getSupportedLanguages()
+                    .size();
                 final Category category = m_category.getCategory(state);
-                if (permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_CATEGORIES,
-                        category)) {
-                    if (category.getTitle().getAvailableLocales().size() < countSupportedLanguages
-                            || category.getDescription().getAvailableLocales().size() < countSupportedLanguages) {
+                if (permissionChecker.isPermitted(
+                    AdminPrivileges.ADMINISTER_CATEGORIES,
+                    category)) {
+                    if (category.getTitle().getAvailableLocales().size()
+                            < countSupportedLanguages
+                            || category.getDescription().getAvailableLocales()
+                            .size() < countSupportedLanguages) {
                         return true;
                     }
                 }
@@ -166,9 +169,11 @@ class CategoryItemPane extends BaseItemPane {
 
         };
 
-        CategoryLocalizationAddForm addCategoryLocalizationForm =
-                                    new CategoryLocalizationAddForm(m_category);
-        m_detailPane.add(new CategoryLocalizationSection(addCategoryLocalizationLink));
+        CategoryLocalizationAddForm addCategoryLocalizationForm
+                                        = new CategoryLocalizationAddForm(
+                m_category);
+        m_detailPane.add(new CategoryLocalizationSection(
+            addCategoryLocalizationLink));
         add(addCategoryLocalizationForm);
         connect(addCategoryLocalizationLink, addCategoryLocalizationForm);
         connect(addCategoryLocalizationForm);
@@ -178,7 +183,8 @@ class CategoryItemPane extends BaseItemPane {
         m_detailPane.add(new SubcategorySection(addLink));
 
         // Linked categories
-        final ActionLink linkAddLink = new ActionLink(new Label(gz("cms.ui.category.linked_add")));
+        final ActionLink linkAddLink = new ActionLink(new Label(gz(
+            "cms.ui.category.linked_add")));
 
         final Form linkForm = new LinkForm(m_category);
         add(linkForm);
@@ -190,14 +196,12 @@ class CategoryItemPane extends BaseItemPane {
 
         // Templates
 //        m_detailPane.add(new AdminVisible(new CategoryTemplateSection()));
-
         // Permissions
         //m_detailPane.add(new PermissionsSection());
         //m_detailPane.add(new Text("PermissionSection Placeholder"));
-
         connect(indexLink, indexForm);
         connect(indexForm);
-        
+
         connect(moveLink, moveForm);
         connect(moveForm);
 
@@ -215,8 +219,10 @@ class CategoryItemPane extends BaseItemPane {
         @Override
         public boolean hasPermission(PageState ps) {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
-            return permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_CATEGORIES);
+            final PermissionChecker permissionChecker = cdiUtil.findBean(
+                PermissionChecker.class);
+            return permissionChecker.isPermitted(
+                AdminPrivileges.ADMINISTER_CATEGORIES);
         }
 
     }
@@ -230,8 +236,10 @@ class CategoryItemPane extends BaseItemPane {
         @Override
         public boolean hasPermission(PageState ps) {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
-            return permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_CATEGORIES);
+            final PermissionChecker permissionChecker = cdiUtil.findBean(
+                PermissionChecker.class);
+            return permissionChecker.isPermitted(
+                AdminPrivileges.ADMINISTER_CATEGORIES);
         }
 
     }
@@ -303,16 +311,16 @@ class CategoryItemPane extends BaseItemPane {
                                        category.getDescription().getValue()));
                 props.add(new Property(gz("cms.ui.category.is_not_abstract"),
                                        category.isAbstractCategory()
-                                       ? gz("cms.ui.no")
-                                       : gz("cms.ui.yes")));
+                                           ? gz("cms.ui.no")
+                                           : gz("cms.ui.yes")));
                 props.add(new Property(gz("cms.ui.cateogry.is_visible"),
                                        category.isVisible()
-                                       ? gz("cms.ui.yes")
-                                       : gz("cms.ui.no")));
+                                           ? gz("cms.ui.yes")
+                                           : gz("cms.ui.no")));
                 props.add(new Property(gz("cms.ui.category.is_enabled"),
                                        category.isEnabled()
-                                       ? gz("cms.ui.yes")
-                                       : gz("cms.ui.no")));
+                                           ? gz("cms.ui.yes")
+                                           : gz("cms.ui.no")));
                 props.add(new Property(gz("cms.ui.category.index_item"),
                                        itemTitle));
 
@@ -320,8 +328,8 @@ class CategoryItemPane extends BaseItemPane {
             }
 
         }
-    }
 
+    }
 
     // Quasimodo: BEGIN
     // CategoryLocalizationSection
@@ -339,12 +347,15 @@ class CategoryItemPane extends BaseItemPane {
 
             final ActionGroup group = new ActionGroup();
             setBody(group);
-            m_catLocalizationTable = new CategoryLocalizationTable(m_category, m_model, m_catLocale);
+            m_catLocalizationTable = new CategoryLocalizationTable(m_category,
+                                                                   m_model,
+                                                                   m_catLocale);
             group.setSubject(m_catLocalizationTable);
             group.addAction(new AdminVisible(addLink), ActionGroup.ADD);
 
-            m_editCategoryLocalizationForm = new CategoryLocalizationEditForm(m_category,
-                                                                              m_catLocale);
+            m_editCategoryLocalizationForm = new CategoryLocalizationEditForm(
+                m_category,
+                m_catLocale);
             add(m_editCategoryLocalizationForm);
             connect(m_editCategoryLocalizationForm);
             connect(m_catLocalizationTable, 0, m_editCategoryLocalizationForm);
@@ -353,7 +364,8 @@ class CategoryItemPane extends BaseItemPane {
         @Override
         public void register(Page page) {
             super.register(page);
-            page.addComponentStateParam(m_editCategoryLocalizationForm, m_catLocaleParam);
+            page.addComponentStateParam(m_editCategoryLocalizationForm,
+                                        m_catLocaleParam);
         }
 
     }
@@ -527,7 +539,6 @@ class CategoryItemPane extends BaseItemPane {
 //        }
 //
 //    }
-
     private static class OrderItemsForm extends CMSForm {
 
         public OrderItemsForm(CategoryRequestLocal category) {
@@ -557,10 +568,16 @@ class CategoryItemPane extends BaseItemPane {
         @Override
         protected String prepareURL(final PageState state, String location) {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final CategoryManager manager = cdiUtil.findBean(CategoryManager.class);
+            final CategoryManager manager = cdiUtil.findBean(
+                CategoryManager.class);
 
-            ContentItem indexItem = (ContentItem) manager.getIndexObject(m_category.getCategory(state)).get();
-            return "/redirect/?oid=" + URLEncoder.encode(Long.toString(indexItem.getObjectId()));
+            ContentItem indexItem = (ContentItem) manager
+                .getIndexObject(m_category.getCategory(state))
+                .stream()
+                .findFirst()
+                .get();
+            return "/redirect/?oid=" + URLEncoder.encode(Long.toString(indexItem
+                .getObjectId()));
         }
 
         // We only show this link when an index item exists for this category
@@ -569,7 +586,8 @@ class CategoryItemPane extends BaseItemPane {
             if (!super.isVisible(state)) {
                 return false;
             }
-            Category /*ACSObject*/ indexItem = m_category.getCategory(state);//.getDirectIndexObject();
+            Category /*ACSObject*/ indexItem = m_category
+                    .getCategory(state);//.getDirectIndexObject();
             if (indexItem == null) {
                 return false;
             } else {
@@ -593,12 +611,17 @@ class CategoryItemPane extends BaseItemPane {
         @Override
         protected String prepareURL(final PageState state, String location) {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final CategoryManager manager = cdiUtil.findBean(CategoryManager.class);
-            final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
-            final ContentItemManager contentItemManager =
-                    cdiUtil.findBean(ContentItemManager.class);
+            final CategoryManager manager = cdiUtil.findBean(
+                CategoryManager.class);
+            final PermissionChecker permissionChecker = cdiUtil.findBean(
+                PermissionChecker.class);
+            final ContentItemManager contentItemManager = cdiUtil.findBean(
+                ContentItemManager.class);
 
-            Optional<CcmObject> indexItem = manager.getIndexObject(m_category.getCategory(state));
+            Optional<CcmObject> indexItem = manager
+                .getIndexObject(m_category.getCategory(state))
+                .stream()
+                .findFirst();
             if (!indexItem.isPresent()) {
                 return "";
             }
@@ -606,10 +629,11 @@ class CategoryItemPane extends BaseItemPane {
                 return "";
             } else {
                 Long draftID = contentItemManager
-                        .getDraftVersion((ContentItem) indexItem.get(), ContentItem.class)
-                        .getObjectId();
+                    .getDraftVersion((ContentItem) indexItem.get(),
+                                     ContentItem.class)
+                    .getObjectId();
                 return "item.jsp?item_id=" + draftID + "&set_tab="
-                       + ContentItemPage.AUTHORING_TAB;
+                           + ContentItemPage.AUTHORING_TAB;
             }
         }
 
@@ -624,38 +648,45 @@ class CategoryItemPane extends BaseItemPane {
         @Override
         public boolean isVisible(PageState state) {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final CategoryManager manager = cdiUtil.findBean(CategoryManager.class);
-            final ContentItemManager contentItemManager =
-                    cdiUtil.findBean(ContentItemManager.class);
-            final PermissionChecker permissionChecker =
-                    cdiUtil.findBean(PermissionChecker.class);
+            final CategoryManager manager = cdiUtil.findBean(
+                CategoryManager.class);
+            final ContentItemManager contentItemManager = cdiUtil.findBean(
+                ContentItemManager.class);
+            final PermissionChecker permissionChecker = cdiUtil.findBean(
+                PermissionChecker.class);
             if (!super.isVisible(state)) {
                 return false;
             }
-            Optional<CcmObject> indexItem = manager.getIndexObject(m_category.getCategory(state));
+            Optional<CcmObject> indexItem = manager.getIndexObject(m_category
+                .getCategory(state))
+                .stream()
+                .findFirst();
             if (!indexItem.isPresent()) {
                 return false;
             } else {
-                return permissionChecker.isPermitted(ItemPrivileges.EDIT, indexItem.get());
+                return permissionChecker.isPermitted(ItemPrivileges.EDIT,
+                                                     indexItem.get());
             }
         }
+
     };
-    
-    private  class MoveLink extends ActionLink {
-        
+
+    private class MoveLink extends ActionLink {
+
         private final Label alternativeLabel;
-        
+
         public MoveLink(final Label label) {
             super(label);
-            alternativeLabel = new Label(GlobalizationUtil.globalize("cms.ui.category.cantmoved"));
+            alternativeLabel = new Label(GlobalizationUtil.globalize(
+                "cms.ui.category.cantmoved"));
         }
-        
+
         @Override
         public void generateXML(final PageState state, final Element parent) {
             if (!isVisible(state)) {
                 return;
             }
-            
+
             final Category category = m_category.getCategory(state);
             if (category.getParentCategory() == null) {
                 alternativeLabel.generateXML(state, parent);
@@ -663,6 +694,7 @@ class CategoryItemPane extends BaseItemPane {
                 super.generateXML(state, parent);
             }
         }
-        
+
     }
+
 }
