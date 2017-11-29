@@ -194,11 +194,11 @@ public class StaticThemeProvider implements ThemeProvider {
         Objects.requireNonNull(theme);
 
         final String manifestJsonPath = String.format("/" + THEMES_PACKAGE
-                                                          + "%s/"
+                                                          + "/%s/"
                                                           + THEME_MANIFEST_JSON,
                                                       theme);
         final String manifestXmlPath = String.format("/" + THEMES_PACKAGE
-                                                         + "%s/"
+                                                         + "/%s/"
                                                          + THEME_MANIFEST_XML,
                                                      theme);
 
@@ -227,11 +227,11 @@ public class StaticThemeProvider implements ThemeProvider {
         Objects.requireNonNull(theme);
 
         final String manifestJsonPath = String.format("/" + THEMES_PACKAGE
-                                                          + "%s/"
+                                                          + "/%s/"
                                                           + THEME_MANIFEST_JSON,
                                                       theme);
         final String manifestXmlPath = String.format("/" + THEMES_PACKAGE
-                                                         + "%s/"
+                                                         + "/%s/"
                                                          + THEME_MANIFEST_XML,
                                                      theme);
 

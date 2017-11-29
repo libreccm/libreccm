@@ -39,7 +39,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import static org.libreccm.theming.ThemeConstants.*;
 
-import org.libreccm.theming.ThemeVersion;
+import org.libreccm.theming.ProcessesThemes;
 import org.libreccm.theming.manifest.ThemeTemplate;
 
 import java.io.InputStream;
@@ -50,7 +50,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Optional;
 
 import javax.xml.transform.Result;
-import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -64,6 +63,7 @@ import javax.xml.transform.stream.StreamSource;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+@ProcessesThemes("xsl")
 @RequestScoped
 public class XsltThemeProcessor implements ThemeProcessor {
 
