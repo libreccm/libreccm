@@ -19,6 +19,7 @@
 package org.librecms.pagemodel.contentitems;
 
 import org.libreccm.messaging.Attachment;
+import org.librecms.contentsection.Asset;
 import org.librecms.pagemodel.assets.AbstractAssetRenderer;
 import org.librecms.contentsection.AttachmentList;
 import org.librecms.contentsection.ContentItem;

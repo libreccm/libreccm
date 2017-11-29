@@ -25,8 +25,11 @@ import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
+
 import java.util.Iterator;
 import java.util.Optional;
+
+import javax.enterprise.inject.Any;
 
 /**
  * Provides access to all available implementations of the
@@ -41,6 +44,7 @@ public class ComponentRendererManager {
         ComponentRendererManager.class);
 
     @Inject
+    @Any
     private Instance<ComponentRenderer<?>> componentRenderers;
 
     /**
@@ -73,8 +77,9 @@ public class ComponentRendererManager {
         final Instance<ComponentRenderer<?>> instance = componentRenderers
             .select(literal);
         if (instance.isUnsatisfied()) {
-            LOGGER.warn("No ComponentRenderer for component model \"%s\" "
-                            + "and type \"%s\". Ignoring component model.");
+            LOGGER.warn("No ComponentRenderer for component model \"{}\". "
+                            + "Ignoring component model.",
+                        componentModelClass.getName());
             return Optional.empty();
         } else if (instance.isAmbiguous()) {
             throw new IllegalStateException(String.format(
