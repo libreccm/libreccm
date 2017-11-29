@@ -142,7 +142,9 @@ public class ItemListComponentForm
 
         final ItemListComponent component = getComponentModel();
 
-        if (component != null) {
+        if (component == null) {
+            pageSizeField.setValue(state, "30");
+        }else {
             final Object[] descendingValue;
             if (component.isDescending()) {
                 descendingValue = new Object[]{DESCENDING};

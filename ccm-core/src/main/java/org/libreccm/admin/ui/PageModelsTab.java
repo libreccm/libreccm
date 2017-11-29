@@ -56,9 +56,7 @@ class PageModelsTab extends CustomComponent {
 
         final Tree<ApplicationTreeNode> applicationTree = new Tree<>(
             adminViewController.getApplicationTreeDataProvider());
-
         applicationTree.setItemCaptionGenerator(ApplicationTreeNode::getTitle);
-
         applicationTree.setItemCollapseAllowedProvider(node -> {
             return !node.getNodeType().equals(ApplicationTreeNodeType.ROOT_NODE);
         });
@@ -99,27 +97,41 @@ class PageModelsTab extends CustomComponent {
             .addComponentColumn(row -> buildDeleteButton(row,
                                                          adminViewController))
             .setId(COL_DELETE);
-
         pageModelsGrid.setVisible(false);
+        pageModelsGrid.setWidth("100%");
 
         final Label placeholder = new Label(localizedTextsUtil.getText(
             "ui.admin.pagemodels.select_application"));
 
         final VerticalLayout layout = new VerticalLayout(pageModelsGrid,
                                                          placeholder);
+        layout.setWidth("100%");
 
         applicationTree.addItemClickListener(event -> {
-            final PageModelsTableDataProvider dataProvider
-                                              = (PageModelsTableDataProvider) pageModelsGrid
-                    .getDataProvider();
-            dataProvider.setApplicationUuid(event.getItem().getNodeId());
-            pageModelsGrid.setVisible(true);
-            placeholder.setVisible(false);
+
+            final ApplicationTreeNode node = event.getItem();
+            final ApplicationTreeNodeType nodeType = node.getNodeType();
+
+            if (nodeType == ApplicationTreeNodeType.APPLICATION_NODE
+                    || nodeType
+                       == ApplicationTreeNodeType.SINGLETON_APPLICATION_NODE) {
+                final PageModelsTableDataProvider dataProvider
+                                                      = (PageModelsTableDataProvider) pageModelsGrid
+                        .getDataProvider();
+                dataProvider.setApplicationUuid(node.getNodeId());
+                pageModelsGrid.setVisible(true);
+                placeholder.setVisible(false);
+            } else {
+                pageModelsGrid.setVisible(false);
+                placeholder.setVisible(true);
+            }
         });
 
+        final VerticalLayout treeLayout = new VerticalLayout(applicationTree);
+        
         final HorizontalSplitPanel panel = new HorizontalSplitPanel(
-            applicationTree, layout);
-        panel.setSplitPosition(33.0f);
+            treeLayout, layout);
+        panel.setSplitPosition(20.0f);
         super.setCompositionRoot(panel);
     }
 
