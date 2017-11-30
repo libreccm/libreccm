@@ -6,7 +6,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--<ccm.version>7.0.0-SNAPSHOT</ccm.version>-->
-        <jackson-core-version>2.4.5</jackson-core-version>
     </properties>
 
     <prerequisites>
@@ -614,48 +613,12 @@
                 <type>pom</type>
             </dependency>   
 
-            <!-- Export Import Libraries -->
-
-            <!--<dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson-core-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>${jackson-core-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson-core-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-jdk8</artifactId>
-                <version>${jackson-core-version}</version>
-            </dependency>-->
-            <!-- for xml ex-/import -->
-            <!--<dependency>
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
-                <artifactId>jackson-dataformat-xml</artifactId>
-                <version>${jackson-core-version}</version>
-            </dependency>-->
             <!-- better xml library -->
             <dependency> 
                 <groupId>org.codehaus.woodstox</groupId>
                 <artifactId>woodstox-core-asl</artifactId>
                 <version>4.4.1</version>
             </dependency>
-            <!-- for csv ex-/import -->
-            <!--
-            <dependency> 
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
-                <artifactId>jackson-dataformat-csv</artifactId>
-                <version>${jackson-core-version}</version>
-            </dependency>
-            -->
 
             <!-- 
                 **********************
