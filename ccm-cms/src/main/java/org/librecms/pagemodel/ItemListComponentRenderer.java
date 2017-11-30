@@ -54,10 +54,11 @@ import javax.servlet.http.HttpServletRequest;
 import static org.librecms.pages.PagesConstants.*;
 
 import org.libreccm.pagemodel.RendersComponent;
+import org.librecms.contentsection.ContentItemVersion;
 
 /**
  * Renderer for the {@link ItemListComponent}.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -166,7 +167,12 @@ public class ItemListComponentRenderer
         final Join<? extends ContentItem, Categorization> catJoin = from
             .join("categories");
 
-        criteriaQuery.where(catJoin.get("category").in(categories));
+        criteriaQuery.where(criteriaBuilder
+            .and(catJoin.get("category").in(categories),
+                 criteriaBuilder.equal(catJoin.get("indexObject"), false),
+                 criteriaBuilder.equal(catJoin.get("type"), ""),
+                 criteriaBuilder.equal(from.get("version"),
+                                       ContentItemVersion.LIVE)));
 //        criteriaQuery
 //            .where(criteriaBuilder
 //                .and(catJoin.get("category").in(categories),

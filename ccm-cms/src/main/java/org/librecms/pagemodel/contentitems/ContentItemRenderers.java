@@ -21,6 +21,7 @@ package org.librecms.pagemodel.contentitems;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.librecms.contentsection.ContentItem;
+import org.librecms.pagemodel.assets.AssetRenderers;
 
 import java.util.Locale;
 import java.util.Map;
@@ -42,6 +43,9 @@ public class ContentItemRenderers {
 
     private static final Logger LOGGER = LogManager
         .getLogger(ContentItemRenderers.class);
+
+    @Inject
+    private AssetRenderers assetRenderers;
 
     @Inject
     private Instance<AbstractContentItemRenderer> renderers;
@@ -69,7 +73,7 @@ public class ContentItemRenderers {
      * is returned.
      *
      * @param itemType The type for which the renderer is retrieved.
-     * @param mode The render mode.
+     * @param mode     The render mode.
      *
      * @return The renderer for the provided type.
      */
@@ -94,7 +98,10 @@ public class ContentItemRenderers {
                 LOGGER.warn("No renderer for item type \"{}\" and mode "
                                 + "\"--DEFAULT--\". Returning default renderer.",
                             itemType.getName());
-                return new AbstractContentItemRenderer() {
+                return new AbstractContentItemRenderer(assetRenderers) {
+
+                    private static final long serialVersionUID
+                                                  = -4679445070846896396L;
 
                     @Override
                     public void renderItem(final ContentItem item,

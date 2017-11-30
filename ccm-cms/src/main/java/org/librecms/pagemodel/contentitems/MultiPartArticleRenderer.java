@@ -21,11 +21,14 @@ package org.librecms.pagemodel.contentitems;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contenttypes.MultiPartArticle;
 import org.librecms.contenttypes.MultiPartArticleSection;
+import org.librecms.pagemodel.assets.AssetRenderers;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.inject.Inject;
 
 /**
  * Renderer for {@link MultiPartArticle} items.
@@ -34,6 +37,13 @@ import java.util.stream.Collectors;
  */
 @ContentItemRenderer(renders = MultiPartArticle.class)
 public class MultiPartArticleRenderer extends AbstractContentItemRenderer {
+
+    private static final long serialVersionUID = -4298383182795585868L;
+
+    @Inject
+    public MultiPartArticleRenderer(final AssetRenderers assetRenderers) {
+        super(assetRenderers);
+    }
 
     /**
      * Renders the provided {@link MultiPartArticle}. The following values are

@@ -29,6 +29,8 @@ import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,6 +38,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -77,13 +80,13 @@ import javax.persistence.Table;
             name = "Categorization.findIndexObject",
             query = "SELECT c.categorizedObject FROM Categorization c "
                             + "WHERE c.category = :category "
-                            + "AND c.index = TRUE")
+                            + "AND c.indexObject = TRUE")
     ,
     @NamedQuery(
             name = "Categorization.findIndexObjectCategorization",
             query = "SELECT c FROM Categorization c "
                             + "WHERE c.category = :category "
-                            + "AND c.index = TRUE"
+                            + "AND c.indexObject = TRUE"
     )
     ,
     @NamedQuery(
@@ -92,7 +95,7 @@ import javax.persistence.Table;
                     + "ELSE false END) "
                             + "FROM Categorization c "
                             + "WHERE c.category = :category "
-                            + "AND c.index = TRUE")
+                            + "AND c.indexObject = TRUE")
 })
 @JsonIdentityInfo(generator = CategorizationIdGenerator.class,
                   property = "customCatId")
@@ -125,11 +128,11 @@ public class Categorization implements Serializable, Relation, Portable {
     private CcmObject categorizedObject;
 
     /**
-     * If the categorised object is the index object of the category this
-     * property is set to {@code true}.
+     * If the categorised object is the indexObject object of the category this
+ property is set to {@code true}.
      */
     @Column(name = "CATEGORY_INDEX")
-    private boolean index;
+    private boolean indexObject;
 
     /**
      * Defines the order in which the categories assigned the the categorised
@@ -153,7 +156,7 @@ public class Categorization implements Serializable, Relation, Portable {
     private String type;
 
     public Categorization() {
-        index = false;
+        indexObject = false;
         categoryOrder = 0;
         objectOrder = 0;
     }
@@ -192,12 +195,16 @@ public class Categorization implements Serializable, Relation, Portable {
         this.categorizedObject = categorizedObject;
     }
 
-    public boolean isIndex() {
-        return index;
+//    public boolean getIndex() {
+//        return indexObject;
+//    }
+    
+    public boolean isIndexObject() {
+        return indexObject;
     }
 
-    public void setIndex(final boolean index) {
-        this.index = index;
+    public void setIndexObject(final boolean indexObject) {
+        this.indexObject = indexObject;
     }
 
     public long getCategoryOrder() {
@@ -231,7 +238,7 @@ public class Categorization implements Serializable, Relation, Portable {
         = 89 * hash + (int) (categorizationId ^ (categorizationId >>> 32));
         hash = 89 * hash + Objects.hashCode(category);
         hash = 89 * hash + Objects.hashCode(categorizedObject);
-        hash = 89 * hash + (index ? 1 : 0);
+        hash = 89 * hash + (indexObject ? 1 : 0);
         hash = 89 * hash + (int) (categoryOrder ^ (categoryOrder >>> 32));
         hash = 89 * hash + (int) (objectOrder ^ (objectOrder >>> 32));
         hash = 89 * hash + Objects.hashCode(type);
@@ -263,7 +270,7 @@ public class Categorization implements Serializable, Relation, Portable {
             return false;
         }
 
-        if (index != other.isIndex()) {
+        if (indexObject != other.isIndexObject()) {
             return false;
         }
 
@@ -301,7 +308,7 @@ public class Categorization implements Serializable, Relation, Portable {
                              categorizationId,
                              Objects.toString(category),
                              Objects.toString(categorizedObject),
-                             index,
+                             indexObject,
                              categoryOrder,
                              objectOrder,
                              type,

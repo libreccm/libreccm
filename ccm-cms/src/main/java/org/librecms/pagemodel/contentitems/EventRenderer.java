@@ -20,9 +20,12 @@ package org.librecms.pagemodel.contentitems;
 
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contenttypes.Event;
+import org.librecms.pagemodel.assets.AssetRenderers;
 
 import java.util.Locale;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 /**
  * Renderer for {@link Event} items.
@@ -32,10 +35,17 @@ import java.util.Map;
 @ContentItemRenderer(renders = Event.class)
 public class EventRenderer extends AbstractContentItemRenderer {
 
+    private static final long serialVersionUID = -3517404651544429745L;
+
+    @Inject
+    public EventRenderer(final AssetRenderers assetRenderers) {
+        super(assetRenderers);
+    }
+
     /**
      * Render the provided {@link Event}. The following values are put into
      * {@code result}:
-     * 
+     *
      * <pre>
      *  {
      *      "text": {@link Event#getText()}
