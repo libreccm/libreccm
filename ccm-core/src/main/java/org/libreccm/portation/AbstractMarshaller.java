@@ -201,7 +201,7 @@ public abstract class AbstractMarshaller<P extends Portable> {
                         } catch (IOException e) {
                             LOGGER.error("Unable to read objects "
                                          + "from XML line:\n \"{}\"", line);
-                            LOGGER.error(e);
+                            LOGGER.error("Exception: ", e);
                             error = true;
                         }
                         break;

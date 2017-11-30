@@ -20,34 +20,43 @@ package org.librecms.pagemodel.contentitems;
 
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contenttypes.Article;
+import org.librecms.pagemodel.assets.AssetRenderers;
 
 import java.util.Locale;
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 
 /**
  * Renderer for {@link Article} items.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ContentItemRenderer(renders = Article.class)
 @RequestScoped
 public class ArticleRenderer extends AbstractContentItemRenderer {
 
+    private static final long serialVersionUID = 8355183377902033759L;
+
+    @Inject
+    public ArticleRenderer(final AssetRenderers assetRenderers) {
+        super(assetRenderers);
+    }
+
     /**
-     * Render the provided {@link Article}. The following values are put into 
-     * the map: 
-     * 
+     * Render the provided {@link Article}. The following values are put into
+     * the map:
+     *
      * <pre>
      *  {
      *      "text": {@link Article#getText()}
      *  }
      * </pre>
-     * 
-     * @param item The item to render.
+     *
+     * @param item     The item to render.
      * @param language The current language.
-     * @param result The map into which the result is placed. 
+     * @param result   The map into which the result is placed.
      */
     @Override
     public void renderItem(final ContentItem item,
@@ -60,7 +69,7 @@ public class ArticleRenderer extends AbstractContentItemRenderer {
         } else {
             return;
         }
-        
+
         result.put("text", article.getText().getValue(language));
 
     }

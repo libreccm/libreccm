@@ -18,6 +18,8 @@
  */
 package org.librecms.contentsection;
 
+import com.arsdigita.kernel.KernelConfig;
+
 import org.apache.shiro.subject.Subject;
 
 import java.util.Date;
@@ -27,6 +29,7 @@ import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
+import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.core.UnexpectedErrorException;
@@ -65,8 +68,16 @@ import javax.transaction.Transactional;
 public class ContentItemRepository
     extends AbstractAuditedEntityRepository<Long, ContentItem> {
 
+    private static final long serialVersionUID = -145167586339461600L;
+
+    @Inject
+    private CategoryManager categoryManager;
+
     @Inject
     private CcmObjectRepository ccmObjectRepo;
+
+    @Inject
+    private ConfigurationManager confManager;
 
     @Inject
     private FolderRepository folderRepo;
@@ -75,28 +86,25 @@ public class ContentItemRepository
     private ContentItemManager itemManager;
 
     @Inject
-    private CategoryManager categoryManager;
-
-    @Inject
-    private Shiro shiro;
-
-    @Inject
-    private UserRepository userRepository;
+    private PermissionChecker permissionChecker;
 
     @Inject
     private RoleManager roleManager;
 
     @Inject
-    private WorkflowRepository workflowRepo;
-
-    @Inject
-    private TaskRepository taskRepo;
+    private Shiro shiro;
 
     @Inject
     private TaskManager taskManager;
 
     @Inject
-    private PermissionChecker permissionChecker;
+    private TaskRepository taskRepo;
+
+    @Inject
+    private UserRepository userRepository;
+
+    @Inject
+    private WorkflowRepository workflowRepo;
 
     @Override
     public Long getEntityId(final ContentItem item) {
@@ -440,7 +448,6 @@ public class ContentItemRepository
         final Class<? extends ContentItem> type,
         final String name) {
 
-        
         final TypedQuery<ContentItem> query = getEntityManager()
             .createNamedQuery("ContentItem.filterByFolderAndTypeAndName",
                               ContentItem.class);
@@ -637,7 +644,24 @@ public class ContentItemRepository
             roles = roleManager.findAllRolesForUser(theUser);
         } else {
 
-            roles = Collections.emptyList();
+            final Optional<User> publicUser;
+
+            final KernelConfig kernelConfig = confManager
+                .findConfiguration(KernelConfig.class);
+            final String principal = (String) shiro
+                .getPublicUser()
+                .getPrincipal();
+            if (kernelConfig.emailIsPrimaryIdentifier()) {
+                publicUser = userRepository.findByEmailAddress(principal);
+            } else {
+                publicUser = userRepository.findByName(principal);
+            }
+
+            if (publicUser.isPresent()) {
+                roles = roleManager.findAllRolesForUser(publicUser.get());
+            } else {
+                roles = Collections.emptyList();
+            }
         }
 
         final boolean isSystemUser = shiro.isSystemUser();

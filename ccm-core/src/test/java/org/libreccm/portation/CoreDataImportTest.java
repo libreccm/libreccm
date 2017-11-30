@@ -153,8 +153,8 @@ public class CoreDataImportTest {
 
         Assert.assertFalse(importHelper.importWorkflows());
         Assert.assertFalse(importHelper.importTaskComments());
-        //Assert.assertFalse(importHelper.importAssignableTasks());
-        //Assert.assertFalse(importHelper.importTaskAssignments());
+        Assert.assertFalse(importHelper.importAssignableTasks());
+//        Assert.assertFalse(importHelper.importTaskAssignments());
     }
 
 }
