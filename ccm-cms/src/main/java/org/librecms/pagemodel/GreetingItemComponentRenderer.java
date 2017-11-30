@@ -32,7 +32,6 @@ import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.ws.rs.NotFoundException;
 
 import static org.librecms.pages.PagesConstants.*;
 

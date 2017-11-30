@@ -144,7 +144,7 @@ public class CategoryManager {
         final long objectCount = countObjects(assignedCategory);
         categorization.setObjectOrder(objectCount + 1);
         categorization.setType(type);
-        categorization.setIndex(false);
+        categorization.setIndexObject(false);
 
         object.addCategory(categorization);
         assignedCategory.addObject(categorization);
@@ -992,7 +992,7 @@ public class CategoryManager {
                                                            ex);
         }
 
-        categorization.setIndex(true);
+        categorization.setIndexObject(true);
         entityManager.merge(categorization);
     }
 
@@ -1013,7 +1013,7 @@ public class CategoryManager {
         query.setParameter("category", category);
 
         final List<Categorization> result = query.getResultList();
-        result.forEach(categorization -> categorization.setIndex(false));
+        result.forEach(categorization -> categorization.setIndexObject(false));
         result.forEach(categorization -> entityManager.merge(categorization));
     }
 

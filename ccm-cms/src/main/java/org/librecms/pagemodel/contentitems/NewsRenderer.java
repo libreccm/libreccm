@@ -20,31 +20,41 @@ package org.librecms.pagemodel.contentitems;
 
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contenttypes.News;
+import org.librecms.pagemodel.assets.AssetRenderers;
 
 import java.util.Locale;
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 
 /**
  * Renderer for {@link News} items.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ContentItemRenderer(renders = News.class)
 @RequestScoped
 public class NewsRenderer extends AbstractContentItemRenderer {
 
+    private static final long serialVersionUID = -493301428054148505L;
+
+    @Inject
+    public NewsRenderer(final AssetRenderers assetRenderers) {
+        super(assetRenderers);
+    }
+
     /**
-     * Renders the provided {@link News} item. The following values are put into {@code result}:
-     * 
+     * Renders the provided {@link News} item. The following values are put into
+     * {@code result}:
+     *
      * <pre>
      *  {
      *      "text": {@link News#getText()}
      *      "releaseDate": {@link News#getReleaseDate()}
      *  }
      * </pre>
-     * 
+     *
      * @param item     The item to render.
      * @param language The current language.
      * @param result   The map into which the result is placed.

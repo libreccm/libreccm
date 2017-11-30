@@ -28,22 +28,26 @@ import org.librecms.contentsection.ItemAttachment;
 import org.librecms.contentsection.rs.ContentItems;
 import org.librecms.pagemodel.assets.AssetRenderers;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.inject.Inject;
 
 /**
  * Base class for the renderers for {@link ContentItems}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public abstract class AbstractContentItemRenderer {
+public abstract class AbstractContentItemRenderer implements Serializable {
 
-    @Inject
-    private AssetRenderers assetRenderers;
+    private static final long serialVersionUID = 1290408390406469580L;
+
+    private final AssetRenderers assetRenderers;
+
+    public AbstractContentItemRenderer(final AssetRenderers assetRenderers) {
+        this.assetRenderers = assetRenderers;
+    }
 
     /**
      * This method should be called to render a {@link ContentItem}. The method
@@ -97,6 +101,7 @@ public abstract class AbstractContentItemRenderer {
         result.put("contentType", renderContentType(item.getContentType(),
                                                     language));
         result.put("description", item.getDescription().getValue(language));
+        result.put("version", item.getVersion().toString());
         result.put("creationDate", item.getCreationDate());
         result.put("lastModified", item.getLastModified());
         result.put("creationUserName", item.getCreationUserName());
