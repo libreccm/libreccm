@@ -571,7 +571,7 @@ public class CategoryManagerTest {
         final Optional<Category> bar = categoryRepo.findById(-2200L);
 
         shiro.getSystemUser().execute(
-            () -> categoryManager.removeSubCategoryFromCategory(bar.get(), 
+            () -> categoryManager.removeSubCategoryFromCategory(bar.get(),
                                                                 foo.get()));
     }
 
@@ -713,8 +713,7 @@ public class CategoryManagerTest {
 
     /**
      * Tries to retrieve the index object from several categories and verifies
-     * that the expected object is returned by 
-     * {@link CategoryManager#getIndexObject(org.libreccm.categorization.Category).
+     * that the expected object is returned by null     {@link CategoryManager#getIndexObject(org.libreccm.categorization.Category).
      */
     @Test
     @UsingDataSet(
@@ -724,11 +723,17 @@ public class CategoryManagerTest {
         final Optional<Category> category1 = categoryRepo.findById(-2100L);
         final Optional<Category> category2 = categoryRepo.findById(-2200L);
 
-        assertThat(categoryManager.getIndexObject(category1.get()).isPresent(),
+        assertThat(categoryManager
+            .getIndexObject(category1.get())
+            .stream()
+            .findFirst()
+            .isPresent(),
                    is(false));
 
         final Optional<CcmObject> index2 = categoryManager.getIndexObject(
-            category2.get());
+            category2.get())
+            .stream()
+            .findFirst();
         assertThat(index2.isPresent(), is(true));
         assertThat(index2.get().getDisplayName(), is(equalTo("object3")));
     }
