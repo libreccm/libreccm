@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
@@ -48,6 +49,7 @@ public class Themes implements Serializable {
     private static final Logger LOGGER = LogManager.getLogger(Themes.class);
 
     @Inject
+    @Any
     private Instance<ThemeProvider> providers;
 //
 //    @Inject

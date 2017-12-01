@@ -39,16 +39,22 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import static org.libreccm.theming.ThemeConstants.*;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.theming.ProcessesThemes;
 import org.libreccm.theming.manifest.ThemeTemplate;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -69,6 +75,9 @@ public class XsltThemeProcessor implements ThemeProcessor {
 
     private static final long serialVersionUID = -3883625727845105417L;
 
+    private static final Logger LOGGER = LogManager
+        .getLogger(XsltThemeProcessor.class);
+
     @Override
     public String process(final Map<String, Object> page,
                           final ThemeInfo theme,
@@ -77,10 +86,14 @@ public class XsltThemeProcessor implements ThemeProcessor {
         //Convert page to XML
         final JacksonXmlModule xmlModule = new JacksonXmlModule();
         final ObjectMapper mapper = new XmlMapper(xmlModule);
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
         final String pageAsXml;
         try {
-            pageAsXml = mapper.writeValueAsString(page);
+            pageAsXml = mapper
+                .writer()
+                .withRootName("page")
+                .writeValueAsString(page);
         } catch (JsonProcessingException ex) {
             throw new UnexpectedErrorException(ex);
         }
@@ -96,7 +109,9 @@ public class XsltThemeProcessor implements ThemeProcessor {
 
         final Document document;
         try {
-            document = documentBuilder.parse(pageAsXml);
+            final InputStream xmlBytesStream = new ByteArrayInputStream(
+                pageAsXml.getBytes(StandardCharsets.UTF_8));
+            document = documentBuilder.parse(xmlBytesStream);
         } catch (SAXException | IOException ex) {
             throw new UnexpectedErrorException(ex);
         }
@@ -152,6 +167,36 @@ public class XsltThemeProcessor implements ThemeProcessor {
             transformer.setURIResolver(new CcmUriResolver(theme.getName(),
                                                           theme.getVersion(),
                                                           themeProvider));
+            transformer.setErrorListener(new ErrorListener() {
+
+                @Override
+                public void warning(final TransformerException te)
+                    throws TransformerException {
+
+                    LOGGER.warn("A WARNING was reported by the "
+                                    + "XSLT Transformer:",
+                                te);
+                }
+
+                @Override
+                public void error(final TransformerException te)
+                    throws TransformerException {
+
+                    LOGGER.warn("An ERROR was reported by the "
+                                    + "XSLT Transformer:",
+                                te);
+                }
+
+                @Override
+                public void fatalError(final TransformerException te)
+                    throws TransformerException {
+
+                    LOGGER.warn("An FATAL ERROR was reported by the "
+                                    + "XSLT Transformer:",
+                                te);
+                }
+
+            });
         } catch (TransformerConfigurationException ex) {
             throw new UnexpectedErrorException(ex);
         }
