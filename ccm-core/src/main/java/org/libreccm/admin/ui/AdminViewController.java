@@ -19,6 +19,7 @@
 package org.libreccm.admin.ui;
 
 import com.vaadin.cdi.ViewScoped;
+import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.l10n.GlobalizationHelper;
 
 import java.io.Serializable;
@@ -38,6 +39,9 @@ class AdminViewController implements Serializable {
 
     @Inject
     private ApplicationTreeDataProvider applicationTreeDataProvider;
+    
+    @Inject
+    private ConfigurationManager configurationManager;
     
     @Inject
     private ConfigurationsTabController confTabController;
@@ -63,6 +67,10 @@ class AdminViewController implements Serializable {
 
     public ApplicationTreeDataProvider getApplicationTreeDataProvider() {
         return applicationTreeDataProvider;
+    }
+    
+    public ConfigurationManager getConfigurationManager() {
+        return configurationManager;
     }
     
     public ConfigurationsTabController getConfTabController() {

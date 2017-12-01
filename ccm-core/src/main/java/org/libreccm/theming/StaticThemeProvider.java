@@ -252,15 +252,50 @@ public class StaticThemeProvider implements ThemeProvider {
     }
 
     @Override
-    public Optional<InputStream> getThemeFileAsStream(String theme,
-                                                      ThemeVersion version,
-                                                      String path) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Optional<InputStream> getThemeFileAsStream(final String theme,
+                                                      final ThemeVersion version,
+                                                      final String path) {
+
+        Objects.requireNonNull(theme);
+        Objects.requireNonNull(path);
+
+        if (theme.isEmpty()
+                || theme.matches("\\s*")) {
+            throw new IllegalArgumentException(
+                "The name of the theme can't be empty.");
+        }
+        if (path.isEmpty()
+                || path.matches("\\s*")) {
+            throw new IllegalArgumentException("The path can't be empty.");
+        }
+
+        final String filePath;
+        if (path.startsWith("/")) {
+            filePath = String.format("/" + THEMES_PACKAGE + "/%s/%s",
+                                     theme,
+                                     path.substring(1));
+        } else {
+            filePath = String.format("/" + THEMES_PACKAGE + "/%s/%s",
+                                     theme,
+                                     path);
+        }
+
+        final InputStream stream = getClass().getResourceAsStream(filePath);
+        if (stream == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(stream);
+        }
     }
 
     @Override
-    public OutputStream getOutputStreamForThemeFile(String theme, String path) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public OutputStream getOutputStreamForThemeFile(final String theme, 
+                                                    final String path) {
+        
+        throw new UnsupportedOperationException(String
+            .format("This implementation of %s interface does not support "
+                + "changes to the theme files.",
+                    ThemeProvider.class.getName()));
     }
 
     @Override
