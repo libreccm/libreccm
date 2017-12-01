@@ -67,7 +67,6 @@ import static org.librecms.pages.PagesConstants.*;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-//@Path("/{page:.+}")
 @Path("/")
 public class PagesRouter {
 
@@ -106,27 +105,16 @@ public class PagesRouter {
             .findConfiguration(KernelConfig.class);
         defaultLocale = kernelConfig.getDefaultLocale();
     }
-    
+
     @GET
     @Path("/")
     @Transactional(Transactional.TxType.REQUIRED)
-    public Response getIndexPage(@Context UriInfo uriInfo) {
+    public Response redirectToIndexPage(@Context final UriInfo uriInfo) {
 
         final String domain = uriInfo.getBaseUri().getHost();
         final Pages pages = getPages(domain);
         final Category category = getCategory(domain, pages, "/");
-
-        final Locale negoidatedLocale = globalizationHelper
-            .getNegotiatedLocale();
-
-        final String language;
-        if (category.getTitle().hasValue(negoidatedLocale)) {
-            language = negoidatedLocale.toString();
-        } else if (category.getTitle().hasValue(defaultLocale)) {
-            language = defaultLocale.toString();
-        } else {
-            throw new NotFoundException();
-        }
+        final String language = determineLanguage(category);
 
         final String indexPage = String.format("/index.%s.html", language);
         final URI uri = uriInfo.getBaseUriBuilder().path(indexPage).build();
@@ -134,39 +122,52 @@ public class PagesRouter {
     }
 
     @GET
-    @Path("/index.html")
+    @Path("/{name:[\\w\\-]+}")
     @Transactional(Transactional.TxType.REQUIRED)
-    public Response getIndexPageAsHtml(@Context final UriInfo uriInfo) {
+    public Response getRootPage(
+        @Context final UriInfo uriInfo,
+        @PathParam("name") final String itemName) {
 
         final String domain = uriInfo.getBaseUri().getHost();
         final Pages pages = getPages(domain);
         final Category category = getCategory(domain, pages, "/");
+        final String language = determineLanguage(category);
 
-        final Locale negoiatedLocale = globalizationHelper
-            .getNegotiatedLocale();
-        final String language;
-        if (category.getTitle().hasValue(negoiatedLocale)) {
-            language = negoiatedLocale.toString();
-        } else if (category.getTitle().hasValue(defaultLocale)) {
-            language = defaultLocale.toString();
-        } else {
-            throw new NotFoundException();
-        }
-
-        final String indexPage = String.format("/index.%s.html", language);
-        final String path = uriInfo.getPath().replace("index.html", indexPage);
-
-        final URI uri = uriInfo.getBaseUriBuilder().replacePath(path).build();
+        final String itemPage = String.format("/%s.%s.html", itemName, language);
+        final URI uri = uriInfo.getBaseUriBuilder().path(itemPage).build();
         return Response.temporaryRedirect(uri).build();
     }
 
     @GET
-    @Path("/index.{lang}.html")
+    @Path("/{name:[\\w\\-]+}.html")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public Response getRootPageAsHtml(
+        @Context final UriInfo uriInfo,
+        @PathParam("name") final String itemName) {
+
+        final String domain = uriInfo.getBaseUri().getHost();
+        final Pages pages = getPages(domain);
+        final Category category = getCategory(domain, pages, "/");
+        final String language = determineLanguage(category);
+
+        final String itemPage = String.format("/%s.%s.html", itemName, language);
+        final String path = uriInfo
+            .getPath()
+            .replace(String.format("%s.html", itemName), itemPage);
+
+        final URI uri = uriInfo.getBaseUriBuilder().path(path).build();
+        return Response.temporaryRedirect(uri).build();
+    }
+
+    @GET
+    @Path("/{name:[\\w\\-]+}.{lang:\\w+}.html")
     @Produces("text/html")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String getIndexPageAsHtml(
+    public String getRootPageAsHtml(
         @Context
         final UriInfo uriInfo,
+        @PathParam("name")
+        final String itemName,
         @PathParam("lang")
         final String language,
         @QueryParam("theme")
@@ -176,23 +177,34 @@ public class PagesRouter {
         @DefaultValue("LIVE")
         final String themeVersion,
         @QueryParam("pagemodel-version")
-        @DefaultValue("LIVE") final String pageModelVersion) {
+        @DefaultValue("LIVE")
+        final String pageModelVersion) {
 
-        final Map<String, Object> buildResult = getCategoryIndexPage(
-            uriInfo, "/", language, pageModelVersion);
+        final Map<String, Object> result;
+        if ("index".equals(itemName)) {
+            result = getCategoryIndexPage(uriInfo,
+                                          "/",
+                                          language,
+                                          pageModelVersion);
+        } else {
+            result = getCategoryItemPage(
+                uriInfo, "/", itemName, language, pageModelVersion);
+        }
         final Site site = getSite(uriInfo);
-        final ThemeInfo themeInfo = getTheme(site, theme, themeVersion);
+        final ThemeInfo themeInfo = getTheme(site, "/", themeVersion);
 
-        return themes.process(buildResult, themeInfo);
+        return themes.process(result, themeInfo);
     }
 
     @GET
-    @Path("/index.{lang}.json")
+    @Path("/{name[\\w\\-]+}.{lang:\\w+}.json")
     @Produces("text/json")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String getIndexPageAsJson(
+    public String getRootPageAsJson(
         @Context
         final UriInfo uriInfo,
+        @PathParam("name")
+        final String itemName,
         @PathParam("lang")
         final String language,
         @QueryParam("pagemodel-version")
@@ -201,31 +213,37 @@ public class PagesRouter {
 
         final ObjectMapper mapper = new ObjectMapper();
 
+        final Map<String, Object> result;
+        if ("index".equals(itemName)) {
+            result = getCategoryIndexPage(uriInfo,
+                                          "/",
+                                          language,
+                                          pageModelVersion);
+        } else {
+            result = getCategoryItemPage(uriInfo,
+                                         "/",
+                                         itemName,
+                                         language,
+                                         pageModelVersion);
+        }
+
         try {
-            final Map<String, Object> result = getCategoryIndexPage(uriInfo,
-                                                         "/",
-                                                         language,
-                                                         pageModelVersion);
             final String json = mapper.writeValueAsString(result);
             return json;
-//            return mapper
-//                .writeValueAsString(getCategoryIndexPage(uriInfo,
-//                                                         "/",
-//                                                         language,
-//                                                         pageModelVersion));
         } catch (JsonProcessingException ex) {
             throw new WebApplicationException(ex);
         }
-//        return getCategoryIndexPage(uriInfo, "/", language, pageModelVersion);
     }
 
     @GET
-    @Path("/index.{lang}.xml")
+    @Path("/{name:[\\w\\-]+}.{lang:\\w+}.xml")
     @Produces("text/xml")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String getIndexPageAsXml(
+    public String getRootPageAsXml(
         @Context
         final UriInfo uriInfo,
+        @PathParam("name")
+        final String itemName,
         @PathParam("lang")
         final String language,
         @QueryParam("pagemodel-version")
@@ -236,334 +254,29 @@ public class PagesRouter {
         final ObjectMapper mapper = new XmlMapper(xmlModule);
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
+        final Map<String, Object> result;
+        if ("index".equals(itemName)) {
+            result = getCategoryIndexPage(uriInfo,
+                                          "/",
+                                          language,
+                                          pageModelVersion);
+        } else {
+            result = getCategoryItemPage(uriInfo,
+                                         "/",
+                                         itemName,
+                                         language,
+                                         pageModelVersion);
+        }
+
         try {
-            final Map<String, Object> result = getCategoryIndexPage(uriInfo, 
-                                                         "/",
-                                                         language,
-                                                         pageModelVersion);
             final String html = mapper
                 .writer()
                 .withRootName("page")
                 .writeValueAsString(result);
             return html;
-//            return mapper
-//                .writeValueAsString(getCategoryIndexPage(uriInfo, 
-//                                                         "/",
-//                                                         language,
-//                                                         pageModelVersion));
         } catch (JsonProcessingException ex) {
             throw new WebApplicationException(ex);
         }
-//        return getCategoryIndexPage(uriInfo, "/", language, pageModelVersion);
-    }
-
-    @GET
-    @Path("/{name}")
-    @Transactional(Transactional.TxType.REQUIRED)
-    public Response getRootItemPage(
-        @Context final UriInfo uriInfo,
-        @PathParam("name") final String itemName) {
-
-        final String domain = uriInfo.getBaseUri().getHost();
-        final Pages pages = getPages(domain);
-        final Category category = getCategory(domain, pages, "/");
-
-        final Locale negoiatedLocale = globalizationHelper
-            .getNegotiatedLocale();
-
-        final String language;
-        if (category.getTitle().hasValue(negoiatedLocale)) {
-            language = negoiatedLocale.toString();
-        } else if (category.getTitle().hasValue(defaultLocale)) {
-            language = defaultLocale.toString();
-        } else {
-            throw new NotFoundException();
-        }
-
-        final String itemPage = String.format("/%s.%s.html", itemName, language);
-        final URI uri = uriInfo.getBaseUriBuilder().path(itemPage).build();
-        return Response.temporaryRedirect(uri).build();
-    }
-
-    @GET
-    @Path("/{name}.html")
-    @Transactional(Transactional.TxType.REQUIRED)
-    public Response getRootItemPageAsHtml(
-        @Context final UriInfo uriInfo,
-        @PathParam("name") final String itemName) {
-
-        final String domain = uriInfo.getBaseUri().getHost();
-        final Pages pages = getPages(domain);
-        final Category category = getCategory(domain, pages, "/");
-
-        final Locale negoiatedLocale = globalizationHelper
-            .getNegotiatedLocale();
-
-        final String language;
-        if (category.getTitle().hasValue(negoiatedLocale)) {
-            language = negoiatedLocale.toString();
-        } else if (category.getTitle().hasValue(defaultLocale)) {
-            language = defaultLocale.toString();
-        } else {
-            throw new NotFoundException();
-        }
-
-        final String itemPage = String.format("/%s.%s.html", itemName, language);
-        final String path = uriInfo
-            .getPath()
-            .replace(String.format("%s.html", itemName), itemPage);
-
-        final URI uri = uriInfo.getBaseUriBuilder().replacePath(path).build();
-        return Response.temporaryRedirect(uri).build();
-    }
-
-    @GET
-    @Path("/{name}.{lang}.html")
-    @Produces("text/html")
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String getRootItemPageAsHtml(
-        @Context
-        final UriInfo uriInfo,
-        @PathParam("name")
-        final String itemName,
-        @PathParam("lang")
-        final String language,
-        @QueryParam("theme")
-        @DefaultValue("--DEFAULT--")
-        final String theme,
-        @QueryParam("theme-version")
-        @DefaultValue("LIVE")
-        final String themeVersion,
-        @QueryParam("pagemodel-version")
-        @DefaultValue("LIVE")
-        final String pageModelVersion) {
-
-        final Map<String, Object> buildResult = getCategoryItemPage(
-            uriInfo, "/", itemName, language, pageModelVersion);
-        final Site site = getSite(uriInfo);
-        final ThemeInfo themeInfo = getTheme(site, "/", themeVersion);
-
-        return themes.process(buildResult, themeInfo);
-    }
-
-    @GET
-    @Path("/{name}.{lang}.json")
-    @Produces("text/json")
-    @Transactional(Transactional.TxType.REQUIRED)
-    public Map<String, Object> getRootItemPageAsJson(
-        @Context
-        final UriInfo uriInfo,
-        @PathParam("name")
-        final String itemName,
-        @PathParam("lang")
-        final String language,
-        @QueryParam("pagemodel-version")
-        @DefaultValue("LIVE")
-        final String pageModelVersion) {
-
-        return getCategoryItemPage(uriInfo,
-                                   "/",
-                                   itemName,
-                                   language,
-                                   pageModelVersion);
-    }
-
-    @GET
-    @Path("/{name}.{lang}.xml")
-    @Produces("text/xml")
-    @Transactional(Transactional.TxType.REQUIRED)
-    public Map<String, Object> getItemPageAsXml(
-        @Context
-        final UriInfo uriInfo,
-        @PathParam("name")
-        final String itemName,
-        @PathParam("lang")
-        final String language,
-        @QueryParam("pagemodel-version")
-        @DefaultValue("LIVE")
-        final String pageModelVersion) {
-
-        return getCategoryItemPage(uriInfo,
-                                   "/",
-                                   itemName,
-                                   language,
-                                   pageModelVersion);
-    }
-
-    /**
-     * Retrieve the index page of a category. Redirects to
-     * {@link #getCategoryIndexPageAsHtml(javax.ws.rs.core.UriInfo, java.lang.String)}.
-     *
-     * @param uriInfo
-     * @param page
-     *
-     * @return
-     */
-    @GET
-    @Path("/{page:.+}/")
-    @Transactional(Transactional.TxType.REQUIRED)
-    public Response getCategoryIndexPage(
-        @Context
-        final UriInfo uriInfo,
-        @PathParam("page")
-        final String page) {
-
-        final String domain = uriInfo.getBaseUri().getHost();
-        final Pages pages = getPages(domain);
-        final Category category = getCategory(domain, pages, page);
-
-        final Locale negoiatedLocale = globalizationHelper
-            .getNegotiatedLocale();
-
-        final String language;
-        if (category.getTitle().hasValue(negoiatedLocale)) {
-            language = negoiatedLocale.toString();
-        } else if (category.getTitle().hasValue(defaultLocale)) {
-            language = defaultLocale.toString();
-        } else {
-            throw new NotFoundException();
-        }
-
-        final String indexPage = String.format("/index.%s.html", language);
-        final URI uri = uriInfo.getBaseUriBuilder().path(indexPage).build();
-        return Response.temporaryRedirect(uri).build();
-    }
-
-    /**
-     * Retrieves the category index page. Redirects to
-     * {@link #getCategoryIndexPageAsHtml(javax.ws.rs.core.UriInfo, java.lang.String)}.
-     *
-     * @param uriInfo
-     * @param page
-     *
-     * @return
-     */
-    @GET
-    @Path("/{page:.+}/index.html")
-    @Transactional(Transactional.TxType.REQUIRED)
-    public Response getCategoryIndexPageAsHtml(
-        @Context
-        final UriInfo uriInfo,
-        @PathParam("page")
-        final String page) {
-
-        final String domain = uriInfo.getBaseUri().getHost();
-        final Pages pages = getPages(domain);
-        final Category category = getCategory(domain, pages, page);
-
-        final Locale negoiatedLocale = globalizationHelper
-            .getNegotiatedLocale();
-        final String language;
-        if (category.getTitle().hasValue(negoiatedLocale)) {
-            language = negoiatedLocale.toString();
-        } else if (category.getTitle().hasValue(defaultLocale)) {
-            language = defaultLocale.toString();
-        } else {
-            throw new NotFoundException();
-        }
-
-        final String indexPage = String.format("/index.%s.html", language);
-        final String path = uriInfo.getPath().replace("index.html", indexPage);
-
-        final URI uri = uriInfo.getBaseUriBuilder().replacePath(path).build();
-        return Response.temporaryRedirect(uri).build();
-    }
-
-    /**
-     * Retrieves the category index page.
-     *
-     * @param uriInfo          Data about the URI called.
-     * @param page             The path of the category to show.
-     * @param language         The selected language.
-     * @param theme            The theme to use.
-     * @param themeVersion     The version of the theme to use.
-     * @param pageModelVersion The version of the page model to use.
-     *
-     * @return The HTML representation of the index page.
-     */
-    @GET
-    @Path("/{page:.+}/index.{lang}.html")
-    @Produces("text/html")
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String getCategoryIndexPageAsHtml(
-        @Context
-        final UriInfo uriInfo,
-        @PathParam("page")
-        final String page,
-        @PathParam("lang")
-        final String language,
-        @QueryParam("theme")
-        @DefaultValue("--DEFAULT--")
-        final String theme,
-        @QueryParam("theme-version")
-        @DefaultValue("LIVE")
-        final String themeVersion,
-        @QueryParam("pagemodel-version")
-        @DefaultValue("LIVE")
-        final String pageModelVersion) {
-
-        final Map<String, Object> buildResult = getCategoryIndexPage(
-            uriInfo, page, language, pageModelVersion);
-        final Site site = getSite(uriInfo);
-        final ThemeInfo themeInfo = getTheme(site, theme, themeVersion);
-
-        return themes.process(buildResult, themeInfo);
-    }
-
-    /**
-     * Retrieves the category index page as JSON:
-     *
-     * @param uriInfo
-     * @param page
-     * @param language
-     * @param pageModelVersion
-     *
-     * @return
-     */
-    @GET
-    @Path("/{page:.+}/index.{lang}.json")
-    @Produces("text/json")
-    @Transactional(Transactional.TxType.REQUIRED)
-    public Map<String, Object> getCategoryIndexPageAsJson(
-        @Context
-        final UriInfo uriInfo,
-        @PathParam("page")
-        final String page,
-        @PathParam("lang")
-        final String language,
-        @QueryParam("pagemodel-version")
-        @DefaultValue("LIVE")
-        final String pageModelVersion) {
-
-        return getCategoryIndexPage(uriInfo, page, language, pageModelVersion);
-    }
-
-    /**
-     * Retrieves the category index page as XML.
-     *
-     * @param uriInfo
-     * @param page
-     * @param language
-     * @param pageModelVersion
-     *
-     * @return
-     */
-    @GET
-    @Path("/{page:.+}/index.{lang}.xml")
-    @Produces("text/xml")
-    @Transactional(Transactional.TxType.REQUIRED)
-    public Map<String, Object> getCategoryIndexPageAsXml(
-        @Context
-        final UriInfo uriInfo,
-        @PathParam("page")
-        final String page,
-        @PathParam("lang")
-        final String language,
-        @QueryParam("pagemodel-version")
-        @DefaultValue("LIVE")
-        final String pageModelVersion) {
-
-        return getCategoryIndexPage(uriInfo, page, language, pageModelVersion);
     }
 
     /**
@@ -571,7 +284,7 @@ public class PagesRouter {
      * with the category and identified by {@code itemName}.
      *
      * Redirects to
-     * {@link #getItemPageAsHtml(javax.ws.rs.core.UriInfo, java.lang.String, java.lang.String)}.
+     * {@link #getPageAsHtml(javax.ws.rs.core.UriInfo, java.lang.String, java.lang.String)}.
      *
      * @param uriInfo
      * @param page
@@ -580,9 +293,9 @@ public class PagesRouter {
      * @return
      */
     @GET
-    @Path("/{page:.+}/{name}")
+    @Path("/{page:[\\w/]+}/{name:[\\w\\-]+}")
     @Transactional(Transactional.TxType.REQUIRED)
-    public Response getItemPage(
+    public Response getPage(
         @Context final UriInfo uriInfo,
         @PathParam("page") final String page,
         @PathParam("name") final String itemName) {
@@ -590,28 +303,28 @@ public class PagesRouter {
         final String domain = uriInfo.getBaseUri().getHost();
         final Pages pages = getPages(domain);
         final Category category = getCategory(domain, pages, page);
+        final String language = determineLanguage(category);
 
-        final Locale negoiatedLocale = globalizationHelper
-            .getNegotiatedLocale();
-
-        final String language;
-        if (category.getTitle().hasValue(negoiatedLocale)) {
-            language = negoiatedLocale.toString();
-        } else if (category.getTitle().hasValue(defaultLocale)) {
-            language = defaultLocale.toString();
+        final String redirectTo;
+        if (uriInfo.getPath().endsWith("/")) {
+            redirectTo = String.format("%sindex.%s.html",
+                                       uriInfo.getPath(),
+                                       language);
         } else {
-            throw new NotFoundException();
+            final String itemPath = String.format("%s.%s.html",
+                                                  itemName,
+                                                  language);
+            redirectTo = uriInfo.getPath().replace(itemName, itemPath);
         }
 
-        final String itemPage = String.format("/%s.%s.html", itemName, language);
-        final URI uri = uriInfo.getBaseUriBuilder().path(itemPage).build();
+        final URI uri = uriInfo.getBaseUriBuilder().path(redirectTo).build();
         return Response.temporaryRedirect(uri).build();
     }
 
     /**
      * Retrieve the item page for a category and the content item associated
      * with the category and identified by {@code itemName}. Redirects to
-     * {@link #getItemPageAsHtml(javax.ws.rs.core.UriInfo, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
+     * {@link #getPageAsHtml(javax.ws.rs.core.UriInfo, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
      *
      * @param uriInfo
      * @param page
@@ -620,9 +333,9 @@ public class PagesRouter {
      * @return
      */
     @GET
-    @Path("/{page:.+}/{name}.html")
+    @Path("/{page:[\\w/]+}/{name:[\\w\\-]+}.html")
     @Transactional(Transactional.TxType.REQUIRED)
-    public Response getItemPageAsHtml(
+    public Response getPageAsHtml(
         @Context final UriInfo uriInfo,
         @PathParam("page") final String page,
         @PathParam("name") final String itemName) {
@@ -630,25 +343,21 @@ public class PagesRouter {
         final String domain = uriInfo.getBaseUri().getHost();
         final Pages pages = getPages(domain);
         final Category category = getCategory(domain, pages, page);
+        final String language = determineLanguage(category);
 
-        final Locale negoiatedLocale = globalizationHelper
-            .getNegotiatedLocale();
-
-        final String language;
-        if (category.getTitle().hasValue(negoiatedLocale)) {
-            language = negoiatedLocale.toString();
-        } else if (category.getTitle().hasValue(defaultLocale)) {
-            language = defaultLocale.toString();
+        final String redirectTo;
+        if (uriInfo.getPath().endsWith("/")) {
+            redirectTo = String.format("%sindex.%s.html",
+                                       uriInfo.getPath(),
+                                       language);
         } else {
-            throw new NotFoundException();
+            final String itemPath = String.format("%s.%s.html",
+                                                  itemName,
+                                                  language);
+            redirectTo = uriInfo.getPath().replace(itemName, itemPath);
         }
 
-        final String itemPage = String.format("/%s.%s.html", itemName, language);
-        final String path = uriInfo
-            .getPath()
-            .replace(String.format("%s.html", itemName), itemPage);
-
-        final URI uri = uriInfo.getBaseUriBuilder().replacePath(path).build();
+        final URI uri = uriInfo.getBaseUriBuilder().path(redirectTo).build();
         return Response.temporaryRedirect(uri).build();
     }
 
@@ -667,9 +376,10 @@ public class PagesRouter {
      * @return
      */
     @GET
-    @Path("/{page:.+}/{name}.{lang}.html")
+    @Path("/{page:[\\w/]+}/{name:[\\w\\-]+}.{lang:\\w+}.html")
+    @Produces("text/html")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String getItemPageAsHtml(
+    public String getPageAsHtml(
         @Context
         final UriInfo uriInfo,
         @PathParam("page")
@@ -688,12 +398,23 @@ public class PagesRouter {
         @DefaultValue("LIVE")
         final String pageModelVersion) {
 
-        final Map<String, Object> buildResult = getCategoryItemPage(
-            uriInfo, page, itemName, language, pageModelVersion);
+        final Map<String, Object> result;
+        if ("index".equals(itemName)) {
+            result = getCategoryIndexPage(uriInfo,
+                                          page,
+                                          language,
+                                          pageModelVersion);
+        } else {
+            result = getCategoryItemPage(uriInfo,
+                                         page,
+                                         itemName,
+                                         language,
+                                         pageModelVersion);
+        }
+
         final Site site = getSite(uriInfo);
         final ThemeInfo themeInfo = getTheme(site, page, themeVersion);
-
-        return themes.process(buildResult, themeInfo);
+        return themes.process(result, themeInfo);
     }
 
     /**
@@ -709,10 +430,10 @@ public class PagesRouter {
      * @return
      */
     @GET
-    @Path("/{page:.+}/{name}.{lang}.json")
+    @Path("/{page:[\\w/]+}/{name:[\\w\\-]+}.{lang:\\w+}.json")
     @Produces("text/json")
     @Transactional(Transactional.TxType.REQUIRED)
-    public Map<String, Object> getItemPageAsJson(
+    public String getPageAsJson(
         @Context
         final UriInfo uriInfo,
         @PathParam("page")
@@ -725,11 +446,28 @@ public class PagesRouter {
         @DefaultValue("LIVE")
         final String pageModelVersion) {
 
-        return getCategoryItemPage(uriInfo,
-                                   page,
-                                   itemName,
-                                   language,
-                                   pageModelVersion);
+        final ObjectMapper mapper = new ObjectMapper();
+
+        final Map<String, Object> result;
+        if ("index".equals(itemName)) {
+            result = getCategoryIndexPage(uriInfo,
+                                          page,
+                                          language,
+                                          pageModelVersion);
+        } else {
+            result = getCategoryItemPage(uriInfo,
+                                         page,
+                                         itemName,
+                                         language,
+                                         pageModelVersion);
+        }
+
+        try {
+            final String json = mapper.writeValueAsString(result);
+            return json;
+        } catch (JsonProcessingException ex) {
+            throw new WebApplicationException(ex);
+        }
     }
 
     /**
@@ -745,10 +483,10 @@ public class PagesRouter {
      * @return
      */
     @GET
-    @Path("/{page:.+}/{name}.{lang}.xml")
+    @Path("/{page:[\\w/]+}/{name:[\\w\\-]+}.{lang:\\w+}.xml")
     @Produces("text/xml")
     @Transactional(Transactional.TxType.REQUIRED)
-    public Map<String, Object> getItemPageAsXml(
+    public String getPageAsXml(
         @Context
         final UriInfo uriInfo,
         @PathParam("page")
@@ -761,11 +499,33 @@ public class PagesRouter {
         @DefaultValue("LIVE")
         final String pageModelVersion) {
 
-        return getCategoryItemPage(uriInfo,
-                                   page,
-                                   itemName,
-                                   language,
-                                   pageModelVersion);
+        final JacksonXmlModule xmlModule = new JacksonXmlModule();
+        final ObjectMapper mapper = new XmlMapper(xmlModule);
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+        final Map<String, Object> result;
+        if ("index".equals(itemName)) {
+            result = getCategoryIndexPage(uriInfo,
+                                          page,
+                                          language,
+                                          pageModelVersion);
+        } else {
+            result = getCategoryItemPage(uriInfo,
+                                         page,
+                                         itemName,
+                                         language,
+                                         pageModelVersion);
+        }
+
+        try {
+            final String html = mapper
+                .writer()
+                .withRootName("page")
+                .writeValueAsString(result);
+            return html;
+        } catch (JsonProcessingException ex) {
+            throw new WebApplicationException(ex);
+        }
     }
 
     private Site getSite(final UriInfo uriInfo) {
@@ -807,6 +567,23 @@ public class PagesRouter {
             pagePath,
             domain)));
 
+    }
+
+    private String determineLanguage(final Category category) {
+
+        final Locale negoiatedLocale = globalizationHelper
+            .getNegotiatedLocale();
+
+        final String language;
+        if (category.getTitle().hasValue(negoiatedLocale)) {
+            language = negoiatedLocale.toString();
+        } else if (category.getTitle().hasValue(defaultLocale)) {
+            language = defaultLocale.toString();
+        } else {
+            throw new NotFoundException();
+        }
+
+        return language;
     }
 
     private ThemeInfo getTheme(final Site site,
@@ -881,7 +658,8 @@ public class PagesRouter {
         final String pageModelVersion) {
 
         final Map<String, Object> parameters = new HashMap<>();
-        final Page page = getPage(uriInfo, pagePath, language, parameters);
+        final Page page = PagesRouter.this.getPage(uriInfo, pagePath, language,
+                                                   parameters);
 
         final PageModel pageModel;
         if ("DRAFT".equals(pageModelVersion)) {
@@ -909,7 +687,8 @@ public class PagesRouter {
         final String pageModelVersion) {
 
         final Map<String, Object> parameters = new HashMap<>();
-        final Page page = getPage(uriInfo, pagePath, language, parameters);
+        final Page page = PagesRouter.this.getPage(uriInfo, pagePath, language,
+                                                   parameters);
 
         final PageModel pageModel;
         if ("DRAFT".equals(pageModelVersion)) {
