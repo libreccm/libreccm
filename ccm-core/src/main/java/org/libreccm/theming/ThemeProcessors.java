@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
@@ -42,6 +43,7 @@ public class ThemeProcessors implements Serializable {
      * All available implementations of {@link ThemeProcessor}.
      */
     @Inject
+    @Any
     private Instance<ThemeProcessor> processors;
 
     /**

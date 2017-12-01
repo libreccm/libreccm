@@ -1,4 +1,6 @@
 {
     "name": "ccm",
-    "type": "xsl"
+    "type": "xsl",
+
+    "default-template": "category-page.xsl"
 }

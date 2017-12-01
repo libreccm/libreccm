@@ -18,22 +18,72 @@
  */
 package org.libreccm.admin.ui;
 
+import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.ui.admin.AdminUiConstants;
+
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.l10n.LocalizedTextsUtil;
 import org.libreccm.pagemodel.PageModel;
+
+import java.util.Locale;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
- class PageModelDetails extends Window {
+class PageModelDetails extends Window {
 
     private static final long serialVersionUID = -3617001410191320596L;
-    
+
     PageModelDetails(final PageModel pageModel,
                      final AdminViewController controller) {
-        
+
         super();
+
+        final GlobalizationHelper globalizationHelper = controller
+            .getGlobalizationHelper();
+        final LocalizedTextsUtil textsUtil = globalizationHelper
+            .getLocalizedTextsUtil(AdminUiConstants.ADMIN_BUNDLE);
+        final ConfigurationManager configurationManager = controller
+            .getConfigurationManager();
+        final KernelConfig kernelConfig = configurationManager
+            .findConfiguration(KernelConfig.class);
+        final Locale defaultLocale = kernelConfig.getDefaultLocale();
+
+        super.setCaption(textsUtil
+            .getText("ui.admin.pagemodels.details.heading",
+                     new String[]{pageModel.getName()}));
+
+        final Label nameLabel = new Label(pageModel.getName());
+        nameLabel.setCaption(textsUtil
+            .getText("ui.admin.pagemodels.details.model_name"));
+
+        final Label titleLabel = new Label(pageModel
+            .getTitle().getValue(defaultLocale));
+        titleLabel.setCaption(textsUtil
+            .getText("ui.admin.pagemodels.details.model_title"));
+
+        final Label applicationLabel = new Label(pageModel
+            .getApplication().getPrimaryUrl());
+        applicationLabel.setCaption(textsUtil
+            .getText("ui.admin.pagemodels.details.model_application"));
+
+        final Label descLabel = new Label(pageModel
+            .getDescription().getValue(defaultLocale));
+        descLabel.setCaption(textsUtil
+            .getText("ui.admin.pagemodels.details.model_desc"));
+
+        final FormLayout propertiesSheetLayout = new FormLayout(
+            nameLabel, titleLabel, applicationLabel, descLabel);
+
         
+        
+        super.setContent(new VerticalLayout(propertiesSheetLayout));
     }
-    
+
 }

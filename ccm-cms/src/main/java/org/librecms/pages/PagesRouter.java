@@ -22,6 +22,7 @@ import com.arsdigita.kernel.KernelConfig;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.libreccm.categorization.Category;
@@ -233,13 +234,17 @@ public class PagesRouter {
 
         final JacksonXmlModule xmlModule = new JacksonXmlModule();
         final ObjectMapper mapper = new XmlMapper(xmlModule);
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
         try {
             final Map<String, Object> result = getCategoryIndexPage(uriInfo, 
                                                          "/",
                                                          language,
                                                          pageModelVersion);
-            final String html = mapper.writeValueAsString(result);
+            final String html = mapper
+                .writer()
+                .withRootName("page")
+                .writeValueAsString(result);
             return html;
 //            return mapper
 //                .writeValueAsString(getCategoryIndexPage(uriInfo, 
