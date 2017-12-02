@@ -50,7 +50,7 @@ class PageModelsTableDataProvider
 
     @Inject
     private ApplicationRepository applicationRepo;
-    
+
     @Inject
     private EntityManager entityManager;
 
@@ -70,7 +70,7 @@ class PageModelsTableDataProvider
         this.application = application;
         refreshAll();
     }
-    
+
     @Transactional(Transactional.TxType.REQUIRED)
     public void setApplicationUuid(final String uuid) {
         application = applicationRepo
