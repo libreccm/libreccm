@@ -19,11 +19,18 @@
 package org.libreccm.admin.ui;
 
 import com.vaadin.cdi.ViewScoped;
+import org.libreccm.pagemodel.ComponentModel;
+import org.libreccm.pagemodel.ComponentModelRepository;
+import org.libreccm.pagemodel.ComponentModels;
 import org.libreccm.pagemodel.PageModel;
+import org.libreccm.pagemodel.PageModelComponentModel;
 import org.libreccm.pagemodel.PageModelManager;
 import org.libreccm.pagemodel.PageModelRepository;
 
 import java.io.Serializable;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -38,6 +45,15 @@ class PageModelsController implements Serializable {
     private static final long serialVersionUID = 6204724295214879943L;
 
     @Inject
+    private ComponentModelRepository componentModelRepo;
+
+    @Inject
+    private ComponentModels componentModels;
+
+    @Inject
+    private PageModelComponentEditorController componentEditorController;
+    
+    @Inject
     private PageModelManager pageModelManager;
 
     @Inject
@@ -46,6 +62,20 @@ class PageModelsController implements Serializable {
     @Inject
     private PageModelsTableDataProvider pageModelsTableDataProvider;
 
+    @Inject
+    private PageModelComponentModelsTableDataProvider componentModelsTableDataProvider;
+
+    @Inject
+    private PageModelComponentModelTypesDataProvider componentModelTypesDataProvider;
+
+    protected ComponentModels getComponentModels() {
+        return componentModels;
+    }
+    
+    protected PageModelComponentEditorController getComponentEditorController() {
+        return componentEditorController;
+    }
+    
     protected PageModelManager getPageModelManager() {
         return pageModelManager;
     }
@@ -56,6 +86,39 @@ class PageModelsController implements Serializable {
 
     protected PageModelsTableDataProvider getPageModelsTableDataProvider() {
         return pageModelsTableDataProvider;
+    }
+
+    protected PageModelComponentModelsTableDataProvider getComponentModelsTableDataProvider() {
+        return componentModelsTableDataProvider;
+    }
+
+    protected PageModelComponentModelTypesDataProvider getComponentModelTypesDataProvider() {
+        return componentModelTypesDataProvider;
+    }
+
+    /**
+     * Retrieves the localised title of the {@link ComponentModel}.
+     *
+     * @param clazz The class of the {@link ComponentModel}.
+     *
+     * @return The localised title of the {@link ComponentModel}.
+     */
+    protected String getComponentModelTitle(
+        final Class<? extends ComponentModel> clazz) {
+
+        Objects.requireNonNull(clazz);
+
+        final Optional<PageModelComponentModel> info = componentModels
+            .getComponentModelInfo(clazz);
+
+        if (info.isPresent()) {
+            final ResourceBundle bundle = ResourceBundle
+                .getBundle(info.get().descBundle());
+
+            return bundle.getString(info.get().titleKey());
+        } else {
+            return clazz.getName();
+        }
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -69,6 +132,28 @@ class PageModelsController implements Serializable {
 
         pageModelRepo.delete(pageModel);
         pageModelsTableDataProvider.refreshAll();
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void removeComponentModel(final PageModel pageModel,
+                                        final ComponentModel componentModel) {
+
+        Objects.requireNonNull(pageModel);
+        Objects.requireNonNull(componentModel);
+
+        final PageModel fromPageModel = pageModelRepo
+            .findById(pageModel.getPageModelId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No PageModel with ID %d in the database.",
+                    pageModel.getPageModelId())));
+
+        final ComponentModel theComponentModel = componentModelRepo
+            .findById(componentModel.getComponentModelId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No ComponentModel with ID %d in the database.",
+                    componentModel.getComponentModelId())));
+        
+        pageModelManager.removeComponentModel(fromPageModel, theComponentModel);
     }
 
 }

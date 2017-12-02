@@ -21,16 +21,35 @@ package org.libreccm.admin.ui;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.ui.admin.AdminUiConstants;
 
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.NativeSelect;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
 import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.l10n.LocalizedTextsUtil;
+import org.libreccm.pagemodel.ComponentModel;
+import org.libreccm.pagemodel.ComponentModels;
 import org.libreccm.pagemodel.PageModel;
+import org.libreccm.pagemodel.PageModelComponentModel;
+import org.libreccm.ui.ConfirmDialog;
+import org.libreccm.web.CcmApplication;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  *
@@ -40,10 +59,26 @@ class PageModelDetails extends Window {
 
     private static final long serialVersionUID = -3617001410191320596L;
 
+    private static final String COL_KEY = "key";
+    private static final String COL_TYPE = "type";
+    private static final String COL_EDIT = "edit";
+    private static final String COL_DEL = "del";
+
+    private final AdminViewController controller;
+    private final CcmApplication application;
+    private final PageModel pageModel;
+
+    private final NativeSelect<PageModelComponentModel> componentModelTypeSelect;
+
     PageModelDetails(final PageModel pageModel,
+                     final CcmApplication application,
                      final AdminViewController controller) {
 
         super();
+
+        this.controller = controller;
+        this.application = application;
+        this.pageModel = pageModel;
 
         final GlobalizationHelper globalizationHelper = controller
             .getGlobalizationHelper();
@@ -81,9 +116,262 @@ class PageModelDetails extends Window {
         final FormLayout propertiesSheetLayout = new FormLayout(
             nameLabel, titleLabel, applicationLabel, descLabel);
 
-        
-        
+        final Button editPropertiesButton = new Button(textsUtil
+            .getText("ui.admin.pagemodels.edit_basic_properties"));
+        editPropertiesButton.setIcon(VaadinIcons.EDIT);
+        editPropertiesButton
+            .addClickListener(this::editBasicPropertiesButtonClicked);
+
+        final PageModelsController pageModelsController = controller
+            .getPageModelsController();
+
+        final Grid<ComponentModel> componentsModelGrid = new Grid<>();
+        final PageModelComponentModelsTableDataProvider dataProvider
+                                                            = pageModelsController
+                .getComponentModelsTableDataProvider();
+        dataProvider.setPageModel(pageModel);
+        componentsModelGrid.setDataProvider(dataProvider);
+        componentsModelGrid
+            .addColumn(ComponentModel::getKey)
+            .setCaption(textsUtil
+                .getText("ui.admin.pagemodels.componentmodels.cols.key.heading"))
+            .setId(COL_KEY);
+        componentsModelGrid
+            .addColumn(this::getComponentModelType)
+            .setCaption(textsUtil
+                .getText("ui.admin.pagemodels.componentmodels.cols.type.heading"))
+            .setId(COL_TYPE);
+        componentsModelGrid
+            .addComponentColumn(this::buildEditButton)
+            .setCaption(textsUtil
+                .getText("ui.admin.pagemodels.componentmodels.cols.edit.heading"))
+            .setId(COL_EDIT);
+        componentsModelGrid
+            .addComponentColumn(this::buildDeleteButton)
+            .setCaption(textsUtil
+                .getText(
+                    "ui.admin.pagemodels.componentmodels.cols.delete.heading"))
+            .setId(COL_DEL);
+        componentsModelGrid.setWidth("100%");
+
+        componentModelTypeSelect = new NativeSelect<>(
+            textsUtil.getText("ui.admin.pagemodels.add_new_component.type"),
+            pageModelsController.getComponentModelTypesDataProvider());
+        componentModelTypeSelect
+            .setItemCaptionGenerator(this::generateComponentModelTypeCaption);
+        final Button addComponentModelButton = new Button(textsUtil
+            .getText("ui.admin.pagemodels.add_new_component.submit"));
+        addComponentModelButton.setIcon(VaadinIcons.PLUS_CIRCLE_O);
+        addComponentModelButton
+            .addClickListener(this::addComponentButtonClicked);
+        final HeaderRow headerRow = componentsModelGrid.prependHeaderRow();
+        final HeaderCell headerCell = headerRow.join(COL_KEY,
+                                                     COL_TYPE,
+                                                     COL_EDIT,
+                                                     COL_DEL);
+        headerCell.setComponent(new HorizontalLayout(componentModelTypeSelect,
+                                                     addComponentModelButton));
+
         super.setContent(new VerticalLayout(propertiesSheetLayout));
+    }
+
+    @SuppressWarnings("unchecked")
+    private void addComponentButtonClicked(final Button.ClickEvent event) {
+
+        final PageModelComponentModel componentModelInfo
+                                          = componentModelTypeSelect.getValue();
+
+        final String bebopFormClassName = componentModelInfo
+            .editor()
+            .getName();
+
+        final PageModelsController pageModelsController = controller
+            .getPageModelsController();
+
+        final String editorName = bebopFormClassName
+            .replace("com.arsdigita.cms", "org.librecms")
+            .replace("Form", "Editor");
+
+        final Class<? extends AbstractPageModelComponentEditor<?>> editorClass;
+        try {
+            editorClass
+                = (Class<? extends AbstractPageModelComponentEditor<?>>) Class
+                    .forName(editorName);
+        } catch (ClassNotFoundException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+
+        final Constructor<? extends AbstractPageModelComponentEditor<?>> constructor;
+        try {
+            constructor = editorClass
+                .getDeclaredConstructor(PageModel.class,
+                                        PageModelComponentModel.class,
+                                        PageModelComponentEditorController.class);
+        } catch (NoSuchMethodException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+
+        final AbstractPageModelComponentEditor<?> editor;
+        try {
+            editor = constructor.newInstance(
+                pageModel,
+                componentModelInfo,
+                pageModelsController.getComponentEditorController());
+        } catch (InstantiationException
+                 | IllegalAccessException
+                 | InvocationTargetException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+
+        editor.setModal(true);
+        editor.setWidth("50%");
+        editor.setHeight("40%");
+
+        UI.getCurrent().addWindow(editor);
+    }
+
+    private void editBasicPropertiesButtonClicked(final Button.ClickEvent event) {
+
+        final PageModelForm pageModelForm = new PageModelForm(pageModel,
+                                                              application,
+                                                              controller);
+        pageModelForm.setModal(true);
+        pageModelForm.setWidth("40%");
+        pageModelForm.setHeight("30%");
+
+        UI.getCurrent().addWindow(pageModelForm);
+    }
+
+    private String getComponentModelType(final ComponentModel model) {
+
+        return controller
+            .getPageModelsController()
+            .getComponentModelTitle(model.getClass());
+
+    }
+
+    private String generateComponentModelTypeCaption(
+        final PageModelComponentModel item) {
+
+        final GlobalizationHelper globalizationHelper = controller
+            .getGlobalizationHelper();
+        final LocalizedTextsUtil textsUtil = globalizationHelper
+            .getLocalizedTextsUtil(item.descBundle());
+
+        return textsUtil.getText(item.titleKey());
+    }
+
+    private Component buildEditButton(final ComponentModel componentModel) {
+
+        final LocalizedTextsUtil textsUtil = controller
+            .getGlobalizationHelper()
+            .getLocalizedTextsUtil(AdminUiConstants.ADMIN_BUNDLE);
+
+        final Button editButton = new Button(textsUtil
+            .getText("ui.admin.pagemodels.components.edit"));
+        editButton.setIcon(VaadinIcons.EDIT);
+        editButton.addClickListener(event -> editComponentModel(componentModel));
+
+        return editButton;
+    }
+
+    @SuppressWarnings(
+        "unchecked")
+    private void editComponentModel(final ComponentModel componentModel) {
+
+        final LocalizedTextsUtil textsUtil = controller
+            .getGlobalizationHelper()
+            .getLocalizedTextsUtil(AdminUiConstants.ADMIN_BUNDLE);
+
+        final PageModelsController pageModelsController = controller
+            .getPageModelsController();
+        final ComponentModels componentModels = pageModelsController
+            .getComponentModels();
+
+        final Optional<PageModelComponentModel> componentModelInfo
+                                                    = componentModels
+                .getComponentModelInfo(componentModel.getClass());
+        if (componentModelInfo.isPresent()) {
+
+            final String bebopFormClassName = componentModelInfo
+                .get()
+                .editor()
+                .getName();
+            final String editorName = bebopFormClassName
+                .replace("com.arsdigita.cms", "org.librecms")
+                .replace("Form", "Editor");
+
+            final Class<? extends AbstractPageModelComponentEditor<?>> editorClass;
+            try {
+                editorClass
+                    = (Class<? extends AbstractPageModelComponentEditor<?>>) Class
+                        .forName(editorName);
+            } catch (ClassNotFoundException ex) {
+                throw new UnexpectedErrorException(ex);
+            }
+
+            final Constructor<? extends AbstractPageModelComponentEditor<?>> constructor;
+
+            try {
+                constructor = editorClass
+                    .getDeclaredConstructor(PageModel.class,
+                         ComponentModel.class,
+                         PageModelComponentEditorController.class
+                    );
+            } catch (NoSuchMethodException ex) {
+                throw new UnexpectedErrorException(ex);
+            }
+
+            final AbstractPageModelComponentEditor<?> editor;
+            try {
+                editor = constructor.newInstance(
+                    pageModel,
+                    componentModel,
+                    pageModelsController.getComponentEditorController());
+            } catch (InstantiationException
+                     | IllegalAccessException
+                     | InvocationTargetException ex) {
+                throw new UnexpectedErrorException(ex);
+            }
+
+            editor.setModal(true);
+            editor.setWidth("50%");
+            editor.setHeight("40%");
+
+            UI.getCurrent().addWindow(editor);
+        } else {
+            Notification.show(textsUtil
+                .getText("ui.admin.pageModels.no_info_for_component",
+                         new String[]{componentModel.getClass().getName()}),
+                              Notification.Type.ERROR_MESSAGE);
+        }
+    }
+
+    private Component buildDeleteButton(final ComponentModel componentModel) {
+
+        final PageModelsController pageModelsController = controller
+            .getPageModelsController();
+        final LocalizedTextsUtil textsUtil = controller
+            .getGlobalizationHelper()
+            .getLocalizedTextsUtil(AdminUiConstants.ADMIN_BUNDLE);
+
+        final Button deleteButton = new Button(textsUtil
+            .getText("ui.admin.pagemodels.components.delete"));
+        deleteButton.setIcon(VaadinIcons.EDIT);
+        deleteButton.addClickListener(event -> {
+
+            final ConfirmDialog confirmDialog = new ConfirmDialog(() -> {
+                pageModelsController.removeComponentModel(pageModel,
+                                                          componentModel);
+                return null;
+            });
+            confirmDialog.setMessage(textsUtil.getText(
+                "ui.admin.pagemodels.componentmodels.cols.delete.confirmation"));
+            confirmDialog.setModal(true);
+            UI.getCurrent().addWindow(confirmDialog);
+        });
+
+        return deleteButton;
     }
 
 }

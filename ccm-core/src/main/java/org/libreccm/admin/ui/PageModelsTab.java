@@ -25,15 +25,19 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 import org.libreccm.l10n.LocalizedTextsUtil;
 import org.libreccm.pagemodel.PageModel;
 import org.libreccm.ui.ConfirmDialog;
+import org.libreccm.web.CcmApplication;
 
 /**
  *
@@ -50,12 +54,15 @@ class PageModelsTab extends CustomComponent {
     private static final String COL_EDIT = "edit";
     private static final String COL_DELETE = "delete";
 
+    private final Tree<ApplicationTreeNode> applicationTree;
+    private final Grid<PageModelsTableRow> pageModelsGrid;
+
     protected PageModelsTab(final AdminViewController adminViewController) {
 
         super();
 
-        final Tree<ApplicationTreeNode> applicationTree = new Tree<>(
-            adminViewController.getApplicationTreeDataProvider());
+        applicationTree = new Tree<>(adminViewController
+            .getApplicationTreeDataProvider());
         applicationTree.setItemCaptionGenerator(ApplicationTreeNode::getTitle);
         applicationTree.setItemCollapseAllowedProvider(node -> {
             return !node.getNodeType().equals(ApplicationTreeNodeType.ROOT_NODE);
@@ -65,7 +72,7 @@ class PageModelsTab extends CustomComponent {
             .getGlobalizationHelper()
             .getLocalizedTextsUtil(AdminUiConstants.ADMIN_BUNDLE);
 
-        final Grid<PageModelsTableRow> pageModelsGrid = new Grid<>();
+        pageModelsGrid = new Grid<>();
         pageModelsGrid.setDataProvider(adminViewController
             .getPageModelsController()
             .getPageModelsTableDataProvider());
@@ -100,6 +107,30 @@ class PageModelsTab extends CustomComponent {
         pageModelsGrid.setVisible(false);
         pageModelsGrid.setWidth("100%");
 
+        final Button addPageModelButton = new Button(localizedTextsUtil
+            .getText("ui.admin.pagemodels.create_new"));
+        addPageModelButton.setIcon(VaadinIcons.PLUS_CIRCLE_O);
+        addPageModelButton.addClickListener(event -> {
+            final CcmApplication application
+                                     = ((PageModelsTableDataProvider) pageModelsGrid
+                                        .getDataProvider()).getApplication();
+            final PageModelForm pageModelForm = new PageModelForm(
+                adminViewController, application);
+            pageModelForm.setModal(true);
+            pageModelForm.setWidth("40%");
+            pageModelForm.setHeight("30%");
+
+            UI.getCurrent().addWindow(pageModelForm);
+        });
+        final HeaderRow headerRow = pageModelsGrid.prependHeaderRow();
+        final HeaderCell headerCell = headerRow.join(COL_NAME,
+                                                     COL_TITLE,
+                                                     COL_DESC,
+                                                     COL_LIVE,
+                                                     COL_EDIT,
+                                                     COL_DELETE);
+        headerCell.setComponent(new HorizontalLayout(addPageModelButton));
+
         final Label placeholder = new Label(localizedTextsUtil.getText(
             "ui.admin.pagemodels.select_application"));
 
@@ -114,7 +145,7 @@ class PageModelsTab extends CustomComponent {
 
             if (nodeType == ApplicationTreeNodeType.APPLICATION_NODE
                     || nodeType
-                       == ApplicationTreeNodeType.SINGLETON_APPLICATION_NODE) {
+                           == ApplicationTreeNodeType.SINGLETON_APPLICATION_NODE) {
                 final PageModelsTableDataProvider dataProvider
                                                       = (PageModelsTableDataProvider) pageModelsGrid
                         .getDataProvider();
@@ -128,7 +159,7 @@ class PageModelsTab extends CustomComponent {
         });
 
         final VerticalLayout treeLayout = new VerticalLayout(applicationTree);
-        
+
         final HorizontalSplitPanel panel = new HorizontalSplitPanel(
             treeLayout, layout);
         panel.setSplitPosition(20.0f);
@@ -155,8 +186,12 @@ class PageModelsTab extends CustomComponent {
                 .format("No PageModel with ID %d in the database.",
                         row.getPageModelId())));
 
+            final CcmApplication application
+                                     = ((PageModelsTableDataProvider) pageModelsGrid
+                                        .getDataProvider()).getApplication();
+
             final PageModelDetails pageModelDetails = new PageModelDetails(
-                pageModel, controller);
+                pageModel, application, controller);
             pageModelDetails.center();
             pageModelDetails.setModal(true);
             pageModelDetails.setWidth("90%");
