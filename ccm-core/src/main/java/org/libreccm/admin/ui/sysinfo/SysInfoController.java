@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.ui.admin.sysinfo;
+package org.libreccm.admin.ui.sysinfo;
 
 import org.xml.sax.SAXException;
 
