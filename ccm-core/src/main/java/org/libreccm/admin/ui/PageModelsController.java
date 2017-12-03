@@ -135,6 +135,22 @@ class PageModelsController implements Serializable {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
+    protected void addComponentModel(final PageModel pageModel,
+    final ComponentModel componentModel) {
+        
+        Objects.requireNonNull(pageModel);
+        Objects.requireNonNull(componentModel);
+
+        final PageModel toPageModel = pageModelRepo
+            .findById(pageModel.getPageModelId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No PageModel with ID %d in the database.",
+                    pageModel.getPageModelId())));
+        
+        pageModelManager.addComponentModel(toPageModel, componentModel);
+    }
+    
+    @Transactional(Transactional.TxType.REQUIRED)
     protected void removeComponentModel(final PageModel pageModel,
                                         final ComponentModel componentModel) {
 

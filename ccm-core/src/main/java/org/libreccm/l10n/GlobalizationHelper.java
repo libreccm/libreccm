@@ -33,9 +33,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 /**
  * Provides the locale which has been selected based on the available languages
@@ -130,7 +132,7 @@ public class GlobalizationHelper implements Serializable {
     }
 
     public Locale getNegotiatedLocale() {
-        
+
         final KernelConfig kernelConfig = confManager.findConfiguration(
             KernelConfig.class);
 
@@ -139,10 +141,10 @@ public class GlobalizationHelper implements Serializable {
         final Locale selectedLocale = getSelectedLocale();
         if (selectedLocale == null
                 || !kernelConfig.hasLanguage(selectedLocale.getLanguage())) {
-            
+
             final Enumeration<Locale> acceptedLocales = request.getLocales();
             while (acceptedLocales.hasMoreElements()) {
-                
+
                 final Locale current = acceptedLocales.nextElement();
                 if (kernelConfig.hasLanguage(current.getLanguage())) {
                     preferred = new Locale(current.getLanguage());
@@ -183,6 +185,21 @@ public class GlobalizationHelper implements Serializable {
         }
 
         return selected;
+    }
+
+    public List<Locale> getAvailableLocales() {
+
+        final KernelConfig kernelConfig = confManager
+            .findConfiguration(KernelConfig.class);
+
+        return kernelConfig
+            .getSupportedLanguages()
+            .stream()
+            .map(lang -> new Locale(lang))
+            .sorted((locale1, locale2) -> {
+                return locale1.toString().compareTo(locale2.toString());
+            })
+            .collect(Collectors.toList());
     }
 
     public void setSelectedLocale(final Locale locale) {

@@ -128,7 +128,7 @@ public abstract class AbstractPageModelComponentEditor<T extends ComponentModel>
                 .getText("ui.admin.pagemodels.components.key.error.not_empty")));
             return;
         }
-        
+
         if (!validate()) {
             return;
         }
@@ -137,14 +137,16 @@ public abstract class AbstractPageModelComponentEditor<T extends ComponentModel>
             componentModel = createComponentModel();
             componentModel.setKey(key);
             updateComponentModel();
-            controller.getPageModelManager().addComponentModel(pageModel,
-                                                               componentModel);
+            controller
+                .getPageModelsController()
+                .addComponentModel(pageModel, componentModel);
         } else {
-            
             componentModel.setKey(key);
             updateComponentModel();
             controller.getComponentModelRepository().save(componentModel);
         }
+        controller.refreshComponentModels();
+        close();
     }
 
     protected PageModelComponentEditorController getController() {
@@ -167,7 +169,7 @@ public abstract class AbstractPageModelComponentEditor<T extends ComponentModel>
     protected abstract void initWidgets();
 
     /**
-     * 
+     *
      * @return {@code true} if form is validate, {@code false} if not.
      */
     protected abstract boolean validate();
