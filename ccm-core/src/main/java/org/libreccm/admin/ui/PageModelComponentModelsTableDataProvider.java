@@ -29,6 +29,10 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 /**
@@ -41,6 +45,9 @@ class PageModelComponentModelsTableDataProvider
 
     private static final long serialVersionUID = -8880329002442808769L;
 
+    @Inject
+    private EntityManager entityManager;
+    
     @Inject
     private PageModelRepository pageModelRepo;
 
@@ -60,8 +67,16 @@ class PageModelComponentModelsTableDataProvider
     protected Stream<ComponentModel> fetchFromBackEnd(
         final Query<ComponentModel, String> query) {
 
-        return retrievePageModel()
-            .getComponents()
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<ComponentModel> criteriaQuery = builder
+        .createQuery(ComponentModel.class);
+        final Root<ComponentModel> from = criteriaQuery
+        .from(ComponentModel.class);
+        criteriaQuery.where(builder.equal(from.get("pageModel"), pageModel));
+        
+        return entityManager
+            .createQuery(criteriaQuery)
+            .getResultList()
             .stream();
     }
 
@@ -69,7 +84,19 @@ class PageModelComponentModelsTableDataProvider
     @Transactional(Transactional.TxType.REQUIRED)
     protected int sizeInBackEnd(final Query<ComponentModel, String> query) {
 
-        return retrievePageModel().getComponents().size();
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<Long> criteriaQuery = builder
+            .createQuery(Long.class);
+        final Root<ComponentModel> from = criteriaQuery
+            .from(ComponentModel.class);
+        criteriaQuery.select(builder.count(from));
+        criteriaQuery.where(builder.equal(from.get("pageModel"), pageModel));
+        
+        return entityManager
+            .createQuery(criteriaQuery)
+            .getSingleResult()
+            .intValue();
+//        return retrievePageModel().getComponents().size();
     }
 
     private PageModel retrievePageModel() {

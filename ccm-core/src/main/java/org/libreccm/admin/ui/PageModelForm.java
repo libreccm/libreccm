@@ -24,17 +24,22 @@ import com.vaadin.server.UserError;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.l10n.LocalizedString;
 import org.libreccm.l10n.LocalizedTextsUtil;
 import org.libreccm.l10n.ui.LocalizedStringEditor;
 import org.libreccm.pagemodel.PageModel;
 import org.libreccm.pagemodel.PageModelManager;
 import org.libreccm.pagemodel.PageModelRepository;
 import org.libreccm.web.CcmApplication;
+
+import java.util.Locale;
+import java.util.Map;
 
 /**
  *
@@ -88,18 +93,39 @@ class PageModelForm extends Window {
         nameField = new TextField(textsUtil.getText("ui.admin.pagemodels.name"));
         nameField.setRequiredIndicatorVisible(true);
 
-        titleEditor = new LocalizedStringEditor(pageModel.getTitle(),
-                                                globalizationHelper);
-        titleEditor.setCaption(textsUtil.getText("ui.admin.pagemodels.title"));
+        if (pageModel == null) {
+            titleEditor = new LocalizedStringEditor(globalizationHelper);
+        } else {
+            titleEditor = new LocalizedStringEditor(pageModel.getTitle(),
+                                                    globalizationHelper);
+        }
+//        titleEditor.setCaption(textsUtil.getText("ui.admin.pagemodels.title"));
+        titleEditor.setHeight("10em");
+        final Panel titlePanel = new Panel(
+            textsUtil.getText("ui.admin.pagemodels.title"),
+            titleEditor);
 
-        descriptionEditor = new LocalizedStringEditor(
-            pageModel.getDescription(), globalizationHelper);
-        descriptionEditor
-            .setCaption(textsUtil.getText("ui.admin.pagemodels.desc"));
+        if (pageModel == null) {
+            descriptionEditor = new LocalizedStringEditor(globalizationHelper);
+        } else {
+            descriptionEditor = new LocalizedStringEditor(
+                pageModel.getDescription(), globalizationHelper);
+        }
+//        descriptionEditor
+//            .setCaption(textsUtil.getText("ui.admin.pagemodels.desc"));
+        descriptionEditor.setHeight("10em");
+        final Panel descPanel = new Panel(
+            textsUtil.getText("ui.admin.pagemodels.desc"),
+            descriptionEditor);
 
-        final FormLayout formLayout = new FormLayout(nameField,
-                                                     titleEditor,
-                                                     descriptionEditor);
+        if (pageModel == null) {
+            setCaption(textsUtil.getText("ui.admin.pagemodels.caption.new"));
+        } else {
+            setCaption(textsUtil.getText("ui.admin.pagemodels.caption.edit",
+                                         new String[]{pageModel.getName()}));
+        }
+
+        final FormLayout formLayout = new FormLayout(nameField);
 
         final Button saveButton = new Button(textsUtil
             .getText("ui.admin.pagemodels.buttons.save"));
@@ -113,7 +139,10 @@ class PageModelForm extends Window {
                                                                     cancelButton);
 
         final VerticalLayout layout = new VerticalLayout(formLayout,
+                                                         titlePanel,
+                                                         descPanel,
                                                          buttonsLayout);
+        layout.setMargin(true);
         setContent(layout);
     }
 
@@ -140,15 +169,30 @@ class PageModelForm extends Window {
         }
 
         if (pageModel == null) {
-            
             pageModel = pageModelManager.createPageModel(name, application);
+            final LocalizedString title = titleEditor.getLocalizedString();
+            for (final Map.Entry<Locale, String> entry : title.getValues()
+                .entrySet()) {
+                pageModel.getTitle().addValue(entry.getKey(), entry.getValue());
+            }
+            final LocalizedString desc = descriptionEditor.getLocalizedString();
+            for (final Map.Entry<Locale, String> entry : desc.getValues()
+                .entrySet()) {
+                pageModel.getDescription().addValue(entry.getKey(),
+                                                    entry.getValue());
+            }
         }
+
         pageModel.setName(name);
 
         final PageModelRepository pageModelRepo = pageModelsController
             .getPageModelRepo();
         pageModelRepo.save(pageModel);
 
+        controller
+            .getPageModelsController()
+            .getPageModelsTableDataProvider()
+            .refreshAll();
         close();
     }
 

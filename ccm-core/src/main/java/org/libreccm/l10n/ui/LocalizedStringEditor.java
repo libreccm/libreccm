@@ -1,8 +1,18 @@
 package org.libreccm.l10n.ui;
 
+import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.data.provider.QuerySortOrder;
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.SerializableToIntFunction;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
+import com.vaadin.ui.themes.ValoTheme;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.l10n.LocalizedString;
 
@@ -10,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /*
@@ -74,7 +85,39 @@ public class LocalizedStringEditor extends CustomComponent {
         grid.addColumn(LocalizedStringValue::getLocaleLabel)
             .setCaption("Language")
             .setId(COL_LOCALE);
+        grid.addColumn(LocalizedStringValue::getValue)
+            .setCaption("Value")
+            .setId(COL_VALUE);
+        grid.addComponentColumn(this::buildEditButton)
+            .setCaption("Edit")
+            .setId(COL_EDIT);
+        grid.addComponentColumn(this::buildDeleteButton)
+            .setCaption("Delete")
+            .setId(COL_REMOVE);
 
+        final ComboBox<Locale> localeSelect = new ComboBox<>();
+        localeSelect.setDataProvider(this::fetchAvailableLocales,
+                                     this::countAvailableLocales);
+        localeSelect.setDescription("Select locale to add");
+        localeSelect.addStyleName(ValoTheme.COMBOBOX_TINY);
+        localeSelect.setEmptySelectionAllowed(false);
+        localeSelect.setTextInputAllowed(false);
+        localeSelect.setItemCaptionGenerator(Locale::toString);
+        final Button addButton = new Button("Add value");
+        addButton.addStyleName(ValoTheme.BUTTON_TINY);
+        addButton.setIcon(VaadinIcons.PLUS_CIRCLE_O);
+        addButton.addClickListener(event -> {
+        });
+
+        final HeaderRow headerRow = grid.prependHeaderRow();
+        final HeaderCell headerCell = headerRow.join(COL_LOCALE,
+                                                     COL_VALUE,
+                                                     COL_EDIT,
+                                                     COL_REMOVE);
+        headerCell.setComponent(new HorizontalLayout(localeSelect, addButton));
+
+        localizedString = new LocalizedString();
+        super.setCompositionRoot(grid);
     }
 
     public LocalizedStringEditor(final LocalizedString localizedString,
@@ -90,6 +133,7 @@ public class LocalizedStringEditor extends CustomComponent {
                                  final GlobalizationHelper globalizationHelper) {
         this(globalizationHelper);
         this.multiline = multiline;
+        localizedString = new LocalizedString();
     }
 
     public LocalizedStringEditor(final LocalizedString localizedString,
@@ -114,6 +158,58 @@ public class LocalizedStringEditor extends CustomComponent {
 
     public void setLocalizedString(final LocalizedString localizedString) {
         this.localizedString = localizedString;
+    }
+
+    private Stream<Locale> fetchAvailableLocales(final String filter,
+                                                 final int offset,
+                                                 final int limit) {
+
+        final List<Locale> values = globalizationHelper
+            .getAvailableLocales()
+            .stream()
+            .filter(locale -> localizedString.hasValue(locale))
+            .sorted((locale1, locale2) -> {
+                return locale1.toString().compareTo(locale2.toString());
+            })
+            .collect(Collectors.toList());
+        
+        if (values.size() > limit) {
+            return values.subList(offset, offset + limit).stream();
+        } else {
+            return values.stream();
+        }
+    }
+
+    private int countAvailableLocales(final String value) {
+
+        return (int) globalizationHelper
+            .getAvailableLocales()
+            .stream()
+            .filter(locale -> localizedString.hasValue(locale))
+            .count();
+    }
+
+    private Component buildEditButton(final LocalizedStringValue value) {
+
+        final Button button = new Button("Edit");
+        button.setIcon(VaadinIcons.EDIT);
+        button.addStyleName(ValoTheme.BUTTON_TINY);
+        button.addClickListener(event -> {
+        });
+
+        return button;
+    }
+
+    private Component buildDeleteButton(final LocalizedStringValue value) {
+
+        final Button button = new Button("Edit");
+        button.setIcon(VaadinIcons.MINUS_CIRCLE_O);
+        button.addStyleNames(ValoTheme.BUTTON_TINY,
+                             ValoTheme.BUTTON_DANGER);
+        button.addClickListener(event -> {
+        });
+
+        return button;
     }
 
     private class LocalizedStringValue {
@@ -176,11 +272,19 @@ public class LocalizedStringEditor extends CustomComponent {
                 .compareTo(Objects.toString(locale2));
         });
 
-        return locales
-            .subList(offset, limit)
-            .stream()
-            .map(locale -> new LocalizedStringValue(
-            locale, localizedString.getValue(locale)));
+        if (locales.size() > limit) {
+            return locales
+                .subList(offset, limit)
+                .stream()
+                .map(locale -> new LocalizedStringValue(
+                locale, localizedString.getValue(locale)));
+        } else {
+            return locales
+                .subList(offset, locales.size())
+                .stream()
+                .map(locale -> new LocalizedStringValue(
+                locale, localizedString.getValue(locale)));
+        }
     }
 
 }

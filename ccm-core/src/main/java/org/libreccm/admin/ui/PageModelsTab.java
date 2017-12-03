@@ -109,6 +109,7 @@ class PageModelsTab extends CustomComponent {
 
         final Button addPageModelButton = new Button(localizedTextsUtil
             .getText("ui.admin.pagemodels.create_new"));
+        addPageModelButton.addStyleName(ValoTheme.BUTTON_TINY);
         addPageModelButton.setIcon(VaadinIcons.PLUS_CIRCLE_O);
         addPageModelButton.addClickListener(event -> {
             final CcmApplication application
@@ -118,7 +119,7 @@ class PageModelsTab extends CustomComponent {
                 adminViewController, application);
             pageModelForm.setModal(true);
             pageModelForm.setWidth("40%");
-            pageModelForm.setHeight("30%");
+            pageModelForm.setHeight("60%");
 
             UI.getCurrent().addWindow(pageModelForm);
         });

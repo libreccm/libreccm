@@ -73,20 +73,23 @@ public class CategoryTreeComponentEditor
         showFullTreeCheckBox = new CheckBox(textsUtil
             .getText(
                 "cms.ui.pagemodel.category_tree_component_form.show_full_tree.label"));
+        addComponent(showFullTreeCheckBox);
 
     }
 
     @Override
     protected void initWidgets() {
-        
+
         final CategoryTreeComponent component = getComponentModel();
-        
-        showFullTreeCheckBox.setValue(component.isShowFullTree());
+
+        if (component != null) {
+            showFullTreeCheckBox.setValue(component.isShowFullTree());
+        }
     }
 
     @Override
     protected boolean validate() {
-        
+
         //Nothing to validate here
         return true;
     }
@@ -98,9 +101,9 @@ public class CategoryTreeComponentEditor
 
     @Override
     protected void updateComponentModel() {
-        
+
         final CategoryTreeComponent component = getComponentModel();
-        
+
         component.setShowFullTree(showFullTreeCheckBox.getValue());
     }
 
