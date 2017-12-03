@@ -31,26 +31,47 @@ import javax.inject.Inject;
  */
 @RequestScoped
 public class PageModelComponentEditorController {
-    
+
     @Inject
     private ComponentModelRepository componentModelRepository;
-    
+
     @Inject
     private GlobalizationHelper globalizationHelper;
+
+    @Inject
+    private PageModelsController pageModelsController;
     
     @Inject
     private PageModelManager pageModelManager;
-    
+
+    @Inject
+    private PageModelsTableDataProvider pageModelsTableDataProvider;
+
+    @Inject
+    private PageModelComponentModelsTableDataProvider pageModelComponentModelsTableDataProvider;
+
     public ComponentModelRepository getComponentModelRepository() {
         return componentModelRepository;
     }
-    
+
     public GlobalizationHelper getGlobalizationHelper() {
         return globalizationHelper;
+    }
+
+    public PageModelsController getPageModelsController() {
+        return pageModelsController;
     }
     
     public PageModelManager getPageModelManager() {
         return pageModelManager;
     }
-    
+
+    public void refreshPageModelsTable() {
+        pageModelsTableDataProvider.refreshAll();
+    }
+
+    public void refreshComponentModels() {
+        pageModelComponentModelsTableDataProvider.refreshAll();
+    }
+
 }

@@ -23,18 +23,19 @@ import com.arsdigita.ui.admin.AdminUiConstants;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
+import com.vaadin.ui.themes.ValoTheme;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.GlobalizationHelper;
@@ -68,7 +69,8 @@ class PageModelDetails extends Window {
     private final CcmApplication application;
     private final PageModel pageModel;
 
-    private final NativeSelect<PageModelComponentModel> componentModelTypeSelect;
+//    private final NativeSelect<PageModelComponentModel> componentModelTypeSelect;
+    private final ComboBox<PageModelComponentModel> componentModelTypeSelect;
 
     PageModelDetails(final PageModel pageModel,
                      final CcmApplication application,
@@ -121,6 +123,8 @@ class PageModelDetails extends Window {
         editPropertiesButton.setIcon(VaadinIcons.EDIT);
         editPropertiesButton
             .addClickListener(this::editBasicPropertiesButtonClicked);
+        final HorizontalLayout buttonsLayout = new HorizontalLayout(
+            editPropertiesButton);
 
         final PageModelsController pageModelsController = controller
             .getPageModelsController();
@@ -154,16 +158,32 @@ class PageModelDetails extends Window {
             .setId(COL_DEL);
         componentsModelGrid.setWidth("100%");
 
-        componentModelTypeSelect = new NativeSelect<>(
-            textsUtil.getText("ui.admin.pagemodels.add_new_component.type"),
-            pageModelsController.getComponentModelTypesDataProvider());
+//        componentModelTypeSelect = new NativeSelect<>(
+//            textsUtil.getText("ui.admin.pagemodels.add_new_component.type"),
+//            pageModelsController.getComponentModelTypesDataProvider());
+        componentModelTypeSelect = new ComboBox<>();
+        componentModelTypeSelect.setTextInputAllowed(false);
+        componentModelTypeSelect.setEmptySelectionAllowed(false);
+        componentModelTypeSelect.setDescription(textsUtil
+            .getText("ui.admin.pagemodels.add_new_component.type"));
+        componentModelTypeSelect.setDataProvider(pageModelsController
+            .getComponentModelTypesDataProvider());
         componentModelTypeSelect
             .setItemCaptionGenerator(this::generateComponentModelTypeCaption);
+        componentModelTypeSelect.addStyleName(ValoTheme.COMBOBOX_TINY);
         final Button addComponentModelButton = new Button(textsUtil
             .getText("ui.admin.pagemodels.add_new_component.submit"));
+        addComponentModelButton.addStyleName(ValoTheme.BUTTON_TINY);
         addComponentModelButton.setIcon(VaadinIcons.PLUS_CIRCLE_O);
         addComponentModelButton
             .addClickListener(this::addComponentButtonClicked);
+//        final Panel componentsPanel = new Panel(
+//            "Components",
+//            new VerticalLayout(new HorizontalLayout(
+//                new FormLayout(componentModelTypeSelect),
+//                addComponentModelButton),
+//                               componentsModelGrid));
+
         final HeaderRow headerRow = componentsModelGrid.prependHeaderRow();
         final HeaderCell headerCell = headerRow.join(COL_KEY,
                                                      COL_TYPE,
@@ -171,8 +191,12 @@ class PageModelDetails extends Window {
                                                      COL_DEL);
         headerCell.setComponent(new HorizontalLayout(componentModelTypeSelect,
                                                      addComponentModelButton));
-
-        super.setContent(new VerticalLayout(propertiesSheetLayout));
+        super.setContent(new VerticalLayout(propertiesSheetLayout,
+                                            buttonsLayout,
+                                            componentsModelGrid));
+//        super.setContent(new VerticalLayout(propertiesSheetLayout,
+//                                            buttonsLayout,
+//                                            componentsPanel));
     }
 
     @SuppressWarnings("unchecked")
@@ -222,6 +246,7 @@ class PageModelDetails extends Window {
                  | InvocationTargetException ex) {
             throw new UnexpectedErrorException(ex);
         }
+        editor.initWidgets();
 
         editor.setModal(true);
         editor.setWidth("50%");
@@ -270,6 +295,7 @@ class PageModelDetails extends Window {
         final Button editButton = new Button(textsUtil
             .getText("ui.admin.pagemodels.components.edit"));
         editButton.setIcon(VaadinIcons.EDIT);
+        editButton.addStyleName(ValoTheme.BUTTON_TINY);
         editButton.addClickListener(event -> editComponentModel(componentModel));
 
         return editButton;
@@ -315,8 +341,8 @@ class PageModelDetails extends Window {
             try {
                 constructor = editorClass
                     .getDeclaredConstructor(PageModel.class,
-                         ComponentModel.class,
-                         PageModelComponentEditorController.class
+                                            componentModelInfo.get().modelClass(),
+                                            PageModelComponentEditorController.class
                     );
             } catch (NoSuchMethodException ex) {
                 throw new UnexpectedErrorException(ex);
@@ -333,6 +359,7 @@ class PageModelDetails extends Window {
                      | InvocationTargetException ex) {
                 throw new UnexpectedErrorException(ex);
             }
+            editor.initWidgets();
 
             editor.setModal(true);
             editor.setWidth("50%");
@@ -357,7 +384,9 @@ class PageModelDetails extends Window {
 
         final Button deleteButton = new Button(textsUtil
             .getText("ui.admin.pagemodels.components.delete"));
-        deleteButton.setIcon(VaadinIcons.EDIT);
+        deleteButton.setIcon(VaadinIcons.MINUS_CIRCLE_O);
+        deleteButton.addStyleNames(ValoTheme.BUTTON_TINY,
+                                   ValoTheme.BUTTON_DANGER);
         deleteButton.addClickListener(event -> {
 
             final ConfirmDialog confirmDialog = new ConfirmDialog(() -> {

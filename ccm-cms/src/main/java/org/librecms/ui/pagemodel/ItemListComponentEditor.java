@@ -92,6 +92,7 @@ public class ItemListComponentEditor
 
         pageSizeField = new TextField(textsUtil
             .getText("cms.ui.pagemodel.itemlist_component_form.page_size.label"));
+        pageSizeField.setValue("25");
         addComponent(pageSizeField);
 
         listOrderArea = new TextArea(textsUtil
@@ -106,9 +107,13 @@ public class ItemListComponentEditor
 
         if (itemListComponent != null) {
             descendingCheckBox.setValue(itemListComponent.isDescending());
+            limitToTypeField.setValue(itemListComponent.getLimitToType());
+            pageSizeField
+                .setValue(Integer.toString(itemListComponent.getPageSize()));
+            listOrderArea.setValue(String.join("\n", 
+                                               itemListComponent.getListOrder()));
+            
         }
-
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override

@@ -21,9 +21,12 @@ package org.libreccm.admin.ui;
 import com.vaadin.cdi.ViewScoped;
 import com.vaadin.data.provider.AbstractDataProvider;
 import com.vaadin.data.provider.Query;
+import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.l10n.LocalizedTextsUtil;
 import org.libreccm.pagemodel.ComponentModels;
 import org.libreccm.pagemodel.PageModelComponentModel;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
@@ -41,6 +44,9 @@ class PageModelComponentModelTypesDataProvider
     @Inject
     private ComponentModels componentModels;
 
+    @Inject
+    private GlobalizationHelper globalizationHelper;
+
     @Override
     public boolean isInMemory() {
         return true;
@@ -49,18 +55,50 @@ class PageModelComponentModelTypesDataProvider
     @Override
     public int size(final Query<PageModelComponentModel, String> query) {
 
-        return componentModels
-            .findAvailableComponentModels()
-            .size();
+        final Optional<String> filter = query.getFilter();
+
+        if (filter.isPresent()) {
+            return (int) componentModels
+                .findAvailableComponentModels()
+                .stream()
+                .filter(model -> filterModels(model, filter.get()))
+                .count();
+
+        } else {
+            return componentModels
+                .findAvailableComponentModels()
+                .size();
+        }
     }
 
     @Override
     public Stream<PageModelComponentModel> fetch(
         final Query<PageModelComponentModel, String> query) {
-        
-        return componentModels
-            .findAvailableComponentModels()
-            .stream();
+
+        final Optional<String> filter = query.getFilter();
+
+        if (filter.isPresent()) {
+            return componentModels
+                .findAvailableComponentModels()
+                .stream()
+                .filter(model -> filterModels(model, filter.get()));
+        } else {
+            return componentModels
+                .findAvailableComponentModels()
+                .stream();
+        }
+    }
+
+    private boolean filterModels(final PageModelComponentModel model,
+                                 final String filter) {
+
+        final LocalizedTextsUtil textsUtil = globalizationHelper
+            .getLocalizedTextsUtil(model.descBundle());
+
+        final String title = textsUtil
+            .getText(textsUtil.getText(model.titleKey()));
+
+        return title.startsWith(filter);
     }
 
 }
