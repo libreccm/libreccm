@@ -26,6 +26,7 @@ import org.arsdigita.cms.CMSConfig;
 import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
 import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.User;
 import org.libreccm.workflow.Task;
 import org.libreccm.workflow.TaskManager;
@@ -41,14 +42,17 @@ import org.librecms.lifecycle.Lifecycle;
 import org.librecms.lifecycle.LifecycleDefinition;
 import org.librecms.lifecycle.LifecycleDefinitionRepository;
 import org.librecms.lifecycle.LifecycleManager;
+import org.librecms.lifecycle.LifecycleRepository;
 import org.librecms.lifecycle.Phase;
+import org.librecms.lifecycle.PhaseDefinition;
 import org.librecms.lifecycle.PhaseRepository;
 import org.librecms.workflow.CmsTask;
 import org.librecms.workflow.CmsTaskType;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -60,13 +64,17 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class ItemLifecycleAdminController {
+class ItemLifecycleAdminController implements Serializable {
 
     private static final Logger LOGGER = LogManager
         .getLogger(ItemLifecycleAdminController.class);
+    private static final long serialVersionUID = -6482423583933975632L;
 
     @Inject
     private ConfigurationManager confManager;
+
+    @Inject
+    private GlobalizationHelper globalizationHelper;
 
     @Inject
     private ContentItemRepository itemRepo;
@@ -79,6 +87,9 @@ public class ItemLifecycleAdminController {
 
     @Inject
     private LifecycleManager lifecycleManager;
+
+    @Inject
+    private LifecycleRepository lifecycleRepo;
 
     @Inject
     private PhaseRepository phaseRepo;
@@ -151,17 +162,51 @@ public class ItemLifecycleAdminController {
     @Transactional(Transactional.TxType.REQUIRED)
     public LifecycleDefinition getDefinitionOfLifecycle(final ContentItem item) {
 
-        final ContentItem contentItem = itemRepo
-            .findById(item.getObjectId())
-            .orElseThrow(() -> new IllegalArgumentException(String
-            .format("No ContentItem with ID %d in the database.",
-                    item.getObjectId())));
-
+//        final ContentItem contentItem = itemRepo
+//            .findById(item.getObjectId())
+//            .orElseThrow(() -> new IllegalArgumentException(String
+//            .format("No ContentItem with ID %d in the database.",
+//                    item.getObjectId())));
         final ContentItem liveItem = itemManager
             .getLiveVersion(item, ContentItem.class)
             .get();
 
         return liveItem.getLifecycle().getDefinition();
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected List<ItemPhaseTableRow> findPhasesOfLifecycle(
+        final Lifecycle lifecycle) {
+
+        Objects.requireNonNull(lifecycle);
+
+        final Lifecycle ofLifecycle = lifecycleRepo
+            .findById(lifecycle.getLifecycleId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No Lifecycle with ID %d in the database.",
+                    lifecycle.getLifecycleId())));
+
+        return ofLifecycle
+            .getPhases()
+            .stream()
+            .map(this::buildItemPhaseTableRow)
+            .collect(Collectors.toList());
+
+    }
+
+    private ItemPhaseTableRow buildItemPhaseTableRow(final Phase phase) {
+
+        final PhaseDefinition definition = phase.getDefinition();
+
+        final ItemPhaseTableRow row = new ItemPhaseTableRow();
+        row.setName(globalizationHelper
+            .getValueFromLocalizedString(definition.getLabel()));
+        row.setDescription(globalizationHelper
+            .getValueFromLocalizedString(definition.getDescription()));
+        row.setStartDate(phase.getStartDateTime());
+        row.setEndDate(phase.getEndDateTime());
+
+        return row;
     }
 
     @Transactional(Transactional.TxType.REQUIRED)

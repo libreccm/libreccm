@@ -39,7 +39,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
+import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.privileges.ItemPrivileges;
+
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author Michael Pih
@@ -128,11 +132,21 @@ public class ItemLifecycleAdminPane extends BaseItemPane {
         @Override
         protected final Object initialValue(final PageState state) {
             final ContentItem item = selectedItem.getContentItem(state);
-            final Lifecycle lifecycle = item.getLifecycle();
 
-            LOGGER.debug("Returning lifecycle " + lifecycle);
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final ContentItemManager itemManager = cdiUtil
+                .findBean(ContentItemManager.class);
+            final Optional<ContentItem> liveItem = itemManager
+                .getLiveVersion(item, ContentItem.class);
+            if (liveItem.isPresent()) {
 
-            return lifecycle;
+                final Lifecycle lifecycle = liveItem.get().getLifecycle();
+                LOGGER.debug("Returning lifecycle {}",
+                             Objects.toString(lifecycle));
+                return lifecycle;
+            } else {
+                return null;
+            }
         }
 
     }
@@ -207,7 +221,7 @@ public class ItemLifecycleAdminPane extends BaseItemPane {
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final ItemLifecycleAdminController controller = cdiUtil
             .findBean(ItemLifecycleAdminController.class);
-        
+
         return controller.isAssignedToAbstractCategory(item);
 
 //        final long count = item.getCategories().stream()
