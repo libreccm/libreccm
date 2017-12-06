@@ -131,7 +131,7 @@ class PagesForm extends Form {
             target.addOption(new Option(Long.toString(site.getObjectId()),
                                         label));
         }
-        
+
         if (selectedPages.getSelectedKey(event.getPageState()) != null) {
             target.setDisabled();
         }
@@ -153,7 +153,7 @@ class PagesForm extends Form {
             target.addOption(new Option(Long.toString(domain.getObjectId()),
                                         new Text(domain.getDomainKey())));
         }
-        
+
         if (selectedPages.getSelectedKey(event.getPageState()) != null) {
             target.setDisabled();
         }
@@ -243,7 +243,20 @@ class PagesForm extends Form {
 
             final FormData data = event.getFormData();
 
-            final String primaryUrl = data.getString(PRIMARY_URL_FIELD);
+            final String primaryUrl;
+            if (data.getString(PRIMARY_URL_FIELD).startsWith("/")
+                    && data.getString(PRIMARY_URL_FIELD).endsWith("/")) {
+                primaryUrl = data.getString(PRIMARY_URL_FIELD);
+            } else if(data.getString(PRIMARY_URL_FIELD).startsWith("/")) {
+                primaryUrl = String.format("%s/", 
+                                           data.getString(PRIMARY_URL_FIELD));
+            } else if(data.getString(PRIMARY_URL_FIELD).endsWith("/")) {
+                primaryUrl = String.format("/%s", 
+                                           data.getString(PRIMARY_URL_FIELD));
+            } else {
+                primaryUrl = String.format("/%s/", 
+                                           data.getString(PRIMARY_URL_FIELD));
+            }
             final String selectedSiteId = data.getString(SITE_SELECT);
             final String selectedDomainId = data.getString(
                 CATEGORY_DOMAIN_SELECT);

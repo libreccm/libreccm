@@ -50,6 +50,7 @@ class CmsView extends CustomComponent implements View {
         final ContentSectionsGrid sectionsGrid = new ContentSectionsGrid(controller);
         sectionsGrid.setWidth("100%");
         tabSheet.addTab(sectionsGrid, "Content Section");
+        tabSheet.addTab(new PagesTab(controller), "Pages");
         tabSheet.addTab(new Label("Placeholder"), "Search");
         tabSheet.addTab(new Label("Placeholder"), "My tasks");
         
