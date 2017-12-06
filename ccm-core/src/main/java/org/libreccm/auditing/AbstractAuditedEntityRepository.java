@@ -19,14 +19,18 @@
 package org.libreccm.auditing;
 
 import org.hibernate.envers.AuditReader;
+import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.exception.NotAuditedException;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.libreccm.core.AbstractEntityRepository;
 
 import javax.inject.Inject;
+
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
 
 /**
  *
@@ -38,8 +42,12 @@ import java.util.stream.Collectors;
 public abstract class AbstractAuditedEntityRepository<K, T>
     extends AbstractEntityRepository<K, T> {
 
+    private static final long serialVersionUID = -1592329493646101135L;
+
+//    @Inject
+//    private AuditReader auditReader;
     @Inject
-    private AuditReader auditReader;
+    private EntityManager entityManager;
 
     public abstract K getEntityId(final T entity);
 
@@ -54,6 +62,8 @@ public abstract class AbstractAuditedEntityRepository<K, T>
      */
     @SuppressWarnings("unchecked")
     public T retrieveEntityAtRevision(final T entity, final Number revision) {
+
+        final AuditReader auditReader = AuditReaderFactory.get(entityManager);
         final AuditQuery query = auditReader.createQuery()
             .forEntitiesAtRevision(getEntityClass(), revision);
         query.add(AuditEntity.id().eq(getEntityId(entity)));
@@ -89,6 +99,8 @@ public abstract class AbstractAuditedEntityRepository<K, T>
      */
     public List<Number> retrieveRevisionNumbersOfEntity(final T entity,
                                                         final Long objectId) {
+
+        final AuditReader auditReader = AuditReaderFactory.get(entityManager);
         return auditReader.getRevisions(entity.getClass(), objectId);
     }
 
@@ -102,9 +114,11 @@ public abstract class AbstractAuditedEntityRepository<K, T>
      */
     public CcmRevision retrieveFirstRevision(final T entity,
                                              final Long objectId) {
+
         final List<Number> revisions = retrieveRevisionNumbersOfEntity(
             entity, objectId);
 
+        final AuditReader auditReader = AuditReaderFactory.get(entityManager);
         return auditReader.findRevision(CcmRevision.class, revisions.get(0));
     }
 
@@ -119,9 +133,11 @@ public abstract class AbstractAuditedEntityRepository<K, T>
      */
     public List<CcmRevision> retrieveRevisions(final T entity,
                                                final Long objectId) {
+
         final List<Number> revisionNumbers = retrieveRevisionNumbersOfEntity(
             entity, objectId);
 
+        final AuditReader auditReader = AuditReaderFactory.get(entityManager);
         return revisionNumbers.stream()
             .map(revisionNumber -> auditReader.findRevision(CcmRevision.class,
                                                             revisionNumber))
@@ -142,19 +158,20 @@ public abstract class AbstractAuditedEntityRepository<K, T>
             entity, objectId);
         final Number lastRevision = revisions.get(revisions.size() - 1);
 
+        final AuditReader auditReader = AuditReaderFactory.get(entityManager);
         return auditReader.findRevision(CcmRevision.class, lastRevision);
     }
 
     /**
      * Retrieves a specific revision object.
      *
-     * @param entity
-     * @param objectId
      * @param revision
      *
      * @return
      */
     public CcmRevision retrieveRevision(final Number revision) {
+
+        final AuditReader auditReader = AuditReaderFactory.get(entityManager);
         return auditReader.findRevision(CcmRevision.class, revision);
     }
 

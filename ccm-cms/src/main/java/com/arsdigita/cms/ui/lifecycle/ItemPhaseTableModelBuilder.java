@@ -22,18 +22,10 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Table;
 import com.arsdigita.bebop.table.AbstractTableModelBuilder;
 import com.arsdigita.bebop.table.TableModel;
-import com.arsdigita.globalization.GlobalizedMessage;
 
-import org.arsdigita.cms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.l10n.GlobalizationHelper;
-import org.librecms.CmsConstants;
-import org.librecms.lifecycle.Phase;
 
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * @author Xixi D'Moon &lt;xdmoon@arsdigita.com&gt;
@@ -52,84 +44,14 @@ class ItemPhaseTableModelBuilder extends AbstractTableModelBuilder {
     @Override
     public final TableModel makeModel(final Table table,
                                       final PageState state) {
-        return new Model(lifecycle.getLifecycle(state).getPhases());
+        
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ItemLifecycleAdminController controller = cdiUtil
+        .findBean(ItemLifecycleAdminController.class);
+
+        final List<ItemPhaseTableRow> rows = controller
+        .findPhasesOfLifecycle(lifecycle.getLifecycle(state));
+        
+        return new ItemPhaseTableModel(rows);
     }
-
-    private static class Model implements TableModel {
-
-        private final List<Phase> phases;
-        private int index = -1;
-        private Phase phase;
-
-        public Model(final List<Phase> phases) {
-            this.phases = phases;
-        }
-
-        @Override
-        public final int getColumnCount() {
-            return 4;
-        }
-
-        @Override
-        public final boolean nextRow() {
-            index++;
-            if (index < phases.size()) {
-                phase = phases.get(index);
-
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public final Object getElementAt(final int column) {
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final GlobalizationHelper globalizationHelper = cdiUtil
-                .findBean(GlobalizationHelper.class);
-            final Locale locale = globalizationHelper.getNegotiatedLocale();
-            final DateFormat format;
-            if (CMSConfig.getConfig().isHideTimezone()) {
-                format = DateFormat.getDateTimeInstance(
-                    DateFormat.FULL, DateFormat.SHORT, locale);
-            } else {
-                format = DateFormat.getDateTimeInstance(
-                    DateFormat.FULL, DateFormat.FULL, locale);
-            }
-
-            switch (column) {
-                case 0:
-                    return phase.getDefinition().getLabel().getValue(locale);
-                case 1:
-                    return phase.getDefinition().getDescription().getValue(
-                        locale);
-                case 2:
-                    final Date startDate = phase.getStartDateTime();
-                    return format.format(startDate);
-                case 3:
-                    final Date endDate = phase.getEndDateTime();
-
-                    if (endDate == null) {
-                        return lz("cms.ui.lifecycle.forever");
-                    } else {
-                        return format.format(endDate);
-                    }
-                default:
-                    throw new IllegalArgumentException();
-            }
-        }
-
-        @Override
-        public final Object getKeyAt(final int column) {
-            return phase.getDefinition().getDefinitionId();
-        }
-
-    }
-
-    protected final static String lz(final String key) {
-        final GlobalizedMessage message = new GlobalizedMessage(key, 
-            CmsConstants.CMS_BUNDLE);
-        return (String) message.localize();
-    }
-
 }

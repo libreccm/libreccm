@@ -29,6 +29,8 @@ import javax.enterprise.context.RequestScoped;
 @RequestScoped
 public class PhaseRepository extends AbstractEntityRepository<Long, Phase>{
 
+    private static final long serialVersionUID = 1010039772043186415L;
+
     @Override
     public Class<Phase> getEntityClass() {
         return Phase.class;
