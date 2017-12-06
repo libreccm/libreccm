@@ -22,6 +22,10 @@ import com.vaadin.cdi.ViewScoped;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.PermissionManager;
+import org.librecms.pages.PageManager;
+import org.librecms.pages.PageRepository;
+import org.librecms.pages.PagesManager;
+import org.librecms.pages.PagesRepository;
 
 import javax.inject.Inject;
 
@@ -36,6 +40,10 @@ class CmsViewController {
     private GlobalizationHelper globalizationHelper;
 
     @Inject
+    private PagesController pagesController;
+    
+
+    @Inject
     private PermissionManager permissionManager;
 
     @Inject
@@ -48,6 +56,11 @@ class CmsViewController {
         return globalizationHelper;
     }
 
+
+    protected PagesController getPagesController() {
+        return pagesController;
+    }
+    
     protected PermissionManager getPermissionManager() {
         return permissionManager;
     }

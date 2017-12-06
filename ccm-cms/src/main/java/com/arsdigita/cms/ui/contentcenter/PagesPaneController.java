@@ -32,8 +32,6 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import static org.primefaces.component.calendar.Calendar.PropertyKeys.*;
-
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -90,7 +88,7 @@ class PagesPaneController {
                     pagesId)));
 
         pages.setPrimaryUrl(primaryUrl);
-        
+
         pagesRepo.save(pages);
     }
 
