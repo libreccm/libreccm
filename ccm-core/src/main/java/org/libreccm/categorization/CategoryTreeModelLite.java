@@ -18,49 +18,52 @@
  */
 package org.libreccm.categorization;
 
-
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.tree.TreeModel;
 import com.arsdigita.bebop.tree.TreeNode;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.l10n.GlobalizationHelper;
 
 import java.util.Iterator;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Implements the {@link com.arsdigita.bebop.tree.TreeModel} interface for
  * categories.
  *
  * @author Daniel Berrange
- * @version $Revision: #17 $ $DateTime: 2004/08/16 18:10:38 $
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter </a>
  */
 public class CategoryTreeModelLite implements TreeModel {
 
     private static final Logger LOGGER = LogManager.getLogger(
-            CategoryTreeModelLite.class);
+        CategoryTreeModelLite.class);
 //    String m_order = null;
-    final Category category;
+    private final Category root;
 
     /**
-     * Initializes with the passed in the root Category.
+     * Initialises with the passed in the root Category.
      *
      * @param root the root category for this TreeModel
      */
 //    public CategoryTreeModelLite(Category root) {
 //        this(root, null);
 //    }
-
     /**
      * Initializes with the passed in the root Category.
      *
      * @param root the root category for this TreeModel
      */
-    public CategoryTreeModelLite(Category root) {
+    public CategoryTreeModelLite(final Category root) {
 //        super(root.getUniqueId(),
 //              "com.arsdigita.categorization.getRootCategory",
 //              "com.arsdigita.categorization.getSubCategories");
 //        m_order = order;
-        category = root;
+        this.root = root;
     }
 
 //    @Override
@@ -68,20 +71,82 @@ public class CategoryTreeModelLite implements TreeModel {
 //                                                             String getSubCategories) {
 //        return new CategoryTreeIterator(node, getSubCategories, m_order);
 //    }
-
     @Override
-    public TreeNode getRoot(PageState data) {
-        return null;
+    public TreeNode getRoot(final PageState data) {
+        return new CategoryTreeNode(root);
     }
 
     @Override
-    public boolean hasChildren(TreeNode n, PageState data) {
-        return false;
+    public boolean hasChildren(final TreeNode node,
+                               final PageState state) {
+
+        Objects.requireNonNull(node);
+        if (node.getKey() == null
+                || !(node.getKey() instanceof Long)) {
+            throw new IllegalArgumentException(
+                "The key of the provided TreeNode is null or not a Long.");
+        }
+
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final CategoryTreeModelLiteController controller = cdiUtil
+            .findBean(CategoryTreeModelLiteController.class);
+
+        return controller.hasSubCategories((long) node.getKey());
     }
 
     @Override
-    public Iterator<TreeNode> getChildren(TreeNode n, PageState data) {
-        return null;
+    public Iterator<TreeNode> getChildren(final TreeNode node,
+                                          final PageState state) {
+
+        Objects.requireNonNull(node);
+        if (node.getKey() == null
+                || !(node.getKey() instanceof Long)) {
+            throw new IllegalArgumentException(
+                "The key of the provided TreeNode is null or not a Long.");
+        }
+
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final CategoryTreeModelLiteController controller = cdiUtil
+            .findBean(CategoryTreeModelLiteController.class);
+
+        return controller
+            .findSubCategories((long) node.getKey())
+            .stream()
+            .map(this::buildTreeNode)
+            .iterator();
+    }
+
+    private TreeNode buildTreeNode(final Category category) {
+        return new CategoryTreeNode(category);
+    }
+    
+    private class CategoryTreeNode implements TreeNode {
+
+        private final Category category;
+
+        public CategoryTreeNode(final Category category) {
+            this.category = category;
+        }
+
+        @Override
+        public Object getKey() {
+            return category.getObjectId();
+        }
+
+        @Override
+        public Object getElement() {
+
+            if (category.getTitle().getValues().isEmpty()) {
+                return category.getName();
+            } else {
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final GlobalizationHelper globalizationHelper = cdiUtil
+                    .findBean(GlobalizationHelper.class);
+                return globalizationHelper
+                    .getValueFromLocalizedString(category.getTitle());
+            }
+        }
+
     }
 
 //    private static class CategoryTreeIterator extends DataQueryTreeIterator {
