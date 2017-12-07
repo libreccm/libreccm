@@ -34,6 +34,7 @@ import com.arsdigita.bebop.event.ChangeListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.parameters.ParameterModel;
 import com.arsdigita.bebop.parameters.StringParameter;
+import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ui.BaseAdminPane;
 import com.arsdigita.cms.ui.BaseDeleteForm;
 import com.arsdigita.cms.ui.BaseTree;
@@ -47,12 +48,12 @@ import org.apache.logging.log4j.Logger;
 import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryRepository;
+import org.libreccm.categorization.DomainOwnership;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.security.PermissionChecker;
+import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.privileges.AdminPrivileges;
-
-
 
 /**
  * A split pane for the Category Administration UI.
@@ -78,8 +79,8 @@ public final class CategoryAdminPane extends BaseAdminPane {
         m_contextModel = new UseContextSelectionModel(new StringParameter(
             CONTEXT_SELECTED));
 
-        /* Left column */
- /* Use context section */
+        // Left column
+        // Use context section
         List list = new List(new CategoryUseContextModelBuilder());
         list.setSelectionModel(m_contextModel);
         list.addChangeListener(new ContextSelectionListener());
@@ -303,9 +304,12 @@ public final class CategoryAdminPane extends BaseAdminPane {
         }
 
         @Override
-        public Object getSelectedKey(PageState state) {
+        public Object getSelectedKey(final PageState state) {
+
             Object val = super.getSelectedKey(state);
-            if (val == null || ((String) val).length() == 0) {
+            if (val == null
+                    || ((CharSequence) val).length() == 0) {
+
                 val = DEFAULT_USE_CONTEXT;
                 state.setValue(getStateParameter(), val);
                 fireStateChanged(state);
@@ -315,16 +319,24 @@ public final class CategoryAdminPane extends BaseAdminPane {
 
     }
 
-    public String getUseContext(PageState state) {
+    public String getUseContext(final PageState state) {
+
         String selected = (String) m_contextModel.getSelectedKey(state);
-        return (DEFAULT_USE_CONTEXT).equals(selected) ? (String) null : selected;
+        if (DEFAULT_USE_CONTEXT.equals(selected)) {
+            return null;
+        } else {
+            return selected;
+        }
+//        return (DEFAULT_USE_CONTEXT).equals(selected) ? (String) null : selected;
     }
 
-    public class ContextSelectionListener implements ChangeListener {
+    private class ContextSelectionListener implements ChangeListener {
 
+        @Override
         public final void stateChanged(final ChangeEvent event) {
+
             LOGGER.debug("Selection state changed; I may change "
-                         + "the body's visible pane");
+                             + "the body's visible pane");
 
             final PageState state = event.getPageState();
 
@@ -336,13 +348,27 @@ public final class CategoryAdminPane extends BaseAdminPane {
                     .getSelectedKey(state);
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final CategoryRepository categoryRepo = cdiUtil
-                .findBean(CategoryRepository.class);
-                final Category root = categoryRepo
-                .findById(Long.parseLong(rootCategoryId))
-                .orElseThrow(() -> new UnexpectedErrorException(String
-                .format("No Category with ID %s in the database.",
-                        rootCategoryId)));
+                    .findBean(CategoryRepository.class);
+                final Category root;
+                if (DEFAULT_USE_CONTEXT.equals(rootCategoryId)) {
+                    final ContentSection section = CMS
+                        .getContext()
+                        .getContentSection();
 
+                    final CategoryAdminController controller = CdiUtil
+                        .createCdiUtil()
+                        .findBean(CategoryAdminController.class);
+                    final java.util.List<DomainOwnership> ownerships
+                                                          = controller
+                            .retrieveDomains(section);
+                    root = ownerships.get(0).getDomain().getRoot();
+                } else {
+                    root = categoryRepo
+                        .findById(Long.parseLong(rootCategoryId))
+                        .orElseThrow(() -> new UnexpectedErrorException(String
+                        .format("No Category with ID %s in the database.",
+                                rootCategoryId)));
+                }
                 if (root != null) {
                     m_model.setSelectedKey(state, root.getUniqueId());
                     m_categoryTree.reset(state);
@@ -351,7 +377,7 @@ public final class CategoryAdminPane extends BaseAdminPane {
             }
             if (m_model.isSelected(state)) {
                 LOGGER.debug("The selection model is selected; displaying "
-                             + "the item pane");
+                                 + "the item pane");
 
                 getBody().push(state, getItemPane());
             }
