@@ -29,7 +29,6 @@ import com.arsdigita.bebop.form.Option;
 import com.arsdigita.bebop.form.RadioGroup;
 import com.arsdigita.bebop.parameters.BooleanParameter;
 
-import com.arsdigita.cms.ui.ContentItemPage;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.util.UncheckedWrapperException;
@@ -50,6 +49,7 @@ import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.workflow.AssignableTask;
+import org.libreccm.workflow.TaskDependency;
 import org.libreccm.workflow.Workflow;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
@@ -192,12 +192,16 @@ public final class TaskFinishForm extends CommentAddForm {
                                      + "tasks");
 
                     // Reenable the previous tasks.
-                    for (final Task dependent : task.getDependentTasks()) {
+                    for (final TaskDependency blockedTask : task
+                        .getBlockedTasks()) {
                         LOGGER.debug("Reenabling task {}",
-                                     dependent.getLabel().getValue(
-                                         kernelConfig.getDefaultLocale()));
+                                     blockedTask
+                                         .getBlockedTask()
+                                         .getLabel()
+                                         .getValue(kernelConfig
+                                             .getDefaultLocale()));
 
-                        controller.enable(dependent);
+                        controller.enable(blockedTask.getBlockedTask());
                     }
                 }
             } else {

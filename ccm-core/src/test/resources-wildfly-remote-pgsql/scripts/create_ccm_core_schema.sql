@@ -2,6 +2,8 @@ drop schema if exists CCM_CORE cascade;
 
 drop sequence if exists HIBERNATE_SEQUENCE;
 
+
+
     create schema CCM_CORE;
 
     create table CCM_CORE.APPLICATIONS (
@@ -530,10 +532,10 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
         SETTING_VALUE_STRING varchar(1024),
-        SETTING_VALUE_BOOLEAN boolean,
         SETTING_VALUE_DOUBLE float8,
-        SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
         SETTING_VALUE_LONG int8,
+        SETTING_VALUE_BOOLEAN boolean,
+        SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
         primary key (SETTING_ID)
     );
 
@@ -636,8 +638,10 @@ drop sequence if exists HIBERNATE_SEQUENCE;
     );
 
     create table CCM_CORE.WORKFLOW_TASK_DEPENDENCIES (
-        DEPENDS_ON_TASK_ID int8 not null,
-        DEPENDENT_TASK_ID int8 not null
+        TASK_DEPENDENCY_ID int8 not null,
+        BLOCKED_TASK_ID int8,
+        BLOCKING_TASK_ID int8,
+        primary key (TASK_DEPENDENCY_ID)
     );
 
     create table CCM_CORE.WORKFLOW_TASK_DESCRIPTIONS (
@@ -1203,13 +1207,13 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         references CCM_CORE.WORKFLOW_TASKS;
 
     alter table CCM_CORE.WORKFLOW_TASK_DEPENDENCIES 
-        add constraint FK1htp420ki24jaswtcum56iawe 
-        foreign key (DEPENDENT_TASK_ID) 
+        add constraint FKy88tppv7ihx0lsn6g64f5lfq 
+        foreign key (BLOCKED_TASK_ID) 
         references CCM_CORE.WORKFLOW_TASKS;
 
     alter table CCM_CORE.WORKFLOW_TASK_DEPENDENCIES 
-        add constraint FK8rbggnp4yjpab8quvvx800ymy 
-        foreign key (DEPENDS_ON_TASK_ID) 
+        add constraint FKrj80uilojn73u9a4xgk3vt0cj 
+        foreign key (BLOCKING_TASK_ID) 
         references CCM_CORE.WORKFLOW_TASKS;
 
     alter table CCM_CORE.WORKFLOW_TASK_DESCRIPTIONS 

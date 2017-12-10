@@ -26,6 +26,7 @@ import org.apache.shiro.subject.Subject;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CoreConstants;
+import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
@@ -53,7 +54,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-
 
 /**
  * Manager for {@link Workflow}s. The logic of some of these classes has been
@@ -128,9 +128,9 @@ public class WorkflowManager {
                 "The provided template is not an abstract workflow");
         }
 
-        Objects.requireNonNull(object, 
+        Objects.requireNonNull(object,
                                "Can't create a workflow without an object.");
-        
+
         final Workflow workflow = new Workflow();
 
         final LocalizedString name = new LocalizedString();
@@ -267,17 +267,48 @@ public class WorkflowManager {
     private void fixTaskDependencies(final Task template,
                                      final Task task,
                                      final Map<Long, Task> tasks) {
-        if (template.getDependentTasks() != null
-                && !template.getDependentTasks().isEmpty()) {
-            template.getDependentTasks().forEach(dependent
-                -> task.addDependentTask(tasks.get(dependent.getTaskId())));
+
+        if (template.getBlockedTasks() != null
+                && !template.getBlockedTasks().isEmpty()) {
+
+            for (final TaskDependency blocked : template.getBlockedTasks()) {
+
+                final Task blockingTask = tasks
+                    .get(blocked.getBlockingTask().getTaskId());
+                final Task blockedTask = tasks
+                    .get(blocked.getBlockedTask().getTaskId());
+                try {
+                    taskManager.addDependentTask(blockingTask, blockedTask);
+                } catch (CircularTaskDependencyException ex) {
+                    throw new UnexpectedErrorException(ex);
+                }
+            }
         }
 
-        if (template.getDependsOn() != null
-                && !template.getDependsOn().isEmpty()) {
-            template.getDependsOn().forEach(dependsOn
-                -> task.addDependsOn(tasks.get(dependsOn.getTaskId())));
+//        if (template.getDependentTasks() != null
+//                && !template.getDependentTasks().isEmpty()) {
+//            template.getDependentTasks().forEach(dependent
+//                -> task.addDependentTask(tasks.get(dependent.getTaskId())));
+//        }
+        for (final TaskDependency blocking : template.getBlockingTasks()) {
+
+            final Task blockingTask = tasks
+                .get(blocking.getBlockingTask().getTaskId());
+            final Task blockedTask = tasks
+                .get(blocking.getBlockedTask().getTaskId());
+            try {
+                taskManager.addDependentTask(blockingTask, blockedTask);
+            } catch(CircularTaskDependencyException ex) {
+                throw new UnexpectedErrorException(ex);
+            }
+            
         }
+
+//        if (template.getDependsOn() != null
+//                && !template.getDependsOn().isEmpty()) {
+//            template.getDependsOn().forEach(dependsOn
+//                -> task.addDependsOn(tasks.get(dependsOn.getTaskId())));
+//        }
     }
 
     /**

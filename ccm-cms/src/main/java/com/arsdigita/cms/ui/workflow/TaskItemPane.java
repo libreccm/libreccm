@@ -52,6 +52,7 @@ import org.libreccm.security.Shiro;
 import org.libreccm.workflow.Task;
 import org.libreccm.workflow.AssignableTask;
 import org.libreccm.workflow.AssignableTaskManager;
+import org.libreccm.workflow.TaskDependency;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 
 import java.util.List;
@@ -340,12 +341,15 @@ final class TaskItemPane extends BaseItemPane {
                 final WorkflowAdminPaneController controller = cdiUtil
                     .findBean(WorkflowAdminPaneController.class);
 
-                final List<Task> dependencies = controller.getDependencies(task);
+                final List<TaskDependency> blockedTasks = controller
+                    .getBlockedTasks(task);
                 final KernelConfig kernelConfig = KernelConfig.getConfig();
                 final Locale defaultLocale = kernelConfig.getDefaultLocale();
 
-                return dependencies.stream()
-                    .map(dependency -> dependency.getLabel().getValue(
+                return blockedTasks
+                    .stream()
+                    .map(TaskDependency::getBlockedTask)
+                    .map(blockedTask -> blockedTask.getLabel().getValue(
                     defaultLocale))
                     .collect(Collectors.joining(", "));
             }

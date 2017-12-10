@@ -3,10 +3,12 @@ DROP SCHEMA IF EXISTS ccm_core CASCADE;
 
 DROP SEQUENCE IF EXISTS hibernate_sequence;
 
-CREATE SCHEMA ccm_core;
-CREATE SCHEMA ccm_shortcuts;
 
-create table CCM_CORE.APPLICATIONS (
+    create schema CCM_CORE;
+
+    create schema CCM_SHORTCUTS;
+
+    create table CCM_CORE.APPLICATIONS (
         APPLICATION_TYPE varchar(1024) not null,
         PRIMARY_URL varchar(1024) not null,
         OBJECT_ID int8 not null,
@@ -530,10 +532,10 @@ create table CCM_CORE.APPLICATIONS (
         SETTING_ID int8 not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
-        SETTING_VALUE_DOUBLE float8,
         SETTING_VALUE_STRING varchar(1024),
-        SETTING_VALUE_BOOLEAN boolean,
+        SETTING_VALUE_DOUBLE float8,
         SETTING_VALUE_LONG int8,
+        SETTING_VALUE_BOOLEAN boolean,
         SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
         primary key (SETTING_ID)
     );
@@ -553,6 +555,20 @@ create table CCM_CORE.APPLICATIONS (
     create table CCM_CORE.SETTINGS_STRING_LIST (
         LIST_ID int8 not null,
         value varchar(255)
+    );
+
+    create table CCM_CORE.SITE_AWARE_APPLICATIONS (
+        OBJECT_ID int8 not null,
+        SITE_ID int8,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CORE.SITES (
+        DEFAULT_SITE boolean,
+        DEFAULT_THEME varchar(255),
+        DOMAIN_OF_SITE varchar(255),
+        OBJECT_ID int8 not null,
+        primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.THREADS (
@@ -623,8 +639,10 @@ create table CCM_CORE.APPLICATIONS (
     );
 
     create table CCM_CORE.WORKFLOW_TASK_DEPENDENCIES (
-        DEPENDS_ON_TASK_ID int8 not null,
-        DEPENDENT_TASK_ID int8 not null
+        TASK_DEPENDENCY_ID int8 not null,
+        BLOCKED_TASK_ID int8,
+        BLOCKING_TASK_ID int8,
+        primary key (TASK_DEPENDENCY_ID)
     );
 
     create table CCM_CORE.WORKFLOW_TASK_DESCRIPTIONS (
@@ -679,6 +697,9 @@ create table CCM_CORE.APPLICATIONS (
 
     alter table CCM_CORE.SETTINGS 
         add constraint UK5whinfxdaepqs09e5ia9y71uk unique (CONFIGURATION_CLASS, NAME);
+
+    alter table CCM_CORE.SITES 
+        add constraint UK_kou1h4y4st2m173he44yy8grx unique (DOMAIN_OF_SITE);
 
     alter table CCM_CORE.WORKFLOW_TASK_COMMENTS 
         add constraint UK_4nnedf08odyjxalfkg16fmjoi unique (UUID);
@@ -1111,6 +1132,21 @@ create table CCM_CORE.APPLICATIONS (
         foreign key (LIST_ID) 
         references CCM_CORE.SETTINGS;
 
+    alter table CCM_CORE.SITE_AWARE_APPLICATIONS 
+        add constraint FKopo91c29jaunpcusjwlphhxkd 
+        foreign key (SITE_ID) 
+        references CCM_CORE.SITES;
+
+    alter table CCM_CORE.SITE_AWARE_APPLICATIONS 
+        add constraint FKslbu2qagg23dmdu01lun7oh7x 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.APPLICATIONS;
+
+    alter table CCM_CORE.SITES 
+        add constraint FKrca95c6p023men53b8ayu26kp 
+        foreign key (OBJECT_ID) 
+        references CCM_CORE.CCM_OBJECTS;
+
     alter table CCM_CORE.THREADS 
         add constraint FKsx08mpwvwnw97uwdgjs76q39g 
         foreign key (ROOT_ID) 
@@ -1177,13 +1213,13 @@ create table CCM_CORE.APPLICATIONS (
         references CCM_CORE.WORKFLOW_TASKS;
 
     alter table CCM_CORE.WORKFLOW_TASK_DEPENDENCIES 
-        add constraint FK1htp420ki24jaswtcum56iawe 
-        foreign key (DEPENDENT_TASK_ID) 
+        add constraint FKy88tppv7ihx0lsn6g64f5lfq 
+        foreign key (BLOCKED_TASK_ID) 
         references CCM_CORE.WORKFLOW_TASKS;
 
     alter table CCM_CORE.WORKFLOW_TASK_DEPENDENCIES 
-        add constraint FK8rbggnp4yjpab8quvvx800ymy 
-        foreign key (DEPENDS_ON_TASK_ID) 
+        add constraint FKrj80uilojn73u9a4xgk3vt0cj 
+        foreign key (BLOCKING_TASK_ID) 
         references CCM_CORE.WORKFLOW_TASKS;
 
     alter table CCM_CORE.WORKFLOW_TASK_DESCRIPTIONS 

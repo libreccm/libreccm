@@ -58,6 +58,7 @@ import org.libreccm.categorization.CategoryManager;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.Shiro;
+import org.libreccm.workflow.TaskDependency;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSectionManager;
 import org.librecms.dispatcher.ItemResolver;
@@ -171,11 +172,15 @@ public class Summary extends CMSContainer {
                 final GraphSet graph = new GraphSet();
 
                 for (final Task task : tasks) {
-                    final List<Task> dependsOn = task.getDependsOn();
+                    final List<TaskDependency> blockingTasks = task
+                        .getBlockingTasks();
                     final StringBuilder builder = new StringBuilder();
-                    for (final Task dep : dependsOn) {
-                        graph.addEdge(task, dep, null);
-                        builder.append(dep.getLabel().getValue(language));
+                    for (final TaskDependency blocking : blockingTasks) {
+                        graph.addEdge(task, blocking, null);
+                        builder.append(blocking
+                            .getBlockingTask()
+                            .getLabel()
+                            .getValue(language));
                     }
 
                     final int len = builder.length();

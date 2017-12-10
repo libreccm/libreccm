@@ -35,6 +35,7 @@ import com.arsdigita.util.UncheckedWrapperException;
 import org.libreccm.workflow.Task;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.workflow.CircularTaskDependencyException;
+import org.libreccm.workflow.TaskDependency;
 import org.libreccm.workflow.TaskManager;
 import org.libreccm.workflow.TaskRepository;
 import org.librecms.CmsConstants;
@@ -187,10 +188,12 @@ class BaseTaskForm extends BaseForm {
      */
     final void processDependencies(final Task task,
                                    final String[] selectedDependencies) {
-        final List<Task> dependencies = task.getDependentTasks();
+        final List<TaskDependency> blockedTasks = task.getBlockedTasks();
         final Map<Long, Task> toAdd = new HashMap<>();
         // Everything is to be removed unless it is in the array.
-        final Map<Long, Task> toRemove = dependencies.stream()
+        final Map<Long, Task> toRemove = blockedTasks
+            .stream()
+            .map(TaskDependency::getBlockedTask)
             .collect(Collectors.toMap(Task::getTaskId,
                                       dependency -> dependency));
 

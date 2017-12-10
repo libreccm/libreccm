@@ -34,9 +34,8 @@ import org.librecms.workflow.CmsTask;
 import com.arsdigita.util.UncheckedWrapperException;
 
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.workflow.Task;
-import org.libreccm.workflow.TaskRepository;
+import org.libreccm.workflow.TaskDependency;
 import org.libreccm.workflow.Workflow;
 import org.librecms.workflow.CmsTaskType;
 
@@ -125,9 +124,11 @@ class TaskEditForm extends BaseTaskForm {
             final WorkflowAdminPaneController controller = cdiUtil.findBean(
                 WorkflowAdminPaneController.class);
 
-            final List<Task> dependencies = controller.getDependencies(task);
-            final List<String> depIdList = dependencies.stream()
-                .map(dependency -> Long.toString(dependency.getTaskId()))
+            final List<TaskDependency> blockedTasks = controller.getBlockedTasks(task);
+            final List<String> depIdList = blockedTasks
+                .stream()
+                .map(TaskDependency::getBlockedTask)
+                .map(blockedTask -> Long.toString(blockedTask.getTaskId()))
                 .collect(Collectors.toList());
 
             getDependenciesOptionGroup().setValue(state, depIdList.toArray());
