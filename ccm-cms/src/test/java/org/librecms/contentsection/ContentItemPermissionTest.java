@@ -46,7 +46,6 @@ import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
 import org.libreccm.tests.categories.IntegrationTest;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -150,6 +149,7 @@ public class ContentItemPermissionTest {
             .addClass(org.libreccm.security.Relation.class)
             //Classes required by org.libreccm.workflow.Task.class
             .addClass(org.libreccm.workflow.TaskComment.class)
+            .addClass(org.libreccm.workflow.TaskDependency.class)
             .addClass(org.libreccm.workflow.TaskState.class)
             .addClass(org.libreccm.workflow.Workflow.class)
             .addClass(org.libreccm.workflow.AbstractWorkflowException.class)
