@@ -26,13 +26,18 @@ import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
 
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+
+import javax.persistence.TypedQuery;
 
 /**
  * Manager for {@link Task}s. The logic of some of this methods has been taken
@@ -94,8 +99,8 @@ public class TaskManager {
     /**
      * Adds a dependent {@link Task} to another {@code Task}.
      *
-     * @param parent The task to which the dependent task is added.
-     * @param task   The dependent task.
+     * @param blockingTask The task which blocks the blocked task.
+     * @param blockedTask  The task blocked by the blocking task.
      *
      * @throws CircularTaskDependencyException If a circular dependency is
      *                                         detected.
@@ -103,33 +108,81 @@ public class TaskManager {
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
-    public void addDependentTask(final Task parent, final Task task)
+    public void addDependentTask(final Task blockingTask,
+                                 final Task blockedTask)
         throws CircularTaskDependencyException {
 
-        checkForCircularDependencies(parent, task);
+        Objects.requireNonNull(blockedTask);
+        Objects.requireNonNull(blockingTask);
 
-        parent.addDependentTask(task);
-        task.addDependsOn(parent);
+        LOGGER.debug("Adding a dependency between task {} (blocking task) "
+                         + "and task {} (blocked task)...",
+                     Objects.toString(blockingTask),
+                     Objects.toString(blockedTask));
 
-        taskRepo.save(task);
-        taskRepo.save(parent);
+        LOGGER.debug("Checking for circular dependencies...");
+        checkForCircularDependencies(blockingTask, blockedTask);
+
+        LOGGER.debug("Checking if dependency already exists...");
+        final TypedQuery<Boolean> query = entityManager
+            .createNamedQuery("Task.existsDependency", Boolean.class);
+        query.setParameter("blockingTask", blockingTask);
+        query.setParameter("blockedTask", blockedTask);
+        final Boolean dependencyExists = query.getSingleResult();
+
+        if (dependencyExists) {
+            LOGGER.info("Dependency between task {} (blocking task) "
+                            + "and task {} (blocked task) already exists.",
+                        Objects.toString(blockingTask),
+                        Objects.toString(blockedTask));
+            return;
+        }
+
+        final TaskDependency dependency = new TaskDependency();
+        dependency.setBlockedTask(blockedTask);
+        dependency.setBlockingTask(blockingTask);
+        
+        blockingTask.addBlockedTask(dependency);
+        blockedTask.addBlockingTask(dependency);
+        
+//        blockingTask.addDependentTask(blockedTask);
+//        blockedTask.addDependsOn(blockingTask);
+
+        entityManager.persist(dependency);
+        taskRepo.save(blockedTask);
+        taskRepo.save(blockingTask);
     }
 
     /**
      * Removes a dependent task.
      *
-     * @param parent The task from which the dependent task is removed.
-     * @param task   The dependent task to remove.
+     * @param blockingTask The task which blocks the other task.
+     * @param blockedTask   The task which is blocked by the other task.
      */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
-    public void removeDependentTask(final Task parent, final Task task) {
-        parent.removeDependentTask(task);
-        task.removeDependsOn(parent);
+    public void removeDependentTask(final Task blockingTask, 
+                                    final Task blockedTask) {
 
-        taskRepo.save(task);
-        taskRepo.save(parent);
+        final TypedQuery<TaskDependency> query = entityManager
+        .createNamedQuery("Task.findDependency", TaskDependency.class);
+        query.setParameter("blockedTask", blockedTask);
+        query.setParameter("blockingTask", blockingTask);
+        final List<TaskDependency> dependencies = query.getResultList();
+        
+        for(final TaskDependency dependency : dependencies) {
+            
+            entityManager.remove(dependency);
+            blockingTask.removeBlockedTask(dependency);
+            blockedTask.removeBlockingTask(dependency);
+        }
+        
+//        blockingTask.removeDependentTask(blockedTask);
+//        blockedTask.removeDependsOn(blockingTask);
+
+        taskRepo.save(blockedTask);
+        taskRepo.save(blockingTask);
     }
 
     /**
@@ -149,19 +202,27 @@ public class TaskManager {
         }
     }
 
-    private boolean dependsOn(final Task task, final Task dependsOn) {
-        for (final Task current : task.getDependsOn()) {
-            if (current.equals(dependsOn)) {
-                return true;
-            }
-
-            if (current.getDependsOn() != null
-                    && !current.getDependsOn().isEmpty()) {
-                return dependsOn(current, dependsOn);
-            }
-        }
-
-        return false;
+    private boolean dependsOn(final Task blockingTask, final Task blockedTask) {
+        
+        final TypedQuery<Boolean> query = entityManager
+        .createNamedQuery("Task.existsDependency", Boolean.class);
+        query.setParameter("blockingTask", blockingTask);
+        query.setParameter("blockedTask", blockedTask);
+        
+        return query.getSingleResult();
+        
+//        for (final Task current : blockingTask.getDependsOn()) {
+//            if (current.equals(blockedTask)) {
+//                return true;
+//            }
+//
+//            if (current.getDependsOn() != null
+//                    && !current.getDependsOn().isEmpty()) {
+//                return dependsOn(current, blockedTask);
+//            }
+//        }
+//
+//        return false;
     }
 
     /**
@@ -252,10 +313,9 @@ public class TaskManager {
      * @param task The task to finish.
      */
     public void finish(final Task task) {
-        if (task == null) {
-            throw new IllegalArgumentException("Can't finished null...");
-        }
-
+        
+        Objects.requireNonNull(task, "Can't finished null...");
+        
         if (task.getTaskState() != TaskState.ENABLED) {
             throw new IllegalArgumentException(String.format(
                 "Task %s is not enabled.",
@@ -265,7 +325,11 @@ public class TaskManager {
         task.setTaskState(TaskState.FINISHED);
         taskRepo.save(task);
 
-        task.getDependentTasks().forEach(dependent -> updateState(dependent));
+        task
+            .getBlockedTasks()
+            .stream()
+            .map(TaskDependency::getBlockedTask)
+            .forEach(this::updateState);
     }
 
     /**
@@ -276,6 +340,9 @@ public class TaskManager {
      * @param task
      */
     protected void updateState(final Task task) {
+        
+        Objects.requireNonNull(task);
+        
         LOGGER.debug("Updating state for task {}...",
                      Objects.toString(task));
 
@@ -285,11 +352,13 @@ public class TaskManager {
             return;
         }
 
-        for (final Task dependsOnTask : task.getDependsOn()) {
+        for (final TaskDependency blockingTaskDependency : task.getBlockingTasks()) {
+            
+            final Task blockingTask = blockingTaskDependency.getBlockingTask();
             LOGGER.debug("Checking dependency {}...",
-                         Objects.toString(dependsOnTask));
-            if (dependsOnTask.getTaskState() != TaskState.FINISHED
-                    && dependsOnTask.isActive()) {
+                         Objects.toString(blockingTask));
+            if (blockingTask.getTaskState() != TaskState.FINISHED
+                    && blockingTask.isActive()) {
 
                 LOGGER.debug("Dependency is not yet satisfied.");
 

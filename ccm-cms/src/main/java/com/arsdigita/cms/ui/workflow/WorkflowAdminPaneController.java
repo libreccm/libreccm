@@ -31,6 +31,7 @@ import org.libreccm.security.RoleRepository;
 import org.libreccm.workflow.AssignableTaskManager;
 import org.libreccm.workflow.CircularTaskDependencyException;
 import org.libreccm.workflow.Task;
+import org.libreccm.workflow.TaskDependency;
 import org.libreccm.workflow.TaskManager;
 import org.libreccm.workflow.TaskRepository;
 import org.libreccm.workflow.Workflow;
@@ -208,10 +209,12 @@ public class WorkflowAdminPaneController {
      */
     private void processDependencies(final Task task,
                                      final String[] selectedDependencies) {
-        final List<Task> dependencies = task.getDependentTasks();
+        final List<TaskDependency> blockedTasks = task.getBlockedTasks();
         final Map<Long, Task> toAdd = new HashMap<>();
         // Everything is to be removed unless it is in the array.
-        final Map<Long, Task> toRemove = dependencies.stream()
+        final Map<Long, Task> toRemove = blockedTasks
+            .stream()
+            .map(TaskDependency::getBlockedTask)
             .collect(Collectors.toMap(Task::getTaskId,
                                       dependency -> dependency));
 
@@ -241,7 +244,7 @@ public class WorkflowAdminPaneController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<Task> getDependencies(final Task task) {
+    public List<TaskDependency> getBlockedTasks(final Task task) {
 
         final Task theTask = taskRepo
             .findById(task.getTaskId())
@@ -249,7 +252,7 @@ public class WorkflowAdminPaneController {
             "No Task with ID %d in the database. Where did that ID come from?",
             task.getTaskId())));
 
-        return new ArrayList<>(theTask.getDependsOn());
+        return new ArrayList<>(theTask.getBlockedTasks());
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -266,10 +269,12 @@ public class WorkflowAdminPaneController {
 
         while (tasksIter.hasNext()) {
             Task task = tasksIter.next();
-            final Iterator<Task> deps = task.getDependsOn().iterator();
+            final Iterator<TaskDependency> deps = task
+                .getBlockingTasks()
+                .iterator();
             final StringBuffer buffer = new StringBuffer();
             while (deps.hasNext()) {
-                Task dep = deps.next();
+                Task dep = deps.next().getBlockingTask();
                 graphSet.addEdge(task, dep, null);
                 buffer
                     .append(dep.getLabel().getValue(defaultLocale))

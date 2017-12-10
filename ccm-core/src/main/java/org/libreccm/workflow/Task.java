@@ -20,14 +20,13 @@ package org.libreccm.workflow;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.Identifiable;
 import org.libreccm.l10n.LocalizedString;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,6 +34,28 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import javax.persistence.AssociationOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 
 /**
  * A task is part of a workflow and represents a specific step in the creation
@@ -84,6 +105,21 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
         query = "SELECT t FROM Task t "
                     + "WHERE t.workflow = :workflow "
                     + "AND t.taskState = org.libreccm.workflow.TaskState.FINISHED")
+    ,
+    @NamedQuery(
+        name = "Task.existsDependency",
+        query = "SELECT (CASE WHEN COUNT(d) > 0 THEN true ELSE false END) "
+                    + "FROM TaskDependency d "
+                    + "WHERE d.blockedTask = :blockedTask "
+                    + "AND d.blockingTask = :blockingTask"
+    )
+    ,
+    @NamedQuery(
+        name = "Task.findDependency",
+        query = "SELECT d FROM TaskDependency d "
+                    + "WHERE d.blockedTask = :blockedTask "
+                    + "AND d.blockingTask = :blockingTask"
+    )
 })
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
                   resolver = TaskIdResolver.class,
@@ -152,26 +188,34 @@ public class Task implements Identifiable, Serializable {
     @JsonIdentityReference(alwaysAsId = true)
     private Workflow workflow;
 
-    /**
-     * Tasks which depend on this task.
-     */
-    @ManyToMany(mappedBy = "dependsOn", fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<Task> dependentTasks;
+//    /**
+//     * Tasks which depend on this task.
+//     */
+//    @ManyToMany(mappedBy = "dependsOn", fetch = FetchType.LAZY)
+//    @JsonIgnore
+//    private List<Task> dependentTasks;
+    @OneToMany(mappedBy = "blockingTask", fetch = FetchType.LAZY)
+    @XmlElementWrapper(name = "blocked-tasks")
+    @XmlElement(name = "task-dependency")
+    private List<TaskDependency> blockedTasks;
 
-    /**
-     * The dependencies of this task.
-     */
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "WORKFLOW_TASK_DEPENDENCIES",
-               schema = DB_SCHEMA,
-               joinColumns = {
-                   @JoinColumn(name = "DEPENDS_ON_TASK_ID")},
-               inverseJoinColumns = {
-                   @JoinColumn(name = "DEPENDENT_TASK_ID")})
-    @JsonIdentityReference(alwaysAsId = true)
-    private List<Task> dependsOn;
+    @OneToMany(mappedBy = "blockedTask", fetch = FetchType.LAZY)
+    @XmlElementWrapper(name = "blocking-tasks")
+    @XmlElement(name = "task-dependency")
+    private List<TaskDependency> blockingTasks;
 
+//    /**
+//     * The dependencies of this task.
+//     */
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    @JoinTable(name = "WORKFLOW_TASK_DEPENDENCIES",
+//               schema = DB_SCHEMA,
+//               joinColumns = {
+//                   @JoinColumn(name = "DEPENDS_ON_TASK_ID")},
+//               inverseJoinColumns = {
+//                   @JoinColumn(name = "DEPENDENT_TASK_ID")})
+//    @JsonIdentityReference(alwaysAsId = true)
+//    private List<Task> dependsOn;
     /**
      * Comments for the task.
      */
@@ -185,8 +229,10 @@ public class Task implements Identifiable, Serializable {
 
         label = new LocalizedString();
         description = new LocalizedString();
-        dependentTasks = new ArrayList<>();
-        dependsOn = new ArrayList<>();
+//        dependentTasks = new ArrayList<>();
+//        dependsOn = new ArrayList<>();
+        blockedTasks = new ArrayList<>();
+        blockingTasks = new ArrayList<>();
         comments = new ArrayList<>();
         active = false;
     }
@@ -250,44 +296,83 @@ public class Task implements Identifiable, Serializable {
         this.workflow = workflow;
     }
 
-    public List<Task> getDependentTasks() {
-        if (dependentTasks == null) {
+//    public List<Task> getDependentTasks() {
+//        if (dependentTasks == null) {
+//            return null;
+//        } else {
+//            return Collections.unmodifiableList(dependentTasks);
+//        }
+//    }
+//
+//    protected void setDependentTasks(final List<Task> dependentTasks) {
+//        this.dependentTasks = dependentTasks;
+//    }
+//
+//    protected void addDependentTask(final Task task) {
+//        dependentTasks.add(task);
+//    }
+//
+//    protected void removeDependentTask(final Task task) {
+//        dependentTasks.remove(task);
+//    }
+//
+//    public List<Task> getDependsOn() {
+//        if (dependsOn == null) {
+//            return null;
+//        } else {
+//            return Collections.unmodifiableList(dependsOn);
+//        }
+//    }
+//
+//    protected void setDependsOn(final List<Task> dependsOn) {
+//        this.dependsOn = dependsOn;
+//    }
+//
+//    protected void addDependsOn(final Task task) {
+//        dependsOn.add(task);
+//    }
+//
+//    protected void removeDependsOn(final Task task) {
+//        dependsOn.remove(task);
+//    }
+    public List<TaskDependency> getBlockingTasks() {
+        if (blockingTasks == null) {
             return null;
         } else {
-            return Collections.unmodifiableList(dependentTasks);
+            return Collections.unmodifiableList(blockingTasks);
         }
     }
 
-    protected void setDependentTasks(final List<Task> dependentTasks) {
-        this.dependentTasks = dependentTasks;
+    protected void setBlockingTasks(final List<TaskDependency> blockingTasks) {
+        this.blockingTasks = blockingTasks;
     }
 
-    protected void addDependentTask(final Task task) {
-        dependentTasks.add(task);
+    protected void addBlockingTask(final TaskDependency taskDependency) {
+        blockingTasks.add(taskDependency);
     }
 
-    protected void removeDependentTask(final Task task) {
-        dependentTasks.remove(task);
+    protected void removeBlockingTask(final TaskDependency taskDependency) {
+        blockingTasks.remove(taskDependency);
     }
 
-    public List<Task> getDependsOn() {
-        if (dependsOn == null) {
+    public List<TaskDependency> getBlockedTasks() {
+        if (blockedTasks == null) {
             return null;
         } else {
-            return Collections.unmodifiableList(dependsOn);
+            return Collections.unmodifiableList(blockedTasks);
         }
     }
 
-    protected void setDependsOn(final List<Task> dependsOn) {
-        this.dependsOn = dependsOn;
+    protected void setBlockedTasks(final List<TaskDependency> blockedTasks) {
+        this.blockedTasks = blockedTasks;
     }
 
-    protected void addDependsOn(final Task task) {
-        dependsOn.add(task);
+    protected void addBlockedTask(final TaskDependency taskDependency) {
+        blockedTasks.add(taskDependency);
     }
 
-    protected void removeDependsOn(final Task task) {
-        dependsOn.remove(task);
+    protected void removeBlockedTask(final TaskDependency taskDependency) {
+        blockedTasks.remove(taskDependency);
     }
 
     public List<TaskComment> getComments() {

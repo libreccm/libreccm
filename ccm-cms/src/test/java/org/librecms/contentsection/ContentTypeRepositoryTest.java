@@ -52,7 +52,6 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.persistence.CleanupUsingScript;
 import org.jboss.arquillian.persistence.TestExecutionPhase;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -387,6 +386,7 @@ public class ContentTypeRepositoryTest {
             .addClass(org.libreccm.workflow.Task.class)
             .addClass(org.libreccm.workflow.TaskAssignment.class)
             .addClass(org.libreccm.workflow.TaskComment.class)
+            .addClass(org.libreccm.workflow.TaskDependency.class)
             .addClass(org.libreccm.workflow.TaskState.class)
             .addClass(org.libreccm.workflow.Workflow.class)
             .addClass(org.libreccm.workflow.WorkflowState.class)
