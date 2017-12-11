@@ -6,15 +6,43 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
+    <!--<parent>
         <groupId>org.libreccm</groupId>
         <artifactId>libreccm-parent</artifactId>
+        <version>7.0.0-SNAPSHOT</version>
+    </parent>-->
+    
+    <parent>
+        <groupId>org.libreccm</groupId>
+        <artifactId>ccm-bundle-devel</artifactId>
+        <relativePath>../ccm-bundle-devel</relativePath>
         <version>7.0.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.libreccm</groupId>
     <artifactId>ccm-bundle-devel-wildfly-swarm</artifactId>
     <packaging>war</packaging>
+    
+    <name>LibreCCM Devel Bundle for Wildfly Swarm</name>
+    <url>http://www.libreccm.org</url>
+    <distributionManagement>
+        <site>
+            <id>libreccm-site</id>
+            <name>LibreCCM</name>
+            <url>http://www.libreccm.org/project-sites/</url>
+        </site>
+    </distributionManagement>
+
+    <organization>
+        <name>LibreCCM Foundation</name>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>LGPLv2 or newer</name>
+            <url>http://www.gnu.org/licenses/lgpl-2.0.html</url>
+        </license>
+    </licenses>
     
     <properties>
         <failOnMissingWebXml>false</failOnMissingWebXml>
@@ -24,8 +52,8 @@
         <dependencies>
             <dependency>
                 <groupId>org.wildfly.swarm</groupId>
-                <artifactId>bom</artifactId>
-                <version>2017.1.1</version>
+                <artifactId>bom-all</artifactId>
+                <version>2017.11.0</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -33,15 +61,63 @@
     </dependencyManagement>
     
     <dependencies>
+        
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>cdi</artifactId>
+        </dependency>
+        
         <dependency>
             <groupId>org.wildfly.swarm</groupId>
             <artifactId>container</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>datasources</artifactId>
+        </dependency>
+         
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>logging</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>jaxrs</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>jaxrs-cdi</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>jsf</artifactId>
+        </dependency>
+        
+        
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>mail</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>undertow</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>9.4.1212.jre7</version>
+            <version>42.1.4.jre7</version>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -61,7 +137,7 @@
                         </goals>
                     </execution>
                 </executions>
-           </plugin>
+            </plugin>
         </plugins>
     </build>
 
