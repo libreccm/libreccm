@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+                             http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+    
+    <display-name>LibreCCM Devel Bundle for Wildfly</display-name>
+    
+    <context-param>
+        <param-name>ccm.develmode</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>ccm.distribution</param-name>
+        <param-value>libreccm</param-value>
+    </context-param>
+
+    <!-- No JSESSIONID!!! -->
+    <session-config>
+        <tracking-mode>COOKIE</tracking-mode>
+        <!--<tracking-mode>URL</tracking-mode>-->
+    </session-config>
+
+    <filter>
+        <filter-name>ShiroFilter</filter-name>
+        <filter-class>org.apache.shiro.web.servlet.ShiroFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>ShiroFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <listener>
+        <listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
+    </listener>
+    
+    <!-- JAX-RS -->
+    <!--<servlet>
+        <servlet-name>javax.ws.rs.core.Application</servlet-name>
+        
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>javax.ws.rs.core.Application</servlet-name>
+        <url-pattern>/content-sections/*</url-pattern>
+    </servlet-mapping>-->
+    
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.xhtml</url-pattern>
+    </servlet-mapping>
+    
+    <context-param>
+        <param-name>javax.faces.PROJECT_STAGE</param-name>
+        <param-value>Development</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    
+    <servlet>
+        <servlet-name>vaadin-servlet</servlet-name>
+        <servlet-class>com.vaadin.cdi.server.VaadinCDIServlet</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>vaadin-servlet</servlet-name>
+        <url-pattern>/vaadin/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>vaadin-servlet</servlet-name>
+        <url-pattern>/VAADIN/*</url-pattern>
+    </servlet-mapping>
+    
+</web-app>
