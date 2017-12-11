@@ -39,34 +39,41 @@
     </licenses>
 
     <modules>
+        
+        <!-- Provides basic functionality required by all modules -->
         <module>ccm-core</module>
-        <module>ccm-shortcuts</module>
+        
+        <!-- Additional modules used by most/all modules (including ccm-core) -->
         <module>ccm-testutils</module>
-        <module>ccm-docrepo</module>
+        <module>ccm-xafilesystemadapter</module>
         
-        <!-- Bundle modules -->
-        <!--<module>ccm-bundle-devel-swarm</module>-->
-        <!--<module>ccm-bundle-devel-wildfly</module>-->
-        <!--<module>ccm-test-bundle-wildfly8</module>-->
-        
-        <module>ccm-theme-foundry</module>
-        
-        <!-- Archetypes -->
-        <module>ccm-archetype-module</module>
+        <!-- CMS modules -->
         <module>ccm-cms</module>
-        <module>ccm-cms-archetype-contenttype</module>
+        
         <module>ccm-cms-types-agenda</module>
         <module>ccm-cms-types-bookmark</module>
-        <module>ccm-cms-types-minutes</module>
         <module>ccm-cms-types-decisiontree</module>
-        <module>ccm-cms-types-glossaryitem</module>
-        <module>ccm-cms-types-faqitem</module>
         <module>ccm-cms-types-externallink</module>
+        <module>ccm-cms-types-faqitem</module>
+        <module>ccm-cms-types-glossaryitem</module>
+        <module>ccm-cms-types-minutes</module>
+        
+        <!-- Miscellaneous modules  -->
+        <module>ccm-docrepo</module>
+        <module>ccm-shortcuts</module>
+        
+        <!-- Modules providing themes -->
+        <module>ccm-theme-foundry</module>
+        
+        <!-- Bundle modules -->
         <module>ccm-bundle-devel</module>
         <module>ccm-bundle-devel-wildfly-web</module>
         <module>ccm-bundle-devel-wildfly</module>
-        <!--<module>ccm-bundle-devel-wildfly-swarm</module>-->
-        <module>ccm-xafilesystemadapter</module>
+        <module>ccm-bundle-devel-wildfly-swarm</module>
+        
+        <!-- Archetypes -->
+        <module>ccm-archetype-module</module>
+        <module>ccm-cms-archetype-contenttype</module>
     </modules>
 
     <reporting>
