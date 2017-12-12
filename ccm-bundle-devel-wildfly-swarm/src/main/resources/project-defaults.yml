@@ -1,0 +1,5 @@
+swarm:
+    deployment:
+        ccm-bundle-devel-wildfly.war:
+            jaxrs:
+                application-path: /jaxrs

@@ -76,10 +76,20 @@
             <groupId>org.wildfly.swarm</groupId>
             <artifactId>datasources</artifactId>
         </dependency>
-         
+        
         <dependency>
             <groupId>org.wildfly.swarm</groupId>
-            <artifactId>logging</artifactId>
+            <artifactId>ejb</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>hibernate-search</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>hibernate-validator</artifactId>
         </dependency>
         
         <dependency>
@@ -94,9 +104,18 @@
         
         <dependency>
             <groupId>org.wildfly.swarm</groupId>
+            <artifactId>jpa</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
             <artifactId>jsf</artifactId>
         </dependency>
         
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>logging</artifactId>
+        </dependency>
         
         <dependency>
             <groupId>org.wildfly.swarm</groupId>
@@ -121,7 +140,7 @@
     </dependencies>
 
     <build>
-        <finalName>ccm-bundle-devel-wildfly-swarm</finalName>
+        <finalName>ccm-bundle-devel-wildfly</finalName>
         
         <plugins>
             <plugin>
@@ -137,6 +156,37 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <overlays>
+                        <overlay>
+                            <groupId>org.libreccm</groupId>
+                            <artifactId>ccm-theme-foundry</artifactId>
+                            <type>jar</type>
+                        </overlay>
+                        <overlay>
+                            <groupId>org.libreccm</groupId>
+                            <artifactId>ccm-core</artifactId>
+                            <type>jar</type>
+                            <includes>
+                                <include>assets/</include>
+                                <include>VAADIN/</include>
+                            </includes>
+                        </overlay>
+                        <overlay>
+                            <groupId>org.librecms</groupId>
+                            <artifactId>ccm-cms</artifactId>
+                            <type>jar</type>
+                            <includes>
+                                <include>templates/</include>
+                            </includes>
+                        </overlay>
+                    </overlays>
+                </configuration>
             </plugin>
         </plugins>
     </build>
