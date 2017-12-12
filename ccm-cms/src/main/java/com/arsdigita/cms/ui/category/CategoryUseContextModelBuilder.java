@@ -23,8 +23,11 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.list.AbstractListModelBuilder;
 import com.arsdigita.bebop.list.ListModel;
 import com.arsdigita.cms.CMS;
+
+import org.libreccm.categorization.Domain;
 import org.libreccm.categorization.DomainOwnership;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.contentsection.ContentSection;
 
 import java.util.Iterator;
@@ -36,8 +39,6 @@ import java.util.Iterator;
  * @author Scott Seago
  */
 class CategoryUseContextModelBuilder extends AbstractListModelBuilder {
-
-    private static String DEFAULT_USE_CONTEXT = "<default>";
 
     @Override
     public final ListModel makeModel(final List list, final PageState state) {
@@ -74,12 +75,28 @@ class CategoryUseContextModelBuilder extends AbstractListModelBuilder {
 
         @Override
         public Object getElement() {
-            return current.getDomain().getRoot();
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final GlobalizationHelper globalizationHelper = cdiUtil
+                .findBean(GlobalizationHelper.class);
+            final Domain categorySystem = current.getDomain();
+            if (categorySystem
+                .getTitle()
+                .hasValue(globalizationHelper.getNegotiatedLocale())) {
+
+                return globalizationHelper
+                    .getValueFromLocalizedString(current.getDomain().getTitle());
+            } else {
+                return categorySystem.getDomainKey();
+            }
+
         }
 
         @Override
         public String getKey() {
-            return current.getContext() != null ? current.getContext() : DEFAULT_USE_CONTEXT;
+
+            return Long.toString(current.getDomain().getObjectId());
         }
+
     }
+
 }
