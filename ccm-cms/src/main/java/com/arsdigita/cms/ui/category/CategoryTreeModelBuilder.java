@@ -27,11 +27,11 @@ import com.arsdigita.cms.CMS;
 import com.arsdigita.util.LockableImpl;
 
 import org.libreccm.categorization.Category;
-import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.categorization.CategoryTreeModelLite;
+import org.libreccm.categorization.Domain;
 import org.libreccm.categorization.DomainOwnership;
+import org.libreccm.categorization.DomainRepository;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.UnexpectedErrorException;
 import org.librecms.contentsection.ContentSection;
 
 /**
@@ -43,17 +43,18 @@ import org.librecms.contentsection.ContentSection;
 class CategoryTreeModelBuilder extends LockableImpl
     implements TreeModelBuilder {
 
-    private static String DEFAULT_USE_CONTEXT = "<default>";
-
-    private SingleSelectionModel m_contextModel = null;
+//    private static String DEFAULT_USE_CONTEXT = "<default>";
+    private final SingleSelectionModel<String> selectedCategorySystem;
 
     public CategoryTreeModelBuilder() {
         this(null);
     }
 
-    public CategoryTreeModelBuilder(SingleSelectionModel contextModel) {
+    public CategoryTreeModelBuilder(
+        final SingleSelectionModel<String> selectedCategorySystem) {
+
         super();
-        m_contextModel = contextModel;
+        this.selectedCategorySystem = selectedCategorySystem;
     }
 
     @Override
@@ -61,11 +62,9 @@ class CategoryTreeModelBuilder extends LockableImpl
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final Category root;
-        if (DEFAULT_USE_CONTEXT.equals(m_contextModel.getSelectedKey(state))) {
-            final ContentSection section = CMS
-                .getContext()
-                .getContentSection();
 
+        if (selectedCategorySystem.getSelectedKey(state) == null) {
+            final ContentSection section =CMS.getContext().getContentSection();
             final CategoryAdminController controller = cdiUtil
                 .findBean(CategoryAdminController.class);
             final java.util.List<DomainOwnership> ownerships
@@ -73,16 +72,40 @@ class CategoryTreeModelBuilder extends LockableImpl
                     .retrieveDomains(section);
             root = ownerships.get(0).getDomain().getRoot();
         } else {
-            final CategoryRepository categoryRepo = cdiUtil
-                .findBean(CategoryRepository.class);
-            root = categoryRepo
-                .findById(Long.parseLong((String) m_contextModel
+            final DomainRepository domainRepo = cdiUtil
+                .findBean(DomainRepository.class);
+            final Domain categorySystem = domainRepo
+                .findById(Long.parseLong(selectedCategorySystem
                     .getSelectedKey(state)))
-                .orElseThrow(() -> new UnexpectedErrorException(String
-                .format("No Category with ID %s in the database.",
-                        m_contextModel.getSelectedKey(state))));
+                .orElseThrow(() -> new IllegalArgumentException(String
+                .format("No Domain with ID %s in the database.",
+                        selectedCategorySystem.getSelectedKey(state))));
+
+            root = categorySystem.getRoot();
         }
 
+//        if (DEFAULT_USE_CONTEXT.equals(selectedCategorySystem.getSelectedKey(
+//            state))) {
+//            final ContentSection section = CMS
+//                .getContext()
+//                .getContentSection();
+//
+//            final CategoryAdminController controller = cdiUtil
+//                .findBean(CategoryAdminController.class);
+//            final java.util.List<DomainOwnership> ownerships
+//                                                      = controller
+//                    .retrieveDomains(section);
+//            root = ownerships.get(0).getDomain().getRoot();
+//        } else {
+//            final CategoryRepository categoryRepo = cdiUtil
+//                .findBean(CategoryRepository.class);
+//            root = categoryRepo
+//                .findById(Long.parseLong((String) m_contextModel
+//                    .getSelectedKey(state)))
+//                .orElseThrow(() -> new UnexpectedErrorException(String
+//                .format("No Category with ID %s in the database.",
+//                        m_contextModel.getSelectedKey(state))));
+//        }
         return new CategoryTreeModelLite(root);
     }
 
