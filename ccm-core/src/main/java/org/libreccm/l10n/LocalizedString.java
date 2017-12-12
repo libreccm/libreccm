@@ -18,20 +18,23 @@
  */
 package org.libreccm.l10n;
 
-import static org.libreccm.l10n.L10NConstants.*;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Field;
 import org.libreccm.l10n.jaxb.LocalizedStringValuesAdapter;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.MapKeyColumn;
-
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,11 +43,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import static org.libreccm.l10n.L10NConstants.L10N_XML_NS;
 
 /**
  * A helper class for localisable string properties. This class is declared as
@@ -67,6 +66,7 @@ public class LocalizedString implements Serializable {
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name = "LOCALE")
     @Column(name = "LOCALIZED_VALUE")
+    @Basic
     @Lob
     @Type(type = "org.hibernate.type.TextType")
     @Field

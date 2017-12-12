@@ -20,6 +20,7 @@ package org.libreccm.workflow;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.Identifiable;
@@ -188,34 +189,25 @@ public class Task implements Identifiable, Serializable {
     @JsonIdentityReference(alwaysAsId = true)
     private Workflow workflow;
 
-//    /**
-//     * Tasks which depend on this task.
-//     */
-//    @ManyToMany(mappedBy = "dependsOn", fetch = FetchType.LAZY)
-//    @JsonIgnore
-//    private List<Task> dependentTasks;
+    /**
+     * Tasks which depend on this task.
+     */
     @OneToMany(mappedBy = "blockingTask", fetch = FetchType.LAZY)
     @XmlElementWrapper(name = "blocked-tasks")
     @XmlElement(name = "task-dependency")
+    @JsonIgnore
     private List<TaskDependency> blockedTasks;
 
+    /**
+     * The dependencies of this task.
+     */
     @OneToMany(mappedBy = "blockedTask", fetch = FetchType.LAZY)
     @XmlElementWrapper(name = "blocking-tasks")
     @XmlElement(name = "task-dependency")
+    @JsonIgnore
     private List<TaskDependency> blockingTasks;
 
-//    /**
-//     * The dependencies of this task.
-//     */
-//    @ManyToMany(fetch = FetchType.LAZY)
-//    @JoinTable(name = "WORKFLOW_TASK_DEPENDENCIES",
-//               schema = DB_SCHEMA,
-//               joinColumns = {
-//                   @JoinColumn(name = "DEPENDS_ON_TASK_ID")},
-//               inverseJoinColumns = {
-//                   @JoinColumn(name = "DEPENDENT_TASK_ID")})
-//    @JsonIdentityReference(alwaysAsId = true)
-//    private List<Task> dependsOn;
+
     /**
      * Comments for the task.
      */
@@ -229,8 +221,6 @@ public class Task implements Identifiable, Serializable {
 
         label = new LocalizedString();
         description = new LocalizedString();
-//        dependentTasks = new ArrayList<>();
-//        dependsOn = new ArrayList<>();
         blockedTasks = new ArrayList<>();
         blockingTasks = new ArrayList<>();
         comments = new ArrayList<>();
@@ -296,65 +286,6 @@ public class Task implements Identifiable, Serializable {
         this.workflow = workflow;
     }
 
-//    public List<Task> getDependentTasks() {
-//        if (dependentTasks == null) {
-//            return null;
-//        } else {
-//            return Collections.unmodifiableList(dependentTasks);
-//        }
-//    }
-//
-//    protected void setDependentTasks(final List<Task> dependentTasks) {
-//        this.dependentTasks = dependentTasks;
-//    }
-//
-//    protected void addDependentTask(final Task task) {
-//        dependentTasks.add(task);
-//    }
-//
-//    protected void removeDependentTask(final Task task) {
-//        dependentTasks.remove(task);
-//    }
-//
-//    public List<Task> getDependsOn() {
-//        if (dependsOn == null) {
-//            return null;
-//        } else {
-//            return Collections.unmodifiableList(dependsOn);
-//        }
-//    }
-//
-//    protected void setDependsOn(final List<Task> dependsOn) {
-//        this.dependsOn = dependsOn;
-//    }
-//
-//    protected void addDependsOn(final Task task) {
-//        dependsOn.add(task);
-//    }
-//
-//    protected void removeDependsOn(final Task task) {
-//        dependsOn.remove(task);
-//    }
-    public List<TaskDependency> getBlockingTasks() {
-        if (blockingTasks == null) {
-            return null;
-        } else {
-            return Collections.unmodifiableList(blockingTasks);
-        }
-    }
-
-    protected void setBlockingTasks(final List<TaskDependency> blockingTasks) {
-        this.blockingTasks = blockingTasks;
-    }
-
-    protected void addBlockingTask(final TaskDependency taskDependency) {
-        blockingTasks.add(taskDependency);
-    }
-
-    protected void removeBlockingTask(final TaskDependency taskDependency) {
-        blockingTasks.remove(taskDependency);
-    }
-
     public List<TaskDependency> getBlockedTasks() {
         if (blockedTasks == null) {
             return null;
@@ -373,6 +304,26 @@ public class Task implements Identifiable, Serializable {
 
     protected void removeBlockedTask(final TaskDependency taskDependency) {
         blockedTasks.remove(taskDependency);
+    }
+
+    public List<TaskDependency> getBlockingTasks() {
+        if (blockingTasks == null) {
+            return null;
+        } else {
+            return Collections.unmodifiableList(blockingTasks);
+        }
+    }
+
+    protected void setBlockingTasks(final List<TaskDependency> blockingTasks) {
+        this.blockingTasks = blockingTasks;
+    }
+
+    protected void addBlockingTask(final TaskDependency taskDependency) {
+        blockingTasks.add(taskDependency);
+    }
+
+    protected void removeBlockingTask(final TaskDependency taskDependency) {
+        blockingTasks.remove(taskDependency);
     }
 
     public List<TaskComment> getComments() {

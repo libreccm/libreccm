@@ -18,8 +18,10 @@
  */
 package org.libreccm.workflow;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import org.libreccm.core.CoreConstants;
+import org.libreccm.portation.Portable;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -39,7 +41,9 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "WORKFLOW_TASK_DEPENDENCIES", schema = CoreConstants.DB_SCHEMA)
-public class TaskDependency implements Serializable {
+@JsonIdentityInfo(generator = TaskDependencyIdGenerator.class,
+                  property = "customDepId")
+public class TaskDependency implements Serializable, Portable {
 
     private static final long serialVersionUID = -4383255770131633943L;
 
