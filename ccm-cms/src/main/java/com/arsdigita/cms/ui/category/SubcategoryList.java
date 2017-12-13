@@ -23,66 +23,113 @@ import com.arsdigita.bebop.List;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.event.ActionEvent;
-import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.bebop.list.ListModel;
 import com.arsdigita.bebop.list.ListModelBuilder;
 import com.arsdigita.bebop.util.GlobalizationUtil;
 import com.arsdigita.util.LockableImpl;
+
 import org.libreccm.categorization.Category;
+import org.libreccm.categorization.CategoryManager;
+import org.libreccm.cdi.utils.CdiUtil;
 
 /**
  * A List of all subcategories of the current category.
  *
- * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
+ *
  * @author Stanislav Freidin (stas@arsdigita.com)
  * @author Michael Pih (pihman@arsdigita.com)
- * @version $Revision: #15 $ $DateTime: 2004/08/17 23:15:09 $
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class SubcategoryList extends SortableCategoryList {
-    private final CategoryRequestLocal m_parent;
-    private final SingleSelectionModel m_model;
 
-    public SubcategoryList(final CategoryRequestLocal parent,
-                           final SingleSelectionModel model) {
-        super(parent);
+    private final CategoryRequestLocal parentCategory;
+    private final SingleSelectionModel<String> selectedCategoryId;
 
-        m_parent = parent;
-        m_model = model;
+    public SubcategoryList(
+        final CategoryRequestLocal parentCategory,
+        final SingleSelectionModel<String> selectedCategoryId) {
 
-        setIdAttr("subcategories_list");
+        super(parentCategory);
+
+        this.parentCategory = parentCategory;
+        this.selectedCategoryId = selectedCategoryId;
+
+        super.setIdAttr("subcategories_list");
 
         setModelBuilder(new SubcategoryModelBuilder());
 
         // Select the category in the main tree when the
         // user selects it here
-        addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    final PageState state = event.getPageState();
-                    final String id = (String) getSelectedKey(state);
+        super.addActionListener(this::actionPerformed);
 
-                    if (id != null) {
-                        m_model.setSelectedKey(state, id);
-                    }
-                }
-            });
-
-        Label label = new Label(GlobalizationUtil.globalize
-                                ("cms.ui.category.subcategory.none"));
+        Label label = new Label(GlobalizationUtil.globalize(
+            "cms.ui.category.subcategory.none"));
         label.setFontWeight(Label.ITALIC);
         setEmptyView(label);
     }
 
-    private class SubcategoryModelBuilder extends LockableImpl
-            implements ListModelBuilder {
-        public ListModel makeModel(List list, PageState state) {
-            final Category category = m_parent.getCategory(state);
+    /**
+     * Select the category in the main tree when the user selects it here
+     *
+     * @param event
+     */
+    private void actionPerformed(final ActionEvent event) {
 
-            if (category != null && !category.getSubCategories().isEmpty()) {
-                java.util.List<Category> children = category.getSubCategories();
+        final PageState state = event.getPageState();
+        final String categoryId = (String) getSelectedKey(state);
+
+        if (categoryId != null) {
+            selectedCategoryId.setSelectedKey(state, categoryId);
+        }
+    }
+
+    public ListModel makeMake(final List list, final PageState state) {
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final CategoryManager categoryManager = cdiUtil
+            .findBean(CategoryManager.class);
+        final Category category = parentCategory.getCategory(state);
+
+        if (category != null
+                && categoryManager.hasSubCategories(category)) {
+
+            final CategoryAdminController controller = cdiUtil.findBean(
+                CategoryAdminController.class);
+            final java.util.List<CategoryListItem> children = controller
+                .generateSubCategoryList(category);
+
+            return new CategoryListModel(children);
+        } else {
+            return List.EMPTY_MODEL;
+        }
+
+    }
+
+    private class SubcategoryModelBuilder extends LockableImpl
+        implements ListModelBuilder {
+
+        @Override
+        public ListModel makeModel(final List list, final PageState state) {
+
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final CategoryManager categoryManager = cdiUtil
+                .findBean(CategoryManager.class);
+            final Category category = parentCategory.getCategory(state);
+
+            if (category != null
+                    && categoryManager.hasSubCategories(category)) {
+
+                final CategoryAdminController controller = cdiUtil.findBean(
+                    CategoryAdminController.class);
+                final java.util.List<CategoryListItem> children = controller
+                    .generateSubCategoryList(category);
+
                 return new CategoryListModel(children);
             } else {
                 return List.EMPTY_MODEL;
             }
         }
+
     }
+
 }
