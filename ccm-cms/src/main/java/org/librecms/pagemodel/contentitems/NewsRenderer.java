@@ -40,10 +40,12 @@ public class NewsRenderer extends AbstractContentItemRenderer {
     private static final long serialVersionUID = -493301428054148505L;
 
     @Inject
-    public NewsRenderer(final AssetRenderers assetRenderers) {
-        super(assetRenderers);
-    }
+    private AssetRenderers assetRenderers;
 
+//    @Inject
+//    public NewsRenderer(final AssetRenderers assetRenderers) {
+//        super(assetRenderers);
+//    }
     /**
      * Renders the provided {@link News} item. The following values are put into
      * {@code result}:
@@ -73,6 +75,11 @@ public class NewsRenderer extends AbstractContentItemRenderer {
 
         result.put("text", news.getText().getValue(language));
         result.put("releaseDate", news.getReleaseDate());
+    }
+
+    @Override
+    protected AssetRenderers getAssetRenderers() {
+        return assetRenderers;
     }
 
 }

@@ -191,7 +191,9 @@ public class PagesRouter {
                 uriInfo, "/", itemName, language, pageModelVersion);
         }
         final Site site = getSite(uriInfo);
-        final ThemeInfo themeInfo = getTheme(site, "/", themeVersion);
+        final ThemeInfo themeInfo = getTheme(site,
+                                             theme,
+                                             themeVersion);
 
         return themes.process(result, themeInfo);
     }
@@ -413,7 +415,7 @@ public class PagesRouter {
         }
 
         final Site site = getSite(uriInfo);
-        final ThemeInfo themeInfo = getTheme(site, page, themeVersion);
+        final ThemeInfo themeInfo = getTheme(site, theme, themeVersion);
         return themes.process(result, themeInfo);
     }
 
@@ -624,9 +626,12 @@ public class PagesRouter {
         final Category category = getCategory(domain, pages, pagePath);
 
         final Locale locale = new Locale(language);
-        if (!category.getTitle().hasValue(locale)) {
-            throw new NotFoundException();
-        }
+        // disabled. Needs to be decided if the available languages of the 
+        // index item or of the category are
+        // used to decide if a NotFoundException is thrown.
+//        if (!category.getTitle().hasValue(locale)) {
+//            throw new NotFoundException();
+//        }
 
         globalizationHelper.setSelectedLocale(locale);
 
@@ -658,8 +663,10 @@ public class PagesRouter {
         final String pageModelVersion) {
 
         final Map<String, Object> parameters = new HashMap<>();
-        final Page page = PagesRouter.this.getPage(uriInfo, pagePath, language,
-                                                   parameters);
+        final Page page = getPage(uriInfo,
+                                  pagePath,
+                                  language,
+                                  parameters);
 
         final PageModel pageModel;
         if ("DRAFT".equals(pageModelVersion)) {

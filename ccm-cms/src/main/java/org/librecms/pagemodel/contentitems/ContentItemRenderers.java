@@ -21,12 +21,15 @@ package org.librecms.pagemodel.contentitems;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.librecms.contentsection.ContentItem;
+import org.librecms.contenttypes.Article;
 import org.librecms.pagemodel.assets.AssetRenderers;
 
+import java.io.Serializable;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
@@ -39,7 +42,9 @@ import javax.inject.Inject;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class ContentItemRenderers {
+public class ContentItemRenderers implements Serializable {
+
+    private static final long serialVersionUID = 4038159486301146385L;
 
     private static final Logger LOGGER = LogManager
         .getLogger(ContentItemRenderers.class);
@@ -48,6 +53,7 @@ public class ContentItemRenderers {
     private AssetRenderers assetRenderers;
 
     @Inject
+    @Any
     private Instance<AbstractContentItemRenderer> renderers;
 
     /**
@@ -98,7 +104,7 @@ public class ContentItemRenderers {
                 LOGGER.warn("No renderer for item type \"{}\" and mode "
                                 + "\"--DEFAULT--\". Returning default renderer.",
                             itemType.getName());
-                return new AbstractContentItemRenderer(assetRenderers) {
+                return new AbstractContentItemRenderer() {
 
                     private static final long serialVersionUID
                                                   = -4679445070846896396L;
@@ -108,6 +114,11 @@ public class ContentItemRenderers {
                                            final Locale language,
                                            final Map<String, Object> result) {
                         //Nothing here.
+                    }
+
+                    @Override
+                    public AssetRenderers getAssetRenderers() {
+                        return assetRenderers;
                     }
 
                 };
