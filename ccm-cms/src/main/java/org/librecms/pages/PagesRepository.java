@@ -97,12 +97,14 @@ public class PagesRepository extends AbstractEntityRepository<Long, Pages> {
     }
 
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void save(final Pages pages) {
         super.save(pages);
     }
 
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void delete(final Pages pages) {
         super.delete(pages);

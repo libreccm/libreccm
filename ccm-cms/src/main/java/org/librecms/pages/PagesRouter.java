@@ -197,7 +197,7 @@ public class PagesRouter {
     }
 
     @GET
-    @Path("/{name[\\w\\-]+}.{lang:\\w+}.json")
+    @Path("/{name:[\\w\\-]+}.{lang:\\w+}.json")
     @Produces("text/json")
     @Transactional(Transactional.TxType.REQUIRED)
     public String getRootPageAsJson(
