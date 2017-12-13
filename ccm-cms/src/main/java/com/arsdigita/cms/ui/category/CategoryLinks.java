@@ -30,10 +30,12 @@ import com.arsdigita.bebop.list.ListModelBuilder;
 import com.arsdigita.bebop.parameters.BigDecimalParameter;
 import com.arsdigita.bebop.util.GlobalizationUtil;
 import com.arsdigita.util.LockableImpl;
-import org.libreccm.categorization.Category;
 
-import java.util.Collection;
-import java.util.HashSet;
+import org.libreccm.categorization.Category;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.l10n.GlobalizationHelper;
+
+import java.util.ArrayList;
 
 /**
  * A List of all secondary parents of the current category.
@@ -81,13 +83,27 @@ public class CategoryLinks extends List {
     // Since this part is for non default parents, but there is only one... this is not needed anymore, i guess
     private class LinkedCategoryModelBuilder extends LockableImpl
             implements ListModelBuilder {
+        
+        @Override
         public ListModel makeModel(List list, PageState state) {
             final Category category = m_parent.getCategory(state);
 
             if (category != null && category.getParentCategory() != null) {
 
-                java.util.List<Category> categories = new java.util.ArrayList<>();
-                categories.add(category.getParentCategory());
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final GlobalizationHelper globalizationHelper  =cdiUtil
+                .findBean(GlobalizationHelper.class);
+                final Category parent = category.getParentCategory();
+                
+                java.util.List<CategoryListItem> categories = new ArrayList<>();
+                final CategoryListItem parentItem = new CategoryListItem();
+                parentItem.setCategoryId(parent.getObjectId());
+                final String label = globalizationHelper
+                .getValueFromLocalizedString(parent.getTitle(),
+                                             parent::getName);
+                parentItem.setLabel(label);
+                
+                categories.add(parentItem);
 
                 return new CategoryListModel
                     (categories,

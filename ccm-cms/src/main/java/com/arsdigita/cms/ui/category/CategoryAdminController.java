@@ -18,16 +18,28 @@
  */
 package com.arsdigita.cms.ui.category;
 
+import org.libreccm.categorization.Categorization;
+import org.libreccm.categorization.Category;
+import org.libreccm.categorization.CategoryManager;
+import org.libreccm.categorization.CategoryRepository;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+
 import org.libreccm.categorization.DomainOwnership;
+import org.libreccm.l10n.GlobalizationHelper;
+import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentItemManager;
+import org.librecms.contentsection.ContentItemVersion;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
+
+import java.util.stream.Collectors;
 
 /**
  *
@@ -37,13 +49,22 @@ import org.librecms.contentsection.ContentSectionRepository;
 class CategoryAdminController {
 
     @Inject
-    private ContentSectionRepository sectionRepo;
+    private CategoryManager categoryManager;
 
     @Inject
-    private EntityManager entityManager;
+    private CategoryRepository categoryRepo;
+
+    @Inject
+    private ContentItemManager itemManager;
+
+    @Inject
+    private GlobalizationHelper globalizationHelper;
+
+    @Inject
+    private ContentSectionRepository sectionRepo;
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<DomainOwnership> retrieveDomains(final ContentSection section) {
+    protected List<DomainOwnership> retrieveDomains(final ContentSection section) {
 
         Objects.requireNonNull(section);
 
@@ -55,6 +76,58 @@ class CategoryAdminController {
             section.getObjectId())));
 
         return new ArrayList<>(contentSection.getDomains());
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected List<CategoryListItem> generateSubCategoryList(
+        final Category forCategory) {
+
+        Objects.requireNonNull(forCategory);
+
+        final Category category = categoryRepo
+            .findById(forCategory.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No Category with ID %d in the datbase.",
+                    forCategory.getObjectId())));
+
+        return category
+            .getSubCategories()
+            .stream()
+            .map(this::createCategoryListItem)
+            .collect(Collectors.toList());
+    }
+
+    private CategoryListItem createCategoryListItem(final Category category) {
+
+        final CategoryListItem item = new CategoryListItem();
+        item.setCategoryId(category.getObjectId());
+
+        final String label = globalizationHelper
+            .getValueFromLocalizedString(category.getTitle(), category::getName);
+        item.setLabel(label);
+
+        return item;
+    }
+
+    @Transactional
+    protected List<ContentItem> retrieveAssignedContentItems(
+        final Category fromCategory) {
+
+        final Category category = categoryRepo
+            .findById(fromCategory.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No Category with ID %d in the datbase.",
+                    fromCategory.getObjectId())));
+
+        return category
+            .getObjects()
+            .stream()
+            .map(Categorization::getCategorizedObject)
+            .filter(obj -> obj instanceof ContentItem)
+            .map(obj -> (ContentItem) obj)
+            .filter(item -> itemManager.isLive(item))
+            .filter(item -> item.getVersion() == ContentItemVersion.LIVE)
+            .collect(Collectors.toList());
     }
 
 }
