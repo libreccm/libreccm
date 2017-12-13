@@ -32,12 +32,12 @@ import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.form.Submit;
 import com.arsdigita.bebop.parameters.StringParameter;
 
-import com.arsdigita.bebop.util.GlobalizationUtil;
 import com.arsdigita.cms.ui.BaseItemPane;
 import com.arsdigita.cms.ui.CMSForm;
 import com.arsdigita.cms.ui.ContentItemPage;
 import com.arsdigita.cms.ui.VisibilityComponent;
 import com.arsdigita.cms.ui.templates.CategoryTemplates;
+import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.Property;
@@ -45,7 +45,6 @@ import com.arsdigita.toolbox.ui.PropertyList;
 import com.arsdigita.toolbox.ui.Section;
 import com.arsdigita.xml.Element;
 
-import java.net.URLEncoder;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -56,11 +55,16 @@ import org.libreccm.categorization.CategoryManager;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CcmObject;
+import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.PermissionChecker;
+import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.contentsection.privileges.ItemPrivileges;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Edits a single category.
@@ -100,7 +104,12 @@ class CategoryItemPane extends BaseItemPane {
                 if (!super.isVisible(state)) {
                     return false;
                 }
-                return !m_category.getCategory(state).getObjects().isEmpty();
+
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final CategoryManager categoryManager = cdiUtil
+                    .findBean(CategoryManager.class);
+                final Category category = m_category.getCategory(state);
+                return categoryManager.hasObjects(category);
             }
 
         };
@@ -276,6 +285,7 @@ class CategoryItemPane extends BaseItemPane {
                        final BaseLink viewIndexItem,
                        final BaseLink editIndexItem,
                        final ActionLink orderItemsLink) {
+
             setHeading(new Label(gz("cms.ui.category.details")));
 
             final ActionGroup group = new ActionGroup();
@@ -295,36 +305,67 @@ class CategoryItemPane extends BaseItemPane {
         private class Properties extends PropertyList {
 
             @Override
-            protected final java.util.List properties(final PageState state) {
-                final java.util.List props = super.properties(state);
-                final Category category = m_category.getCategory(state);
+            protected final java.util.List<Property> properties(
+                final PageState state) {
 
-                String itemTitle = "None";
+                final java.util.List<Property> properties = super.properties(
+                    state);
+                final Category category = m_category
+                    .getCategory(state);
 
-                if (category != null) {
-                    itemTitle = category.getDisplayName();
+                final String itemTitle;
+
+                if (category == null) {
+                    itemTitle = "None";
+                } else {
+                    final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                    final CategoryManager categoryManager = cdiUtil
+                        .findBean(CategoryManager.class);
+                    final List<CcmObject> indexObjects = categoryManager
+                        .getIndexObject(category);
+
+                    final Optional<ContentItem> indexItem = indexObjects
+                        .stream()
+                        .filter(obj -> obj instanceof ContentItem)
+                        .map(obj -> (ContentItem) obj)
+                        .findFirst();
+
+                    if (indexItem.isPresent()) {
+                        final GlobalizationHelper globalizationHelper = cdiUtil
+                            .findBean(GlobalizationHelper.class);
+
+                        final ContentItem item = indexItem.get();
+                        itemTitle = globalizationHelper
+                            .getValueFromLocalizedString(item.getTitle(),
+                                                         item::getDisplayName);
+
+                    } else {
+                        final CcmObject indexObj = indexObjects.get(0);
+                        itemTitle = Objects.toString(indexObj);
+                    }
                 }
 
-                props.add(new Property(gz("cms.ui.name"),
-                                       category.getName()));
-                props.add(new Property(gz("cms.ui.description"),
-                                       category.getDescription().getValue()));
-                props.add(new Property(gz("cms.ui.category.is_not_abstract"),
-                                       category.isAbstractCategory()
-                                           ? gz("cms.ui.no")
-                                           : gz("cms.ui.yes")));
-                props.add(new Property(gz("cms.ui.cateogry.is_visible"),
-                                       category.isVisible()
-                                           ? gz("cms.ui.yes")
-                                           : gz("cms.ui.no")));
-                props.add(new Property(gz("cms.ui.category.is_enabled"),
-                                       category.isEnabled()
-                                           ? gz("cms.ui.yes")
-                                           : gz("cms.ui.no")));
-                props.add(new Property(gz("cms.ui.category.index_item"),
-                                       itemTitle));
+                properties.add(new Property(gz("cms.ui.name"),
+                                            category.getName()));
+                properties.add(new Property(gz("cms.ui.description"),
+                                            category.getDescription().getValue()));
+                properties.add(new Property(
+                    gz("cms.ui.category.is_not_abstract"),
+                    category.isAbstractCategory()
+                        ? gz("cms.ui.no")
+                        : gz("cms.ui.yes")));
+                properties.add(new Property(gz("cms.ui.cateogry.is_visible"),
+                                            category.isVisible()
+                                                ? gz("cms.ui.yes")
+                                                : gz("cms.ui.no")));
+                properties.add(new Property(gz("cms.ui.category.is_enabled"),
+                                            category.isEnabled()
+                                                ? gz("cms.ui.yes")
+                                                : gz("cms.ui.no")));
+                properties.add(new Property(gz("cms.ui.category.index_item"),
+                                            itemTitle));
 
-                return props;
+                return properties;
             }
 
         }
@@ -398,7 +439,13 @@ class CategoryItemPane extends BaseItemPane {
 
         @Override
         public final boolean isVisible(final PageState state) {
-            return m_category.getCategory(state).getParentCategory().isVisible();
+
+            final Category category = m_category.getCategory(state);
+            if (category.getParentCategory() == null) {
+                return false;
+            } else {
+                return category.getParentCategory().isVisible();
+            }
         }
 
     }
@@ -567,17 +614,20 @@ class CategoryItemPane extends BaseItemPane {
         // the content. The prepareURL method is called by the printwriter
         @Override
         protected String prepareURL(final PageState state, String location) {
+
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final CategoryManager manager = cdiUtil.findBean(
                 CategoryManager.class);
+            final Category category = m_category.getCategory(state);
 
-            ContentItem indexItem = (ContentItem) manager
-                .getIndexObject(m_category.getCategory(state))
+            final ContentItem indexItem = (ContentItem) manager
+                .getIndexObject(category)
                 .stream()
                 .findFirst()
                 .get();
-            return "/redirect/?oid=" + URLEncoder.encode(Long.toString(indexItem
-                .getObjectId()));
+
+            return String.format("/redirect/?oid=%s",
+                                 Long.toString(indexItem.getObjectId()));
         }
 
         // We only show this link when an index item exists for this category
@@ -586,13 +636,12 @@ class CategoryItemPane extends BaseItemPane {
             if (!super.isVisible(state)) {
                 return false;
             }
-            Category /*ACSObject*/ indexItem = m_category
-                    .getCategory(state);//.getDirectIndexObject();
-            if (indexItem == null) {
-                return false;
-            } else {
-                return true;
-            }
+
+            final Category category = m_category.getCategory(state);
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final CategoryManager categoryManager = cdiUtil
+                .findBean(CategoryManager.class);
+            return categoryManager.hasIndexObject(category);
         }
 
     };
@@ -677,8 +726,9 @@ class CategoryItemPane extends BaseItemPane {
 
         public MoveLink(final Label label) {
             super(label);
-            alternativeLabel = new Label(GlobalizationUtil.globalize(
-                "cms.ui.category.cantmoved"));
+            alternativeLabel = new Label(new GlobalizedMessage(
+                "cms.ui.category.cantmoved",
+                CmsConstants.CMS_BUNDLE));
         }
 
         @Override

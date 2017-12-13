@@ -272,15 +272,23 @@ public final class CategoryAdminPane extends BaseAdminPane<String> {
 
         @Override
         protected final Object initialValue(final PageState state) {
-            final String id = selectedCategory.getSelectedKey(state);
+            
+            final String selectedCatetoryIdStr = selectedCategory
+                .getSelectedKey(state);
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final CategoryRepository repository = cdiUtil.findBean(
                 CategoryRepository.class);
-            if (id == null) {
-                return null;
+            final Category category;
+            if (selectedCatetoryIdStr == null) {
+                category = null;
             } else {
-                return repository.findById(Long.parseLong(id));
+                category = repository
+                    .findById(Long.parseLong(selectedCatetoryIdStr))
+                    .orElseThrow(() -> new UnexpectedErrorException(String
+                    .format("No Category with ID %s in the database.",
+                            selectedCatetoryIdStr)));
             }
+            return category;
         }
 
     }
