@@ -47,6 +47,8 @@ import java.util.UUID;
 @RequestScoped
 public class CategoryRepository extends AbstractEntityRepository<Long, Category> {
 
+    private static final long serialVersionUID = 8848653913581241248L;
+
     private static final Logger LOGGER = LogManager.getLogger(
         CategoryRepository.class);
 
@@ -97,7 +99,7 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
      */
     public Optional<Category> findByUuid(final String uuid) {
         final TypedQuery<Category> query = getEntityManager().
-                createNamedQuery("Category.findByUuid", Category.class);
+            createNamedQuery("Category.findByUuid", Category.class);
         query.setParameter("uuid", uuid);
 
         try {

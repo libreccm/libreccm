@@ -30,6 +30,7 @@ import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.User;
 import org.libreccm.workflow.Task;
 import org.libreccm.workflow.TaskManager;
+import org.libreccm.workflow.TaskState;
 import org.libreccm.workflow.Workflow;
 import org.libreccm.workflow.WorkflowManager;
 import org.libreccm.workflow.WorkflowRepository;
@@ -53,6 +54,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -220,6 +222,30 @@ class ItemLifecycleAdminController implements Serializable {
 
         return ContentItemPage.getItemURL(contentItem,
                                           ContentItemPage.PUBLISHING_TAB);
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void repulish(final ContentItem item) {
+
+        Objects.requireNonNull(item);
+
+        final Optional<ContentItem> liveItem = itemManager
+            .getLiveVersion(item, ContentItem.class);
+        if (liveItem.isPresent()) {
+            final ContentItem contentItem = itemRepo
+                .findById(item.getObjectId())
+                .orElseThrow(() -> new IllegalArgumentException(String
+                .format("No ContentItem with Id %d in the database.",
+                        item.getObjectId())));
+            itemManager.publish(contentItem);
+            final Workflow workflow = contentItem.getWorkflow();
+            if (workflow != null
+                    && workflow.isActive()
+                    && workflow.getTasksState() == TaskState.ENABLED) {
+
+                workflowManager.finish(contentItem.getWorkflow());
+            }
+        }
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
