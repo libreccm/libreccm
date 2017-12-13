@@ -24,6 +24,7 @@ import com.arsdigita.kernel.KernelConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.core.UnexpectedErrorException;
 
 import java.io.Serializable;
 
@@ -36,7 +37,9 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
+import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 /**
@@ -102,6 +105,8 @@ public class GlobalizationHelper implements Serializable {
     public String getValueFromLocalizedString(
         final LocalizedString localizedString) {
 
+        Objects.requireNonNull(localizedString);
+
         if (localizedString.hasValue(getNegotiatedLocale())) {
             return localizedString.getValue(getNegotiatedLocale());
         }
@@ -129,6 +134,29 @@ public class GlobalizationHelper implements Serializable {
             .findFirst()
             .get()
             .getValue();
+    }
+
+    public String getValueFromLocalizedString(
+        final LocalizedString localizedString,
+        final Callable<String> fallbackProvider) {
+
+        Objects.requireNonNull(localizedString);
+        Objects.requireNonNull(fallbackProvider);
+
+        final KernelConfig kernelConfig = confManager
+            .findConfiguration(KernelConfig.class);
+        final Locale defaultLocale = kernelConfig.getDefaultLocale();
+        if (localizedString.hasValue(getNegotiatedLocale())
+                || localizedString.hasValue(defaultLocale)) {
+
+            return getValueFromLocalizedString(localizedString);
+        } else {
+            try {
+                return fallbackProvider.call();
+            } catch (Exception ex) {
+                throw new UnexpectedErrorException(ex);
+            }
+        }
     }
 
     public Locale getNegotiatedLocale() {

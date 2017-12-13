@@ -293,15 +293,12 @@ class ItemLifecycleItemPane extends BaseItemPane {
     private static void republish(final ContentItem item,
                                   final boolean reset,
                                   final User user) {
+
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final ContentItemManager itemManager = cdiUtil.findBean(
-            ContentItemManager.class);
-        final WorkflowManager workflowManager = cdiUtil.findBean(
-            WorkflowManager.class);
-
-        itemManager.publish(item);
-
-        workflowManager.finish(item.getWorkflow());
+        final ItemLifecycleAdminController controller = cdiUtil
+            .findBean(ItemLifecycleAdminController.class);
+        
+        controller.repulish(item);
     }
 
     private class RepublishLink extends PublishLink {
