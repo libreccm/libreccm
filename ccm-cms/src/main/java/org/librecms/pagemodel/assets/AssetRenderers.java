@@ -26,6 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
@@ -43,6 +44,7 @@ public class AssetRenderers {
         .getLogger(AssetRenderers.class);
 
     @Inject
+    @Any
     private Instance<AbstractAssetRenderer> renderers;
 
     /**

@@ -40,9 +40,12 @@ public class ArticleRenderer extends AbstractContentItemRenderer {
     private static final long serialVersionUID = 8355183377902033759L;
 
     @Inject
-    public ArticleRenderer(final AssetRenderers assetRenderers) {
-        super(assetRenderers);
-    }
+    private AssetRenderers assetRenderers;
+    
+//    @Inject
+//    public ArticleRenderer(final AssetRenderers assetRenderers) {
+//        super(assetRenderers);
+//    }
 
     /**
      * Render the provided {@link Article}. The following values are put into
@@ -59,7 +62,7 @@ public class ArticleRenderer extends AbstractContentItemRenderer {
      * @param result   The map into which the result is placed.
      */
     @Override
-    public void renderItem(final ContentItem item,
+    protected void renderItem(final ContentItem item,
                            final Locale language,
                            final Map<String, Object> result) {
 
@@ -71,7 +74,11 @@ public class ArticleRenderer extends AbstractContentItemRenderer {
         }
 
         result.put("text", article.getText().getValue(language));
-
+    }
+    
+    @Override
+    public AssetRenderers getAssetRenderers() {
+        return assetRenderers;
     }
 
 }

@@ -77,9 +77,11 @@ public class ImageRenderer extends BinaryAssetRenderer {
 
         result.put("width", image.getWidth());
         result.put("height", image.getHeight());
-        result.put("legalMetadata",
-                   legalMetadataRenderer.render(image.getLegalMetadata(),
-                                                language));
+        if (image.getLegalMetadata() != null) {
+            result.put("legalMetadata",
+                       legalMetadataRenderer.render(image.getLegalMetadata(),
+                                                    language));
+        }
     }
 
 }

@@ -10,16 +10,21 @@
                 <title>Category page</title>
             </head>
             <body>
-                <xsl:apply-templates select="indexItem" />
+                <xsl:apply-templates select="greetingItem" />
             </body>
         </html>
     </xsl:template>
 
-    <xsl:template match="indexItem">
+    <xsl:template match="greetingItem">
         
         <h1>
             <xsl:value-of select="./title" />
+            
         </h1>
+        <p>
+            <xsl:value-of select="./description" />
+        </p>
+        <xsl:value-of disable-output-escaping="true" select="./text" />
         
     </xsl:template>
 

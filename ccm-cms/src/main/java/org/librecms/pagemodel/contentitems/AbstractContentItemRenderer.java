@@ -43,11 +43,11 @@ public abstract class AbstractContentItemRenderer implements Serializable {
 
     private static final long serialVersionUID = 1290408390406469580L;
 
-    private final AssetRenderers assetRenderers;
-
-    public AbstractContentItemRenderer(final AssetRenderers assetRenderers) {
-        this.assetRenderers = assetRenderers;
-    }
+//    private final AssetRenderers assetRenderers;
+//
+//    public AbstractContentItemRenderer(final AssetRenderers assetRenderers) {
+//        this.assetRenderers = assetRenderers;
+//    }
 
     /**
      * This method should be called to render a {@link ContentItem}. The method
@@ -121,6 +121,8 @@ public abstract class AbstractContentItemRenderer implements Serializable {
     protected abstract void renderItem(final ContentItem item,
                                        final Locale language,
                                        final Map<String, Object> result);
+    
+    protected abstract AssetRenderers getAssetRenderers();
 
     /**
      * Renders the {@link ContentType} of an {@link ContentItem}. The generated
@@ -235,7 +237,7 @@ public abstract class AbstractContentItemRenderer implements Serializable {
         result.put("uuid", attachment.getUuid());
         result.put("sortKey", attachment.getSortKey());
 
-        final AbstractAssetRenderer renderer = assetRenderers
+        final AbstractAssetRenderer renderer = getAssetRenderers()
             .findRenderer(attachment.getAsset().getClass());
         result.put("asset", renderer.render(attachment.getAsset(), language));
 
