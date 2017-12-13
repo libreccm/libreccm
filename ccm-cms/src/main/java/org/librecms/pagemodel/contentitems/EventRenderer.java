@@ -38,9 +38,12 @@ public class EventRenderer extends AbstractContentItemRenderer {
     private static final long serialVersionUID = -3517404651544429745L;
 
     @Inject
-    public EventRenderer(final AssetRenderers assetRenderers) {
-        super(assetRenderers);
-    }
+    private AssetRenderers assetRenderers;
+    
+//    @Inject
+//    public EventRenderer(final AssetRenderers assetRenderers) {
+//        super(assetRenderers);
+//    }
 
     /**
      * Render the provided {@link Event}. The following values are put into
@@ -88,4 +91,11 @@ public class EventRenderer extends AbstractContentItemRenderer {
         result.put("cost", event.getCost().getValue(language));
     }
 
+    @Override
+    protected AssetRenderers getAssetRenderers() {
+        return assetRenderers;
+    }
+
+    
+    
 }

@@ -41,9 +41,12 @@ public class MultiPartArticleRenderer extends AbstractContentItemRenderer {
     private static final long serialVersionUID = -4298383182795585868L;
 
     @Inject
-    public MultiPartArticleRenderer(final AssetRenderers assetRenderers) {
-        super(assetRenderers);
-    }
+    private AssetRenderers assetRenderers;
+    
+//    @Inject
+//    public MultiPartArticleRenderer(final AssetRenderers assetRenderers) {
+//        super(assetRenderers);
+//    }
 
     /**
      * Renders the provided {@link MultiPartArticle}. The following values are
@@ -119,5 +122,11 @@ public class MultiPartArticleRenderer extends AbstractContentItemRenderer {
 
         return result;
     }
+    
+     @Override
+    protected AssetRenderers getAssetRenderers() {
+        return assetRenderers;
+    }
+
 
 }

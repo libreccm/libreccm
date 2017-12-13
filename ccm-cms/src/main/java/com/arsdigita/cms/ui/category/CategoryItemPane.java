@@ -339,6 +339,8 @@ class CategoryItemPane extends BaseItemPane {
                             .getValueFromLocalizedString(item.getTitle(),
                                                          item::getDisplayName);
 
+                    } else if (indexObjects.isEmpty()){
+                        itemTitle = "None";
                     } else {
                         final CcmObject indexObj = indexObjects.get(0);
                         itemTitle = Objects.toString(indexObj);

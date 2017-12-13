@@ -43,12 +43,13 @@ import org.libreccm.security.RoleRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
  * Table displaying all permissions granted to a role.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class RolePermissionsTable extends Table {
@@ -113,7 +114,8 @@ class RolePermissionsTable extends Table {
                         final PermissionManager permissionManager = cdiUtil
                             .findBean(PermissionManager.class);
                         final Role role = roleRepository.findById(
-                            Long.parseLong(selectedRoleId.getSelectedKey(state))).get();
+                            Long.parseLong(selectedRoleId.getSelectedKey(state)))
+                            .get();
                         final Permission permission = permissionManager
                             .findById(Long.parseLong(key)).get();
                         if (permission.getObject() == null) {
@@ -187,7 +189,8 @@ class RolePermissionsTable extends Table {
                     return result;
                 } else if (p1.getObject() != null
                                && p1.getObject().getDisplayName() != null
-                               && p2.getObject() != null) {
+                               && p2.getObject() != null
+                               && p2.getObject().getDisplayName() != null) {
                     return p1.getObject().getDisplayName()
                         .compareTo(p2.getObject().getDisplayName());
                 } else {
