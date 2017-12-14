@@ -12,4 +12,4 @@ alter table CCM_CMS.CONTENT_TYPES
 alter table CCM_CMS.CONTENT_TYPES 
     add constraint FKhnu9oikw8rpf22lt5fmk41t7k 
     foreign key (DEFAULT_WORKFLOW) 
-    references CCM_CORE.WORKFLOW_TEMPLATES;
+    references CCM_CORE.WORKFLOWS;
