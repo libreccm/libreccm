@@ -27,7 +27,7 @@ alter table CCM_CMS.CONTENT_SECTION_LIFECYCLE_DEFINITIONS
 alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
     add constraint FKrx08cdjm9tutrp5lvfhgslw48 
     foreign key (WORKFLOW_TEMPLATE_ID) 
-    references CCM_CORE.WORKFLOW_TEMPLATES;
+    references CCM_CORE.WORKFLOWS;
 
 alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
     add constraint FK6kuejkcl9hcbkr8q6bdlatt8q 

@@ -28,7 +28,7 @@ import java.util.Date;
 class ItemPhaseTableRow implements Serializable {
 
     private static final long serialVersionUID = -8947185134493863779L;
-    
+
     private long phaseId;
     private String name;
     private String description;
@@ -60,21 +60,35 @@ class ItemPhaseTableRow implements Serializable {
     }
 
     public Date getStartDate() {
-        return new Date(startDate.getTime());
+        if (startDate == null) {
+            return null;
+        } else {
+            return new Date(startDate.getTime());
+        }
     }
 
     public void setStartDate(final Date startDate) {
-        this.startDate = new Date(startDate.getTime());
+        if (startDate == null) {
+            this.startDate = startDate;
+        } else {
+            this.startDate = new Date(startDate.getTime());
+        }
     }
 
     public Date getEndDate() {
-        return new Date(endDate.getTime());
+        if (endDate == null) {
+            return null;
+        } else {
+            return new Date(endDate.getTime());
+        }
     }
 
     public void setEndDate(final Date endDate) {
-        this.endDate = new Date(endDate.getTime());
+        if (endDate == null) {
+            this.endDate = endDate;
+        } else {
+            this.endDate = new Date(endDate.getTime());
+        }
     }
-    
-    
-    
+
 }
