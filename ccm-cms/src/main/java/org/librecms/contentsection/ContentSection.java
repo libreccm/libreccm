@@ -48,6 +48,8 @@ import org.librecms.contentsection.privileges.ItemPrivileges;
 import org.librecms.contentsection.privileges.TypePrivileges;
 import org.librecms.lifecycle.LifecycleDefinition;
 
+import javax.persistence.OrderBy;
+
 import static org.librecms.CmsConstants.*;
 
 /**
@@ -180,6 +182,7 @@ public class ContentSection extends CcmApplication implements Serializable {
     private Locale defaultLocale;
 
     @OneToMany(mappedBy = "contentSection")
+    @OrderBy("contentItemClass ASC")
     private List<ContentType> contentTypes = new ArrayList<>();
 
     @OneToMany

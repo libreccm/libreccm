@@ -47,6 +47,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 /**
@@ -240,6 +241,7 @@ public class PageModel implements Serializable {
      * The components of the page described by this {@code PageModel}.
      */
     @OneToMany(mappedBy = "pageModel")
+    @OrderBy("key ASC")
     private List<ComponentModel> components;
 
     public PageModel() {
