@@ -39,6 +39,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import static org.librecms.CmsConstants.*;
@@ -90,6 +91,7 @@ public class MultiPartArticle extends ContentItem implements Serializable {
 
     @OneToMany
     @JoinColumn(name = "MULTIPART_ARTICLE_ID")
+    @OrderBy("rank ASC")
     private List<MultiPartArticleSection> sections;
 
     public MultiPartArticle() {

@@ -43,6 +43,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import static org.librecms.CmsConstants.*;
@@ -140,6 +141,7 @@ public class AttachmentList implements Comparable<AttachmentList>,
     private LocalizedString description;
 
     @OneToMany(mappedBy = "attachmentList")
+    @OrderBy("sortKey ASC")
     @RecursivePermissions(privileges = {AssetPrivileges.EDIT, 
                                         AssetPrivileges.DELETE, 
                                         AssetPrivileges.VIEW})

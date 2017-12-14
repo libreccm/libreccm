@@ -69,9 +69,11 @@ public class Message extends CcmObject implements Serializable {
     private Message inReplyTo;
 
     @OneToMany(mappedBy = "inReplyTo")
+    @OrderBy("sent ASC")
     private List<Message> replies;
 
     @OneToMany(mappedBy = "message")
+    @OrderBy("title ASC")
     private List<Attachment> attachments;
 
     public User getSender() {
