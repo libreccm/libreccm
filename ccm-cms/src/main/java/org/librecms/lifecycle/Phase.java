@@ -85,19 +85,35 @@ public class Phase implements Serializable {
     }
 
     public Date getStartDateTime() {
-        return new Date(startDateTime.getTime());
+        if (startDateTime == null) {
+            return null;
+        } else {
+            return new Date(startDateTime.getTime());
+        }
     }
 
     public void setStartDateTime(final Date startDateTime) {
-        this.startDateTime = new Date(startDateTime.getTime());
+        if (startDateTime == null) {
+            this.startDateTime = startDateTime;
+        } else {
+            this.startDateTime = new Date(startDateTime.getTime());
+        }
     }
 
     public Date getEndDateTime() {
-        return new Date(endDateTime.getTime());
+        if (endDateTime == null) {
+            return null;
+        } else {
+            return new Date(endDateTime.getTime());
+        }
     }
 
     public void setEndDateTime(final Date endDateTime) {
-        this.endDateTime = new Date(endDateTime.getTime());
+        if (endDateTime == null) {
+            this.endDateTime = endDateTime;
+        } else {
+            this.endDateTime = new Date(endDateTime.getTime());
+        }
     }
 
     public String getListener() {
@@ -202,7 +218,7 @@ public class Phase implements Serializable {
     public final String toString() {
         return toString("");
     }
-    
+
     public String toString(final String data) {
         return String.format("%s{ "
                                  + "phaseId = %d, "

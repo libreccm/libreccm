@@ -82,7 +82,11 @@ class ItemPhaseTableModel implements TableModel {
             case 1:
                 return currentRow.getDescription();
             case 2:
-                return format.format(currentRow.getStartDate());
+                if (currentRow.getStartDate() == null) {
+                    return "";
+                } else {
+                    return format.format(currentRow.getStartDate());
+                }
             case 3:
                 if (currentRow.getEndDate() == null) {
                     return new GlobalizedMessage("cms.ui.lifecycle.forever",
