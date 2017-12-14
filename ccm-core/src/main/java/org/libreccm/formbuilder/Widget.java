@@ -22,12 +22,15 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import javax.persistence.OrderBy;
 
 /**
  *
@@ -52,6 +55,7 @@ public class Widget extends Component implements Serializable {
 //    private WidgetLabel label;
 
     @OneToMany(mappedBy = "widget")
+    @OrderBy("className ASC")
     private List<Listener> listeners;
 
     public String getParameterName() {

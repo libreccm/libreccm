@@ -24,12 +24,15 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import javax.persistence.OrderBy;
 
 /**
  *
@@ -45,6 +48,7 @@ public class Portal extends Resource implements Serializable {
     private boolean template;
 
     @OneToMany(mappedBy = "portal")
+    @OrderBy("cellNumber ASC, sortKey ASC")
     private List<Portlet> portlets;
 
     public Portal() {

@@ -227,6 +227,7 @@ public class Category extends CcmObject implements Serializable, Portable {
      */
     @RecursivePermissions
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    @OrderBy("objectOrder ASC")
     @XmlElementWrapper(name = "objects", namespace = CAT_XML_NS)
     @JsonIgnore
     private List<Categorization> objects;

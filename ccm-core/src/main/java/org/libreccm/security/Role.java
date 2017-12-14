@@ -172,6 +172,7 @@ public class Role implements Serializable, Portable {
      * Permissions granted to the role.
      */
     @OneToMany(mappedBy = "grantee")
+    @OrderBy("grantedPrivilege ASC")
     @XmlElementWrapper(name = "permissions", namespace = CORE_XML_NS)
     @XmlElement(name = "permission", namespace = CORE_XML_NS)
     @JsonIgnore

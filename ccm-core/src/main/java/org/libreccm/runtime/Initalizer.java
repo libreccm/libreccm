@@ -46,6 +46,7 @@ public class Initalizer implements Serializable {
     private String className;
 
     @ManyToOne
+    @OrderBy("className ASC")
     @JoinColumn(name = "REQUIRED_BY_ID")
     private Initalizer requiredBy;
 

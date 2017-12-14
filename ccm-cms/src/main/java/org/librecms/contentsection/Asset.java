@@ -41,6 +41,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import static org.librecms.CmsConstants.*;
@@ -416,6 +417,7 @@ public class Asset extends CcmObject {
     private static final long serialVersionUID = -3499741368562653529L;
 
     @OneToMany(mappedBy = "asset")
+    @OrderBy("sortKey ASC")
     private List<ItemAttachment<?>> itemAttachments;
 
     @Embedded

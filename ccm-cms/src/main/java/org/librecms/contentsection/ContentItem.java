@@ -56,6 +56,8 @@ import javax.persistence.FetchType;
 import org.hibernate.envers.NotAudited;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
+import javax.persistence.OrderBy;
+
 import static org.librecms.CmsConstants.*;
 
 /**
@@ -586,6 +588,7 @@ public class ContentItem extends CcmObject implements Serializable {
     private String ancestors;
 
     @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
+    @OrderBy("order ASC")
     private List<AttachmentList> attachments;
 
     @OneToOne()
