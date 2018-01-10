@@ -35,6 +35,7 @@ import org.librecms.contentsection.Folder;
 
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.globalization.GlobalizedMessage;
+import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.util.Assert;
 
 import org.libreccm.cdi.utils.CdiUtil;
@@ -77,6 +78,8 @@ public class PageCreateForm
     private final CreationSelector creationSelector;
     private ApplyWorkflowFormSection workflowSection;
     private final StringParameter selectedLanguageParam;
+    
+    private LanguageWidget languageWidget;
 
     /**
      * Construct a new PageCreationForm
@@ -133,7 +136,9 @@ public class PageCreateForm
         /* language selection   */
         add(new Label(new GlobalizedMessage("cms.ui.language.field",
                                             CmsConstants.CMS_BUNDLE)));
-        add(new LanguageWidget(LANGUAGE));
+        languageWidget = new LanguageWidget(LANGUAGE);
+        add(languageWidget);
+//        add(new LanguageWidget(LANGUAGE));
 
         /* Additional widgets from super type: title and name (url)   */
         super.addWidgets();
@@ -160,7 +165,10 @@ public class PageCreateForm
      */
     @Override
     public void init(final FormSectionEvent event) throws FormProcessException {
-        // this is currently a no-op
+        
+        //Init language widget with default language.
+        final PageState state = event.getPageState();
+        languageWidget.setValue(state, KernelConfig.getConfig().getDefaultLanguage());
     }
 
     /**
