@@ -883,7 +883,7 @@ public class FolderManipulator extends SimpleContainer implements
         private static final String ITEM_VIEW = "itemView";
 
         private final FolderBrowser folderBrowser;
-        private final Paginator paginator;
+//        private final Paginator paginator;
         private final OptionGroup checkboxGroup;
         private final SingleSelect actionSelect;
         private final Submit submit;
@@ -904,11 +904,11 @@ public class FolderManipulator extends SimpleContainer implements
             folderBrowser.setFilterParameter(filterParam);
 //            folderBrowser.setFilterForm(filterForm);
             folderBrowser.setFolderManipulator(FolderManipulator.this);
-            paginator = new Paginator(
-                    new FolderBrowserPaginationModelBuilder(folderBrowser),
-                    CMSConfig.getConfig().getFolderBrowseListSize());
-            folderBrowser.setPaginator(paginator);
-            panel.add(paginator);
+//            paginator = new Paginator(
+//                    new FolderBrowserPaginationModelBuilder(folderBrowser),
+//                    CMSConfig.getConfig().getFolderBrowseListSize());
+//            folderBrowser.setPaginator(paginator);
+//            panel.add(paginator);
             panel.add(folderBrowser);
 
             LOGGER.debug("Adding filter form...");
@@ -966,16 +966,16 @@ public class FolderManipulator extends SimpleContainer implements
             return folderBrowser;
         }
 
-        public Paginator getPaginator() {
-            return paginator;
-        }
+//        public Paginator getPaginator() {
+//            return paginator;
+//        }
 
         @Override
         public void reset(final PageState state) {
 
             checkboxGroup.setValue(state, null);
             actionSelect.setValue(state, null);
-            paginator.reset(state);
+//            paginator.reset(state);
             //state.setValue(m_aToZfilter, null);
             state.setValue(filterParam, null);
             filterForm.getFilterField().setValue(state, null);

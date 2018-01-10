@@ -105,7 +105,7 @@ public class FolderBrowser extends Table {
     private StringParameter atozFilterParameter = null;
     private StringParameter filterParameter = null;
     private FolderManipulator folderManipulator;
-    private Paginator paginator;
+//    private Paginator paginator;
 //    private FolderManipulator.FilterForm filterForm;
     private long folderSize;
 
@@ -227,13 +227,13 @@ public class FolderBrowser extends Table {
         return folderSize;
     }
 
-    protected Paginator getPaginator() {
-        return paginator;
-    }
-
-    protected void setPaginator(final Paginator paginator) {
-        this.paginator = paginator;
-    }
+//    protected Paginator getPaginator() {
+//        return paginator;
+//    }
+//
+//    protected void setPaginator(final Paginator paginator) {
+//        this.paginator = paginator;
+//    }
 
     protected String getFilter(final PageState state) {
         return (String) state.getValue(filterParameter);

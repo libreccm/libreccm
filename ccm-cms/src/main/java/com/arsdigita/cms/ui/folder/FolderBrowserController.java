@@ -291,6 +291,7 @@ public class FolderBrowserController {
                                               final String orderDirection,
                                               final int firstResult,
                                               final int maxResults) {
+        
         final List<Folder> subFolders = findSubFolders(folder,
                                                        filterTerm,
                                                        orderBy,
@@ -302,9 +303,9 @@ public class FolderBrowserController {
             .map(subFolder -> buildRow(subFolder))
             .collect(Collectors.toList());
 
-        if (subFolders.size() > maxResults) {
-            return subFolderRows;
-        } else {
+//        if (subFolders.size() >= maxResults) {
+//            return subFolderRows;
+//        } else {
             final int maxItems = maxResults - subFolders.size();
             final int firstItem = firstResult - subFolders.size();
 
@@ -323,7 +324,7 @@ public class FolderBrowserController {
             rows.addAll(itemRows);
 
             return rows;
-        }
+//        }
     }
 
     /**
