@@ -444,13 +444,13 @@ public class ContentSectionServlet extends BaseApplicationServlet {
         if (url.endsWith(XML_SUFFIX)) {
             request.setAttribute(XML_MODE, Boolean.TRUE);
             LOGGER.debug("StraightXML Requested");
-            itemUrl = "/" + url.substring(0, url.length() - XML_SUFFIX.length());
+            itemUrl = "/" + url.substring(1, url.length() - XML_SUFFIX.length());
         } else {
             request.setAttribute(XML_MODE, Boolean.FALSE);
             if (url.endsWith(FILE_SUFFIX)) {
                 itemUrl = String.format(
                     "/%s",
-                    url.substring(0, url.length() - FILE_SUFFIX.length()));
+                    url.substring(1, url.length() - FILE_SUFFIX.length()));
             } else if (url.endsWith("/")) {
                 itemUrl = String.format("/%s",
                                         url.substring(0, url.length() - 1));
