@@ -119,8 +119,9 @@ class PagesPane extends CMSContainer {
     private class PagesTable extends Table {
 
         public static final int COL_SITE = 0;
-        public static final int COL_EDIT = 1;
-        public static final int COL_DELETE = 2;
+        public static final int COL_PAGES_INSTANCE = 1;
+        public static final int COL_EDIT = 2;
+        public static final int COL_DELETE = 3;
 
         public PagesTable() {
 
@@ -133,6 +134,12 @@ class PagesPane extends CMSContainer {
                     COL_SITE,
                     new Label(new GlobalizedMessage(
                         "cms.ui.contentcenter.pagestable.columns.site.header",
+                        CmsConstants.CMS_BUNDLE))));
+            columnModel
+                .add(new TableColumn(
+                    COL_SITE,
+                    new Label(new GlobalizedMessage(
+                        "cms.ui.contentcenter.pagestable.columns.pages_instance.header",
                         CmsConstants.CMS_BUNDLE))));
             columnModel
                 .add(new TableColumn(
@@ -174,8 +181,25 @@ class PagesPane extends CMSContainer {
                             return new Text(pages.getSite().getDomainOfSite());
                         }
                     }
-
                 });
+            
+            columnModel
+            .get(COL_PAGES_INSTANCE)
+                .setCellRenderer(new TableCellRenderer() {
+
+                @Override
+                public Component getComponent(final Table table, 
+                                              final PageState state,
+                                              final Object value, 
+                                              final boolean isSelected,
+                                              final Object key, 
+                                              final int row, 
+                                              final int column) {
+                    
+                    final Pages pages = (Pages) value;
+                    return new Text(pages.getPrimaryUrl());
+                }
+            });
 
             columnModel
                 .get(COL_EDIT)
@@ -347,6 +371,8 @@ class PagesPane extends CMSContainer {
 
             switch (columnIndex) {
                 case PagesTable.COL_SITE:
+                    return current;
+                case PagesTable.COL_PAGES_INSTANCE:
                     return current;
                 case PagesTable.COL_EDIT:
                     return new Label(new GlobalizedMessage(
