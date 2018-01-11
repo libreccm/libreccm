@@ -524,6 +524,8 @@ public class FolderBrowserController {
                 builder.in(from).value(itemCriteriaQuery)
             ));
 
+        criteriaQuery.orderBy(builder.asc(from.get("displayName")));
+        
         final TypedQuery<CcmObject> query = entityManager
             .createQuery(criteriaQuery);
 
