@@ -60,7 +60,7 @@ class FolderBrowserTableModelBuilder
             return Table.EMPTY_MODEL;
         } else {
             folderBrowser.getRowSelectionModel().clearSelection(state);
-//            final Paginator paginator = folderBrowser.getPaginator();
+            final Paginator paginator = folderBrowser.getPaginator();
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final FolderBrowserController controller = cdiUtil
                 .findBean(FolderBrowserController.class);
@@ -78,8 +78,8 @@ class FolderBrowserTableModelBuilder
                 orderDirection = folderBrowser.getSortDirection(state);
             }
             final String atozFilter = folderBrowser.getAtoZfilter(state);
-//            final int first = paginator.getFirst(state);
-//            final int pageSize = paginator.getPageSize(state);
+            final int first = paginator.getFirst(state);
+            final int pageSize = paginator.getPageSize(state);
 
             final String filterTerm;
             if (filter != null && !filter.trim().isEmpty()) {
@@ -96,23 +96,16 @@ class FolderBrowserTableModelBuilder
             if (filterTerm == null) {
                 rows = controller.getObjectRows(folder,
                                                 orderBy,
-                                                orderDirection);
-//                rows = controller.getObjectRows(folder,
-//                                                orderBy,
-//                                                orderDirection,
-//                                                first - 1,
-//                                                pageSize);
+                                                orderDirection,
+                                                first - 1,
+                                                pageSize);
             } else {
                 rows = controller.getObjectRows(folder,
                                                 filterTerm,
                                                 orderBy,
-                                                orderDirection);
-//                rows = controller.getObjectRows(folder,
-//                                                filterTerm,
-//                                                orderBy,
-//                                                orderDirection,
-//                                                first - 1,
-//                                                pageSize);
+                                                orderDirection,
+                                                first - 1,
+                                                pageSize);
             }
 
             LOGGER.debug("Retrieve table rows in {} ms.",
