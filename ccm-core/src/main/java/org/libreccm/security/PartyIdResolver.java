@@ -47,8 +47,8 @@ public class PartyIdResolver implements ObjectIdResolver {
         return partyRepository
                 .findByName(id.key.toString())
                 .orElseThrow(() -> new IllegalArgumentException(String
-                .format("No Party with name %s in the database.",
-                        id.key.toString())));
+                        .format("No Party with name %s in the database.",
+                                id.key.toString())));
     }
 
     @Override

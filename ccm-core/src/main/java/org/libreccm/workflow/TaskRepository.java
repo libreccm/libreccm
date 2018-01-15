@@ -23,6 +23,7 @@ import org.libreccm.core.AbstractEntityRepository;
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -57,6 +58,7 @@ public class TaskRepository extends AbstractEntityRepository<Long, Task> {
      *
      * @return An optional either with the found item or empty
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public Optional<Task> findByUuid(final String uuid) {
         final TypedQuery<Task> query = getEntityManager().createNamedQuery(
                 "Task.findByUuid", Task.class);
