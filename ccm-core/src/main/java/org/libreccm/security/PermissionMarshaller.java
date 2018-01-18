@@ -27,7 +27,7 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
+ * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version created on 11/7/16
  */
 @RequestScoped
