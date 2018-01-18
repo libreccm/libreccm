@@ -1,0 +1,102 @@
+.ccm-editor {
+    box-sizing: border-box;
+
+    width: 60em;
+}
+
+.ccm-editor-accessibility {
+    box-sizing: inherit;
+
+    position: absolute;
+    display: block;
+
+    width: 1px;
+    height: 1px;
+
+    overflow: hidden;
+}
+
+.ccm-editor-dialog {
+
+    background-color: #ccc;
+
+    border: 1px solid #aaa;
+
+    box-sizing: border-box;
+
+    padding: 1em 0.75em;
+
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    margin-top: -10em;
+    margin-left: -20em;
+
+    width: 40em;
+    /*height: 20em;*/
+}
+
+.ccm-editor-dialog h1 {
+    margin-top: 0;
+}
+
+.ccm-editor-dialog form {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+}
+
+.ccm-editor-dialog  form input[type="checkbox"] {
+    justify-self: start;
+}
+
+.ccm-editor-dialog  form button {
+    justify-self: center;
+}
+
+.ccm-editor-editable {
+
+    background-color: #fff;
+    color: #000;
+
+    border: 1px solid #bbb;
+
+    box-sizing: inherit;
+
+    height: 20em;
+
+    padding: 0.5em 0.3em;
+}
+
+.ccm-editor-hidden {
+    display: none;
+}
+
+.ccm-editor-textarea {
+
+    background-color: #fff;
+    color: #000;
+
+    box-sizing: inherit;
+
+    width: 60em;
+}
+
+.ccm-editor-toolbar {
+    box-sizing: inherit;
+
+    background-color: #ccc;
+
+    border: 1px solid #ccc;
+
+    padding: 0.2em 0.33em;
+}
+
+.ccm-editor-toolbar-actiongroup {
+    box-sizing: inherit;
+
+    display: inline-block;
+
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}

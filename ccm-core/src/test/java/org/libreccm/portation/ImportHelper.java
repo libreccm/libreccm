@@ -67,8 +67,8 @@ import javax.inject.Inject;
 @RequestScoped
 class ImportHelper {
     
-    //private String repoPath = "/home/jensp/pwi/libreccm/ccm/";
-    private final String repoPath = "/home/tosmers/Svn/libreccm/";
+    private final String repoPath = "/home/jensp/pwi/libreccm/ccm/";
+//    private final String repoPath = "/home/tosmers/Svn/libreccm/";
     private final String projectPath = "ccm_ng/ccm-core/src/test/resources/" +
                     "portation/trunk-iaw-exports";
     private final boolean indentation = false;
