@@ -12,7 +12,6 @@
     
     <parent>
         <groupId>org.libreccm</groupId>
-        <!--<artifactId>libreccm-parent</artifactId>-->
         <artifactId>ccm-bundle-devel</artifactId>
         <relativePath>../ccm-bundle-devel</relativePath>
         <version>7.0.0-SNAPSHOT</version>
@@ -26,48 +25,23 @@
     <name>LibreCCM Devel Bundle Web for Wildfly</name>
     <url>http://www.libreccm.org/modules/web/wildfly</url>
     
-    <!--<dependencies>
+    <dependencies>
         <dependency>
-            <groupId>org.libreccm</groupId>
-            <artifactId>ccm-core</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.libreccm</groupId>
-            <artifactId>ccm-theme-foundry</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>net.sf.saxon</groupId>
-            <artifactId>Saxon-HE</artifactId>
-        </dependency>-->
-        
-        <!-- CCM modules -->
-        <!--<dependency>
-            <groupId>org.libreccm</groupId>
-            <artifactId>ccm-shortcuts</artifactId>
-            <version>${project.parent.version}</version>
+            <groupId>org.webjars</groupId>
+            <artifactId>font-awesome</artifactId>
+            <version>4.7.0</version>
         </dependency>
         <dependency>
-            <groupId>org.librecms</groupId>
-            <artifactId>ccm-cms</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>-->
-        <!-- CCM Modules end -->
-        
-        <!-- Dependencies for log4j 2 including adapter for the log4j 1.2 API -->
-        <!--<dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
+            <groupId>org.webjars</groupId>
+            <artifactId>requirejs</artifactId>
+            <version>2.3.5</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
+            <groupId>org.webjars</groupId>
+            <artifactId>requirejs-domready</artifactId>
+            <version>2.0.1-2</version>
         </dependency>
-        
-    </dependencies>-->
+    </dependencies>
     
     <build>
         <finalName>libreccm-web-wildfly</finalName>
