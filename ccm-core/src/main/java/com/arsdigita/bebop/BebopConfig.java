@@ -70,13 +70,14 @@ public final class BebopConfig {
     private Set<String> dhtmlEditors = new HashSet<>(
         Arrays.asList(new String[]{BebopConstants.BEBOP_XINHAEDITOR,
                                    BebopConstants.BEBOP_FCKEDITOR,
-                                   BebopConstants.BEBOP_DHTMLEDITOR}));
+                                   BebopConstants.BEBOP_DHTMLEDITOR,
+                                   BebopConstants.BEBOP_CCMEDITOR}));
 
     @Setting
-    private String defaultDhtmlEditor = BebopConstants.BEBOP_XINHAEDITOR;
+    private String defaultDhtmlEditor = BebopConstants.BEBOP_CCMEDITOR;
 
     @Setting
-    private String dhtmlEditorSrcFile = "/assets/xinha/XinhaLoader.js";
+    private String dhtmlEditorSrcFile = "/ccm-editor/ccm-editor-loader.js";
 
     @Setting
     private Boolean showClassName = false;
