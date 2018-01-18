@@ -19,9 +19,8 @@
 package com.arsdigita.bebop.util;
 
 /**
- * An interface that contains all the Bebop
- * constants that are used by Bebop components in generating the
- * output XML.
+ * An interface that contains all the Bebop constants that are used by Bebop
+ * components in generating the output XML.
  *
  * @author Jim Parsons
  * @version $Id: BebopConstants.java 1224 2006-06-18 22:28:30Z apevec $
@@ -29,38 +28,39 @@ package com.arsdigita.bebop.util;
 public interface BebopConstants {
 
     String BEBOP_CHECKBOXGROUP = "bebop:checkboxGroup";
-    String BEBOP_CHECKBOX      = "bebop:checkbox";
-    String BEBOP_DATE          = "bebop:date";
-    String BEBOP_DATETIME      = "bebop:datetime";
-    String BEBOP_TIME          = "bebop:time";
-    String BEBOP_MULTISELECT   = "bebop:multiSelect";
-    String BEBOP_OPTION        = "bebop:option";
-    String BEBOP_RADIOGROUP    = "bebop:radioGroup";
-    String BEBOP_RADIO         = "bebop:radio";
-    String BEBOP_SELECT        = "bebop:select";
-    String BEBOP_TEXTAREA      = "bebop:textarea";
-    String BEBOP_DHTMLEDITOR   = "bebop:dhtmleditor";
-    String BEBOP_FCKEDITOR     = "bebop:fckeditor";
-    String BEBOP_XINHAEDITOR   = "bebop:xinha";
-    String BEBOP_FORMWIDGET    = "bebop:formWidget";
-    String BEBOP_FORMERRORS    = "bebop:formErrors";
-    String BEBOP_PORTAL        = "bebop:portal";
-    String BEBOP_PORTLET       = "bebop:portlet";
-    String BEBOP_BOXPANEL      = "bebop:boxPanel";
-    String BEBOP_CELL          = "bebop:cell";
-    String BEBOP_COLUMNPANEL   = "bebop:columnPanel";
-    String BEBOP_GRIDPANEL     = "bebop:gridPanel";
-    String BEBOP_BORDER        = "bebop:cell";
-    String BEBOP_PAD           = "bebop:pad";
-    String BEBOP_PADFRAME      = "bebop:padFrame";
-    String BEBOP_PANELROW      = "bebop:panelRow";
-    String BEBOP_LIST          = "bebop:list";
-    String BEBOP_TABLE         = "bebop:table";
-    String BEBOP_TABLEBODY     = "bebop:tbody";
-    String BEBOP_TABLEROW      = "bebop:trow";
-    String BEBOP_SEG_PANEL     = "bebop:segmentedPanel";
-    String BEBOP_SEGMENT       = "bebop:segment";
-    String BEBOP_SEG_BODY      = "bebop:segmentBody";
-    String BEBOP_SEG_HEADER    = "bebop:segmentHeader";
+    String BEBOP_CHECKBOX = "bebop:checkbox";
+    String BEBOP_DATE = "bebop:date";
+    String BEBOP_DATETIME = "bebop:datetime";
+    String BEBOP_TIME = "bebop:time";
+    String BEBOP_MULTISELECT = "bebop:multiSelect";
+    String BEBOP_OPTION = "bebop:option";
+    String BEBOP_RADIOGROUP = "bebop:radioGroup";
+    String BEBOP_RADIO = "bebop:radio";
+    String BEBOP_SELECT = "bebop:select";
+    String BEBOP_TEXTAREA = "bebop:textarea";
+    String BEBOP_DHTMLEDITOR = "bebop:dhtmleditor";
+    String BEBOP_FCKEDITOR = "bebop:fckeditor";
+    String BEBOP_XINHAEDITOR = "bebop:xinha";
+    String BEBOP_CCMEDITOR = "bebop:ccmeditor";
+    String BEBOP_FORMWIDGET = "bebop:formWidget";
+    String BEBOP_FORMERRORS = "bebop:formErrors";
+    String BEBOP_PORTAL = "bebop:portal";
+    String BEBOP_PORTLET = "bebop:portlet";
+    String BEBOP_BOXPANEL = "bebop:boxPanel";
+    String BEBOP_CELL = "bebop:cell";
+    String BEBOP_COLUMNPANEL = "bebop:columnPanel";
+    String BEBOP_GRIDPANEL = "bebop:gridPanel";
+    String BEBOP_BORDER = "bebop:cell";
+    String BEBOP_PAD = "bebop:pad";
+    String BEBOP_PADFRAME = "bebop:padFrame";
+    String BEBOP_PANELROW = "bebop:panelRow";
+    String BEBOP_LIST = "bebop:list";
+    String BEBOP_TABLE = "bebop:table";
+    String BEBOP_TABLEBODY = "bebop:tbody";
+    String BEBOP_TABLEROW = "bebop:trow";
+    String BEBOP_SEG_PANEL = "bebop:segmentedPanel";
+    String BEBOP_SEGMENT = "bebop:segment";
+    String BEBOP_SEG_BODY = "bebop:segmentBody";
+    String BEBOP_SEG_HEADER = "bebop:segmentHeader";
 
 }

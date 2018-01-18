@@ -30,24 +30,29 @@ import com.arsdigita.web.Web;
 import com.arsdigita.xml.Element;
 
 /**
- * Displays and manages a WYSIWYG HTML editor that takes advantage of DHTML scripting features. This
- * class can use: - <a href="http://www.xinha.org>Xinha</a>
- * - <a href="http://www.fckeditor.net">FCKeditor</a>
- * - HTMLarea for backwards compatibility, development discontinued Editor is choosen based on the
- * config parameter waf.bebop.dhtml_editor, default is "Xinha", which is the successor of HTMLarea
+ * Displays and manages a WYSIWYG HTML editor that takes advantage of DHTML
+ * scripting features. This class can use:
+ * <ul>
+ * <li>CCM Editor, a new editor using HTML5 features.</li>
+ * <li><a href="http://www.xinha.org">Xinha</a></li>
+ * <li><a href="http://www.fckeditor.net">FCKeditor</a></li>
+ * <li>HTMLarea for backwards compatibility, development discontinued</li>
+ * </ul>
+ * Editor is chosen based on the configuration parameter
+ * {@code waf.bebop.dhtml_editor} default is {@code ccm-editor}.
  *
  * @author Jim Parsons
  * @author Richard Li
  * @author Chris Burnett
  * @author Alan Pevec
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  *
- * @version $Id$
  */
 public class DHTMLEditor extends TextArea {
 
     /**
-     * Constant for specifying <tt>OFF</tt> value for the <tt>WRAP</tt> attribute of this image
-     * input.
+     * Constant for specifying <tt>OFF</tt> value for the <tt>WRAP</tt>
+     * attribute of this image input.
      *
      * See <a href="http:
      * //developer.netscape.com/docs/manuals/htmlguid/tags10.htm#1340340">here</a>
@@ -56,8 +61,8 @@ public class DHTMLEditor extends TextArea {
     public static final int OFF = 0;
 
     /**
-     * Constant for specifying <tt>HARD</tt> value for the <tt>WRAP</tt> attribute of this image
-     * input.
+     * Constant for specifying <tt>HARD</tt> value for the <tt>WRAP</tt>
+     * attribute of this image input.
      *
      * See <a href="http://
      * developer.netscape.com/docs/manuals/htmlguid/tags10.htm#1340340">here</a>
@@ -66,8 +71,8 @@ public class DHTMLEditor extends TextArea {
     public static final int HARD = 1;
 
     /**
-     * Constant for specifying <tt>SOFT</tt> value for the <tt>WRAP</tt> attribute of this image
-     * input. See <a href="http://
+     * Constant for specifying <tt>SOFT</tt> value for the <tt>WRAP</tt>
+     * attribute of this image input. See <a href="http://
      * developer.netscape.com/docs/manuals/htmlguid/tags10.htm#1340340">here</a>
      * for a description of what this attribute does.
      */
@@ -80,22 +85,31 @@ public class DHTMLEditor extends TextArea {
 
         // WARNING: Processing of these default values by CMSConfig does NOT
         // work correctly because of deviciencies in unmarshal method there.
-        public static final Config STANDARD = new Config("Xinha.Config",
-                                                         "/assets/xinha/CCMcoreXinhaConfig.js");
+        public static final Config XINHA_STANDARD = new Config("Xinha.Config",
+                                                               "/assets/xinha/CCMcoreXinhaConfig.js");
 
         /**
          * Example FCKEditor configuration.
          */
-        public static final Config FCK_STANDARD = new Config("FCKEditor.Config.StyleDefault",
-                                                             "/assets/fckeditor/config/fckconfigstyledefault.js");
+        public static final Config FCK_STANDARD = new Config(
+            "FCKEditor.Config.StyleDefault",
+            "/assets/fckeditor/config/fckconfigstyledefault.js");
 
-        public static final Config FCK_CMSADMIN = new Config("FCKEditor.Config.StyleCMSAdmin",
-                                                             "/assets/fckeditor/config/fckconfigstylecmsadmin.js");
+        public static final Config FCK_CMSADMIN = new Config(
+            "FCKEditor.Config.StyleCMSAdmin",
+            "/assets/fckeditor/config/fckconfigstylecmsadmin.js");
 
         /**
          * Example old HTMLarea configuration.
          */
-        public static final Config HTMLAREA = new Config("HTMLArea.Config", null);
+        public static final Config HTMLAREA
+                                   = new Config("HTMLArea.Config", null);
+
+        /**
+         * Example of configuration for ccm-editor
+         */
+        public static final Config STANDARD = new Config("ccm-editor.loader",
+                                                         "/ccm-editor/ccm-editor-loader.js");
 
         private String m_name;
         private String m_path;
@@ -183,7 +197,7 @@ public class DHTMLEditor extends TextArea {
 
     public String getEditorURL() {
         return BebopConfig.getConfig().getDhtmlEditorSrcFile().substring(
-            0, 
+            0,
             BebopConfig.getConfig().getDhtmlEditorSrcFile().lastIndexOf("/") + 1);
     }
 
@@ -211,7 +225,8 @@ public class DHTMLEditor extends TextArea {
     /**
      * Prevent the specified button from being displayed in the editor toolbar.
      *
-     * @param name name of the button, as specified in the btnList of the htmlarea.js file
+     * @param name name of the button, as specified in the btnList of the
+     *             htmlarea.js file
      *
      */
     public void hideButton(String name) {
@@ -261,7 +276,8 @@ public class DHTMLEditor extends TextArea {
     /**
      * The XML tag.
      *
-     * @return The tag to be used for the top level DOM element generated for this type of Widget.
+     * @return The tag to be used for the top level DOM element generated for
+     *         this type of Widget.
      */
     @Override
     protected String getElementTag() {
@@ -284,9 +300,12 @@ public class DHTMLEditor extends TextArea {
         editor.addAttribute("name", getName());
         generateDescriptionXML(state, editor);
 
-        // Set the needed config params so they don't have to be hardcoded in the theme
-        editor.addAttribute("editor_url", Web.getWebappContextPath().concat(getEditorURL()));
-        editor.addAttribute("editor_src", Web.getWebappContextPath().concat(getEditorSrc()));
+        // Set the needed config params so they don't have to be hardcoded in 
+        //the theme
+        editor.addAttribute("editor_url",
+                            Web.getWebappContextPath().concat(getEditorURL()));
+        editor.addAttribute("editor_src",
+                            Web.getWebappContextPath().concat(getEditorSrc()));
 
         if (value != null) {
             editor.setText(value);
@@ -297,7 +316,8 @@ public class DHTMLEditor extends TextArea {
         Element config = editor.newChildElement("bebop:config", BEBOP_XML_NS);
         config.addAttribute("name", m_config.getName());
         if (m_config.getPath() != null) {
-            config.addAttribute("path", Web.getWebappContextPath().concat(m_config.getPath()));
+            config.addAttribute("path", Web.getWebappContextPath().concat(
+                                m_config.getPath()));
         }
         if (m_hiddenButtons.size() > 0) {
 
@@ -314,7 +334,8 @@ public class DHTMLEditor extends TextArea {
         Iterator plugins = m_plugins.iterator();
         while (plugins.hasNext()) {
             String name = (String) plugins.next();
-            Element plugin = editor.newChildElement("bebop:plugin", BEBOP_XML_NS);
+            Element plugin = editor
+                .newChildElement("bebop:plugin", BEBOP_XML_NS);
             plugin.addAttribute("name", name);
         }
     }

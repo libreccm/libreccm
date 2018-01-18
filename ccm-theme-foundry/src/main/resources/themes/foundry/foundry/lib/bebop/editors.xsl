@@ -43,7 +43,7 @@
         <xsl:variable name="first-match">
             <xsl:value-of select="//bebop:dhtmleditor/@name"/>
         </xsl:variable>
-        <xsl:if test="@name=$first-match">    
+        <xsl:if test="@name=$first-match">
       
             <script type="text/javascript">
                 _editor_url = "/assets/htmlarea/";
@@ -267,7 +267,7 @@
             <xsl:value-of select="//bebop:xinha/@name"/>
         </xsl:variable>
 
-        <xsl:if test="@name=$first-match">    
+        <xsl:if test="@name=$first-match">
  
             <script type="text/javascript">
                 _editor_url = "<xsl:value-of select="@editor_url"/>";
@@ -320,4 +320,21 @@
             <xsl:value-of disable-output-escaping="no" select="text()"/>
         </textarea>
     </xsl:template>
+    
+    <xsl:template match="bebop:ccmeditor">
+        
+        <script data-main="{@editor_src}"
+                src="{$context-prefix}/webjars/requirejs/2.3.5/require.min.js" />
+        <textarea id="ta_{@name}"
+                  name="{@name}"
+                  class="editor-textarea"
+                  rows="{@rows}"
+                  cols="{@cols}"
+                  wrap="{@wrap}">
+            <xsl:value-of disable-output-escaping="no"
+                          select="text()" />
+        </textarea>
+        
+    </xsl:template>
+    
 </xsl:stylesheet>
