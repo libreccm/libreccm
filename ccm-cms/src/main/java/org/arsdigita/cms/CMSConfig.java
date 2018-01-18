@@ -83,7 +83,7 @@ public class CMSConfig {
      */
     @Setting
     private List<String> dhtmlEditorConfig = Arrays.asList(new String[]{
-        "Xinha.Config", "/assets/xinha/CCMcmsCinhaConfig.js"});
+        "ccm-editor.loader", "/ccm-editor/ccm-editor-loader.js"});
 
     /**
      * Defines which plugins to use, e.g.TableOperations,CSS Format:

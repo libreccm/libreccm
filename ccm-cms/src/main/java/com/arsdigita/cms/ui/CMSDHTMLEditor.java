@@ -23,7 +23,6 @@ import com.arsdigita.bebop.parameters.ParameterModel;
 import com.arsdigita.bebop.parameters.StringParameter;
 
 import org.arsdigita.cms.CMSConfig;
-import org.librecms.contentsection.ContentSection;
 
 /**
  *

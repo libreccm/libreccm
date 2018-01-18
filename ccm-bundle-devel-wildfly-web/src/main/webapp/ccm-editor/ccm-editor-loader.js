@@ -1,8 +1,8 @@
 requirejs(["./ccm-editor",
-            "../node_modules/requirejs-domready/domReady!"],
+            "../webjars/requirejs-domready/2.0.1/domReady!"],
           function(editor, doc) {
 
-    editor.addEditor(".editor", {
+    editor.addEditor(".editor-textarea", {
         "actionGroups": [
             {
                     "name": "blocks",
@@ -40,6 +40,8 @@ requirejs(["./ccm-editor",
             }
         ],
         "settings": {
+            "ccm-editor-css.path": "/libreccm/ccm-editor/ccm-editor.css",
+            "font-awesome.path": "/libreccm/webjars/font-awesome/4.7.0/css/font-awesome.min.css",
             "formatBlock.blocks": [
                 {
                     "element": "h3",

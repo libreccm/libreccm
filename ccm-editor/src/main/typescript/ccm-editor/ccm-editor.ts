@@ -145,7 +145,13 @@ export class CCMEditor {
         const headElem: Element = document.getElementsByTagName("head").item(0);
         const styleElem: Element = document.createElement("link");
         styleElem.setAttribute("rel", "stylesheet");
-        styleElem.setAttribute("href", "libreccm-editor.css");
+        if ("ccm-editor-css.path" in this.configuration.settings) {
+            styleElem
+                .setAttribute("href",
+                              this.configuration.settings["ccm-editor-css.path"]);
+        } else {
+            styleElem.setAttribute("href", "ccm-editor.css");
+        }
         headElem.appendChild(styleElem);
 
         //Check if Fontawesome is already loaded. If not add it
@@ -153,7 +159,15 @@ export class CCMEditor {
 
             const fontawesomeElem: Element = document.createElement("link");
             fontawesomeElem.setAttribute("rel", "stylesheet");
-            fontawesomeElem.setAttribute("href", "node_modules/font-awesome/css/font-awesome.min.css");
+            if ("font-awesome.path" in this.configuration.settings) {
+                fontawesomeElem
+                    .setAttribute("href",
+                                  this.configuration.settings["font-awesome.path"]);
+            } else {
+                fontawesomeElem
+                    .setAttribute("href",
+                                  "node_modules/font-awesome/css/font-awesome.min.css");
+            }
             headElem.appendChild(fontawesomeElem);
         }
 
@@ -186,7 +200,7 @@ export class CCMEditor {
         console.log("Selection changed.");
         const selection: Selection = document.getSelection();
         for(const key in this.actions) {
-            
+
             this.actions[key].selectionChanged(selection);
         }
     }
