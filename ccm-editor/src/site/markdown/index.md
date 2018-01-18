@@ -73,6 +73,28 @@ the to configuration of the `maven-war-plugin`:
     </build>
     ...
 
+The editor needs three external libraries: RequireJS, RequireJS DOMready and 
+Font Awesome. The easiest way to include them into the bundle is to use the 
+JARs provided by the [WebJars project](https://www.webjars.org) by adding them
+to the dependencies section of the WAR module:
+
+    <dependency>
+        <groupId>org.webjars</groupId>
+        <artifactId>font-awesome</artifactId>
+        <version>4.7.0</version>
+    </dependency>
+    <dependency>
+        <groupId>org.webjars</groupId>
+         <artifactId>requirejs</artifactId>
+         <version>2.3.5</version>
+    </dependency>
+    <dependency>
+        <groupId>org.webjars</groupId>
+        <artifactId>requirejs-domready</artifactId>
+         <version>2.0.1-2</version>
+    </dependency>
+
+
 In the WAR module add a folder `ccm-editor` to the `src/main/webapp` folder 
 and create a file similar to the following one:
 
