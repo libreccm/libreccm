@@ -1,6 +1,7 @@
 requirejs(["./ccm-editor",
+           "./ccm-cms-editor",
             "../webjars/requirejs-domready/2.0.1/domReady!"],
-          function(editor, doc) {
+          function(editor, cmseditor, doc) {
 
     editor.addEditor(".editor-textarea", {
         "commandGroups": [
@@ -22,7 +23,8 @@ requirejs(["./ccm-editor",
                     editor.SubscriptCommand,
                     editor.SuperscriptCommand,
                     editor.RemoveFormatCommand,
-                    editor.InsertExternalLinkCommand
+                    editor.InsertExternalLinkCommand,
+                    cmseditor.InsertInternalLinkCommand
                 ]
             },
             {
