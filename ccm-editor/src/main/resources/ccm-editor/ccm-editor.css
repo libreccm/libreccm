@@ -92,7 +92,7 @@
     padding: 0.2em 0.33em;
 }
 
-.ccm-editor-toolbar-actiongroup {
+.ccm-editor-toolbar-commandgroup {
     box-sizing: inherit;
 
     display: inline-block;
