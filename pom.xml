@@ -47,8 +47,12 @@
         <module>ccm-testutils</module>
         <module>ccm-xafilesystemadapter</module>
         
+        <!-- Simple HTML editor for use in the backend -->
+        <module>ccm-editor</module>
+        
         <!-- CMS modules -->
         <module>ccm-cms</module>
+        <module>ccm-cms-editor</module>
         
         <module>ccm-cms-types-agenda</module>
         <module>ccm-cms-types-bookmark</module>
@@ -61,9 +65,6 @@
         <!-- Miscellaneous modules  -->
         <module>ccm-docrepo</module>
         <module>ccm-shortcuts</module>
-        
-        <!-- Simple HTML editor for use in the backend -->
-        <module>ccm-editor</module>
         
         <!-- Modules providing themes -->
         <module>ccm-theme-foundry</module>

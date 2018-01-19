@@ -10,14 +10,14 @@
     "license": "GPL-3.0",
     "dependencies": {
     "font-awesome": "^4.7.0",
-    "fontawesome": "^4.7.2",
+    "requirejs": "^2.3.5",
+    "requirejs-domready": "^2.0.3"
+  },
+  "devDependencies": {
     "grunt": "^1.0.1",
     "grunt-cli": "^1.2.0",
     "grunt-contrib-clean": "^1.1.0",
     "grunt-ts": "^6.0.0-beta.17",
-    "requirejs": "^2.3.5",
-    "requirejs-domready": "^2.0.3",
     "typescript": "^2.6.2"
-  },
-  "devDependencies": {}
+  }
 }
