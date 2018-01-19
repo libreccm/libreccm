@@ -103,40 +103,40 @@ and create a file similar to the following one:
           function(editor, doc) {
 
         editor.addEditor(".editor", {
-            "actionGroups": [
+            "commandGroups": [
                 {
                         "name": "blocks",
                         "title": "Format blocks",
-                        "actions": [
-                            editor.FormatBlockAction
+                        "commands": [
+                            editor.FormatBlockCommand
                         ]
                 },
                 {
                     "name": "format-text",
                     "title": "Format text",
-                    "actions": [
-                        editor.MakeBoldAction,
-                        editor.MakeItalicAction,
-                        editor.MakeUnderlineAction,
-                        editor.StrikeThroughAction,
-                        editor.SubscriptAction,
-                        editor.SuperscriptAction,
-                        editor.RemoveFormatAction,
-                        editor.InsertExternalLinkAction
+                    "commands": [
+                        editor.MakeBoldCommand,
+                        editor.MakeItalicCommand,
+                        editor.MakeUnderlineCommand,
+                        editor.StrikeThroughCommand,
+                        editor.SubscriptCommand,
+                        editor.SuperscriptCommand,
+                        editor.RemoveFormatCommand,
+                        editor.InsertExternalLinkCommand
                     ]
                 },
                 {
                         "name": "insert-list",
                         "title": "Insert list",
-                        "actions": [
-                            editor.InsertUnorderedListAction,
-                            editor.InsertOrderedListAction
+                        "commands": [
+                            editor.InsertUnorderedListCommand,
+                            editor.InsertOrderedListCommand
                         ]
                 },
                 {
                     "name": "html",
                     "title": "HTML",
-                    "actions": [editor.ToggleHtmlAction]
+                    "commands": [editor.ToggleHtmlCommand]
                 }
             ],
             "settings": {
@@ -176,6 +176,6 @@ The editor is initialised with a configuration. The configuration is described
 at the [configuration](configuration.html) page. The editor itself has no 
 hardcoded functions. Instead all controls in its toolbar are provided as 
 (TypeScript) classes which can be added by the configuration. The editor 
-module provides several standard actions like formated block elements. Please
-refer to the [Standard Actions](actions.html) for more information about these
-actions.
+module provides several standard commands like formated block elements. Please
+refer to the [Standard Commands](commands.html) for more information about these
+commands.

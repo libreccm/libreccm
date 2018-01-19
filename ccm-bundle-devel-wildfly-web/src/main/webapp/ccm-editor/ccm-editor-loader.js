@@ -3,40 +3,40 @@ requirejs(["./ccm-editor",
           function(editor, doc) {
 
     editor.addEditor(".editor-textarea", {
-        "actionGroups": [
+        "commandGroups": [
             {
                     "name": "blocks",
                     "title": "Format blocks",
-                    "actions": [
-                        editor.FormatBlockAction
+                    "commands": [
+                        editor.FormatBlockCommand
                     ]
             },
             {
                 "name": "format-text",
                 "title": "Format text",
-                "actions": [
-                    editor.MakeBoldAction,
-                    editor.MakeItalicAction,
-                    editor.MakeUnderlineAction,
-                    editor.StrikeThroughAction,
-                    editor.SubscriptAction,
-                    editor.SuperscriptAction,
-                    editor.RemoveFormatAction,
-                    editor.InsertExternalLinkAction
+                "commands": [
+                    editor.MakeBoldCommand,
+                    editor.MakeItalicCommand,
+                    editor.MakeUnderlineCommand,
+                    editor.StrikeThroughCommand,
+                    editor.SubscriptCommand,
+                    editor.SuperscriptCommand,
+                    editor.RemoveFormatCommand,
+                    editor.InsertExternalLinkCommand
                 ]
             },
             {
                     "name": "insert-list",
                     "title": "Insert list",
-                    "actions": [
-                        editor.InsertUnorderedListAction,
-                        editor.InsertOrderedListAction
+                    "commands": [
+                        editor.InsertUnorderedListCommand,
+                        editor.InsertOrderedListCommand
                     ]
             },
             {
                 "name": "html",
                 "title": "HTML",
-                "actions": [editor.ToggleHtmlAction]
+                "commands": [editor.ToggleHtmlCommand]
             }
         ],
         "settings": {

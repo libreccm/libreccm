@@ -1,5 +1,5 @@
 /**
- * Them main class for the editor.
+ * The main class for the editor.
  */
 export class CCMEditor {
 
@@ -8,7 +8,7 @@ export class CCMEditor {
     private editorDiv: Element;
     private editorToolbar: Element;
     private htmlSourceToolbar: Element;
-    private actions: CCMEditorAction[] = [];
+    private commands: CCMEditorCommand[] = [];
 
     constructor(textarea: HTMLTextAreaElement,
                 configuration?: CCMEditorConfiguration) {
@@ -22,11 +22,11 @@ export class CCMEditor {
             console.log("No configuration provided, using default configuration.");
 
             this.configuration = {
-                "actionGroups": [
+                "commandGroups": [
                     {
                         "name": "mark-text",
                         "title": "Mark text",
-                        "actions": [MakeBoldAction, MakeItalicAction]
+                        "commands": [MakeBoldCommand, MakeItalicCommand]
                     }
                 ],
                 "settings":
@@ -69,19 +69,19 @@ export class CCMEditor {
 
         this.textarea = textarea;
 
-        console.log("Adding actions...")
-        for(const actionGroupKey in this.configuration.actionGroups) {
+        console.log("Adding commands...")
+        for(const commandGroupKey in this.configuration.commandGroups) {
 
-            const actionGroup: CCMEditorActionGroup = this
+            const commandGroup: CCMEditorCommandGroup = this
                 .configuration
-                .actionGroups[actionGroupKey];
-            for(const actionKey in actionGroup.actions) {
+                .commandGroups[commandGroupKey];
+            for(const commandKey in commandGroup.commands) {
 
-                console.log("Adding action " + actionKey);
-                const actionClass = actionGroup.actions[actionKey];
-                const actionObj: CCMEditorAction
-                    = new actionClass(this, configuration.settings);
-                this.actions[actionGroup.actions[actionKey]] = actionObj;
+                console.log("Adding command " + commandKey);
+                const commandClass = commandGroup.commands[commandKey];
+                const commandObj: CCMEditorCommand
+                    = new commandClass(this, configuration.settings);
+                this.commands[commandGroup.commands[commandKey]] = commandObj;
             }
         }
 
@@ -91,20 +91,20 @@ export class CCMEditor {
         this.editorToolbar = editor.appendChild(document.createElement("div"));
         this.editorToolbar.classList.add("ccm-editor-toolbar");
 
-        for(const actionGroupKey in this.configuration.actionGroups) {
+        for(const commandGroupKey in this.configuration.commandGroups) {
 
-            const actionGroup: CCMEditorActionGroup = this
+            const commandGroup: CCMEditorCommandGroup = this
                 .configuration
-                .actionGroups[actionGroupKey];
-            const actionGroupElem: Element = this.editorToolbar
+                .commandGroups[commandGroupKey];
+            const commandGroupElem: Element = this.editorToolbar
                 .appendChild(document.createElement("div"));
-            actionGroupElem.classList.add("ccm-editor-toolbar-actiongroup");
+            commandGroupElem.classList.add("ccm-editor-toolbar-commandgroup");
 
-            for(const actionKey in actionGroup.actions) {
+            for(const commandKey in commandGroup.commands) {
 
-                const actionObj: CCMEditorAction = this
-                    .actions[actionGroup.actions[actionKey]];
-                actionGroupElem.appendChild(actionObj.getDocumentFragment());
+                const commandObj: CCMEditorCommand = this
+                    .commands[commandGroup.commands[commandKey]];
+                commandGroupElem.appendChild(commandObj.getDocumentFragment());
             }
         }
 
@@ -199,9 +199,9 @@ export class CCMEditor {
     private selectionChanged() {
         console.log("Selection changed.");
         const selection: Selection = document.getSelection();
-        for(const key in this.actions) {
+        for(const key in this.commands) {
 
-            this.actions[key].selectionChanged(selection);
+            this.commands[key].selectionChanged(selection);
         }
     }
 
@@ -240,23 +240,23 @@ export function addEditor(selector: string,
 
 interface CCMEditorConfiguration {
 
-    actionGroups: CCMEditorActionGroup[]
+    commandGroups: CCMEditorCommandGroup[]
 
     settings: {}
 }
 
-interface CCMEditorActionGroup {
+interface CCMEditorCommandGroup {
 
     name: string;
     title: string;
 
-    actions: any[];
+    commands: any[];
 }
 
 /**
- * Possible types for actions.
+ * Possible types for commands.
  */
-export enum CCMEditorActionType {
+export enum CCMEditorCommandType {
 
     INSERT_BLOCK,
     INSERT_INLINE,
@@ -264,9 +264,9 @@ export enum CCMEditorActionType {
 }
 
 /**
- * Base class for all editor actions.
+ * Base class for all editor commands.
  */
-export abstract class CCMEditorAction {
+export abstract class CCMEditorCommand {
 
     protected editor: CCMEditor;
     protected settings: string[];
@@ -281,7 +281,7 @@ export abstract class CCMEditorAction {
     }
 
     /**
-     * Generate the HTML for the control(s) for the action. The Element
+     * Generate the HTML for the control(s) for the command. The Element
      * returned by this method is added to the toolbar of the editor if
      * the plugin is added to the editor.
      */
@@ -290,12 +290,12 @@ export abstract class CCMEditorAction {
     }
 
     /**
-     * Return the type of the action.
+     * Return the type of the command.
      */
-    abstract getActionType(): CCMEditorActionType;
+    abstract getCommandType(): CCMEditorCommandType;
 
     /**
-     * Verify is the action is applicable for the current element.
+     * Verify is the command is applicable for the current element.
      * This will be a future extension.
      *
      * @param element The element.
@@ -307,17 +307,17 @@ export abstract class CCMEditorAction {
     public abstract selectionChanged(selection: Selection): void;
 
     /**
-     * Enables the controls for the action.
+     * Enables the controls for the command.
      */
-    abstract enableAction(): void;
+    abstract enableCommand(): void;
 
     /**
-     * Disables the controls for the action.
+     * Disables the controls for the command.
      */
-    abstract disableAction(): void;
+    abstract disableCommand(): void;
 }
 
-export class FormatBlockAction extends CCMEditorAction {
+export class FormatBlockCommand extends CCMEditorCommand {
 
     private blockSelect: HTMLSelectElement;
     private values: string[];
@@ -361,8 +361,8 @@ export class FormatBlockAction extends CCMEditorAction {
         });
     }
 
-    getActionType(): CCMEditorActionType {
-        return CCMEditorActionType.INSERT_BLOCK;
+    getCommandType(): CCMEditorCommandType {
+        return CCMEditorCommandType.INSERT_BLOCK;
     }
 
     selectionChanged(selection: Selection) {
@@ -408,20 +408,20 @@ export class FormatBlockAction extends CCMEditorAction {
         }
     }
 
-    enableAction(): void {
+    enableCommand(): void {
         this.blockSelect.removeAttribute("disabled");
     }
 
-    disableAction(): void {
+    disableCommand(): void {
         this.blockSelect.setAttribute("disabled", "true");
     }
 }
 
 /**
- * Action for making the selected text bold (strongly emphasised). Wraps the
+ * Command for making the selected text bold (strongly emphasised). Wraps the
  * selected text in a <code>b</code> element.
  */
-export class MakeBoldAction extends CCMEditorAction {
+export class MakeBoldCommand extends CCMEditorCommand {
 
     private button: Element;
 
@@ -452,29 +452,29 @@ export class MakeBoldAction extends CCMEditorAction {
         });
     }
 
-    getActionType(): CCMEditorActionType {
-        return CCMEditorActionType.INSERT_INLINE;
+    getCommandType(): CCMEditorCommandType {
+        return CCMEditorCommandType.INSERT_INLINE;
     }
 
     selectionChanged(selection: Selection) {
 
     }
 
-    enableAction(): void {
+    enableCommand(): void {
         this.button.removeAttribute("disabled");
     }
 
-    disableAction(): void {
+    disableCommand(): void {
         this.button.setAttribute("disabled", "true");
     }
 
 }
 
 /**
- * Action for making the selected text italic (emphasised). Wraps the
+ * Command for making the selected text italic (emphasised). Wraps the
  * selected text in a <code>i</code> element.
  */
-export class MakeItalicAction extends CCMEditorAction {
+export class MakeItalicCommand extends CCMEditorCommand {
 
     private button: Element;
 
@@ -504,8 +504,8 @@ export class MakeItalicAction extends CCMEditorAction {
         });
     }
 
-    getActionType(): CCMEditorActionType {
-        return CCMEditorActionType.INSERT_INLINE;
+    getCommandType(): CCMEditorCommandType {
+        return CCMEditorCommandType.INSERT_INLINE;
     }
 
     isApplicableFor(element: Element): Boolean {
@@ -516,20 +516,20 @@ export class MakeItalicAction extends CCMEditorAction {
 
     }
 
-    enableAction(): void {
+    enableCommand(): void {
         this.button.removeAttribute("disabled");
     }
 
-    disableAction(): void {
+    disableCommand(): void {
         this.button.setAttribute("disabled", "true");
     }
 }
 
 /**
- * Action for making the selected text underlined. Wraps the selected text
+ * Command for making the selected text underlined. Wraps the selected text
  * in an <code>u</code> element
  */
-export class MakeUnderlineAction extends CCMEditorAction {
+export class MakeUnderlineCommand extends CCMEditorCommand {
 
     private button: Element;
 
@@ -562,8 +562,8 @@ export class MakeUnderlineAction extends CCMEditorAction {
         });
     }
 
-    getActionType(): CCMEditorActionType {
-        return CCMEditorActionType.INSERT_INLINE;
+    getCommandType(): CCMEditorCommandType {
+        return CCMEditorCommandType.INSERT_INLINE;
     }
 
     isApplicableFor(element: Element): Boolean {
@@ -574,16 +574,16 @@ export class MakeUnderlineAction extends CCMEditorAction {
 
     }
 
-    enableAction(): void {
+    enableCommand(): void {
         this.button.removeAttribute("disabled");
     }
 
-    disableAction(): void {
+    disableCommand(): void {
         this.button.setAttribute("disabled", "true");
     }
 }
 
-export class StrikeThroughAction extends CCMEditorAction {
+export class StrikeThroughCommand extends CCMEditorCommand {
 
     private button: Element;
 
@@ -613,8 +613,8 @@ export class StrikeThroughAction extends CCMEditorAction {
         });
     }
 
-    getActionType(): CCMEditorActionType {
-        return CCMEditorActionType.INSERT_INLINE;
+    getCommandType(): CCMEditorCommandType {
+        return CCMEditorCommandType.INSERT_INLINE;
     }
 
     isApplicableFor(element: Element): Boolean {
@@ -625,16 +625,16 @@ export class StrikeThroughAction extends CCMEditorAction {
 
     }
 
-    enableAction(): void {
+    enableCommand(): void {
         this.button.removeAttribute("disabled");
     }
 
-    disableAction(): void {
+    disableCommand(): void {
         this.button.setAttribute("disabled", "true");
     }
 }
 
-export class ToggleHtmlAction extends CCMEditorAction {
+export class ToggleHtmlCommand extends CCMEditorCommand {
 
     private showHtmlButton: HTMLButtonElement;
 
@@ -662,24 +662,24 @@ export class ToggleHtmlAction extends CCMEditorAction {
         });
     }
 
-    getActionType(): CCMEditorActionType {
-        return CCMEditorActionType.OTHER;
+    getCommandType(): CCMEditorCommandType {
+        return CCMEditorCommandType.OTHER;
     }
 
     selectionChanged(selection: Selection) {
 
     }
 
-    enableAction(): void {
+    enableCommand(): void {
         this.showHtmlButton.removeAttribute("disabled");
     }
 
-    disableAction(): void {
+    disableCommand(): void {
         this.showHtmlButton.setAttribute("disabled", "true");
     }
 }
 
-export class SubscriptAction extends CCMEditorAction {
+export class SubscriptCommand extends CCMEditorCommand {
 
     private button: HTMLButtonElement;
 
@@ -708,8 +708,8 @@ export class SubscriptAction extends CCMEditorAction {
         });
     }
 
-    getActionType(): CCMEditorActionType {
-        return CCMEditorActionType.INSERT_INLINE;
+    getCommandType(): CCMEditorCommandType {
+        return CCMEditorCommandType.INSERT_INLINE;
     }
 
     isApplicableFor(element: Element): Boolean {
@@ -720,16 +720,16 @@ export class SubscriptAction extends CCMEditorAction {
 
     }
 
-    enableAction(): void {
+    enableCommand(): void {
         this.button.removeAttribute("disabled");
     }
 
-    disableAction(): void {
+    disableCommand(): void {
         this.button.setAttribute("disabled", "true");
     }
 }
 
-export class SuperscriptAction extends CCMEditorAction {
+export class SuperscriptCommand extends CCMEditorCommand {
 
     private button: HTMLButtonElement;
 
@@ -758,8 +758,8 @@ export class SuperscriptAction extends CCMEditorAction {
         });
     }
 
-    getActionType(): CCMEditorActionType {
-        return CCMEditorActionType.INSERT_INLINE;
+    getCommandType(): CCMEditorCommandType {
+        return CCMEditorCommandType.INSERT_INLINE;
     }
 
     isApplicableFor(element: Element): Boolean {
@@ -770,16 +770,16 @@ export class SuperscriptAction extends CCMEditorAction {
 
     }
 
-    enableAction(): void {
+    enableCommand(): void {
         this.button.removeAttribute("disabled");
     }
 
-    disableAction(): void {
+    disableCommand(): void {
         this.button.setAttribute("disabled", "true");
     }
 }
 
-export class RemoveFormatAction extends CCMEditorAction {
+export class RemoveFormatCommand extends CCMEditorCommand {
 
     private button: Element;
 
@@ -809,8 +809,8 @@ export class RemoveFormatAction extends CCMEditorAction {
         });
     }
 
-    getActionType(): CCMEditorActionType {
-        return CCMEditorActionType.OTHER;
+    getCommandType(): CCMEditorCommandType {
+        return CCMEditorCommandType.OTHER;
     }
 
     isApplicableFor(element: Element): Boolean {
@@ -821,16 +821,16 @@ export class RemoveFormatAction extends CCMEditorAction {
 
     }
 
-    enableAction(): void {
+    enableCommand(): void {
         this.button.removeAttribute("disabled");
     }
 
-    disableAction(): void {
+    disableCommand(): void {
         this.button.setAttribute("disabled", "true");
     }
 }
 
-export class InsertOrderedListAction extends CCMEditorAction {
+export class InsertOrderedListCommand extends CCMEditorCommand {
 
     private button: Element;
 
@@ -860,8 +860,8 @@ export class InsertOrderedListAction extends CCMEditorAction {
         });
     }
 
-    getActionType(): CCMEditorActionType {
-        return CCMEditorActionType.INSERT_BLOCK;
+    getCommandType(): CCMEditorCommandType {
+        return CCMEditorCommandType.INSERT_BLOCK;
     }
 
     isApplicableFor(element: Element): Boolean {
@@ -872,16 +872,16 @@ export class InsertOrderedListAction extends CCMEditorAction {
 
     }
 
-    enableAction(): void {
+    enableCommand(): void {
         this.button.removeAttribute("disabled");
     }
 
-    disableAction(): void {
+    disableCommand(): void {
         this.button.setAttribute("disabled", "true");
     }
 }
 
-export class InsertUnorderedListAction extends CCMEditorAction {
+export class InsertUnorderedListCommand extends CCMEditorCommand {
 
     private button: Element;
 
@@ -911,8 +911,8 @@ export class InsertUnorderedListAction extends CCMEditorAction {
         });
     }
 
-    getActionType(): CCMEditorActionType {
-        return CCMEditorActionType.INSERT_BLOCK;
+    getCommandType(): CCMEditorCommandType {
+        return CCMEditorCommandType.INSERT_BLOCK;
     }
 
     isApplicableFor(element: Element): Boolean {
@@ -923,16 +923,16 @@ export class InsertUnorderedListAction extends CCMEditorAction {
 
     }
 
-    enableAction(): void {
+    enableCommand(): void {
         this.button.removeAttribute("disabled");
     }
 
-    disableAction(): void {
+    disableCommand(): void {
         this.button.setAttribute("disabled", "true");
     }
 }
 
-export class InsertExternalLinkAction extends CCMEditorAction {
+export class InsertExternalLinkCommand extends CCMEditorCommand {
 
     private button: Element;
 
@@ -1025,19 +1025,19 @@ export class InsertExternalLinkAction extends CCMEditorAction {
         });
     }
 
-    getActionType(): CCMEditorActionType {
-        return CCMEditorActionType.INSERT_INLINE;
+    getCommandType(): CCMEditorCommandType {
+        return CCMEditorCommandType.INSERT_INLINE;
     }
 
     selectionChanged(selection: Selection) {
 
     }
 
-    enableAction(): void {
+    enableCommand(): void {
         this.button.removeAttribute("disabled");
     }
 
-    disableAction(): void {
+    disableCommand(): void {
         this.button.setAttribute("disabled", "true");
     }
 }
