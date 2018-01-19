@@ -72,6 +72,46 @@
     display: none;
 }
 
+.ccm-editor-selectdialog {
+    background-color: #ccc;
+
+    border: 1px solid #aaa;
+
+    box-sizing: border-box;
+
+    padding: 1em 0.75em;
+
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    margin-top: -35em;
+    margin-left: -20em;
+
+    width: 70em;
+    height: 40em;
+    overflow: scroll;
+}
+
+.ccm-editor-selectdialog .ccm-editor-selectdialog-closebutton {
+
+    postion: absolute;
+    top: 0;
+    right: 0;
+
+    width: 1em;
+    height: 1em;
+}
+
+.ccm-editor-selectdialog div {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+}
+
+.ccm-editor-selectdialog div button {
+    justify-self: center;
+}
+
 .ccm-editor-textarea {
 
     background-color: #fff;

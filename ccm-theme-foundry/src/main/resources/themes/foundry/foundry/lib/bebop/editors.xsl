@@ -330,7 +330,11 @@
                   class="editor-textarea"
                   rows="{@rows}"
                   cols="{@cols}"
-                  wrap="{@wrap}">
+                  wrap="{@wrap}"
+                  data-context-prefix = "{$context-prefix}"
+                  data-dispatcher-prefix="{$dispatcher-prefix}"
+                  data-current-contentsection-id="{./@current-contentsection-id}"
+                  data-current-contentsection-primaryurl="{./@current-contentsection-primaryurl}">
             <xsl:value-of disable-output-escaping="no"
                           select="text()" />
         </textarea>

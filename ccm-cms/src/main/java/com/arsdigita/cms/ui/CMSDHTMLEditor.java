@@ -21,45 +21,61 @@ package com.arsdigita.cms.ui;
 import com.arsdigita.bebop.form.DHTMLEditor;
 import com.arsdigita.bebop.parameters.ParameterModel;
 import com.arsdigita.bebop.parameters.StringParameter;
+import com.arsdigita.cms.CMS;
 
 import org.arsdigita.cms.CMSConfig;
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.l10n.GlobalizationHelper;
+import org.librecms.contentsection.ContentSection;
 
 /**
  *
  *
  */
 public class CMSDHTMLEditor extends DHTMLEditor {
-    
+
     public CMSDHTMLEditor(final String name) {
         super(new StringParameter(name),
               CMSConfig.getConfig().getDHTMLEditorConfig());
         addPlugins();
         hideButtons();
-        
+
+        final ContentSection section = CMS.getContext().getContentSection();
+        final GlobalizationHelper globalizationHelper = CdiUtil
+            .createCdiUtil()
+            .findBean(GlobalizationHelper.class);
+        setAttribute("current-contentsection-id",
+                     Long.toString(section.getObjectId()));
+        setAttribute("current-contentsection-primaryurl",
+                     section.getPrimaryUrl());
+        setAttribute("current-contentsection-title",
+                     globalizationHelper
+                         .getValueFromLocalizedString(section.getTitle()));
+
     }
-    
+
     public CMSDHTMLEditor(final ParameterModel model) {
         super(model,
               CMSConfig.getConfig().getDHTMLEditorConfig());
-        
+
         addPlugins();
         hideButtons();
     }
-    
+
     private void addPlugins() {
-        
+
         CMSConfig
             .getConfig()
             .getDhtmlEditorPlugins()
             .forEach(plugin -> addPlugin(plugin));
     }
-    
+
     private void hideButtons() {
-        
+
         CMSConfig
             .getConfig()
             .getDhtmlEditorHiddenButtons()
             .forEach(hiddenButton -> hideButton(hiddenButton));
     }
-    
+
 }

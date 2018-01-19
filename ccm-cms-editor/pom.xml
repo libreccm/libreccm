@@ -18,19 +18,30 @@
         <version>7.0.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.libreccm</groupId>
-    <artifactId>ccm-editor</artifactId>
+    <groupId>org.librecms</groupId>
+    <artifactId>ccm-cms-editor</artifactId>
     <version>7.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    
-    <name>LibreCCM Editor</name>
-    
+
+    <name>LibreCMS modules for the ccm-editor</name>
+    <description>
+        Provides CMS specific modules for the ccm-editor.
+    </description>
+
     <licenses>
         <license>
             <name>Lesser GPL 2.1</name>
             <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1</url>
         </license>
     </licenses>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.libreccm</groupId>
+            <artifactId>ccm-editor</artifactId>
+            <version>7.0.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <finalName>ccm-editor</finalName>
@@ -76,6 +87,5 @@
         </plugins>
         
     </build>
-
 
 </project>

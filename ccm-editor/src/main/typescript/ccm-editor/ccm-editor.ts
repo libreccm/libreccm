@@ -75,6 +75,7 @@ export class CCMEditor {
             const commandGroup: CCMEditorCommandGroup = this
                 .configuration
                 .commandGroups[commandGroupKey];
+            console.log("Adding command group " + commandGroup["name"]);
             for(const commandKey in commandGroup.commands) {
 
                 console.log("Adding command " + commandKey);
@@ -173,6 +174,11 @@ export class CCMEditor {
 
         //Avoid <br>
         document.execCommand("insertBrOnReturn", false, false);
+    }
+
+    public getDataAttribute(name: string): string {
+
+        return this.textarea.getAttribute("data-" + name);
     }
 
     public toggleHtml(): void {
@@ -987,6 +993,7 @@ export class InsertExternalLinkCommand extends CCMEditorCommand {
             newWindowCheckbox.setAttribute("id",
                                            "ccm-editor-external-link-new-window");
             newWindowCheckbox.setAttribute("type", "checkbox");
+
             const okButton: HTMLButtonElement = dialogForm
                 .appendChild(document.createElement("button"));
             const cancelButton: HTMLButtonElement = dialogForm
