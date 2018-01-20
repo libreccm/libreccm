@@ -387,28 +387,28 @@ export class FormatBlockCommand extends CCMEditorCommand {
     private findBlockElement(node: Node): Element {
 
         if (node instanceof Element) {
-            console.log("Current node is an element.");
+            // console.log("Current node is an element.");
             const elem: Element = node as Element;
-            console.log("elem.tagName = " + elem.tagName.toLowerCase());
+            // console.log("elem.tagName = " + elem.tagName.toLowerCase());
             if(this.values.indexOf(elem.tagName.toLowerCase()) === -1) {
-                console.log("elem.tagName is not in the values array.");
+                // console.log("elem.tagName is not in the values array.");
                 if (elem.parentNode === null) {
-                    console.log("elem has no parent node. Returning null.");
+                    // console.log("elem has no parent node. Returning null.");
                     return null;
                 } else {
-                    console.log("Continuing with elem.parentNode");
+                    // console.log("Continuing with elem.parentNode");
                     return this.findBlockElement(elem.parentNode);
                 }
             } else {
                 return elem;
             }
         } else {
-            console.log("Current node is not an element node.");
+            // console.log("Current node is not an element node.");
             if (node.parentNode === null) {
-                console.log("Current node has no parent, returning null.");
+                // console.log("Current node has no parent, returning null.");
                 return null;
             } else {
-                console.log("Continuing with parent node...");
+                // console.log("Continuing with parent node...");
                 return this.findBlockElement(node.parentNode);
             }
         }
