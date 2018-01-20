@@ -38,8 +38,8 @@ export class InsertInternalLinkCommand extends CCMEditorCommand {
 
             const closeButton = dialogElem
                 .appendChild(document.createElement("button"));
-            closeButton.setAttribute("id", "ccm-editor-selectdialog-closebutton");
-            closeButton.textContent = "&#x2715";
+            closeButton.setAttribute("class", "ccm-editor-selectdialog-closebutton");
+            closeButton.textContent = "\u2715";
             closeButton.addEventListener("click", function(event){
                 event.preventDefault();
                 const bodyElem = document.getElementsByTagName("body").item(0);
@@ -127,12 +127,22 @@ export class InsertInternalLinkCommand extends CCMEditorCommand {
                     }
                 }
             });
+            sectionsRequest.send();
 
+            console.log("Current sections is \"" + currentSection + "\"");
             // Get items
             let itemsUrl = contextPrefix
-                + "/content-sections/"
-                + contentSectionSelect.value
-                + "/items";
+                + "/content-sections";
+            if (!(new RegExp("^/.*").test(currentSection))) {
+                console.log("Current sections does not start with an \"/\", adding one...");
+                itemsUrl += "/";
+            }
+            itemsUrl += currentSection;
+            if (!(new RegExp(".*/$").test(currentSection))) {
+                console.log("Current sections does not end with an \"/\", adding one...");
+                itemsUrl += "/";
+            }
+            itemsUrl += "items";
             if (filterInput.value !== null && filterInput.value.length > 0) {
                 itemsUrl + "?query=" + filterInput.value;
             }
@@ -156,17 +166,25 @@ export class InsertInternalLinkCommand extends CCMEditorCommand {
 
                         const selectItemButton = dataTitle
                             .appendChild(document.createElement("button"));
-                        selectItemButton.textContent = item["title"];
+                        if (item["title"] === null
+                            || item["title"].length <= 0) {
+                            selectItemButton.textContent = item["name"];
+                        } else {
+                            selectItemButton.textContent = item["title"];
+                        }
                         selectItemButton
                             .addEventListener("click", function(event) {
 
                                 event.preventDefault();
 
-                                document.removeChild(dialogElem);
+                                const bodyElem = document
+                                    .getElementsByTagName("body")
+                                    .item(0);
+                                bodyElem.removeChild(dialogElem);
                                 document.getSelection().removeAllRanges();
                                 document.getSelection().addRange(currentRange);
 
-                                document.execCommand("insertLink",
+                                document.execCommand("createLink",
                                                      false,
                                                      contextPrefix
                                                      + "/redirect/?oid="
@@ -180,6 +198,7 @@ export class InsertInternalLinkCommand extends CCMEditorCommand {
                     }
                 }
             });
+            itemsRequest.send();
 
             const bodyElem = document.getElementsByTagName("body").item(0);
             bodyElem.appendChild(dialogFragment);

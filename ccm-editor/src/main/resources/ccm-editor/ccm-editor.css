@@ -82,25 +82,34 @@
     padding: 1em 0.75em;
 
     position: absolute;
-    left: 50%;
     top: 50%;
+    left: 50%;
 
-    margin-top: -35em;
-    margin-left: -20em;
+    margin-top: -20em;
+    margin-left: -35em;
 
     width: 70em;
     height: 40em;
     overflow: scroll;
 }
 
+.ccm-editor-selectdialog h1 {
+    padding: 0.5em;
+    margin-bottom: 0.8em;
+}
+
 .ccm-editor-selectdialog .ccm-editor-selectdialog-closebutton {
 
-    postion: absolute;
+    font-size: 1em;
+
+    padding: 0.25em;
+
+    position: absolute;
     top: 0;
     right: 0;
 
-    width: 1em;
-    height: 1em;
+    width: 2.5em;
+    height: 2.5em;
 }
 
 .ccm-editor-selectdialog div {

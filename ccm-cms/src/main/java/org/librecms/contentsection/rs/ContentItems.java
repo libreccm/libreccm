@@ -128,6 +128,8 @@ public class ContentItems {
         result.put("itemId",
                    Long.toString(item.getObjectId()));
 
+        result.put("name", item.getDisplayName());
+
         result.put("title",
                    item.getTitle().getValue(globalizationHelper
                        .getNegotiatedLocale()));
@@ -155,7 +157,7 @@ public class ContentItems {
 
     @GET
     @Path("/")
-    @Produces("text/json; charset=utf-8")
+    @Produces("application/json; charset=utf-8")
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Map<String, String>> findItems(
         @PathParam("content-section") final String section,
@@ -177,7 +179,7 @@ public class ContentItems {
                        && (type == null || type.trim().isEmpty())) {
 
             items = itemRepo.findByNameAndContentSection(query,
-                                                          contentSection);
+                                                         contentSection);
         } else if ((query == null || query.trim().isEmpty())
                        && (type != null && !type.trim().isEmpty())) {
 
@@ -202,7 +204,7 @@ public class ContentItems {
 
     @GET
     @Path("/folders")
-    @Produces("text/json; charset=utf-8")
+    @Produces("application/json; charset=utf-8")
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Map<String, String>> findItemsInRootFolder(
         @PathParam("content-section") final String section,
@@ -221,7 +223,7 @@ public class ContentItems {
 
     @GET
     @Path("/folders/{folder}/")
-    @Produces("text/json; charset=utf-8")
+    @Produces("application/json; charset=utf-8")
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Map<String, String>> findItemsInFolder(
         @PathParam("content-section") final String section,
@@ -279,11 +281,11 @@ public class ContentItems {
             .stream()
             .map(item -> createItemMapEntry(item))
             .collect(Collectors.toList());
-        
+
         final List<Map<String, String>> result = new ArrayList<>();
         result.addAll(subFolderEntries);
         result.addAll(itemEntries);
-        
+
         return result;
 
     }

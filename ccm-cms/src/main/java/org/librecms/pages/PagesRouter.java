@@ -200,7 +200,7 @@ public class PagesRouter {
 
     @GET
     @Path("/{name:[\\w\\-]+}.{lang:\\w+}.json")
-    @Produces("text/json")
+    @Produces("application/json")
     @Transactional(Transactional.TxType.REQUIRED)
     public String getRootPageAsJson(
         @Context
@@ -433,7 +433,7 @@ public class PagesRouter {
      */
     @GET
     @Path("/{page:[\\w/]+}/{name:[\\w\\-]+}.{lang:\\w+}.json")
-    @Produces("text/json")
+    @Produces("application/json")
     @Transactional(Transactional.TxType.REQUIRED)
     public String getPageAsJson(
         @Context
