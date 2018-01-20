@@ -2,16 +2,14 @@ module.exports = function(grunt) {
     grunt.initConfig({
         ts: {
             default : {
-                src: ["src/main/typescript/**/*.ts"],
+                tsconfig: true,
                 options: {
-                    module: "amd"
+                    module: "amd",
+                    moduleResolution: "classic"
                 }
             }
         },
-        clean: ['scripts/*.js', 'scripts/*.js.map', 'scripts/.tscache']
     });
     grunt.loadNpmTasks("grunt-ts");
-    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.registerTask("default", ["ts"]);
 };
-

@@ -153,7 +153,7 @@ public class Assets {
 
     @GET
     @Path("/")
-    @Produces("text/json; charset=utf-8")
+    @Produces("application/json; charset=utf-8")
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Map<String, String>> findAssets(
         @PathParam("content-section") final String section,
@@ -194,7 +194,7 @@ public class Assets {
 
     @GET
     @Path("/folders/")
-    @Produces("text/json; charset=utf-8")
+    @Produces("application/json; charset=utf-8")
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Map<String, String>> findAssetsInRootFolder(
         @PathParam("content-section") final String section,
@@ -213,7 +213,7 @@ public class Assets {
 
     @GET
     @Path("/folders/{folder}/")
-    @Produces("text/json; charset=utf-8")
+    @Produces("application/json; charset=utf-8")
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Map<String, String>> findAssetsInFolder(
         @PathParam("content-section") final String section,

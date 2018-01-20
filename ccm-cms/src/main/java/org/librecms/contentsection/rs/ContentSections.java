@@ -47,7 +47,7 @@ public class ContentSections {
 
     @GET
     @Path("/")
-    @Produces("text/json; charset=utf-8")
+    @Produces("application/json; charset=utf-8")
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Map<String, String>> listContentSections() {
 
