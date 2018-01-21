@@ -49,6 +49,8 @@ import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.value.Int64Value;
+import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;
 import org.apache.logging.log4j.LogManager;
@@ -56,6 +58,8 @@ import org.apache.logging.log4j.Logger;
 import org.libreccm.theming.ProcessesThemes;
 import org.libreccm.theming.manifest.ThemeTemplate;
 import org.libreccm.theming.utils.SettingsUtils;
+import org.libreccm.theming.utils.SystemInfoUtils;
+import org.libreccm.theming.utils.TextUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -88,11 +92,20 @@ public class XsltThemeProcessor implements ThemeProcessor {
 
     private static final long serialVersionUID = -3883625727845105417L;
 
+    private static final String FUNCTION_XMLNS = "http://xmlns.libreccm.org";
+    private static final String FUNCTION_XMLNS_PREFIX = "ccm";
+
     private static final Logger LOGGER = LogManager
         .getLogger(XsltThemeProcessor.class);
 
     @Inject
     private SettingsUtils settingsUtils;
+
+    @Inject
+    private SystemInfoUtils systemInfoUtils;
+
+    @Inject
+    private TextUtils textUtils;
 
     @Override
     public String process(final Map<String, Object> page,
@@ -182,10 +195,13 @@ public class XsltThemeProcessor implements ThemeProcessor {
                                          = (TransformerFactoryImpl) transformerFactory;
         final Configuration configuration = transformerFactoryImpl
             .getConfiguration();
-        configuration.registerExtensionFunction(new Greeter());
+        configuration
+            .registerExtensionFunction(new GetContextPathFunctionDefinition());
         configuration
             .registerExtensionFunction(
                 new GetSettingFunctionDefinition(theme, themeProvider));
+        configuration
+            .registerExtensionFunction(new TruncateTextFunctionDefinition());
         final Transformer transformer;
         try {
             transformer = transformerFactory.newTransformer(xslFileStreamSource);
@@ -237,7 +253,46 @@ public class XsltThemeProcessor implements ThemeProcessor {
         return resultWriter.toString();
     }
 
-    private class GetSettingFunctionDefinition extends ExtensionFunctionDefinition {
+    private class GetContextPathFunctionDefinition
+        extends ExtensionFunctionDefinition {
+
+        @Override
+        public StructuredQName getFunctionQName() {
+            return new StructuredQName(FUNCTION_XMLNS_PREFIX,
+                                       FUNCTION_XMLNS,
+                                       "getContextPath");
+        }
+
+        @Override
+        public SequenceType[] getArgumentTypes() {
+            return new SequenceType[]{};
+        }
+
+        @Override
+        public SequenceType getResultType(final SequenceType[] arguments) {
+            return SequenceType.SINGLE_STRING;
+        }
+
+        @Override
+        public ExtensionFunctionCall makeCallExpression() {
+            return new ExtensionFunctionCall() {
+
+                @Override
+                public Sequence call(final XPathContext xPathContext,
+                                     final Sequence[] arguments)
+                    throws XPathException {
+
+                    return StringValue
+                        .makeStringValue(systemInfoUtils.getContextPath());
+                }
+
+            };
+        }
+
+    }
+
+    private class GetSettingFunctionDefinition
+        extends ExtensionFunctionDefinition {
 
         private final ThemeInfo theme;
         private final ThemeProvider themeProvider;
@@ -250,8 +305,8 @@ public class XsltThemeProcessor implements ThemeProcessor {
 
         @Override
         public StructuredQName getFunctionQName() {
-            return new StructuredQName("ccm",
-                                       "http://xmlns.libreccm.org",
+            return new StructuredQName(FUNCTION_XMLNS_PREFIX,
+                                       FUNCTION_XMLNS,
                                        "getSetting");
         }
 
@@ -273,7 +328,7 @@ public class XsltThemeProcessor implements ThemeProcessor {
         }
 
         @Override
-        public SequenceType getResultType(final SequenceType[] sts) {
+        public SequenceType getResultType(final SequenceType[] arguments) {
             return SequenceType.SINGLE_STRING;
         }
 
@@ -321,22 +376,24 @@ public class XsltThemeProcessor implements ThemeProcessor {
 
     }
 
-    private class Greeter extends ExtensionFunctionDefinition {
+    private class TruncateTextFunctionDefinition
+        extends ExtensionFunctionDefinition {
 
         @Override
         public StructuredQName getFunctionQName() {
-            return new StructuredQName("ccm",
-                                       "http://xmlns.libreccm.org",
-                                       "greet");
+            return new StructuredQName(FUNCTION_XMLNS_PREFIX,
+                                       FUNCTION_XMLNS,
+                                       "truncateText");
         }
 
         @Override
         public SequenceType[] getArgumentTypes() {
-            return new SequenceType[]{SequenceType.SINGLE_STRING};
+            return new SequenceType[]{SequenceType.SINGLE_STRING,
+                                      SequenceType.SINGLE_INTEGER};
         }
 
         @Override
-        public SequenceType getResultType(final SequenceType[] sts) {
+        public SequenceType getResultType(final SequenceType[] arguments) {
             return SequenceType.SINGLE_STRING;
         }
 
@@ -349,9 +406,11 @@ public class XsltThemeProcessor implements ThemeProcessor {
                                      final Sequence[] arguments)
                     throws XPathException {
 
-                    final String name = arguments[0].toString();
+                    final String text = ((Item) arguments[0]).getStringValue();
+                    final int length = Integer
+                        .parseInt(((Item) arguments[1]).getStringValue());
                     return StringValue
-                        .makeStringValue(String.format("Hello %s.", name));
+                        .makeStringValue(textUtils.truncateText(text, length));
                 }
 
             };
