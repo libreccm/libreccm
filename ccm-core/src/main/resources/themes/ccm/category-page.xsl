@@ -26,6 +26,23 @@
         </p>
         <xsl:value-of disable-output-escaping="true" select="./text" />
         
+        <h2>Example of Saxon Extension Function</h2>
+        <pre>
+            <xsl:value-of select="ccm:greet('John')" />
+        </pre>
+        
+        <h2>Example of Theme Utils</h2>
+        <dl>
+            <dt>
+                <code>getSetting</code>
+            </dt>
+            <dd>
+                <code>
+                    <xsl:value-of select="ccm:getSetting('settings.properties', 'example.setting', 'n/a')" />
+                </code>
+            </dd>
+        </dl>
+        
     </xsl:template>
 
 </xsl:stylesheet>
