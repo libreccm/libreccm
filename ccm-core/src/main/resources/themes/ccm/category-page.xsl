@@ -26,19 +26,30 @@
         </p>
         <xsl:value-of disable-output-escaping="true" select="./text" />
         
-        <h2>Example of Saxon Extension Function</h2>
-        <pre>
-            <xsl:value-of select="ccm:greet('John')" />
-        </pre>
-        
         <h2>Example of Theme Utils</h2>
         <dl>
+            <dt>
+                <code>getContextPath</code>
+            </dt>
+            <dd>
+                <code>
+                    <xsl:value-of select="ccm:getContextPath()" />
+                </code>
+            </dd>
             <dt>
                 <code>getSetting</code>
             </dt>
             <dd>
                 <code>
                     <xsl:value-of select="ccm:getSetting('settings.properties', 'example.setting', 'n/a')" />
+                </code>
+            </dd>
+            <dt>
+                <code>truncateText</code>
+            </dt>
+            <dd>
+                <code>
+                    <xsl:value-of select="ccm:truncateText('0123456789 123456789 123456789', 20)" />
                 </code>
             </dd>
         </dl>

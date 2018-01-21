@@ -25,26 +25,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.theming.ThemeInfo;
 import org.libreccm.theming.ThemeProvider;
-import org.libreccm.theming.Themes;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.io.Serializable;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.logging.Level;
 
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 /**
  * Methods for reading configuration options from the theme. Most themes have
@@ -74,7 +68,9 @@ import javax.xml.stream.XMLStreamReader;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class SettingsUtils {
+public class SettingsUtils implements Serializable {
+
+    private static final long serialVersionUID = 8705552323418210749L;
 
     private static final Logger LOGGER = LogManager
         .getLogger(SettingsUtils.class);
@@ -169,7 +165,7 @@ public class SettingsUtils {
     /**
      * Retrieve the boolean value of a setting. This method reads the value of a
      * setting using null null null null null null null null null null null null
-     * null null null null null null null null null null     {@link #getSetting(java.lang.String, java.lang.String, java.lang.String, java.lang.String) 
+     * null null null null null null null null null null null     {@link #getSetting(java.lang.String, java.lang.String, java.lang.String, java.lang.String) 
      * and converts it into a {@code boolean} value using
      * {@link Boolean#parseBoolean(java.lang.String)}.
      *
