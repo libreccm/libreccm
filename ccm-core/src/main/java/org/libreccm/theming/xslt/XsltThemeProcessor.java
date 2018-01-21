@@ -40,10 +40,22 @@ import javax.xml.parsers.ParserConfigurationException;
 import static org.libreccm.theming.ThemeConstants.*;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
+import net.sf.saxon.Configuration;
+import net.sf.saxon.TransformerFactoryImpl;
+import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.lib.ExtensionFunctionCall;
+import net.sf.saxon.lib.ExtensionFunctionDefinition;
+import net.sf.saxon.om.Item;
+import net.sf.saxon.om.Sequence;
+import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.value.SequenceType;
+import net.sf.saxon.value.StringValue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.theming.ProcessesThemes;
 import org.libreccm.theming.manifest.ThemeTemplate;
+import org.libreccm.theming.utils.SettingsUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -54,6 +66,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+import javax.inject.Inject;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
@@ -77,6 +90,9 @@ public class XsltThemeProcessor implements ThemeProcessor {
 
     private static final Logger LOGGER = LogManager
         .getLogger(XsltThemeProcessor.class);
+
+    @Inject
+    private SettingsUtils settingsUtils;
 
     @Override
     public String process(final Map<String, Object> page,
@@ -160,7 +176,16 @@ public class XsltThemeProcessor implements ThemeProcessor {
 
         final StreamSource xslFileStreamSource = new StreamSource(reader);
         final TransformerFactory transformerFactory = TransformerFactory
-            .newInstance();
+            .newInstance(TransformerFactoryImpl.class.getName(),
+                         getClass().getClassLoader());
+        final TransformerFactoryImpl transformerFactoryImpl
+                                         = (TransformerFactoryImpl) transformerFactory;
+        final Configuration configuration = transformerFactoryImpl
+            .getConfiguration();
+        configuration.registerExtensionFunction(new Greeter());
+        configuration
+            .registerExtensionFunction(
+                new GetSettingFunctionDefinition(theme, themeProvider));
         final Transformer transformer;
         try {
             transformer = transformerFactory.newTransformer(xslFileStreamSource);
@@ -210,6 +235,128 @@ public class XsltThemeProcessor implements ThemeProcessor {
         }
 
         return resultWriter.toString();
+    }
+
+    private class GetSettingFunctionDefinition extends ExtensionFunctionDefinition {
+
+        private final ThemeInfo theme;
+        private final ThemeProvider themeProvider;
+
+        public GetSettingFunctionDefinition(final ThemeInfo themeInfo,
+                                            final ThemeProvider themeProvider) {
+            this.theme = themeInfo;
+            this.themeProvider = themeProvider;
+        }
+
+        @Override
+        public StructuredQName getFunctionQName() {
+            return new StructuredQName("ccm",
+                                       "http://xmlns.libreccm.org",
+                                       "getSetting");
+        }
+
+        @Override
+        public SequenceType[] getArgumentTypes() {
+            return new SequenceType[]{SequenceType.SINGLE_STRING,
+                                      SequenceType.SINGLE_STRING,
+                                      SequenceType.SINGLE_STRING};
+        }
+
+        @Override
+        public int getMinimumNumberOfArguments() {
+            return 2;
+        }
+
+        @Override
+        public int getMaximumNumberOfArguments() {
+            return 3;
+        }
+
+        @Override
+        public SequenceType getResultType(final SequenceType[] sts) {
+            return SequenceType.SINGLE_STRING;
+        }
+
+        @Override
+        public ExtensionFunctionCall makeCallExpression() {
+
+            return new ExtensionFunctionCall() {
+
+                @Override
+                public Sequence call(final XPathContext xPathContext,
+                                     final Sequence[] arguments)
+                    throws XPathException {
+
+                    final String result;
+                    final String filePath = ((Item) arguments[0])
+                        .getStringValue();
+                    final String settingName = ((Item) arguments[1])
+                        .getStringValue();
+                    switch (arguments.length) {
+                        case 2:
+                            result = settingsUtils.getSetting(theme,
+                                                              themeProvider,
+                                                              filePath,
+                                                              settingName);
+                            break;
+                        case 3:
+                            final String defaultValue = ((Item) arguments[2])
+                                .getStringValue();
+                            result = settingsUtils.getSetting(theme,
+                                                              themeProvider,
+                                                              filePath,
+                                                              settingName,
+                                                              defaultValue);
+                            break;
+                        default:
+                            throw new UnexpectedErrorException(
+                                "Illegal number of arguments.");
+                    }
+
+                    return StringValue.makeStringValue(result);
+                }
+
+            };
+        }
+
+    }
+
+    private class Greeter extends ExtensionFunctionDefinition {
+
+        @Override
+        public StructuredQName getFunctionQName() {
+            return new StructuredQName("ccm",
+                                       "http://xmlns.libreccm.org",
+                                       "greet");
+        }
+
+        @Override
+        public SequenceType[] getArgumentTypes() {
+            return new SequenceType[]{SequenceType.SINGLE_STRING};
+        }
+
+        @Override
+        public SequenceType getResultType(final SequenceType[] sts) {
+            return SequenceType.SINGLE_STRING;
+        }
+
+        @Override
+        public ExtensionFunctionCall makeCallExpression() {
+            return new ExtensionFunctionCall() {
+
+                @Override
+                public Sequence call(final XPathContext xPathContext,
+                                     final Sequence[] arguments)
+                    throws XPathException {
+
+                    final String name = arguments[0].toString();
+                    return StringValue
+                        .makeStringValue(String.format("Hello %s.", name));
+                }
+
+            };
+        }
+
     }
 
 }
