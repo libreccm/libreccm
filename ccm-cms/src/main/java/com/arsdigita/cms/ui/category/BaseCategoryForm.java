@@ -18,6 +18,7 @@
  */
 package com.arsdigita.cms.ui.category;
 
+import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
@@ -48,19 +49,10 @@ import java.util.Collection;
  * @author Stanislav Freidin &lt;sfreidin@redhat.com&gt;
  * @author Justin Ross &lt;jross@redhat.com&gt;
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class BaseCategoryForm extends BaseForm {
 
-    final CategoryRequestLocal m_parent;
-    final TextField m_name;
-    final TextArea m_description;
-    final RadioGroup m_isAbstract;
-    final RadioGroup m_isVisible;
-    final RadioGroup m_isEnabled;
-    private Label m_script = new Label(new GlobalizedMessage(String.format(
-        "<script language=\"javascript\" src=\"%s/javascript/manipulate-input.js\"></script>",
-        Web.getWebappContextPath())),
-                                       false);
     private final static String NAME = "name";
     private final static String DESCRIPTION = "description";
     private final static String URL = "url";
@@ -68,64 +60,116 @@ class BaseCategoryForm extends BaseForm {
     private final static String IS_VISIBLE = "isVisible";
     private final static String IS_ENABLED = "isEnabled";
 
+    private final CategoryRequestLocal categoryRequestLocal;
+    private final TextField nameField;
+    private final TextArea descriptionArea;
+    private final RadioGroup isAbstractRadioGroup;
+    private final RadioGroup isVisibleRadioGroup;
+    private final RadioGroup isEnabledRadioGroup;
+    private Label script = new Label(new GlobalizedMessage(String
+        .format("<script src=\"%s/javascript/manipulate-input.js\"></script>",
+                Web.getWebappContextPath())),
+                                       false);
+
     /**
      * Constructor.
      */
-    BaseCategoryForm(final String key,
-                     final GlobalizedMessage heading,
-                     final CategoryRequestLocal parent) {
+    protected BaseCategoryForm(final String key,
+                               final GlobalizedMessage heading,
+                               final CategoryRequestLocal parent) {
+
         super(key, heading);
 
-        m_parent = parent;
+        categoryRequestLocal = parent;
 
-        m_name = new TextField(new TrimmedStringParameter(NAME));
-        addField(gz("cms.ui.name"), m_name);
+        nameField = new TextField(new TrimmedStringParameter(NAME));
+        addField(gz("cms.ui.name"), nameField);
 
-        m_name.setSize(30);
-        m_name.setMaxLength(200);
-        m_name.addValidationListener(new NotNullValidationListener());
-        m_name.setOnFocus("if (this.form." + URL + ".value == '') { "
-                          + " defaulting = true; this.form." + URL
-                              + ".value = urlize(this.value); }");
-        m_name.setOnKeyUp("if (defaulting) { this.form." + URL
-                          + ".value = urlize(this.value) }");
+        nameField.setSize(30);
+        nameField.setMaxLength(200);
+        nameField.addValidationListener(new NotNullValidationListener());
+        nameField.setOnFocus(String.format(
+            ""
+                + "if (this.form.%1$s.value == '') {"
+                + "    defaulting = true;"
+                + "    this.form.%1$s.value = urlize(this.value);"
+                + "}",
+            URL));
+        nameField.setOnFocus(String.format(
+            ""
+                + "if (defaulting) {"
+                + "    this.form.%1$s.value = urlize(this.value)"
+                + "}",
+            URL
+        ));
 
         // is abstract?
-        m_isAbstract = new RadioGroup(IS_ABSTRACT);
-        m_isAbstract.addOption(new Option("no", new Label(gz("cms.ui.no"))));
-        m_isAbstract.addOption(new Option("yes", new Label(gz("cms.ui.yes"))));
-        addField(gz("cms.ui.category.is_not_abstract"), m_isAbstract);
+        isAbstractRadioGroup = new RadioGroup(IS_ABSTRACT);
+        isAbstractRadioGroup.addOption(new Option("no", new Label(
+                                                  gz("cms.ui.no"))));
+        isAbstractRadioGroup.addOption(new Option("yes", new Label(gz(
+                                                  "cms.ui.yes"))));
+        addField(gz("cms.ui.category.is_not_abstract"), isAbstractRadioGroup);
 
         // is visible
-        m_isVisible = new RadioGroup(IS_VISIBLE);
-        m_isVisible.addOption(new Option("no", new Label(gz("cms.ui.no"))));
-        m_isVisible.addOption(new Option("yes", new Label(gz("cms.ui.yes"))));
-        addField(gz("cms.ui.category.is_visible"), m_isVisible);
+        isVisibleRadioGroup = new RadioGroup(IS_VISIBLE);
+        isVisibleRadioGroup.addOption(new Option("no",
+                                                 new Label(gz("cms.ui.no"))));
+        isVisibleRadioGroup.addOption(new Option("yes", new Label(gz(
+                                                 "cms.ui.yes"))));
+        addField(gz("cms.ui.category.is_visible"), isVisibleRadioGroup);
 
         // is enabled?
-        m_isEnabled = new RadioGroup(IS_ENABLED);
-        m_isEnabled.addOption(new Option("no", new Label(gz("cms.ui.no"))));
-        m_isEnabled.addOption(new Option("yes", new Label(gz("cms.ui.yes"))));
-        addField(gz("cms.ui.category.is_enabled"), m_isEnabled);
+        isEnabledRadioGroup = new RadioGroup(IS_ENABLED);
+        isEnabledRadioGroup.addOption(new Option("no",
+                                                 new Label(gz("cms.ui.no"))));
+        isEnabledRadioGroup.addOption(new Option("yes", new Label(gz(
+                                                 "cms.ui.yes"))));
+        addField(gz("cms.ui.category.is_enabled"), isEnabledRadioGroup);
 
-        m_description = new TextArea(new TrimmedStringParameter(DESCRIPTION));
-        addField(gz("cms.ui.description"), m_description);
+        descriptionArea = new TextArea(new TrimmedStringParameter(DESCRIPTION));
+        addField(gz("cms.ui.description"), descriptionArea);
 
-        m_description.setWrap(TextArea.SOFT);
-        m_description.setRows(5);
-        m_description.setCols(40);
+        descriptionArea.setWrap(TextArea.SOFT);
+        descriptionArea.setRows(5);
+        descriptionArea.setCols(40);
 
         addAction(new Finish());
         addAction(new Cancel());
     }
+    
+    protected CategoryRequestLocal getCategoryRequestLocal() {
+        return categoryRequestLocal;
+    }
+    
+    protected TextField getNameField() {
+        return nameField;
+    }
+
+    protected TextArea getDescriptionArea() {
+        return descriptionArea;
+    }
+    
+    protected RadioGroup getIsAbstractRadioGroup() {
+        return isAbstractRadioGroup;
+    }
+    
+    protected RadioGroup getIsVisibleRadioGroup() {
+        return isVisibleRadioGroup;
+    }
+    
+    protected RadioGroup getIsEnabledRadioGroup() {
+        return isEnabledRadioGroup;
+    }
+    
 
     @Override
     public void generateXML(PageState ps, Element parent) {
-        m_script.generateXML(ps, parent);
+        script.generateXML(ps, parent);
         super.generateXML(ps, parent);
     }
 
-    class NameUniqueListener implements ParameterListener {
+    private class NameUniqueListener implements ParameterListener {
 
         private final CategoryRequestLocal m_category;
         private final Widget m_widget;
@@ -133,7 +177,7 @@ class BaseCategoryForm extends BaseForm {
         final static int NAME_FIELD = 1;
 
         NameUniqueListener(final CategoryRequestLocal category) {
-            this(category, m_name, NAME_FIELD);
+            this(category, nameField, NAME_FIELD);
         }
 
         NameUniqueListener(final CategoryRequestLocal category,
@@ -149,7 +193,7 @@ class BaseCategoryForm extends BaseForm {
             final PageState state = e.getPageState();
             final String title = (String) m_widget.getValue(state);
 
-            final Category parent = m_parent.getCategory(state);
+            final Category parent = categoryRequestLocal.getCategory(state);
 
             final Collection<Category> children = parent.getSubCategories();
 

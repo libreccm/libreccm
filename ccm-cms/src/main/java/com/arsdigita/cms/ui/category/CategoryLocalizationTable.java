@@ -32,22 +32,19 @@ import com.arsdigita.bebop.table.TableColumnModel;
 import com.arsdigita.bebop.table.TableModel;
 import com.arsdigita.bebop.table.TableModelBuilder;
 import com.arsdigita.bebop.util.GlobalizationUtil;
+import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.LockableImpl;
 
 import org.libreccm.categorization.Category;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.l10n.GlobalizedMessagesUtil;
-import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Locale;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Lists all existing localizations for a selected category.
@@ -63,6 +60,12 @@ public class CategoryLocalizationTable extends Table implements
 
     private static final String TABLE_COL_LANG = "table_col_lang";
     private static final String TABLE_COL_DEL = "table_col_del";
+
+    private static final int COL_LOCALE = 0;
+    private static final int COL_TITLE = 1;
+    private static final int COL_DESCRIPTION = 2;
+    private static final int COL_EDIT = 3;
+    private static final int COL_DEL = 4;
 
     private final CategoryRequestLocal m_category;
     private final SingleSelectionModel m_model;
@@ -94,31 +97,26 @@ public class CategoryLocalizationTable extends Table implements
 
         // define columns
         columnModel.add(new TableColumn(
-            0,
+            COL_LOCALE,
             messagesUtil.getGlobalizedMessage(
-                "cms.ui.category.localization.locale")
-                .localize(),
+                "cms.ui.category.localization.locale"),
             TABLE_COL_LANG));
         columnModel.add(new TableColumn(
-            1,
+            COL_TITLE,
             messagesUtil
-                .getGlobalizedMessage("cms.ui.category.localization_name")
-                .localize()));
+                .getGlobalizedMessage("cms.ui.category.localization_title")));
         columnModel.add(new TableColumn(
-            2,
+            COL_DESCRIPTION,
             messagesUtil.getGlobalizedMessage(
-                "cms.ui.category.localization_description")
-                .localize()));
+                "cms.ui.category.localization_description")));
         columnModel.add(new TableColumn(
-            3,
+            COL_EDIT,
             messagesUtil
-                .getGlobalizedMessage("cms.ui.category.localization_url")
-                .localize()));
+                .getGlobalizedMessage("cms.ui.category.localization_edit")));
         columnModel.add(new TableColumn(
-            4,
+            COL_DEL,
             messagesUtil
-                .getGlobalizedMessage("cms.ui.category.localization_action")
-                .localize(),
+                .getGlobalizedMessage("cms.ui.category.localization_action"),
             TABLE_COL_DEL));
 
         super.setModelBuilder(new CategoryLocalizationTableModelBuilder());
@@ -130,101 +128,87 @@ public class CategoryLocalizationTable extends Table implements
 
     }
 
-    /**
-     * XXXX
-     *
-     */
     private class CategoryLocalizationTableModelBuilder extends LockableImpl
         implements TableModelBuilder {
 
-        public TableModel makeModel(Table table, PageState state) {
+        @Override
+        public TableModel makeModel(final Table table, final PageState state) {
+            
             final Category category = m_category.getCategory(state);
 
-            if (category != null) {
-                return new CategoryLocalizationTableModel(table, state, category);
-            } else {
+            if (category == null) {
                 return Table.EMPTY_MODEL;
+            } else {
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final CategoryLocalizationTableController controller = cdiUtil
+                .findBean(CategoryLocalizationTableController.class);
+                
+                final List<CategoryLocalizationTableRow> rows = controller
+                .getCategoryLocalizations(category);
+                return new CategoryLocalizationTableModel(table, rows);
             }
         }
 
     }
 
-    /**
-     * XXX
-     *
-     */
     private class CategoryLocalizationTableModel implements TableModel {
 
-        private Table m_table;
-        private ArrayList<LocalizedString> localizedStringCollection;
-        private LocalizedString m_categoryLocalization;
+        private final Table table;
+        private final Iterator<CategoryLocalizationTableRow> iterator;
+        private CategoryLocalizationTableRow currentRow;
 
-        private CategoryLocalizationTableModel(Table t, PageState ps,
-                                               Category category) {
-            m_table = t;
-            localizedStringCollection = new ArrayList<>();
-            localizedStringCollection.add(category.getTitle());
-            localizedStringCollection.add(category.getDescription());
+        private CategoryLocalizationTableModel(
+            final Table table,
+            final List<CategoryLocalizationTableRow> rows) {
+
+            this.table = table;
+            iterator = rows.iterator();
         }
 
+        @Override
         public int getColumnCount() {
-            return m_table.getColumnModel().size();
+            return table.getColumnModel().size();
         }
 
-        /**
-         * Check collection for the existence of another row.
-         *
-         * If exists, fetch the value of current CategoryLocalization object
-         * into m_categoryLocalization class variable.
-         */
+        @Override
         public boolean nextRow() {
-            return false;
-//            if (m_categoryLocalizations != null && m_categoryLocalizations.next()) {
-//                m_categoryLocalization = m_categoryLocalizations.getCategoryLocalization();
-//                return true;
-//
-//            } else {
-//
-//                return false;
-//
-//            }
+
+            if (iterator.hasNext()) {
+                currentRow = iterator.next();
+                return true;
+            } else {
+                return false;
+            }
         }
 
-        /**
-         * Return the
-         *
-         * @see com.arsdigita.bebop.table.TableModel#getElementAt(int)
-         */
-        public Object getElementAt(int columnIndex) {
-            return null;
-//            switch (columnIndex) {
-//                case 0:
-//                    Locale clLocale = new Locale(m_categoryLocalization.getLocale());
-//                    return clLocale.getDisplayLanguage(/*Locale*/);
-//                case 1:
-//                    return m_categoryLocalization.getName();
-//                case 2:
-//                    String desc = m_categoryLocalization.getDescription();
-//                    if (desc != null && desc.length() > MAX_DESC_LENGTH) {
-//                        desc = desc.substring(MAX_DESC_LENGTH - 3).concat("...");
-//                    }
-//                    return desc;
-//                case 3:
-//                    return m_categoryLocalization.getURL();
-//                case 4:
-//                    return GlobalizationUtil.globalize("cms.ui.delete").localize();
-//                default:
-//                    return null;
-//            }
+        @Override
+        public Object getElementAt(final int columnIndex) {
+
+            switch (columnIndex) {
+                case COL_LOCALE:
+                    return currentRow.getLocale();
+                case COL_TITLE:
+                    return currentRow.getTitle();
+                case COL_DESCRIPTION:
+                    return currentRow.getDescription();
+                case COL_EDIT:
+                    return new GlobalizedMessage("cms.ui.edit",
+                                                 CmsConstants.CMS_BUNDLE);
+                case COL_DEL:
+                    return new GlobalizedMessage("cms.ui.delete",
+                                                 CmsConstants.CMS_BUNDLE);
+                default:
+                    throw new IllegalArgumentException("Illegal Column Index");
+            }
         }
 
         /**
          *
          * @see com.arsdigita.bebop.table.TableModel#getKeyAt(int)
          */
-        public Object getKeyAt(int columnIndex) {
-            return null;
-//          return m_categoryLocalization.getID();
+        @Override
+        public Object getKeyAt(final int columnIndex) {
+            return currentRow.getLocale();
         }
 
     }
@@ -232,9 +216,15 @@ public class CategoryLocalizationTable extends Table implements
     private class EditCellRenderer extends LockableImpl implements
         TableCellRenderer {
 
-        public Component getComponent(Table table, PageState state, Object value,
-                                      boolean isSelected, final Object key,
-                                      int row, int column) {
+        @Override
+        public Component getComponent(final Table table,
+                                      final PageState state,
+                                      final Object value,
+                                      final boolean isSelected,
+                                      final Object key,
+                                      final int row,
+                                      final int column) {
+            
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final PermissionChecker permissionChecker = cdiUtil.findBean(
                 PermissionChecker.class);
@@ -253,9 +243,15 @@ public class CategoryLocalizationTable extends Table implements
     private class DeleteCellRenderer extends LockableImpl implements
         TableCellRenderer {
 
-        public Component getComponent(Table table, PageState state, Object value,
-                                      boolean isSelected, Object key,
-                                      int row, int column) {
+        @Override
+        public Component getComponent(final Table table, 
+                                      final PageState state, 
+                                      final Object value,
+                                      final boolean isSelected, 
+                                      final Object key,
+                                      final int row, 
+                                      final int column) {
+            
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final PermissionChecker permissionChecker = cdiUtil.findBean(
                 PermissionChecker.class);
@@ -279,9 +275,10 @@ public class CategoryLocalizationTable extends Table implements
      * into picture when a link on the table is clicked. Handles edit and delete
      * event.
      */
-    public void cellSelected(TableActionEvent evt) {
+    @Override
+    public void cellSelected(final TableActionEvent event) {
 
-        PageState state = evt.getPageState();
+        PageState state = event.getPageState();
 
 //        // Get selected CategoryLocalization
 //        CategoryLocalization categoryLocalization =
@@ -308,8 +305,9 @@ public class CategoryLocalizationTable extends Table implements
      * provide Implementation to TableActionListener method. Does nothing in our
      * case.
      */
-    public void headSelected(TableActionEvent e) {
-        throw new UnsupportedOperationException("Not Implemented");
+    @Override
+    public void headSelected(final TableActionEvent event) {
+        //Nothing
     }
 
 }

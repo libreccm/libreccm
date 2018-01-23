@@ -69,12 +69,12 @@ public class CategoryLocalizationForm extends BaseForm {
     final TextField m_title;
     final TextArea m_description;
     //final TextField m_url;
-    final Hidden m_url;
-    final RadioGroup m_isEnabled;
-    private Embedded m_script = new Embedded(String.format(
-        "<script language=\"javascript\" src=\"%s/javascript/manipulate-input.js\">" + "</script>",
-        Web.getWebappContextPath()),
-                                             false);
+//    final Hidden m_url;
+//    final RadioGroup m_isEnabled;
+//    private Embedded m_script = new Embedded(String.format(
+//        "<script language=\"javascript\" src=\"%s/javascript/manipulate-input.js\">" + "</script>",
+//        Web.getWebappContextPath()),
+//                                             false);
 
     private final static String LOCALE = "locale";
     private final static String TITLE = "title";
@@ -117,7 +117,7 @@ public class CategoryLocalizationForm extends BaseForm {
         addField(gz("cms.ui.category.localization_locale"), m_locale);
 
         m_title = new TextField(new TrimmedStringParameter(TITLE));
-        addField(gz("cms.ui.name"), m_title);
+        addField(gz("cms.ui.title"), m_title);
 
         m_title.setSize(30);
         m_title.setMaxLength(200);
@@ -128,10 +128,10 @@ public class CategoryLocalizationForm extends BaseForm {
         m_title.setOnKeyUp("if (defaulting) { this.form." + URL + ".value = urlize(this.value) }");
 
         // is enabled?
-        m_isEnabled = new RadioGroup(IS_ENABLED);
-        m_isEnabled.addOption(new Option("no", new Label(gz("cms.ui.no"))));
-        m_isEnabled.addOption(new Option("yes", new Label(gz("cms.ui.yes"))));
-        addField(gz("cms.ui.category.is_enabled"), m_isEnabled);
+//        m_isEnabled = new RadioGroup(IS_ENABLED);
+//        m_isEnabled.addOption(new Option("no", new Label(gz("cms.ui.no"))));
+//        m_isEnabled.addOption(new Option("yes", new Label(gz("cms.ui.yes"))));
+//        addField(gz("cms.ui.category.is_enabled"), m_isEnabled);
 
         m_description = new TextArea(new TrimmedStringParameter(DESCRIPTION));
         addField(gz("cms.ui.description"), m_description);
@@ -165,25 +165,25 @@ public class CategoryLocalizationForm extends BaseForm {
         //the URLs. Also, a category is the same resource for every language variant therefore 
         //the URL should be the same.
         //Changed field to Hidden, initalised with URL of category itself.
-        m_url = new Hidden(new TrimmedStringParameter(URL));
-        try {
-            m_url.addPrintListener(new PrintListener() {
-
-                @Override
-                public void prepare(final PrintEvent event) {
-                    final Hidden target = (Hidden) event.getTarget();
-                    final PageState state = event.getPageState();
-
-                    final Category cat = m_category.getCategory(state);
-
-                    target.setValue(state, cat.getName());
-                }
-
-            });
-        } catch (TooManyListenersException | IllegalArgumentException ex) {
-            LOGGER.fatal(ex);
-        }
-        addField(gz("cms.ui.category.url"), m_url);
+//        m_url = new Hidden(new TrimmedStringParameter(URL));
+//        try {
+//            m_url.addPrintListener(new PrintListener() {
+//
+//                @Override
+//                public void prepare(final PrintEvent event) {
+//                    final Hidden target = (Hidden) event.getTarget();
+//                    final PageState state = event.getPageState();
+//
+//                    final Category cat = m_category.getCategory(state);
+//
+//                    target.setValue(state, cat.getName());
+//                }
+//
+//            });
+//        } catch (TooManyListenersException | IllegalArgumentException ex) {
+//            LOGGER.fatal(ex);
+//        }
+//        addField(gz("cms.ui.category.url"), m_url);
 
         addAction(new Finish());
         addAction(new Cancel());
@@ -192,7 +192,7 @@ public class CategoryLocalizationForm extends BaseForm {
 
     @Override
     public void generateXML(PageState ps, Element parent) {
-        m_script.generateXML(ps, parent);
+//        m_script.generateXML(ps, parent);
         super.generateXML(ps, parent);
     }
 
