@@ -1,0 +1,10 @@
+{
+    
+    "compilerOptions": {
+        "rootDirs": [
+            "./src/main/typescript/ccm-editor"
+        ],
+        "module": "amd",
+        "traceResolution": true
+    }
+}
