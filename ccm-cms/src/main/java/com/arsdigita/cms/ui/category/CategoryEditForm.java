@@ -32,6 +32,7 @@ import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.contentsection.privileges.AdminPrivileges;
@@ -49,52 +50,57 @@ final class CategoryEditForm extends BaseCategoryForm {
 
     private static final String NO = "no";
     private static final String YES = "yes";
-    private final CategoryRequestLocal m_category;
+    
+    private final CategoryRequestLocal selectedCategory;
 
     public CategoryEditForm(final CategoryRequestLocal parent,
-                            final CategoryRequestLocal category) {
+                            final CategoryRequestLocal selectedCategory) {
         super("EditCategory", gz("cms.ui.category.edit"), parent);
 
-        m_category = category;
+        this.selectedCategory = selectedCategory;
 
-        addInitListener(new InitListener());
-        addProcessListener(new ProcessListener());
+        super.addInitListener(new InitListener());
+        super.addProcessListener(new ProcessListener());
     }
 
     private class InitListener implements FormInitListener {
 
         @Override
-        public final void init(final FormSectionEvent e)
+        public final void init(final FormSectionEvent event)
             throws FormProcessException {
-            final PageState state = e.getPageState();
-            final Category category = m_category.getCategory(state);
+            
+            final PageState state = event.getPageState();
+            final Category category = selectedCategory.getCategory(state);
 
-            // Quasimodo:
-            // Modified to ensure that the value is read from Category (and not the
-            // localized version). This is necessary because we are in the admin GUI,
-            // a localized version would be confusing.
-            m_name.setValue(state, category.getName());
-            m_description.setValue(state, category.getDescription());
-            //m_url.setValue(state, category.getURL(""));
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final GlobalizationHelper globalizationHelper = cdiUtil
+                .findBean(GlobalizationHelper.class);
+
+            getNameField().setValue(state, category.getName());
+            final LocalizedString description = category.getDescription();
+            getDescriptionArea()
+                .setValue(state,
+                          globalizationHelper
+                              .getValueFromLocalizedString(description));
             // this seems anti-intuitive but the question is "can you place
             // items in this category.  If the user says "yes" then the
             // category is not abstract
             if (category.isAbstractCategory()) {
-                m_isAbstract.setValue(state, NO);
+                getIsAbstractRadioGroup().setValue(state, NO);
             } else {
-                m_isAbstract.setValue(state, YES);
+                getIsAbstractRadioGroup().setValue(state, YES);
             }
 
             if (category.isVisible()) {
-                m_isVisible.setValue(state, YES);
+                getIsVisibleRadioGroup().setValue(state, YES);
             } else {
-                m_isVisible.setValue(state, NO);
+                getIsVisibleRadioGroup().setValue(state, NO);
             }
 
             if (category.isEnabled()) {
-                m_isEnabled.setValue(state, YES);
+                getIsEnabledRadioGroup().setValue(state, YES);
             } else {
-                m_isEnabled.setValue(state, NO);
+                getIsEnabledRadioGroup().setValue(state, NO);
             }
         }
 
@@ -103,8 +109,9 @@ final class CategoryEditForm extends BaseCategoryForm {
     private class ProcessListener implements FormProcessListener {
 
         @Override
-        public final void process(final FormSectionEvent e)
+        public final void process(final FormSectionEvent event)
             throws FormProcessException {
+
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final PermissionChecker permissionChecker = cdiUtil.findBean(
                 PermissionChecker.class);
@@ -115,20 +122,21 @@ final class CategoryEditForm extends BaseCategoryForm {
             final CategoryRepository categoryRepository = cdiUtil.findBean(
                 CategoryRepository.class);
 
-            final PageState state = e.getPageState();
-            final Category category = m_category.getCategory(state);
+            final PageState state = event.getPageState();
+            final Category category = selectedCategory.getCategory(state);
 
             if (permissionChecker.isPermitted(
                 AdminPrivileges.ADMINISTER_CATEGORIES, category)) {
-                category.setName((String) m_name.getValue(state));
+                category.setName((String) getNameField().getValue(state));
                 final LocalizedString localizedDescription
-                                      = new LocalizedString();
-                localizedDescription.addValue(config.getDefaultLocale(),
-                                              (String) m_description.getValue(
-                                                  state));
+                                          = new LocalizedString();
+                localizedDescription
+                    .addValue(config.getDefaultLocale(),
+                              (String) getDescriptionArea().getValue(state));
                 category.setDescription(localizedDescription);
 
-                final String isAbstract = (String) m_isAbstract.getValue(state);
+                final String isAbstract = (String) getIsAbstractRadioGroup()
+                    .getValue(state);
                 // this seems anti-intuitive but the question is "can you place
                 // items in this category.  If the user says "yes" then the
                 // category is not abstract
@@ -138,14 +146,16 @@ final class CategoryEditForm extends BaseCategoryForm {
                     category.setAbstractCategory(true);
                 }
 
-                final String isVisible = (String) m_isVisible.getValue(state);
+                final String isVisible = (String) getIsVisibleRadioGroup()
+                    .getValue(state);
                 if (YES.equals(isVisible)) {
                     category.setVisible(true);
                 } else {
                     category.setVisible(false);
                 }
 
-                final String isEnabled = (String) m_isEnabled.getValue(state);
+                final String isEnabled = (String) getIsEnabledRadioGroup()
+                    .getValue(state);
                 if (YES.equals(isEnabled)) {
                     category.setEnabled(true);
                 } else if (NO.equals(isEnabled)) {
@@ -153,6 +163,7 @@ final class CategoryEditForm extends BaseCategoryForm {
                 }
 
                 categoryRepository.save(category);
+                
             } else {
                 throw new AccessDeniedException();
             }

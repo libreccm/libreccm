@@ -29,11 +29,13 @@ import com.arsdigita.bebop.list.ListModel;
 import com.arsdigita.bebop.list.ListModelBuilder;
 import com.arsdigita.bebop.parameters.BigDecimalParameter;
 import com.arsdigita.bebop.util.GlobalizationUtil;
+import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.LockableImpl;
 
 import org.libreccm.categorization.Category;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.GlobalizationHelper;
+import org.librecms.CmsConstants;
 
 import java.util.ArrayList;
 
@@ -45,6 +47,7 @@ import java.util.ArrayList;
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 public class CategoryLinks extends List {
+
     public final static String SUB_CATEGORY = "sc";
 
     private final CategoryRequestLocal m_parent;
@@ -52,8 +55,8 @@ public class CategoryLinks extends List {
 
     public CategoryLinks(final CategoryRequestLocal parent,
                          final SingleSelectionModel model) {
-        super(new ParameterSingleSelectionModel
-              (new BigDecimalParameter(SUB_CATEGORY)));
+        super(new ParameterSingleSelectionModel(new BigDecimalParameter(
+            SUB_CATEGORY)));
         setIdAttr("category_links_list");
 
         m_parent = parent;
@@ -64,26 +67,29 @@ public class CategoryLinks extends List {
         // Select the category in the main tree when the
         // user selects it here
         addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    final PageState state = e.getPageState();
-                    final String id = (String) getSelectedKey(state);
 
-                    if (id != null) {
-                        m_model.setSelectedKey(state, id);
-                    }
+            public void actionPerformed(ActionEvent e) {
+                final PageState state = e.getPageState();
+                final String id = (String) getSelectedKey(state);
+
+                if (id != null) {
+                    m_model.setSelectedKey(state, id);
                 }
-            });
+            }
 
-        final Label label = new Label
-            (GlobalizationUtil.globalize("cms.ui.category.linked_none"));
+        });
+
+        final Label label = new Label(new GlobalizedMessage(
+            "cms.ui.category.linked_none",
+            CmsConstants.CMS_BUNDLE));
         label.setFontWeight(Label.ITALIC);
         setEmptyView(label);
     }
 
     // Since this part is for non default parents, but there is only one... this is not needed anymore, i guess
     private class LinkedCategoryModelBuilder extends LockableImpl
-            implements ListModelBuilder {
-        
+        implements ListModelBuilder {
+
         @Override
         public ListModel makeModel(List list, PageState state) {
             final Category category = m_parent.getCategory(state);
@@ -91,27 +97,38 @@ public class CategoryLinks extends List {
             if (category != null && category.getParentCategory() != null) {
 
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final GlobalizationHelper globalizationHelper  =cdiUtil
-                .findBean(GlobalizationHelper.class);
-                final Category parent = category.getParentCategory();
-                
+                final CategoryController controller = cdiUtil
+                    .findBean(CategoryController.class);
+                final GlobalizationHelper globalizationHelper = cdiUtil
+                    .findBean(GlobalizationHelper.class);
+                final Category parent = controller
+                    .getParentCategory(category).get();
+
                 java.util.List<CategoryListItem> categories = new ArrayList<>();
                 final CategoryListItem parentItem = new CategoryListItem();
                 parentItem.setCategoryId(parent.getObjectId());
                 final String label = globalizationHelper
-                .getValueFromLocalizedString(parent.getTitle(),
-                                             parent::getName);
+                    .getValueFromLocalizedString(parent.getTitle(),
+                                                 parent::getName);
                 parentItem.setLabel(label);
-                
+
                 categories.add(parentItem);
 
-                return new CategoryListModel
-                    (categories,
-                     category.getParentCategory() == null ? null : Long.parseLong(category.getParentCategory().getUniqueId()));
+                return new CategoryListModel(
+                    categories,
+                    parent.getObjectId());
+
+//                return new CategoryListModel(categories,
+//                                             category.getParentCategory()
+//                                                 == null ? null : Long
+//                                                     .parseLong(
+//                                                         parent
+//                                                             .getUniqueId()));
             } else {
                 return List.EMPTY_MODEL;
             }
         }
+
     }
 
 }

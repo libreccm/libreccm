@@ -89,13 +89,13 @@ public class CategoryLocalizationEditForm extends CategoryLocalizationForm {
 
             m_title.setValue(state, category.getTitle().getValue(locale));
             m_description.setValue(state, category.getDescription().getValue(locale));
-            m_url.setValue(state, category.getName());
+//            m_url.setValue(state, category.getName());
 
-            if (category.isEnabled()) {
-                m_isEnabled.setValue(state, "yes");
-            } else {
-                m_isEnabled.setValue(state, "no");
-            }
+//            if (category.isEnabled()) {
+//                m_isEnabled.setValue(state, "yes");
+//            } else {
+//                m_isEnabled.setValue(state, "no");
+//            }
         }
     }
 
@@ -122,8 +122,8 @@ public class CategoryLocalizationEditForm extends CategoryLocalizationForm {
                 final Locale locale = new Locale((String) m_locale.getValue(state));
                 category.getTitle().addValue(locale, (String) m_title.getValue(state));
                 category.getDescription().addValue(locale, (String) m_description.getValue(state));
-                category.setName((String) m_url.getValue(state));
-                category.setEnabled("yes".equals(m_isEnabled.getValue(state)));
+//                category.setName((String) m_url.getValue(state));
+//                category.setEnabled("yes".equals(m_isEnabled.getValue(state)));
                 categoryRepository.save(category);
             } else {
                 throw new AccessDeniedException();
