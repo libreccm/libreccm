@@ -24,97 +24,94 @@ import com.arsdigita.bebop.SingleSelectionModel;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.dispatcher.AccessDeniedException;
-import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.util.Assert;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.categorization.Category;
-import org.libreccm.categorization.CategoryManager;
-import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.configuration.ConfigurationManager;
-import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.contentsection.privileges.AdminPrivileges;
+
 
 /**
  * TODO Needs a description.
  *
  * @author Justin Ross &lt;jross@redhat.com&gt;
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 final class CategoryAddForm extends BaseCategoryForm {
 
-    private static final Logger LOGGER = LogManager.getLogger
-        (CategoryAddForm.class);
+    private static final Logger LOGGER = LogManager.getLogger(
+        CategoryAddForm.class);
 
-    private final SingleSelectionModel m_model;
+    private final SingleSelectionModel<String> categorySelectionModel;
 
     /**
      * Constructor.
      */
     public CategoryAddForm(final CategoryRequestLocal parent,
-                           final SingleSelectionModel model) {
+                           final SingleSelectionModel<String> model) {
+
         super("AddSubcategories", gz("cms.ui.category.add"), parent);
 
-        m_model = model;
+        categorySelectionModel = model;
 
         addProcessListener(new ProcessListener());
     }
 
     private final class ProcessListener implements FormProcessListener {
 
-        public final void process(final FormSectionEvent e)
-                     throws FormProcessException {
+        @Override
+        public final void process(final FormSectionEvent event)
+            throws FormProcessException {
+
             LOGGER.debug("Adding a category");
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final CategoryRepository categoryRepository = cdiUtil.findBean(CategoryRepository.class);
-            final CategoryManager categoryManager = cdiUtil.findBean(CategoryManager.class);
-            final PermissionChecker permissionChecker = cdiUtil.findBean(PermissionChecker.class);
-            final ConfigurationManager manager = cdiUtil.findBean(ConfigurationManager.class);
-            final KernelConfig config = manager.findConfiguration(KernelConfig.class);
+            final PermissionChecker permissionChecker = cdiUtil
+                .findBean(PermissionChecker.class);
+            final CategoryController controller = cdiUtil
+                .findBean(CategoryController.class);
 
-            final PageState state = e.getPageState();
+            final PageState state = event.getPageState();
 
-            final Category parent = m_parent.getCategory(state);
-            final String name = (String) m_name.getValue(state);
-            final String description = (String) m_description.getValue(state);
-            final String isAbstract = (String) m_isAbstract.getValue(state);
+            final Category parent = getCategoryRequestLocal()
+                .getCategory(state);
+            final String name = (String) getNameField().getValue(state);
+            final String description = (String) getDescriptionArea()
+                .getValue(state);
+            // this seems anti-intuitive but the question is "can you place
+            // items in this category.  If the user says "yes" then the
+            // category is not abstract
+            final boolean isAbstract = !"yes"
+                .equals(getIsAbstractRadioGroup().getValue(state));
 
             Assert.exists(parent, "Category parent");
 
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Using parent category " + parent + " to " +
-                            "create new category");
+                LOGGER.debug("Using parent category " + parent + " to "
+                                 + "create new category");
             }
 
-            if (permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_CATEGORIES, parent)) {
-                final Category category = new Category();
-                category.setName(name);
-                final LocalizedString localizedDescription = new LocalizedString();
-                localizedDescription.addValue(config.getDefaultLocale(), description);
-                category.setDescription(localizedDescription);
-                // this seems anti-intuitive but the question is "can you place
-                // items in this category.  If the user says "yes" then the
-                // category is not abstract
-                if ("yes".equals(isAbstract)) {
-                    category.setAbstractCategory(false);
-                } else if ("no".equals(isAbstract)) {
-                    category.setAbstractCategory(true);
-                }
+            if (permissionChecker
+                .isPermitted(AdminPrivileges.ADMINISTER_CATEGORIES, parent)) {
 
-                categoryRepository.save(category);
+                final Category category = controller.createCategory(parent,
+                                                                    name,
+                                                                    description,
+                                                                    isAbstract);
 
-                categoryManager.addSubCategoryToCategory(category, parent);
-
-                m_model.setSelectedKey(state, category.getUniqueId());
+                categorySelectionModel.setSelectedKey(state,
+                                                      category.getUniqueId());
             } else {
                 // XXX user a better exception here.
                 // PermissionException doesn't work for this case.
                 throw new AccessDeniedException();
             }
         }
+
     }
+
 }

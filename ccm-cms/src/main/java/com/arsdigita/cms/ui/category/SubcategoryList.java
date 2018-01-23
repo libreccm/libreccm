@@ -26,11 +26,13 @@ import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.list.ListModel;
 import com.arsdigita.bebop.list.ListModelBuilder;
 import com.arsdigita.bebop.util.GlobalizationUtil;
+import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.LockableImpl;
 
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.librecms.CmsConstants;
 
 /**
  * A List of all subcategories of the current category.
@@ -63,8 +65,9 @@ public class SubcategoryList extends SortableCategoryList {
         // user selects it here
         super.addActionListener(this::actionPerformed);
 
-        Label label = new Label(GlobalizationUtil.globalize(
-            "cms.ui.category.subcategory.none"));
+        Label label = new Label(new GlobalizedMessage(
+            "cms.ui.category.subcategory.none",
+            CmsConstants.CMS_BUNDLE));
         label.setFontWeight(Label.ITALIC);
         setEmptyView(label);
     }

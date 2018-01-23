@@ -315,10 +315,12 @@ class CategoryItemPane extends BaseItemPane {
 
                 final String itemTitle;
 
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                final GlobalizationHelper globalizationHelper = cdiUtil
+                    .findBean(GlobalizationHelper.class);
                 if (category == null) {
                     itemTitle = "None";
                 } else {
-                    final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                     final CategoryManager categoryManager = cdiUtil
                         .findBean(CategoryManager.class);
                     final List<CcmObject> indexObjects = categoryManager
@@ -331,15 +333,13 @@ class CategoryItemPane extends BaseItemPane {
                         .findFirst();
 
                     if (indexItem.isPresent()) {
-                        final GlobalizationHelper globalizationHelper = cdiUtil
-                            .findBean(GlobalizationHelper.class);
 
                         final ContentItem item = indexItem.get();
                         itemTitle = globalizationHelper
                             .getValueFromLocalizedString(item.getTitle(),
                                                          item::getDisplayName);
 
-                    } else if (indexObjects.isEmpty()){
+                    } else if (indexObjects.isEmpty()) {
                         itemTitle = "None";
                     } else {
                         final CcmObject indexObj = indexObjects.get(0);
@@ -349,8 +349,10 @@ class CategoryItemPane extends BaseItemPane {
 
                 properties.add(new Property(gz("cms.ui.name"),
                                             category.getName()));
-                properties.add(new Property(gz("cms.ui.description"),
-                                            category.getDescription().getValue()));
+                properties.add(new Property(
+                    gz("cms.ui.description"),
+                    globalizationHelper
+                        .getValueFromLocalizedString(category.getDescription())));
                 properties.add(new Property(
                     gz("cms.ui.category.is_not_abstract"),
                     category.isAbstractCategory()
@@ -443,10 +445,15 @@ class CategoryItemPane extends BaseItemPane {
         public final boolean isVisible(final PageState state) {
 
             final Category category = m_category.getCategory(state);
-            if (category.getParentCategory() == null) {
-                return false;
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final CategoryController controller = cdiUtil
+                .findBean(CategoryController.class);
+            final Optional<Category> parentCategory = controller
+                .getParentCategory(category);
+            if (parentCategory.isPresent()) {
+                return parentCategory.get().isVisible();
             } else {
-                return category.getParentCategory().isVisible();
+                return false;
             }
         }
 
