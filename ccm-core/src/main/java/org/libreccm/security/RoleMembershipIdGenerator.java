@@ -25,6 +25,8 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerator;
  * @version created on 3/23/17
  */
 public class RoleMembershipIdGenerator extends ObjectIdGenerator<String> {
+    private static final long serialVersionUID = 801410727263488529L;
+
     @Override
     public Class<?> getScope() {
         return RoleMembership.class;

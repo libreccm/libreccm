@@ -25,6 +25,8 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerator;
  * @version created the 8/10/17
  */
 public class DomainOwnershipIdGenerator extends ObjectIdGenerator<String> {
+    private static final long serialVersionUID = -5651368736214980681L;
+
     @Override
     public Class<?> getScope() {
         return DomainOwnership.class;

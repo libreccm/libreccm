@@ -23,6 +23,7 @@ import org.libreccm.portation.Marshals;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import java.io.Serializable;
 
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers<\a>
@@ -31,6 +32,8 @@ import javax.inject.Inject;
 @RequestScoped
 @Marshals(Domain.class)
 public class DomainMarshaller extends AbstractMarshaller<Domain> {
+
+    private static final long serialVersionUID = -2435714410695539890L;
 
     @Inject
     private DomainRepository domainRepository;

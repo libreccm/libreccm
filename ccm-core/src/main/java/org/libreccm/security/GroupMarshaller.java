@@ -33,6 +33,8 @@ import javax.transaction.Transactional;
 @Marshals(Group.class)
 public class GroupMarshaller extends AbstractMarshaller<Group> {
 
+    private static final long serialVersionUID = 5004457104585052013L;
+
     @Inject
     private GroupRepository groupRepository;
 

@@ -32,6 +32,8 @@ import java.util.Optional;
 @RequestScoped
 public class TaskCommentRepository extends AbstractEntityRepository<Long,
         TaskComment> {
+    private static final long serialVersionUID = -420902242220205847L;
+
     @Override
     public Class<TaskComment> getEntityClass() {
         return TaskComment.class;

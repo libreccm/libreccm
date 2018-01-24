@@ -25,6 +25,8 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerator;
  * @version created on 3/23/17
  */
 public class GroupMembershipIdGenerator extends ObjectIdGenerator<String> {
+    private static final long serialVersionUID = 5256221797846627835L;
+
     @Override
     public Class<?> getScope() {
         return GroupMembership.class;

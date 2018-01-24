@@ -34,6 +34,7 @@ import java.util.UUID;
  */
 @RequestScoped
 public class WorkflowRepository extends AbstractEntityRepository<Long, Workflow> {
+    private static final long serialVersionUID = -8811728904958517569L;
 
     @Override
     public Class<Workflow> getEntityClass() {

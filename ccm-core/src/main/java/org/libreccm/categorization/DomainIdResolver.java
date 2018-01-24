@@ -23,13 +23,16 @@ import com.fasterxml.jackson.annotation.ObjectIdResolver;
 import org.libreccm.cdi.utils.CdiUtil;
 
 import javax.enterprise.context.RequestScoped;
+import java.io.Serializable;
 
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers<\a>
  * @version created the 8/2/17
  */
 @RequestScoped
-public class DomainIdResolver implements ObjectIdResolver {
+public class DomainIdResolver implements Serializable, ObjectIdResolver {
+    private static final long serialVersionUID = -8504371142795445708L;
+
     @Override
     public void bindItem(ObjectIdGenerator.IdKey idKey, Object o) {
         // According to the Jackson JavaDoc, this method can be used to keep

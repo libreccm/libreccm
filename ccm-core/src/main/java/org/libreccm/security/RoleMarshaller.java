@@ -32,6 +32,7 @@ import javax.transaction.Transactional;
 @RequestScoped
 @Marshals(Role.class)
 public class RoleMarshaller extends AbstractMarshaller<Role> {
+    private static final long serialVersionUID = -2150833120444479902L;
 
     @Inject
     private RoleRepository roleRepository;

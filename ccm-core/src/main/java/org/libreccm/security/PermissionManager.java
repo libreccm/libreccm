@@ -31,6 +31,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -45,7 +46,8 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class PermissionManager {
+public class PermissionManager implements Serializable {
+    private static final long serialVersionUID = -6068575941173342106L;
 
     private static final Logger LOGGER = LogManager
         .getLogger(PermissionManager.class);

@@ -42,6 +42,8 @@ import static org.libreccm.core.CoreConstants.ACCESS_DENIED;
 @RequestScoped
 public class CcmObjectRepository extends AbstractEntityRepository<Long, CcmObject> {
 
+    private static final long serialVersionUID = 5033157795875521195L;
+
     @Override
     public Class<CcmObject> getEntityClass() {
         return CcmObject.class;

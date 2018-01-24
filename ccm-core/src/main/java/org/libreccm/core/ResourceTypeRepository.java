@@ -37,6 +37,8 @@ import java.util.Optional;
 public class ResourceTypeRepository extends AbstractEntityRepository<Long,
         ResourceType> {
 
+    private static final long serialVersionUID = -6313169146990554867L;
+
     @Override
     public Class<ResourceType> getEntityClass() {
         return ResourceType.class;

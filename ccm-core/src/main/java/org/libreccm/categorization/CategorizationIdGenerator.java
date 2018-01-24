@@ -25,6 +25,8 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerator;
  * @version created on 3/23/17
  */
 public class CategorizationIdGenerator extends ObjectIdGenerator<String> {
+    private static final long serialVersionUID = 3013739402534056286L;
+
     @Override
     public Class<?> getScope() {
         return Categorization.class;
