@@ -35,7 +35,7 @@ import org.librecms.pagemodel.FixedContentItemComponent;
 
 /**
  * Form for creating/editing a {@link FixedContentItemComponent}.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class FixedContentItemComponentForm
@@ -99,7 +99,9 @@ public class FixedContentItemComponentForm
         final PageState state = event.getPageState();
         final FixedContentItemComponent component = getComponentModel();
 
-        itemSearchWidget.setValue(state, component.getContentItem());
+        if (component != null) {
+            itemSearchWidget.setValue(state, component.getContentItem());
+        }
     }
 
     @Override
