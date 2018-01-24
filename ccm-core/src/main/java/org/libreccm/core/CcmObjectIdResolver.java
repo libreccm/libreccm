@@ -23,13 +23,16 @@ import com.fasterxml.jackson.annotation.ObjectIdResolver;
 import org.libreccm.cdi.utils.CdiUtil;
 
 import javax.enterprise.context.RequestScoped;
+import java.io.Serializable;
 
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
  * @version created on 3/23/17
  */
 @RequestScoped
-public class CcmObjectIdResolver implements ObjectIdResolver {
+public class CcmObjectIdResolver implements Serializable, ObjectIdResolver {
+    private static final long serialVersionUID = 246452778202614974L;
+
     @Override
     public void bindItem(ObjectIdGenerator.IdKey idKey,
                          Object pojo) {

@@ -34,6 +34,7 @@ import java.util.UUID;
  */
 @RequestScoped
 public class TaskRepository extends AbstractEntityRepository<Long, Task> {
+    private static final long serialVersionUID = -8366096936911158514L;
 
     @Override
     public Class<Task> getEntityClass() {

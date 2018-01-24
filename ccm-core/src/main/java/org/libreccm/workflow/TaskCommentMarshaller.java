@@ -31,6 +31,7 @@ import javax.inject.Inject;
 @RequestScoped
 @Marshals(TaskComment.class)
 public class TaskCommentMarshaller extends AbstractMarshaller<TaskComment> {
+    private static final long serialVersionUID = -3259560130798503811L;
 
     @Inject
     private TaskCommentRepository taskCommentRepository;

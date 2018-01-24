@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,9 @@ import java.util.List;
  * @version created the 2/10/16
  * @param <P>
  */
-public abstract class AbstractMarshaller<P extends Portable> {
+public abstract class AbstractMarshaller<P extends Portable> implements Serializable {
+
+    private static final long serialVersionUID = -5796378713915256691L;
 
     private static final Logger LOGGER = LogManager.getLogger(
         AbstractMarshaller.class);

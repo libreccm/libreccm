@@ -24,6 +24,7 @@ import org.libreccm.portation.Marshals;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.io.Serializable;
 
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
@@ -32,6 +33,8 @@ import javax.transaction.Transactional;
 @RequestScoped
 @Marshals(Category.class)
 public class CategoryMarshaller extends AbstractMarshaller<Category> {
+
+    private static final long serialVersionUID = -9089135773302229477L;
 
     @Inject
     private CategoryRepository categoryRepository;

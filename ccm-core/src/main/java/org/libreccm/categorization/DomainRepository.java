@@ -44,6 +44,8 @@ import java.util.UUID;
 @RequestScoped
 public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
 
+    private static final long serialVersionUID = -924664711844102643L;
+
     @Override
     public Class<Domain> getEntityClass() {
         return Domain.class;

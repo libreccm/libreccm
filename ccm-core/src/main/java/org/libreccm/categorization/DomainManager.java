@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +39,9 @@ import java.util.Optional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class DomainManager {
+public class DomainManager implements Serializable {
+
+    private static final long serialVersionUID = -8921596414159020455L;
 
     @Inject
     private ApplicationRepository applicationRepo;

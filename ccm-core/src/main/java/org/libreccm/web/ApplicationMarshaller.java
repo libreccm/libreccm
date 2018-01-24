@@ -31,6 +31,7 @@ import javax.inject.Inject;
 @RequestScoped
 @Marshals(CcmApplication.class)
 public class ApplicationMarshaller extends AbstractMarshaller<CcmApplication> {
+    private static final long serialVersionUID = -342978428750991072L;
 
     @Inject
     private ApplicationRepository applicationRepository;

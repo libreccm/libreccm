@@ -25,6 +25,8 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerator;
  * @version created on 3/23/17
  */
 public class TaskAssignmentIdGenerator extends ObjectIdGenerator<String> {
+    private static final long serialVersionUID = -5493483256068253010L;
+
     @Override
     public Class<?> getScope() {
         return TaskAssignment.class;

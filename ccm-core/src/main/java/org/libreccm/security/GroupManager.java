@@ -26,6 +26,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -35,7 +36,8 @@ import java.util.List;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class GroupManager {
+public class GroupManager implements Serializable {
+    private static final long serialVersionUID = 8001182420672016296L;
 
     @Inject
     private GroupRepository groupRepository;

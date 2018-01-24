@@ -37,6 +37,7 @@ import javax.persistence.TypedQuery;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.transaction.Transactional;
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -44,10 +45,11 @@ import java.util.*;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ApplicationScoped
-public class ApplicationManager {
+public class ApplicationManager implements Serializable {
+    private static final long serialVersionUID = -4623791386536335252L;
 
     private static final Logger LOGGER = LogManager.getLogger(
-        ApplicationManager.class);
+            ApplicationManager.class);
 
     @Inject
     private EntityManager entityManager;
@@ -60,11 +62,11 @@ public class ApplicationManager {
     @PostConstruct
     private void loadApplicationTypes() {
         final ServiceLoader<CcmModule> modules = ServiceLoader.load(
-            CcmModule.class);
+                CcmModule.class);
 
         for (CcmModule module : modules) {
             final Module moduleData = module.getClass().getAnnotation(
-                Module.class);
+                    Module.class);
 
             final ApplicationType[] appTypes = moduleData.applicationTypes();
 
@@ -88,12 +90,12 @@ public class ApplicationManager {
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public <T extends CcmApplication> T createInstance(
-        final ApplicationType type,
-        final String path,
-        final Class<T> applicationClass) throws ApplicationCreateException {
+            final ApplicationType type,
+            final String path,
+            final Class<T> applicationClass) throws ApplicationCreateException {
         @SuppressWarnings("unchecked")
         final ApplicationCreator<T> creator = CdiUtil.createCdiUtil().findBean(
-            type.creator());
+                type.creator());
         final T application = creator.createInstance(path, type);
 
         entityManager.persist(application);
@@ -110,7 +112,7 @@ public class ApplicationManager {
 
     public CcmApplication findApplicationByPath(final String path) {
         final TypedQuery<CcmApplication> query = entityManager.createNamedQuery(
-            "CcmApplication.retrieveApplicationForPath", CcmApplication.class);
+                "CcmApplication.retrieveApplicationForPath", CcmApplication.class);
         query.setParameter("path", path);
         final List<CcmApplication> result = query.getResultList();
         if (result.isEmpty()) {
@@ -129,26 +131,26 @@ public class ApplicationManager {
 
         if (type == null) {
             throw new IllegalArgumentException(String.format(
-                "Unknown application type \"%s\".", typeName));
+                    "Unknown application type \"%s\".", typeName));
         }
 
         if (type.servletPath().isEmpty()) {
             if (type.servlet().equals(HttpServlet.class)) {
                 throw new IllegalArgumentException(String.format(
-                    "Application type \"%s\" can no servlet path nor a serlet "
-                        + "definition.",
-                    typeName));
+                        "Application type \"%s\" can no servlet path nor a serlet "
+                                + "definition.",
+                        typeName));
             } else {
                 final Class<? extends HttpServlet> servletClass = type.servlet();
 
                 if (servletClass.isAnnotationPresent(WebServlet.class)) {
                     return servletClass.getAnnotation(WebServlet.class)
-                        .urlPatterns()[0];
+                            .urlPatterns()[0];
                 } else {
                     throw new IllegalArgumentException(String.format(
-                        "Provided servlet for application type \"%s\" has not "
-                            + "@WebServlet annotation.",
-                        typeName));
+                            "Provided servlet for application type \"%s\" has not "
+                                    + "@WebServlet annotation.",
+                            typeName));
                 }
             }
         } else {
@@ -157,7 +159,7 @@ public class ApplicationManager {
     }
 
     public String getApplicationTypeTitle(
-        final ApplicationType applicationType) {
+            final ApplicationType applicationType) {
 
         final String descBundle;
         if (Strings.isBlank(applicationType.descBundle())) {
@@ -169,7 +171,7 @@ public class ApplicationManager {
         final ResourceBundle bundle;
         try {
             bundle = ResourceBundle.getBundle(
-                descBundle, globalizationHelper.getNegotiatedLocale());
+                    descBundle, globalizationHelper.getNegotiatedLocale());
             return bundle.getString(applicationType.titleKey());
         } catch (MissingResourceException ex) {
             LOGGER.warn("Failed to find resource bundle '{}'.", ex);
@@ -179,7 +181,7 @@ public class ApplicationManager {
     }
 
     public String getApplicationTypeDescription(
-        final ApplicationType applicationType) {
+            final ApplicationType applicationType) {
 
         final String descBundle;
         if (Strings.isBlank(applicationType.descBundle())) {
@@ -191,7 +193,7 @@ public class ApplicationManager {
         final ResourceBundle bundle;
         try {
             bundle = ResourceBundle.getBundle(
-                descBundle, globalizationHelper.getNegotiatedLocale());
+                    descBundle, globalizationHelper.getNegotiatedLocale());
             return bundle.getString(applicationType.descKey());
         } catch (MissingResourceException ex) {
             LOGGER.warn("Failed to find resource bundle '{}'.", ex);
@@ -201,3 +203,4 @@ public class ApplicationManager {
     }
 
 }
+

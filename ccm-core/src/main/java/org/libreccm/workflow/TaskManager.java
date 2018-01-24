@@ -26,6 +26,7 @@ import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -46,7 +47,8 @@ import javax.persistence.TypedQuery;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class TaskManager {
+public class TaskManager implements Serializable {
+    private static final long serialVersionUID = -5605541655413527137L;
 
     private static final Logger LOGGER = LogManager.getLogger(TaskManager.class);
 

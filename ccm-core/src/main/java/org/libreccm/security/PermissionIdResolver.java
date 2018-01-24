@@ -26,6 +26,7 @@ import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.core.UnexpectedErrorException;
 
 import javax.enterprise.context.RequestScoped;
+import java.io.Serializable;
 import java.util.Optional;
 
 /**
@@ -33,7 +34,9 @@ import java.util.Optional;
  * @version created on 3/23/17
  */
 @RequestScoped
-public class PermissionIdResolver implements ObjectIdResolver {
+public class PermissionIdResolver implements Serializable, ObjectIdResolver {
+    private static final long serialVersionUID = -8397366681202009916L;
+
     @Override
     public void bindItem(final ObjectIdGenerator.IdKey id,
                          final Object pojo) {

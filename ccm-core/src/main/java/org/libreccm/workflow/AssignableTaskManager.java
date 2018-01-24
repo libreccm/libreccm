@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,7 +37,8 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class AssignableTaskManager {
+public class AssignableTaskManager implements Serializable {
+    private static final long serialVersionUID = -4364893854116452485L;
 
     @Inject
     private EntityManager entityManager;

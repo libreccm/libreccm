@@ -38,6 +38,8 @@ import java.util.UUID;
 public class ResourceRepository extends AbstractEntityRepository<Long,
         Resource> {
 
+    private static final long serialVersionUID = 4593206445936878071L;
+
     @Override
     public Class<Resource> getEntityClass() {
         return Resource.class;

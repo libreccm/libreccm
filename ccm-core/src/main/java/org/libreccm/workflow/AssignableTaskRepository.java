@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 @RequestScoped
 public class AssignableTaskRepository extends AbstractEntityRepository<Long,
         AssignableTask> {
+    private static final long serialVersionUID = 2657793145163510103L;
 
     @Override
     public Class<AssignableTask> getEntityClass() {
