@@ -35,6 +35,8 @@ import java.util.Optional;
 @RequestScoped
 public class GroupRepository extends AbstractEntityRepository<Long, Group> {
 
+    private static final long serialVersionUID = 115864505126792697L;
+
     @Override
     public Class<Group> getEntityClass() {
         return Group.class;

@@ -37,6 +37,7 @@ import javax.transaction.Transactional;
 import static org.libreccm.categorization.CategorizationConstants.PRIVILEGE_MANAGE_CATEGORY;
 import static org.libreccm.categorization.CategorizationConstants.PRIVILEGE_MANAGE_CATEGORY_OBJECTS;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,7 +52,8 @@ import java.util.StringJoiner;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class CategoryManager {
+public class CategoryManager implements Serializable {
+    private static final long serialVersionUID = -3354487547729008811L;
 
     private static final Logger LOGGER = LogManager.getLogger(
         CategoryManager.class);

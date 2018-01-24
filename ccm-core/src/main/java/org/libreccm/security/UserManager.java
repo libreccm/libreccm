@@ -39,6 +39,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import javax.validation.executable.ValidateOnExecution;
+import java.io.Serializable;
 
 /**
  * Provides various operations for user objects.
@@ -47,7 +48,8 @@ import javax.validation.executable.ValidateOnExecution;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class UserManager {
+public class UserManager implements Serializable {
+    private static final long serialVersionUID = -5457302841422810115L;
 
     @Inject
     private UserRepository userRepository;

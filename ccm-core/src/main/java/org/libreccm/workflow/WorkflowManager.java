@@ -44,6 +44,7 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -69,7 +70,8 @@ import java.util.Optional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class WorkflowManager {
+public class WorkflowManager implements Serializable {
+    private static final long serialVersionUID = -6939804120313699606L;
 
     private final static Logger LOGGER = LogManager.getLogger(
         WorkflowManager.class);

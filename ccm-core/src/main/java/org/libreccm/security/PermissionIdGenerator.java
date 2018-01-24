@@ -25,6 +25,8 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerator;
  * @version created on 3/23/17
  */
 public class PermissionIdGenerator extends ObjectIdGenerator<String> {
+    private static final long serialVersionUID = -8762745860290577542L;
+
     @Override
     public Class<?> getScope() {
         return Permission.class;

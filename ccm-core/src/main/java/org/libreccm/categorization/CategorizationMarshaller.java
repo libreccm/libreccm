@@ -25,6 +25,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.io.Serializable;
 
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
@@ -32,7 +33,9 @@ import javax.transaction.Transactional;
  */
 @RequestScoped
 @Marshals(Categorization.class)
-public class CategorizationMarshaller extends AbstractMarshaller<Categorization>{
+public class CategorizationMarshaller extends AbstractMarshaller<Categorization> {
+
+    private static final long serialVersionUID = -4388218720510005447L;
 
     @Inject
     private EntityManager entityManager;

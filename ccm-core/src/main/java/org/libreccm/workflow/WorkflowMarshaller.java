@@ -32,6 +32,7 @@ import javax.transaction.Transactional;
 @RequestScoped
 @Marshals(Workflow.class)
 public class WorkflowMarshaller extends AbstractMarshaller<Workflow> {
+    private static final long serialVersionUID = 9126827334328274556L;
 
     @Inject
     private WorkflowRepository workflowRepository;

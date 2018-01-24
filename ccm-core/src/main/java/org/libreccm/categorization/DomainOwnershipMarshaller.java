@@ -33,6 +33,8 @@ import javax.persistence.EntityManager;
 @Marshals(DomainOwnership.class)
 public class DomainOwnershipMarshaller extends AbstractMarshaller<DomainOwnership> {
 
+    private static final long serialVersionUID = 6743023023790517330L;
+
     @Inject
     private EntityManager entityManager;
 

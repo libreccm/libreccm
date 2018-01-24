@@ -25,6 +25,7 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.faces.bean.RequestScoped;
 import javax.inject.Inject;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -41,7 +42,10 @@ import java.util.Map;
  * @version created the 03.02.2016
  */
 @RequestScoped
-public class Marshaller {
+@Deprecated /*needs to be reviewed when integrating import/export in gui*/
+public class Marshaller implements Serializable {
+
+    private static final long serialVersionUID = 6769177147719834999L;
 
     @Inject
     @Any

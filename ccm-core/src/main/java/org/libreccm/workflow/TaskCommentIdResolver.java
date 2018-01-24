@@ -22,11 +22,15 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdResolver;
 import org.libreccm.cdi.utils.CdiUtil;
 
+import java.io.Serializable;
+
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers<\a>
  * @version created the 9/27/17
  */
-public class TaskCommentIdResolver implements ObjectIdResolver {
+public class TaskCommentIdResolver implements Serializable, ObjectIdResolver {
+    private static final long serialVersionUID = 1057961565308988397L;
+
     @Override
     public void bindItem(ObjectIdGenerator.IdKey id,
                          Object pojo) {

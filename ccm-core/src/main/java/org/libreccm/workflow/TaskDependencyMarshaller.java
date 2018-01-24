@@ -34,6 +34,7 @@ import javax.transaction.Transactional;
 @RequestScoped
 @Marshals(TaskDependency.class)
 public class TaskDependencyMarshaller extends AbstractMarshaller<TaskDependency> {
+    private static final long serialVersionUID = 2753329911463298832L;
 
     @Inject
     private EntityManager entityManager;

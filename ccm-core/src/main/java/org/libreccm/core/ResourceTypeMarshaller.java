@@ -32,6 +32,8 @@ import javax.inject.Inject;
 @Marshals(ResourceType.class)
 public class ResourceTypeMarshaller extends AbstractMarshaller<ResourceType> {
 
+    private static final long serialVersionUID = 79174993117568181L;
+
     @Inject
     private ResourceTypeRepository resourceTypeRepository;
 

@@ -35,9 +35,10 @@ import javax.transaction.Transactional;
 @RequestScoped
 @Marshals(RoleMembership.class)
 public class RoleMembershipMarshaller extends AbstractMarshaller<RoleMembership> {
+    private static final long serialVersionUID = 1304404004268502935L;
 
     private static final Logger LOGGER = LogManager.getLogger(RoleMembershipMarshaller.class);
-    
+
     @Inject
     private EntityManager entityManager;
 

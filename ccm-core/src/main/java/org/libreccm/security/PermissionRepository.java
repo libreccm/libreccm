@@ -35,6 +35,8 @@ import java.util.Optional;
 public class PermissionRepository
         extends AbstractEntityRepository<Long, Permission> {
 
+    private static final long serialVersionUID = -4240674229117593486L;
+
     @Override
     public Class<Permission> getEntityClass() {
         return Permission.class;

@@ -34,6 +34,8 @@ import javax.transaction.Transactional;
 @Marshals(GroupMembership.class)
 public class GroupMembershipMarshaller extends AbstractMarshaller<GroupMembership> {
 
+    private static final long serialVersionUID = -1920271635191667015L;
+
     @Inject
     private EntityManager entityManager;
 
