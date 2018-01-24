@@ -1,19 +1,67 @@
 <?xml version="1.0"?>
 <xsl:stylesheet version="2.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:ccm="http://xmlns.libreccm.org">
+                xmlns:ccm="http://xmlns.libreccm.org"
+                exclude-result-prefixes="ccm xsl">
 
+     <xsl:output method="html"
+                doctype-system="about:legacy-compat"
+                indent="yes"
+                encoding="utf-8"/>
+    
     <xsl:template match="page">
         
         <html>
             <head>
                 <title>Category page</title>
+                <link rel="stylesheet" href="/themes/ccm/style.css" />
             </head>
             <body>
-                <xsl:apply-templates select="greetingItem" />
+                <main>
+                    <ul class="news">
+                        <xsl:for-each select="/page/newsList/items">
+                            <span>
+                                <pre>
+                                    <xsl:value-of select="count(./attachments[name='.images']/attachments[1])" />
+                                </pre>
+                                <img src="/content-sections/info/images/{./attachments[name='.images']/attachments[0]/asset/uuid}" width="354" height="286" alt="" />
+                            </span>
+                            <span>
+                                <xsl:value-of select="./title" />
+                            </span>
+                        </xsl:for-each>
+                    </ul>
+                    <div class="boxes">
+                        <xsl:for-each select="/page/articles/items">
+                            <div>
+                                <h1>
+                                    <xsl:value-of select="./title" />
+                                </h1>
+                                <p>
+                                    <img src="/content-sections/info/images/{./attachments[name='.images']/attachments[0]/asset/uuid}" alt="" />
+                                    <xsl:value-of select="./description" />
+                                </p>
+                            </div>
+                        </xsl:for-each>
+                    </div>
+                    <!--<xsl:apply-templates select="greetingItem" />-->
+                </main>
+                <footer>
+                    <ul>
+                        <li>
+                            <a href="/impressum">Impressum</a>
+                        </li>
+                        <li>
+                            <a href="/privacy">Privacy</a>
+                        </li>
+                    </ul>
+                </footer>
+                
             </body>
         </html>
     </xsl:template>
+
+    
 
     <xsl:template match="greetingItem">
         

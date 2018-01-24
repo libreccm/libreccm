@@ -111,12 +111,10 @@ public class ItemListComponentRenderer
             language = kernelConfig.getDefaultLocale();
         }
 
-        final List<Category> categories;
+        final List<Category> categories = new ArrayList<>();
         if (componentModel.isDescending()) {
-            categories = collectCategories(category);
-        } else {
-            categories = new ArrayList<>();
-        }
+            categories.addAll(collectCategories(category));
+        } 
         categories.add(category);
 
         final Class<? extends ContentItem> limitToType = getLimitToType(

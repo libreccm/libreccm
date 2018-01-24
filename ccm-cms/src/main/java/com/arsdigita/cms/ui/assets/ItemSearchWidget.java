@@ -74,8 +74,8 @@ public class ItemSearchWidget extends Widget {
             widget.addAttribute("asset-type", type.getName());
         }
 
-        final ContentSection section = CMS.getContext().getContentSection();
-        widget.addAttribute("content-section", section.getLabel());
+//        final ContentSection section = CMS.getContext().getContentSection();
+//        widget.addAttribute("content-section", section.getLabel());
 
         final Long value = (Long) getValue(state);
         if (value != null) {
