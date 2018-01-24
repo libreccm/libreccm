@@ -30,22 +30,30 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.libreccm.security.GroupRepository;
-import org.libreccm.tests.categories.IntegrationTest;
-
-import javax.inject.Inject;
-
-import static org.libreccm.testutils.DependenciesHelpers.getModuleDependencies;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.runner.RunWith;
+import org.libreccm.tests.categories.IntegrationTest;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.libreccm.testutils.DependenciesHelpers.getModuleDependencies;
 
 
 /**
@@ -66,23 +74,75 @@ public class CoreDataImportTest {
 
     @Inject
     private ImportHelper importHelper;
-    @Inject
-    private GroupRepository groupRepository;
+
+    private enum Types {
+        user, group, groupMem, role, roleMem,
+        category, categorization, resourceType,
+        ccmAppl, domain, domainOwn,
+        permission, workflow, taskComment,
+        assignableTask, taskDep, taskAssign
+    }
+
+    private static final Map<Types, String> fileNames;
+    static {
+        fileNames = new HashMap<>();
+        fileNames.put(Types.user,           "users.xml");
+        fileNames.put(Types.group,          "groups.xml");
+        fileNames.put(Types.groupMem,       "groupMemberships.xml");
+        fileNames.put(Types.role,           "roles.xml");
+        fileNames.put(Types.roleMem,        "roleMemberships.xml");
+        fileNames.put(Types.category,       "categories.xml");
+        fileNames.put(Types.categorization, "categorizations.xml");
+        fileNames.put(Types.resourceType,   "resourceTypes.xml");
+        fileNames.put(Types.ccmAppl,        "ccmApplications.xml");
+        fileNames.put(Types.domain,         "domains.xml");
+        fileNames.put(Types.domainOwn,      "domainOwnerships.xml");
+        fileNames.put(Types.permission,     "permissions.xml");
+        fileNames.put(Types.workflow,       "workflows.xml");
+        fileNames.put(Types.taskComment,    "taskComments.xml");
+        fileNames.put(Types.assignableTask, "assignableTasks.xml");
+        fileNames.put(Types.taskDep,        "taskDependencies.xml");
+        fileNames.put(Types.taskAssign,     "taskAssignments.xml");
+    }
 
     public CoreDataImportTest() {
 
     }
 
     @BeforeClass
-    public static void setUpClass() {
-    }
+    public static void setUpClass() throws IOException {
+        final String tmpDirPath = System.getProperty("java.io.tmpdir");
+        final Path filesPath = Paths
+                .get(tmpDirPath, "libreccm-test", "CoreDataImportTest");
+        Files.createDirectories(filesPath);
 
-    @BeforeClass
-    public static void createResource() {
+        for (String fileName : fileNames.values()) {
+            final InputStream inputStream = CoreDataImportTest
+                    .class
+                    .getResourceAsStream(String
+                            .format("/portation/trunk-iaw-exports/%s",
+                                    fileName));
+            try {
+                Files.copy(inputStream, filesPath.resolve(fileName));
+            } catch(FileAlreadyExistsException e) {
+                //destination file already exists
+            }
+        }
     }
 
     @AfterClass
-    public static void tearDownClass() {
+    public static void tearDownClass() throws IOException {
+        final String tmpDirPath = System.getProperty("java.io.tmpdir");
+        final Path filesPath = Paths
+                .get(tmpDirPath,"libreccm-test", "CoreDataImportTest");
+        Files.walkFileTree(filesPath, new SimpleFileVisitor<Path>(){
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes
+                                             attrs) throws IOException {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
+        });
     }
 
     @Deployment
@@ -134,28 +194,50 @@ public class CoreDataImportTest {
 
     @Test
     @InSequence(100)
-    public void objectsShouldBeImported() {
+    public void objectsShouldBeImported() throws IOException {
+        final String tmpDirPath = System.getProperty("java.io.tmpdir");
+        final Path filesPath = Paths
+                .get(tmpDirPath, "libreccm-test", "CoreDataImportTest");
+        Files.createDirectories(filesPath);
+
         // assert for no errors
-        Assert.assertFalse(importHelper.importUsers());
-        Assert.assertFalse(importHelper.importGroups());
-        Assert.assertFalse(importHelper.importGroupMemberships());
-        Assert.assertFalse(importHelper.importRoles());
-        Assert.assertFalse(importHelper.importRoleMemberships());
+        Assert.assertFalse(importHelper.importUsers(
+                filesPath.resolve(fileNames.get(Types.user))));
+        Assert.assertFalse(importHelper.importGroups(
+                filesPath.resolve(fileNames.get(Types.group))));
+        Assert.assertFalse(importHelper.importGroupMemberships(
+                filesPath.resolve(fileNames.get(Types.groupMem))));
+        Assert.assertFalse(importHelper.importRoles(
+                filesPath.resolve(fileNames.get(Types.role))));
+        Assert.assertFalse(importHelper.importRoleMemberships(
+                filesPath.resolve(fileNames.get(Types.roleMem))));
 
-        Assert.assertFalse(importHelper.importCategories());
-        Assert.assertFalse(importHelper.importCategorizations());
-        Assert.assertFalse(importHelper.importResourceTypes());
-        Assert.assertFalse(importHelper.importCcmApplications());
-        Assert.assertFalse(importHelper.importDomains());
-        Assert.assertFalse(importHelper.importDomainOwnerships());
+        Assert.assertFalse(importHelper.importCategories(
+                filesPath.resolve(fileNames.get(Types.category))));
+        Assert.assertFalse(importHelper.importCategorizations(
+                filesPath.resolve(fileNames.get(Types.categorization))));
+        Assert.assertFalse(importHelper.importResourceTypes(
+                filesPath.resolve(fileNames.get(Types.resourceType))));
+        Assert.assertFalse(importHelper.importCcmApplications(
+                filesPath.resolve(fileNames.get(Types.ccmAppl))));
+        Assert.assertFalse(importHelper.importDomains(
+                filesPath.resolve(fileNames.get(Types.domain))));
+        Assert.assertFalse(importHelper.importDomainOwnerships(
+                filesPath.resolve(fileNames.get(Types.domainOwn))));
 
-        Assert.assertFalse(importHelper.importPermissions());
+        Assert.assertFalse(importHelper.importPermissions(
+                filesPath.resolve(fileNames.get(Types.permission))));
 
-        Assert.assertFalse(importHelper.importWorkflows());
-        Assert.assertFalse(importHelper.importTaskComments());
-        Assert.assertFalse(importHelper.importAssignableTasks());
-        Assert.assertFalse(importHelper.importTaskDependencies());
-        Assert.assertFalse(importHelper.importTaskAssignments());
+        Assert.assertFalse(importHelper.importWorkflows(
+                filesPath.resolve(fileNames.get(Types.workflow))));
+        Assert.assertFalse(importHelper.importTaskComments(
+                filesPath.resolve(fileNames.get(Types.taskComment))));
+        Assert.assertFalse(importHelper.importAssignableTasks(
+                filesPath.resolve(fileNames.get(Types.assignableTask))));
+        Assert.assertFalse(importHelper.importTaskDependencies(
+                filesPath.resolve(fileNames.get(Types.taskDep))));
+        Assert.assertFalse(importHelper.importTaskAssignments(
+                filesPath.resolve(fileNames.get(Types.taskAssign))));
     }
 
 }

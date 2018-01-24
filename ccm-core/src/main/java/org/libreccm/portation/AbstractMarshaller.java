@@ -96,7 +96,7 @@ public abstract class AbstractMarshaller<P extends Portable> {
      *                    from
      * @param filename    The filename of the file exported to or imported from
      * @param indentation whether or not indentation
-     */
+     *
     public void prepare(final Format format,
                         String folderPath, String filename,
                         boolean indentation) {
@@ -104,7 +104,7 @@ public abstract class AbstractMarshaller<P extends Portable> {
         if (file.exists() || file.mkdirs()) {
             prepare(format, folderPath + "/" + filename, indentation);
         }
-    }
+    }*/
 
     /**
      * Export routine for lists with the same object type {@code P}. Creates a
