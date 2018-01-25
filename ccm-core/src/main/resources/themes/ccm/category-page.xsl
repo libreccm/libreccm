@@ -4,31 +4,36 @@
                 xmlns:ccm="http://xmlns.libreccm.org"
                 exclude-result-prefixes="ccm xsl">
 
-     <xsl:output method="html"
-                doctype-system="about:legacy-compat"
-                indent="yes"
-                encoding="utf-8"/>
+    <xsl:output method="html"
+                 doctype-system="about:legacy-compat"
+                 indent="yes"
+                 encoding="utf-8"/>
     
     <xsl:template match="page">
         
         <html>
             <head>
                 <title>Category page</title>
-                <link rel="stylesheet" href="/themes/ccm/style.css" />
+                <link rel="stylesheet" href="{ccm:getContextPath()}/theming/ccm/style.css" />
             </head>
             <body>
                 <main>
                     <ul class="news">
                         <xsl:for-each select="/page/newsList/items">
-                            <span>
-                                <pre>
-                                    <xsl:value-of select="count(./attachments[name='.images']/attachments[1])" />
-                                </pre>
-                                <img src="/content-sections/info/images/{./attachments[name='.images']/attachments[0]/asset/uuid}" width="354" height="286" alt="" />
-                            </span>
-                            <span>
-                                <xsl:value-of select="./title" />
-                            </span>
+                            <li>
+                                <span>
+                                    <!--<pre>
+                                        <xsl:value-of select="count(./attachments[name='.images']/attachments[1])" />
+                                    </pre>-->
+                                    <img src="{ccm:getContextPath()}/content-sections/info/images/uuid-{./attachments[name='.images']/attachments[1]/asset/uuid}" 
+                                         width="354" 
+                                         height="286" 
+                                         alt="" />
+                                </span>
+                                <span>
+                                    <xsl:value-of select="./title" />
+                                </span>
+                            </li>
                         </xsl:for-each>
                     </ul>
                     <div class="boxes">
@@ -38,7 +43,7 @@
                                     <xsl:value-of select="./title" />
                                 </h1>
                                 <p>
-                                    <img src="/content-sections/info/images/{./attachments[name='.images']/attachments[0]/asset/uuid}" alt="" />
+                                    <img src="{ccm:getContextPath()}/content-sections/info/images/uuid-{./attachments[name='.images']/attachments[1]/asset/uuid}" alt="" />
                                     <xsl:value-of select="./description" />
                                 </p>
                             </div>

@@ -194,7 +194,11 @@ public abstract class ACSObjectCategoryForm extends Form {
                                  final Category category) {
 
         if (category.getParentCategory() != null) {
-            ancestorCats.add(category.getParentCategory().getObjectId());
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final ACSObjectCategoryController controller = cdiUtil
+                .findBean(ACSObjectCategoryController.class);
+            ancestorCats
+                .add(controller.getParentCategoryId(category));
         }
 
     }
