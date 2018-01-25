@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.pagemodel.PageModel;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -142,6 +143,38 @@ public class Themes implements Serializable {
         final ThemeProvider provider = forTheme.get();
 
         return processor.process(page, theme, provider);
+    }
+
+    /**
+     * Retrieve a file from a theme using the {@link ThemeProvider} for the
+     * theme.
+     *
+     * @param theme The theme from which the file is retrieved.
+     * @param path  The path of the file relative to the root directory of the
+     *              theme.
+     *
+     * @return An {@link Optional} containing an {@link InputStream} for reading
+     *         the contents of the file or an empty {@link Optional} if the file
+     *         was not found.
+     */
+    public Optional<InputStream> getFileFromTheme(final ThemeInfo theme,
+                                                  final String path) {
+
+        final Instance<? extends ThemeProvider> forTheme = providers.select(
+            theme.getProvider());
+
+        if (forTheme.isUnsatisfied()) {
+            LOGGER.error("ThemeProvider \"{}\" not found.",
+                         theme.getProvider().getName());
+            throw new UnexpectedErrorException(String.format(
+                "ThemeProvider \"%s\" not found.",
+                theme.getProvider().getName()));
+        }
+
+        final ThemeProvider provider = forTheme.get();
+        return provider.getThemeFileAsStream(theme.getName(),
+                                             theme.getVersion(),
+                                             path);
     }
 
 }

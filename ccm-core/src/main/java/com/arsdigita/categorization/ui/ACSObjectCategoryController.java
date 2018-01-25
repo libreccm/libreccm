@@ -27,6 +27,7 @@ import org.libreccm.core.CcmObjectRepository;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -42,10 +43,10 @@ class ACSObjectCategoryController {
 
     @Inject
     private CategoryRepository categoryRepo;
-    
+
     @Inject
     private CategoryManager categoryManager;
-    
+
     @Inject
     private CcmObjectRepository ccmObjectRepo;
 
@@ -81,19 +82,19 @@ class ACSObjectCategoryController {
                     object.getObjectId())));
 
         final Category cat = categoryRepo
-        .findById(category.getObjectId())
-        .orElseThrow(() -> new IllegalArgumentException(String
+            .findById(category.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String
             .format("No Category with ID %d in the database.",
                     category.getObjectId())));
-        
+
         categoryManager.addObjectToCategory(ccmObject, cat);
     }
-    
+
     @Transactional(Transactional.TxType.REQUIRED)
     protected void removeObjectFromCategory(final CcmObject object,
-                                            final Category category) 
+                                            final Category category)
         throws ObjectNotAssignedToCategoryException {
-        
+
         Objects.requireNonNull(object);
         Objects.requireNonNull(category);
 
@@ -104,12 +105,24 @@ class ACSObjectCategoryController {
                     object.getObjectId())));
 
         final Category cat = categoryRepo
-        .findById(category.getObjectId())
-        .orElseThrow(() -> new IllegalArgumentException(String
+            .findById(category.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String
             .format("No Category with ID %d in the database.",
                     category.getObjectId())));
-        
+
         categoryManager.removeObjectFromCategory(ccmObject, cat);
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected long getParentCategoryId(final Category forCategory) {
+
+        final Category category = categoryRepo
+            .findById(forCategory.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No Category with ID %d in the database.",
+                    forCategory.getObjectId())));
+
+        return category.getParentCategory().getObjectId();
     }
 
 }
