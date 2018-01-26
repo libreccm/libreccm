@@ -326,6 +326,7 @@ public class RoleAdminPaneController {
             "No ContentSection with ID %d in the database."
                 + "Where did that ID come from?",
             CMS.getContext().getContentSection().getObjectId())));
+        sectionManager.addRoleToContentSection(role, contentSection);
         final Folder rootDocumentsFolder = contentSection
             .getRootDocumentsFolder();
         final Folder rootAssetsFolder = contentSection.getRootAssetsFolder();

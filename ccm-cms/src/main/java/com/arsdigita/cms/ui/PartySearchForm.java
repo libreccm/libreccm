@@ -33,24 +33,23 @@ import com.arsdigita.util.Assert;
  */
 public class PartySearchForm extends BaseForm {
 
-    private final static String SEARCH_LABEL = "Search";
-
-    private final TextField m_search;
+    private final TextField searchField;
 
     public PartySearchForm() {
         super("SearchParties", gz("cms.ui.search"));
 
         addComponent(new Label(gz("cms.ui.search_prompt")));
 
-        m_search = new TextField(new StringParameter("query"));
-        m_search.setSize(40);
-        addComponent(m_search);
+        searchField = new TextField(new StringParameter("query"));
+        searchField.setSize(40);
+        addComponent(searchField);
 
         addAction(new Submit("finish", gz("cms.ui.search")));
         addAction(new Cancel());
 
     }
 
+    @Override
     public final void register(final Page page) {
         super.register(page);
 
@@ -58,6 +57,6 @@ public class PartySearchForm extends BaseForm {
     }
 
     public TextField getSearchWidget() {
-        return m_search;
+        return searchField;
     }
 }
