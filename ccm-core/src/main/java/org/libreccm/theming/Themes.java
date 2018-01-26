@@ -172,9 +172,27 @@ public class Themes implements Serializable {
         }
 
         final ThemeProvider provider = forTheme.get();
-        return provider.getThemeFileAsStream(theme.getName(),
-                                             theme.getVersion(),
-                                             path);
+        final Optional<InputStream> result = provider
+            .getThemeFileAsStream(theme.getName(), theme.getVersion(), path);
+
+        if (result.isPresent()) {
+            return result;
+        } else if (theme.getManifest().getMasterTheme() == null
+                       || theme.getManifest().getMasterTheme().isEmpty()
+                       || theme.getManifest().getMasterTheme().matches("\\s*")) {
+
+            return Optional.empty();
+        } else {
+            final Optional<ThemeInfo> masterTheme = getTheme(
+                theme.getManifest().getMasterTheme(), 
+                theme.getVersion());
+            
+            if (masterTheme.isPresent()) {
+                return getFileFromTheme(masterTheme.get(), path);
+            } else {
+                return Optional.empty();
+            }
+        }
     }
 
 }

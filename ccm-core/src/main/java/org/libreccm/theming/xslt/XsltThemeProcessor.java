@@ -49,13 +49,12 @@ import net.sf.saxon.om.Item;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.value.Int64Value;
-import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.theming.ProcessesThemes;
+import org.libreccm.theming.Themes;
 import org.libreccm.theming.manifest.ThemeTemplate;
 import org.libreccm.theming.utils.SettingsUtils;
 import org.libreccm.theming.utils.SystemInfoUtils;
@@ -106,6 +105,9 @@ public class XsltThemeProcessor implements ThemeProcessor {
 
     @Inject
     private TextUtils textUtils;
+
+    @Inject
+    private Themes themes;
 
     @Override
     public String process(final Map<String, Object> page,
@@ -170,10 +172,18 @@ public class XsltThemeProcessor implements ThemeProcessor {
             pathToTemplate = theme.getManifest().getDefaultTemplate();
         }
 
-        final InputStream xslFileInputStream = themeProvider
-            .getThemeFileAsStream(theme.getName(),
-                                  theme.getVersion(),
-                                  pathToTemplate)
+//        final InputStream xslFileInputStream = themeProvider
+//            .getThemeFileAsStream(theme.getName(),
+//                                  theme.getVersion(),
+//                                  pathToTemplate)
+//            .orElseThrow(() -> new UnexpectedErrorException(String
+//            .format("Failed to open XSL file \"%s\" from theme \"%s\" for "
+//                        + "reading.",
+//                    pathToTemplate,
+//                    theme.getName())));
+        final InputStream xslFileInputStream = themes
+            .getFileFromTheme(theme,
+                              pathToTemplate)
             .orElseThrow(() -> new UnexpectedErrorException(String
             .format("Failed to open XSL file \"%s\" from theme \"%s\" for "
                         + "reading.",
