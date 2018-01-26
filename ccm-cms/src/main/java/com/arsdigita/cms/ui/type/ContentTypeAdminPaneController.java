@@ -31,12 +31,19 @@ import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 /**
@@ -51,16 +58,19 @@ import javax.transaction.Transactional;
 class ContentTypeAdminPaneController {
 
     @Inject
+    private EntityManager entityManager;
+
+    @Inject
+    private ContentSectionRepository sectionRepo;
+
+    @Inject
     private ContentTypeRepository typeRepo;
 
     @Inject
     private ContentTypesManager typesManager;
 
-    @Inject
-    private ContentSectionRepository sectionRepo;
-
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<String[]> getTypeList(final ContentSection section) {
+    protected List<String[]> getTypeList(final ContentSection section) {
         final List<ContentType> types = typeRepo.findByContentSection(section);
 
         return types.stream()
@@ -85,7 +95,7 @@ class ContentTypeAdminPaneController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<ContentTypeInfo> getNotAssociatedContentTypes(
+    protected List<ContentTypeInfo> getNotAssociatedContentTypes(
         final ContentSection section) {
 
         final List<ContentTypeInfo> availableTypes = typesManager
@@ -103,7 +113,7 @@ class ContentTypeAdminPaneController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public LifecycleDefinition getLifecycleDefinition(final ContentType type) {
+    protected LifecycleDefinition getLifecycleDefinition(final ContentType type) {
 
         final ContentType contentType = typeRepo
             .findById(type.getObjectId())
@@ -116,7 +126,7 @@ class ContentTypeAdminPaneController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public Optional<String> getLifecycleDefinitionLabel(final ContentType type,
+    protected Optional<String> getLifecycleDefinitionLabel(final ContentType type,
                                                         final Locale locale) {
 
         final LifecycleDefinition lifecycleDefinition = getLifecycleDefinition(
@@ -130,7 +140,7 @@ class ContentTypeAdminPaneController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public Workflow getWorkflowTemplate(final ContentType type) {
+    protected Workflow getWorkflowTemplate(final ContentType type) {
 
         final ContentType contentType = typeRepo
             .findById(type.getObjectId())
@@ -143,7 +153,7 @@ class ContentTypeAdminPaneController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public Optional<String> getWorkflowTemplateName(final ContentType type,
+    protected Optional<String> getWorkflowTemplateName(final ContentType type,
                                                     final Locale locale) {
 
         final Workflow workflowTemplate = getWorkflowTemplate(type);
@@ -156,7 +166,7 @@ class ContentTypeAdminPaneController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<LifecycleDefinition> getLifecycleDefinitions(
+    protected List<LifecycleDefinition> getLifecycleDefinitions(
         final ContentSection section) {
 
         final ContentSection contentSection = sectionRepo
@@ -170,7 +180,7 @@ class ContentTypeAdminPaneController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<Workflow> getWorkflowTemplates(
+    protected List<Workflow> getWorkflowTemplates(
         final ContentSection section) {
 
         final ContentSection contentSection = sectionRepo

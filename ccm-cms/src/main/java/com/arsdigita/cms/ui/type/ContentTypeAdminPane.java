@@ -29,6 +29,8 @@ import com.arsdigita.bebop.event.ActionEvent;
 import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSubmissionListener;
+import com.arsdigita.bebop.event.PrintEvent;
+import com.arsdigita.bebop.event.PrintListener;
 import com.arsdigita.cms.CMS;
 
 import org.librecms.contentsection.ContentSection;
@@ -48,12 +50,14 @@ import com.arsdigita.toolbox.ui.Section;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.core.UnexpectedErrorException;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSectionManager;
 import org.librecms.contentsection.ContentTypeManager;
 import org.librecms.contenttypes.ContentTypeInfo;
 
 import java.util.List;
+import java.util.TooManyListenersException;
 
 /**
  * This class contains the split pane for the ContentType administration
@@ -315,16 +319,16 @@ public final class ContentTypeAdminPane extends BaseAdminPane<String> {
         implements ActionListener, FormProcessListener {
 
         private final Label noTypesAvailableLabel
-                          = new Label(gz("cms.ui.type.select.none"));
+                                = new Label(gz("cms.ui.type.select.none"));
         private final SelectType selectType;
-        
+
         public AddTypeContainer() {
             super(1);
-            
+
             final Section selectSection = new Section();
             selectSection.setHeading(new Label(gz("cms.ui.type.select")));
             add(selectSection);
-            
+
             final GridPanel container = new GridPanel(1);
             container.add(noTypesAvailableLabel);
             selectType = new SelectType();
@@ -333,26 +337,26 @@ public final class ContentTypeAdminPane extends BaseAdminPane<String> {
             container.add(selectType);
             selectSection.setBody(container);
         }
-        
+
         @Override
         public void actionPerformed(final ActionEvent event) {
-            
+
             final PageState state = event.getPageState();
             final ContentSection section = CMS.getContext().getContentSection();
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final ContentTypeAdminPaneController controller = cdiUtil
-            .findBean(ContentTypeAdminPaneController.class);
+                .findBean(ContentTypeAdminPaneController.class);
             final List<ContentTypeInfo> contentTypes = controller
-            .getNotAssociatedContentTypes(section);
+                .getNotAssociatedContentTypes(section);
             final boolean hasAvailableTypes = !contentTypes.isEmpty();
             selectType.setVisible(state, hasAvailableTypes);
             noTypesAvailableLabel.setVisible(state, !hasAvailableTypes);
         }
-        
+
         @Override
-        public void process(final FormSectionEvent event) 
+        public void process(final FormSectionEvent event)
             throws FormProcessException {
-            
+
             final PageState state = event.getPageState();
             resetPane(state);
         }
