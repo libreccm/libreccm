@@ -75,29 +75,29 @@ public class EditType extends CMSForm
 
     private static final Logger LOGGER = LogManager.getLogger(EditType.class);
 
-    private final SingleSelectionModel<String> m_types;
+    private final SingleSelectionModel<String> selectedTypeModel;
 
     // Form widgets
-    private Hidden m_id;
+    private final Hidden idField;
 //    private TextField m_label;
 //    private TextArea m_description;
-    private SingleSelect m_lcSelect;
-    private SingleSelect m_wfSelect;
-    private Submit m_submit;
-    private Submit m_cancel;
+    private final SingleSelect lifecycleSelect;
+    private final SingleSelect workflowSelect;
+    private final Submit submitButton;
+    private final Submit cancelButton;
 
     /**
-     * @param model The content type selection model. This tells the form which
-     *              content type is selected.
+     * @param selectedTypeModel The content type selection model. This tells the
+     *                          form which content type is selected.
      */
-    public EditType(final SingleSelectionModel<String> model) {
+    public EditType(final SingleSelectionModel<String> selectedTypeModel) {
         super("EditContentType");
 
-        m_types = model;
+        this.selectedTypeModel = selectedTypeModel;
 
-        m_id = new Hidden(new LongParameter("id"));
-        m_id.addValidationListener(new NotNullValidationListener());
-        add(m_id);
+        idField = new Hidden(new LongParameter("id"));
+        idField.addValidationListener(new NotNullValidationListener());
+        super.add(idField);
 
 //        add(new Label(new GlobalizedMessage("cms.ui.type.label",
 //                                            CmsConstants.CMS_BUNDLE)));
@@ -116,40 +116,40 @@ public class EditType extends CMSForm
 //        m_description.setRows(5);
 //        m_description.setWrap(TextArea.SOFT);
 //        add(m_description);
-        add(new Label(new GlobalizedMessage("cms.ui.type.lifecycle",
-                                            CmsConstants.CMS_BUNDLE)));
-        m_lcSelect = new SingleSelect(new LongParameter("lifecycle"));
+        super.add(new Label(new GlobalizedMessage("cms.ui.type.lifecycle",
+                                                  CmsConstants.CMS_BUNDLE)));
+        lifecycleSelect = new SingleSelect(new LongParameter("lifecycle"));
         try {
-            m_lcSelect.addPrintListener(new SelectLifecyclePrintListener());
+            lifecycleSelect.addPrintListener(new SelectLifecyclePrintListener());
         } catch (TooManyListenersException e) {
             throw new UncheckedWrapperException("TooManyListeners: " + e
                 .getMessage(), e);
         }
-        add(m_lcSelect);
+        super.add(lifecycleSelect);
 
-        add(new Label(new GlobalizedMessage("cms.ui.type.workflow",
-                                            CmsConstants.CMS_BUNDLE)));
-        m_wfSelect = new SingleSelect(new LongParameter("workflow"));
+        super.add(new Label(new GlobalizedMessage("cms.ui.type.workflow",
+                                                  CmsConstants.CMS_BUNDLE)));
+        workflowSelect = new SingleSelect(new LongParameter("workflow"));
         try {
-            m_wfSelect.addPrintListener(new SelectWorkflowPrintListener());
-        } catch (TooManyListenersException e) {
-            throw new UncheckedWrapperException("TooManyListeners: " + e
-                .getMessage(), e);
+            workflowSelect.addPrintListener(new SelectWorkflowPrintListener());
+        } catch (TooManyListenersException ex) {
+            throw new UncheckedWrapperException("TooManyListeners: " + ex
+                .getMessage(), ex);
         }
-        add(m_wfSelect);
+        super.add(workflowSelect);
 
-        SimpleContainer s = new SimpleContainer();
-        m_submit = new Submit("submit");
-        m_submit.setButtonLabel("Save");
-        s.add(m_submit);
-        m_cancel = new Submit("cancel");
-        m_cancel.setButtonLabel("Cancel");
-        s.add(m_cancel);
-        add(s, ColumnPanel.FULL_WIDTH | ColumnPanel.CENTER);
+        final SimpleContainer buttonContainer = new SimpleContainer();
+        submitButton = new Submit(new GlobalizedMessage("cms.ui.save",
+                                                        CmsConstants.CMS_BUNDLE));
+        buttonContainer.add(submitButton);
+        cancelButton = new Submit(new GlobalizedMessage("cms.ui.cancel",
+                                                        CmsConstants.CMS_BUNDLE));
+        buttonContainer.add(cancelButton);
+        super.add(buttonContainer, ColumnPanel.FULL_WIDTH | ColumnPanel.CENTER);
 
-        addInitListener(this);
-        addSubmissionListener(new TypeSecurityListener());
-        addProcessListener(this);
+        super.addInitListener(this);
+        super.addSubmissionListener(new TypeSecurityListener());
+        super.addProcessListener(this);
     }
 
     /**
@@ -161,7 +161,7 @@ public class EditType extends CMSForm
      */
     @Override
     public boolean isCancelled(final PageState state) {
-        return m_cancel.isSelected(state);
+        return cancelButton.isSelected(state);
     }
 
     /**
@@ -170,7 +170,7 @@ public class EditType extends CMSForm
      * @return the cancel button on the form
      */
     public Submit getCancelButton() {
-        return m_cancel;
+        return cancelButton;
     }
 
     /**
@@ -180,13 +180,13 @@ public class EditType extends CMSForm
      */
     @Override
     public void init(final FormSectionEvent event) {
+
         final FormData data = event.getFormData();
         final PageState state = event.getPageState();
 
-        final ContentSection section = CMS.getContext().getContentSection();
-
-        final KernelConfig kernelConfig = KernelConfig.getConfig();
-
+//        final ContentSection section = CMS.getContext().getContentSection();
+//
+//        final KernelConfig kernelConfig = KernelConfig.getConfig();
         final ContentType type = getContentType(state);
         final long typeId = type.getObjectId();
 //        final String label = type.getLabel().getValue(kernelConfig
@@ -194,18 +194,18 @@ public class EditType extends CMSForm
 //        final String description = type.getDescription().getValue(kernelConfig
 //            .getDefaultLocale());
 
-        data.put(m_id.getName(), typeId);
+        data.put(idField.getName(), typeId);
 //        data.put(m_label.getName(), label);
 //        data.put(m_description.getName(), description);
 
         final LifecycleDefinition cycle = type.getDefaultLifecycle();
         if (cycle != null) {
-            data.put(m_lcSelect.getName(), cycle.getDefinitionId());
+            data.put(lifecycleSelect.getName(), cycle.getDefinitionId());
         }
 
-        Workflow template = type.getDefaultWorkflow();
+        final Workflow template = type.getDefaultWorkflow();
         if (template != null) {
-            data.put(m_wfSelect.getName(), template.getWorkflowId());
+            data.put(workflowSelect.getName(), template.getWorkflowId());
         }
     }
 
@@ -214,7 +214,8 @@ public class EditType extends CMSForm
      * model.
      */
     private ContentType getContentType(final PageState state) {
-        final String key = m_types.getSelectedKey(state);
+
+        final String key = selectedTypeModel.getSelectedKey(state);
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final ContentTypeRepository typeRepo = cdiUtil.findBean(
@@ -222,7 +223,9 @@ public class EditType extends CMSForm
 
         final Optional<ContentType> result;
         try {
-            result = typeRepo.findById(Long.parseLong(key));
+            result = typeRepo.findByIdAndFetchAttributes(Long.parseLong(key),
+                                                         "defaultLifecycle",
+                                                         "defaultWorkflow");
         } catch (NumberFormatException ex) {
             throw new UncheckedWrapperException(String.format(
                 "The provided key \"%s\" is not a long.", key),
@@ -253,11 +256,11 @@ public class EditType extends CMSForm
         final ContentSection section = CMS.getContext().getContentSection();
 
         // Read form variables.
-        final Long key = (Long) data.get(m_id.getName());
+        final Long key = (Long) data.get(idField.getName());
 //        final String label = (String) data.get(m_label.getName());
 //        final String description = (String) data.get(m_description.getName());
-        final Long lifecycleId = (Long) data.get(m_lcSelect.getName());
-        final Long workflowId = (Long) data.get(m_wfSelect.getName());
+        final Long lifecycleId = (Long) data.get(lifecycleSelect.getName());
+        final Long workflowId = (Long) data.get(workflowSelect.getName());
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final ContentTypeRepository typeRepo = cdiUtil.findBean(
@@ -293,11 +296,10 @@ public class EditType extends CMSForm
         }
         final Workflow defaultWorkflow;
         if (workflowId == 0) {
-             defaultWorkflow = null;
+            defaultWorkflow = null;
         } else {
             defaultWorkflow = workflowRepo.findById(workflowId).get();
         }
-        
 
         typeManager.setDefaultLifecycle(type.get(), defaultLifecycle);
         typeManager.setDefaultWorkflow(type.get(), defaultWorkflow);
@@ -372,8 +374,9 @@ public class EditType extends CMSForm
                 .getDefaultLocale();
             templates.forEach(template -> {
                 workflowSelect.addOption(
-                    new Option(Long.toString(template.getWorkflowId()),
-                               template.getName().getValue(defaultLocale)));
+                    new Option(
+                        Long.toString(template.getWorkflowId()),
+                        new Text(template.getName().getValue(defaultLocale))));
             });
 
         }
