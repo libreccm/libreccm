@@ -29,8 +29,6 @@ import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
-import com.arsdigita.bebop.event.PrintEvent;
-import com.arsdigita.bebop.event.PrintListener;
 import com.arsdigita.bebop.form.CheckboxGroup;
 import com.arsdigita.bebop.form.Hidden;
 import com.arsdigita.bebop.form.Option;
@@ -39,23 +37,20 @@ import com.arsdigita.bebop.form.Submit;
 import com.arsdigita.bebop.form.Widget;
 import com.arsdigita.bebop.parameters.NotNullValidationListener;
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.ui.admin.GlobalizationUtil;
-import com.arsdigita.util.UncheckedWrapperException;
 import com.arsdigita.xml.Element;
+
+import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.security.Party;
 import org.librecms.CmsConstants;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.TooManyListenersException;
-
 
 /**
  * Form for adding multiple parties to a role.
  *
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author Scott Seago (scott@arsdigita.com)
- * @version Id: PartyAddForm.java 754 2005-09-02 13:26:17Z sskracic $
  */
 public abstract class PartyAddForm extends SimpleContainer
     implements FormInitListener, FormProcessListener {
@@ -64,65 +59,66 @@ public abstract class PartyAddForm extends SimpleContainer
     private final static String PARTIES = "parties";
     private final static String SUBMIT = "addSubmit";
     private final static String CANCEL = "addCancel";
-    private final static String SUBMIT_LABEL = "Add Members";
-    private final static String CANCEL_LABEL = "Cancel";
 
-    private Widget m_search;
-    private RequestLocal m_query;
+    private Widget searchWidget;
+    private RequestLocal queryRequestLocal;
 
-    private CMSContainer m_noMatches;
-    private CMSContainer m_matches;
+    private CMSContainer noMatchesContainer;
+    private CMSContainer matchesContainer;
 
-    private Form m_form;
-    private Hidden m_searchQuery;
-    private Submit m_cancel;
-
+    private Form form;
+    private Hidden searchQueryField;
+    private Submit cancelButton;
 
     /**
-     * Private access prevents this constructor from ever being called
-     * directly.
+     * Private access prevents this constructor from ever being called directly.
      */
     private PartyAddForm() {
         super();
     }
 
-
     /**
      * Constructor.
      *
-     * @param search The widget on the search form that contains the value
-     *   of the search string.
+     * @param searchWidget The widget on the search form that contains the value
+     *                     of the search string.
      */
-    public PartyAddForm(Widget search) {
+    public PartyAddForm(final Widget searchWidget) {
+
         this();
 
-        m_search = search;
+        this.searchWidget = searchWidget;
 
-        m_query = new RequestLocal() {
-                protected Object initialValue(PageState state) {
-                    return makeQuery(state);
-                }
-            };
+        queryRequestLocal = new RequestLocal() {
 
-        m_form = makeForm();
+            @Override
+            protected Object initialValue(final PageState state) {
+                return makeQuery(state);
+            }
 
-        Label title = new Label(GlobalizationUtil.globalize("cms.ui.matches"));
+        };
+
+        form = makeForm();
+
+        final Label title = new Label(new GlobalizedMessage("cms.ui.matches",
+                                                            CmsConstants.CMS_BUNDLE));
         title.setFontWeight(Label.BOLD);
 
-        Label label = new Label(GlobalizationUtil.globalize("cms.ui.there_was_no_one_matching_the_search_criteria"));
+        final Label label = new Label(new GlobalizedMessage(
+            "cms.ui.there_was_no_one_matching_the_search_criteria",
+            CmsConstants.CMS_BUNDLE));
         label.setFontWeight("em");
 
-        m_noMatches = new CMSContainer();
-        m_noMatches.add(title);
-        m_noMatches.add(label);
-        add(m_noMatches);
+        noMatchesContainer = new CMSContainer();
+        noMatchesContainer.add(title);
+        noMatchesContainer.add(label);
+        super.add(noMatchesContainer);
 
-        m_matches = new CMSContainer();
-        m_matches.add(title);
-        m_matches.add(m_form);
-        add(m_matches);
+        matchesContainer = new CMSContainer();
+        matchesContainer.add(title);
+        matchesContainer.add(form);
+        super.add(matchesContainer);
     }
-
 
     /**
      * Build the form used to add parties.
@@ -130,52 +126,62 @@ public abstract class PartyAddForm extends SimpleContainer
      * @return The form
      */
     private Form makeForm() {
-        final CMSForm form = new CMSForm("AddParties") {
-                @Override
-                public final boolean isCancelled(final PageState state) {
-                    return m_cancel.isSelected(state);
-                }
-            };
+
+        final CMSForm addPartyForm = new CMSForm("AddParties") {
+
+            @Override
+            public final boolean isCancelled(final PageState state) {
+                return cancelButton.isSelected(state);
+            }
+
+        };
 
         // This hidden field will store the search query. A hidden widget is
         // used instead of a request local variable because the search query
         // should only be updated when the search form is submitted.
-        m_searchQuery = new Hidden(SEARCH_QUERY);
-        form.add(m_searchQuery, ColumnPanel.FULL_WIDTH);
+        searchQueryField = new Hidden(SEARCH_QUERY);
+        addPartyForm.add(searchQueryField, ColumnPanel.FULL_WIDTH);
 
-        Label l = new Label(
-                new GlobalizedMessage("Check the box next to the name of the person(s) to assign to this role."));
-        form.add(l, ColumnPanel.FULL_WIDTH);
+        final Label hintLabel = new Label(
+            new GlobalizedMessage("cms.ui.party_add_form.hint",
+                                  CmsConstants.CMS_BUNDLE));
+        addPartyForm.add(hintLabel, ColumnPanel.FULL_WIDTH);
 
         // Add the list of parties that can be added.
-        CheckboxGroup m_parties = new CheckboxGroup(PARTIES);
-        m_parties.addValidationListener(new NotNullValidationListener());
+        final CheckboxGroup partyCheckboxes = new CheckboxGroup(PARTIES);
+        partyCheckboxes.addValidationListener(new NotNullValidationListener());
         try {
-            m_parties.addPrintListener(event -> {
-                CheckboxGroup target = (CheckboxGroup) event.getTarget();
-                PageState state = event.getPageState();
+            partyCheckboxes.addPrintListener(event -> {
+                final CheckboxGroup target = (CheckboxGroup) event.getTarget();
+                final PageState state = event.getPageState();
                 // Ensures that the init listener gets fired before the
                 // print listeners.
-                FormData data = m_form.getFormData(state);
+                final FormData data = addPartyForm.getFormData(state);
                 addParties(state, target);
             });
-        } catch (TooManyListenersException e) {
-            UncheckedWrapperException.throwLoggedException(getClass(), "Too many listeners", e);
+        } catch (TooManyListenersException ex) {
+            throw new UnexpectedErrorException(ex);
         }
-        form.add(m_parties, ColumnPanel.FULL_WIDTH);
+        addPartyForm.add(partyCheckboxes, ColumnPanel.FULL_WIDTH);
 
         // Submit and Cancel buttons.
-        SimpleContainer s = new SimpleContainer();
-        Submit m_submit = new Submit(SUBMIT, new GlobalizedMessage(SUBMIT_LABEL, CmsConstants.CMS_BUNDLE));
-        s.add(m_submit);
-        m_cancel = new Submit(CANCEL, new GlobalizedMessage(CANCEL_LABEL, CmsConstants.CMS_BUNDLE));
-        s.add(m_cancel);
-        form.add(s, ColumnPanel.FULL_WIDTH | ColumnPanel.CENTER);
+        final SimpleContainer buttonContainer = new SimpleContainer();
+        final Submit submitButton = new Submit(SUBMIT,
+                                               new GlobalizedMessage(
+                                                   "cms.ui.save",
+                                                   CmsConstants.CMS_BUNDLE));
+        buttonContainer.add(submitButton);
+        cancelButton = new Submit(CANCEL,
+                                  new GlobalizedMessage("cms.ui.cancel",
+                                                        CmsConstants.CMS_BUNDLE));
+        buttonContainer.add(cancelButton);
+        addPartyForm.add(buttonContainer, ColumnPanel.FULL_WIDTH
+                                              | ColumnPanel.CENTER);
 
-        form.addInitListener(this);
-        form.addProcessListener(this);
+        addPartyForm.addInitListener(this);
+        addPartyForm.addProcessListener(this);
 
-        return form;
+        return addPartyForm;
     }
 
     /**
@@ -184,7 +190,7 @@ public abstract class PartyAddForm extends SimpleContainer
      * @return The "add party" form
      */
     public Form getForm() {
-        return m_form;
+        return form;
     }
 
     /**
@@ -193,88 +199,96 @@ public abstract class PartyAddForm extends SimpleContainer
      * @return The widget that contains the search string
      */
     protected Widget getSearchWidget() {
-        return m_searchQuery;
+        return searchQueryField;
     }
 
     /**
      * Return true if the form is cancelled, false otherwise.
      *
      * @param state The page state
+     *
      * @return true if the form is cancelled, false otherwise.
+     *
      * @pre ( state != null )
      */
-    public boolean isCancelled(PageState state) {
-        return m_cancel.isSelected(state);
+    public boolean isCancelled(final PageState state) {
+        return cancelButton.isSelected(state);
     }
-
 
     /**
      * Adds parties to the option group.
      *
-     * @param state The page state
+     * @param state  The page state
      * @param target The option group
+     *
      * @pre ( state != null && target != null )
      */
-    private void addParties(PageState state, OptionGroup target) {
+    private void addParties(final PageState state, final OptionGroup target) {
+        
         @SuppressWarnings("unchecked")
-        List<Party> parties = (List<Party>) m_query.get(state);
+        final List<Party> parties = (List<Party>) queryRequestLocal.get(state);
+        
+        target.clearOptions();
 
         for (final Party party : parties) {
             target.addOption(new Option(
-                    Long.toString(party.getPartyId()),
-                    new Label(new GlobalizedMessage(party.getName()))
+                Long.toString(party.getPartyId()),
+                new Label(new GlobalizedMessage(party.getName()))
             ));
         }
     }
 
-
     /**
-     * Generates a {@link Object} that encapsulates
-     * search results.
+     * Generates a {@link Object} that encapsulates search results.
      *
      * @param state The page state
+     *
+     * @return
      */
     protected abstract List<Party> makeQuery(PageState state);
-
 
     /**
      * Stores the search query in the hidden field.
      *
      * @param event The form event
+     *
+     * @throws com.arsdigita.bebop.FormProcessException
      */
     @Override
-    public void init(FormSectionEvent event) throws FormProcessException {
+    public void init(final FormSectionEvent event) throws FormProcessException {
+        
         PageState state = event.getPageState();
 
-        m_searchQuery.setValue(state, m_search.getValue(state));
+        searchQueryField.setValue(state, searchWidget.getValue(state));
     }
 
     /**
      * Process listener for the "Add parties" form.
      *
      * @param event The form event
+     *
+     * @throws com.arsdigita.bebop.FormProcessException
      */
     @Override
     public abstract void process(FormSectionEvent event)
         throws FormProcessException;
 
-
     /**
      * Displays the appropriate frame.
      *
-     * @param state The page state
+     * @param state  The page state
      * @param parent The parent DOM element
      */
     @Override
-    public void generateXML(PageState state, Element parent) {
+    public void generateXML(final PageState state, final Element parent) {
 
         @SuppressWarnings("unchecked")
-        List<Party> searchResults = (List<Party>) m_query.get(state);
+        final List<Party> searchResults = (List<Party>) queryRequestLocal.get(state);
 
-        if ( searchResults.size() > 0 ) {
-            m_matches.generateXML(state, parent);
+        if (searchResults.size() > 0) {
+            matchesContainer.generateXML(state, parent);
         } else {
-            m_noMatches.generateXML(state, parent);
+            noMatchesContainer.generateXML(state, parent);
         }
     }
 
