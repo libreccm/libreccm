@@ -31,17 +31,22 @@ import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.pagemodel.PageModel;
 import org.libreccm.pagemodel.PageModelManager;
+import org.libreccm.pagemodel.PageModelVersion;
 import org.libreccm.sites.Site;
 import org.libreccm.sites.SiteRepository;
 import org.libreccm.theming.ThemeInfo;
 import org.libreccm.theming.ThemeVersion;
 import org.libreccm.theming.Themes;
+import org.librecms.contentsection.ContentItemVersion;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
@@ -173,27 +178,29 @@ public class PagesRouter {
         @QueryParam("theme")
         @DefaultValue("--DEFAULT--")
         final String theme,
-        @QueryParam("theme-version")
-        @DefaultValue("LIVE")
-        final String themeVersion,
-        @QueryParam("pagemodel-version")
-        @DefaultValue("LIVE")
-        final String pageModelVersion) {
+        @QueryParam("preview")
+        @DefaultValue("")
+        final String preview) {
+
+        final Versions versions = generateFromPreviewParam(preview);
 
         final Map<String, Object> result;
         if ("index".equals(itemName)) {
             result = getCategoryIndexPage(uriInfo,
                                           "/",
                                           language,
-                                          pageModelVersion);
+                                          versions.getPageModelVersion());
         } else {
-            result = getCategoryItemPage(
-                uriInfo, "/", itemName, language, pageModelVersion);
+            result = getCategoryItemPage(uriInfo,
+                                         "/",
+                                         itemName,
+                                         language,
+                                         versions.getPageModelVersion());
         }
         final Site site = getSite(uriInfo);
         final ThemeInfo themeInfo = getTheme(site,
                                              theme,
-                                             themeVersion);
+                                             versions.getThemeVersion());
 
         return themes.process(result, themeInfo);
     }
@@ -209,9 +216,11 @@ public class PagesRouter {
         final String itemName,
         @PathParam("lang")
         final String language,
-        @QueryParam("pagemodel-version")
-        @DefaultValue("LIVE")
-        final String pageModelVersion) {
+        @QueryParam("preview")
+        @DefaultValue("")
+        final String preview) {
+
+        final Versions versions = generateFromPreviewParam(preview);
 
         final ObjectMapper mapper = new ObjectMapper();
 
@@ -220,13 +229,13 @@ public class PagesRouter {
             result = getCategoryIndexPage(uriInfo,
                                           "/",
                                           language,
-                                          pageModelVersion);
+                                          versions.getPageModelVersion());
         } else {
             result = getCategoryItemPage(uriInfo,
                                          "/",
                                          itemName,
                                          language,
-                                         pageModelVersion);
+                                         versions.getPageModelVersion());
         }
 
         try {
@@ -248,9 +257,11 @@ public class PagesRouter {
         final String itemName,
         @PathParam("lang")
         final String language,
-        @QueryParam("pagemodel-version")
-        @DefaultValue("LIVE")
-        final String pageModelVersion) {
+        @QueryParam("preview")
+        @DefaultValue("")
+        final String preview) {
+
+        final Versions versions = generateFromPreviewParam(preview);
 
         final JacksonXmlModule xmlModule = new JacksonXmlModule();
         final ObjectMapper mapper = new XmlMapper(xmlModule);
@@ -261,13 +272,13 @@ public class PagesRouter {
             result = getCategoryIndexPage(uriInfo,
                                           "/",
                                           language,
-                                          pageModelVersion);
+                                          versions.getPageModelVersion());
         } else {
             result = getCategoryItemPage(uriInfo,
                                          "/",
                                          itemName,
                                          language,
-                                         pageModelVersion);
+                                         versions.getPageModelVersion());
         }
 
         try {
@@ -372,8 +383,7 @@ public class PagesRouter {
      * @param itemName
      * @param language
      * @param theme
-     * @param themeVersion
-     * @param pageModelVersion
+     * @param preview
      *
      * @return
      */
@@ -393,29 +403,30 @@ public class PagesRouter {
         @QueryParam("theme")
         @DefaultValue("--DEFAULT--")
         final String theme,
-        @QueryParam("theme-version")
-        @DefaultValue("LIVE")
-        final String themeVersion,
-        @QueryParam("pagemodel-version")
-        @DefaultValue("LIVE")
-        final String pageModelVersion) {
+        @QueryParam("preview")
+        @DefaultValue("")
+        final String preview) {
+
+        final Versions versions = generateFromPreviewParam(preview);
 
         final Map<String, Object> result;
         if ("index".equals(itemName)) {
             result = getCategoryIndexPage(uriInfo,
                                           page,
                                           language,
-                                          pageModelVersion);
+                                          versions.getPageModelVersion());
         } else {
             result = getCategoryItemPage(uriInfo,
                                          page,
                                          itemName,
                                          language,
-                                         pageModelVersion);
+                                         versions.getPageModelVersion());
         }
 
         final Site site = getSite(uriInfo);
-        final ThemeInfo themeInfo = getTheme(site, theme, themeVersion);
+        final ThemeInfo themeInfo = getTheme(site,
+                                             theme,
+                                             versions.getThemeVersion());
         return themes.process(result, themeInfo);
     }
 
@@ -427,7 +438,7 @@ public class PagesRouter {
      * @param page
      * @param itemName
      * @param language
-     * @param pageModelVersion
+     * @param preview
      *
      * @return
      */
@@ -444,9 +455,11 @@ public class PagesRouter {
         final String itemName,
         @PathParam("lang")
         final String language,
-        @QueryParam("pagemodel-version")
-        @DefaultValue("LIVE")
-        final String pageModelVersion) {
+        @QueryParam("preview")
+        @DefaultValue("")
+        final String preview) {
+
+        final Versions versions = generateFromPreviewParam(preview);
 
         final ObjectMapper mapper = new ObjectMapper();
 
@@ -455,13 +468,13 @@ public class PagesRouter {
             result = getCategoryIndexPage(uriInfo,
                                           page,
                                           language,
-                                          pageModelVersion);
+                                          versions.getPageModelVersion());
         } else {
             result = getCategoryItemPage(uriInfo,
                                          page,
                                          itemName,
                                          language,
-                                         pageModelVersion);
+                                         versions.getPageModelVersion());
         }
 
         try {
@@ -480,7 +493,7 @@ public class PagesRouter {
      * @param page
      * @param itemName
      * @param language
-     * @param pageModelVersion
+     * @param preview
      *
      * @return
      */
@@ -497,9 +510,11 @@ public class PagesRouter {
         final String itemName,
         @PathParam("lang")
         final String language,
-        @QueryParam("pagemodel-version")
-        @DefaultValue("LIVE")
-        final String pageModelVersion) {
+        @QueryParam("preview")
+        @DefaultValue("")
+        final String preview) {
+
+        final Versions versions = generateFromPreviewParam(preview);
 
         final JacksonXmlModule xmlModule = new JacksonXmlModule();
         final ObjectMapper mapper = new XmlMapper(xmlModule);
@@ -510,13 +525,13 @@ public class PagesRouter {
             result = getCategoryIndexPage(uriInfo,
                                           page,
                                           language,
-                                          pageModelVersion);
+                                          versions.getPageModelVersion());
         } else {
             result = getCategoryItemPage(uriInfo,
                                          page,
                                          itemName,
                                          language,
-                                         pageModelVersion);
+                                         versions.getPageModelVersion());
         }
 
         try {
@@ -590,12 +605,11 @@ public class PagesRouter {
 
     private ThemeInfo getTheme(final Site site,
                                final String theme,
-                               final String themeVersion) {
+                               final ThemeVersion themeVersion) {
 
         if ("--DEFAULT--".equals(theme)) {
             return themes
-                .getTheme(site.getDefaultTheme(),
-                          ThemeVersion.valueOf(themeVersion))
+                .getTheme(site.getDefaultTheme(), themeVersion)
                 .orElseThrow(() -> new WebApplicationException(
                 String.format("The configured default theme \"%s\" for "
                                   + "site \"%s\" is not available.",
@@ -603,8 +617,7 @@ public class PagesRouter {
                               site.getDomainOfSite()),
                 Response.Status.INTERNAL_SERVER_ERROR));
         } else {
-            return themes.getTheme(theme,
-                                   ThemeVersion.valueOf(themeVersion))
+            return themes.getTheme(theme, themeVersion)
                 .orElseThrow(() -> new WebApplicationException(
                 String.format("The theme \"%s\" is not available.",
                               theme),
@@ -660,7 +673,7 @@ public class PagesRouter {
         final UriInfo uriInfo,
         final String pagePath,
         final String language,
-        final String pageModelVersion) {
+        final PageModelVersion pageModelVersion) {
 
         final Map<String, Object> parameters = new HashMap<>();
         final Page page = getPage(uriInfo,
@@ -669,7 +682,7 @@ public class PagesRouter {
                                   parameters);
 
         final PageModel pageModel;
-        if ("DRAFT".equals(pageModelVersion)) {
+        if (pageModelVersion == PageModelVersion.DRAFT) {
             pageModel = pageModelManager
                 .getDraftVersion(page.getIndexPageModel());
         } else {
@@ -691,14 +704,14 @@ public class PagesRouter {
         final String pagePath,
         final String itemName,
         final String language,
-        final String pageModelVersion) {
+        final PageModelVersion pageModelVersion) {
 
         final Map<String, Object> parameters = new HashMap<>();
         final Page page = PagesRouter.this.getPage(uriInfo, pagePath, language,
                                                    parameters);
 
         final PageModel pageModel;
-        if ("DRAFT".equals(pageModelVersion)) {
+        if (pageModelVersion == PageModelVersion.DRAFT) {
             pageModel = pageModelManager.getDraftVersion(page
                 .getItemPageModel());
         } else {
@@ -714,6 +727,131 @@ public class PagesRouter {
         parameters.put(PARAMETER_LANGUAGE, language);
 
         return buildPage(pageModel, parameters);
+    }
+
+    /**
+     * Parse the value of the {@code preview} query parameter.
+     *
+     * @param value The value of the {@code preview} query parameter to parse.
+     *
+     * @return If the provided value is {@code all} a {@link Versions} object
+     *         with all versions set to the draft versions is created and
+     *         returned. If the provided value is {@code null} or empty a
+     *         {@link Versions} object with fields set the the live versions is
+     *         returned. Otherwise the values is split into tokens (separated by
+     *         commas). The values of the returned {@link Versions} depend on
+     *         presence of certain tokens. At the moment to following tokens are
+     *         recognised:
+     * <dl>
+     * <dt>{@code content}</dt>
+     * <dd>{@link Versions#contentVersion} is set to
+     * {@link ContentItemVersion#DRAFT}</dd>
+     * <dt>{@code pagemodel}</dt>
+     * <dd>{@link Versions#pageModelVersion} is set to
+     * {@link PageModelVersion#DRAFT}</dd>
+     * <dt>{@code theme}</dt>
+     * <dd>{@link Versions#themeVersion} is set to
+     * {@link ThemeVersion#DRAFT}.</dd>
+     * </dl>
+     *
+     */
+    private Versions generateFromPreviewParam(final String value) {
+
+        if (value == null || value.isEmpty() || value.matches("\\s*")) {
+            return new Versions(ContentItemVersion.LIVE,
+                                PageModelVersion.LIVE,
+                                ThemeVersion.LIVE);
+        } else if ("all".equals(value.toLowerCase(Locale.ROOT))) {
+            return new Versions(ContentItemVersion.DRAFT,
+                                PageModelVersion.DRAFT,
+                                ThemeVersion.DRAFT);
+        } else {
+            final Set<String> values = new HashSet<>();
+            Collections.addAll(values,
+                               value.toLowerCase(Locale.ROOT).split(","));
+
+            final Versions result = new Versions();
+            if (values.contains("content")) {
+                result.setContentVersion(ContentItemVersion.DRAFT);
+            }
+            if (values.contains("pagemodel")) {
+                result.setPageModelVersion(PageModelVersion.DRAFT);
+            }
+            if (values.contains("theme")) {
+                result.setThemeVersion(ThemeVersion.DRAFT);
+            }
+            return result;
+        }
+    }
+
+    /**
+     * Encapsulate the result of converting the value of the {@code preview}
+     * query parameter.
+     */
+    private class Versions {
+
+        /**
+         * Version of content to use
+         */
+        private ContentItemVersion contentVersion;
+        /**
+         * Version of {@link PageModel} to use.
+         */
+        private PageModelVersion pageModelVersion;
+        /**
+         * Version of theme to use.
+         */
+        private ThemeVersion themeVersion;
+
+        /**
+         * Creates a new {@code Versions} object with all fields set to
+         * {@code live} versions.
+         */
+        public Versions() {
+            this.contentVersion = ContentItemVersion.LIVE;
+            this.pageModelVersion = PageModelVersion.LIVE;
+            this.themeVersion = ThemeVersion.LIVE;
+        }
+
+        /**
+         * Create a new {@code Versions} object with the provided parameters.
+         *
+         * @param contentVersion
+         * @param pageModelVersion
+         * @param themeVersion
+         */
+        public Versions(final ContentItemVersion contentVersion,
+                        final PageModelVersion pageModelVersion,
+                        final ThemeVersion themeVersion) {
+            this.contentVersion = contentVersion;
+            this.pageModelVersion = pageModelVersion;
+            this.themeVersion = themeVersion;
+        }
+
+        public ContentItemVersion getContentVersion() {
+            return contentVersion;
+        }
+
+        public void setContentVersion(final ContentItemVersion contentVersion) {
+            this.contentVersion = contentVersion;
+        }
+
+        public PageModelVersion getPageModelVersion() {
+            return pageModelVersion;
+        }
+
+        public void setPageModelVersion(final PageModelVersion pageModelVersion) {
+            this.pageModelVersion = pageModelVersion;
+        }
+
+        public ThemeVersion getThemeVersion() {
+            return themeVersion;
+        }
+
+        public void setThemeVersion(final ThemeVersion themeVersion) {
+            this.themeVersion = themeVersion;
+        }
+
     }
 
 }
