@@ -18,7 +18,6 @@
  */
 package org.libreccm.core;
 
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +31,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
@@ -137,12 +137,17 @@ public abstract class AbstractEntityRepository<K, E> implements Serializable {
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<E> findById(final K entityId) {
 
+        Objects.requireNonNull(entityId);
+
         return Optional.ofNullable(entityManager.find(getEntityClass(),
                                                       entityId));
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<E> findById(final K entityId, final String entityGraphName) {
+
+        Objects.requireNonNull(entityId);
+        Objects.requireNonNull(entityGraphName);
 
         @SuppressWarnings("unchecked")
         final EntityGraph<E> entityGraph = (EntityGraph<E>) entityManager.
@@ -153,6 +158,9 @@ public abstract class AbstractEntityRepository<K, E> implements Serializable {
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<E> findById(final K entityId,
                                 final EntityGraph<E> entityGraph) {
+
+        Objects.requireNonNull(entityId);
+        Objects.requireNonNull(entityGraph);
 
         final Map<String, Object> hints = new HashMap<>();
         hints.put(FETCH_GRAPH_HINT_KEY, entityGraph);

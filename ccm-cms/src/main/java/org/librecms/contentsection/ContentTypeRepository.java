@@ -27,7 +27,14 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 /**
@@ -38,6 +45,11 @@ import javax.transaction.Transactional;
 public class ContentTypeRepository
     extends AbstractEntityRepository<Long, ContentType> {
 
+    private static final long serialVersionUID = 5871606965722748001L;
+
+    @Inject
+    private EntityManager entityManager;
+
     @Override
     public Class<ContentType> getEntityClass() {
         return ContentType.class;
@@ -46,6 +58,30 @@ public class ContentTypeRepository
     @Override
     public boolean isNew(final ContentType type) {
         return type.getObjectId() == 0;
+    }
+
+    public Optional<ContentType> findByIdAndFetchAttributes(
+        final Long typeId, final String... fetchAttributes) {
+
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<ContentType> criteriaQuery = builder
+            .createQuery(getEntityClass());
+
+        final Root<ContentType> from = criteriaQuery.from(getEntityClass());
+        for (final String fetchAttribute : fetchAttributes) {
+            from.fetch(fetchAttribute, JoinType.LEFT);
+        }
+
+        criteriaQuery.select(from);
+        criteriaQuery.where(builder.equal(from.get("objectId"), typeId));
+
+        try {
+            final TypedQuery<ContentType> query = entityManager
+                .createQuery(criteriaQuery);
+            return Optional.of(query.getSingleResult());
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
     }
 
     /**
@@ -188,8 +224,8 @@ public class ContentTypeRepository
     public void delete(
         @RequiresPrivilege(AdminPrivileges.ADMINISTER_CONTENT_TYPES)
         final ContentType type) {
-        
-            if (isContentTypeInUse(type)) {
+
+        if (isContentTypeInUse(type)) {
             throw new IllegalArgumentException(String.format(
                 "Contenttype \"%s\" in section \"%s\" is in use and can't be"
                     + "deleted.",
@@ -199,7 +235,7 @@ public class ContentTypeRepository
             super.delete(type);
         }
     }
-    
+
     /**
      * Checks if there is any item of the provided content type and the content
      * section to which the type belongs.
@@ -212,9 +248,9 @@ public class ContentTypeRepository
         final TypedQuery<Long> query = getEntityManager().createNamedQuery(
             "ContentType.isInUse", Long.class);
         query.setParameter("type", type);
-        
+
         final long result = query.getSingleResult();
-        
+
         return result > 0;
     }
 

@@ -22,10 +22,12 @@ import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.libreccm.core.CoreConstants.ACCESS_DENIED;
+
 
 /**
  * A repository class for {@link CcmObject} entities.
@@ -43,7 +45,7 @@ import static org.libreccm.core.CoreConstants.ACCESS_DENIED;
 public class CcmObjectRepository extends AbstractEntityRepository<Long, CcmObject> {
 
     private static final long serialVersionUID = 5033157795875521195L;
-
+    
     @Override
     public Class<CcmObject> getEntityClass() {
         return CcmObject.class;
@@ -86,7 +88,7 @@ public class CcmObjectRepository extends AbstractEntityRepository<Long, CcmObjec
             return Optional.empty();
         }
     }
-
+    
     /**
      * Finds a {@link CcmObject} by its uuid.
      *
