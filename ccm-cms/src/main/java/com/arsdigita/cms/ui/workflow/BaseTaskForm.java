@@ -64,6 +64,7 @@ class BaseTaskForm extends BaseForm {
     BaseTaskForm(final String key,
                  final GlobalizedMessage message,
                  final WorkflowRequestLocal workflowRequestLocal) {
+        
         super(key, message);
 
         this.workflowRequestLocal = workflowRequestLocal;
@@ -166,7 +167,9 @@ class BaseTaskForm extends BaseForm {
 
         @Override
         public void prepare(final PrintEvent event) {
+            
             final OptionGroup target = (OptionGroup) event.getTarget();
+            target.clearOptions();
 
             for (final CmsTaskType type : CmsTaskType.values()) {
                 final GlobalizedMessage label = new GlobalizedMessage(

@@ -21,6 +21,7 @@ package com.arsdigita.cms.ui.workflow;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SingleSelectionModel;
+import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.PrintEvent;
@@ -51,28 +52,31 @@ class TaskAddForm extends BaseTaskForm {
                                                   + "name already exists in this "
                                               + "content section.";
 
-    private final SingleSelectionModel<Long> m_model;
+    private final SingleSelectionModel<Long> selectedWorkflowId;
 
     public TaskAddForm(final WorkflowRequestLocal workflow,
-                       final SingleSelectionModel<Long> model) {
+                       final SingleSelectionModel<Long> selectedWorkflowId) {
+
         super("task", gz("cms.ui.workflow.task.add"), workflow);
 
-        m_model = model;
+        this.selectedWorkflowId = selectedWorkflowId;
 
         try {
-            getDependenciesOptionGroup()
+            super
+                .getDependenciesOptionGroup()
                 .addPrintListener(new DependencyPrinter());
-        } catch (TooManyListenersException tmle) {
-            throw new UncheckedWrapperException(tmle);
+        } catch (TooManyListenersException ex) {
+            throw new UncheckedWrapperException(ex);
         }
 
-        addProcessListener(new ProcessListener());
+        super.addProcessListener(new ProcessListener());
     }
 
     private class DependencyPrinter implements PrintListener {
 
         @Override
         public final void prepare(final PrintEvent event) {
+            
             final PageState state = event.getPageState();
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final WorkflowAdminPaneController controller = cdiUtil
@@ -88,7 +92,7 @@ class TaskAddForm extends BaseTaskForm {
             options.clearOptions();
             tasks.forEach(task -> options.addOption(new Option(
                 Long.toString(task.getTaskId()),
-                task.getLabel().getValue(defaultLocale))));
+                new Text(task.getLabel().getValue(defaultLocale)))));
         }
 
     }
@@ -113,7 +117,7 @@ class TaskAddForm extends BaseTaskForm {
                     .getValue(state)),
                 (String[]) getDependenciesOptionGroup().getValue(state));
 
-            m_model.setSelectedKey(state, task.getTaskId());
+            selectedWorkflowId.setSelectedKey(state, task.getTaskId());
         }
 
     }
