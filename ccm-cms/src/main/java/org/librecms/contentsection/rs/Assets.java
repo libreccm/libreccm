@@ -53,9 +53,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
 /**
- * Provides a Web Service (build using JAX-RS). Used for example by the 
+ * Provides a Web Service (build using JAX-RS). Used for example by the
  * {@link AssetSearchWidget}.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -67,7 +67,7 @@ public class Assets {
 
     @Inject
     private FolderRepository folderRepo;
-    
+
     @Inject
     private FolderManager folderManager;
 
@@ -76,7 +76,7 @@ public class Assets {
 
     @Inject
     private AssetManager assetManager;
-    
+
     @Inject
     private AssetTypesManager assetTypesManager;
 
@@ -116,16 +116,18 @@ public class Assets {
         result.put("type",
                    Folder.class.getName());
         result.put("place", "");
-        
+
         return result;
     }
 
     private Map<String, String> createAssetMapEntry(final Asset asset) {
         final Map<String, String> result = new HashMap<>();
 
-        result.put("assetId", 
+        result.put("assetId",
                    Long.toString(asset.getObjectId()));
-        
+
+        result.put("uuid", asset.getUuid());
+
         result.put("title",
                    asset.getTitle().getValue(globalizationHelper
                        .getNegotiatedLocale()));
@@ -142,12 +144,12 @@ public class Assets {
 
         final Optional<Folder> assetFolder = assetManager.getAssetFolder(asset);
         if (assetFolder.isPresent()) {
-        result.put("place", 
-                   folderManager.getFolderPath(assetFolder.get()));
+            result.put("place",
+                       folderManager.getFolderPath(assetFolder.get()));
         } else {
             result.put("place", "");
         }
-        
+
         return result;
     }
 
