@@ -19,6 +19,7 @@
 package org.librecms.assets;
 
 import com.arsdigita.cms.ui.assets.forms.AudioForm;
+
 import org.hibernate.envers.Audited;
 
 import java.io.Serializable;
