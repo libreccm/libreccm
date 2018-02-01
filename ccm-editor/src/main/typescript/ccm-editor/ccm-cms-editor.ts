@@ -2,7 +2,7 @@ import { CCMEditor, CCMEditorCommand, CCMEditorCommandType } from "./ccm-editor"
 
 export class InsertInternalLinkCommand extends CCMEditorCommand {
 
-    private button: Element;
+    private button: HTMLElement;
 
     constructor(editor: CCMEditor, settings: any) {
         super(editor, settings);
@@ -10,16 +10,18 @@ export class InsertInternalLinkCommand extends CCMEditorCommand {
         this.button = this.fragment
             .appendChild(document.createElement("button"));
 
-        const icon: Element = this.button
+        const icon: HTMLElement = this.button
             .appendChild(document.createElement("i"));
         icon.className = "fa fa-link";
 
-        const text: Element = this.button
+        const text: HTMLElement = this.button
             .appendChild(document.createElement("span"));
         this.button
             .setAttribute("title", "Insert a link to a ContentItem");
         text.textContent = "Create internal link";
         text.className = "ccm-editor-accessibility";
+
+        const command = this;
 
         this.button.addEventListener("click", function(event){
 
@@ -29,10 +31,10 @@ export class InsertInternalLinkCommand extends CCMEditorCommand {
 
             const dialogFragment: DocumentFragment = document
                 .createDocumentFragment();
-            const dialogElem: Element = dialogFragment
+            const dialogElem: HTMLElement = dialogFragment
                 .appendChild(document.createElement("div"));
             dialogElem.className = "ccm-editor-selectdialog";
-            const dialogTitleElem: Element = dialogElem
+            const dialogTitleElem: HTMLElement = dialogElem
                 .appendChild(document.createElement("h1"));
             dialogTitleElem.textContent = "Insert link to a Content Item";
 
@@ -49,9 +51,9 @@ export class InsertInternalLinkCommand extends CCMEditorCommand {
                 return false;
             });
 
-            const filterForm: Element = dialogElem
+            const filterForm: HTMLElement = dialogElem
                 .appendChild(document.createElement("div"));
-            const contentSectionSelectLabel: Element = filterForm
+            const contentSectionSelectLabel: HTMLElement = filterForm
                 .appendChild(document.createElement("label"));
             contentSectionSelectLabel
                 .setAttribute("for", "ccm-editor-contentsection-select");
@@ -60,7 +62,7 @@ export class InsertInternalLinkCommand extends CCMEditorCommand {
                 .appendChild(document.createElement("select"));
             contentSectionSelect
                 .setAttribute("id", "ccm-editor-contentsection-select");
-            const filterInputLabel: Element = filterForm
+            const filterInputLabel: HTMLElement = filterForm
                 .appendChild(document.createElement("label"));
             filterInputLabel.setAttribute("id", "ccm-editor-assetfilter");
             filterInputLabel.textContent = "Filter items";
@@ -68,14 +70,14 @@ export class InsertInternalLinkCommand extends CCMEditorCommand {
                 .appendChild(document.createElement("input"));
             filterInput.setAttribute("id", "ccm-editor-assetfilter");
             filterInput.setAttribute("type", "text");
-            const applyFiltersButton: Element = filterForm
+            const applyFiltersButton: HTMLElement = filterForm
                 .appendChild(document.createElement("button"));
-            applyFiltersButton.textContent = "Clear filters";
+            applyFiltersButton.textContent = "Apply filters";
             applyFiltersButton.addEventListener("click", function(event){
                 event.preventDefault();
                 return false;
             });
-            const clearFiltersButton: Element = filterForm
+            const clearFiltersButton: HTMLElement = filterForm
                 .appendChild(document.createElement("button"));
             clearFiltersButton.textContent = "Clear filters";
             clearFiltersButton.addEventListener("click", function(event){
@@ -84,127 +86,193 @@ export class InsertInternalLinkCommand extends CCMEditorCommand {
                 return false;
             });
 
-            const table: Element = dialogElem
+            const table: HTMLElement = dialogElem
                 .appendChild(document.createElement("table"));
-            const tableHead: Element = table
+            const tableHead: HTMLElement = table
                 .appendChild(document.createElement("thead"));
-            const headerRow: Element = tableHead
+            const headerRow: HTMLElement = tableHead
                 .appendChild(document.createElement("tr"));
-            const titleColHeader: Element = headerRow
+            const titleColHeader: HTMLElement = headerRow
                 .appendChild(document.createElement("th"));
-            const typeColHeader: Element = headerRow
+            const typeColHeader: HTMLElement = headerRow
                 .appendChild(document.createElement("th"));
-            const placeColHeader: Element = headerRow
+            const placeColHeader: HTMLElement = headerRow
                 .appendChild(document.createElement("th"));
             titleColHeader.textContent = "Title";
             typeColHeader.textContent = "Type";
             placeColHeader.textContent = "Place";
-            const tableBody: Element = table
+            const tableBody: HTMLElement = table
                 .appendChild(document.createElement("tbody"));
 
             const contextPrefix = editor.getDataAttribute("context-prefix");
             // Get content sections
             const currentSection = editor
                 .getDataAttribute("current-contentsection-primaryurl");
-            const sectionsUrl = contextPrefix + "/content-sections/";
-            const sectionsRequest = new XMLHttpRequest();
-            sectionsRequest.open("GET", sectionsUrl);
-            sectionsRequest.withCredentials = true;
-            sectionsRequest.addEventListener("load", function(event){
-                if (sectionsRequest.status >= 200
-                    && sectionsRequest.status <= 300) {
-
-                    const sections = JSON.parse(sectionsRequest.responseText);
-                    for(let i = 0; i < sections.length; ++i) {
-                        const section = sections[i];
-                        const option: Element = contentSectionSelect
-                            .appendChild(document.createElement("option"));
-                        option.setAttribute("value", section["primaryUrl"]);
-                        option.textContent = section["primaryUrl"];
-                        if (section["primaryUrl"] === currentSection) {
-                            option.setAttribute("selected", "selected");
+            const sectionsUrl = `${contextPrefix}/content-sections/`;
+            fetch(sectionsUrl, { credentials: "include" }).then((response) => {
+                if (response.ok) {
+                    response.json().then((data) => {
+                        for (const section of data) {
+                            const option: HTMLOptionElement
+                                = contentSectionSelect
+                                    .appendChild(document
+                                        .createElement("option"));
+                            option.value = section.primaryUrl;
+                            option.textContent = section.primaryUrl;
+                            if (section.primaryUrl === currentSection) {
+                                option.selected = true;
+                            }
                         }
-                    }
+                    });
+                } else {
+                    const errorMsgElement: HTMLElement = dialogElem
+                        .appendChild(document.createElement("div"));
+                    errorMsgElement.classList.add("ccm-editor-error");
+                    errorMsgElement.textContent = `Failed to fetch available
+                    content sections from "${sectionsUrl}". Status: ${response.status}.
+                    Status text: ${response.statusText}`;
                 }
+            },
+            (failure) => {
+                const errorMsgElement: HTMLElement = dialogElem
+                    .appendChild(document.createElement("div"));
+                errorMsgElement.classList.add("ccm-editor-error");
+                errorMsgElement.textContent = `Failed to fetch available
+                content sections from "${sectionsUrl}". Failure: ${failure}`;
             });
-            sectionsRequest.send();
 
-            console.log("Current sections is \"" + currentSection + "\"");
-            // Get items
-            let itemsUrl = contextPrefix
-                + "/content-sections";
-            if (!(new RegExp("^/.*").test(currentSection))) {
-                console.log("Current sections does not start with an \"/\", adding one...");
-                itemsUrl += "/";
-            }
-            itemsUrl += currentSection;
-            if (!(new RegExp(".*/$").test(currentSection))) {
-                console.log("Current sections does not end with an \"/\", adding one...");
-                itemsUrl += "/";
-            }
-            itemsUrl += "items";
-            if (filterInput.value !== null && filterInput.value.length > 0) {
-                itemsUrl + "?query=" + filterInput.value;
-            }
-            const itemsRequest = new XMLHttpRequest();
-            itemsRequest.open("GET", itemsUrl);
-            itemsRequest.withCredentials = true;
-            itemsRequest.addEventListener("load", function(event){
-                if (itemsRequest.status >= 200 && itemsRequest.status <= 300) {
-
-                    const items = JSON.parse(itemsRequest.responseText);
-                    for(let i = 0; i < items.length; ++i) {
-                        const item = items[i];
-                        const row: Element = tableBody
-                            .appendChild(document.createElement("tr"));
-                        const dataTitle = row
-                            .appendChild(document.createElement("td"));
-                        const dataType = row
-                            .appendChild(document.createElement("td"));
-                        const dataPlace =
-                            row.appendChild(document.createElement("td"));
-
-                        const selectItemButton = dataTitle
-                            .appendChild(document.createElement("button"));
-                        if (item["title"] === null
-                            || item["title"].length <= 0) {
-                            selectItemButton.textContent = item["name"];
-                        } else {
-                            selectItemButton.textContent = item["title"];
-                        }
-                        selectItemButton
-                            .addEventListener("click", function(event) {
-
-                                event.preventDefault();
-
-                                const bodyElem = document
-                                    .getElementsByTagName("body")
-                                    .item(0);
-                                bodyElem.removeChild(dialogElem);
-                                document.getSelection().removeAllRanges();
-                                document.getSelection().addRange(currentRange);
-
-                                document.execCommand("createLink",
-                                                     false,
-                                                     contextPrefix
-                                                     + "/redirect/?oid="
-                                                     + item["itemId"]);
-
-                                return false;
-                        });
-
-                        dataType.textContent = item["typeLabel"];
-                        dataType.textContent = item["place"];
-                    }
-                }
+            contentSectionSelect.addEventListener("click", (event) => {
+                command.fetchItems(dialogElem,
+                                   contentSectionSelect.value,
+                                   filterInput.value,
+                                   tableBody,
+                                   currentRange);
             });
-            itemsRequest.send();
+
+            applyFiltersButton.addEventListener("click", (event) => {
+                event.preventDefault();
+
+                command.fetchItems(dialogElem,
+                                contentSectionSelect.value,
+                                filterInput.value,
+                                tableBody,
+                                currentRange);
+            });
+
+            command.fetchItems(dialogElem,
+                               currentSection,
+                               filterInput.value,
+                               tableBody,
+                               currentRange);
 
             const bodyElem = document.getElementsByTagName("body").item(0);
             bodyElem.appendChild(dialogFragment);
 
             return false;
         });
+    }
+
+    private fetchItems(dialogElem: HTMLElement,
+                       contentSection: string,
+                       query: string,
+                       itemsTableBodyElem: HTMLElement,
+                       currentRange: Range) {
+
+        const itemsUrl = this.generateItemsUrl(contentSection, query);
+
+        fetch(itemsUrl, { credentials: "include" }).then((response) => {
+            if (response.ok) {
+
+                itemsTableBodyElem.innerHTML = "";
+
+                response.json().then((data) => {
+                    for (const item of data) {
+                        const row: HTMLElement = itemsTableBodyElem
+                            .appendChild(document.createElement("tr"));
+                        const dataTitle = row
+                            .appendChild(document.createElement("td"));
+                        const dataType = row
+                            .appendChild(document.createElement("td"));
+                        const dataPlace = row
+                            .appendChild(document.createElement("td"));
+
+                        const selectItemButton: HTMLButtonElement = dataTitle
+                            .appendChild(document.createElement("button"));
+                        if (item.title === null || item.title.length <= 0) {
+                            selectItemButton.textContent = item.name;
+                        } else {
+                            selectItemButton.textContent = item.title;
+                        }
+                        selectItemButton.addEventListener("click", (event) => {
+                            event.preventDefault();
+
+                            const bodyElem = document
+                                .getElementsByTagName("body")
+                                .item[0];
+                            bodyElem.removeChild(dialogElem);
+                            document.getSelection().removeAllRanges();
+                            document.getSelection().addRange(currentRange);
+
+                            const contextPrefix = this.editor
+                                .getDataAttribute("context-prefix");
+                            document.execCommand(
+                                "createLink",
+                                false,
+                                `${contextPrefix}/redirect/?oid${item.itemId}`);
+                        });
+
+                        dataType.textContent = item.typeLabel;
+                        dataPlace.textContent = item.place;
+                    }
+                });
+            } else {
+                const dialogElem: HTMLElement = itemsTableBodyElem
+                    .parentNode.parentNode as HTMLElement;
+                const errorMsgElement: HTMLElement = dialogElem
+                    .insertBefore(document.createElement("div"),
+                                  itemsTableBodyElem.parentNode);
+                errorMsgElement.classList.add("ccm-editor-error");
+                errorMsgElement.textContent = `Failed to fetch items for
+                content section "${contentSection}" and query "${query}"
+                from "${itemsUrl}".
+                Status code: ${response.status}.
+                Status text: ${response.statusText}`;
+            }
+        },
+        (failure) => {
+            const dialogElem: HTMLElement = itemsTableBodyElem
+                .parentNode.parentNode as HTMLElement;
+            const errorMsgElement: HTMLElement = dialogElem
+                .insertBefore(document.createElement("div"),
+                              itemsTableBodyElem.parentNode);
+            errorMsgElement.classList.add("ccm-editor-error");
+            errorMsgElement.textContent = `Failed to fetch items for
+            content section "${contentSection}" and query "${query}"
+            from "${itemsUrl}".
+            Failure message: ${failure}.`;
+        });
+    }
+
+    private generateItemsUrl(contentSection: string, query?: string) {
+        const contextPrefix = this.editor.getDataAttribute("context-prefix");
+
+        let itemsUrl = `${contextPrefix}/content-sections`;
+        if (!(new RegExp("^/.*").test(contentSection))) {
+            itemsUrl = `${itemsUrl}/`;
+        }
+
+        itemsUrl = `${itemsUrl}${contentSection}`;
+        if (!(new RegExp(".*/$").test(contentSection))) {
+            itemsUrl = `${itemsUrl}/`;
+        }
+
+        itemsUrl = `${itemsUrl}items`;
+
+        if (query) {
+            itemsUrl = `${itemsUrl}?query=${query}`;
+        }
+
+        return itemsUrl;
     }
 
     getCommandType(): CCMEditorCommandType {
@@ -243,11 +311,11 @@ export class InsertMediaAssetCommand extends CCMEditorCommand {
         this.button = this.fragment
             .appendChild(document.createElement("button"));
 
-        const icon: Element = this.button
+        const icon: HTMLElement = this.button
             .appendChild(document.createElement("i"));
         icon.className = "fa fa-file-image-o";
 
-        const text: Element = this.button
+        const text: HTMLElement = this.button
             .appendChild(document.createElement("span"));
         this.button.setAttribute("title",
                                  "Insert media content (image, audio, video)");
@@ -268,7 +336,7 @@ export class InsertMediaAssetCommand extends CCMEditorCommand {
             const dialogElem: HTMLElement = dialogFragment
                 .appendChild(document.createElement("div"));
             dialogElem.className = "ccm-editor-selectdialog";
-            const dialogTitleElem: Element = dialogElem
+            const dialogTitleElem: HTMLElement = dialogElem
                 .appendChild(document.createElement("h1"));
             dialogTitleElem.textContent = "Insert media";
 
@@ -331,7 +399,7 @@ export class InsertMediaAssetCommand extends CCMEditorCommand {
                 option.textContent = typeOption.label
                 typeSelect.appendChild(option);
             }
-            const filterInputLabel: Element = filterForm
+            const filterInputLabel: HTMLElement = filterForm
                 .appendChild(document.createElement("label"));
             filterInputLabel.setAttribute("id", "ccm-editor-assetfilter");
             filterInputLabel.textContent = "Filter items";
@@ -339,11 +407,11 @@ export class InsertMediaAssetCommand extends CCMEditorCommand {
                 .appendChild(document.createElement("input"));
             filterInput.setAttribute("id", "ccm-editor-assetfilter");
             filterInput.setAttribute("type", "text");
-            const applyFiltersButton: Element = filterForm
+            const applyFiltersButton: HTMLElement = filterForm
                 .appendChild(document.createElement("button"));
             applyFiltersButton.textContent = "Clear filters";
 
-            const clearFiltersButton: Element = filterForm
+            const clearFiltersButton: HTMLElement = filterForm
                 .appendChild(document.createElement("button"));
             clearFiltersButton.textContent = "Clear filters";
             clearFiltersButton.addEventListener("click", function(event){
@@ -359,9 +427,9 @@ export class InsertMediaAssetCommand extends CCMEditorCommand {
                 .appendChild(document.createElement("tr"));
             const titleColHeader: HTMLElement = headerRow
                 .appendChild(document.createElement("th"));
-            const typeColHeader: Element = headerRow
+            const typeColHeader: HTMLElement = headerRow
                     .appendChild(document.createElement("th"));
-            const placeColHeader: Element = headerRow
+            const placeColHeader: HTMLElement = headerRow
                     .appendChild(document.createElement("th"));
             titleColHeader.textContent = "Title";
             typeColHeader.textContent = "Type";
@@ -379,16 +447,32 @@ export class InsertMediaAssetCommand extends CCMEditorCommand {
                 if (response.ok) {
                     response.json().then((data) => {
                         for(const section of data) {
-                            const option: HTMLElement = contentSectionSelect
-                                .appendChild(document.createElement("option"));
-                            option.setAttribute("value", section.primaryUrl);
+                            const option: HTMLOptionElement
+                                = contentSectionSelect
+                                    .appendChild(document
+                                            .createElement("option"));
+                            option.value = section.primaryUrl;
                             option.textContent = section.primaryUrl;
                             if (section.primaryUrl === currentSection) {
-                                option.setAttribute("selected", "selected");
+                                option.selected = true;
                             }
                         }
                     });
+                } else {
+                    const errorMsgElement: HTMLElement = dialogElem
+                        .appendChild(document.createElement("div"));
+                    errorMsgElement.classList.add("ccm-editor-error");
+                    errorMsgElement.textContent = `Failed to fetch available
+                    content sections. Status: ${response.status}.
+                    Status text: ${response.statusText}`;
                 }
+            },
+            (failure) => {
+                const errorMsgElement: HTMLElement = dialogElem
+                    .appendChild(document.createElement("div"));
+                errorMsgElement.classList.add("ccm-editor-error");
+                errorMsgElement.textContent = `Failed to fetch available
+                content sections. Failure: ${failure}`;
             });
 
             contentSectionSelect.addEventListener("change", (event) => {
