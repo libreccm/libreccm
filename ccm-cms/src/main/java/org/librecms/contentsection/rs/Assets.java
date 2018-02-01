@@ -128,9 +128,11 @@ public class Assets {
 
         result.put("uuid", asset.getUuid());
 
+        result.put("name", asset.getDisplayName());
+
         result.put("title",
-                   asset.getTitle().getValue(globalizationHelper
-                       .getNegotiatedLocale()));
+                   globalizationHelper
+                       .getValueFromLocalizedString(asset.getTitle()));
 
         result.put("type",
                    asset.getClass().getName());
