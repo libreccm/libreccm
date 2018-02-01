@@ -24,7 +24,8 @@ requirejs(["./ccm-editor",
                     editor.SuperscriptCommand,
                     editor.RemoveFormatCommand,
                     editor.InsertExternalLinkCommand,
-                    cmseditor.InsertInternalLinkCommand
+                    cmseditor.InsertInternalLinkCommand,
+                    cmseditor.InsertMediaAssetCommand
                 ]
             },
             {

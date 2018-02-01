@@ -68,13 +68,17 @@
     padding: 0.5em 0.3em;
 }
 
-.ccm-editor-error {
+.ccm-editor-selectdialog .ccm-editor-error {
 
     color: #f00;
 
-    border: 2px solid #ff0;
-    border-radius: 0.4em;
+    display: block;
 }
+
+.ccm-editor-selectdialog .ccm-editor-error i.fa-warning {
+    font-size: 4em;
+}
+
 
 .ccm-editor-hidden {
     display: none;
