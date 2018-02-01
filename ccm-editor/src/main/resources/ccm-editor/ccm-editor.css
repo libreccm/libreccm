@@ -68,6 +68,14 @@
     padding: 0.5em 0.3em;
 }
 
+.ccm-editor-error {
+
+    color: #f00;
+
+    border: 2px solid #ff0;
+    border-radius: 0.4em;
+}
+
 .ccm-editor-hidden {
     display: none;
 }
@@ -90,7 +98,7 @@
 
     width: 70em;
     height: 40em;
-    overflow: scroll;
+    overflow: auto;
 }
 
 .ccm-editor-selectdialog h1 {
