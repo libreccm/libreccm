@@ -657,6 +657,7 @@ export class InsertMediaAssetCommand extends CCMEditorCommand {
         selectDialogElem.setAttribute("style", "display: none");
 
         const dialogId: string = "ccm-editor-insertmedia";
+        const alignmentId: string = `${dialogId}-alignment`;
         const captionFieldId: string = `${dialogId}-caption`;
         const altFieldId: string = `${dialogId}-alt`;
         const decorativeCheckboxId: string
@@ -678,10 +679,32 @@ export class InsertMediaAssetCommand extends CCMEditorCommand {
         const formElem: HTMLElement = insertDialogElem
             .appendChild(document.createElement("form"));
 
+        const alignmentLabel: HTMLLabelElement = formElem
+            .appendChild(document.createElement("label"));
+        alignmentLabel.htmlFor = alignmentId;
+        alignmentLabel.textContent = "Aligment";
+        const alignmentSelect: HTMLSelectElement = formElem
+            .appendChild(document.createElement("select"));
+        alignmentSelect.id = alignmentId;
+        alignmentSelect.size = 1;
+        const leftOption: HTMLOptionElement = alignmentSelect
+            .appendChild(document.createElement("option"));
+        leftOption.value = "left";
+        leftOption.textContent = "Left";
+        leftOption.selected = true;
+        const centerOption: HTMLOptionElement = alignmentSelect
+            .appendChild(document.createElement("option"));
+        centerOption.value = "center";
+        centerOption.textContent = "Center";
+        const rightOption: HTMLOptionElement = alignmentSelect
+            .appendChild(document.createElement("option"));
+        rightOption.value = "right";
+        rightOption.textContent = "Right";
+
         const captionLabel: HTMLLabelElement = formElem
             .appendChild(document.createElement("label"));
         captionLabel.htmlFor = captionFieldId;
-        captionLabel.textContent = "Caption";
+        captionLabel.textContent = "Caption *";
         const captionField: HTMLInputElement = formElem
             .appendChild(document.createElement("input"));
         captionField.id = captionFieldId;
@@ -692,7 +715,7 @@ export class InsertMediaAssetCommand extends CCMEditorCommand {
             const altLabel: HTMLLabelElement = formElem
                 .appendChild(document.createElement("label"));
             altLabel.htmlFor = altFieldId;
-            altLabel.textContent = "Alternativ text for image";
+            altLabel.textContent = "Alternativ text for image *";
             const altField: HTMLInputElement = formElem
                 .appendChild(document.createElement("input"));
             altField.type = "text";
@@ -753,17 +776,28 @@ export class InsertMediaAssetCommand extends CCMEditorCommand {
             insertButton.addEventListener("click", (event) => {
                 event.preventDefault();
 
+                const alignmentSelect: HTMLSelectElement = document
+                    .getElementById(alignmentId) as HTMLSelectElement;
                 const captionField: HTMLInputElement = document
                     .getElementById(captionFieldId) as HTMLInputElement;
+
+                console.log(`Inserting media asset of type "${assetType}"`);
+                console.log(`this.IMAGE_TYPE = ${this.IMAGE_TYPE}`);
                 let mediaHtml: string;
                 switch(assetType) {
                     case this.AUDIO_TYPE: {
                         mediaHtml = this
-                            .generateAudioHtml("0", captionField.value);
+                            .generateAudioHtml("0",
+                                               alignmentSelect.value,
+                                               captionField.value);
+                        break;
                     }
                     case this.EXTERNAL_AUDIO_TYPE: {
                         mediaHtml = this
-                            .generateAudioHtml("0", captionField.value);
+                            .generateAudioHtml("0",
+                                               alignmentSelect.value,
+                                               captionField.value);
+                        break;
                     }
                     case this.EXTERNAL_VIDEO_TYPE: {
                         const widthField: HTMLInputElement = document
@@ -773,11 +807,14 @@ export class InsertMediaAssetCommand extends CCMEditorCommand {
                             HTMLInputElement;
                         mediaHtml = this
                             .generateVideoHtml("0",
+                                               alignmentSelect.value,
                                                captionField.value,
                                                Number(widthField.value),
                                                Number(heightField.value));
+                        break;
                     }
                     case this.IMAGE_TYPE: {
+                        console.log("Generating HTML for image...");
                         const altField: HTMLInputElement = document
                             .getElementById(altFieldId) as HTMLInputElement;
                         const widthField: HTMLInputElement = document
@@ -791,19 +828,59 @@ export class InsertMediaAssetCommand extends CCMEditorCommand {
                                               assetUuid);
 
                         if (decorativeCheckbox.checked) {
+                            console.log("generating html for decorative image");
                             mediaHtml = this
                                 .generateDecorativeImageHtml(
                                     imageUrl,
+                                    alignmentSelect.value,
                                     Number(widthField.value),
                                     Number(heightField.value));
                         } else {
+                            console.log("generating html for image");
+
+                            if (captionField.value == null
+                                || captionField.value.length === 0) {
+
+                                captionField.classList
+                                    .add("ccm-editor-missing");
+                                const label = document
+                                    .querySelector(
+                                        `label[for="${captionFieldId}"]`)
+                                const span = label
+                                    .appendChild(document
+                                        .createElement("span"));
+                                span.classList.add("ccm-editor-missing");
+                                span.textContent = `A caption is required`;
+
+                                return;
+                            }
+
+                            if (altField.value == null
+                                || altField.value.length === 0) {
+
+                                altField.classList.add("ccm-editor-missing");
+                                const label = document
+                                    .querySelector(
+                                        `label[for="${altFieldId}"]`);
+                                const span = label
+                                    .appendChild(document
+                                        .createElement("span"));
+                                span.classList.add("ccm-editor-missing");
+                                span.textContent = "A alternative text for the "
+                                    + "image is required";
+
+                                return;
+                            }
+
                             mediaHtml = this
                                 .generateImageHtml(imageUrl,
-                                                  captionField.value,
-                                                  altField.value,
-                                                  Number(widthField.value),
-                                                  Number(heightField.value));
+                                                   alignmentSelect.value,
+                                                   captionField.value,
+                                                   altField.value,
+                                                   Number(widthField.value),
+                                                   Number(heightField.value));
                         }
+                        break;
                     }
                     case this.VIDEO_TYPE: {
                         const widthField: HTMLInputElement = document
@@ -813,16 +890,22 @@ export class InsertMediaAssetCommand extends CCMEditorCommand {
                             HTMLInputElement;
                         mediaHtml = this
                             .generateVideoHtml("0",
+                                               alignmentSelect.value,
                                                captionField.value,
                                                Number(widthField.value),
                                                Number(heightField.value));
+                        break;
                     }
                     default:
+                        console.log("No type matches.");
                         mediaHtml = "";
+                        break;
                 }
 
                 document.getSelection().removeAllRanges();
                 document.getSelection().addRange(currentRange);
+                console
+                    .log(`Calling insertHTML command for HTML: "${mediaHtml}"`);
                 document.execCommand("insertHTML", false, mediaHtml);
 
                 const bodyElem = document.getElementsByTagName("body").item(0);
@@ -841,11 +924,15 @@ export class InsertMediaAssetCommand extends CCMEditorCommand {
                 selectDialogElem.removeAttribute("style");
             });
         }
+
+        const bodyElem = document.getElementsByTagName("body").item(0);
+        bodyElem.appendChild(fragment);
     }
 
     private generateDecorativeImageHtml(imageUrl: string,
-                            width: number = -1,
-                            height: number = -1): string {
+                                        alignment: string,
+                                        width: number = -1,
+                                        height: number = -1): string {
 
         let dimensions: string;
         if (width > 0) {
@@ -855,16 +942,18 @@ export class InsertMediaAssetCommand extends CCMEditorCommand {
             dimensions = `${dimensions} height="${height}"`;
         }
 
-        return `<img src="${imageUrl}" ${dimensions} alt="" />`;
+        return `<img  class="ccm-figure-${alignment}"
+                      src="${imageUrl}" ${dimensions} alt="" />`;
     }
 
     private generateImageHtml(imageUrl: string,
+                              alignment: string,
                               caption: string,
                               alt: string,
                               width: number = -1,
                               height: number = -1): string {
 
-        let dimensions: string;
+        let dimensions: string = "";
         if (width > 0) {
             dimensions = `${dimensions} width="${width}"`;
         }
@@ -872,7 +961,7 @@ export class InsertMediaAssetCommand extends CCMEditorCommand {
             dimensions = `${dimensions} height="${height}"`;
         }
 
-        return `<figure role="group">
+        return `<figure role="group" class="ccm-figure-${alignment}">
             <img src="${imageUrl}" ${dimensions} alt="${alt}" />
             <figcaption>${caption}</figcaption>
         </figure>`
@@ -888,28 +977,31 @@ export class InsertMediaAssetCommand extends CCMEditorCommand {
         if (!(new RegExp("^/.*").test(contentSection))) {
             imageUrl = `${imageUrl}/`;
         }
-        imageUrl = `${imageUrl}{$contentSection}`;
+        imageUrl = `${imageUrl}${contentSection}`;
         if (!(new RegExp(".*/$").test(contentSection))) {
             imageUrl = `${imageUrl}/`;
         }
-        return `${imageUrl}/images/uuid-${assetUuid}
-        ?width=${width}&height=${height}`;
+        return `${imageUrl}images/uuid-${assetUuid}`
+                + `?width=${width}&height=${height}`;
     }
 
     private generateVideoHtml(videoUrl: string,
+                              alignment: string,
                               caption: string,
                               width: number = -1,
                               height: number = -1): string {
 
-        return `<figure role="group">
+        return `<figure role="group" class="ccm-figure-${alignment}">
             <span>Not implemented yet</span>
             <figcaption>${caption}</figcaption>
         </figure>`;
     }
 
-    private generateAudioHtml(audioUrl: string, caption: string): string {
+    private generateAudioHtml(audioUrl: string,
+                              alignment: string,
+                              caption: string): string {
 
-        return `<figure role="group">
+        return `<figure role="group" class="ccm-figure-${alignment}">
             <span>Not implemented yet</span>
             <figcaption>${caption}</figcaption>
         </figure>`;

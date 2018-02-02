@@ -54,6 +54,16 @@
     justify-self: center;
 }
 
+.ccm-editor-dialog input.ccm-editor-missing {
+
+    border: 1px solid #f00;
+}
+
+.ccm-editor-dialog span.ccm-editor-missing {
+
+    color: #f00;
+}
+
 .ccm-editor-editable {
 
     background-color: #fff;
@@ -63,7 +73,9 @@
 
     box-sizing: inherit;
 
-    height: 20em;
+    height: 30em;
+
+    overflow: auto;
 
     padding: 0.5em 0.3em;
 }
