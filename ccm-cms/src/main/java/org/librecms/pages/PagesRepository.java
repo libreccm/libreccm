@@ -83,15 +83,20 @@ public class PagesRepository extends AbstractEntityRepository<Long, Pages> {
     }
 
     @Override
+    public String getIdAttributeName() {
+        return "objectId";
+    }
+
+    @Override
     public boolean isNew(final Pages pages) {
         return pages.getObjectId() == 0;
     }
-    
+
     @Override
     public void initNewEntity(final Pages pages) {
-        
+
         super.initNewEntity(pages);
-        
+
         pages.setUuid(UUID.randomUUID().toString());
         pages.setApplicationType(Pages.class.getName());
     }

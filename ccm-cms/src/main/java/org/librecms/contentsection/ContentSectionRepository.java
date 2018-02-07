@@ -39,6 +39,8 @@ import javax.transaction.Transactional;
 public class ContentSectionRepository
     extends AbstractEntityRepository<Long, ContentSection> {
 
+    private static final long serialVersionUID = 4616599498399330865L;
+
     public Optional<ContentSection> findByLabel(final String label) {
         if (label == null || label.isEmpty()) {
             throw new IllegalArgumentException(
@@ -60,6 +62,11 @@ public class ContentSectionRepository
     @Override
     public Class<ContentSection> getEntityClass() {
         return ContentSection.class;
+    }
+    
+    @Override
+    public String getIdAttributeName() {
+        return "objectId";
     }
 
     @Override

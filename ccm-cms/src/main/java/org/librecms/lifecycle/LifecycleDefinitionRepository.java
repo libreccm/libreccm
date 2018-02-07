@@ -27,8 +27,10 @@ import javax.enterprise.context.RequestScoped;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class LifecycleDefinitionRepository 
-    extends AbstractEntityRepository<Long, LifecycleDefinition>{
+public class LifecycleDefinitionRepository
+    extends AbstractEntityRepository<Long, LifecycleDefinition> {
+
+    private static final long serialVersionUID = -6388883975391235155L;
 
     @Override
     public Class<LifecycleDefinition> getEntityClass() {
@@ -36,10 +38,13 @@ public class LifecycleDefinitionRepository
     }
 
     @Override
+    public String getIdAttributeName() {
+        return "definitionId";
+    }
+
+    @Override
     public boolean isNew(final LifecycleDefinition lifecycleDefinition) {
         return lifecycleDefinition.getDefinitionId() == 0;
     }
-    
-    
-    
+
 }

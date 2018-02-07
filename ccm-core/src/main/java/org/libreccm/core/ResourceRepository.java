@@ -44,6 +44,11 @@ public class ResourceRepository extends AbstractEntityRepository<Long,
     public Class<Resource> getEntityClass() {
         return Resource.class;
     }
+    
+    @Override
+    public String getIdAttributeName() {
+        return "objectId";
+    }
 
     @Override
     public boolean isNew(final Resource entity) {

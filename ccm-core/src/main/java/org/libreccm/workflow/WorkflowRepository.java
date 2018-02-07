@@ -34,11 +34,17 @@ import java.util.UUID;
  */
 @RequestScoped
 public class WorkflowRepository extends AbstractEntityRepository<Long, Workflow> {
+
     private static final long serialVersionUID = -8811728904958517569L;
 
     @Override
     public Class<Workflow> getEntityClass() {
         return Workflow.class;
+    }
+
+    @Override
+    public String getIdAttributeName() {
+        return "workflowId";
     }
 
     @Override
@@ -65,14 +71,14 @@ public class WorkflowRepository extends AbstractEntityRepository<Long, Workflow>
             throw new IllegalArgumentException(
                 "The UUID of the Workflow to retrieve can't be null or empty.");
         }
-        
+
         final TypedQuery<Workflow> query = getEntityManager()
-                .createNamedQuery("Workflow.findByUuid", Workflow.class);
+            .createNamedQuery("Workflow.findByUuid", Workflow.class);
         query.setParameter("uuid", uuid);
-        
+
         try {
             return Optional.of(query.getSingleResult());
-        } catch(NoResultException ex) {
+        } catch (NoResultException ex) {
             return Optional.empty();
         }
     }

@@ -35,26 +35,32 @@ public class FileRepository extends AbstractResourceRepository<File> {
     }
 
     @Override
+    public String getIdAttributeName() {
+        return "objectId";
+    }
+
+    @Override
     public TypedQuery<File> getFindByNameQuery() {
         return entityManager.createNamedQuery(
-                "DocRepo.findFileByName", File.class);
+            "DocRepo.findFileByName", File.class);
     }
 
     @Override
     public TypedQuery<File> getFindByPathNameQuery() {
         return entityManager.createNamedQuery(
-                "DocRepo.findFileByPath", File.class);
+            "DocRepo.findFileByPath", File.class);
     }
 
     @Override
     public TypedQuery<File> getFindForCreatorQuery() {
         return entityManager.createNamedQuery(
-                "DocRepo.findCreatedFileFromUser", File.class);
+            "DocRepo.findCreatedFileFromUser", File.class);
     }
 
     @Override
     public TypedQuery<File> getFindForModifierQuery() {
         return entityManager.createNamedQuery(
-                "DocRepo.findModifiedFileFromUser", File.class);
+            "DocRepo.findModifiedFileFromUser", File.class);
     }
+
 }

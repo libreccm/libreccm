@@ -92,6 +92,11 @@ public class PageRepository extends AbstractEntityRepository<Long, Page> {
     }
 
     @Override
+    public String getIdAttributeName() {
+        return "objectId";
+    }
+
+    @Override
     public boolean isNew(final Page page) {
         return page.getObjectId() == 0;
     }

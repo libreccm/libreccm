@@ -29,16 +29,22 @@ import java.util.UUID;
 
 /**
  * Repository for {@link Task}s.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 public class TaskRepository extends AbstractEntityRepository<Long, Task> {
+
     private static final long serialVersionUID = -8366096936911158514L;
 
     @Override
     public Class<Task> getEntityClass() {
         return Task.class;
+    }
+
+    @Override
+    public String getIdAttributeName() {
+        return "taskId";
     }
 
     @Override
@@ -62,7 +68,7 @@ public class TaskRepository extends AbstractEntityRepository<Long, Task> {
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<Task> findByUuid(final String uuid) {
         final TypedQuery<Task> query = getEntityManager().createNamedQuery(
-                "Task.findByUuid", Task.class);
+            "Task.findByUuid", Task.class);
         query.setParameter("uuid", uuid);
 
         try {
@@ -71,4 +77,5 @@ public class TaskRepository extends AbstractEntityRepository<Long, Task> {
             return Optional.empty();
         }
     }
+
 }

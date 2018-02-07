@@ -27,7 +27,7 @@ import javax.enterprise.context.RequestScoped;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class PhaseRepository extends AbstractEntityRepository<Long, Phase>{
+public class PhaseRepository extends AbstractEntityRepository<Long, Phase> {
 
     private static final long serialVersionUID = 1010039772043186415L;
 
@@ -37,8 +37,13 @@ public class PhaseRepository extends AbstractEntityRepository<Long, Phase>{
     }
 
     @Override
+    public String getIdAttributeName() {
+        return "phaseId";
+    }
+
+    @Override
     public boolean isNew(final Phase phase) {
         return phase.getPhaseId() == 0;
     }
-    
+
 }
