@@ -28,6 +28,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -123,12 +124,12 @@ public abstract class AbstractEntityRepository<K, E> implements Serializable {
      *         repository.
      */
     public abstract Class<E> getEntityClass();
-    
+
     /**
      * Used by some methods to create queries using the JPA Criteria API.
-     * 
-     * @return The name of the ID attribute/property for entities managed by
-     * a repository.
+     *
+     * @return The name of the ID attribute/property for entities managed by a
+     *         repository.
      */
     public abstract String getIdAttributeName();
 
@@ -174,6 +175,32 @@ public abstract class AbstractEntityRepository<K, E> implements Serializable {
         return Optional.ofNullable(entityManager.find(getEntityClass(),
                                                       entityId,
                                                       hints));
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public Optional<E> findById(final K entityId,
+                                final String... fetchJoins) {
+
+        Objects.requireNonNull(entityId);
+
+        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<E> criteriaQuery = builder
+            .createQuery(getEntityClass());
+        final Root<E> from = criteriaQuery.from(getEntityClass());
+        criteriaQuery.from(getEntityClass());
+        for (final String fetchJoin : fetchJoins) {
+            from.fetch(fetchJoin);
+        }
+
+        criteriaQuery
+            .where(builder.equal(from.get(getIdAttributeName()), entityId));
+
+        final TypedQuery<E> query = entityManager.createQuery(criteriaQuery);
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
     }
 
     /**
