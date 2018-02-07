@@ -36,6 +36,11 @@ public class PhaseDefinititionRepository
     }
 
     @Override
+    public String getIdAttributeName() {
+        return "definitionId";
+    }
+    
+    @Override
     public boolean isNew(final PhaseDefinition phaseDefinition) {
         return phaseDefinition.getDefinitionId() == 0;
     }

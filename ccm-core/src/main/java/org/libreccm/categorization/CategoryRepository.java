@@ -65,6 +65,11 @@ public class CategoryRepository extends AbstractEntityRepository<Long, Category>
     public Class<Category> getEntityClass() {
         return Category.class;
     }
+    
+    @Override
+    public String getIdAttributeName() {
+        return "objectId";
+    }
 
     @Override
     public boolean isNew(final Category entity) {

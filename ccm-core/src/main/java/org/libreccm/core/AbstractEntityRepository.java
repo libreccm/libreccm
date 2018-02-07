@@ -123,6 +123,14 @@ public abstract class AbstractEntityRepository<K, E> implements Serializable {
      *         repository.
      */
     public abstract Class<E> getEntityClass();
+    
+    /**
+     * Used by some methods to create queries using the JPA Criteria API.
+     * 
+     * @return The name of the ID attribute/property for entities managed by
+     * a repository.
+     */
+    public abstract String getIdAttributeName();
 
     /**
      * Finds an entity by it ID.

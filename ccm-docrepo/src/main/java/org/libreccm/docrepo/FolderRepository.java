@@ -35,26 +35,32 @@ public class FolderRepository extends AbstractResourceRepository<Folder> {
     }
 
     @Override
+    public String getIdAttributeName() {
+        return "objectId";
+    }
+
+    @Override
     public TypedQuery<Folder> getFindByNameQuery() {
         return entityManager.createNamedQuery(
-                "DocRepo.findFolderByName", Folder.class);
+            "DocRepo.findFolderByName", Folder.class);
     }
 
     @Override
     public TypedQuery<Folder> getFindByPathNameQuery() {
         return entityManager.createNamedQuery(
-                "DocRepo.findFolderByPath", Folder.class);
+            "DocRepo.findFolderByPath", Folder.class);
     }
 
     @Override
     public TypedQuery<Folder> getFindForCreatorQuery() {
         return entityManager.createNamedQuery(
-                "DocRepo.findCreatedFolderFromUser", Folder.class);
+            "DocRepo.findCreatedFolderFromUser", Folder.class);
     }
 
     @Override
     public TypedQuery<Folder> getFindForModifierQuery() {
         return entityManager.createNamedQuery(
-                "DocRepo.findModifiedFolderFromUser", Folder.class);
+            "DocRepo.findModifiedFolderFromUser", Folder.class);
     }
+
 }

@@ -43,6 +43,11 @@ public class PartyRepository extends AbstractEntityRepository<Long, Party> {
     }
 
     @Override
+    public String getIdAttributeName() {
+        return "partyId";
+    }
+
+    @Override
     public boolean isNew(final Party entity) {
         if (entity == null) {
             throw new IllegalArgumentException("Can't save null");

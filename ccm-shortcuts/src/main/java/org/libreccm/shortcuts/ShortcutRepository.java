@@ -34,7 +34,7 @@ import javax.transaction.Transactional;
 
 /**
  * Repository class for {@link Shortcut} entities.
- * 
+ *
  * @author <a href="konerman@tzi.de">Alexander Konermann</a>
  */
 @RequestScoped
@@ -46,6 +46,11 @@ public class ShortcutRepository extends AbstractEntityRepository<Long, Shortcut>
     @Override
     public Class<Shortcut> getEntityClass() {
         return Shortcut.class;
+    }
+
+    @Override
+    public String getIdAttributeName() {
+        return "shortcutId";
     }
 
     @Override

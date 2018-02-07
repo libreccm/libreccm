@@ -34,11 +34,10 @@ import java.util.stream.Collectors;
  * Repository class for retrieving, storing and deleting {@code Repository}s.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
- * @version 25/11/2015
  */
 @RequestScoped
-public class RepositoryRepository extends
-    AbstractAuditedEntityRepository<Long, Repository> {
+public class RepositoryRepository
+    extends AbstractAuditedEntityRepository<Long, Repository> {
 
     @Inject
     private EntityManager entityManager;
@@ -46,6 +45,11 @@ public class RepositoryRepository extends
     @Override
     public Long getEntityId(Repository entity) {
         return entity.getObjectId();
+    }
+
+    @Override
+    public String getIdAttributeName() {
+        return "objectId";
     }
 
     @Override

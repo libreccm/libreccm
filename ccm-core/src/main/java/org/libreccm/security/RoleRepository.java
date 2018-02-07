@@ -45,6 +45,11 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
     }
 
     @Override
+    public String getIdAttributeName() {
+        return "roleId";
+    }
+
+    @Override
     public boolean isNew(final Role entity) {
         if (entity == null) {
             throw new IllegalArgumentException("Can't save null.");

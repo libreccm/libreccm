@@ -27,16 +27,22 @@ import java.util.Optional;
 
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers<\a>
- * @version created the 9/27/17
+ * 
  */
 @RequestScoped
-public class TaskCommentRepository extends AbstractEntityRepository<Long,
-        TaskComment> {
+public class TaskCommentRepository
+    extends AbstractEntityRepository<Long, TaskComment> {
+
     private static final long serialVersionUID = -420902242220205847L;
 
     @Override
     public Class<TaskComment> getEntityClass() {
         return TaskComment.class;
+    }
+
+    @Override
+    public String getIdAttributeName() {
+        return "commentId";
     }
 
     @Override
@@ -62,4 +68,5 @@ public class TaskCommentRepository extends AbstractEntityRepository<Long,
             return Optional.empty();
         }
     }
+
 }

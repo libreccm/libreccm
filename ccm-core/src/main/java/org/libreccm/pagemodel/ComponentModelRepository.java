@@ -33,13 +33,19 @@ import java.util.UUID;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class ComponentModelRepository extends AbstractEntityRepository<Long, ComponentModel> {
+public class ComponentModelRepository
+    extends AbstractEntityRepository<Long, ComponentModel> {
 
     private static final long serialVersionUID = -6358512316472857971L;
 
     @Override
     public Class<ComponentModel> getEntityClass() {
         return ComponentModel.class;
+    }
+
+    @Override
+    public String getIdAttributeName() {
+        return "componentModelId";
     }
 
     @Override
