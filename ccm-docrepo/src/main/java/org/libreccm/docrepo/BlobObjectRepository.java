@@ -18,7 +18,6 @@
  */
 package org.libreccm.docrepo;
 
-
 import org.libreccm.auditing.AbstractAuditedEntityRepository;
 
 import javax.enterprise.context.RequestScoped;
@@ -33,7 +32,7 @@ import javax.persistence.EntityManager;
  */
 @RequestScoped
 public class BlobObjectRepository extends
-        AbstractAuditedEntityRepository<Long, BlobObject> {
+    AbstractAuditedEntityRepository<Long, BlobObject> {
 
     @Inject
     private EntityManager entityManager;
@@ -41,6 +40,11 @@ public class BlobObjectRepository extends
     @Override
     public Long getEntityId(BlobObject entity) {
         return entity.getBlobObjectId();
+    }
+
+    @Override
+    public String getIdAttributeName() {
+        return "blobObjectId";
     }
 
     @Override
@@ -55,4 +59,5 @@ public class BlobObjectRepository extends
         }
         return entity.getBlobObjectId() == 0;
     }
+
 }

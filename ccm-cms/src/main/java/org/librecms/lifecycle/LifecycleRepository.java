@@ -33,6 +33,11 @@ public class LifecycleRepository extends AbstractEntityRepository<Long, Lifecycl
     public Class<Lifecycle> getEntityClass() {
         return Lifecycle.class;
     }
+    
+    @Override
+    public String getIdAttributeName() {
+        return "lifecycleId";
+    }
 
     @Override
     public boolean isNew(final Lifecycle lifecycle) {

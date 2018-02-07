@@ -35,11 +35,18 @@ import javax.transaction.Transactional;
 public class MultiPartArticleSectionRepository
     extends AbstractAuditedEntityRepository<Long, MultiPartArticleSection> {
 
+    private static final long serialVersionUID = -3392120236224057234L;
+
     @Override
     public Long getEntityId(final MultiPartArticleSection entity) {
         return entity.getSectionId();
     }
 
+    @Override
+    public String getIdAttributeName() {
+        return "sectionId";
+    }
+    
     @Override
     public Class<MultiPartArticleSection> getEntityClass() {
         return MultiPartArticleSection.class;

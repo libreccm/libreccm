@@ -115,6 +115,11 @@ public class ContentItemRepository
     public Class<ContentItem> getEntityClass() {
         return ContentItem.class;
     }
+    
+    @Override
+    public String getIdAttributeName() {
+        return "objectId";
+    }
 
     @Override
     public boolean isNew(final ContentItem item) {

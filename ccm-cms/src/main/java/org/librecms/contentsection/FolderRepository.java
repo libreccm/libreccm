@@ -43,6 +43,8 @@ import javax.transaction.Transactional;
 @RequestScoped
 public class FolderRepository extends AbstractEntityRepository<Long, Folder> {
 
+    private static final long serialVersionUID = -2588848483908283604L;
+
     private static final Logger LOGGER = LogManager.getLogger(
         FolderRepository.class);
 
@@ -52,6 +54,11 @@ public class FolderRepository extends AbstractEntityRepository<Long, Folder> {
     @Override
     public Class<Folder> getEntityClass() {
         return Folder.class;
+    }
+
+    @Override
+    public String getIdAttributeName() {
+        return "objectId";
     }
 
     @Override
@@ -200,14 +207,14 @@ public class FolderRepository extends AbstractEntityRepository<Long, Folder> {
     }
 
     public List<Folder> findSubFolders(final Folder parent) {
-        
+
         final TypedQuery<Folder> query = getEntityManager()
             .createNamedQuery("Folder.findSubFolders", Folder.class);
         query.setParameter("parent", parent);
-        
+
         return query.getResultList();
     }
-    
+
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     @Override

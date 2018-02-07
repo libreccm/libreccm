@@ -48,18 +48,23 @@ public class ApplicationRepository
     }
 
     @Override
+    public String getIdAttributeName() {
+        return "objectId";
+    }
+
+    @Override
     public boolean isNew(final CcmApplication application) {
         return application.getObjectId() == 0;
     }
 
     @Override
     public void initNewEntity(final CcmApplication application) {
-        
+
         super.initNewEntity(application);
         application.setUuid(UUID.randomUUID().toString());
         application.setApplicationType(application.getClass().getName());
     }
-    
+
     /**
      * Retrieve the application mounted at the provided {@code path}.
      *
@@ -108,8 +113,8 @@ public class ApplicationRepository
      */
     public Optional<CcmApplication> findByUuid(final String uuid) {
         final TypedQuery<CcmApplication> query = getEntityManager()
-                .createNamedQuery("CcmApplication.findByUuid",
-                                  CcmApplication.class);
+            .createNamedQuery("CcmApplication.findByUuid",
+                              CcmApplication.class);
         query.setParameter("uuid", uuid);
 
         try {
@@ -118,7 +123,7 @@ public class ApplicationRepository
             return Optional.empty();
         }
     }
-    
+
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
@@ -126,7 +131,7 @@ public class ApplicationRepository
     public void save(final CcmApplication application) {
         super.save(application);
     }
-    
+
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)

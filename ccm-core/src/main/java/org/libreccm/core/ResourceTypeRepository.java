@@ -30,18 +30,23 @@ import java.util.Optional;
  * {@link ResourceType}s from the database. This is the responsibility of the
  * application using the {@link ResourceType}.
  *
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers<\a>
- * @version created the 8/10/17
+ * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
+ * 
  */
 @RequestScoped
-public class ResourceTypeRepository extends AbstractEntityRepository<Long,
-        ResourceType> {
+public class ResourceTypeRepository
+    extends AbstractEntityRepository<Long, ResourceType> {
 
     private static final long serialVersionUID = -6313169146990554867L;
 
     @Override
     public Class<ResourceType> getEntityClass() {
         return ResourceType.class;
+    }
+
+    @Override
+    public String getIdAttributeName() {
+        return "resourceTypeId";
     }
 
     @Override
@@ -58,7 +63,7 @@ public class ResourceTypeRepository extends AbstractEntityRepository<Long,
      */
     public Optional<ResourceType> findByTitle(final String title) {
         final TypedQuery<ResourceType> query = getEntityManager()
-                .createNamedQuery("ResourceType.findByTitle", ResourceType.class);
+            .createNamedQuery("ResourceType.findByTitle", ResourceType.class);
         query.setParameter("title", title);
 
         try {
@@ -67,4 +72,5 @@ public class ResourceTypeRepository extends AbstractEntityRepository<Long,
             return Optional.empty();
         }
     }
+
 }

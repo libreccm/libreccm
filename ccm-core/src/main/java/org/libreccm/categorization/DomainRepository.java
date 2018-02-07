@@ -52,6 +52,11 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
     }
 
     @Override
+    public String getIdAttributeName() {
+        return "objectId";
+    }
+
+    @Override
     public boolean isNew(final Domain entity) {
         return entity.getObjectId() == 0;
     }
@@ -79,11 +84,11 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
      */
     public Optional<Domain> findByDomainKey(final String domainKey) {
         final TypedQuery<Domain> query = getEntityManager()
-                .createNamedQuery("Domain.findByKey", Domain.class);
+            .createNamedQuery("Domain.findByKey", Domain.class);
         query.setParameter("key", domainKey);
 
         final EntityGraph<?> graph = getEntityManager()
-                .getEntityGraph(    "Domain.allCategories");
+            .getEntityGraph("Domain.allCategories");
         query.setHint("javax.persistence.fetchgraph", graph);
 
         try {
@@ -103,7 +108,7 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
      */
     public Domain findByUri(final URI uri) {
         final TypedQuery<Domain> query = getEntityManager()
-                .createNamedQuery("Domain.findByUri", Domain.class);
+            .createNamedQuery("Domain.findByUri", Domain.class);
         query.setParameter("uri", uri);
 
         return query.getSingleResult();
@@ -118,7 +123,7 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
      */
     public Optional<Domain> findByUuid(final String uuid) {
         final TypedQuery<Domain> query = getEntityManager()
-                .createNamedQuery("Domain.findByUuid", Domain.class);
+            .createNamedQuery("Domain.findByUuid", Domain.class);
         query.setParameter("uuid", uuid);
 
         try {
@@ -130,10 +135,10 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
 
     public List<Domain> search(final String term) {
         final TypedQuery<Domain> query = getEntityManager()
-                .createNamedQuery("Domain.search", Domain.class);
+            .createNamedQuery("Domain.search", Domain.class);
         query.setParameter("term", term);
         final EntityGraph<?> graph = getEntityManager()
-                .getEntityGraph("Domain.withOwners");
+            .getEntityGraph("Domain.withOwners");
         query.setHint("javax.persistence.fetchgraph", graph);
 
         return query.getResultList();

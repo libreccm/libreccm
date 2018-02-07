@@ -32,9 +32,8 @@ import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlElement;
+
 import java.io.Serializable;
-import java.sql.Blob;
 import java.util.Arrays;
 import java.util.Objects;
 

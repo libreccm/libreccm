@@ -33,13 +33,18 @@ import java.util.Optional;
  */
 @RequestScoped
 public class PermissionRepository
-        extends AbstractEntityRepository<Long, Permission> {
+    extends AbstractEntityRepository<Long, Permission> {
 
     private static final long serialVersionUID = -4240674229117593486L;
 
     @Override
     public Class<Permission> getEntityClass() {
         return Permission.class;
+    }
+
+    @Override
+    public String getIdAttributeName() {
+        return "permissionId";
     }
 
     @Override
@@ -51,25 +56,27 @@ public class PermissionRepository
     }
 
     /**
-     * Finds a {@link Permission} by the privilege, the grantee and the
-     * object. Where the grantee has been granted the given privilege on the
-     * given object.
+     * Finds a {@link Permission} by the privilege, the grantee and the object.
+     * Where the grantee has been granted the given privilege on the given
+     * object.
      *
      * @param privilege The privilege, beeing granted
-     * @param grantee The grantee, having the privilege
-     * @param object The object, the privilege has been granted on
+     * @param grantee   The grantee, having the privilege
+     * @param object    The object, the privilege has been granted on
      *
      * @return An optional either with the found item or empty
      */
     public Optional<Permission> findByCustomPermId(final String privilege,
                                                    final Role grantee,
                                                    final Object object) {
-        final TypedQuery<Permission> query = getEntityManager().createNamedQuery(
+        final TypedQuery<Permission> query = getEntityManager()
+            .createNamedQuery(
                 "Permission.findByCustomPermId", Permission.class);
         query.setParameter("privilege", privilege);
         query.setParameter("grantee", grantee);
-        if (object != null)
+        if (object != null) {
             query.setParameter("object", object);
+        }
 
         try {
             return Optional.of(query.getSingleResult());
@@ -77,4 +84,5 @@ public class PermissionRepository
             return Optional.empty();
         }
     }
+
 }

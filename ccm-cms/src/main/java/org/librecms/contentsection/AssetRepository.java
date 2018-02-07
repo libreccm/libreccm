@@ -60,6 +60,8 @@ import javax.transaction.Transactional;
 public class AssetRepository
     extends AbstractAuditedEntityRepository<Long, Asset> {
 
+    private static final long serialVersionUID = 7190032071018013125L;
+
     private static final Logger LOGGER = LogManager
         .getLogger(AssetRepository.class);
 
@@ -95,6 +97,11 @@ public class AssetRepository
     @Override
     public Class<Asset> getEntityClass() {
         return Asset.class;
+    }
+
+    @Override
+    public String getIdAttributeName() {
+        return "objectId";
     }
 
     @Override
@@ -200,7 +207,8 @@ public class AssetRepository
 
             final List<Permission> permissions = asset.getPermissions();
             for (final Permission permission : permissions) {
-                permissionManager.revokePrivilege(permission.getGrantedPrivilege(), 
+                permissionManager.revokePrivilege(permission
+                    .getGrantedPrivilege(),
                                                   permission.getGrantee(),
                                                   asset);
             }

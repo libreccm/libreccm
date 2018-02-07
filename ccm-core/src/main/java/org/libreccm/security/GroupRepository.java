@@ -41,6 +41,11 @@ public class GroupRepository extends AbstractEntityRepository<Long, Group> {
     public Class<Group> getEntityClass() {
         return Group.class;
     }
+    
+    @Override
+    public String getIdAttributeName() {
+        return "partyId";
+    }
 
     @Override
     public boolean isNew(final Group entity) {

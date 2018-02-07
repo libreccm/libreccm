@@ -36,13 +36,19 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class AssignableTaskRepository extends AbstractEntityRepository<Long,
-        AssignableTask> {
+public class AssignableTaskRepository
+    extends AbstractEntityRepository<Long, AssignableTask> {
+
     private static final long serialVersionUID = 2657793145163510103L;
 
     @Override
     public Class<AssignableTask> getEntityClass() {
         return AssignableTask.class;
+    }
+
+    @Override
+    public String getIdAttributeName() {
+        return "taskId";
     }
 
     @Override
