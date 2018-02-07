@@ -54,10 +54,15 @@ public class ContentTypeRepository
     public Class<ContentType> getEntityClass() {
         return ContentType.class;
     }
-    
+
     @Override
     public String getIdAttributeName() {
         return "objectId";
+    }
+
+    @Override
+    public Long getIdOfEntity(final ContentType entity) {
+        return entity.getObjectId();
     }
 
     @Override

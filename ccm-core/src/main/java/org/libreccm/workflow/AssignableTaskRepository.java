@@ -50,6 +50,11 @@ public class AssignableTaskRepository
     public String getIdAttributeName() {
         return "taskId";
     }
+    
+    @Override
+    public Long getIdOfEntity(final AssignableTask entity) {
+        return entity.getTaskId();
+    }
 
     @Override
     public boolean isNew(final AssignableTask task) {

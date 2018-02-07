@@ -44,6 +44,11 @@ public class TaskCommentRepository
     public String getIdAttributeName() {
         return "commentId";
     }
+    
+    @Override
+    public Long getIdOfEntity(final TaskComment entity) {
+        return entity.getCommentId();
+    }
 
     @Override
     public boolean isNew(TaskComment entity) {

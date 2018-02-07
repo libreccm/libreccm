@@ -27,16 +27,22 @@ import javax.enterprise.context.RequestScoped;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class LifecycleRepository extends AbstractEntityRepository<Long, Lifecycle> {
+public class LifecycleRepository
+    extends AbstractEntityRepository<Long, Lifecycle> {
 
     @Override
     public Class<Lifecycle> getEntityClass() {
         return Lifecycle.class;
     }
-    
+
     @Override
     public String getIdAttributeName() {
         return "lifecycleId";
+    }
+
+    @Override
+    public Long getIdOfEntity(final Lifecycle entity) {
+        return entity.getLifecycleId();
     }
 
     @Override
@@ -44,6 +50,4 @@ public class LifecycleRepository extends AbstractEntityRepository<Long, Lifecycl
         return lifecycle.getLifecycleId() == 0;
     }
 
-    
-    
 }

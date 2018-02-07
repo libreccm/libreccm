@@ -115,10 +115,15 @@ public class ContentItemRepository
     public Class<ContentItem> getEntityClass() {
         return ContentItem.class;
     }
-    
+
     @Override
     public String getIdAttributeName() {
         return "objectId";
+    }
+
+    @Override
+    public Long getIdOfEntity(final ContentItem entity) {
+        return entity.getObjectId();
     }
 
     @Override

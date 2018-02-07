@@ -101,4 +101,9 @@ public class PageRepository extends AbstractEntityRepository<Long, Page> {
         return page.getObjectId() == 0;
     }
 
+    @Override
+    public Long getIdOfEntity(final Page entity) {
+        return entity.getObjectId();
+    }
+
 }

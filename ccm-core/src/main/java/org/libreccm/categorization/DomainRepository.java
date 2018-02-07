@@ -55,6 +55,11 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
     public String getIdAttributeName() {
         return "objectId";
     }
+    
+    @Override
+    public Long getIdOfEntity(final Domain entity) {
+        return entity.getObjectId();
+    }
 
     @Override
     public boolean isNew(final Domain entity) {

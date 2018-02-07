@@ -41,10 +41,15 @@ public class GroupRepository extends AbstractEntityRepository<Long, Group> {
     public Class<Group> getEntityClass() {
         return Group.class;
     }
-    
+
     @Override
     public String getIdAttributeName() {
         return "partyId";
+    }
+
+    @Override
+    public Long getIdOfEntity(final Group entity) {
+        return entity.getPartyId();
     }
 
     @Override

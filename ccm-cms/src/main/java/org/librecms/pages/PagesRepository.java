@@ -88,6 +88,11 @@ public class PagesRepository extends AbstractEntityRepository<Long, Pages> {
     }
 
     @Override
+    public Long getIdOfEntity(final Pages entity) {
+        return entity.getObjectId();
+    }
+
+    @Override
     public boolean isNew(final Pages pages) {
         return pages.getObjectId() == 0;
     }

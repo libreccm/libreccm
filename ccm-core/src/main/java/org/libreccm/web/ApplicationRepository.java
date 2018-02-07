@@ -51,6 +51,11 @@ public class ApplicationRepository
     public String getIdAttributeName() {
         return "objectId";
     }
+    
+    @Override
+    public Long getIdOfEntity(final CcmApplication entity) {
+        return entity.getObjectId();
+    }
 
     @Override
     public boolean isNew(final CcmApplication application) {

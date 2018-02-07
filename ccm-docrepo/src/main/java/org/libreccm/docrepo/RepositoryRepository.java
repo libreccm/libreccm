@@ -48,6 +48,11 @@ public class RepositoryRepository
     }
 
     @Override
+    public Long getIdOfEntity(final Repository entity) {
+        return entity.getObjectId();
+    }
+
+    @Override
     public String getIdAttributeName() {
         return "objectId";
     }
