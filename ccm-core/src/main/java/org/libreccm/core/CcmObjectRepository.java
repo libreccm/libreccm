@@ -55,6 +55,11 @@ public class CcmObjectRepository extends AbstractEntityRepository<Long, CcmObjec
     public String getIdAttributeName() {
         return "objectId";
     }
+    
+    @Override
+    public Long getIdOfEntity(final CcmObject entity) {
+        return entity.getObjectId();
+    }
 
     @Override
     public boolean isNew(final CcmObject entity) {

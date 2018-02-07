@@ -40,6 +40,11 @@ public class FileRepository extends AbstractResourceRepository<File> {
     }
 
     @Override
+    public Long getIdOfEntity(final File entity) {
+        return entity.getObjectId();
+    }
+
+    @Override
     public TypedQuery<File> getFindByNameQuery() {
         return entityManager.createNamedQuery(
             "DocRepo.findFileByName", File.class);

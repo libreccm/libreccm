@@ -47,6 +47,11 @@ public class ComponentModelRepository
     public String getIdAttributeName() {
         return "componentModelId";
     }
+    
+    @Override
+    public Long getIdOfEntity(final ComponentModel entity) {
+        return entity.getComponentModelId();
+    }
 
     @Override
     public boolean isNew(final ComponentModel componentModel) {

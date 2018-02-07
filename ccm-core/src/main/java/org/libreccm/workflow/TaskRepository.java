@@ -46,6 +46,11 @@ public class TaskRepository extends AbstractEntityRepository<Long, Task> {
     public String getIdAttributeName() {
         return "taskId";
     }
+    
+    @Override
+    public Long getIdOfEntity(final Task entity) {
+        return entity.getTaskId();
+    }
 
     @Override
     public boolean isNew(final Task task) {

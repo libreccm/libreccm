@@ -48,6 +48,11 @@ public class PermissionRepository
     }
 
     @Override
+    public Long getIdOfEntity(final Permission entity) {
+        return entity.getPermissionId();
+    }
+
+    @Override
     public boolean isNew(Permission entity) {
         if (entity == null) {
             throw new IllegalArgumentException("Can't save null");

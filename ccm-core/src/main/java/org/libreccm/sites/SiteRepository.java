@@ -127,6 +127,11 @@ public class SiteRepository extends AbstractEntityRepository<Long, Site> {
     public String getIdAttributeName() {
         return "objectId";
     }
+    
+    @Override
+    public Long getIdOfEntity(final Site entity) {
+        return entity.getObjectId();
+    }
 
     @Override
     public boolean isNew(final Site site) {

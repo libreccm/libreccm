@@ -54,7 +54,7 @@ public class ContentSectionRepository
 
         try {
             return Optional.of(query.getSingleResult());
-        } catch(NoResultException ex) {
+        } catch (NoResultException ex) {
             return Optional.empty();
         }
     }
@@ -63,10 +63,15 @@ public class ContentSectionRepository
     public Class<ContentSection> getEntityClass() {
         return ContentSection.class;
     }
-    
+
     @Override
     public String getIdAttributeName() {
         return "objectId";
+    }
+
+    @Override
+    public Long getIdOfEntity(final ContentSection entity) {
+        return entity.getObjectId();
     }
 
     @Override

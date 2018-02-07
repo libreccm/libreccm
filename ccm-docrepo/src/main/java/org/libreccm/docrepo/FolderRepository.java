@@ -38,6 +38,11 @@ public class FolderRepository extends AbstractResourceRepository<Folder> {
     public String getIdAttributeName() {
         return "objectId";
     }
+    
+    @Override
+    public Long getIdOfEntity(final Folder entity) {
+        return entity.getObjectId();
+    }
 
     @Override
     public TypedQuery<Folder> getFindByNameQuery() {

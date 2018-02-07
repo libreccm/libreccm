@@ -48,6 +48,11 @@ public class ResourceTypeRepository
     public String getIdAttributeName() {
         return "resourceTypeId";
     }
+    
+    @Override
+    public Long getIdOfEntity(final ResourceType entity) {
+        return entity.getResourceTypeId();
+    }
 
     @Override
     public boolean isNew(final ResourceType entity) {
