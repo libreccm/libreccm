@@ -27,7 +27,7 @@ import javax.enterprise.context.RequestScoped;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class PhaseDefinititionRepository 
+public class PhaseDefinititionRepository
     extends AbstractEntityRepository<Long, PhaseDefinition> {
 
     @Override
@@ -39,12 +39,15 @@ public class PhaseDefinititionRepository
     public String getIdAttributeName() {
         return "definitionId";
     }
-    
+
+    @Override
+    public Long getIdOfEntity(final PhaseDefinition entity) {
+        return entity.getDefinitionId();
+    }
+
     @Override
     public boolean isNew(final PhaseDefinition phaseDefinition) {
         return phaseDefinition.getDefinitionId() == 0;
     }
-    
-    
 
 }

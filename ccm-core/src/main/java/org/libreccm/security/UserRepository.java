@@ -47,6 +47,11 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
     public String getIdAttributeName() {
         return "partyId";
     }
+    
+    @Override
+    public Long getIdOfEntity(final User entity) {
+        return entity.getPartyId();
+    }
 
     @Override
     public boolean isNew(final User user) {

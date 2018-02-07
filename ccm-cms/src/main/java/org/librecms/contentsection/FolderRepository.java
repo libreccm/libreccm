@@ -62,6 +62,11 @@ public class FolderRepository extends AbstractEntityRepository<Long, Folder> {
     }
 
     @Override
+    public Long getIdOfEntity(final Folder entity) {
+        return entity.getObjectId();
+    }
+
+    @Override
     public boolean isNew(final Folder folder) {
         return folder.getObjectId() == 0;
     }

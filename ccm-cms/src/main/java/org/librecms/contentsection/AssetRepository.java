@@ -105,6 +105,11 @@ public class AssetRepository
     }
 
     @Override
+    public Long getIdOfEntity(final Asset entity) {
+        return entity.getObjectId();
+    }
+
+    @Override
     public boolean isNew(final Asset asset) {
         return asset.getObjectId() == 0;
     }

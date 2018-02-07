@@ -54,6 +54,11 @@ public class PageModelRepository extends AbstractEntityRepository<Long, PageMode
     }
 
     @Override
+    public Long getIdOfEntity(final PageModel entity) {
+        return entity.getPageModelId();
+    }
+    
+    @Override
     public boolean isNew(final PageModel pageModel) {
 
         Objects.requireNonNull(pageModel);

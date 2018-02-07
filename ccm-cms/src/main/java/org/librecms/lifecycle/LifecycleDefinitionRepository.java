@@ -43,6 +43,11 @@ public class LifecycleDefinitionRepository
     }
 
     @Override
+    public Long getIdOfEntity(final LifecycleDefinition entity) {
+        return entity.getDefinitionId();
+    }
+
+    @Override
     public boolean isNew(final LifecycleDefinition lifecycleDefinition) {
         return lifecycleDefinition.getDefinitionId() == 0;
     }

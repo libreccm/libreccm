@@ -48,6 +48,11 @@ public class WorkflowRepository extends AbstractEntityRepository<Long, Workflow>
     }
 
     @Override
+    public Long getIdOfEntity(final Workflow entity) {
+        return entity.getWorkflowId();
+    }
+    
+    @Override
     public boolean isNew(final Workflow workflow) {
         return workflow.getWorkflowId() == 0;
     }

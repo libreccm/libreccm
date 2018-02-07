@@ -34,6 +34,8 @@ import javax.persistence.EntityManager;
 public class BlobObjectRepository extends
     AbstractAuditedEntityRepository<Long, BlobObject> {
 
+    private static final long serialVersionUID = 35679591875538616L;
+
     @Inject
     private EntityManager entityManager;
 
@@ -45,6 +47,11 @@ public class BlobObjectRepository extends
     @Override
     public String getIdAttributeName() {
         return "blobObjectId";
+    }
+
+    @Override
+    public Long getIdOfEntity(final BlobObject entity) {
+        return entity.getBlobObjectId();
     }
 
     @Override

@@ -134,6 +134,14 @@ public abstract class AbstractEntityRepository<K, E> implements Serializable {
     public abstract String getIdAttributeName();
 
     /**
+     * Get the primary key/id of a entity.
+     * 
+     * @param entity The entity
+     * @return The ID of the provided {@code entity}.
+     */
+    public abstract K getIdOfEntity(E entity);
+    
+    /**
      * Finds an entity by it ID.
      *
      * @param entityId The ID of the entity to retrieve.
@@ -214,6 +222,16 @@ public abstract class AbstractEntityRepository<K, E> implements Serializable {
         } catch (NoResultException ex) {
             return Optional.empty();
         }
+    }
+    
+    @Transactional(Transactional.TxType.REQUIRED)
+    public E reload(final E entity, final String... fetchJoins) {
+        
+        return findById(getIdOfEntity(entity), fetchJoins)
+            .orElseThrow(() -> new IllegalArgumentException(String
+                .format("No Entity of type \"%s\" with ID %s in the database.",
+                        getEntityClass().getName(),
+                        Objects.toString(getIdOfEntity(entity)))));
     }
 
     /**

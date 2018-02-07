@@ -54,6 +54,11 @@ public class ShortcutRepository extends AbstractEntityRepository<Long, Shortcut>
     }
 
     @Override
+    public Long getIdOfEntity(final Shortcut entity) {
+        return entity.getShortcutId();
+    }
+
+    @Override
     public boolean isNew(final Shortcut entity) {
         return entity.getShortcutId() == 0;
     }

@@ -46,7 +46,12 @@ public class MultiPartArticleSectionRepository
     public String getIdAttributeName() {
         return "sectionId";
     }
-    
+
+    @Override
+    public Long getIdOfEntity(final MultiPartArticleSection entity) {
+        return entity.getSectionId();
+    }
+
     @Override
     public Class<MultiPartArticleSection> getEntityClass() {
         return MultiPartArticleSection.class;
@@ -78,10 +83,10 @@ public class MultiPartArticleSectionRepository
         final MultiPartArticleSection section) {
 
         final TypedQuery<MultiPartArticle> query = getEntityManager()
-        .createNamedQuery("MultiPartArticleSection.findArticleOfSection", 
-                          MultiPartArticle.class);
+            .createNamedQuery("MultiPartArticleSection.findArticleOfSection",
+                              MultiPartArticle.class);
         query.setParameter("section", section);
-        
+
         return query.getSingleResult();
     }
 

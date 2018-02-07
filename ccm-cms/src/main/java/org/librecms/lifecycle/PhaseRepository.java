@@ -42,6 +42,11 @@ public class PhaseRepository extends AbstractEntityRepository<Long, Phase> {
     }
 
     @Override
+    public Long getIdOfEntity(final Phase entity) {
+        return entity.getPhaseId();
+    }
+
+    @Override
     public boolean isNew(final Phase phase) {
         return phase.getPhaseId() == 0;
     }
