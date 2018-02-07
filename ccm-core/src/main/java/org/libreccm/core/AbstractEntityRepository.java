@@ -177,6 +177,19 @@ public abstract class AbstractEntityRepository<K, E> implements Serializable {
                                                       hints));
     }
 
+    /**
+     * Finds an entity by its ID and does fetch joins for the provided
+     * attributes. Be careful with this method. Do not a too many attributes to
+     * the fetch joins, only does which you really need. Otherwise there can be
+     * a serious performance impact.
+     *
+     * @param entityId   The ID of the entity to retrieve.
+     * @param fetchJoins The names of the attributes to join using fetch joins.
+     *
+     * @return An {@link Optional} containing the entity identified by the
+     *         provided {@code entityId} or an empty {@link Optional} if there
+     *         is no such entity.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<E> findById(final K entityId,
                                 final String... fetchJoins) {
