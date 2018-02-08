@@ -52,6 +52,8 @@
                         </xsl:for-each>
                     </div>
                     <!--<xsl:apply-templates select="greetingItem" />-->
+                    
+                    <xsl:call-template name="themeFunctionsExamples" />
                 </main>
                 <xsl:call-template name="footer" />
                 <!--<footer>
@@ -81,6 +83,9 @@
         </p>
         <xsl:value-of disable-output-escaping="true" select="./text" />
         
+    </xsl:template>
+    
+    <xsl:template name="themeFunctionsExamples">
         <h2>Example of Theme Utils</h2>
         <dl>
             <dt>
@@ -107,8 +112,31 @@
                     <xsl:value-of select="ccm:truncateText('0123456789 123456789 123456789', 20)" />
                 </code>
             </dd>
+            <dt>
+                <code>localized('label.critical')</code>
+            </dt>
+            <dd>
+                <xsl:value-of select="ccm:localize('label.critical', 'texts/labels')" />
+            </dd>
+            <dt>
+                <code>localized('label.error')</code>
+            </dt>
+            <dd>
+                <xsl:value-of select="ccm:localize('label.error', 'texts/labels')" />
+            </dd>
+            <dt>
+                <code>localized('label.ok')</code>
+            </dt>
+            <dd>
+                <xsl:value-of select="ccm:localize('label.ok', 'texts/labels')" />
+            </dd>
+            <dt>
+                <code>localized('label.warning')</code>
+            </dt>
+            <dd>
+                <xsl:value-of select="ccm:localize('label.warning', 'texts/labels')" />
+            </dd>
         </dl>
-        
     </xsl:template>
 
 </xsl:stylesheet>
