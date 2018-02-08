@@ -137,7 +137,7 @@ public class XsltThemeProcessor implements ThemeProcessor {
         } catch (ParserConfigurationException ex) {
             throw new UnexpectedErrorException(ex);
         }
-
+        
         final Document document;
         try {
             final InputStream xmlBytesStream = new ByteArrayInputStream(
@@ -201,6 +201,9 @@ public class XsltThemeProcessor implements ThemeProcessor {
         final TransformerFactory transformerFactory = TransformerFactory
             .newInstance(TransformerFactoryImpl.class.getName(),
                          getClass().getClassLoader());
+        transformerFactory.setURIResolver(new CcmUriResolver(theme.getName(),
+                                                             theme.getVersion(),
+                                                             themeProvider));
         final TransformerFactoryImpl transformerFactoryImpl
                                          = (TransformerFactoryImpl) transformerFactory;
         final Configuration configuration = transformerFactoryImpl
@@ -215,9 +218,9 @@ public class XsltThemeProcessor implements ThemeProcessor {
         final Transformer transformer;
         try {
             transformer = transformerFactory.newTransformer(xslFileStreamSource);
-            transformer.setURIResolver(new CcmUriResolver(theme.getName(),
-                                                          theme.getVersion(),
-                                                          themeProvider));
+//            transformer.setURIResolver(new CcmUriResolver(theme.getName(),
+//                                                          theme.getVersion(),
+//                                                          themeProvider));
             transformer.setErrorListener(new ErrorListener() {
 
                 @Override
