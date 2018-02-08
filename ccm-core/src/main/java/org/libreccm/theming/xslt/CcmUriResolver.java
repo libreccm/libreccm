@@ -18,12 +18,13 @@
  */
 package org.libreccm.theming.xslt;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.theming.ThemeProvider;
 import org.libreccm.theming.ThemeVersion;
 
 import java.io.InputStream;
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
@@ -36,6 +37,9 @@ import javax.xml.transform.stream.StreamSource;
  */
 class CcmUriResolver implements URIResolver {
 
+    private static final Logger LOGGER = LogManager
+        .getLogger(CcmUriResolver.class);
+    
     private final String theme;
     private final ThemeVersion version;
     private final ThemeProvider themeProvider;
@@ -48,6 +52,13 @@ class CcmUriResolver implements URIResolver {
         Objects.requireNonNull(version);
         Objects.requireNonNull(themeProvider);
         
+        LOGGER.debug("Creating new instance of {} with these parameters:",
+                     getClass().getName());
+        LOGGER.debug("\ttheme = {}", theme);
+        LOGGER.debug("\tversion = {}", Objects.toString(version));
+        LOGGER.debug("\tthemeProvider = {}", 
+                     themeProvider.getClass().getName());
+        
         this.theme = theme;
         this.version = version;
         this.themeProvider = themeProvider;
@@ -57,12 +68,17 @@ class CcmUriResolver implements URIResolver {
     public Source resolve(final String href,
                           final String base) throws TransformerException {
         
+        LOGGER.debug("Resolving href = \"{}\" using base = \"{}\"...",
+                     href,
+                     base);
+        
         final String path;
         if (base == null) {
             path = href;
         } else {
-            path = String.join("/", href, base);
+            path = String.join("/", base, href);
         }
+        LOGGER.debug("Using path \"{}\"...", path);
         
         final InputStream inputStream = themeProvider
             .getThemeFileAsStream(theme, version, path)
@@ -76,6 +92,9 @@ class CcmUriResolver implements URIResolver {
                     version,
                     themeProvider.getClass().getName())));
         
+        LOGGER.debug("Resolved href = \"{}\" with base \"{}\" successfully.",
+                     href,
+                     path);
         return new StreamSource(inputStream);
     }
 
