@@ -4,10 +4,12 @@
                 xmlns:ccm="http://xmlns.libreccm.org"
                 exclude-result-prefixes="ccm xsl">
 
+    <xsl:import href="footer.xsl" />
+    
     <xsl:output method="html"
-                 doctype-system="about:legacy-compat"
-                 indent="yes"
-                 encoding="utf-8"/>
+                doctype-system="about:legacy-compat"
+                indent="yes"
+                encoding="utf-8"/>
     
     <xsl:template match="page">
         
@@ -51,7 +53,8 @@
                     </div>
                     <!--<xsl:apply-templates select="greetingItem" />-->
                 </main>
-                <footer>
+                <xsl:call-template name="footer" />
+                <!--<footer>
                     <ul>
                         <li>
                             <a href="/impressum">Impressum</a>
@@ -60,8 +63,7 @@
                             <a href="/privacy">Privacy</a>
                         </li>
                     </ul>
-                </footer>
-                
+                </footer>-->
             </body>
         </html>
     </xsl:template>

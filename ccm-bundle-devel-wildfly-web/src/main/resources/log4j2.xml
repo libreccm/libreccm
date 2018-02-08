@@ -80,6 +80,9 @@
         <Logger name="org.libreccm.security.Shiro"
                 level="debug">
         </Logger>
+        <Logger name="org.libreccm.theming.xslt.CcmUriResolver"
+                level="debug">
+        </Logger>
         <Logger name="org.libreccm.ui.admin.usersgroupsroles.RolesController"
                 level="debug">
         </Logger>
@@ -93,10 +96,10 @@
                 level="debug">
         </Logger>
         <Logger name="org.librecms.contentsection.rs.Images"
-                    level="debug">
+                level="debug">
         </Logger>
-       <Logger name="com.arsdigita.web.DefaultApplicationFileResolver"
-                    level="debug">
+        <Logger name="com.arsdigita.web.DefaultApplicationFileResolver"
+                level="debug">
         </Logger>
     </Loggers>
 </Configuration>

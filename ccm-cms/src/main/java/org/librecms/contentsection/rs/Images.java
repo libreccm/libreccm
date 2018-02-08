@@ -161,7 +161,7 @@ public class Images {
      * @return A {@link Response} containing the scaled image or an error value.
      */
     @GET
-    @Path("/{path:.+}")
+    @Path("/{path:^(?!uuid).+$}")
     public Response getImage(
         @PathParam("content-section")
         final String sectionName,
@@ -220,7 +220,7 @@ public class Images {
      *         image.
      */
     @GET
-    @Path("/{path:.*}/properties")
+    @Path("/{path:^(?!uuid).+$}/properties")
     public Response getImageProperties(
         @PathParam("content-section") final String sectionName,
         @PathParam("path") final String path) {
