@@ -53,6 +53,7 @@ import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.theming.ProcessesThemes;
 import org.libreccm.theming.Themes;
 import org.libreccm.theming.manifest.ThemeTemplate;
@@ -67,7 +68,13 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 
 import javax.inject.Inject;
 import javax.xml.transform.ErrorListener;
@@ -96,6 +103,9 @@ public class XsltThemeProcessor implements ThemeProcessor {
 
     private static final Logger LOGGER = LogManager
         .getLogger(XsltThemeProcessor.class);
+
+    @Inject
+    private GlobalizationHelper globalizationHelper;
 
     @Inject
     private SettingsUtils settingsUtils;
@@ -137,7 +147,7 @@ public class XsltThemeProcessor implements ThemeProcessor {
         } catch (ParserConfigurationException ex) {
             throw new UnexpectedErrorException(ex);
         }
-        
+
         final Document document;
         try {
             final InputStream xmlBytesStream = new ByteArrayInputStream(
@@ -213,6 +223,9 @@ public class XsltThemeProcessor implements ThemeProcessor {
         configuration
             .registerExtensionFunction(
                 new GetSettingFunctionDefinition(theme, themeProvider));
+        configuration
+            .registerExtensionFunction(
+                new LocalizeFunctionDefinition(theme, themeProvider));
         configuration
             .registerExtensionFunction(new TruncateTextFunctionDefinition());
         final Transformer transformer;
@@ -385,6 +398,173 @@ public class XsltThemeProcessor implements ThemeProcessor {
                 }
 
             };
+        }
+
+    }
+
+    /**
+     * Definition for XSL function for localising texts in the theme. Allows use
+     * of {@link ResourceBundle}s instead of a custom XML format which was used
+     * in legacy versions.
+     *
+     * The XSL function {@code ccm:localize} expects one mandatory parameter,
+     * the {@code key} of the text to localise. The optional second parameter
+     * {@code bundle} identifies the {@link ResourceBundle} to use. The
+     * {@code bundle} parameter is passed to
+     * {@link ResourceBundle#getBundle(java.lang.String)}. All bundle paths are
+     * resolved relative to the root of the theme using {@link ThemeProvider}.
+     * If the {@code bundle} parameter is omitted the function will look for
+     * {@link PropertyResourceBundle} named {@code theme-bundle.properties} in
+     * the root of the theme. Examples:
+     *
+     * {@code <xsl:value-of select="ccm:localize('footer.privacy')" />}
+     *
+     * In this case this function will load the file
+     * {@code theme-bundle.properties} from the root of the theme and use it to
+     * create an instance of {@link PropertyResourceBundle}. If this is
+     * successful the key {@code footer.privacy} is lookup in the resource
+     * bundle.
+     *
+     * {@code <xsl:value-of select="ccm:localize('footer.privacy', '/texts/footer')" />}
+     *
+     * In this case the function tries find a property file called
+     * {@code footer.properties} in the texts directory in the theme.
+     *
+     * Of course the function, or better {@link ResourceBundle} will also take
+     * into account the current locale, therefore in both examples the first
+     * file name will be {@code footer_$locale.properties} where {@code $locale}
+     * is the the locale returned by
+     * {@link GlobalizationHelper#getNegotiatedLocale()}.
+     */
+    private class LocalizeFunctionDefinition
+        extends ExtensionFunctionDefinition {
+
+        private final ThemeInfo theme;
+        private final ThemeProvider themeProvider;
+
+        public LocalizeFunctionDefinition(final ThemeInfo theme,
+                                          final ThemeProvider themeProvider) {
+            super();
+            this.theme = theme;
+            this.themeProvider = themeProvider;
+        }
+
+        @Override
+        public StructuredQName getFunctionQName() {
+            return new StructuredQName(FUNCTION_XMLNS_PREFIX,
+                                       FUNCTION_XMLNS,
+                                       "localize");
+        }
+
+        @Override
+        public SequenceType[] getArgumentTypes() {
+            return new SequenceType[]{SequenceType.SINGLE_STRING};
+        }
+
+        @Override
+        public int getMaximumNumberOfArguments() {
+            return 2;
+        }
+
+        @Override
+        public SequenceType getResultType(final SequenceType[] arguments) {
+            return SequenceType.SINGLE_STRING;
+        }
+
+        @Override
+        public ExtensionFunctionCall makeCallExpression() {
+            return new ExtensionFunctionCall() {
+
+                @Override
+                public Sequence call(final XPathContext xPathContext,
+                                     final Sequence[] arguments)
+                    throws XPathException {
+
+                    final String bundle;
+                    if (arguments.length > 1) {
+                        bundle = ((Item) arguments[1]).getStringValue();
+                    } else {
+                        bundle = "theme-bundle";
+                    }
+                    final String key = ((Item) arguments[0]).getStringValue();
+
+                    LOGGER.debug("Localizing key \"{}\" from bundle \"{}\"...",
+                                 key,
+                                 bundle);
+
+                    final ResourceBundle resourceBundle = ResourceBundle
+                        .getBundle(
+                            bundle,
+                            globalizationHelper.getNegotiatedLocale(),
+                            new LocalizedResourceBundleControl(theme,
+                                                               themeProvider));
+
+                    return StringValue
+                        .makeStringValue(resourceBundle.getString(key));
+                }
+
+            };
+        }
+
+    }
+
+    private class LocalizedResourceBundleControl
+        extends ResourceBundle.Control {
+
+        private final ThemeInfo theme;
+        private final ThemeProvider themeProvider;
+
+        public LocalizedResourceBundleControl(
+            final ThemeInfo theme,
+            final ThemeProvider themeProvider) {
+
+            this.theme = theme;
+            this.themeProvider = themeProvider;
+        }
+
+        @Override
+        public List<String> getFormats(final String baseName) {
+            Objects.requireNonNull(baseName);
+
+            return Arrays.asList("java.properties");
+        }
+
+        @Override
+        public ResourceBundle newBundle(final String baseName,
+                                        final Locale locale,
+                                        final String format,
+                                        final ClassLoader classLoader,
+                                        final boolean reload)
+            throws IllegalAccessException,
+                   InstantiationException,
+                   IOException {
+
+            if ("java.properties".equals(format)) {
+
+                final String bundleName = toBundleName(baseName, locale);
+
+                final Optional<InputStream> inputStream = themeProvider
+                    .getThemeFileAsStream(theme.getName(),
+                                          theme.getVersion(),
+                                          String.format("%s.properties",
+                                                        bundleName));
+                if (inputStream.isPresent()) {
+                    return new PropertyResourceBundle(inputStream.get());
+                } else {
+                    return super.newBundle(baseName,
+                                           locale,
+                                           format,
+                                           classLoader,
+                                           reload);
+                }
+
+            } else {
+                return super.newBundle(baseName,
+                                       locale,
+                                       format,
+                                       classLoader,
+                                       reload);
+            }
         }
 
     }
