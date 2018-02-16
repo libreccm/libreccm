@@ -57,6 +57,7 @@ import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.theming.ProcessesThemes;
 import org.libreccm.theming.Themes;
 import org.libreccm.theming.manifest.ThemeTemplate;
+import org.libreccm.theming.utils.L10NUtils;
 import org.libreccm.theming.utils.SettingsUtils;
 import org.libreccm.theming.utils.SystemInfoUtils;
 import org.libreccm.theming.utils.TextUtils;
@@ -105,7 +106,7 @@ public class XsltThemeProcessor implements ThemeProcessor {
         .getLogger(XsltThemeProcessor.class);
 
     @Inject
-    private GlobalizationHelper globalizationHelper;
+    private L10NUtils l10nUtils;
 
     @Inject
     private SettingsUtils settingsUtils;
@@ -182,15 +183,6 @@ public class XsltThemeProcessor implements ThemeProcessor {
             pathToTemplate = theme.getManifest().getDefaultTemplate();
         }
 
-//        final InputStream xslFileInputStream = themeProvider
-//            .getThemeFileAsStream(theme.getName(),
-//                                  theme.getVersion(),
-//                                  pathToTemplate)
-//            .orElseThrow(() -> new UnexpectedErrorException(String
-//            .format("Failed to open XSL file \"%s\" from theme \"%s\" for "
-//                        + "reading.",
-//                    pathToTemplate,
-//                    theme.getName())));
         final InputStream xslFileInputStream = themes
             .getFileFromTheme(theme,
                               pathToTemplate)
@@ -231,9 +223,6 @@ public class XsltThemeProcessor implements ThemeProcessor {
         final Transformer transformer;
         try {
             transformer = transformerFactory.newTransformer(xslFileStreamSource);
-//            transformer.setURIResolver(new CcmUriResolver(theme.getName(),
-//                                                          theme.getVersion(),
-//                                                          themeProvider));
             transformer.setErrorListener(new ErrorListener() {
 
                 @Override
@@ -492,79 +481,14 @@ public class XsltThemeProcessor implements ThemeProcessor {
                                  key,
                                  bundle);
 
-                    final ResourceBundle resourceBundle = ResourceBundle
-                        .getBundle(
-                            bundle,
-                            globalizationHelper.getNegotiatedLocale(),
-                            new LocalizedResourceBundleControl(theme,
-                                                               themeProvider));
-
                     return StringValue
-                        .makeStringValue(resourceBundle.getString(key));
+                        .makeStringValue(l10nUtils.getText(theme,
+                                                           themeProvider,
+                                                           bundle,
+                                                           key));
                 }
 
             };
-        }
-
-    }
-
-    private class LocalizedResourceBundleControl
-        extends ResourceBundle.Control {
-
-        private final ThemeInfo theme;
-        private final ThemeProvider themeProvider;
-
-        public LocalizedResourceBundleControl(
-            final ThemeInfo theme,
-            final ThemeProvider themeProvider) {
-
-            this.theme = theme;
-            this.themeProvider = themeProvider;
-        }
-
-        @Override
-        public List<String> getFormats(final String baseName) {
-            Objects.requireNonNull(baseName);
-
-            return Arrays.asList("java.properties");
-        }
-
-        @Override
-        public ResourceBundle newBundle(final String baseName,
-                                        final Locale locale,
-                                        final String format,
-                                        final ClassLoader classLoader,
-                                        final boolean reload)
-            throws IllegalAccessException,
-                   InstantiationException,
-                   IOException {
-
-            if ("java.properties".equals(format)) {
-
-                final String bundleName = toBundleName(baseName, locale);
-
-                final Optional<InputStream> inputStream = themeProvider
-                    .getThemeFileAsStream(theme.getName(),
-                                          theme.getVersion(),
-                                          String.format("%s.properties",
-                                                        bundleName));
-                if (inputStream.isPresent()) {
-                    return new PropertyResourceBundle(inputStream.get());
-                } else {
-                    return super.newBundle(baseName,
-                                           locale,
-                                           format,
-                                           classLoader,
-                                           reload);
-                }
-
-            } else {
-                return super.newBundle(baseName,
-                                       locale,
-                                       format,
-                                       classLoader,
-                                       reload);
-            }
         }
 
     }
