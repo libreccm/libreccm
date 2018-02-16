@@ -1,0 +1,6 @@
+{
+    "name": "ccm-freemarker",
+    "type": "freemarker",
+    
+    "default-template": "category-page.html.ftl"
+}
