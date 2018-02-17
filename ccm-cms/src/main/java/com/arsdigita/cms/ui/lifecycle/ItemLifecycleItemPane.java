@@ -62,7 +62,6 @@ import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
-import org.libreccm.workflow.WorkflowManager;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
@@ -262,7 +261,7 @@ class ItemLifecycleItemPane extends BaseItemPane {
         UnpublishLink() {
             super(new Label(gz("cms.ui.item.lifecycle.unpublish")));
 
-            addActionListener(new Listener());
+            super.addActionListener(new Listener());
         }
 
         private class Listener implements ActionListener {
@@ -297,7 +296,7 @@ class ItemLifecycleItemPane extends BaseItemPane {
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final ItemLifecycleAdminController controller = cdiUtil
             .findBean(ItemLifecycleAdminController.class);
-        
+
         controller.repulish(item);
     }
 
@@ -306,7 +305,7 @@ class ItemLifecycleItemPane extends BaseItemPane {
         RepublishLink() {
             super(new Label(gz("cms.ui.item.lifecycle.republish")));
 
-            addActionListener(new Listener());
+            super.addActionListener(new Listener());
         }
 
         private class Listener implements ActionListener {
@@ -404,12 +403,12 @@ class ItemLifecycleItemPane extends BaseItemPane {
                      */
                 } else {
                     republish(item, false, user);
-                    if (CMSConfig.getConfig().isUseStreamlinedCreation()) {
-                        throw new RedirectSignal(
-                            URL.there(state.getRequest(),
-                                      CmsConstants.CONTENT_CENTER_URL),
-                            true);
-                    }
+//                    if (CMSConfig.getConfig().isUseStreamlinedCreation()) {
+//                        throw new RedirectSignal(
+//                            URL.there(state.getRequest(),
+//                                      CmsConstants.CONTENT_CENTER_URL),
+//                            true);
+//                    }
                 }
             }
 
@@ -449,7 +448,7 @@ class ItemLifecycleItemPane extends BaseItemPane {
         RepublishAndResetLink() {
             super(new Label(gz("cms.ui.item.lifecycle.republish_and_reset")));
 
-            addActionListener(new Listener());
+            super.addActionListener(new Listener());
             // warning gets a bit annoying, and link should be descriptive
             // enough that it is not required
             // setConfirmation("This will reset all your publication dates, are
@@ -550,12 +549,12 @@ class ItemLifecycleItemPane extends BaseItemPane {
                      * jensp 2011-12-14 end
                      */
                     republish(item, true, user);
-                    if (CMSConfig.getConfig().isUseStreamlinedCreation()) {
-                        throw new RedirectSignal(
-                            URL.there(state.getRequest(),
-                                      CmsConstants.CONTENT_CENTER_URL),
-                            true);
-                    }
+//                    if (CMSConfig.getConfig().isUseStreamlinedCreation()) {
+//                        throw new RedirectSignal(
+//                            URL.there(state.getRequest(),
+//                                      CmsConstants.CONTENT_CENTER_URL),
+//                            true);
+//                    }
                 }
             }
 
@@ -644,11 +643,15 @@ class ItemLifecycleItemPane extends BaseItemPane {
 
             actionSelect.addOption(new Option(
                 REPUBLISH,
-                new Label(gz("cms.ui.item.lifecycle.republish"))));
+                new Label(new GlobalizedMessage(
+                    "cms.ui.item.lifecycle.republish",
+                    CmsConstants.CMS_BUNDLE))));
             if (!CMSConfig.getConfig().isHideResetLifecycleLink()) {
                 actionSelect.addOption(new Option(
                     REPUBLISH_AND_RESET,
-                    new Label(gz("cms.ui.item.lifecycle.republish_and_reset"))));
+                    new Label(new GlobalizedMessage(
+                        "cms.ui.item.lifecycle.republish_and_reset",
+                        CmsConstants.CMS_BUNDLE))));
             }
             actionSelect.addOption(new Option(
                 UNPUBLISH,
@@ -785,11 +788,11 @@ class ItemLifecycleItemPane extends BaseItemPane {
                 } else {
                     republish(item, false, user);
 
-                    if (CMSConfig.getConfig().isUseStreamlinedCreation()) {
-                        throw new RedirectSignal(
-                            URL.there(state.getRequest(),
-                                      CmsConstants.CONTENT_CENTER_URL), true);
-                    }
+//                    if (CMSConfig.getConfig().isUseStreamlinedCreation()) {
+//                        throw new RedirectSignal(
+//                            URL.there(state.getRequest(),
+//                                      CmsConstants.CONTENT_CENTER_URL), true);
+//                    }
                 }
             } else if (REPUBLISH_AND_RESET.equals(selected)) {
                 if (CMSConfig.getConfig().isThreadPublishing()) {
@@ -873,11 +876,11 @@ class ItemLifecycleItemPane extends BaseItemPane {
                 } else {
                     republish(item, true, user);
 
-                    if (CMSConfig.getConfig().isUseStreamlinedCreation()) {
-                        throw new RedirectSignal(
-                            URL.there(state.getRequest(),
-                                      CmsConstants.CONTENT_CENTER_URL), true);
-                    }
+//                    if (CMSConfig.getConfig().isUseStreamlinedCreation()) {
+//                        throw new RedirectSignal(
+//                            URL.there(state.getRequest(),
+//                                      CmsConstants.CONTENT_CENTER_URL), true);
+//                    }
                 }
             } else if (UNPUBLISH.equals(selected)) {
                 final ContentItemManager itemManager = cdiUtil.findBean(
