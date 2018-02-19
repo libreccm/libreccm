@@ -60,12 +60,13 @@ public class BaseQueryComponent extends QueryComponent {
 
     private Set filters;
     private Form form;
-    private StringParameter termsParameter = new StringParameter("terms");
+    private final StringParameter termsParameter = new StringParameter("terms");
 
     /**
      * Creates a new query component
      */
     public BaseQueryComponent() {
+        
         super("query");
         filters = new HashSet();
     }
@@ -91,16 +92,18 @@ public class BaseQueryComponent extends QueryComponent {
      */
     @Override
     protected String getTerms(final PageState state) {
+
         final FormData formData = form.getFormData(state);
 
-        if (formData != null) {
+        
+        if (formData == null) {
+            return null;
+        } else {
             final ParameterData data = formData.getParameter(termsParameter.
-                    getName());
-            LOGGER.debug("Search terms were: {}", (String) data.getValue());
+                getName());
+            LOGGER.debug("Search terms were: {}", data.getValue());
 
             return (String) data.getValue();
-        } else {
-            return null;
         }
     }
 
