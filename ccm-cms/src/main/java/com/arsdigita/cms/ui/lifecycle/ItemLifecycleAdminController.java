@@ -144,7 +144,8 @@ class ItemLifecycleAdminController implements Serializable {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public LifecycleDefinition getDefaultLifecycle(final ContentItem item) {
+    public Optional<LifecycleDefinition> getDefaultLifecycle(
+        final ContentItem item) {
 
         final ContentItem contentItem = itemRepo
             .findById(item.getObjectId())
@@ -156,9 +157,14 @@ class ItemLifecycleAdminController implements Serializable {
             .getContentType()
             .getDefaultLifecycle();
 
-        return lifecycleDefRepo
-            .findById(definition.getDefinitionId())
-            .get();
+        if (definition == null) {
+            return Optional.empty();
+        } else {
+            return Optional
+                .of(lifecycleDefRepo
+                    .findById(definition.getDefinitionId())
+                    .get());
+        }
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
