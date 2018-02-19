@@ -264,7 +264,7 @@ public class AuthoringKitWizard extends LayoutPanel implements Resettable {
             final String compClassName = componentClass.getName();
 
             if (panel != null) {
-                panel.setNextStepKey(step.getClass().getName());
+                panel.setNextStepKey(key);
             }
             panel = new StepComponent(compClassName);
             stepsContainer.add(panel);
