@@ -41,7 +41,6 @@ import com.arsdigita.bebop.parameters.IntegerParameter;
 import com.arsdigita.bebop.parameters.NumberInRangeValidationListener;
 import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ui.BaseForm;
-import com.arsdigita.cms.ui.ContentItemPage;
 import com.arsdigita.cms.ui.item.ContentItemRequestLocal;
 import com.arsdigita.cms.ui.item.ItemWorkflowRequestLocal;
 import com.arsdigita.cms.ui.workflow.WorkflowRequestLocal;
@@ -67,16 +66,9 @@ import org.libreccm.workflow.WorkflowRepository;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
-import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.privileges.ItemPrivileges;
-import org.librecms.lifecycle.Lifecycle;
 import org.librecms.lifecycle.LifecycleDefinition;
-import org.librecms.lifecycle.LifecycleDefinitionRepository;
-import org.librecms.lifecycle.LifecycleManager;
-import org.librecms.lifecycle.Phase;
-import org.librecms.lifecycle.PhaseDefinition;
-import org.librecms.lifecycle.PhaseRepository;
 import org.librecms.workflow.CmsTask;
 import org.librecms.workflow.CmsTaskManager;
 import org.librecms.workflow.CmsTaskType;
@@ -88,6 +80,7 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.TimeZone;
 import java.util.TooManyListenersException;
 
@@ -320,19 +313,17 @@ class ItemLifecycleSelectForm extends BaseForm {
                 // associated lifecycle.
 
                 final LifecycleDefinition definition = controller
-                .getDefinitionOfLifecycle(item);
+                    .getDefinitionOfLifecycle(item);
 //                final LifecycleDefinition definition = item
 //                    .getLifecycle()
 //                    .getDefinition();
                 cycleSelect.setValue(state, definition.getDefinitionId());
             } else {
                 // Set the default lifecycle (if it exists).
-                final LifecycleDefinition definition = controller
-                    .getDefaultLifecycle(item);
-
-                if (definition != null) {
-                    cycleSelect.setValue(state, definition.getDefinitionId());
-                }
+                controller
+                    .getDefaultLifecycle(item)
+                    .ifPresent(definition -> cycleSelect.setValue(state, 
+                                                                  definition));
             }
 
             // Set the default start date.
@@ -390,8 +381,8 @@ class ItemLifecycleSelectForm extends BaseForm {
             final ContentItem item = itemRequestLocal.getContentItem(state);
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final ItemLifecycleAdminController controller = cdiUtil
-            .findBean(ItemLifecycleAdminController.class);
-            
+                .findBean(ItemLifecycleAdminController.class);
+
             final Publisher publisher = new Publisher(state);
             if (CMSConfig.getConfig().isThreadPublishing()) {
                 final Runnable threadAction = new Runnable() {
@@ -730,10 +721,10 @@ class ItemLifecycleSelectForm extends BaseForm {
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final ItemLifecycleAdminController controller = cdiUtil
-            .findBean(ItemLifecycleAdminController.class);
-            
+                .findBean(ItemLifecycleAdminController.class);
+
             controller.publish(itemUuid, defID, endDate, workflowUuid, user);
-            
+
 //            final ContentItemRepository itemRepo = cdiUtil.findBean(
 //                ContentItemRepository.class);
 //            final ContentItemManager itemManager = cdiUtil.findBean(
