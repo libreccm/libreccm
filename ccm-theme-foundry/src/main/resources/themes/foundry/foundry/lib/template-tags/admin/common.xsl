@@ -52,11 +52,11 @@
                     <xsl:call-template name="foundry:process-datatree-attributes"/>
                     <xsl:apply-templates select="$data-tree//bebop:currentPane/bebop:form//bebop:layoutPanel/bebop:body 
                                                  | $data-tree//bebop:currentPane/bebop:form//bebop:layoutPanel/bebop:right"/>
-                    <xsl:message>
+                    <!--<xsl:message>
                         <xsl:value-of select="concat('Applying template for bebop:pageState to ', 
                                                      count($data-tree//bebop:currentPane/bebop:form//bebop:pageState), 
                                                      ' objects...')"/>
-                    </xsl:message>
+                    </xsl:message>-->
                     <xsl:apply-templates select="$data-tree//bebop:currentPane/bebop:form//bebop:pageState"/>
                 </form>
             </xsl:when>
@@ -103,11 +103,11 @@
                     <!--<xsl:attribute name="method" select="'post'"/>-->
                     <xsl:call-template name="foundry:process-datatree-attributes"/>
                     <xsl:apply-templates select="$data-tree//bebop:currentPane/bebop:form//bebop:layoutPanel/bebop:left"/>
-                     <xsl:message>
+                     <!--<xsl:message>
                         <xsl:value-of select="concat('Applying template for bebop:pageState to ', 
                                                      count($data-tree//bebop:currentPane/bebop:form//bebop:pageState), 
                                                      ' objects...')"/>
-                    </xsl:message>
+                    </xsl:message>-->
                     <xsl:apply-templates select="$data-tree//bebop:currentPane/bebop:form//bebop:pageState"/>
                 </form>
             </xsl:when>

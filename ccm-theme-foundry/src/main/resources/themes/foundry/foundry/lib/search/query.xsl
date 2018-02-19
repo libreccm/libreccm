@@ -36,7 +36,7 @@
                 xmlns:nav="http://ccm.redhat.com/navigation" 
                 xmlns:search="http://rhea.redhat.com/search/1.0"
                 exclude-result-prefixes="xsl bebop cms foundry nav search" 
-                version="1.0">
+                version="2.0">
   
     <!-- Show the search queries for the admin pages -->
     <xsl:template match="search:query">

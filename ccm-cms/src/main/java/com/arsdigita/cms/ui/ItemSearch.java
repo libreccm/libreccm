@@ -62,7 +62,7 @@ public class ItemSearch extends Form implements Resettable {
         super("itemSearch", new SimpleContainer());
         //setMethod("GET");
         itemSearchSection = createSearchSection(context, limitToContentSection);
-        add(itemSearchSection);
+        super.add(itemSearchSection);
     }
 
     protected ItemSearchSection createSearchSection(final String context,
