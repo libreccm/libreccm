@@ -123,7 +123,7 @@ public class TaskManager implements Serializable {
                      Objects.toString(blockedTask));
 
         LOGGER.debug("Checking for circular dependencies...");
-        checkForCircularDependencies(blockingTask, blockedTask);
+        checkForCircularDependencies(blockedTask, blockingTask);
 
         LOGGER.debug("Checking if dependency already exists...");
         final TypedQuery<Boolean> query = entityManager
