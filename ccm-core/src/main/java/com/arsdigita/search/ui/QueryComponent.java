@@ -22,7 +22,6 @@ import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.search.SearchConstants;
 
-import com.arsdigita.util.Assert;
 import org.apache.lucene.search.Query;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.libreccm.cdi.utils.CdiUtil;
@@ -59,16 +58,21 @@ public abstract class QueryComponent extends SimpleContainer
      */
     @Override
     public Query getQuerySpecification(final PageState state) {
+        
         final String terms = getTerms(state);
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final SearchManager searchManager = cdiUtil.
                 findBean(SearchManager.class);
         
-        final QueryBuilder queryBuilder = searchManager.createQueryBuilder(CcmObject.class);
+        final QueryBuilder queryBuilder = searchManager
+            .createQueryBuilder(CcmObject.class);
         
         return queryBuilder
-                .keyword().onFields("displayName", "summary", "description", "title")
+                .keyword().onFields("displayName", 
+                                    "summary", 
+                                    "description", 
+                                    "title")
                 .matching(terms)
                 .createQuery();
         

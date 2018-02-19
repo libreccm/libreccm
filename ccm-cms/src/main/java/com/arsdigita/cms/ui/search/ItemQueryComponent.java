@@ -47,7 +47,7 @@ public class ItemQueryComponent extends BaseQueryComponent {
                               final boolean limitToContentSection,
                               final ContentType type) {
         this.context = context;
-
+        
 //ToDo      
 //            add(new PermissionFilterComponent(
 //                    SecurityManager.CMS_PREVIEW_ITEM));
