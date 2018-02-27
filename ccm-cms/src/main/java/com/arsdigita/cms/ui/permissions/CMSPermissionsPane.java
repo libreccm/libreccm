@@ -43,7 +43,6 @@ import com.arsdigita.bebop.parameters.ArrayParameter;
 import com.arsdigita.bebop.parameters.ParameterModel;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.table.TableCellRenderer;
-import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.dispatcher.DispatcherHelper;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.ui.CcmObjectSelectionModel;
@@ -58,8 +57,6 @@ import org.libreccm.security.PermissionManager;
 import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
 import org.librecms.CmsConstants;
-import org.librecms.contentsection.ContentItem;
-import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import java.io.IOException;
@@ -266,7 +263,8 @@ public class CMSPermissionsPane extends SimpleContainer implements Resettable,
                              "cms.ui.permissions.table.role_header",
                              CmsConstants.CMS_BUNDLE)));
         headerLabels.add(new Label(new GlobalizedMessage(
-            "cms.ui.permissions.table.remove_all.header")));
+            "cms.ui.permissions.table.remove_all.header",
+            CmsConstants.CMS_BUNDLE)));
         final Table table = new Table(new CMSPermissionsTableModelBuilder(this),
                                       headerLabels.toArray());
         table.setClassAttr("dataTable");
