@@ -23,6 +23,7 @@ import com.arsdigita.kernel.KernelConfig;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.security.PermissionManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,25 +47,28 @@ import javax.transaction.Transactional;
 public class FolderManager {
 
     @Inject
-    private EntityManager entityManager;
-
-    @Inject
-    private ConfigurationManager confManager;
-
-    @Inject
-    private FolderRepository folderRepo;
+    private AssetManager assetManager;
 
     @Inject
     private CategoryManager categoryManager;
 
     @Inject
-    private ContentItemRepository itemRepo;
+    private ConfigurationManager confManager;
+
+    @Inject
+    private EntityManager entityManager;
+
+    @Inject
+    private FolderRepository folderRepo;
 
     @Inject
     private ContentItemManager itemManager;
 
     @Inject
-    private AssetManager assetManager;
+    private ContentItemRepository itemRepo;
+
+    @Inject
+    private PermissionManager permissionManager;
 
     /**
      * An enum describing if a folder can be deleted or not and why.
@@ -188,6 +192,7 @@ public class FolderManager {
         folderRepo.save(folder);
 
         categoryManager.addSubCategoryToCategory(folder, parent);
+        permissionManager.copyPermissions(parent, folder, true);
 
         return folder;
     }
