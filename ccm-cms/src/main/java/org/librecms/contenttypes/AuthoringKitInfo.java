@@ -19,8 +19,6 @@
 package org.librecms.contenttypes;
 
 import com.arsdigita.bebop.FormSection;
-import com.arsdigita.cms.ui.authoring.PageCreateForm;
-import com.arsdigita.cms.ui.item.ItemCreateForm;
 
 import java.util.ArrayList;
 import java.util.Collections;
