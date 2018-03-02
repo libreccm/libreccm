@@ -85,6 +85,7 @@ class CMSPermissionsTableController {
             .collect(Collectors.toList());
 
         final CMSPermissionsTableRow row = new CMSPermissionsTableRow();
+        row.setObject(object);
         row.setRoleName(role.getName());
         row.setColumns(columns);
 

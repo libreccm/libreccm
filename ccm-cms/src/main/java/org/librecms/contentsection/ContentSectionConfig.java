@@ -19,6 +19,7 @@
 package org.librecms.contentsection;
 
 import com.arsdigita.cms.ui.authoring.ItemCategoryStep;
+import com.arsdigita.cms.ui.permissions.ItemPermissionsStep;
 import com.arsdigita.cms.ui.authoring.assets.relatedinfo.RelatedInfoStep;
 import com.arsdigita.cms.ui.authoring.assets.images.ImageStep;
 
@@ -123,10 +124,13 @@ public class ContentSectionConfig {
      */
     @Setting
     private List<String> defaultAuthoringSteps = Arrays
-        .asList(new String[]{
-        ItemCategoryStep.class.getName(),
-        ImageStep.class.getName(),
-        RelatedInfoStep.class.getName()});
+        .asList(
+            new String[]{
+                ItemCategoryStep.class.getName(),
+                ImageStep.class.getName(),
+                RelatedInfoStep.class.getName(),
+//                ItemPermissionsStep.class.getName()
+            });
 
     public static ContentSectionConfig getConfig() {
         final ConfigurationManager confManager = CdiUtil.createCdiUtil()
