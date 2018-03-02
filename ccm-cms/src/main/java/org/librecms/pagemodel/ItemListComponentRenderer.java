@@ -54,7 +54,20 @@ import javax.servlet.http.HttpServletRequest;
 import static org.librecms.pages.PagesConstants.*;
 
 import org.libreccm.pagemodel.RendersComponent;
+import org.libreccm.security.Permission;
+import org.libreccm.security.PermissionChecker;
+import org.libreccm.security.Role;
+import org.libreccm.security.RoleManager;
+import org.libreccm.security.Shiro;
+import org.libreccm.security.User;
+import org.libreccm.security.UserRepository;
 import org.librecms.contentsection.ContentItemVersion;
+import org.librecms.contentsection.privileges.ItemPrivileges;
+
+import java.util.Optional;
+
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
 
 /**
  * Renderer for the {@link ItemListComponent}.
@@ -77,6 +90,18 @@ public class ItemListComponentRenderer
 
     @Inject
     private HttpServletRequest request;
+
+    @Inject
+    private PermissionChecker permissionChecker;
+
+    @Inject
+    private RoleManager roleManager;
+
+    @Inject
+    private Shiro shiro;
+
+    @Inject
+    private UserRepository userRepository;
 
     @Override
     public Map<String, Object> renderComponent(
@@ -114,7 +139,7 @@ public class ItemListComponentRenderer
         final List<Category> categories = new ArrayList<>();
         if (componentModel.isDescending()) {
             categories.addAll(collectCategories(category));
-        } 
+        }
         categories.add(category);
 
         final Class<? extends ContentItem> limitToType = getLimitToType(
@@ -164,17 +189,113 @@ public class ItemListComponentRenderer
             .from(limitToType);
         final Join<? extends ContentItem, Categorization> catJoin = from
             .join("categories");
+        final Join<? extends ContentItem, Permission> permissionsJoin = from
+            .join("permissions", JoinType.LEFT);
 
-        criteriaQuery.where(criteriaBuilder
+        final Optional<User> user = shiro.getUser();
+        final List<Role> roles;
+        if (user.isPresent()) {
+            final User theUser = userRepository
+                .findById(user.get().getPartyId())
+                .orElseThrow(() -> new IllegalArgumentException(String
+                .format(
+                    "No user with id %d in the database. "
+                        + "Where did that ID come from?",
+                    user.get().getPartyId())));
+            roles = roleManager.findAllRolesForUser(theUser);
+        } else {
+
+            final Optional<User> publicUser;
+
+            final KernelConfig kernelConfig = confManager
+                .findConfiguration(KernelConfig.class);
+            final String principal = (String) shiro
+                .getPublicUser()
+                .getPrincipal();
+            if (kernelConfig.emailIsPrimaryIdentifier()) {
+                publicUser = userRepository.findByEmailAddress(principal);
+            } else {
+                publicUser = userRepository.findByName(principal);
+            }
+
+            if (publicUser.isPresent()) {
+                roles = roleManager.findAllRolesForUser(publicUser.get());
+            } else {
+                roles = Collections.emptyList();
+            }
+        }
+
+        final boolean isSystemUser = shiro.isSystemUser();
+        final boolean isAdmin = permissionChecker.isPermitted("*");
+
+        final Predicate permissionsCheck;
+        if (roles.isEmpty()) {
+            permissionsCheck = criteriaBuilder
+                .or(
+                    criteriaBuilder.equal(criteriaBuilder.literal(true),
+                                          isSystemUser),
+                    criteriaBuilder.equal(criteriaBuilder.literal(true),
+                                          isAdmin)
+                );
+        } else {
+            permissionsCheck = criteriaBuilder
+                .or(
+                    criteriaBuilder
+                        .and(
+                            criteriaBuilder.in(permissionsJoin.get("grantee"))
+                                .value(roles),
+                            criteriaBuilder
+                                .equal(
+                                    permissionsJoin.get("grantedPrivilege"),
+                                    criteriaBuilder.selectCase()
+                                        .when(
+                                            criteriaBuilder.equal(
+                                                from.get("version"),
+                                                ContentItemVersion.DRAFT),
+                                            ItemPrivileges.PREVIEW)
+                                        .otherwise(
+                                            ItemPrivileges.VIEW_PUBLISHED))
+                        ),
+                    criteriaBuilder
+                        .equal(criteriaBuilder.literal(true),
+                               isSystemUser),
+                    criteriaBuilder
+                        .equal(criteriaBuilder.literal(true),
+                               isAdmin)
+                );
+        }
+
+        criteriaQuery.distinct(true).where(criteriaBuilder
             .and(catJoin.get("category").in(categories),
                  criteriaBuilder.equal(catJoin.get("indexObject"), false),
                  criteriaBuilder.equal(catJoin.get("type"), ""),
                  criteriaBuilder.equal(from.get("version"),
-                                       ContentItemVersion.LIVE)));
-//        criteriaQuery
-//            .where(criteriaBuilder
-//                .and(catJoin.get("category").in(categories),
-//                     criteriaBuilder.equal(catJoin.get("index"), false)));
+                                       ContentItemVersion.LIVE),
+                 permissionsCheck
+//                 criteriaBuilder.or(
+//                     criteriaBuilder.and(
+//                         criteriaBuilder
+//                             .in(permissionsJoin.get("grantee"))
+//                             .value(roles),
+//                         criteriaBuilder.equal(
+//                             permissionsJoin.get("grantedPrivilege"),
+//                             criteriaBuilder.selectCase()
+//                                 .when(
+//                                     criteriaBuilder
+//                                         .equal(from.get("version"),
+//                                                ContentItemVersion.DRAFT),
+//                                     ItemPrivileges.PREVIEW)
+//                                 .otherwise(ItemPrivileges.VIEW_PUBLISHED))
+//                     ),
+//                     criteriaBuilder
+//                         .equal(criteriaBuilder.literal(true),
+//                                isSystemUser),
+//                     criteriaBuilder
+//                         .equal(criteriaBuilder.literal(true),
+//                                isAdmin)
+//                 )
+            )
+        );
 
         criteriaQuery
             .orderBy(listOrder

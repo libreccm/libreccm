@@ -32,8 +32,13 @@ import com.arsdigita.util.Assert;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.security.*;
-import org.librecms.CmsConstants;
+
+import org.libreccm.security.Party;
+import org.libreccm.security.PartyRepository;
+import org.libreccm.security.Role;
+import org.libreccm.security.RoleManager;
+import org.libreccm.security.RoleRepository;
+import org.libreccm.security.User;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 
 import java.util.Arrays;
@@ -54,64 +59,72 @@ import java.util.List;
  */
 class RolePartyAddForm extends PartyAddForm {
 
-    private static Logger LOGGER = LogManager.getLogger(RolePartyAddForm.class);
+    private static final Logger LOGGER = LogManager
+        .getLogger(RolePartyAddForm.class);
 
-    private SingleSelectionModel m_roles;
+    private final SingleSelectionModel<String> roleSelectionModel;
 
-    RolePartyAddForm(SingleSelectionModel roles, TextField search) {
+    RolePartyAddForm(final SingleSelectionModel<String> roleSelectionModel, 
+                     final TextField search) {
+        
         super(search);
 
-        m_roles = roles;
+        this.roleSelectionModel = roleSelectionModel;
 
-        getForm().addSubmissionListener(new FormSecurityListener(
-            AdminPrivileges.ADMINISTER_ROLES));
+        super
+            .getForm()
+            .addSubmissionListener(
+                new FormSecurityListener(AdminPrivileges.ADMINISTER_ROLES));
     }
 
     @Override
-    protected List<Party> makeQuery(PageState s) {
-        Assert.isTrue(m_roles.isSelected(s));
+    protected List<Party> makeQuery(final PageState state) {
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final PartyRepository partyRepository = cdiUtil.findBean(
             PartyRepository.class);
 
-        final String searchQuery = (String) getSearchWidget().getValue(s);
+        final String searchQuery = (String) getSearchWidget().getValue(state);
 
         return partyRepository.searchByName(searchQuery);
     }
 
     @Override
     public void process(FormSectionEvent event) throws FormProcessException {
-        FormData data = event.getFormData();
-        PageState state = event.getPageState();
-        Assert.isTrue(m_roles.isSelected(state));
+        
+        final FormData data = event.getFormData();
+        final PageState state = event.getPageState();
 
-        String[] parties = (String[]) data.get("parties");
+        final String[] parties = (String[]) data.get("parties");
         LOGGER.debug("PARTIES = " + Arrays.toString(parties));
         if (parties == null) {
             throw new FormProcessException(GlobalizationUtil.globalize(
                 "cms.ui.role.no_party_selected"));
         }
 
-        final Long roleId = new Long((String) m_roles.getSelectedKey(state));
+        final Long roleId = Long
+            .parseLong(roleSelectionModel.getSelectedKey(state));
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final RoleRepository roleRepository = cdiUtil.findBean(
-            RoleRepository.class);
-        final PartyRepository partyRepository = cdiUtil.findBean(
-            PartyRepository.class);
-        final RoleManager roleManager = cdiUtil.findBean(RoleManager.class);
+//        final RoleRepository roleRepository = cdiUtil.findBean(
+//            RoleRepository.class);
+//        final PartyRepository partyRepository = cdiUtil.findBean(
+//            PartyRepository.class);
+//        final RoleManager roleManager = cdiUtil.findBean(RoleManager.class);
+        final RoleAdminPaneController controller = cdiUtil
+            .findBean(RoleAdminPaneController.class);
 
-        final Role role = roleRepository.findById(roleId).get();
+//        final Role role = roleRepository.findById(roleId).get();
 
         // Add each checked party to the role
-        Party party;
+//        Party party;
         for (int i = 0; i < parties.length; i++) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("parties[" + i + "] = " + parties[i]);
             }
-            party = partyRepository.findByName(parties[i]).get();
-            roleManager.assignRoleToParty(role, party);
+//            party = partyRepository.findById(Long.parseLong(parties[i])).get();
+//            roleManager.assignRoleToParty(role, party);
+            controller.assignRoleToParty(roleId, Long.parseLong(parties[i]));
         }
     }
 
