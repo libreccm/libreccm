@@ -18,6 +18,8 @@
  */
 package org.librecms.contentsection;
 
+import com.arsdigita.kernel.KernelConfig;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.auditing.AbstractAuditedEntityRepository;
@@ -25,6 +27,7 @@ import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
+import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.security.AuthorizationRequired;
@@ -33,8 +36,10 @@ import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.PermissionManager;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.security.Role;
+import org.libreccm.security.RoleManager;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
+import org.libreccm.security.UserRepository;
 import org.librecms.contentsection.privileges.AssetPrivileges;
 import org.librecms.contentsection.rs.Assets;
 
@@ -73,6 +78,9 @@ public class AssetRepository
 
     @Inject
     private CcmObjectRepository ccmObjectRepo;
+    
+    @Inject
+    private ConfigurationManager confManager;
 
     @Inject
     private EntityManager entityManager;
@@ -87,7 +95,13 @@ public class AssetRepository
     private PermissionManager permissionManager;
 
     @Inject
+    private RoleManager roleManager;
+    
+    @Inject
     private Shiro shiro;
+    
+    @Inject
+    private UserRepository userRepository;
 
     @Override
     public Long getEntityId(final Asset asset) {
@@ -677,7 +691,25 @@ public class AssetRepository
                 .map(membership -> membership.getRole())
                 .collect(Collectors.toList());
         } else {
-            roles = Collections.emptyList();
+            
+            final Optional<User> publicUser;
+            
+            final KernelConfig kernelConfig = confManager
+                .findConfiguration(KernelConfig.class);
+            final String principal = (String) shiro
+                .getPublicUser()
+                .getPrincipal();
+            if (kernelConfig.emailIsPrimaryIdentifier()) {
+                publicUser = userRepository.findByEmailAddress(principal);
+            } else {
+                publicUser = userRepository.findByName(principal);
+            }
+
+            if (publicUser.isPresent()) {
+                roles = roleManager.findAllRolesForUser(publicUser.get());
+            } else {
+                roles = Collections.emptyList();
+            }
         }
 
         final boolean isSystemUser = shiro.isSystemUser();
