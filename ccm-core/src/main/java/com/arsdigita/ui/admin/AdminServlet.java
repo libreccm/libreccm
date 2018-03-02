@@ -146,10 +146,10 @@ public class AdminServlet extends BaseApplicationServlet {
                                             ADMIN_BUNDLE)),
             new ConfigurationTab());
 
-        tabbedPane.addTab(
-            new Label(new GlobalizedMessage("ui.admin.tab.workflows.title",
-                                            ADMIN_BUNDLE)),
-            new WorkflowAdminTab());
+//        tabbedPane.addTab(
+//            new Label(new GlobalizedMessage("ui.admin.tab.workflows.title",
+//                                            ADMIN_BUNDLE)),
+//            new WorkflowAdminTab());
 
         tabbedPane.addTab(
             new Label(new GlobalizedMessage("ui.admin.tab.importexport.title",

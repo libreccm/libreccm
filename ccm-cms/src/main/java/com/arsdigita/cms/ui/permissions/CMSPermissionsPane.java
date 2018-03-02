@@ -143,6 +143,26 @@ public class CMSPermissionsPane extends SimpleContainer implements Resettable,
         this.selectionModel = selectionModel;
         this.privilegeNameMap = privilegeNameMap;
     }
+    
+    public CMSPermissionsPane(
+        final Class<?> privilegesClass,
+        final CcmObjectSelectionModel<CcmObject> selectionModel) {
+        
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final PermissionManager permissionManager = cdiUtil.findBean(
+            PermissionManager.class);
+        final List<String> privilegesFromClass = permissionManager
+            .listDefiniedPrivileges(privilegesClass);
+        
+        final Map<String, String> nameMap = new HashMap<>();
+        for(final String privilege: privilegesFromClass) {
+            nameMap.put(privilege, privilege);
+        }
+        
+        this.privileges = privilegesFromClass.toArray(new String[]{});
+        this.selectionModel = selectionModel;
+        this.privilegeNameMap = nameMap;
+    }
 
     /**
      * Overwrite this method to construct your default Permissions Pane with the
@@ -253,9 +273,10 @@ public class CMSPermissionsPane extends SimpleContainer implements Resettable,
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final PermissionManager permissionManager = cdiUtil.findBean(
             PermissionManager.class);
-        final List<String> privileges = permissionManager
-            .listDefiniedPrivileges(ItemPrivileges.class);
-        final List<Label> headerLabels = privileges.stream()
+//        final List<String> privileges = permissionManager
+//            .listDefiniedPrivileges(ItemPrivileges.class);
+//        final List<Label> headerLabels = privileges.stream()
+        final List<Label> headerLabels = Arrays.stream(privileges)
             .map(privilege -> generatePrivilegeColumnHeader(privilege))
             .collect(Collectors.toList());
         headerLabels.add(0,
@@ -269,7 +290,8 @@ public class CMSPermissionsPane extends SimpleContainer implements Resettable,
                                       headerLabels.toArray());
         table.setClassAttr("dataTable");
         for (int j = 1; j < table.getColumnModel().size() - 1; j++) {
-            table.getColumn(j).setKey(privileges.get(j - 1));
+//            table.getColumn(j).setKey(privileges.get(j - 1));
+//            table.getColumn(j).setKey(privileges[j - 1]);
             table.getColumn(j).setCellRenderer(new TableCellRenderer() {
 
                 @Override
@@ -349,8 +371,10 @@ public class CMSPermissionsPane extends SimpleContainer implements Resettable,
                 final PermissionChecker permissionChecker = cdiUtil.findBean(
                     PermissionChecker.class);
                 if (columnIndex > 0 && columnIndex < lastColumnIndex) {
-                    final String privilege = table.getColumn(columnIndex)
-                        .getKey();
+//                    final String privilege = table
+//                        .getColumn(columnIndex)
+//                        .getKey();
+                    final String privilege = privileges[columnIndex - 1];
 
                     if (permissionChecker.isPermitted(privilege,
                                                       object,

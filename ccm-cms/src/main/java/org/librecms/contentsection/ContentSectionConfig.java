@@ -129,7 +129,7 @@ public class ContentSectionConfig {
                 ItemCategoryStep.class.getName(),
                 ImageStep.class.getName(),
                 RelatedInfoStep.class.getName(),
-//                ItemPermissionsStep.class.getName()
+                ItemPermissionsStep.class.getName()
             });
 
     public static ContentSectionConfig getConfig() {
