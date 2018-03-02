@@ -49,8 +49,8 @@ import java.util.TooManyListenersException;
 /**
  * Form for adding multiple parties to a role.
  *
- * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author Scott Seago (scott@arsdigita.com)
+ * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  */
 public abstract class PartyAddForm extends SimpleContainer
     implements FormInitListener, FormProcessListener {
