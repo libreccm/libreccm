@@ -79,22 +79,23 @@ class CMSPermissionsTableModel implements TableModel {
     @Override
     public Object getKeyAt(final int columnIndex) {
 
-        if (columnIndex == 0) {
-            return String.format("%s-%s-role",
-                                 currentRow.getObject().getUuid(),
-                                 currentRow.getRoleName());
-        } else if (columnIndex >= currentRow.getColumns().size() - 1) {
-            return String.format("%s-%s-remove-all",
-                                 currentRow.getObject().getUuid(),
-                                 currentRow.getRoleName());
-        } else {
-            return String.format(
-                "%s-%s-%s",
-                currentRow.getObject().getUuid(),
-                currentRow.getRoleName(),
-                currentRow.getColumns().get(columnIndex - 1).getPrivilege()
-            );
-        }
+        return currentRow.getRoleName();
+        
+//        if (columnIndex == 0) {
+//            return String.format("%s-%s-role",
+//                                 currentRow.getObject().getUuid(),
+//                                 currentRow.getRoleName());
+//        } else if (columnIndex >= currentRow.getColumns().size() - 1) {
+//            return String.format("%s-%s-remove-all",
+//                                 currentRow.getObject().getUuid(),
+//                                 currentRow.getRoleName());
+//        } else {
+//            return String.format(
+//                "%s-%s-%s",
+//                currentRow.getObject().getUuid(),
+//                currentRow.getRoleName(),
+//                currentRow.getColumns().get(columnIndex - 1).getPrivilege()
+//            );
+//        }
     }
-
 }
