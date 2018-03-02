@@ -65,8 +65,8 @@ class GroupsTable extends Table {
         
         super();
 
-        setIdAttr("groupsTable");
-        setStyleAttr("width: 30em");
+        super.setIdAttr("groupsTable");
+        super.setStyleAttr("width: 30em");
 
         this.groupsTableFilter = groupsTableFilter;
         this.selectedGroupId = selectedGroupId;
