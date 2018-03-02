@@ -23,9 +23,11 @@ import com.arsdigita.kernel.KernelConfig;
 
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.security.Party;
+import org.libreccm.security.PartyRepository;
 import org.libreccm.security.Permission;
 import org.libreccm.security.PermissionManager;
 import org.libreccm.security.Role;
+import org.libreccm.security.RoleManager;
 import org.libreccm.security.RoleRepository;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionManager;
@@ -51,22 +53,28 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class RoleAdminPaneController {
+class RoleAdminPaneController {
+
+    @Inject
+    private ConfigurationManager confManager;
+
+    @Inject
+    private PartyRepository partyRepo;
 
     @Inject
     private PermissionManager permissionManager;
 
     @Inject
-    private ContentSectionRepository sectionRepo;
+    private RoleManager roleManager;
+    
+    @Inject
+    private RoleRepository roleRepo;
 
     @Inject
     private ContentSectionManager sectionManager;
 
     @Inject
-    private RoleRepository roleRepo;
-
-    @Inject
-    private ConfigurationManager confManager;
+    private ContentSectionRepository sectionRepo;
 
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Role> findRolesForContentSection(final ContentSection section) {
@@ -356,6 +364,23 @@ public class RoleAdminPaneController {
         }
 
         return role;
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void assignRoleToParty(final long roleId, final long partyId) {
+
+        final Role role = roleRepo
+            .findById(roleId)
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No role with ID %d in the database.",
+                    roleId)));
+        final Party party = partyRepo
+            .findById(partyId)
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No party with ID %d in the database.",
+                    partyId)));
+
+        roleManager.assignRoleToParty(role, party);
     }
 
 }
