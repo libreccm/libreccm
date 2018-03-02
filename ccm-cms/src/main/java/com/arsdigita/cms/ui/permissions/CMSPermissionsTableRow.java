@@ -18,6 +18,8 @@
  */
 package com.arsdigita.cms.ui.permissions;
 
+import org.libreccm.core.CcmObject;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -28,10 +30,19 @@ import java.util.Objects;
  */
 class CMSPermissionsTableRow {
 
+    private CcmObject object;
     private String roleName;
 
     private List<CMSPermissionsTableColumn> columns;
 
+    public CcmObject getObject() {
+        return object;
+    }
+    
+    public void setObject(final CcmObject object) {
+        this.object = object;
+    }
+    
     public String getRoleName() {
         return roleName;
     }

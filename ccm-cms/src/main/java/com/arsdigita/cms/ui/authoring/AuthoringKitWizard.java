@@ -70,14 +70,12 @@ import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.workflow.Task;
 import org.libreccm.workflow.TaskRepository;
 import org.librecms.CmsConstants;
-import org.librecms.contentsection.ContentItem;
 import org.librecms.contenttypes.AuthoringKit;
 import org.librecms.contenttypes.AuthoringKitInfo;
 import org.librecms.contenttypes.AuthoringStepInfo;
 import org.librecms.contenttypes.ContentTypeInfo;
 import org.librecms.ui.authoring.ContentItemAuthoringStepInfo;
 import org.librecms.ui.authoring.ContentItemAuthoringStepManager;
-import org.librecms.workflow.CmsTaskType;
 
 /**
  * This class represents a single authoring kit. The wizard accepts a
