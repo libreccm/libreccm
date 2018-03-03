@@ -20,12 +20,10 @@ package com.arsdigita.cms.ui.folder;
 
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SingleSelectionModel;
-import com.arsdigita.cms.CMS;
 
 import com.arsdigita.ui.CcmObjectSelectionModel;
 
 import org.libreccm.categorization.Category;
-import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.Folder;
 
 /**

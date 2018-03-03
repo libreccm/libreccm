@@ -318,11 +318,16 @@ public abstract class AbstractAssetForm<T extends Asset>
     }
 
     protected Locale getSelectedLocale(final PageState state) {
-        final String selected = (String) showLocaleSelect.getValue(state);
+        
+        final Object selected = showLocaleSelect.getValue(state);
         if (selected == null) {
             return KernelConfig.getConfig().getDefaultLocale();
+        } else if(selected instanceof Locale) {
+            return (Locale) selected;
+        } else if(selected instanceof String) {
+            return new Locale((String) selected);
         } else {
-            return new Locale(selected);
+            return new Locale(selected.toString());
         }
     }
 

@@ -67,9 +67,11 @@ import com.arsdigita.cms.ui.folder.FolderRequestLocal;
 import com.arsdigita.cms.ui.folder.FolderSelectionModel;
 import com.arsdigita.cms.ui.folder.FolderTreeModelBuilder;
 import com.arsdigita.cms.ui.folder.FolderTreeModelController;
+import com.arsdigita.cms.ui.permissions.CMSPermissionsPane;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.LayoutPanel;
+import com.arsdigita.ui.CcmObjectSelectionModel;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -88,6 +90,7 @@ import org.libreccm.categorization.CategoryManager;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.security.PermissionChecker;
+import org.libreccm.security.PermissionManager;
 import org.librecms.assets.AssetTypeInfo;
 import org.librecms.assets.AssetTypesManager;
 import org.librecms.contentsection.Asset;
@@ -95,9 +98,12 @@ import org.librecms.contentsection.AssetManager;
 import org.librecms.contentsection.AssetRepository;
 import org.librecms.contentsection.FolderManager;
 import org.librecms.contentsection.FolderRepository;
+import org.librecms.contentsection.privileges.AssetPrivileges;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.TooManyListenersException;
@@ -142,6 +148,7 @@ public class AssetPane extends LayoutPanel implements Resettable {
     private SegmentedPanel.Segment newFolderSegment;
     private SegmentedPanel.Segment editFolderSegment;
     private SegmentedPanel.Segment editAssetSegment;
+    private SegmentedPanel.Segment folderPermissionsSegment;
 
     @SuppressWarnings("unchecked")
     public AssetPane() {
@@ -337,7 +344,6 @@ public class AssetPane extends LayoutPanel implements Resettable {
 //
 //        });
 //        currentFolderSegment.add(currentFolderLabel);
-
         actionsSegment = panel.addSegment();
         actionsSegment.setIdAttr("folder-browse");
 
@@ -570,7 +576,7 @@ public class AssetPane extends LayoutPanel implements Resettable {
                     final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                     final AssetTypesManager typesManager = cdiUtil
                         .findBean(AssetTypesManager.class);
-                    
+
                     if (selectedAssetModel.isSelected(state)) {
                         target.setLabel(
                             new GlobalizedMessage(
@@ -585,7 +591,7 @@ public class AssetPane extends LayoutPanel implements Resettable {
                             typeInfo.getLabelBundle());
                         final String typeLabel = bundle
                             .getString(typeInfo.getLabelKey());
-                        
+
                         target.setLabel(new GlobalizedMessage(
                             "cms.ui.admin.assets.create",
                             CmsConstants.CMS_BUNDLE,
@@ -595,6 +601,25 @@ public class AssetPane extends LayoutPanel implements Resettable {
 
             }));
         editAssetSegment.add(editAssetForm);
+        
+        folderPermissionsSegment = panel.addSegment();
+                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final PermissionManager permissionManager = cdiUtil
+            .findBean(PermissionManager.class);
+        final String[] privileges = permissionManager
+            .listDefiniedPrivileges(AssetPrivileges.class)
+            .toArray(new String[]{});
+        final Map<String, String> privilegeNameMap = new HashMap<>();
+        Arrays
+            .stream(privileges)
+            .forEach(privilege -> privilegeNameMap.put(privilege, privilege));
+        final CcmObjectSelectionModel<CcmObject> objSelectionModel
+                                                     = new CcmObjectSelectionModel<>(
+                CcmObject.class, folderSelectionModel);
+        final CMSPermissionsPane folderPermissionsPane = new CMSPermissionsPane(
+            privileges, privilegeNameMap, objSelectionModel);
+        folderPermissionsSegment.add(folderPermissionsPane);
+        
 
         return panel;
 
@@ -610,7 +635,7 @@ public class AssetPane extends LayoutPanel implements Resettable {
         newFolderSegment.setVisible(state, false);
         editFolderSegment.setVisible(state, false);
         editAssetSegment.setVisible(state, false);
-
+        folderPermissionsSegment.setVisible(state, true);
     }
 
     protected void moveCopyMode(final PageState state) {
@@ -624,6 +649,7 @@ public class AssetPane extends LayoutPanel implements Resettable {
         editFolderSegment.setVisible(state, false);
         targetSelector.expose(state);
         editAssetSegment.setVisible(state, false);
+        folderPermissionsSegment.setVisible(state, false);
     }
 
     protected void newFolderMode(final PageState state) {
@@ -636,6 +662,7 @@ public class AssetPane extends LayoutPanel implements Resettable {
         newFolderSegment.setVisible(state, true);
         editFolderSegment.setVisible(state, false);
         editAssetSegment.setVisible(state, false);
+        folderPermissionsSegment.setVisible(state, false);
     }
 
     protected void editFolderMode(final PageState state) {
@@ -646,6 +673,7 @@ public class AssetPane extends LayoutPanel implements Resettable {
         newFolderSegment.setVisible(state, false);
         editFolderSegment.setVisible(state, true);
         editAssetSegment.setVisible(state, false);
+        folderPermissionsSegment.setVisible(state, false);
     }
 
     protected void editAssetMode(final PageState state) {
@@ -656,6 +684,7 @@ public class AssetPane extends LayoutPanel implements Resettable {
         newFolderSegment.setVisible(state, false);
         editFolderSegment.setVisible(state, false);
         editAssetSegment.setVisible(state, true);
+        folderPermissionsSegment.setVisible(state, false);
     }
 
     @Override
@@ -675,6 +704,7 @@ public class AssetPane extends LayoutPanel implements Resettable {
         page.setVisibleDefault(newFolderSegment, false);
         page.setVisibleDefault(editFolderSegment, false);
         page.setVisibleDefault(editAssetSegment, false);
+        page.setVisibleDefault(folderPermissionsSegment, true);
 
         page.addComponentStateParam(this, actionParameter);
         page.addComponentStateParam(this, sourcesParameter);
