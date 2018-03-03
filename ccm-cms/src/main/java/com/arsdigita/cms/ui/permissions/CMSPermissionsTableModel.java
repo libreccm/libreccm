@@ -22,8 +22,6 @@ import com.arsdigita.bebop.table.TableModel;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.CcmObject;
-import org.libreccm.security.PermissionManager;
-import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import java.util.Iterator;
 
@@ -33,26 +31,28 @@ import java.util.Iterator;
  */
 class CMSPermissionsTableModel implements TableModel {
 
+    private final String[] privileges;
     private final Iterator<CMSPermissionsTableRow> iterator;
     private CMSPermissionsTableRow currentRow;
 
-    public CMSPermissionsTableModel(final CcmObject object) {
-
+    public CMSPermissionsTableModel(final CcmObject object,
+                                    final String[] privileges) {
+        
+        this.privileges = privileges;
+        
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final CMSPermissionsTableController controller = cdiUtil.findBean(
             CMSPermissionsTableController.class);
 
-        iterator = controller.buildDirectPermissionsRows(object).iterator();
+        iterator = controller
+            .buildDirectPermissionsRows(object,privileges)
+            .iterator();
     }
 
     @Override
     public int getColumnCount() {
-        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final PermissionManager permissionManager = cdiUtil.findBean(
-            PermissionManager.class);
-
-        return permissionManager.listDefiniedPrivileges(ItemPrivileges.class)
-            .size() + 2;
+        
+        return privileges.length + 2;
     }
 
     @Override

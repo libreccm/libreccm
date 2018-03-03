@@ -27,8 +27,8 @@ import org.libreccm.security.PermissionManager;
 import org.libreccm.security.Role;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
-import org.librecms.contentsection.privileges.ItemPrivileges;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -56,7 +56,7 @@ class CMSPermissionsTableController {
 
     @Transactional(Transactional.TxType.REQUIRED)
     public List<CMSPermissionsTableRow> buildDirectPermissionsRows(
-        final CcmObject object) {
+        final CcmObject object, final String[] privileges) {
 
         final Optional<ContentSection> section = sectionRepo.findById(CMS
             .getContext().getContentSection().getObjectId());
@@ -68,7 +68,7 @@ class CMSPermissionsTableController {
             .getRoles();
 
         return roles.stream()
-            .map(role -> buildRow(role, object))
+            .map(role -> buildRow(role, object, privileges))
             .sorted((row1, row2) -> {
                 return row1.getRoleName().compareTo(row2.getRoleName());
             })
@@ -76,11 +76,11 @@ class CMSPermissionsTableController {
     }
 
     private CMSPermissionsTableRow buildRow(final Role role,
-                                            final CcmObject object) {
-        final List<String> privileges = permissionManager
-            .listDefiniedPrivileges(ItemPrivileges.class);
+                                            final CcmObject object,
+                                            final String[] privileges) {
 
-        final List<CMSPermissionsTableColumn> columns = privileges.stream()
+        final List<CMSPermissionsTableColumn> columns = Arrays
+            .stream(privileges)
             .map(privilege -> buildColumn(role, object, privilege))
             .collect(Collectors.toList());
 

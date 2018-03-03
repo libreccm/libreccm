@@ -92,8 +92,6 @@ public class AssetFolderBrowser extends Table {
 
     private void initComponents() {
 
-        setModelBuilder(new AssetFolderBrowserTableModelBuilder());
-
         final GlobalizedMessage[] headers = {
             new GlobalizedMessage("cms.ui.folder.name",
                                   CMS_FOLDER_BUNDLE),
