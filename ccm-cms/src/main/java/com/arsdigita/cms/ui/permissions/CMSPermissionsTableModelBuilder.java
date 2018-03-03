@@ -42,7 +42,7 @@ class CMSPermissionsTableModelBuilder extends LockableImpl
     @Override
     public TableModel makeModel(final Table table, final PageState state) {
         final CcmObject object = parent.getObject(state);
-        return new CMSPermissionsTableModel(object);
+        return new CMSPermissionsTableModel(object, parent.getPrivileges());
     }
 
 }
