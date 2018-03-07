@@ -589,6 +589,7 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         NAME varchar(255) not null,
         FILE_PATH varchar(8192) not null,
         UUID varchar(255) not null,
+        VERSION varchar(255),
         PARENT_DIRECTORY_ID bigint,
         primary key (FILE_ID)
     );
