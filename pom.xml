@@ -574,11 +574,11 @@
             </dependency>
             <!-- Apache Commons libraries end -->
 
-            <dependency>
+            <!--<dependency>
                 <groupId>org.glassfish</groupId>
                 <artifactId>javax.json</artifactId>
                 <version>1.1.2</version>
-            </dependency>
+            </dependency>-->
 
             <dependency>
                 <groupId>org.freemarker</groupId>
@@ -699,7 +699,7 @@
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-transaction-bom</artifactId>
-                <version>1.0.5</version>
+                <version>1.0.3.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
