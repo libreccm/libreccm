@@ -692,14 +692,14 @@
             <dependency>
                 <groupId>org.jboss.arquillian</groupId>
                 <artifactId>arquillian-bom</artifactId>
-                <version>1.1.12.Final</version>
+                <version>1.4.0.Final</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-transaction-bom</artifactId>
-                <version>1.0.3.Final</version>
+                <version>1.0.5</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -714,21 +714,15 @@
                 <version>1.0.0.Alpha9</version>
             </dependency>
             <dependency>
-                <groupId>org.wildfly</groupId>
-                <artifactId>wildfly-arquillian-container-managed</artifactId>
-                <version>8.2.1.Final</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.wildfly.arquillian</groupId>
                 <artifactId>wildfly-arquillian-container-managed</artifactId>
                 <version>2.0.2.Final</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.wildfly</groupId>
+                <groupId>org.wildfly.arquillian</groupId>
                 <artifactId>wildfly-arquillian-container-remote</artifactId>
-                <version>8.2.1.Final</version>
+                <version>2.1.0.Final</version>
                 <scope>test</scope>
             </dependency>
 
@@ -738,7 +732,7 @@
             <dependency>
                 <groupId>org.jacoco</groupId>
                 <artifactId>org.jacoco.core</artifactId>
-                <version>0.7.9</version>
+                <version>0.8.0</version>
                 <scope>test</scope>
             </dependency>
 

@@ -312,7 +312,7 @@
                     <trimStackTrace>false</trimStackTrace>
                 </configuration>
             </plugin>
-            <plugin>
+            <!--<plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <executions>
@@ -330,7 +330,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
             <plugin>
                 <groupId>de.jpdigital</groupId>
                 <artifactId>hibernate50-ddl-maven-plugin</artifactId>
@@ -450,11 +450,11 @@
                     <trimStackTrace>false</trimStackTrace>
                 </configuration>
             </plugin>
-            <plugin>
+            <!--<plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.7.9</version>
-            </plugin>
+            </plugin>-->
             
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -835,7 +835,7 @@
                     <artifactId>wildfly-arquillian-container-managed</artifactId>
                     <scope>test</scope>
                 </dependency>
-                <dependency>
+                <!--<dependency>
                     <groupId>org.jacoco</groupId>
                     <artifactId>org.jacoco.core</artifactId>
                     <scope>test</scope>
@@ -843,8 +843,7 @@
                 <dependency>
                     <groupId>org.jboss.arquillian.extension</groupId>
                     <artifactId>arquillian-jacoco</artifactId>
-                    <version>1.0.0.Alpha9</version>
-                </dependency>
+                </dependency>-->
                 <dependency>
                     <groupId>net.sf.saxon</groupId>
                     <artifactId>Saxon-HE</artifactId>
@@ -917,11 +916,11 @@
                     <artifactId>wildfly-arquillian-container-managed</artifactId>
                     <scope>test</scope>
                 </dependency>
-                <dependency>
+                <!--<dependency>
                     <groupId>org.jacoco</groupId>
                     <artifactId>org.jacoco.core</artifactId>
                     <scope>test</scope>
-                </dependency>
+                </dependency>-->
                 <dependency>
                     <groupId>net.sf.saxon</groupId>
                     <artifactId>Saxon-HE</artifactId>
@@ -990,11 +989,11 @@
             <id>wildfly-remote-h2-mem</id>
             <dependencies>
                 <dependency>
-                    <groupId>org.wildfly</groupId>
+                    <groupId>org.wildfly.arquillian</groupId>
                     <artifactId>wildfly-arquillian-container-remote</artifactId>
                     <scope>test</scope>
                 </dependency>
-                <dependency>
+                <!--<dependency>
                     <groupId>org.jacoco</groupId>
                     <artifactId>org.jacoco.core</artifactId>
                     <scope>test</scope>
@@ -1002,8 +1001,7 @@
                 <dependency>
                     <groupId>org.jboss.arquillian.extension</groupId>
                     <artifactId>arquillian-jacoco</artifactId>
-                    <version>1.0.0.Alpha9</version>
-                </dependency>
+                </dependency>-->
                 <dependency>
                     <groupId>net.sf.saxon</groupId>
                     <artifactId>Saxon-HE</artifactId>
@@ -1072,15 +1070,15 @@
             <id>wildfly-remote-pgsql</id>
             <dependencies>
                 <dependency>
-                    <groupId>org.wildfly</groupId>
+                    <groupId>org.wildfly.arquillian</groupId>
                     <artifactId>wildfly-arquillian-container-remote</artifactId>
                     <scope>test</scope>
                 </dependency>
-                <dependency>
+                <!--<dependency>
                     <groupId>org.jacoco</groupId>
                     <artifactId>org.jacoco.core</artifactId>
                     <scope>test</scope>
-                </dependency>
+                </dependency>-->
                 <dependency>
                     <groupId>net.sf.saxon</groupId>
                     <artifactId>Saxon-HE</artifactId>

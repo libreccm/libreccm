@@ -357,7 +357,7 @@
             <id>wildfly-managed-h2-mem</id>
             <dependencies>
                 <dependency>
-                    <groupId>org.wildfly</groupId>
+                    <groupId>org.wildfly.arquillian</groupId>
                     <artifactId>wildfly-arquillian-container-managed</artifactId>
                     <scope>test</scope>
                 </dependency>
@@ -374,7 +374,6 @@
                 <dependency>
                     <groupId>org.jboss.arquillian.extension</groupId>
                     <artifactId>arquillian-jacoco</artifactId>
-                    <version>1.0.0.Alpha8</version>
                 </dependency>
                 <dependency>
                     <groupId>net.sf.saxon</groupId>
@@ -446,22 +445,19 @@
             <id>wildfly-managed-pgsql</id>
             <dependencies>
                 <dependency>
-                    <groupId>org.wildfly</groupId>
+                    <groupId>org.wildfly.arquillian</groupId>
                     <artifactId>wildfly-arquillian-container-managed</artifactId>
-                    <!--<version>8.2.1.Final</version>-->
                     <scope>test</scope>
                 </dependency>
                 <dependency>
                     <groupId>org.jacoco</groupId>
                     <artifactId>org.jacoco.core</artifactId>
-                    <!--<version>0.7.5.201505241946</version>-->
                     <scope>test</scope>
                 </dependency>
-                <!--<dependency>
+                <dependency>
                     <groupId>org.jboss.arquillian.extension</groupId>
                     <artifactId>arquillian-jacoco</artifactId>
-                    <version>1.0.0.Alpha8</version>
-                </dependency>-->
+                </dependency>
                 <dependency>
                     <groupId>net.sf.saxon</groupId>
                     <artifactId>Saxon-HE</artifactId>
@@ -532,7 +528,7 @@
             <id>wildfly-remote-h2-mem</id>
             <dependencies>
                 <dependency>
-                    <groupId>org.wildfly</groupId>
+                    <groupId>org.wildfly.arquillian</groupId>
                     <artifactId>wildfly-arquillian-container-remote</artifactId>
                     <scope>test</scope>
                 </dependency>
@@ -620,22 +616,19 @@
             <id>wildfly-remote-pgsql</id>
             <dependencies>
                 <dependency>
-                    <groupId>org.wildfly</groupId>
+                    <groupId>org.wildfly.arquillian</groupId>
                     <artifactId>wildfly-arquillian-container-remote</artifactId>
-                    <!--<version>8.2.1.Final</version>-->
                     <scope>test</scope>
                 </dependency>
                 <dependency>
                     <groupId>org.jacoco</groupId>
                     <artifactId>org.jacoco.core</artifactId>
-                    <!--<version>0.7.5.201505241946</version>-->
                     <scope>test</scope>
                 </dependency>
-                <!--<dependency>
+                <dependency>
                     <groupId>org.jboss.arquillian.extension</groupId>
                     <artifactId>arquillian-jacoco</artifactId>
-                    <version>1.0.0.Alpha8</version>
-                </dependency>-->
+                </dependency>
                 <dependency>
                     <groupId>net.sf.saxon</groupId>
                     <artifactId>Saxon-HE</artifactId>
