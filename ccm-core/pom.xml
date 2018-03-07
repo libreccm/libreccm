@@ -199,10 +199,10 @@
             <version>0.9.11</version>
         </dependency>
         
-        <dependency>
+        <!--<dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.json</artifactId>
-        </dependency>
+        </dependency>-->
         
         <dependency>
             <groupId>org.freemarker</groupId>
