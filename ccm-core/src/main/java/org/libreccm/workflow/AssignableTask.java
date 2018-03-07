@@ -136,7 +136,7 @@ public class AssignableTask extends Task implements Serializable, Portable {
     /**
      * The roles to which task is assigned.
      */
-    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "task")
     @JsonIgnore
     private List<TaskAssignment> assignments;
 
