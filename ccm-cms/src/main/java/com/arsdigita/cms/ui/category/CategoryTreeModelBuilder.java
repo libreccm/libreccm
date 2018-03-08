@@ -64,13 +64,17 @@ class CategoryTreeModelBuilder extends LockableImpl
         final Category root;
 
         if (selectedCategorySystem.getSelectedKey(state) == null) {
-            final ContentSection section =CMS.getContext().getContentSection();
+            final ContentSection section = CMS.getContext().getContentSection();
             final CategoryAdminController controller = cdiUtil
                 .findBean(CategoryAdminController.class);
             final java.util.List<DomainOwnership> ownerships
                                                       = controller
                     .retrieveDomains(section);
-            root = ownerships.get(0).getDomain().getRoot();
+            if (ownerships == null || ownerships.isEmpty()) {
+                root = null;
+            } else {
+                root = ownerships.get(0).getDomain().getRoot();
+            }
         } else {
             final DomainRepository domainRepo = cdiUtil
                 .findBean(DomainRepository.class);

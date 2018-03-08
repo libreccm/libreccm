@@ -39,6 +39,7 @@ import com.arsdigita.cms.ui.BaseAdminPane;
 import com.arsdigita.cms.ui.BaseDeleteForm;
 import com.arsdigita.cms.ui.BaseTree;
 import com.arsdigita.cms.ui.VisibilityComponent;
+import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.Section;
 import com.arsdigita.xml.Element;
@@ -54,6 +55,7 @@ import org.libreccm.categorization.DomainRepository;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.security.PermissionChecker;
+import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 
@@ -71,6 +73,8 @@ public final class CategoryAdminPane extends BaseAdminPane<String> {
 
     public static final String CONTEXT_SELECTED = "sel_context";
 //    private static final String DEFAULT_USE_CONTEXT = "<default>";
+
+    private final Label noCategorySystemsLabel;
 
     private final SingleSelectionModel<String> selectedCategorySystem;
     private final SingleSelectionModel<String> selectedCategory;
@@ -156,6 +160,10 @@ public final class CategoryAdminPane extends BaseAdminPane<String> {
                                          getAddLink(),
                                          getEditLink(),
                                          getDeleteLink()));
+
+        noCategorySystemsLabel = new Label(new GlobalizedMessage(
+            "cms.ui.category.no_category_systems_mapped",
+            CmsConstants.CMS_BUNDLE));
     }
 
     @Override
@@ -165,6 +173,49 @@ public final class CategoryAdminPane extends BaseAdminPane<String> {
         //page.addActionListener(new RootListener());
     }
 
+    @Override
+    public void generateXML(final PageState state, final Element parent) {
+
+        if (isVisible(state)) {
+
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final ContentSection section = CMS.getContext().getContentSection();
+            final CategoryAdminController controller = cdiUtil
+                .findBean(CategoryAdminController.class);
+            final java.util.List<DomainOwnership> ownerships
+                                                      = controller
+                    .retrieveDomains(section);
+            if (ownerships == null || ownerships.isEmpty()) {
+                final Element panelElem = parent
+                    .newChildElement("bebop:layoutPanel",
+                                     BEBOP_XML_NS);
+                final Element bodyElem = panelElem.newChildElement("bebop:body",
+                                                                   BEBOP_XML_NS);
+                noCategorySystemsLabel.generateXML(state, bodyElem);
+            } else {
+                noCategorySystemsLabel.setVisible(state, false);
+                super.generateXML(state, parent);
+            }
+        }
+    }
+
+//    @Override
+//    public boolean isVisible(final PageState state) {
+//
+//        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+//        final ContentSection section = CMS.getContext().getContentSection();
+//        final CategoryAdminController controller = cdiUtil
+//            .findBean(CategoryAdminController.class);
+//        final java.util.List<DomainOwnership> ownerships
+//                                                  = controller
+//                .retrieveDomains(section);
+//
+//        if (ownerships == null || ownerships.isEmpty()) {
+//            return false;
+//        } else {
+//            return super.isVisible(state);
+//        }
+//    }
     private final class DeleteLink extends ActionLink {
 
         private final Label m_alternativeLabel;
@@ -176,9 +227,9 @@ public final class CategoryAdminPane extends BaseAdminPane<String> {
 
         @Override
         public void generateXML(final PageState state, final Element parent) {
-            
-            if (!isVisible(state)) {
-                return;
+
+            if (isVisible(state)) {
+                super.generateXML(state, parent);
             }
 
             //Category cat = m_category.getCategory(state);
@@ -188,7 +239,7 @@ public final class CategoryAdminPane extends BaseAdminPane<String> {
             //if (cat.isRoot() || !cat.getChildren().isEmpty()) {
             //    m_alternativeLabel.generateXML(state, parent);
             //} else {
-            super.generateXML(state, parent);
+//            
             //}
         }
 
@@ -228,7 +279,6 @@ public final class CategoryAdminPane extends BaseAdminPane<String> {
 
         @Override
         public final void process(final FormSectionEvent event)
-            
             throws FormProcessException {
             final PageState state = event.getPageState();
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
@@ -272,7 +322,7 @@ public final class CategoryAdminPane extends BaseAdminPane<String> {
 
         @Override
         protected final Object initialValue(final PageState state) {
-            
+
             final String selectedCatetoryIdStr = selectedCategory
                 .getSelectedKey(state);
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
@@ -318,7 +368,7 @@ public final class CategoryAdminPane extends BaseAdminPane<String> {
 //        }
 //
 //    }
-    private class UseContextSelectionModel 
+    private class UseContextSelectionModel
         extends ParameterSingleSelectionModel<String> {
 
         public UseContextSelectionModel(final ParameterModel parameterModel) {
@@ -334,17 +384,24 @@ public final class CategoryAdminPane extends BaseAdminPane<String> {
                     || val.matches("\\s*")) {
 
                 final ContentSection section = CMS
-                .getContext()
-                .getContentSection();
+                    .getContext()
+                    .getContentSection();
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
                 final CategoryAdminController controller = cdiUtil
-                .findBean(CategoryAdminController.class);
-                final Domain categorySystem = controller
-                    .retrieveDomains(section).get(0).getDomain();
-                val = Long.toString(categorySystem.getObjectId());
-                
-                state.setValue(getStateParameter(), val);
-                fireStateChanged(state);
+                    .findBean(CategoryAdminController.class);
+                final java.util.List<DomainOwnership> domainOwnerships
+                                                          = controller
+                        .retrieveDomains(section);
+                if (domainOwnerships == null || domainOwnerships.isEmpty()) {
+                    val = null;
+                } else {
+                    final Domain categorySystem = controller
+                        .retrieveDomains(section).get(0).getDomain();
+                    val = Long.toString(categorySystem.getObjectId());
+
+                    state.setValue(getStateParameter(), val);
+                    fireStateChanged(state);
+                }
             }
             return val;
         }

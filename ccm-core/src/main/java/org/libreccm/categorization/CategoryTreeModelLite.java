@@ -119,7 +119,7 @@ public class CategoryTreeModelLite implements TreeModel {
     private TreeNode buildTreeNode(final Category category) {
         return new CategoryTreeNode(category);
     }
-    
+
     private class CategoryTreeNode implements TreeNode {
 
         private final Category category;
@@ -130,7 +130,11 @@ public class CategoryTreeModelLite implements TreeModel {
 
         @Override
         public Object getKey() {
-            return category.getObjectId();
+            if (category == null) {
+                return null;
+            } else {
+                return category.getObjectId();
+            }
         }
 
         @Override
