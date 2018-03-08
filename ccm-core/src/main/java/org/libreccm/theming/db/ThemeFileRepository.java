@@ -22,6 +22,7 @@ import org.libreccm.core.AbstractEntityRepository;
 
 import java.util.Optional;
 
+import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
@@ -29,6 +30,7 @@ import javax.persistence.TypedQuery;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+@RequestScoped
 public class ThemeFileRepository extends AbstractEntityRepository<Long, ThemeFile> {
 
     private static final long serialVersionUID = -490998638396765429L;
