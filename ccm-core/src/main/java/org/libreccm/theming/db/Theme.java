@@ -19,6 +19,7 @@
 package org.libreccm.theming.db;
 
 import org.libreccm.core.CoreConstants;
+import org.libreccm.theming.ThemeVersion;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -43,6 +44,9 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "THEMES", schema = CoreConstants.DB_SCHEMA)
 @NamedQueries({
+    @NamedQuery(name = "Theme.findAllForVersion",
+                query = "SELECT t FROM Theme t WHERE t.version = :version")
+    ,
     @NamedQuery(name = "Theme.findByUuid",
                 query = "SELECT t FROM Theme t "
                             + "WHERE t.uuid = :uuid "
@@ -50,8 +54,8 @@ import javax.persistence.Table;
     ,
     @NamedQuery(name = "Theme.findByName",
                 query = "SELECT t FROM Theme t "
-                + "WHERE t.name = :name "
-                + "AND t.version = :version")
+                            + "WHERE t.name = :name "
+                            + "AND t.version = :version")
 })
 public class Theme implements Serializable {
 
