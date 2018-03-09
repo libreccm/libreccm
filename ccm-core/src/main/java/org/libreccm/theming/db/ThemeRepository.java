@@ -19,8 +19,13 @@
 package org.libreccm.theming.db;
 
 import org.libreccm.core.AbstractEntityRepository;
+import org.libreccm.security.RequiresPrivilege;
+import org.libreccm.theming.ThemeVersion;
+import org.libreccm.theming.ThemingPrivileges;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
@@ -57,10 +62,27 @@ public class ThemeRepository extends AbstractEntityRepository<Long, Theme> {
     }
 
     @Override
-    public void save(final Theme theme) {
-        super.save(theme);;
+    public void initNewEntity(final Theme theme) {
+        if (theme.getUuid() == null || theme.getUuid().isEmpty()) {
+            theme.setUuid(UUID.randomUUID().toString());
+        }
     }
-    
+
+    @Override
+    @RequiresPrivilege(ThemingPrivileges.ADMINISTER_THEMES)
+    public void save(final Theme theme) {
+        super.save(theme);
+    }
+
+    public List<Theme> findAll(final ThemeVersion version) {
+
+        final TypedQuery<Theme> query = getEntityManager()
+            .createNamedQuery("Theme.findAllForVersion", Theme.class);
+        query.setParameter("version", version);
+
+        return query.getResultList();
+    }
+
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<Theme> findThemeByUuid(final String uuid,
                                            final ThemeVersion version) {

@@ -19,8 +19,17 @@
 package org.libreccm.theming.db;
 
 import org.libreccm.core.AbstractEntityRepository;
+import org.libreccm.core.UnexpectedErrorException;
+import org.libreccm.theming.ThemeVersion;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLConnection;
+import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
@@ -55,6 +64,33 @@ public class ThemeFileRepository extends AbstractEntityRepository<Long, ThemeFil
         return entity.getFileId() == 0;
     }
 
+    @Override
+    public void initNewEntity(final ThemeFile themeFile) {
+        if (themeFile.getUuid() == null || themeFile.getUuid().isEmpty()) {
+            themeFile.setUuid(UUID.randomUUID().toString());
+        }
+    }
+
+    @Override
+    public void save(final ThemeFile file) {
+
+        if (file instanceof DataFile) {
+            final DataFile dataFile = (DataFile) file;
+            dataFile.setLastModified(new Date());
+            try (final InputStream inputStream = new BufferedInputStream(
+                new ByteArrayInputStream(dataFile.getData()))) {
+
+                final String mimeType = URLConnection
+                    .guessContentTypeFromStream(inputStream);
+                dataFile.setType(mimeType);
+            } catch (IOException ex) {
+                throw new UnexpectedErrorException(ex);
+            }
+        }
+
+        super.save(file);
+    }
+
     public Optional<ThemeFile> findByUuid(final String uuid,
                                           final ThemeVersion version) {
 
@@ -70,7 +106,8 @@ public class ThemeFileRepository extends AbstractEntityRepository<Long, ThemeFil
         }
     }
 
-    public Optional<ThemeFile> findByPath(final String path,
+    public Optional<ThemeFile> findByPath(final Theme theme,
+                                          final String path,
                                           final ThemeVersion version) {
 
         final TypedQuery<ThemeFile> query = getEntityManager()

@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -60,7 +61,6 @@ public class ThemeManifestUtil implements Serializable {
     public ThemeManifest loadManifest(final Path path) {
 
 //        final String pathStr = path.toString().toLowerCase(Locale.ROOT);
-
         final BufferedReader reader;
         try {
             reader = Files.newBufferedReader(path, Charset.forName("UTF-8"));
@@ -69,7 +69,7 @@ public class ThemeManifestUtil implements Serializable {
         }
 
         return parseManifest(reader, path.toString());
-        
+
 //        final ObjectMapper mapper;
 //        if (pathStr.endsWith(THEME_MANIFEST_JSON)) {
 //            mapper = new ObjectMapper();
@@ -105,7 +105,7 @@ public class ThemeManifestUtil implements Serializable {
         }
 
         return parseManifest(reader, fileName);
-        
+
 //        final ObjectMapper mapper;
 //        if (fileName.endsWith(THEME_MANIFEST_JSON)) {
 //            mapper = new ObjectMapper();
@@ -130,7 +130,38 @@ public class ThemeManifestUtil implements Serializable {
 //        return manifest;
     }
 
-    private ThemeManifest parseManifest(final Reader reader, final String path) {
+    public String serializeManifest(final ThemeManifest manifest,
+                                    final String format) {
+
+        final ObjectMapper mapper;
+
+        switch (format) {
+            case THEME_MANIFEST_JSON:
+                mapper = new ObjectMapper();
+                break;
+            case THEME_MANIFEST_XML:
+                final JacksonXmlModule xmlModule = new JacksonXmlModule();
+                mapper = new XmlMapper(xmlModule);
+                break;
+            default:
+                throw new IllegalArgumentException(
+                    "Unsupported format for ThemeManifest");
+        }
+
+        mapper.registerModule(new JaxbAnnotationModule());
+
+        final StringWriter writer = new StringWriter();
+        try {
+            mapper.writeValue(writer, manifest);
+        } catch (IOException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+
+        return writer.toString();
+    }
+
+    private ThemeManifest parseManifest(final Reader reader,
+                                        final String path) {
 
         final String pathStr = path.toLowerCase(Locale.ROOT);
 
