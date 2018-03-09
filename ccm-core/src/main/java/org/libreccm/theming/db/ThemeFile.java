@@ -19,6 +19,7 @@
 package org.libreccm.theming.db;
 
 import org.libreccm.core.CoreConstants;
+import org.libreccm.theming.ThemeVersion;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -89,6 +90,10 @@ public class ThemeFile implements Serializable {
     private String path;
 
     @ManyToOne
+    @JoinColumn(name = "THEME_ID")
+    private Theme theme;
+
+    @ManyToOne
     @JoinColumn(name = "PARENT_DIRECTORY_ID")
     private Directory parent;
 
@@ -132,6 +137,14 @@ public class ThemeFile implements Serializable {
         this.version = version;
     }
 
+    public Theme getTheme() {
+        return theme;
+    }
+
+    protected void setTheme(final Theme theme) {
+        this.theme = theme;
+    }
+
     public Directory getParent() {
         return parent;
     }
@@ -147,6 +160,7 @@ public class ThemeFile implements Serializable {
         hash = 37 * hash + Objects.hashCode(name);
         hash = 37 * hash + Objects.hashCode(path);
         hash = 37 * hash + Objects.hashCode(uuid);
+        hash = 37 * hash + Objects.hashCode(theme);
         hash = 37 * hash + Objects.hashCode(parent);
         return hash;
     }
@@ -178,6 +192,10 @@ public class ThemeFile implements Serializable {
         if (!Objects.equals(uuid, other.getUuid())) {
             return false;
         }
+        if (!Objects.equals(theme, other.getTheme())) {
+            return false;
+        }
+
         return Objects.equals(parent, other.getParent());
     }
 
@@ -195,13 +213,17 @@ public class ThemeFile implements Serializable {
                                  + "fileId = %d, "
                                  + "name = \"%s\", "
                                  + "path = \"%s\", "
-                                 + "uuid = \"%s\"%s"
+                                 + "uuid = \"%s\", "
+                                 + "theme = \"%s\", "
+                                 + "parent = \"%s\"%s"
                                  + " }",
                              super.toString(),
                              fileId,
                              name,
                              path,
                              uuid,
+                             Objects.toString(theme),
+                             Objects.toString(parent),
                              data);
     }
 

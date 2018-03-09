@@ -92,14 +92,16 @@ public interface ThemeProvider extends Serializable {
      *                should throw an NullPointerException if {@code null} is
      *                provided as path.
      *
-     * @return A list of all files in the provided directory. If there is such
-     *         path in the theme the list is empty. If the path is the path of a
-     *         file and not a directory the list should have one element, the
-     *         data about the file itself.
-     * 
-     * @throws IllegalArgumentException If {@code theme} is an empty string,
-     * if there is no theme with the name provided by {@code theme} or
-     * if there is no file/directory with the provided path in the theme.
+     * @return A list of all files in the provided directory. If there is no
+     *         such path in the theme the list is empty. If the path is the path
+     *         of a file and not a directory the list should have one element,
+     *         the data about the file itself.
+     *
+     * @throws IllegalArgumentException If {@code theme} is an empty string, if
+     *                                  there is no theme with the name provided
+     *                                  by {@code theme} or if there is no
+     *                                  file/directory with the provided path in
+     *                                  the theme.
      */
     List<ThemeFileInfo> listThemeFiles(String theme,
                                        ThemeVersion version,
