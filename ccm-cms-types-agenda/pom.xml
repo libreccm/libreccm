@@ -20,7 +20,7 @@
     <artifactId>ccm-cms-types-agenda</artifactId>
     <version>7.0.0-SNAPSHOT</version>
 
-    <name>ccm-cms-types-agenda</name>
+    <name>LibreCMS Content Type Agenda</name>
 
     <dependencies>
         <dependency>

@@ -20,7 +20,7 @@
     <artifactId>ccm-cms-types-decisiontree</artifactId>
     <version>7.0.0-SNAPSHOT</version>
 
-    <name>ccm-cms-types-decisiontree</name>
+    <name>LibreCMS ContentType DecisionTree</name>
 
     <dependencies>
         <dependency>
