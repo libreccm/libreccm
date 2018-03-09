@@ -20,7 +20,7 @@
     <artifactId>ccm-cms-types-glossaryitem</artifactId>
     <version>7.0.0-SNAPSHOT</version>
 
-    <name>ccm-cms-types-glossaryitem</name>
+    <name>LibreCMS ContentType GlossaryItem</name>
 
     <dependencies>
         <dependency>
