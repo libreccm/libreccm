@@ -13,7 +13,7 @@
     <artifactId>ccm-xafilesystemadapter</artifactId>
     <version>7.0.0-SNAPSHOT</version>
     
-    <name>ccm-xafilesystemadapter</name>
+    <name>LibreCCM XAFileSystemAdapter</name>
     
     <licenses>
         <license>
