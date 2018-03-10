@@ -28,11 +28,12 @@ import org.libreccm.theming.manifest.ThemeManifest;
 import org.libreccm.theming.manifest.ThemeManifestUtil;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -149,15 +150,99 @@ public class DatabaseThemeProvider implements ThemeProvider {
     }
 
     @Override
-    public Optional<InputStream> getThemeFileAsStream(String theme,
-                                                      ThemeVersion version,
-                                                      String path) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    @Transactional(Transactional.TxType.REQUIRED)
+    public Optional<InputStream> getThemeFileAsStream(final String themeName,
+                                                      final ThemeVersion version,
+                                                      final String path) {
+
+        final Optional<Theme> theme = themeRepository
+            .findThemeByName(themeName, version);
+
+        if (theme.isPresent()) {
+            final Optional<ThemeFile> file = fileRepository
+                .findByPath(theme.get(), path, version);
+            if (file.isPresent()) {
+                if (file.get() instanceof DataFile) {
+
+                    final DataFile dataFile = (DataFile) file.get();
+
+                    final byte[] data = Arrays
+                        .copyOf(dataFile.getData(), dataFile.getData().length);
+
+                    return Optional.of(new ByteArrayInputStream(data));
+                } else {
+                    return Optional.empty();
+                }
+            } else {
+                return Optional.empty();
+            }
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
-    public OutputStream getOutputStreamForThemeFile(String theme, String path) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    @Transactional(Transactional.TxType.REQUIRED)
+    public OutputStream getOutputStreamForThemeFile(final String themeName,
+                                                    final String path) {
+
+        Objects.requireNonNull(themeName);
+        Objects.requireNonNull(path);
+        
+        if (themeName.matches("\\s*")) {
+            throw new IllegalArgumentException("themeName can't be empty.");
+        }
+        
+        if (path.matches("\\s*")) {
+            throw new IllegalArgumentException("path can't be empty.");
+        }
+        
+        final Theme theme = themeRepository
+            .findThemeByName(path, ThemeVersion.DRAFT)
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("Theme \"%s\" does not exist.", themeName)));
+
+        final ThemeFile file = fileRepository
+            .findByPath(theme, path, ThemeVersion.DRAFT)
+            .orElse(createDataFile(theme, path));
+
+        if (file instanceof DataFile) {
+            return new DataFileOutputStream((DataFile) file);
+        } else {
+            throw new IllegalArgumentException(String
+            .format("The path \"%s\" does not point to a DataFile.",
+                    path));
+        }
+    }
+
+    private DataFile createDataFile(final Theme theme,
+                                    final String path) {
+
+        final int lastSlashIndex = path.lastIndexOf('/');
+        final String parentPath = path.substring(0, lastSlashIndex);
+
+        if (parentPath.isEmpty()) {
+            throw new IllegalArgumentException(String.format(
+                "Path \"%s\" does not point to a file.", path));
+        }
+
+        final ThemeFile parent = fileRepository.findByPath(theme,
+                                                           path,
+                                                           ThemeVersion.DRAFT)
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("The path \"%s\" does not point to a directory.",
+                    path)));
+        
+        if (parent instanceof Directory) {
+            final Directory parentDirectory = (Directory) parent;
+            
+            return fileManager.createDataFile(theme, parentDirectory, path);
+            
+        } else {
+            throw new  IllegalArgumentException(String
+            .format("The path \"%s\" does not point to a directory.",
+                    path));
+        }
     }
 
     @Override
@@ -240,6 +325,36 @@ public class DatabaseThemeProvider implements ThemeProvider {
         }
 
         return fileInfo;
+    }
+
+    private class DataFileOutputStream extends OutputStream {
+
+        private final DataFile dataFile;
+        private final ByteArrayOutputStream outputStream;
+
+        private DataFileOutputStream(final DataFile dataFile) {
+            this.dataFile = dataFile;
+            outputStream = new ByteArrayOutputStream();
+        }
+
+        @Override
+        public void close() throws IOException {
+            flush();
+            outputStream.close();
+        }
+
+        @Override
+        public void flush() throws IOException {
+            final byte[] data = outputStream.toByteArray();
+            dataFile.setData(data);
+            fileRepository.save(dataFile);
+        }
+
+        @Override
+        public void write(final int byteData) throws IOException {
+            outputStream.write(byteData);
+        }
+
     }
 
 }
