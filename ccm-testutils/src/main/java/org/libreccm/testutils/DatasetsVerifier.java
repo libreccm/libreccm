@@ -46,6 +46,7 @@ import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.jboss.arquillian.persistence.dbunit.dataset.yaml.YamlDataSet;
 
 import java.io.InputStream;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -85,7 +86,7 @@ public class DatasetsVerifier {
      * one.
      *
      * @return An string array contains the names of the database schemata used
-     * by the datasets the test.
+     *         by the datasets the test.
      */
     public String[] getSchemas() {
         return new String[]{};
@@ -118,8 +119,19 @@ public class DatasetsVerifier {
 //            }
 //        }
         final String connectionStr = buffer.toString();
-        try (final Connection connection = DriverManager.getConnection(
-            connectionStr, "sa", "")) {
+        try (final Connection connection = DriverManager
+            .getConnection(connectionStr, "sa", "")) {
+            final StringBuffer schemaCreateBuffer = new StringBuffer();
+            for (final String schema : getSchemas()) {
+                schemaCreateBuffer.append(String
+                    .format("CREATE SCHEMA IF NOT EXISTS %s;%n", schema));
+            }
+
+            try (final StringReader schemaCreateReader = new StringReader(
+                schemaCreateBuffer.toString())) {
+                RunScript.execute(connection, schemaCreateReader);
+            }
+
             //Create DB tables etc 
             for (final String ddlFile : getDdlFiles()) {
                 processDdlFile(connection, ddlFile);
@@ -181,8 +193,9 @@ public class DatasetsVerifier {
                                                              IOException {
         final Path schemaPath = Paths.get(getClass().getResource(ddlFile)
             .toURI());
-        RunScript.execute(connection, Files.newBufferedReader(
-                          schemaPath, StandardCharsets.UTF_8));
+        RunScript.execute(connection,
+                          Files.newBufferedReader(schemaPath,
+                                                  StandardCharsets.UTF_8));
     }
 
     private void verifyDumping(final IDatabaseConnection connection)
