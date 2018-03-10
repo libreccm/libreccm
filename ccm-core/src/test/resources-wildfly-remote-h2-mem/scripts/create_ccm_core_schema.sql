@@ -2,7 +2,6 @@ drop schema if exists CCM_CORE;
 
 drop sequence if exists HIBERNATE_SEQUENCE;
 
-
     create schema CCM_CORE;
 
     create table CCM_CORE.APPLICATIONS (
@@ -531,9 +530,9 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
         SETTING_VALUE_STRING varchar(1024),
+        SETTING_VALUE_LONG bigint,
         SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         SETTING_VALUE_DOUBLE double,
-        SETTING_VALUE_LONG bigint,
         SETTING_VALUE_BOOLEAN boolean,
         primary key (SETTING_ID)
     );
@@ -591,6 +590,7 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         UUID varchar(255) not null,
         VERSION varchar(255),
         PARENT_DIRECTORY_ID bigint,
+        THEME_ID bigint,
         primary key (FILE_ID)
     );
 
@@ -1188,6 +1188,11 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         add constraint FKfsycb4bt8d0wye7r3n06ekfeu 
         foreign key (PARENT_DIRECTORY_ID) 
         references CCM_CORE.theme_directories;
+
+    alter table CCM_CORE.THEME_FILES 
+        add constraint FKke2jj04kjqh91h347g1ut0yff 
+        foreign key (THEME_ID) 
+        references CCM_CORE.THEMES;
 
     alter table CCM_CORE.THEMES 
         add constraint FKlat55c5l3fxbykkibrmv7qi4x 
