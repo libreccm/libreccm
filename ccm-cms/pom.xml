@@ -235,7 +235,7 @@
 
             <plugin>
                 <groupId>de.jpdigital</groupId>
-                <artifactId>hibernate50-ddl-maven-plugin</artifactId>
+                <artifactId>hibernate51-ddl-maven-plugin</artifactId>
                 <configuration>
                     <dialects>
                         <param>h2</param>
@@ -442,7 +442,7 @@
                 <plugins>
                     <plugin>
                         <groupId>de.jpdigital</groupId>
-                        <artifactId>hibernate50-ddl-maven-plugin</artifactId>
+                        <artifactId>hibernate51-ddl-maven-plugin</artifactId>
                         <configuration>
                             <dialects>
                                 <param>h2</param>
@@ -525,7 +525,7 @@
                 <plugins>
                     <plugin>
                         <groupId>de.jpdigital</groupId>
-                        <artifactId>hibernate50-ddl-maven-plugin</artifactId>
+                        <artifactId>hibernate51-ddl-maven-plugin</artifactId>
                         <configuration>
                             <dialects>
                                 <param>h2</param>
@@ -608,7 +608,7 @@
                 <plugins>
                     <plugin>
                         <groupId>de.jpdigital</groupId>
-                        <artifactId>hibernate50-ddl-maven-plugin</artifactId>
+                        <artifactId>hibernate51-ddl-maven-plugin</artifactId>
                         <configuration>
                             <dialects>
                                 <param>h2</param>
@@ -691,7 +691,7 @@
                 <plugins>
                     <plugin>
                         <groupId>de.jpdigital</groupId>
-                        <artifactId>hibernate50-ddl-maven-plugin</artifactId>
+                        <artifactId>hibernate51-ddl-maven-plugin</artifactId>
                         <configuration>
                             <dialects>
                                 <param>h2</param>

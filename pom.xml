@@ -260,7 +260,7 @@
                 </plugin>
                 <plugin>
                     <groupId>de.jpdigital</groupId>
-                    <artifactId>hibernate50-ddl-maven-plugin</artifactId>
+                    <artifactId>hibernate51-ddl-maven-plugin</artifactId>
                     <version>2.1.0</version>
                 </plugin>
                 <plugin>
@@ -382,7 +382,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
-                <version>5.0.10.Final</version>
+                <version>5.1.10.Final</version>
             </dependency>
 
             <!--
@@ -392,7 +392,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-envers</artifactId>
-                <version>5.0.10.Final</version>
+                <version>5.1.10.Final</version>
             </dependency>
 
             <!--
@@ -401,12 +401,12 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>5.4.1.Final</version>
+                <version>5.4.2.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator-cdi</artifactId>
-                <version>5.4.1.Final</version>
+                <version>5.4.2.Final</version>
             </dependency>
             <dependency>
                 <groupId>javax.el</groupId>
@@ -426,7 +426,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-search-orm</artifactId>
-                <version>5.5.4.Final</version>
+                <version>5.5.8.Final</version>
             </dependency>
 
             <!--
