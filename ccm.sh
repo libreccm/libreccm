@@ -2,11 +2,11 @@
 
 # Provides shortcuts for working with LibreCCM
 
-wildfly_version="10.1.0.Final"
+wildfly_version="12.0.0.Final"
 wildfly_pid_file="./WILDFLY_PID"
 wildfly_home=""
 
-# Helper function for finding Wildfly. First the function checks if the 
+# Helper function for finding Wildfly. First the function checks if the
 # environment variable JBOSS_HOME is set. If JBOSS_HOME is set is make sure
 # that JBOSS_HOME points to a valid Wildfly installation. If JBOSS_HOME is not
 # set the function checks if Wildfly is installed in ./runtime. If there is no
@@ -15,9 +15,9 @@ find_wildfly_home() {
     #local wildfly_home=""
     if [[ -n $JBOSS_HOME ]]; then
         echo "JBOSS_HOME = $JBOSS_HOME"
-        if [ -f "$JBOSS_HOME/bin/standalone.sh" ]; then           
+        if [ -f "$JBOSS_HOME/bin/standalone.sh" ]; then
             echo $JBOSS_HOME
-        else 
+        else
             echo -e "\e[41mJBOSS_HOME is set but there is no $JBOSS_HOME/bin/standalone.sh. Please make sure that JBOSS_HOME points to a valid Wildfly installation.\e[0m"
             exit 1
         fi
@@ -28,7 +28,7 @@ find_wildfly_home() {
         wildfly_home=$(pwd)
         echo "wildfly_home is '$wildfly_home'"
         popd
-        #echo $wildfly_home        
+        #echo $wildfly_home
     else
         echo -e "\e[41mThere is no Wildfly in ./runtime/ neither is JBOSS_HOME set. Please install Wildfly $wildfly_version into ./runtime/ using install-runtime or set the JBOSS_HOME enviroment variable.\e[0m"
         exit 1
@@ -36,13 +36,13 @@ find_wildfly_home() {
 }
 
 # Build the project site.
-# 
+#
 # @param $1 (optional): Maven profile to use.
 #
 build_site() {
     echo "build_site_param1: $1"
     echo "build_site_param2: $2"
-    
+
     if [ -n "$1" ]; then
         echo "Building project site with profile $1..."
         mvn clean package site site:stage -Dmaven.test.failure.ignore=true -P$1
@@ -73,10 +73,10 @@ build_module() {
     if [ -n "$1" ]; then
         if [ -n "$2" ]; then
             mvn clean package -P$2 -pl $1 -am
-        else 
+        else
             mvn clean package -pl $1 -am
         fi
-    else 
+    else
         echo "Usage: ccm.sh build-module MODULE [PROFILE]"
         exit 1
     fi
@@ -112,15 +112,15 @@ start_test_runtime() {
     elif [ "$1"="tomee" ]; then
         echo "Not implemented yet."
         exit 1
-    else 
+    else
         echo "Unsupported runtime $1. Supported runtimes are wildfly and tomee."
         exit 1
     fi
-    
+
 }
 
 # Helper method for stopping the test runtime
-# 
+#
 # @param $1 (mandantory): Runtime to stop
 #
 stop_test_runtime() {
@@ -149,12 +149,12 @@ test_all() {
         echo "...using a managed Wildfly container"
         find_wildfly_home
         #local wildfly_home=$(find_wildfly_home)
-      
+
         echo "...using profile $1"
         echo ""
         if [ -n $STARTUP_TIMEOUT ]; then
             mvn clean test -Djboss.home=$wildfly_home -DstartuptimeoutInSeconds=$STARTUP_TIMEOUT -P$1
-        else 
+        else
             mvn clean test -Djboss.home=$wildfly_home -P$1
         fi
 
@@ -163,7 +163,7 @@ test_all() {
         if [[ $2 == "start" ]]; then
             echo "...starting runtime"
             start_test_runtime wildfly
-        else 
+        else
             echo "...runtime is started manually"
         fi
 
@@ -177,10 +177,10 @@ test_all() {
         if [[ -n $1 ]]; then
             echo -n -e "\e[43m"
             echo "Warning:                                                 "
-            echo "The provided profile starts with an unknown prefix. Tests" 
+            echo "The provided profile starts with an unknown prefix. Tests"
             echo "which require a running application server may fail.     "
             echo -n -e "\e[0m"
-            
+
         fi
 
         mvn clean test
@@ -226,7 +226,7 @@ test_module() {
         if [[ -n $2 ]]; then
             echo -n -e "\e[43m"
             echo "Warning:                                                 "
-            echo "The provided profile starts with an unknown prefix. Tests" 
+            echo "The provided profile starts with an unknown prefix. Tests"
             echo "which require a running application server may fail.     "
             echo -n -e "\e[0m"
         fi
@@ -276,14 +276,14 @@ run_test() {
         if [[ -n $3 ]]; then
             echo -n -e "\e[43m"
             echo "Warning:                                                 "
-            echo "The provided profile starts with an unknown prefix. Tests" 
+            echo "The provided profile starts with an unknown prefix. Tests"
             echo "which require a running application server may fail.     "
-            echo -n -e "\e[0m"            
+            echo -n -e "\e[0m"
         fi
 
         mvn clean test -Dtest=$2 -DfailIfNoTests=false -pl $1 -am
     fi
-    
+
 }
 
 
@@ -292,14 +292,14 @@ install_runtime() {
     local runtime=""
     if [ -z $1 ]; then
         runtime="wildfly"
-    else 
+    else
         runtime=$1
     fi
 
     echo "Installing runtime $runtime..."
     if [ $runtime = wildfly ]; then
 
-        if [ -d ./runtime/wildfly-$wildfly_version ]; then 
+        if [ -d ./runtime/wildfly-$wildfly_version ]; then
             echo "Wildfly $wildfly_version is already installed as runtime. Exiting"
             exit 1
         fi
@@ -308,10 +308,10 @@ install_runtime() {
             mkdir ./runtime
         fi
 
-        pushd runtime 
+        pushd runtime
         if [ -f wildfly-$wildfly_version.tar.gz ]; then
             echo "Wildfly $wildfly_version has already been downloaded, using existing archive."
-        else 
+        else
             wget http://download.jboss.org/wildfly/$wildfly_version/wildfly-$wildfly_version.tar.gz
         fi
 
@@ -322,7 +322,7 @@ install_runtime() {
 
         tar vxzf wildfly-$wildfly_version.tar.gz
         echo ""
-        echo "Wildfly extracted successfully. Please provide a username and password for a Wildfly management user (admin):" 
+        echo "Wildfly extracted successfully. Please provide a username and password for a Wildfly management user (admin):"
         echo ""
         local username=""
         while [ -z $username ]; do
@@ -373,7 +373,7 @@ install_runtime() {
 
     elif [ $runtime = tomee ]; then
         echo "Not implememented yet."
-    else 
+    else
         echo "Unsupported runtime. Supported runtimes are wildfly (default) and tomee."
     fi
 
@@ -458,27 +458,27 @@ stop_runtime() {
 }
 
 show_help() {
-    echo "ccm.sh is a helper script for building and running LibreCCM in a 
+    echo "ccm.sh is a helper script for building and running LibreCCM in a
 development environment. It provides shortcuts for several Maven goals. The available subcommands are:
-    
-    build-site [PROFILE]                    : Builds the Maven project site. 
-    build [PROFILE]                         : Build all LibreCCM modules. 
+
+    build-site [PROFILE]                    : Builds the Maven project site.
+    build [PROFILE]                         : Build all LibreCCM modules.
     build-module MODULE [PROFILE]           : Build a specific LibreCCM module.
     test-all [[PROFILE] [start]]            : Run all tests for all modules.
-    test-module MODULE [[PROFILE] [start]]  : Run all tests for a specific 
+    test-module MODULE [[PROFILE] [start]]  : Run all tests for a specific
                                               LibreCCM module.
-    run-test MODULE TEST [[PROFILE] [start]]: Run a specific testsuite or a 
-                                              single test method. 
-    install-runtime [RUNTIME]               : Download and install a runtime 
-                                              (application server) into 
+    run-test MODULE TEST [[PROFILE] [start]]: Run a specific testsuite or a
+                                              single test method.
+    install-runtime [RUNTIME]               : Download and install a runtime
+                                              (application server) into
                                               ./runtime
     run [-r RUNTIME] [BUNDLE]               : Run a runtime (application server)
     help                                    : Show this help message.
 
     A detailed description of the subcommands is provided in ccm-readme.txt"
-    
 
-    
+
+
     exit 0;
 }
 
@@ -499,5 +499,3 @@ case $1 in
     *)               show_help ;;
 
 esac
-
-
