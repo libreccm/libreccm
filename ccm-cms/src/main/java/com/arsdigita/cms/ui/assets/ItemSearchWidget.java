@@ -69,6 +69,8 @@ public class ItemSearchWidget extends Widget {
                                                       CMS.CMS_XML_NS);
 
         widget.addAttribute("name", getName());
+        widget.addAttribute("content-section", 
+                            CMS.getContext().getContentSection().getLabel());
 
         if (type != null) {
             widget.addAttribute("asset-type", type.getName());
