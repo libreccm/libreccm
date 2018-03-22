@@ -20,8 +20,10 @@ package org.librecms.contentsection.rs;
 
 import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentItemL10NManager;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
+import org.librecms.contentsection.ContentItemVersion;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.Folder;
@@ -131,8 +133,8 @@ public class ContentItems {
         result.put("name", item.getDisplayName());
 
         result.put("title",
-                   item.getTitle().getValue(globalizationHelper
-                       .getNegotiatedLocale()));
+                   globalizationHelper
+                       .getValueFromLocalizedString(item.getTitle()));
 
         result.put("type",
                    item.getClass().getName());
@@ -162,38 +164,49 @@ public class ContentItems {
     public List<Map<String, String>> findItems(
         @PathParam("content-section") final String section,
         @QueryParam("query") final String query,
-        @QueryParam("type") final String type) {
+        @QueryParam("type") final String type,
+        @QueryParam("version") final String version) {
 
         final ContentSection contentSection = sectionRepo
             .findByLabel(section)
             .orElseThrow(() -> new NotFoundException(
             String.format("No content section '%s' found.", section)));
 
+        final ContentItemVersion itemVersion;
+        if (version != null) {
+            itemVersion = ContentItemVersion.valueOf(version.toUpperCase());
+        } else {
+            itemVersion = ContentItemVersion.LIVE;
+        }
+        
         final List<ContentItem> items;
         if ((query == null || query.trim().isEmpty())
                 && (type == null || type.trim().isEmpty())) {
             items = itemRepo
-                .findByContentSection(contentSection);
+                .findByContentSection(contentSection, itemVersion);
 
         } else if ((query != null && !query.trim().isEmpty())
                        && (type == null || type.trim().isEmpty())) {
 
             items = itemRepo.findByNameAndContentSection(query,
-                                                         contentSection);
+                                                         contentSection,
+                                                         itemVersion);
         } else if ((query == null || query.trim().isEmpty())
                        && (type != null && !type.trim().isEmpty())) {
 
             final Class<? extends ContentItem> itemType
                                                    = toContentItemTypeClass(type);
             items = itemRepo.findByTypeAndContentSection(itemType,
-                                                         contentSection);
+                                                         contentSection,
+                                                         itemVersion);
         } else {
             final Class<? extends ContentItem> itemType
                                                    = toContentItemTypeClass(type);
             items = itemRepo.findByNameAndTypeAndContentSection(
                 query,
                 itemType,
-                contentSection);
+                contentSection,
+                itemVersion);
         }
 
         return items

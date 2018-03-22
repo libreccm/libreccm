@@ -194,6 +194,28 @@ import static org.librecms.CmsConstants.*;
                     + ")")
     ,
     @NamedQuery(
+        name = "ContentItem.findByContentSectionAndVersion",
+        query = "SELECT DISTINCT i "
+                    + "FROM ContentItem i "
+                    + "JOIN i.contentType t "
+                    + "LEFT JOIN i.permissions p "
+                    + "WHERE t.contentSection = :section "
+                    + "AND version = :version "
+                    + "AND ("
+                    + "      ("
+                    + "        p.grantee IN :roles "
+                    + "        AND p.grantedPrivilege = "
+                    + "          (CASE WHEN i.version = 'DRAFT' "
+                    + "            THEN '" + ItemPrivileges.PREVIEW + "' "
+                    + "            ELSE '" + ItemPrivileges.VIEW_PUBLISHED
+                    + "' "
+                    + "            END"
+                    + "              )"
+                    + "      )"
+                    + "          OR true = :isSystemUser OR true = :isAdmin"
+                    + ")")
+    ,
+    @NamedQuery(
         name = "ContentItem.findByNameAndContentSection",
         query = "SELECT DISTINCT i "
                     + "FROM ContentItem i "
@@ -214,6 +236,30 @@ import static org.librecms.CmsConstants.*;
                     + "      )"
                     + "          OR true = :isSystemUser OR true = :isAdmin"
                     + ")")
+    ,
+    @NamedQuery(
+        name = "ContentItem.findNameAndContentSectionAndVersion",
+        query = "SELECT DISTINCT i "
+                    + "FROM ContentItem i "
+                    + "JOIN i.contentType t "
+                    + "LEFT JOIN i.permissions p "
+                    + "WHERE t.contentSection = :section "
+                    + "AND lower(i.displayName) LIKE CONCAT('%', :name, '%s') "
+                    + "AND version = :version "
+                    + "AND ("
+                    + "      ("
+                    + "        p.grantee IN :roles "
+                    + "        AND p.grantedPrivilege = "
+                    + "          (CASE WHEN i.version = 'DRAFT' "
+                    + "            THEN '" + ItemPrivileges.PREVIEW + "' "
+                    + "            ELSE '" + ItemPrivileges.VIEW_PUBLISHED
+                    + "' "
+                    + "            END"
+                    + "              )"
+                    + "      )"
+                    + "          OR true = :isSystemUser OR true = :isAdmin"
+                    + ")")
+
     ,
     @NamedQuery(
         name = "ContentItem.findByTypeAndContentSection",
@@ -237,7 +283,30 @@ import static org.librecms.CmsConstants.*;
                     + "          OR true = :isSystemUser OR true = :isAdmin"
                     + ")")
     ,
-        @NamedQuery(
+    @NamedQuery(
+        name = "ContentItem.findByTypeAndContentSectionAndVersion",
+        query = "SELECT DISTINCT i "
+                    + "FROM ContentItem i "
+                    + "JOIN i.contentType t "
+                    + "LEFT JOIN i.permissions p "
+                    + "WHERE t.contentSection = :section "
+                    + "AND TYPE(i) = :type "
+                    + "AND version = :version "
+                    + "AND ("
+                    + "      ("
+                    + "        p.grantee IN :roles "
+                    + "        AND p.grantedPrivilege = "
+                    + "          (CASE WHEN i.version = 'DRAFT' "
+                    + "            THEN '" + ItemPrivileges.PREVIEW + "' "
+                    + "            ELSE '" + ItemPrivileges.VIEW_PUBLISHED
+                    + "' "
+                    + "            END"
+                    + "              )"
+                    + "      )"
+                    + "          OR true = :isSystemUser OR true = :isAdmin"
+                    + ")")
+    ,
+    @NamedQuery(
         name = "ContentItem.findByNameAndTypeAndContentSection",
         query = "SELECT DISTINCT i "
                     + "FROM ContentItem i "
@@ -260,6 +329,31 @@ import static org.librecms.CmsConstants.*;
                     + "          OR true = :isSystemUser OR true = :isAdmin"
                     + ")")
     ,
+        @NamedQuery(
+        name = "ContentItem.findByNameAndTypeAndContentSectionAndVersion",
+        query = "SELECT DISTINCT i "
+                    + "FROM ContentItem i "
+                    + "JOIN i.contentType t "
+                    + "LEFT JOIN i.permissions p "
+                    + "WHERE t.contentSection = :section "
+                    + "AND TYPE(i) = :type "
+                    + "AND lower(i.displayName) LIKE CONCAT('%', :name, '%s') "
+                    + "AND version = :version "
+                    + "AND ("
+                    + "      ("
+                    + "        p.grantee IN :roles "
+                    + "        AND p.grantedPrivilege = "
+                    + "          (CASE WHEN i.version = 'DRAFT' "
+                    + "            THEN '" + ItemPrivileges.PREVIEW + "' "
+                    + "            ELSE '" + ItemPrivileges.VIEW_PUBLISHED
+                    + "' "
+                    + "            END"
+                    + "              )"
+                    + "      )"
+                    + "          OR true = :isSystemUser OR true = :isAdmin"
+                    + ")")
+    ,
+
     @NamedQuery(
         name = "ContentItem.findByFolder",
         query
