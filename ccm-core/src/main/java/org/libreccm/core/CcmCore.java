@@ -18,6 +18,7 @@
  */
 package org.libreccm.core;
 
+import com.arsdigita.pagemodel.layout.ui.FlexLayoutComponentForm;
 import com.arsdigita.ui.admin.AdminServlet;
 import com.arsdigita.ui.admin.AdminUiConstants;
 import com.arsdigita.ui.admin.applications.AdminApplicationCreator;
@@ -37,6 +38,8 @@ import org.libreccm.modules.InstallEvent;
 import org.libreccm.modules.Module;
 import org.libreccm.modules.ShutdownEvent;
 import org.libreccm.modules.UnInstallEvent;
+import org.libreccm.pagemodel.PageModelComponentModel;
+import org.libreccm.pagemodel.layout.FlexLayout;
 
 import org.libreccm.security.SystemUsersSetup;
 import org.libreccm.web.ApplicationType;
@@ -47,6 +50,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import static com.arsdigita.ui.admin.AdminUiConstants.*;
+
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -56,17 +61,28 @@ import java.util.Properties;
                      descBundle = "com.arsdigita.ui.login.LoginResources",
                      singleton = true,
                      creator = LoginApplicationCreator.class,
-                     servlet = LoginServlet.class),
+                     servlet = LoginServlet.class)
+    ,
     @ApplicationType(name = AdminUiConstants.ADMIN_APP_TYPE,
                      descBundle = "com.arsdigita.ui.admin.AdminResources",
                      singleton = true,
                      creator = AdminApplicationCreator.class,
-                     servlet = AdminServlet.class),
+                     servlet = AdminServlet.class)
+    ,
     @ApplicationType(name = "org.libreccm.ui.admin.AdminFaces",
                      descBundle = "com.arsdigita.ui.admin.AdminResources",
                      singleton = true,
                      creator = AdminJsfApplicationCreator.class,
                      servletPath = "/admin-jsf/admin.xhtml")},
+        pageModelComponentModels = {
+            @PageModelComponentModel(
+                modelClass = FlexLayout.class,
+                editor = FlexLayoutComponentForm.class,
+                descBundle = ADMIN_BUNDLE,
+                titleKey = "ui.pagemodel.components.flexlayout.title",
+                descKey = "ui.pagemodel.components.flexlayout.desc"
+            )
+        },
         configurations = {
             com.arsdigita.bebop.BebopConfig.class,
             com.arsdigita.dispatcher.DispatcherConfig.class,
@@ -104,7 +120,7 @@ public class CcmCore implements CcmModule {
 
         LOGGER.info("Setting up admin-jsf application (/ccm/admin-jsf/)...");
         final AdminJsfApplicationSetup adminJsfSetup
-                                       = new AdminJsfApplicationSetup(event);
+                                           = new AdminJsfApplicationSetup(event);
         adminJsfSetup.setup();
 
         LOGGER.info("Setting up login application...");
