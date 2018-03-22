@@ -98,9 +98,6 @@ public class ContentItemRepository
     private TaskManager taskManager;
 
     @Inject
-    private TaskRepository taskRepo;
-
-    @Inject
     private UserRepository userRepository;
 
     @Inject
@@ -272,6 +269,21 @@ public class ContentItemRepository
 
     @Transactional(Transactional.TxType.REQUIRED)
     @SuppressWarnings("unchecked")
+    public <T extends ContentItem> List<T> findByContentSection(
+        final ContentSection section, final ContentItemVersion version) {
+
+        final TypedQuery<ContentItem> query = getEntityManager()
+            .createNamedQuery("ContentItem.findByContentSectionAndVersion",
+                              ContentItem.class);
+        query.setParameter("section", section);
+        query.setParameter("version", version.toString());
+        setAuthorizationParameters(query);
+
+        return (List<T>) query.getResultList();
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    @SuppressWarnings("unchecked")
     public <T extends ContentItem> List<T> findByNameAndContentSection(
         final String name, final ContentSection section) {
 
@@ -280,6 +292,25 @@ public class ContentItemRepository
                               ContentItem.class);
         query.setParameter("section", section);
         query.setParameter("name", name);
+        setAuthorizationParameters(query);
+
+        return (List<T>) query.getResultList();
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    @SuppressWarnings("unchecked")
+    public <T extends ContentItem> List<T> findByNameAndContentSection(
+        final String name,
+        final ContentSection section,
+        final ContentItemVersion version) {
+
+        final TypedQuery<ContentItem> query = getEntityManager()
+            .createNamedQuery(
+                "ContentItem.findByNameAndContentSectionAndVersion",
+                ContentItem.class);
+        query.setParameter("section", section);
+        query.setParameter("name", name);
+        query.setParameter("version", version.toString());
         setAuthorizationParameters(query);
 
         return (List<T>) query.getResultList();
@@ -302,6 +333,25 @@ public class ContentItemRepository
 
     @Transactional(Transactional.TxType.REQUIRED)
     @SuppressWarnings("unchecked")
+    public <T extends ContentItem> List<T> findByTypeAndContentSection(
+        final Class<? extends ContentItem> type,
+        final ContentSection section,
+        final ContentItemVersion version) {
+
+        final TypedQuery<ContentItem> query = getEntityManager()
+            .createNamedQuery(
+                "ContentItem.findByNameAndContentSectionAndVersion",
+                ContentItem.class);
+        query.setParameter("section", section);
+        query.setParameter("type", type);
+        query.setParameter("version", version.toString());
+        setAuthorizationParameters(query);
+
+        return (List<T>) query.getResultList();
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    @SuppressWarnings("unchecked")
     public <T extends ContentItem> List<T> findByNameAndTypeAndContentSection(
         final String name,
         final Class<? extends ContentItem> type,
@@ -313,6 +363,26 @@ public class ContentItemRepository
         query.setParameter("section", section);
         query.setParameter("name", name);
         query.setParameter("type", type);
+        setAuthorizationParameters(query);
+
+        return (List<T>) query.getResultList();
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    @SuppressWarnings("unchecked")
+    public <T extends ContentItem> List<T> findByNameAndTypeAndContentSection(
+        final String name,
+        final Class<? extends ContentItem> type,
+        final ContentSection section,
+        final ContentItemVersion version) {
+
+        final TypedQuery<ContentItem> query = getEntityManager()
+            .createNamedQuery("ContentItem.findByNameAndContentSectionAndVersion",
+                              ContentItem.class);
+        query.setParameter("section", section);
+        query.setParameter("name", name);
+        query.setParameter("type", type);
+        query.setParameter("version", version.toString());
         setAuthorizationParameters(query);
 
         return (List<T>) query.getResultList();

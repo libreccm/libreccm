@@ -102,7 +102,7 @@ function getItemsForSelectItemDialog(dialogId) {
     var dispatcherPrefix = dialog.getAttribute('data-dispatcherPrefix');
 
     var request = new XMLHttpRequest();
-    var url = dispatcherPrefix.substring(0, dispatcherPrefix.length - "/ccm".length) + "/content-sections/" + contentSection + "/items/";
+    var url = dispatcherPrefix.substring(0, dispatcherPrefix.length - "/ccm".length) + "/content-sections/" + contentSection + "/items/?version=DRAFT";
     if (type !== null && type.length > 0) {
         url = url + "?type=" + type;
     }
