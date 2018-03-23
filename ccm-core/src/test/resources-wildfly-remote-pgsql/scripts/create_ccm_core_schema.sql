@@ -4,6 +4,7 @@ drop sequence if exists HIBERNATE_SEQUENCE;
 
     create schema CCM_CORE;
 
+
     create table CCM_CORE.APPLICATIONS (
         APPLICATION_TYPE varchar(1024) not null,
         PRIMARY_URL varchar(1024) not null,
@@ -131,6 +132,21 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         LOCALIZED_VALUE text,
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
+    );
+
+    create table CCM_CORE.FLEX_LAYOUT_BOXES (
+        BOX_ID int8 not null,
+        BOX_ORDER int4,
+        BOX_SIZE int4,
+        COMPONENT_ID int8,
+        LAYOUT_ID int8,
+        primary key (BOX_ID)
+    );
+
+    create table CCM_CORE.FLEX_LAYOUT_COMPONENTS (
+        DIRECTION varchar(255),
+        COMPONENT_MODEL_ID int8 not null,
+        primary key (COMPONENT_MODEL_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_COMPONENT_DESCRIPTIONS (
@@ -529,10 +545,10 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         SETTING_ID int8 not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
-        SETTING_VALUE_STRING varchar(1024),
-        SETTING_VALUE_LONG int8,
-        SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
         SETTING_VALUE_DOUBLE float8,
+        SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
+        SETTING_VALUE_LONG int8,
+        SETTING_VALUE_STRING varchar(1024),
         SETTING_VALUE_BOOLEAN boolean,
         primary key (SETTING_ID)
     );
@@ -741,8 +757,7 @@ drop sequence if exists HIBERNATE_SEQUENCE;
 
     alter table CCM_CORE.WORKFLOWS 
         add constraint UK_o113id7d1cxql0edsrohlnn9x unique (UUID);
-
-    create sequence hibernate_sequence start 1 increment 1;
+create sequence hibernate_sequence start 1 increment 1;
 
     alter table CCM_CORE.APPLICATIONS 
         add constraint FKatcp9ij6mbkx0nfeig1o6n3lm 
@@ -833,6 +848,21 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         add constraint FK5p526dsdwn94els6lp5w0hdn4 
         foreign key (OBJECT_ID) 
         references CCM_CORE.CATEGORY_DOMAINS;
+
+    alter table CCM_CORE.FLEX_LAYOUT_BOXES 
+        add constraint FKeiqh69t1lr7u09hjuxfyxsbs 
+        foreign key (COMPONENT_ID) 
+        references CCM_CORE.PAGE_MODEL_COMPONENT_MODELS;
+
+    alter table CCM_CORE.FLEX_LAYOUT_BOXES 
+        add constraint FKmrobhhqidcf1657ugcgatrd0y 
+        foreign key (LAYOUT_ID) 
+        references CCM_CORE.FLEX_LAYOUT_COMPONENTS;
+
+    alter table CCM_CORE.FLEX_LAYOUT_COMPONENTS 
+        add constraint FK8qxnqt75ikxtedx0xreoeiygg 
+        foreign key (COMPONENT_MODEL_ID) 
+        references CCM_CORE.PAGE_MODEL_COMPONENT_MODELS;
 
     alter table CCM_CORE.FORMBUILDER_COMPONENT_DESCRIPTIONS 
         add constraint FKfh0k9lj3pf4amfc9bbbss0tr1 
