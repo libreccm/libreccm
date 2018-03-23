@@ -23,9 +23,22 @@ import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
 import javax.enterprise.context.RequestScoped;
 import javax.transaction.Transactional;
+
 import java.util.UUID;
+
+import javax.persistence.EntityGraph;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 /**
  * Repository class for managing {@link ComponentModel} entities.
@@ -47,7 +60,7 @@ public class ComponentModelRepository
     public String getIdAttributeName() {
         return "componentModelId";
     }
-    
+
     @Override
     public Long getIdOfEntity(final ComponentModel entity) {
         return entity.getComponentModelId();
@@ -80,6 +93,71 @@ public class ComponentModelRepository
         if (componentModel.getModelUuid() == null
                 || componentModel.getModelUuid().isEmpty()) {
             componentModel.setModelUuid(uuid);
+        }
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public <M extends ComponentModel> Optional<M> findById(final long modelId,
+                                                           final Class<M> modelClass) {
+
+        return Optional.ofNullable(getEntityManager().find(modelClass,
+                                                           modelId));
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public <M extends ComponentModel> Optional<M> findById(
+        final long modelId,
+        final Class<M> modelClass,
+        final String entityGraphName) {
+
+        return Optional.ofNullable(getEntityManager().find(modelClass,
+                                                           modelId));
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public <M extends ComponentModel> Optional<M> findById(
+        final long entityId,
+        final Class<M> modelClass,
+        final EntityGraph<M> entityGraph) {
+
+        Objects.requireNonNull(entityId);
+        Objects.requireNonNull(entityGraph);
+
+        final Map<String, Object> hints = new HashMap<>();
+        hints.put(FETCH_GRAPH_HINT_KEY, entityGraph);
+        return Optional.ofNullable(getEntityManager().find(modelClass,
+                                                           entityId,
+                                                           hints));
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public <M extends ComponentModel> Optional<M> findById(
+        final long entityId,
+        final Class<M> modelClass,
+        final String... fetchJoins) {
+
+        Objects.requireNonNull(entityId);
+
+        final CriteriaBuilder builder = getEntityManager()
+            .getCriteriaBuilder();
+        final CriteriaQuery<M> criteriaQuery = builder
+            .createQuery(modelClass);
+        final Root<M> from = criteriaQuery.from(modelClass);
+        criteriaQuery.from(getEntityClass());
+        criteriaQuery.select(from);
+        for (final String fetchJoin : fetchJoins) {
+            from.fetch(fetchJoin);
+        }
+
+        criteriaQuery
+            .where(builder.equal(from.get(getIdAttributeName()), entityId));
+
+        final TypedQuery<M> query = getEntityManager()
+            .createQuery(criteriaQuery);
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch (NoResultException ex) {
+            return Optional.empty();
         }
     }
 

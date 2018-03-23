@@ -26,26 +26,29 @@ import com.arsdigita.xml.Element;
 
 /**
  * A container that outputs its components in a &lt;list&gt;. Each child is
- * printed in its own list item.  The components are put into the list
- * in the order in which they were added to the
- * <code>ListPanel</code>, progressing from top to bottom.
+ * printed in its own list item. The components are put into the list in the
+ * order in which they were added to the <code>ListPanel</code>, progressing
+ * from top to bottom.
  *
- * <p> ListPanels can be ordered or unordered.</p>
+ * <p>
+ * ListPanels can be ordered or unordered.</p>
  *
  * @author Christian Brechb&uuml;hler (christian@arsdigita.com)
  *
  * @version $Id$
- * */
-public class ListPanel extends SimpleContainer  {
+ *
+ */
+public class ListPanel extends SimpleContainer {
 
-    public static final boolean ORDERED   = true ;
+    public static final boolean ORDERED = true;
     public static final boolean UNORDERED = false;
     private boolean m_ordered;
 
     /**
      * Creates a simple list.
+     *
      * @param ordered <code>true</code> is an ordered (numbered) list;
-     * <code>false</code> is an unordered (bulleted) list
+     *                <code>false</code> is an unordered (bulleted) list
      *
      */
     public ListPanel(boolean ordered) {
@@ -54,32 +57,36 @@ public class ListPanel extends SimpleContainer  {
 
     /**
      * Adds child components as a subtree under list-item nodes.
-     * <p>Generates a DOM fragment:
-     * <p><pre>
+     * <p>
+     * Generates a DOM fragment:
+     * <p>
+     * <pre>
      * &lt;bebop:listPanel>
      *   &lt;bebop:cell> ... cell contents &lt;/bebop:cell>
      *   &lt;bebop:cell> ... cell contents &lt;/bebop:cell>
      *   ...
      * &lt;/bebop:list></pre></p>
-     * @param state the state of the current request
+     *
+     * @param state  the state of the current request
      * @param parent the node under which this subtree will be added
      */
     public void generateXML(PageState state, Element parent) {
 
-        if ( ! isVisible(state) ) {
-            return;
-        }
+        if (isVisible(state)) {
 
-        Element list = parent.newChildElement("bebop:listPanel", BEBOP_XML_NS);
-        list.addAttribute("ordered", String.valueOf(m_ordered));
-        exportAttributes(list);
+            Element list = parent.newChildElement("bebop:listPanel",
+                                                  BEBOP_XML_NS);
+            list.addAttribute("ordered", String.valueOf(m_ordered));
+            exportAttributes(list);
 
-        // generate XML for children
-        for (Iterator i = children(); i.hasNext(); ) {
-            Component c = (Component) i.next();
+            // generate XML for children
+            for (Iterator i = children(); i.hasNext();) {
+                Component c = (Component) i.next();
 
-            Element item  = list.newChildElement("bebop:cell", BEBOP_XML_NS);
-            c.generateXML(state, item);
+                Element item = list.newChildElement("bebop:cell", BEBOP_XML_NS);
+                c.generateXML(state, item);
+            }
         }
     }
+
 }

@@ -16,29 +16,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.theming;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
 /**
- *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * Annotations and classes for exposing resources via WebDAV using JAX-RS. 
+ * The classes in these packages are based on classes originally created for 
+ * JAX-RS. This project was hosted on the now defunct dev.java.net site. The
+ * sources now be found at {@link https://gitlab.com/headcrashing/webdav-jaxrs}.
+ * Unfortunately the project is not maintained anymore and has not been updated
+ * for JAX-RS 2. Therefore we used the classes only as foundation for our 
+ * implementation. The classes have been edited to match our coding standards
+ * and to be compatible with new versions of JAX-RS and other libraries.
  */
-@ApplicationPath("/theming")
-public class ThemesService extends Application {
-
-    @Override
-    public Set<Class<?>> getClasses() {
-
-        final Set<Class<?>> classes = new HashSet<>();
-        classes.add(ThemeFiles.class);
-        classes.add(ThemeFilesDav.class);
-        
-        return classes;
-    }
-
-}
+package org.libreccm.webdav;

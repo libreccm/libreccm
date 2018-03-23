@@ -29,6 +29,7 @@ import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.FormValidationListener;
 import com.arsdigita.bebop.form.TextField;
+import com.arsdigita.bebop.parameters.LongParameter;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.ui.admin.AdminUiConstants;
 
@@ -239,6 +240,7 @@ public abstract class AbstractComponentModelForm<T extends ComponentModel>
      * @throws FormProcessException
      */
     @Override
+    @SuppressWarnings("unchecked")
     public void init(final FormSectionEvent event) throws FormProcessException {
 
         final PageState state = event.getPageState();
@@ -248,18 +250,26 @@ public abstract class AbstractComponentModelForm<T extends ComponentModel>
         if (selectedComponentIdStr != null
                 && !selectedComponentIdStr.isEmpty()) {
 
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            
+            componentModel = loadSelectedComponent(
+                Long.parseLong(selectedComponentIdStr));
+
+            keyField.setValue(state, componentModel.getKey());
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    protected T loadSelectedComponent(final long componentId) {
+        
+         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final ComponentModelRepository componentModelRepo = cdiUtil
                 .findBean(ComponentModelRepository.class);
-
-            final ComponentModel model = componentModelRepo
-                .findById(Long.parseLong(selectedComponentIdStr))
+        
+        return (T) componentModelRepo
+                .findById(componentId)
                 .orElseThrow(() -> new IllegalArgumentException(String
-                .format("No ComponentModel with ID %s in the database.",
-                        selectedComponentIdStr)));
-
-            keyField.setValue(state, model.getKey());
-        }
+                .format("No ComponentModel with ID %d in the database.",
+                        componentId)));
     }
 
     /**
