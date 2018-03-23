@@ -59,7 +59,7 @@ public class FlexLayoutRenderer implements ComponentRenderer<FlexLayout> {
                    componentModel
                        .getBoxes()
                        .stream()
-                       .map(this::renderBox)
+                       .map(box -> renderBox(box, parameters))
                        .collect(Collectors.toList()));
 
         return result;

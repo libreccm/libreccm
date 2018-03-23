@@ -16,29 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.theming;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
 /**
- *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * Annotations for the WebDAV HTTP methods.
  */
-@ApplicationPath("/theming")
-public class ThemesService extends Application {
-
-    @Override
-    public Set<Class<?>> getClasses() {
-
-        final Set<Class<?>> classes = new HashSet<>();
-        classes.add(ThemeFiles.class);
-        classes.add(ThemeFilesDav.class);
-        
-        return classes;
-    }
-
-}
+package org.libreccm.webdav.methods;

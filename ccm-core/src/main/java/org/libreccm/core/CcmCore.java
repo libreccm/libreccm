@@ -18,7 +18,7 @@
  */
 package org.libreccm.core;
 
-import com.arsdigita.pagemodel.layout.ui.FlexLayoutComponentForm;
+import com.arsdigita.ui.admin.pagemodels.layout.FlexLayoutComponentForm;
 import com.arsdigita.ui.admin.AdminServlet;
 import com.arsdigita.ui.admin.AdminUiConstants;
 import com.arsdigita.ui.admin.applications.AdminApplicationCreator;
