@@ -56,6 +56,7 @@ public class FlexBox implements Serializable {
     private long boxId;
 
     @ManyToOne
+    @JoinColumn(name = "LAYOUT_ID")
     private FlexLayout layout;
     
     @Column(name = "BOX_ORDER")

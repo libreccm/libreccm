@@ -32,6 +32,8 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.ui.admin.pagemodels.AbstractComponentModelForm;
 import com.arsdigita.ui.admin.pagemodels.PageModelsTab;
 
+import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.pagemodel.ComponentModelRepository;
 import org.librecms.CmsConstants;
 import org.librecms.pagemodel.ItemListComponent;
 
@@ -133,8 +135,7 @@ public class ItemListComponentForm
     }
 
     @Override
-    public void init(final FormSectionEvent event)
-        throws FormProcessException {
+    public void init(final FormSectionEvent event) throws FormProcessException {
 
         super.init(event);
 
@@ -144,7 +145,7 @@ public class ItemListComponentForm
 
         if (component == null) {
             pageSizeField.setValue(state, "30");
-        }else {
+        } else {
             final Object[] descendingValue;
             if (component.isDescending()) {
                 descendingValue = new Object[]{DESCENDING};
@@ -161,6 +162,21 @@ public class ItemListComponentForm
             listOrderArea.setValue(state,
                                    String.join("\n", component.getListOrder()));
         }
+    }
+
+    @Override
+    protected ItemListComponent loadSelectedComponent(final long componentId) {
+
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ComponentModelRepository componentModelRepo = cdiUtil
+            .findBean(ComponentModelRepository.class);
+
+        return componentModelRepo.findById(componentId,
+                                           ItemListComponent.class,
+                                           new String[]{"listOrder"})
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No ComponentModel with ID %d in the database.",
+                    componentId)));
     }
 
     @Override

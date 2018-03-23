@@ -18,6 +18,8 @@
  */
 package org.libreccm.theming;
 
+import org.libreccm.webdav.methods.PROPFIND;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -34,14 +36,13 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Path("/files/{theme}")
-public class ThemeFiles {
+@Path("/dav/{theme}")
+public class ThemeFilesDav {
 
     @Inject
     private Themes themes;
@@ -77,9 +78,19 @@ public class ThemeFiles {
         } catch (IOException ex) {
             throw new WebApplicationException(ex);
         }
-        
+
         final byte[] data = outputStream.toByteArray();
         return Response.ok(data, mediaType).build();
+
+    }
+    
+    @PROPFIND
+    @Path("/{path}")
+    public Response propfind(@PathParam("theme") final String theme,
+                            @PathParam("path") final String path) {
+        
+        throw new UnsupportedOperationException();
+        
     }
 
     private MediaType getMediaTypeFromPath(final String path) {

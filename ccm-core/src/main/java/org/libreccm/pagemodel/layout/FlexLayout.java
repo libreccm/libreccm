@@ -46,7 +46,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "HORIZONTAL_LAYOUT_COMPONENTS", schema = CoreConstants.DB_SCHEMA)
+@Table(name = "FLEX_LAYOUT_COMPONENTS", schema = CoreConstants.DB_SCHEMA)
 public class FlexLayout extends ComponentModel {
 
     private static final long serialVersionUID = 1977244351125227610L;
@@ -65,7 +65,6 @@ public class FlexLayout extends ComponentModel {
      */
     @OneToMany(mappedBy = "layout")
     @OrderBy(value = "order")
-    @JoinColumn(name = "LAYOUT_ID")
     private List<FlexBox> boxes;
 
     public FlexLayout() {
