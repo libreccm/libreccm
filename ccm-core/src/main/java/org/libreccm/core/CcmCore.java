@@ -18,7 +18,6 @@
  */
 package org.libreccm.core;
 
-import com.arsdigita.ui.admin.pagemodels.layout.FlexLayoutComponentForm;
 import com.arsdigita.ui.admin.AdminServlet;
 import com.arsdigita.ui.admin.AdminUiConstants;
 import com.arsdigita.ui.admin.applications.AdminApplicationCreator;
@@ -38,8 +37,6 @@ import org.libreccm.modules.InstallEvent;
 import org.libreccm.modules.Module;
 import org.libreccm.modules.ShutdownEvent;
 import org.libreccm.modules.UnInstallEvent;
-import org.libreccm.pagemodel.PageModelComponentModel;
-import org.libreccm.pagemodel.layout.FlexLayout;
 
 import org.libreccm.security.SystemUsersSetup;
 import org.libreccm.web.ApplicationType;
@@ -50,7 +47,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
  *
@@ -75,13 +71,7 @@ import static com.arsdigita.ui.admin.AdminUiConstants.*;
                      creator = AdminJsfApplicationCreator.class,
                      servletPath = "/admin-jsf/admin.xhtml")},
         pageModelComponentModels = {
-            @PageModelComponentModel(
-                modelClass = FlexLayout.class,
-                editor = FlexLayoutComponentForm.class,
-                descBundle = ADMIN_BUNDLE,
-                titleKey = "ui.pagemodel.components.flexlayout.title",
-                descKey = "ui.pagemodel.components.flexlayout.desc"
-            )
+            
         },
         configurations = {
             com.arsdigita.bebop.BebopConfig.class,

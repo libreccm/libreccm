@@ -137,9 +137,10 @@ public abstract class AbstractPageModelComponentEditor<T extends ComponentModel>
             componentModel = createComponentModel();
             componentModel.setKey(key);
             updateComponentModel();
-            controller
-                .getPageModelsController()
-                .addComponentModel(pageModel, componentModel);
+// ToDo
+//            controller
+//                .getPageModelsController()
+//                .addComponentModel(pageModel, componentModel);
         } else {
             componentModel.setKey(key);
             updateComponentModel();

@@ -16,15 +16,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.pagemodel.layout;
+package org.libreccm.pagemodel.styles;
 
 /**
+ * Common units used in CSS for length values.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public enum FlexDirection {
-    
-    HORIZONTAL,
-    VERTICAL
-    
+public enum Unit {
+
+    EM,
+    EX,
+    PERCENT,
+    PX,
+    REM,
+    VH,
+    VW,
+
 }

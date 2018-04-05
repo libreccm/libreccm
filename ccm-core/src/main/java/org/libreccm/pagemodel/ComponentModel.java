@@ -77,12 +77,9 @@ public class ComponentModel implements Serializable {
     @NotNull
     private String modelUuid;
 
-    /**
-     * The {@link PageModel} to which the {@code ComponentModel} belongs.
-     */
     @ManyToOne
-    @JoinColumn(name = "PAGE_MODEL_ID")
-    private PageModel pageModel;
+    @JoinColumn(name = "CONTAINER_ID")
+    private ContainerModel container;
 
     /**
      * ID of the component. Must be unique inside a {@link PageModel}.
@@ -138,12 +135,12 @@ public class ComponentModel implements Serializable {
         this.modelUuid = modelUuid;
     }
 
-    public PageModel getPageModel() {
-        return pageModel;
+    public ContainerModel getContainer() {
+        return container;
     }
 
-    protected void setPageModel(final PageModel pageModel) {
-        this.pageModel = pageModel;
+    protected void setContainer(final ContainerModel container) {
+        this.container = container;
     }
 
     public String getIdAttribute() {
@@ -184,7 +181,7 @@ public class ComponentModel implements Serializable {
         hash
             = 53 * hash + (int) (componentModelId ^ (componentModelId >>> 32));
         hash = 53 * hash + Objects.hashCode(uuid);
-        hash = 53 * hash + Objects.hashCode(pageModel);
+        hash = 53 * hash + Objects.hashCode(container);
         hash = 53 * hash + Objects.hashCode(idAttribute);
         hash = 53 * hash + Objects.hashCode(classAttribute);
         hash = 53 * hash + Objects.hashCode(styleAttribute);
@@ -220,10 +217,12 @@ public class ComponentModel implements Serializable {
         if (!Objects.equals(styleAttribute, other.getStyleAttribute())) {
             return false;
         }
-        if (!Objects.equals(key, other.getKey())) {
+        
+        if (!Objects.equals(container, other.getContainer())) {
             return false;
         }
-        return Objects.equals(pageModel, other.getPageModel());
+
+        return Objects.equals(key, other.getKey());
     }
 
     public boolean canEqual(final Object obj) {
@@ -238,7 +237,7 @@ public class ComponentModel implements Serializable {
     public String toString(final String data) {
         return String.format("%s{ "
                                  + "componentModelId = %d, "
-                                 + "pageModel = %s, "
+                                 + "container = %s, "
                                  + "idAttribute = \"%s\", "
                                  + "classAttribute = \"%s\", "
                                  + "styleAttribute = \"%s\", "
@@ -246,7 +245,7 @@ public class ComponentModel implements Serializable {
                                  + " }",
                              super.hashCode(),
                              componentModelId,
-                             pageModel,
+                             container,
                              idAttribute,
                              classAttribute,
                              styleAttribute,
