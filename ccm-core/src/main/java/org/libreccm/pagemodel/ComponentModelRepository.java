@@ -87,6 +87,7 @@ public class ComponentModelRepository
      */
     @Override
     public void initNewEntity(final ComponentModel componentModel) {
+
         final String uuid = UUID.randomUUID().toString();
 
         componentModel.setUuid(uuid);
@@ -97,8 +98,8 @@ public class ComponentModelRepository
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public <M extends ComponentModel> Optional<M> findById(final long modelId,
-                                                           final Class<M> modelClass) {
+    public <M extends ComponentModel> Optional<M> findById(
+        final long modelId, final Class<M> modelClass) {
 
         return Optional.ofNullable(getEntityManager().find(modelClass,
                                                            modelId));

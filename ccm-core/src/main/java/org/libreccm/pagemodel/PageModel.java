@@ -237,17 +237,14 @@ public class PageModel implements Serializable {
     @NotNull
     private String type;
 
-    /**
-     * The components of the page described by this {@code PageModel}.
-     */
     @OneToMany(mappedBy = "pageModel")
     @OrderBy("key ASC")
-    private List<ComponentModel> components;
+    private List<ContainerModel> containers;
 
     public PageModel() {
         title = new LocalizedString();
         description = new LocalizedString();
-        components = new ArrayList<>();
+        containers = new ArrayList<>();
     }
 
     public long getPageModelId() {
@@ -324,24 +321,24 @@ public class PageModel implements Serializable {
         this.type = type;
     }
 
-    public List<ComponentModel> getComponents() {
-        return Collections.unmodifiableList(components);
+    public List<ContainerModel> getContainers() {
+        return Collections.unmodifiableList(containers);
     }
 
-    protected void setComponents(final List<ComponentModel> components) {
-        this.components = new ArrayList<>(components);
+    protected void setContainers(final List<ContainerModel> containers) {
+        this.containers = new ArrayList<>(containers);
     }
-
-    protected void addComponent(final ComponentModel component) {
-        components.add(component);
+    
+    protected void addContainer(final ContainerModel container) {
+        containers.add(container);
     }
-
-    protected void removeComponent(final ComponentModel component) {
-        components.remove(component);
+    
+    protected void removeContainer(final ContainerModel container) {
+        containers.remove(container);
     }
-
-    protected void clearComponents() {
-        components.clear();
+    
+    protected void clearContainers() {
+        containers.clear();
     }
 
     @Override
