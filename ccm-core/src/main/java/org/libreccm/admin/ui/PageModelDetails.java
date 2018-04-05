@@ -389,15 +389,16 @@ class PageModelDetails extends Window {
                                    ValoTheme.BUTTON_DANGER);
         deleteButton.addClickListener(event -> {
 
-            final ConfirmDialog confirmDialog = new ConfirmDialog(() -> {
-                pageModelsController.removeComponentModel(pageModel,
-                                                          componentModel);
-                return null;
-            });
-            confirmDialog.setMessage(textsUtil.getText(
-                "ui.admin.pagemodels.componentmodels.cols.delete.confirmation"));
-            confirmDialog.setModal(true);
-            UI.getCurrent().addWindow(confirmDialog);
+// ToDo
+//            final ConfirmDialog confirmDialog = new ConfirmDialog(() -> {
+//                pageModelsController.removeComponentModel(pageModel,
+//                                                          componentModel);
+//                return null;
+//            });
+//            confirmDialog.setMessage(textsUtil.getText(
+//                "ui.admin.pagemodels.componentmodels.cols.delete.confirmation"));
+//            confirmDialog.setModal(true);
+//            UI.getCurrent().addWindow(confirmDialog);
         });
 
         return deleteButton;

@@ -18,6 +18,7 @@
  */
 package org.libreccm.pagemodel;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -58,18 +59,36 @@ public abstract class AbstractPageRenderer implements PageRenderer {
 
         final Map<String, Object> page = renderPage(parameters);
 
-        for (final ComponentModel componentModel : pageModel.getComponents()) {
-            final Optional<Object> component = renderComponent(
-                componentModel, 
-                componentModel.getClass(),
-                parameters);
-            if (component.isPresent()) {
-                page.put(componentModel.getKey(),
-                         component.get());
-            }
+        for (final ContainerModel containerModel : pageModel.getContainers()) {
+
+            final Map<String, Object> container = renderContainer(
+                containerModel, parameters);
+            page.put(containerModel.getKey(), container);
         }
 
         return page;
+    }
+
+    protected Map<String, Object> renderContainer(
+        final ContainerModel containerModel,
+        final Map<String, Object> parameters) {
+
+        final Map<String, Object> container = new HashMap<>();
+
+        container.put("key", containerModel.getKey());
+        container.put("styles", containerModel.getStyles().toCss());
+
+        for (final ComponentModel componentModel : containerModel
+            .getComponents()) {
+
+            renderComponent(componentModel,
+                            componentModel.getClass(),
+                            parameters)
+                .ifPresent(component -> container.put(componentModel.getKey(),
+                                                      component));
+        }
+
+        return container;
     }
 
     /**

@@ -134,42 +134,44 @@ class PageModelsController implements Serializable {
         pageModelsTableDataProvider.refreshAll();
     }
 
-    @Transactional(Transactional.TxType.REQUIRED)
-    protected void addComponentModel(final PageModel pageModel,
-    final ComponentModel componentModel) {
-        
-        Objects.requireNonNull(pageModel);
-        Objects.requireNonNull(componentModel);
-
-        final PageModel toPageModel = pageModelRepo
-            .findById(pageModel.getPageModelId())
-            .orElseThrow(() -> new IllegalArgumentException(String
-            .format("No PageModel with ID %d in the database.",
-                    pageModel.getPageModelId())));
-        
-        pageModelManager.addComponentModel(toPageModel, componentModel);
-    }
+// ToDo
+//    @Transactional(Transactional.TxType.REQUIRED)
+//    protected void addComponentModel(final PageModel pageModel,
+//    final ComponentModel componentModel) {
+//        
+//        Objects.requireNonNull(pageModel);
+//        Objects.requireNonNull(componentModel);
+//
+//        final PageModel toPageModel = pageModelRepo
+//            .findById(pageModel.getPageModelId())
+//            .orElseThrow(() -> new IllegalArgumentException(String
+//            .format("No PageModel with ID %d in the database.",
+//                    pageModel.getPageModelId())));
+//        
+//        pageModelManager.addComponentModel(toPageModel, componentModel);
+//    }
     
-    @Transactional(Transactional.TxType.REQUIRED)
-    protected void removeComponentModel(final PageModel pageModel,
-                                        final ComponentModel componentModel) {
-
-        Objects.requireNonNull(pageModel);
-        Objects.requireNonNull(componentModel);
-
-        final PageModel fromPageModel = pageModelRepo
-            .findById(pageModel.getPageModelId())
-            .orElseThrow(() -> new IllegalArgumentException(String
-            .format("No PageModel with ID %d in the database.",
-                    pageModel.getPageModelId())));
-
-        final ComponentModel theComponentModel = componentModelRepo
-            .findById(componentModel.getComponentModelId())
-            .orElseThrow(() -> new IllegalArgumentException(String
-            .format("No ComponentModel with ID %d in the database.",
-                    componentModel.getComponentModelId())));
-        
-        pageModelManager.removeComponentModel(fromPageModel, theComponentModel);
-    }
+// ToDo   
+//    @Transactional(Transactional.TxType.REQUIRED)
+//    protected void removeComponentModel(final PageModel pageModel,
+//                                        final ComponentModel componentModel) {
+//
+//        Objects.requireNonNull(pageModel);
+//        Objects.requireNonNull(componentModel);
+//
+//        final PageModel fromPageModel = pageModelRepo
+//            .findById(pageModel.getPageModelId())
+//            .orElseThrow(() -> new IllegalArgumentException(String
+//            .format("No PageModel with ID %d in the database.",
+//                    pageModel.getPageModelId())));
+//
+//        final ComponentModel theComponentModel = componentModelRepo
+//            .findById(componentModel.getComponentModelId())
+//            .orElseThrow(() -> new IllegalArgumentException(String
+//            .format("No ComponentModel with ID %d in the database.",
+//                    componentModel.getComponentModelId())));
+//        
+//        pageModelManager.removeComponentModel(fromPageModel, theComponentModel);
+//    }
 
 }

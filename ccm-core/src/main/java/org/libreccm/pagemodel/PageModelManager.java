@@ -24,6 +24,11 @@ import org.libreccm.core.CoreConstants;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.modules.CcmModule;
 import org.libreccm.modules.Module;
+import org.libreccm.pagemodel.styles.CssProperty;
+import org.libreccm.pagemodel.styles.MediaQuery;
+import org.libreccm.pagemodel.styles.MediaRule;
+import org.libreccm.pagemodel.styles.Rule;
+import org.libreccm.pagemodel.styles.Styles;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.web.CcmApplication;
@@ -50,6 +55,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Provides several methods for managing {@link PageModel}s.
@@ -66,10 +72,16 @@ public class PageModelManager {
     private EntityManager entityManager;
 
     @Inject
-    private PageModelRepository pageModelRepo;
+    private ComponentModelRepository componentModelRepo;
 
     @Inject
-    private ComponentModelRepository componentModelRepo;
+    private ContainerModelRepository containerModelRepo;
+
+    @Inject
+    private ContainerModelManager containerModelManager;
+
+    @Inject
+    private PageModelRepository pageModelRepo;
 
     private final Map<String, PageModelComponentModel> components
                                                            = new HashMap<>();
@@ -291,17 +303,102 @@ public class PageModelManager {
         liveModel.setApplication(draftModel.getApplication());
         liveModel.setType(draftModel.getType());
 
-        LOGGER.debug("Publishing ComponentModels of PageModel \"{}\"...",
+        LOGGER.debug("Publishing ContainerModels of PageModel \"{}\"...",
                      draftModel.getName());
-        liveModel.clearComponents();
-        for (final ComponentModel draft : draftModel.getComponents()) {
-            final ComponentModel live = publishComponentModel(draft);
-            addComponentModel(liveModel, live);
-        }
+        liveModel.clearContainers();
+
+        draftModel
+            .getContainers()
+            .stream()
+            .map(this::publishContainerModel)
+            .forEach(liveContainerModel -> addContainerModel(pageModel,
+                                                             liveContainerModel));
 
         LOGGER.debug("Successfully published PageModel \"{}\".",
                      liveModel.getName());
         return liveModel;
+    }
+
+    private ContainerModel publishContainerModel(
+        final ContainerModel draftModel) {
+
+        Objects.requireNonNull(draftModel);
+
+        final ContainerModel liveModel = new ContainerModel();
+        liveModel.setKey(draftModel.getKey());
+        liveModel.setContainerUuid(draftModel.getContainerUuid());
+
+        final Styles draftStyles = draftModel.getStyles();
+        final Styles liveStyles = new Styles();
+        liveStyles.setStyleName(draftStyles.getStyleName());
+        liveStyles.setRules(draftStyles
+            .getRules()
+            .stream()
+            .map(this::publishRule)
+            .collect(Collectors.toList()));
+        liveStyles.setMediaRules(draftStyles
+            .getMediaRules()
+            .stream()
+            .map(this::publishMediaRule)
+            .collect(Collectors.toList()));
+
+        draftModel
+            .getComponents()
+            .stream()
+            .map(this::publishComponentModel)
+            .forEach(
+                liveComponentModel -> containerModelManager
+                    .addComponentModel(liveModel, liveComponentModel));
+
+        return liveModel;
+    }
+
+    private MediaRule publishMediaRule(final MediaRule draftMediaRule) {
+
+        Objects.requireNonNull(draftMediaRule);
+
+        final MediaRule liveMediaRule = new MediaRule();
+        final MediaQuery liveMediaQuery = new MediaQuery();
+        liveMediaQuery
+            .setMaxWidth(draftMediaRule.getMediaQuery().getMaxWidth());
+        liveMediaQuery
+            .setMediaType(draftMediaRule.getMediaQuery().getMediaType());
+        liveMediaQuery
+            .setMinWidth(draftMediaRule.getMediaQuery().getMinWidth());
+
+        liveMediaRule.setRules(draftMediaRule
+            .getRules()
+            .stream()
+            .map(this::publishRule)
+            .collect(Collectors.toList()));
+
+        return liveMediaRule;
+    }
+
+    private Rule publishRule(final Rule draftRule) {
+
+        Objects.requireNonNull(draftRule);
+
+        final Rule liveRule = new Rule();
+        liveRule.setSelector(draftRule.getSelector());
+        liveRule.setProperties(draftRule
+            .getProperties()
+            .stream()
+            .map(this::publishCssProperty)
+            .collect(Collectors.toList()));
+
+        return liveRule;
+    }
+
+    private CssProperty publishCssProperty(final CssProperty draftProperty) {
+
+        Objects.requireNonNull(draftProperty);
+
+        final CssProperty liveProperty = new CssProperty();
+        liveProperty.setName(draftProperty.getName());
+        liveProperty.setValue(draftProperty.getValue());
+
+        return liveProperty;
     }
 
     /**
@@ -369,8 +466,8 @@ public class PageModelManager {
                     target.addAll(source);
                     writeMethod.invoke(draftModel, target);
                 } catch (IllegalAccessException
-                         | IllegalArgumentException
-                         | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new UnexpectedErrorException(ex);
                 }
 
@@ -384,8 +481,8 @@ public class PageModelManager {
                     source = (Map<Object, Object>) readMethod.invoke(draftModel);
                     target = (Map<Object, Object>) readMethod.invoke(liveModel);
                 } catch (IllegalAccessException
-                         | IllegalArgumentException
-                         | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new UnexpectedErrorException(ex);
                 }
 
@@ -401,8 +498,8 @@ public class PageModelManager {
                     source = (Set<Object>) readMethod.invoke(draftModel);
                     target = (Set<Object>) readMethod.invoke(liveModel);
                 } catch (IllegalAccessException
-                         | IllegalArgumentException
-                         | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new UnexpectedErrorException(ex);
                 }
 
@@ -413,8 +510,8 @@ public class PageModelManager {
                     value = readMethod.invoke(draftModel);
                     writeMethod.invoke(liveModel, value);
                 } catch (IllegalAccessException
-                         | IllegalArgumentException
-                         | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new UnexpectedErrorException(ex);
                 }
             }
@@ -454,95 +551,37 @@ public class PageModelManager {
         return result;
     }
 
-    /**
-     * Returns all available {@link ComponentModel}.
-     *
-     * @return A list of all available {@link ComponentModel}s.
-     */
-    public List<PageModelComponentModel> findAvailableComponents() {
-        final List<PageModelComponentModel> list = new ArrayList<>(components
-            .values());
-        list.sort((component1, component2) -> {
-            return component1.modelClass().getName().compareTo(
-                component2.modelClass().getName());
-        });
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void addContainerModel(final PageModel pageModel,
+                                  final ContainerModel container) {
 
-        return list;
-    }
+        Objects.requireNonNull(pageModel);
+        Objects.requireNonNull(container);
 
-    /**
-     * Finds the description specific {@link ComponentModel}.
-     *
-     * @param className The fully qualified name of the {@link ComponentModel}
-     *                  class.
-     *
-     * @return An {@link Optional} containing the description of the
-     *         {@link ComponentModel} if there is a {@link ComponentModel} with
-     *         the specified {@code name}. Otherwise an empty {@link Optional}.
-     */
-    public Optional<PageModelComponentModel> findComponentModel(
-        final String className) {
-
-        if (components.containsKey(className)) {
-            return Optional.of(components.get(className));
-        } else {
-            return Optional.empty();
-        }
-    }
-
-    /**
-     * Adds a {@link ComponentModel} to a {@link PageModel}.
-     *
-     * @param pageModel      The {@link PageModel} to which component model is
-     *                       added.
-     * @param componentModel The {@link ComponentModel} to add.
-     */
-    public void addComponentModel(final PageModel pageModel,
-                                  final ComponentModel componentModel) {
-
-        if (pageModel == null) {
-            throw new IllegalArgumentException(
-                "Can't add a component model to page model null.");
-        }
-
-        if (componentModel == null) {
-            throw new IllegalArgumentException(
-                "Can't add component model null to a page model.");
-        }
-
-        pageModel.addComponent(componentModel);
-        componentModel.setPageModel(pageModel);
+        pageModel.addContainer(container);
+        container.setPageModel(pageModel);
 
         pageModelRepo.save(pageModel);
-        componentModelRepo.save(componentModel);
+        containerModelRepo.save(container);
     }
 
-    /**
-     * Removes a {@link ComponentModel} from a {@link PageModel}.
-     *
-     * @param pageModel      The {@link PageModel} from which the
-     *                       {@link ComponentModel} is removed.
-     * @param componentModel The {@link ComponentModel} to remove. The component
-     *                       model is also removed from the database.
-     */
-    public void removeComponentModel(final PageModel pageModel,
-                                     final ComponentModel componentModel) {
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void removeContainerModel(final PageModel pageModel,
+                                final ContainerModel container) {
 
-        if (pageModel == null) {
-            throw new IllegalArgumentException(
-                "Can't remove a component model from page model null.");
+        Objects.requireNonNull(pageModel);
+        Objects.requireNonNull(container);
+
+        if (!container.getComponents().isEmpty()) {
+
+            throw new IllegalArgumentException("Container is not empty.");
         }
 
-        if (componentModel == null) {
-            throw new IllegalArgumentException(
-                "Can't remove component model null from a page model.");
-        }
-
-        pageModel.removeComponent(componentModel);
-        componentModel.setPageModel(null);
+        pageModel.removeContainer(container);
+        container.setPageModel(null);
 
         pageModelRepo.save(pageModel);
-        componentModelRepo.delete(componentModel);
+        containerModelRepo.delete(container);
     }
 
 }

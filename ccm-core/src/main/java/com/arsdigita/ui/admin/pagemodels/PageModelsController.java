@@ -244,9 +244,10 @@ class PageModelsController implements Serializable {
                     pageModelId)));
 
         final List<ComponentModel> components = new ArrayList<>();
-        for (final ComponentModel component : model.getComponents()) {
-            components.add(component);
-        }
+// ToDo
+//        for (final ComponentModel component : model.getComponents()) {
+//            components.add(component);
+//        }
         return components;
     }
 
@@ -268,7 +269,8 @@ class PageModelsController implements Serializable {
             .format("No PageModel with ID %d in the database.",
                     pageModelId)));
 
-        pageModelManager.addComponentModel(model, componentModel);
+// ToDo
+//        pageModelManager.addComponentModel(model, componentModel);
 
     }
 
@@ -296,7 +298,8 @@ class PageModelsController implements Serializable {
             .format("No ComponentModel with ID %d in the database.",
                     componentModelId)));
 
-        pageModelManager.removeComponentModel(model, componentModel);
+// ToDo
+//        pageModelManager.removeComponentModel(model, componentModel);
     }
 
 }
