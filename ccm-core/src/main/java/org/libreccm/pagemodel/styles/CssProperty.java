@@ -18,6 +18,8 @@
  */
 package org.libreccm.pagemodel.styles;
 
+import org.libreccm.core.CoreConstants;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -34,7 +36,7 @@ import javax.persistence.Table;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "STYLE_PROPERTIES")
+@Table(name = "STYLE_PROPERTIES", schema = CoreConstants.DB_SCHEMA)
 public class CssProperty implements Serializable {
 
     private static final long serialVersionUID = -4697757123207731769L;
