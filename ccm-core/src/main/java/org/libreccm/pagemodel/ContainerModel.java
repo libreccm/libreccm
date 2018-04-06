@@ -55,7 +55,7 @@ import javax.validation.constraints.NotNull;
 @Table(name = "PAGE_MODEL_CONTAINER_MODELS", schema = CoreConstants.DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(name = "ContainerModel.findByKeyAndPage",
-                query = "SELECT c FROM Container c "
+                query = "SELECT c FROM ContainerModel c "
                             + "WHERE c.key = :key "
                             + "AND c.pageModel = :pageModel")
 })
@@ -89,7 +89,7 @@ public class ContainerModel implements Serializable {
      * used for the value of the {@code id} or {@code class} attribute in HTML.
      * It is recommended the use semantic names.
      */
-    @Column(name = "COMPONENT_KEY", length = 255)
+    @Column(name = "CONTAINER_KEY", length = 255)
     private String key;
 
     /**
