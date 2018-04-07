@@ -133,21 +133,6 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         primary key (OBJECT_ID, LOCALE)
     );
 
-    create table CCM_CORE.FLEX_LAYOUT_BOXES (
-        BOX_ID bigint not null,
-        BOX_ORDER integer,
-        BOX_SIZE integer,
-        COMPONENT_ID bigint,
-        LAYOUT_ID bigint,
-        primary key (BOX_ID)
-    );
-
-    create table CCM_CORE.FLEX_LAYOUT_COMPONENTS (
-        DIRECTION varchar(255),
-        COMPONENT_MODEL_ID bigint not null,
-        primary key (COMPONENT_MODEL_ID)
-    );
-
     create table CCM_CORE.FORMBUILDER_COMPONENT_DESCRIPTIONS (
         COMPONENT_ID bigint not null,
         LOCALIZED_VALUE varchar(2147483647),
@@ -412,8 +397,18 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         MODEL_UUID varchar(255) not null,
         STYLE_ATTRIBUTE varchar(1024),
         UUID varchar(255) not null,
-        PAGE_MODEL_ID bigint,
+        CONTAINER_ID bigint,
         primary key (COMPONENT_MODEL_ID)
+    );
+
+    create table CCM_CORE.PAGE_MODEL_CONTAINER_MODELS (
+        CONTAINER_ID bigint not null,
+        CONTAINER_UUID varchar(255) not null,
+        CONTAINER_KEY varchar(255),
+        UUID varchar(255) not null,
+        PAGE_MODEL_ID bigint,
+        STYLE_ID bigint,
+        primary key (CONTAINER_ID)
     );
 
     create table CCM_CORE.PAGE_MODEL_DESCRIPTIONS (
@@ -544,11 +539,11 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         SETTING_ID bigint not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
+        SETTING_VALUE_STRING varchar(1024),
+        SETTING_VALUE_LONG bigint,
+        SETTING_VALUE_BOOLEAN boolean,
         SETTING_VALUE_DOUBLE double,
         SETTING_VALUE_BIG_DECIMAL decimal(19,2),
-        SETTING_VALUE_LONG bigint,
-        SETTING_VALUE_STRING varchar(1024),
-        SETTING_VALUE_BOOLEAN boolean,
         primary key (SETTING_ID)
     );
 
@@ -581,6 +576,44 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         DOMAIN_OF_SITE varchar(255),
         OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
+    );
+
+    create table CCM_CORE.STYLE_MEDIA_QUERIES (
+        MEDIA_QUERY_ID bigint not null,
+        MAX_WIDTH_UNIT varchar(255),
+        MAX_WIDTH_VALUE float,
+        MEDIA_TYPE varchar(255),
+        MIN_WIDTH_UNIT varchar(255),
+        MIN_WIDTH_VALUE float,
+        primary key (MEDIA_QUERY_ID)
+    );
+
+    create table CCM_CORE.STYLE_MEDIA_RULES (
+        MEDIA_RULE_ID bigint not null,
+        MEDIA_QUERY_ID bigint,
+        STYLE_ID bigint,
+        primary key (MEDIA_RULE_ID)
+    );
+
+    create table CCM_CORE.STYLE_PROPERTIES (
+        PROPERTY_ID bigint not null,
+        NAME varchar(256),
+        PROPERTY_VALUE varchar(4096),
+        RULE_ID bigint,
+        primary key (PROPERTY_ID)
+    );
+
+    create table CCM_CORE.STYLE_RULES (
+        RULE_ID bigint not null,
+        SELECTOR varchar(2048),
+        STYLE_ID bigint,
+        primary key (RULE_ID)
+    );
+
+    create table CCM_CORE.STYLES (
+        STYLE_ID bigint not null,
+        STYLENAME varchar(255),
+        primary key (STYLE_ID)
     );
 
     create table CCM_CORE.THEME_DATA_FILES (
@@ -848,21 +881,6 @@ create sequence hibernate_sequence start with 1 increment by 1;
         foreign key (OBJECT_ID) 
         references CCM_CORE.CATEGORY_DOMAINS;
 
-    alter table CCM_CORE.FLEX_LAYOUT_BOXES 
-        add constraint FKeiqh69t1lr7u09hjuxfyxsbs 
-        foreign key (COMPONENT_ID) 
-        references CCM_CORE.PAGE_MODEL_COMPONENT_MODELS;
-
-    alter table CCM_CORE.FLEX_LAYOUT_BOXES 
-        add constraint FKmrobhhqidcf1657ugcgatrd0y 
-        foreign key (LAYOUT_ID) 
-        references CCM_CORE.FLEX_LAYOUT_COMPONENTS;
-
-    alter table CCM_CORE.FLEX_LAYOUT_COMPONENTS 
-        add constraint FK8qxnqt75ikxtedx0xreoeiygg 
-        foreign key (COMPONENT_MODEL_ID) 
-        references CCM_CORE.PAGE_MODEL_COMPONENT_MODELS;
-
     alter table CCM_CORE.FORMBUILDER_COMPONENT_DESCRIPTIONS 
         add constraint FKfh0k9lj3pf4amfc9bbbss0tr1 
         foreign key (COMPONENT_ID) 
@@ -1064,9 +1082,19 @@ create sequence hibernate_sequence start with 1 increment by 1;
         references CCM_CORE.USERS;
 
     alter table CCM_CORE.PAGE_MODEL_COMPONENT_MODELS 
-        add constraint FKo696ch035fe7rrueol1po13od 
+        add constraint FK1uvkayybawff8sqkmerqt60bk 
+        foreign key (CONTAINER_ID) 
+        references CCM_CORE.PAGE_MODEL_CONTAINER_MODELS;
+
+    alter table CCM_CORE.PAGE_MODEL_CONTAINER_MODELS 
+        add constraint FK1c6drneacxveol92vpum79fxb 
         foreign key (PAGE_MODEL_ID) 
         references CCM_CORE.PAGE_MODELS;
+
+    alter table CCM_CORE.PAGE_MODEL_CONTAINER_MODELS 
+        add constraint FKoi5wphv3vtwryc19akku28p24 
+        foreign key (STYLE_ID) 
+        references CCM_CORE.STYLES;
 
     alter table CCM_CORE.PAGE_MODEL_DESCRIPTIONS 
         add constraint FKcc5d6eqxu1369k8ycyyt6vn3e 
@@ -1202,6 +1230,26 @@ create sequence hibernate_sequence start with 1 increment by 1;
         add constraint FKrca95c6p023men53b8ayu26kp 
         foreign key (OBJECT_ID) 
         references CCM_CORE.CCM_OBJECTS;
+
+    alter table CCM_CORE.STYLE_MEDIA_RULES 
+        add constraint FKdq24a4atxp4c1sbqs8g6lpkx0 
+        foreign key (MEDIA_QUERY_ID) 
+        references CCM_CORE.STYLE_MEDIA_QUERIES;
+
+    alter table CCM_CORE.STYLE_MEDIA_RULES 
+        add constraint FKf67h8q9kkjft9go2xo2572n17 
+        foreign key (STYLE_ID) 
+        references CCM_CORE.STYLES;
+
+    alter table CCM_CORE.STYLE_PROPERTIES 
+        add constraint FKg2g0n7jmce3vjmula0898yp94 
+        foreign key (RULE_ID) 
+        references CCM_CORE.STYLE_RULES;
+
+    alter table CCM_CORE.STYLE_RULES 
+        add constraint FKf6fb4k6y2d74p70ldmj8awqj3 
+        foreign key (STYLE_ID) 
+        references CCM_CORE.STYLE_MEDIA_RULES;
 
     alter table CCM_CORE.THEME_DATA_FILES 
         add constraint FK630m2y2p7pp487ofowbefrm89 
