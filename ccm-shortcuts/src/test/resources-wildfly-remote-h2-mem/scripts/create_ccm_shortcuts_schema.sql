@@ -8,6 +8,7 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
 
     create schema CCM_SHORTCUTS;
 
+
     create table CCM_CORE.APPLICATIONS (
         APPLICATION_TYPE varchar(1024) not null,
         PRIMARY_URL varchar(1024) not null,
@@ -400,8 +401,18 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
         MODEL_UUID varchar(255) not null,
         STYLE_ATTRIBUTE varchar(1024),
         UUID varchar(255) not null,
-        PAGE_MODEL_ID bigint,
+        CONTAINER_ID bigint,
         primary key (COMPONENT_MODEL_ID)
+    );
+
+    create table CCM_CORE.PAGE_MODEL_CONTAINER_MODELS (
+        CONTAINER_ID bigint not null,
+        CONTAINER_UUID varchar(255) not null,
+        CONTAINER_KEY varchar(255),
+        UUID varchar(255) not null,
+        PAGE_MODEL_ID bigint,
+        STYLE_ID bigint,
+        primary key (CONTAINER_ID)
     );
 
     create table CCM_CORE.PAGE_MODEL_DESCRIPTIONS (
@@ -532,11 +543,11 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
         SETTING_ID bigint not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
+        SETTING_VALUE_STRING varchar(1024),
+        SETTING_VALUE_DOUBLE double,
+        SETTING_VALUE_LONG bigint,
         SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         SETTING_VALUE_BOOLEAN boolean,
-        SETTING_VALUE_STRING varchar(1024),
-        SETTING_VALUE_LONG bigint,
-        SETTING_VALUE_DOUBLE double,
         primary key (SETTING_ID)
     );
 
@@ -569,6 +580,44 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
         DOMAIN_OF_SITE varchar(255),
         OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
+    );
+
+    create table CCM_CORE.STYLE_MEDIA_QUERIES (
+        MEDIA_QUERY_ID bigint not null,
+        MAX_WIDTH_UNIT varchar(255),
+        MAX_WIDTH_VALUE float,
+        MEDIA_TYPE varchar(255),
+        MIN_WIDTH_UNIT varchar(255),
+        MIN_WIDTH_VALUE float,
+        primary key (MEDIA_QUERY_ID)
+    );
+
+    create table CCM_CORE.STYLE_MEDIA_RULES (
+        MEDIA_RULE_ID bigint not null,
+        MEDIA_QUERY_ID bigint,
+        STYLE_ID bigint,
+        primary key (MEDIA_RULE_ID)
+    );
+
+    create table CCM_CORE.STYLE_PROPERTIES (
+        PROPERTY_ID bigint not null,
+        NAME varchar(256),
+        PROPERTY_VALUE varchar(4096),
+        RULE_ID bigint,
+        primary key (PROPERTY_ID)
+    );
+
+    create table CCM_CORE.STYLE_RULES (
+        RULE_ID bigint not null,
+        SELECTOR varchar(2048),
+        STYLE_ID bigint,
+        primary key (RULE_ID)
+    );
+
+    create table CCM_CORE.STYLES (
+        STYLE_ID bigint not null,
+        STYLENAME varchar(255),
+        primary key (STYLE_ID)
     );
 
     create table CCM_CORE.THEME_DATA_FILES (
@@ -754,8 +803,7 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
 
     alter table CCM_SHORTCUTS.SHORTCUTS 
         add constraint UK_4otuwtog6qqdbg4e6p8xdpw8h unique (URL_KEY);
-
-    create sequence hibernate_sequence start with 1 increment by 1;
+create sequence hibernate_sequence start with 1 increment by 1;
 
     alter table CCM_CORE.APPLICATIONS 
         add constraint FKatcp9ij6mbkx0nfeig1o6n3lm 
@@ -1043,9 +1091,19 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
         references CCM_CORE.USERS;
 
     alter table CCM_CORE.PAGE_MODEL_COMPONENT_MODELS 
-        add constraint FKo696ch035fe7rrueol1po13od 
+        add constraint FK1uvkayybawff8sqkmerqt60bk 
+        foreign key (CONTAINER_ID) 
+        references CCM_CORE.PAGE_MODEL_CONTAINER_MODELS;
+
+    alter table CCM_CORE.PAGE_MODEL_CONTAINER_MODELS 
+        add constraint FK1c6drneacxveol92vpum79fxb 
         foreign key (PAGE_MODEL_ID) 
         references CCM_CORE.PAGE_MODELS;
+
+    alter table CCM_CORE.PAGE_MODEL_CONTAINER_MODELS 
+        add constraint FKoi5wphv3vtwryc19akku28p24 
+        foreign key (STYLE_ID) 
+        references CCM_CORE.STYLES;
 
     alter table CCM_CORE.PAGE_MODEL_DESCRIPTIONS 
         add constraint FKcc5d6eqxu1369k8ycyyt6vn3e 
@@ -1181,6 +1239,26 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
         add constraint FKrca95c6p023men53b8ayu26kp 
         foreign key (OBJECT_ID) 
         references CCM_CORE.CCM_OBJECTS;
+
+    alter table CCM_CORE.STYLE_MEDIA_RULES 
+        add constraint FKdq24a4atxp4c1sbqs8g6lpkx0 
+        foreign key (MEDIA_QUERY_ID) 
+        references CCM_CORE.STYLE_MEDIA_QUERIES;
+
+    alter table CCM_CORE.STYLE_MEDIA_RULES 
+        add constraint FKf67h8q9kkjft9go2xo2572n17 
+        foreign key (STYLE_ID) 
+        references CCM_CORE.STYLES;
+
+    alter table CCM_CORE.STYLE_PROPERTIES 
+        add constraint FKg2g0n7jmce3vjmula0898yp94 
+        foreign key (RULE_ID) 
+        references CCM_CORE.STYLE_RULES;
+
+    alter table CCM_CORE.STYLE_RULES 
+        add constraint FKf6fb4k6y2d74p70ldmj8awqj3 
+        foreign key (STYLE_ID) 
+        references CCM_CORE.STYLE_MEDIA_RULES;
 
     alter table CCM_CORE.THEME_DATA_FILES 
         add constraint FK630m2y2p7pp487ofowbefrm89 
