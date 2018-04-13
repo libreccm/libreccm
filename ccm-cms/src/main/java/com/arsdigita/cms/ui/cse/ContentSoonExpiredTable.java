@@ -52,11 +52,12 @@ public class ContentSoonExpiredTable extends Table {
     protected static final int COL_END_DATE_TIME = 4;
 
     public ContentSoonExpiredTable() {
+        
         super();
 
-        final ContentSection section = CMS.getContext().getContentSection();
+//        final ContentSection section = CMS.getContext().getContentSection();
 
-        setModelBuilder(new ContentSoonExpiredTableModelBuilder());
+        super.setModelBuilder(new ContentSoonExpiredTableModelBuilder());
 
         final TableColumnModel columnModel = getColumnModel();
         columnModel.add(new TableColumn(

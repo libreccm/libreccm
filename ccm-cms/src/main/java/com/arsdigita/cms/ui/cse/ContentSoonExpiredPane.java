@@ -29,7 +29,7 @@ public class ContentSoonExpiredPane extends SimpleContainer {
 
     public ContentSoonExpiredPane() {
         super();
-        add(new ContentSoonExpiredTable());
+        super.add(new ContentSoonExpiredTable());
     }
 
 }
