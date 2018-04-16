@@ -181,8 +181,6 @@ public final class TimeOut {
      * Guarantees that any unmarshalled enum constants effectively are the
      * constant Java instances itself, so that {@code ==} can be used form
      * comparison.
-     *
-     * @since 1.2
      */
     protected static final class Adapter extends ConstantsAdapter<TimeOut> {
 
