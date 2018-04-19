@@ -1436,14 +1436,12 @@ div.asset-search-widget dialog,
 div.item-search-widget dialog {
     background-color: #e6e4f2;
 
-    border: 1px solid #555;
-    border-radius: 0.75em;
+    border: 0px solid transparent;
+    border-radius: 14px;
 
     box-shadow: 5px 5px #aaa;
 
     display: none;
-
-    padding: 0;
 
     position: absolute;
     top: 5%;
@@ -1453,6 +1451,8 @@ div.item-search-widget dialog {
     height: 90%;
 
     z-index: 999;
+
+    overflow-y: auto;
 }
 
 div.asset-search-widget dialog[open="open"],
@@ -1463,6 +1463,11 @@ div.item-search-widget dialog[open="open"] {
 div.asset-search-widget dialog .controls,
 div.item-search-widget dialog .controls {
     padding: 0.5em;
+}
+
+div.asset-search-widget dialog .controls .apply-filter,
+div.item-search-widget dialog .controls .apply-filter{
+    margin-left: 0.5em;
 }
 
 div.asset-search-widget dialog .controls label,
@@ -1514,12 +1519,20 @@ div.item-search-widget dialog .selectable-assets table thead tr th {
 
 div.asset-search-widget dialog .titlebar,
 div.item-search-widget dialog .titlebar {
-
-    border-bottom: 1px solid #555;
-
     margin-top: 0;
 
     padding: 0.5em 1em;
+
+    background: #0776a0;
+
+    -webkit-border-top-left-radius: 10px;
+	-webkit-border-top-right-radius: 10px;
+	-moz-border-radius-topleft: 10px;
+	-moz-border-radius-topright: 10px;
+	border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    
+    color: white;
 }
 
 div.asset-search-widget dialog .titlebar .close-button,
@@ -1532,7 +1545,11 @@ div.item-search-widget dialog .titlebar .close-button {
     font-size: 18px;
 
     position: absolute;
-    right: 5px;
+    right: 13px;
+
+    color: white;
+
+    margin-top: -0.25em;
 }
 
 div.asset-search-widget dialog .titlebar .close-button:after,
@@ -1549,6 +1566,28 @@ div.item-search-widget dialog .titlebar .close-button span {
     width: 1px;
     height: 1px;
     overflow:hidden;
+}
+
+div.asset-search-widget dialog .titlebar .close-button:hover,
+div.item-search-widget dialog .titlebar .close-button:hover {
+    cursor: pointer;
+}
+
+div.asset-search-widget dialog .selectable-items table,
+div.item-search-widget dialog .selectable-items table{
+    width: 100%;
+    padding: 0.35em;
+    table-layout: fixed;
+}
+
+div.asset-search-widget dialog .selectable-items table tbody tr td,
+div.item-search-widget dialog .selectable-items table tbody tr td{
+    overflow: hidden;
+}
+
+div.asset-search-widget dialog .selectable-items table thead th,
+div.item-search-widget dialog .selectable-items table thead th{
+    text-align: center;
 }
 
 div.cmsImageInfoOverlay {
