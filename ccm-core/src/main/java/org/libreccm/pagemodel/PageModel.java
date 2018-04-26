@@ -49,6 +49,9 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * A {@link PageModel} is used by a {@link PageRenderer} implementation to
@@ -98,7 +101,7 @@ import javax.persistence.Table;
     @NamedQuery(
         name = "PageModel.findDraftByApplication",
         query = "SELECT p FROM PageModel p "
-                    + "WHERE p.application = :application "
+                    + "WHERE  p.application = :application "
                     + "AND p.version = org.libreccm.pagemodel.PageModelVersion.DRAFT"
     )
     ,
@@ -106,6 +109,7 @@ import javax.persistence.Table;
         name = "PageModel.findDraftByApplicationAndName",
         query = "SELECT p FROM PageModel p "
                     + "WHERE p.application = :application "
+                    + "AND p.name = :name "
                     + "AND p.version = org.libreccm.pagemodel.PageModelVersion.DRAFT"
     )
     ,
@@ -151,6 +155,7 @@ import javax.persistence.Table;
                     + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE"
     )
 })
+@XmlRootElement(name = "pagemodel")
 public class PageModel implements Serializable {
 
     private static final long serialVersionUID = 7252512839926020978L;
@@ -163,6 +168,7 @@ public class PageModel implements Serializable {
     @Id
     @Column(name = "PAGE_MODEL_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @XmlElement(name = "pagemodel-id")
     private long pageModelId;
 
     /**
@@ -228,6 +234,7 @@ public class PageModel implements Serializable {
      */
     @ManyToOne
     @JoinColumn(name = "APPLICATION_ID")
+    @XmlTransient
     private CcmApplication application;
 
     /**
@@ -328,15 +335,15 @@ public class PageModel implements Serializable {
     protected void setContainers(final List<ContainerModel> containers) {
         this.containers = new ArrayList<>(containers);
     }
-    
+
     protected void addContainer(final ContainerModel container) {
         containers.add(container);
     }
-    
+
     protected void removeContainer(final ContainerModel container) {
         containers.remove(container);
     }
-    
+
     protected void clearContainers() {
         containers.clear();
     }

@@ -41,6 +41,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * A {@code ContainerModel} for grouping {@link ComponentModel}s. Each
@@ -59,6 +62,7 @@ import javax.validation.constraints.NotNull;
                             + "WHERE c.key = :key "
                             + "AND c.pageModel = :pageModel")
 })
+@XmlRootElement(name = "container-model")
 public class ContainerModel implements Serializable {
 
     private static final long serialVersionUID = -7472858443655353588L;
@@ -68,6 +72,7 @@ public class ContainerModel implements Serializable {
      */
     @Id
     @Column(name = "CONTAINER_ID")
+    @XmlElement(name = "ocntainer-model-id")
     private long containerId;
 
     /**
@@ -105,6 +110,7 @@ public class ContainerModel implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "PAGE_MODEL_ID")
+    @XmlTransient
     private PageModel pageModel;
 
     /**
