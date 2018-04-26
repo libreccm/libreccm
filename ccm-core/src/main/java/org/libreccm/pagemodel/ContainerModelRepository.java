@@ -88,13 +88,14 @@ public class ContainerModelRepository
         final String key, final PageModel pageModel) {
 
         final TypedQuery<ContainerModel> query = getEntityManager()
-            .createNamedQuery("ContainerModel.findByKeyAndPage", ContainerModel.class);
+            .createNamedQuery("ContainerModel.findByKeyAndPage",
+                              ContainerModel.class);
         query.setParameter("key", key);
         query.setParameter("pageModel", pageModel);
-        
+
         try {
             return Optional.of(query.getSingleResult());
-        } catch(NoResultException ex) {
+        } catch (NoResultException ex) {
             return Optional.empty();
         }
     }
