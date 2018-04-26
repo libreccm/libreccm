@@ -35,11 +35,36 @@ import javax.ws.rs.core.Application;
 @ApplicationPath("/page-models")
 public class PageModelsApp extends Application {
 
+    protected static final String APP_NAME = "appName";
+    protected static final String PAGE_MODEL_NAME = "pageModelName";
+    protected static final String CONTAINER_KEY = "containerKey";
+    protected static final String COMPONENT_KEY = "componentKey";
+
+    protected static final String PAGE_MODELS_PATH = "/{" + APP_NAME + "}";
+    protected static final String PAGE_MODEL_PATH = PAGE_MODELS_PATH
+                                                        + "/{"
+                                                        + PAGE_MODEL_NAME
+                                                        + "}";
+    protected static final String CONTAINERS_PATH = PAGE_MODEL_PATH
+                                                        + "/containers";
+    protected static final String CONTAINER_PATH = CONTAINERS_PATH
+                                                       + "/{" 
+                                                   + CONTAINER_KEY
+                                                       + "}";
+    protected static final String COMPONENTS_PATH = CONTAINER_PATH
+                                                        + "/components";
+    protected static final String COMPONENT_PATH = COMPONENTS_PATH
+                                                       + "/{"  
+                                                   + COMPONENT_KEY 
+                                                   + "}";
+
     @Override
     public Set<Class<?>> getClasses() {
 
         final Set<Class<?>> classes = new HashSet<>();
         classes.add(PageModels.class);
+        classes.add(Containers.class);
+        classes.add(Components.class);
 
         return classes;
     }

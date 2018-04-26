@@ -162,4 +162,22 @@ public class ComponentModelRepository
         }
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
+    public Optional<ComponentModel> findComponentByContainerAndKey(
+        final ContainerModel containerModel,
+        final String componentKey) {
+
+        final TypedQuery<ComponentModel> query = getEntityManager()
+        .createNamedQuery("ComponentModel.findComponentByContainerAndKey", 
+                          ComponentModel.class);
+        query.setParameter("container", containerModel);
+        query.setParameter("key", componentKey);
+        
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch(NoResultException ex) {
+            return Optional.empty();
+        }
+    }
+
 }
