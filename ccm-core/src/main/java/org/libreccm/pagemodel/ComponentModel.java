@@ -35,6 +35,8 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
@@ -50,6 +52,13 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "PAGE_MODEL_COMPONENT_MODELS", schema = CoreConstants.DB_SCHEMA)
+@NamedQueries({
+    @NamedQuery(name = "ComponentModel.findComponentByContainerAndKey",
+                query = "SELECT c "
+                            + "FROM ComponentModel c "
+                            + "WHERE c.container = :container "
+                            + "AND c.key = :key")
+})
 public class ComponentModel implements Serializable {
 
     private static final long serialVersionUID = 8585775139379396806L;
@@ -217,7 +226,7 @@ public class ComponentModel implements Serializable {
         if (!Objects.equals(styleAttribute, other.getStyleAttribute())) {
             return false;
         }
-        
+
         if (!Objects.equals(container, other.getContainer())) {
             return false;
         }
