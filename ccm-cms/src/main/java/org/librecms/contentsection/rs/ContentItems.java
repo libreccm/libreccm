@@ -20,7 +20,6 @@ package org.librecms.contentsection.rs;
 
 import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.contentsection.ContentItem;
-import org.librecms.contentsection.ContentItemL10NManager;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentItemVersion;
