@@ -1484,19 +1484,6 @@ div.item-search-widget dialog .dialogarea controls button{
     margin-left: 0.5em;
 
 }
-div.asset-search-widget dialog .selectable-assets, 
-div.item-search-widget dialog .selectable-assets {
-
-    padding: 0;
-    
-    position: absolute;
-    bottom: 0;
-    left: 0;
-
-    width: 100%;
-    height: 80%;
-    overflow: scroll;
-}
 
 div.asset-search-widget dialog .dialogarea table,
 div.item-search-widget dialog .dialogarea table {
@@ -1504,17 +1491,6 @@ div.item-search-widget dialog .dialogarea table {
     margin-top: 1em;
     margin-left: 0.5em;
     margin-right: 0.5em;
-}
-
-div.asset-search-widget dialog .selectable-assets table thead tr th,
-div.item-search-widget dialog .selectable-assets table thead tr th {
-    
-    background-color: transparent;
-    
-    color: #000;
-    
-    font-weight: bold;
-    
 }
 
 div.asset-search-widget dialog .titlebar,
@@ -1573,19 +1549,19 @@ div.item-search-widget dialog .titlebar .close-button:hover {
     cursor: pointer;
 }
 
-div.asset-search-widget dialog .selectable-items table,
+div.asset-search-widget dialog .selectable-assets table,
 div.item-search-widget dialog .selectable-items table{
     width: 100%;
     padding: 0.35em;
     table-layout: fixed;
 }
 
-div.asset-search-widget dialog .selectable-items table tbody tr td,
+div.asset-search-widget dialog .selectable-assets table tbody tr td,
 div.item-search-widget dialog .selectable-items table tbody tr td{
     overflow: hidden;
 }
 
-div.asset-search-widget dialog .selectable-items table thead th,
+div.asset-search-widget dialog .selectable-assets table thead th,
 div.item-search-widget dialog .selectable-items table thead th{
     text-align: center;
 }
