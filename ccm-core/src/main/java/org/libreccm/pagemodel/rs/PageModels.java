@@ -36,6 +36,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.PUT;
@@ -145,10 +146,26 @@ public class PageModels {
             pageModel.setApplication(app);
         }
         pageModel.setName(pageModelName);
-        
+
         controller.savePageModel(pageModel);
-        
+
         return mapPageModelToJson(controller.findPageModel(app, pageModelName));
+    }
+
+    @DELETE
+    @Path(PageModelsApp.PAGE_MODEL_PATH)
+    @Transactional(Transactional.TxType.REQUIRED)
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    public void deletePageModel(
+        @PathParam(PageModelsApp.APP_NAME) final String appPath,
+        @PathParam(PageModelsApp.PAGE_MODEL_NAME) final String pageModelName) {
+
+        final CcmApplication app = controller
+        .findCcmApplication(String.format("/%s/", appPath));
+        final PageModel pageModel = controller.findPageModel(app,
+                                                             pageModelName);
+        pageModelRepo.delete(pageModel);
     }
 
     private JsonObject mapPageModelToJson(final PageModel pageModel) {
