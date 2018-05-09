@@ -16,23 +16,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.webdav.xml.elements.properties;
+package org.libreccm.webdav.xml.properties;
 
 import org.libreccm.webdav.ConstantsAdapter;
-import org.libreccm.webdav.xml.elements.Rfc3339DateTimeFormat;
 
-import java.text.ParseException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Objects;
 
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import static javax.xml.bind.annotation.XmlAccessType.*;
+
 /**
- * WebDAV creationdate Property.
+ *
+ * WebDAV getcontentlength Property.
  *
  * The class is based on a class/interface from java.net WebDAV Project:
  *
@@ -42,64 +43,72 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  *
  * @see
- * <a href="http://www.webdav.org/specs/rfc4918.html#PROPERTY_creationdate">Chapter
- * 15.1 "creationdate Property" of RFC 4918 "HTTP Extensions for Web Distributed
- * Authoring and Versioning (WebDAV)"</a>
+ * <a href="http://www.webdav.org/specs/rfc4918.html#PROPERTY_getcontentlength">Chapter
+ * 15.4 "getcontentlength Property" of RFC 4918 "HTTP Extensions for Web
+ * Distributed Authoring and Versioning (WebDAV)"</a>
+ *
  *
  */
-@XmlJavaTypeAdapter(CreationDate.Adapter.class)
-@XmlRootElement(name = "creationdate")
-public final class CreationDate {
+@XmlAccessorType(NONE)
+@XmlJavaTypeAdapter(GetContentLength.Adapter.class)
+@XmlRootElement(name = "getcontentlength")
+public final class GetContentLength {
 
     /**
      * Singleton empty instance for use as property name only, providing
      * improved performance and the ability to compare by <em>same</em>
      * instance.
+     *
+     * @since 1.2
      */
-    public static final CreationDate CREATIONDATE = new CreationDate();
+    public static final GetContentLength GETCONTENTLENGTH
+                                             = new GetContentLength();
 
-    private Date dateTime;
+    private Long contentLength;
 
-    private CreationDate() {
-        // For unmarshalling only.
-    }
+    @SuppressWarnings("unused")
+    private String getXmlValue() {
 
-    public CreationDate(final Date dateTime) {
-        this.dateTime = Objects.requireNonNull(dateTime);
-    }
-
-    public final Date getDateTime() {
-        if (dateTime == null) {
+        if (contentLength == null) {
             return null;
         } else {
-            return (Date) dateTime.clone();
+            return Long.toString(contentLength);
         }
     }
 
     @XmlValue
-    private String getXmlValue() {
-
-        if (dateTime == null) {
-            return null;
-        } else {
-            return new Rfc3339DateTimeFormat().format(this.dateTime);
-        }
-    }
-
-    @SuppressWarnings("unused")
-    private void setXmlValue(final String xmlValue) throws ParseException {
+    private void setXmlValue(final String xmlValue) {
 
         if (xmlValue == null || xmlValue.isEmpty()) {
-            dateTime = null;
+            contentLength = null;
         } else {
-            dateTime = new Rfc3339DateTimeFormat().parse(xmlValue);
+            contentLength = Long.parseLong(xmlValue);
+        }
+
+        this.contentLength = xmlValue == null || xmlValue.isEmpty() ? null
+                                 : Long.parseLong(xmlValue);
+    }
+
+    private GetContentLength() {
+        // For unmarshalling only
+    }
+
+    public GetContentLength(final long contentLength) {
+        this.contentLength = contentLength;
+    }
+
+    public final long getContentLength() {
+        if (contentLength == null) {
+            return 0;
+        } else {
+            return contentLength;
         }
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 97 * hash + Objects.hashCode(dateTime);
+        hash = 47 * hash + Objects.hashCode(contentLength);
         return hash;
     }
 
@@ -111,30 +120,32 @@ public final class CreationDate {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof CreationDate)) {
+        if (!(obj instanceof GetContentLength)) {
             return false;
         }
-        final CreationDate other = (CreationDate) obj;
-        return Objects.equals(dateTime, other.getDateTime());
+        final GetContentLength other = (GetContentLength) obj;
+        return Objects.equals(contentLength, other.getContentLength());
     }
 
     @Override
     public String toString() {
-        return String.format("%s{ dateTime = %s }",
+        return String.format("%s{ contentLength = %d }",
                              super.toString(),
-                             Objects.toString(dateTime));
+                             contentLength);
     }
 
     /**
      * Guarantees that any unmarshalled enum constants effectively are the
      * constant Java instances itself, so that {@code ==} can be used form
      * comparison.
+     *
      */
-    protected static final class Adapter extends ConstantsAdapter<CreationDate> {
+    protected static final class Adapter
+        extends ConstantsAdapter<GetContentLength> {
 
         @Override
-        protected final Collection<CreationDate> getConstants() {
-            return Collections.singleton(CREATIONDATE);
+        protected final Collection<GetContentLength> getConstants() {
+            return Collections.singleton(GETCONTENTLENGTH);
         }
 
     }

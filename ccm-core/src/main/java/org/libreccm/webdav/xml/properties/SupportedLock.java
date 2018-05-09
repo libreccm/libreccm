@@ -16,23 +16,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.webdav.xml.elements.properties;
+package org.libreccm.webdav.xml.properties;
 
 import org.libreccm.webdav.ConstantsAdapter;
-import org.libreccm.webdav.xml.elements.Collection;
+import org.libreccm.webdav.xml.elements.LockEntry;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
- * WebDAV resourcetype Property.
+ *
+ * WebDAV supportedlock Property.
  *
  * The class is based on a class/interface from java.net WebDAV Project:
  *
@@ -43,50 +45,43 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  *
  * @see
- * <a href="http://www.webdav.org/specs/rfc4918.html#PROPERTY_resourcetype">Chapter
- * 15.9 "resourcetype Property" of RFC 4918 "HTTP Extensions for Web Distributed
- * Authoring and Versioning (WebDAV)"</a>
- *
+ * <a href="http://www.webdav.org/specs/rfc4918.html#PROPERTY_supportedlock">Chapter
+ * 15.10 "supportedlock Property" of RFC 4918 "HTTP Extensions for Web
+ * Distributed Authoring and Versioning (WebDAV)"</a>
  *
  */
-@XmlJavaTypeAdapter(ResourceType.Adapter.class)
-@XmlRootElement(name = "resourcetype")
-public final class ResourceType {
+@XmlJavaTypeAdapter(SupportedLock.Adapter.class)
+@XmlRootElement(name = "supportedlock")
+public final class SupportedLock {
 
     /**
      * Singleton empty instance for use as property name only, providing
      * improved performance and the ability to compare by <em>same</em>
      * instance.
      *
-     * @since 1.2
      */
-    public static final ResourceType RESOURCETYPE = new ResourceType();
+    public static final SupportedLock SUPPORTEDLOCK = new SupportedLock();
 
-    @XmlAnyElement(lax = true)
-    private final List<Object> resourceTypes;
+    @XmlElement(name = "lockentry")
+    private final List<LockEntry> lockEntries;
 
-    public static final ResourceType COLLECTION = new ResourceType(
-        Collection.COLLECTION);
-
-    private ResourceType() {
-        this.resourceTypes = new LinkedList<>();
+    private SupportedLock() {
+        this.lockEntries = new LinkedList<>();
     }
 
-    public ResourceType(final Object... resourceTypes) {
+    public SupportedLock(final LockEntry... lockEntries) {
 
-        this.resourceTypes = Arrays.asList(
-            Objects.requireNonNull(resourceTypes));
-
+        this.lockEntries = Arrays.asList(Objects.requireNonNull(lockEntries));
     }
 
-    public final List<Object> getResourceTypes() {
-        return Collections.unmodifiableList(this.resourceTypes);
+    public final List<LockEntry> getLockEntries() {
+        return Collections.unmodifiableList(lockEntries);
     }
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + Objects.hashCode(resourceTypes);
+        int hash = 7;
+        hash = 29 * hash + Objects.hashCode(lockEntries);
         return hash;
     }
 
@@ -98,18 +93,18 @@ public final class ResourceType {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof ResourceType)) {
+        if (!(obj instanceof SupportedLock)) {
             return false;
         }
-        final ResourceType other = (ResourceType) obj;
-        return Objects.equals(resourceTypes, other.getResourceTypes());
+        final SupportedLock other = (SupportedLock) obj;
+        return Objects.equals(lockEntries, other.getLockEntries());
     }
 
     @Override
     public String toString() {
-        return String.format("%s{ resourceTypes = %s }",
+        return String.format("%s{ lockEntries = %s }",
                              super.toString(),
-                             Objects.toString(resourceTypes));
+                             Objects.toString(lockEntries));
     }
 
     /**
@@ -119,11 +114,11 @@ public final class ResourceType {
      *
      */
     protected static final class Adapter
-        extends ConstantsAdapter<ResourceType> {
+        extends ConstantsAdapter<SupportedLock> {
 
         @Override
-        protected final java.util.Collection<ResourceType> getConstants() {
-            return Arrays.asList(RESOURCETYPE, COLLECTION);
+        protected final Collection<SupportedLock> getConstants() {
+            return Collections.singleton(SUPPORTEDLOCK);
         }
 
     }
