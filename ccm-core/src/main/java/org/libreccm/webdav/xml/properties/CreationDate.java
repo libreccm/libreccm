@@ -16,21 +16,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.webdav.xml.elements.properties;
+package org.libreccm.webdav.xml.properties;
 
 import org.libreccm.webdav.ConstantsAdapter;
+import org.libreccm.webdav.xml.elements.Rfc3339DateTimeFormat;
 
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
 /**
- * WebDAV displayname Property.
+ * WebDAV creationdate Property.
  *
  * The class is based on a class/interface from java.net WebDAV Project:
  *
@@ -40,80 +42,99 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  *
  * @see
- * <a href="http://www.webdav.org/specs/rfc4918.html#PROPERTY_displayname">Chapter
- * 15.2 "displayname Property" of RFC 4918 "HTTP Extensions for Web Distributed
+ * <a href="http://www.webdav.org/specs/rfc4918.html#PROPERTY_creationdate">Chapter
+ * 15.1 "creationdate Property" of RFC 4918 "HTTP Extensions for Web Distributed
  * Authoring and Versioning (WebDAV)"</a>
  *
- *
  */
-@XmlJavaTypeAdapter(DisplayName.Adapter.class)
-@XmlRootElement(name = "displayname")
-public final class DisplayName {
+@XmlJavaTypeAdapter(CreationDate.Adapter.class)
+@XmlRootElement(name = "creationdate")
+public final class CreationDate {
 
     /**
      * Singleton empty instance for use as property name only, providing
      * improved performance and the ability to compare by <em>same</em>
      * instance.
      */
-    public static final DisplayName DISPLAYNAME = new DisplayName();
+    public static final CreationDate CREATIONDATE = new CreationDate();
+
+    private Date dateTime;
+
+    private CreationDate() {
+        // For unmarshalling only.
+    }
+
+    public CreationDate(final Date dateTime) {
+        this.dateTime = Objects.requireNonNull(dateTime);
+    }
+
+    public final Date getDateTime() {
+        if (dateTime == null) {
+            return null;
+        } else {
+            return (Date) dateTime.clone();
+        }
+    }
 
     @XmlValue
-    private final String name;
+    private String getXmlValue() {
 
-    private DisplayName() {
-        this.name = "";
+        if (dateTime == null) {
+            return null;
+        } else {
+            return new Rfc3339DateTimeFormat().format(this.dateTime);
+        }
     }
 
-    public DisplayName(final String name) {
-        this.name = Objects.requireNonNull(name);
-    }
+    @SuppressWarnings("unused")
+    private void setXmlValue(final String xmlValue) throws ParseException {
 
-    public final String getName() {
-        return this.name;
+        if (xmlValue == null || xmlValue.isEmpty()) {
+            dateTime = null;
+        } else {
+            dateTime = new Rfc3339DateTimeFormat().parse(xmlValue);
+        }
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 97 * hash + Objects.hashCode(name);
+        hash = 97 * hash + Objects.hashCode(dateTime);
         return hash;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof DisplayName)) {
+        if (!(obj instanceof CreationDate)) {
             return false;
         }
-        final DisplayName other = (DisplayName) obj;
-        return Objects.equals(name, other.getName());
+        final CreationDate other = (CreationDate) obj;
+        return Objects.equals(dateTime, other.getDateTime());
     }
 
     @Override
     public String toString() {
-        return String.format("%s{ "
-                                 + "name = \"%s\""
-                                 + " }",
+        return String.format("%s{ dateTime = %s }",
                              super.toString(),
-                             name);
+                             Objects.toString(dateTime));
     }
 
     /**
      * Guarantees that any unmarshalled enum constants effectively are the
      * constant Java instances itself, so that {@code ==} can be used form
      * comparison.
-     *
      */
-    protected static final class Adapter extends ConstantsAdapter<DisplayName> {
+    protected static final class Adapter extends ConstantsAdapter<CreationDate> {
 
         @Override
-        protected final Collection<DisplayName> getConstants() {
-            return Collections.singleton(DISPLAYNAME);
+        protected final Collection<CreationDate> getConstants() {
+            return Collections.singleton(CREATIONDATE);
         }
 
     }

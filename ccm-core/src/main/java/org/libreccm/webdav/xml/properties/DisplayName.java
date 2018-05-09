@@ -16,72 +16,66 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.webdav.xml.elements.properties;
+package org.libreccm.webdav.xml.properties;
 
 import org.libreccm.webdav.ConstantsAdapter;
-import org.libreccm.webdav.xml.elements.ActiveLock;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+
 /**
- * WebDAV lockdiscovery Property.
- *
+ * WebDAV displayname Property.
  *
  * The class is based on a class/interface from java.net WebDAV Project:
  *
  * <a href="https://gitlab.com/headcrashing/webdav-jaxrs/blob/master/src/main/java/net/java/dev/webdav/jaxrs/Headers.java">https://gitlab.com/headcrashing/webdav-jaxrs/blob/master/src/main/java/net/java/dev/webdav/jaxrs/Headers.java</a>
  *
- *
  * @author Markus KARG (mkarg@java.net)
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  *
  * @see
- * <a href="http://www.webdav.org/specs/rfc4918.html#PROPERTY_lockdiscovery">Chapter
- * 15.8 "lockdiscovery Property" of RFC 4918 "HTTP Extensions for Web
- * Distributed Authoring and Versioning (WebDAV)"</a>
+ * <a href="http://www.webdav.org/specs/rfc4918.html#PROPERTY_displayname">Chapter
+ * 15.2 "displayname Property" of RFC 4918 "HTTP Extensions for Web Distributed
+ * Authoring and Versioning (WebDAV)"</a>
+ *
  *
  */
-@XmlJavaTypeAdapter(LockDiscovery.Adapter.class)
-@XmlRootElement(name = "lockdiscovery")
-public final class LockDiscovery {
+@XmlJavaTypeAdapter(DisplayName.Adapter.class)
+@XmlRootElement(name = "displayname")
+public final class DisplayName {
 
     /**
      * Singleton empty instance for use as property name only, providing
      * improved performance and the ability to compare by <em>same</em>
      * instance.
-     *
      */
-    public static final LockDiscovery LOCKDISCOVERY = new LockDiscovery();
+    public static final DisplayName DISPLAYNAME = new DisplayName();
 
-    @XmlElement(name = "activelock")
-    private final List<ActiveLock> activeLocks;
+    @XmlValue
+    private final String name;
 
-    private LockDiscovery() {
-        this.activeLocks = new LinkedList<>();
+    private DisplayName() {
+        this.name = "";
     }
 
-    public LockDiscovery(final ActiveLock... activeLocks) {
-
-        this.activeLocks = Arrays.asList(Objects.requireNonNull(activeLocks));
+    public DisplayName(final String name) {
+        this.name = Objects.requireNonNull(name);
     }
 
-    public final List<ActiveLock> getActiveLocks() {
-        return Collections.unmodifiableList(activeLocks);
+    public final String getName() {
+        return this.name;
     }
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 61 * hash + Objects.hashCode(activeLocks);
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(name);
         return hash;
     }
 
@@ -93,18 +87,20 @@ public final class LockDiscovery {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof LockDiscovery)) {
+        if (!(obj instanceof DisplayName)) {
             return false;
         }
-        final LockDiscovery other = (LockDiscovery) obj;
-        return Objects.equals(activeLocks, other.getActiveLocks());
+        final DisplayName other = (DisplayName) obj;
+        return Objects.equals(name, other.getName());
     }
 
     @Override
     public String toString() {
-        return String.format("%s{ activeLocks = %s }",
+        return String.format("%s{ "
+                                 + "name = \"%s\""
+                                 + " }",
                              super.toString(),
-                             Objects.toString(activeLocks));
+                             name);
     }
 
     /**
@@ -113,12 +109,11 @@ public final class LockDiscovery {
      * comparison.
      *
      */
-    protected static final class Adapter
-        extends ConstantsAdapter<LockDiscovery> {
+    protected static final class Adapter extends ConstantsAdapter<DisplayName> {
 
         @Override
-        protected final Collection<LockDiscovery> getConstants() {
-            return Collections.singleton(LOCKDISCOVERY);
+        protected final Collection<DisplayName> getConstants() {
+            return Collections.singleton(DISPLAYNAME);
         }
 
     }

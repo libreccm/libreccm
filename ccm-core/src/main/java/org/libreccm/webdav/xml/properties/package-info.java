@@ -35,7 +35,7 @@
 @XmlSchema(namespace = "DAV:",
            xmlns = @XmlNs(prefix = "D", namespaceURI = "DAV:"),
            elementFormDefault = QUALIFIED)
-package org.libreccm.webdav.xml.elements.properties;
+package org.libreccm.webdav.xml.properties;
 
 import static javax.xml.bind.annotation.XmlNsForm.QUALIFIED;
 

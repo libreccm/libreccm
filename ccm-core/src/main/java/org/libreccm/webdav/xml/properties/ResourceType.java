@@ -16,24 +16,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.webdav.xml.elements.properties;
+package org.libreccm.webdav.xml.properties;
 
 import org.libreccm.webdav.ConstantsAdapter;
-import org.libreccm.webdav.xml.elements.Rfc1123DateFormat;
+import org.libreccm.webdav.xml.elements.Collection;
 
-import java.text.ParseException;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
- *
- * WebDAV getlastmodified Property.
+ * WebDAV resourcetype Property.
  *
  * The class is based on a class/interface from java.net WebDAV Project:
  *
@@ -44,90 +43,73 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  *
  * @see
- * <a href="http://www.webdav.org/specs/rfc4918.html#PROPERTY_getlastmodified">Chapter
- * 15.7 "getlastmodified Property" of RFC 4918 "HTTP Extensions for Web
- * Distributed Authoring and Versioning (WebDAV)"</a>
+ * <a href="http://www.webdav.org/specs/rfc4918.html#PROPERTY_resourcetype">Chapter
+ * 15.9 "resourcetype Property" of RFC 4918 "HTTP Extensions for Web Distributed
+ * Authoring and Versioning (WebDAV)"</a>
+ *
  *
  */
-@XmlJavaTypeAdapter(GetLastModified.Adapter.class)
-@XmlRootElement(name = "getlastmodified")
-public final class GetLastModified {
+@XmlJavaTypeAdapter(ResourceType.Adapter.class)
+@XmlRootElement(name = "resourcetype")
+public final class ResourceType {
 
     /**
      * Singleton empty instance for use as property name only, providing
      * improved performance and the ability to compare by <em>same</em>
      * instance.
      *
+     * @since 1.2
      */
-    public static final GetLastModified GETLASTMODIFIED = new GetLastModified();
+    public static final ResourceType RESOURCETYPE = new ResourceType();
 
-    private Date dateTime;
+    @XmlAnyElement(lax = true)
+    private final List<Object> resourceTypes;
 
-    private GetLastModified() {
-        // For unmarshalling only.
+    public static final ResourceType COLLECTION = new ResourceType(
+        Collection.COLLECTION);
+
+    private ResourceType() {
+        this.resourceTypes = new LinkedList<>();
     }
 
-    public GetLastModified(final Date dateTime) {
-        this.dateTime = Objects.requireNonNull(dateTime);
+    public ResourceType(final Object... resourceTypes) {
+
+        this.resourceTypes = Arrays.asList(
+            Objects.requireNonNull(resourceTypes));
+
     }
 
-    public final Date getDateTime() {
-
-        if (dateTime == null) {
-            return null;
-        } else {
-            return (Date) dateTime.clone();
-        }
-    }
-
-    @XmlValue
-    private String getXmlValue() {
-
-        if (dateTime == null) {
-            return null;
-        } else {
-            return new Rfc1123DateFormat().format(dateTime);
-        }
-    }
-
-    @SuppressWarnings("unused")
-    private void setXmlValue(final String xmlValue) throws ParseException {
-
-        if (xmlValue == null || xmlValue.isEmpty()) {
-            dateTime = null;
-        } else {
-            dateTime = new Rfc1123DateFormat().parse(xmlValue);
-        }
-
+    public final List<Object> getResourceTypes() {
+        return Collections.unmodifiableList(this.resourceTypes);
     }
 
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 79 * hash + Objects.hashCode(dateTime);
+        hash = 97 * hash + Objects.hashCode(resourceTypes);
         return hash;
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof GetLastModified)) {
+        if (!(obj instanceof ResourceType)) {
             return false;
         }
-        final GetLastModified other = (GetLastModified) obj;
-        return Objects.equals(dateTime, other.getDateTime());
+        final ResourceType other = (ResourceType) obj;
+        return Objects.equals(resourceTypes, other.getResourceTypes());
     }
 
     @Override
     public String toString() {
-        return String.format("%s{ dateTime = %s }",
+        return String.format("%s{ resourceTypes = %s }",
                              super.toString(),
-                             Objects.toString(dateTime));
+                             Objects.toString(resourceTypes));
     }
 
     /**
@@ -137,11 +119,11 @@ public final class GetLastModified {
      *
      */
     protected static final class Adapter
-        extends ConstantsAdapter<GetLastModified> {
+        extends ConstantsAdapter<ResourceType> {
 
         @Override
-        protected final Collection<GetLastModified> getConstants() {
-            return Collections.singleton(GETLASTMODIFIED);
+        protected final java.util.Collection<ResourceType> getConstants() {
+            return Arrays.asList(RESOURCETYPE, COLLECTION);
         }
 
     }
