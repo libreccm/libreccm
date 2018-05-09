@@ -24,10 +24,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Application;
 
 /**
  * JAX-RS application for managing {@link PageModel}s.
+ *
+ * The several paths used by the classes of this JAX-RS application are defined
+ * in this class as string constants to avoid problems. Some other parts which
+ * specific to one of the classes are might defined in that class.
+ *
+ * All methods providing RESTful endpoints will throw a
+ * {@link NotFoundException} if one the objects in their path is not found. If
+ * this is the case the application server will send a 404 response to the
+ * client.
  *
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -48,15 +58,17 @@ public class PageModelsApp extends Application {
     protected static final String CONTAINERS_PATH = PAGE_MODEL_PATH
                                                         + "/containers";
     protected static final String CONTAINER_PATH = CONTAINERS_PATH
-                                                       + "/{" 
-                                                   + CONTAINER_KEY
+                                                       + "/{"
+                                                       + CONTAINER_KEY
                                                        + "}";
     protected static final String COMPONENTS_PATH = CONTAINER_PATH
                                                         + "/components";
     protected static final String COMPONENT_PATH = COMPONENTS_PATH
-                                                       + "/{"  
-                                                   + COMPONENT_KEY 
-                                                   + "}";
+                                                       + "/{"
+                                                       + COMPONENT_KEY
+                                                       + "}";
+
+    protected static final String STYLES_PATH = CONTAINER_PATH + "/styles";
 
     @Override
     public Set<Class<?>> getClasses() {
@@ -65,6 +77,9 @@ public class PageModelsApp extends Application {
         classes.add(PageModels.class);
         classes.add(Containers.class);
         classes.add(Components.class);
+        classes.add(StylesRs.class);
+        classes.add(StylesMediaRule.class);
+        classes.add(StylesRule.class);
 
         return classes;
     }

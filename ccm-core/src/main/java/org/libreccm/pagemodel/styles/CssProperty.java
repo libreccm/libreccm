@@ -41,14 +41,23 @@ public class CssProperty implements Serializable {
 
     private static final long serialVersionUID = -4697757123207731769L;
 
+    /**
+     * ID of the CSS property
+     */
     @Id
     @Column(name = "PROPERTY_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long propertyId;
 
+    /**
+     * The name of the property.
+     */
     @Column(name = "NAME", length = 256)
     private String name;
 
+    /**
+     * The value of the property.
+     */
     @Column(name = "PROPERTY_VALUE", length = 4096)
     private String value;
 

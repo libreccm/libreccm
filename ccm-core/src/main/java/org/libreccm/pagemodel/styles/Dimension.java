@@ -36,17 +36,17 @@ public class Dimension implements Serializable {
     private static final long serialVersionUID = 44299305931240403L;
 
     @Column(name = "DIMENSION_VALUE")
-    private float value;
+    private double value;
 
     @Column(name = "UNIT")
     @Enumerated(EnumType.STRING)
     private Unit unit;
 
-    public float getValue() {
+    public double getValue() {
         return value;
     }
 
-    public void setValue(final float value) {
+    public void setValue(final double value) {
         this.value = value;
     }
 
@@ -61,7 +61,9 @@ public class Dimension implements Serializable {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 37 * hash + Float.floatToIntBits(value);
+        hash = 37 * hash
+                   + (int) (Double.doubleToLongBits(value)
+                            ^ (Double.doubleToLongBits(value) >>> 32));
         hash = 37 * hash + Objects.hashCode(unit);
         return hash;
     }
@@ -82,8 +84,8 @@ public class Dimension implements Serializable {
             return false;
         }
 
-        if (Float.floatToIntBits(value) != Float
-            .floatToIntBits(other.getValue())) {
+        if (Double.doubleToLongBits(value)
+                != Double.doubleToLongBits(other.getValue())) {
             return false;
         }
         return unit == other.getUnit();
@@ -113,4 +115,5 @@ public class Dimension implements Serializable {
     public String toCss() {
         return String.format("%s%s", value, unit.toString().toLowerCase());
     }
+
 }

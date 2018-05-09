@@ -34,7 +34,9 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
@@ -47,6 +49,7 @@ import javax.json.JsonObjectBuilder;
 import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -55,6 +58,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 
 /**
+ * Provides RESTful endpoints for retrieving, creating, updating and deleting
+ * {@link ComponentModel}s of a {@link ContainerModel}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -71,6 +76,16 @@ public class Components {
     @Inject
     private PageModelsController controller;
 
+    /**
+     * Retrieve all {@link ComponentModel} of a {@link ContainerModel}.
+     *
+     * @param appPath       The primary URL of the {@link CcmApplication}.
+     * @param pageModelName The name of the {@link PageModel}.
+     * @param containerKey  The key of the {@link ContainerModel}.
+     *
+     * @return A JSON array containing the data of all {@link ComponentModel} of
+     *         the {@link ContainerModel}.
+     */
     @GET
     @Path(PageModelsApp.COMPONENTS_PATH)
     @Produces("application/json; charset=utf-8")
@@ -81,6 +96,10 @@ public class Components {
         @PathParam(PageModelsApp.APP_NAME) final String appPath,
         @PathParam(PageModelsApp.PAGE_MODEL_NAME) final String pageModelName,
         @PathParam(PageModelsApp.CONTAINER_KEY) final String containerKey) {
+
+        Objects.requireNonNull(appPath);
+        Objects.requireNonNull(pageModelName);
+        Objects.requireNonNull(containerKey);
 
         final CcmApplication app = controller.findCcmApplication(
             String.format("/%s/", appPath));
@@ -100,6 +119,16 @@ public class Components {
         return arrayBuilder.build();
     }
 
+    /**
+     * Retrieves a specific {@link ComponentModel}.
+     *
+     * @param appPath       The primary URL of the {@link CcmApplication}.
+     * @param pageModelName The name of the {@link PageModel}.
+     * @param containerKey  The key of the {@link ContainerModel}.
+     * @param componentKey  The key of the {@link ComponentModel}.
+     *
+     * @return A JSON object containing the data of the {@link ComponentModel}.
+     */
     @GET
     @Path(PageModelsApp.COMPONENT_PATH)
     @Produces("application/json; charset=utf-8")
@@ -111,6 +140,11 @@ public class Components {
         @PathParam(PageModelsApp.PAGE_MODEL_NAME) final String pageModelName,
         @PathParam(PageModelsApp.CONTAINER_KEY) final String containerKey,
         @PathParam(PageModelsApp.COMPONENT_KEY) final String componentKey) {
+
+        Objects.requireNonNull(appPath);
+        Objects.requireNonNull(pageModelName);
+        Objects.requireNonNull(containerKey);
+        Objects.requireNonNull(componentKey);
 
         final CcmApplication app = controller.findCcmApplication(
             String.format("/%s/", appPath));
@@ -125,6 +159,27 @@ public class Components {
         return mapComponentModelToJson(component);
     }
 
+    /**
+     * Creates or updates a {@link ComponentModel}.
+     *
+     * If a {@link ComponentModel} with provided {@code componentKey} already
+     * exists in the container identified by {@code appPath},
+     * {@code pageModelName} and {@code containerKey} the {@link ComponentModel}
+     * is updated with the data from {@code componentModelData}.
+     *
+     * Otherwise a new {@link ComponentModel} is created using the data from
+     * {@code componentModelData}.
+     *
+     * @param appPath            The primary URL of the {@link CcmApplication}.
+     * @param pageModelName      The name of the {@link PageModel}.
+     * @param containerKey       The key of the {@link ContainerModel}.
+     * @param componentKey       The key of the {@link ComponentModel} to create
+     *                           or update.
+     * @param componentModelData The data for creating or updating the
+     *                           {@link ComponentModel}.
+     *
+     * @return The new or updated {@link ComponentModel}.
+     */
     @PUT
     @Path(PageModelsApp.COMPONENT_PATH)
     @Consumes("application/json; charset=utf-8")
@@ -137,7 +192,13 @@ public class Components {
         @PathParam(PageModelsApp.PAGE_MODEL_NAME) final String pageModelName,
         @PathParam(PageModelsApp.CONTAINER_KEY) final String containerKey,
         @PathParam(PageModelsApp.COMPONENT_KEY) final String componentKey,
-        final JsonObject componentModelJson) {
+        final JsonObject componentModelData) {
+
+        Objects.requireNonNull(appPath);
+        Objects.requireNonNull(pageModelName);
+        Objects.requireNonNull(containerKey);
+        Objects.requireNonNull(componentKey);
+        Objects.requireNonNull(componentModelData);
 
         final CcmApplication app = controller.findCcmApplication(
             String.format("/%s/", appPath));
@@ -160,20 +221,68 @@ public class Components {
 
         } else {
 
-            componentModel = createComponentModel(componentModelJson);
+            componentModel = createComponentModel(componentModelData);
             componentModel.setKey(componentKey);
             containerManager.addComponentModel(container, componentModel);
         }
 
-        setComponentPropertiesFromJson(componentModelJson, componentModel);
+        setComponentPropertiesFromJson(componentModelData, componentModel);
 
         componentRepo.save(componentModel);
 
         return mapComponentModelToJson(componentModel);
     }
 
+    /**
+     * Deletes a {@link ComponentModel}.
+     *
+     * @param appPath       The primary URL of the {@link CcmApplication}.
+     * @param pageModelName The name of the {@link PageModel}.
+     * @param containerKey  The key of the {@link ContainerModel}.
+     * @param componentKey  The key of the {@link ComponentModel} to delete.
+     *
+     */
+    @DELETE
+    @Path(PageModelsApp.COMPONENT_PATH)
+    @Transactional(Transactional.TxType.REQUIRED)
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    public void deleteComponent(
+        @PathParam(PageModelsApp.APP_NAME) final String appPath,
+        @PathParam(PageModelsApp.PAGE_MODEL_NAME) final String pageModelName,
+        @PathParam(PageModelsApp.CONTAINER_KEY) final String containerKey,
+        @PathParam(PageModelsApp.COMPONENT_KEY) final String componentKey) {
+
+        Objects.requireNonNull(appPath);
+        Objects.requireNonNull(pageModelName);
+        Objects.requireNonNull(containerKey);
+        Objects.requireNonNull(componentKey);
+
+        final CcmApplication app = controller.findCcmApplication(
+            String.format("/%s/", appPath));
+        final PageModel pageModel = controller.findPageModel(app,
+                                                             pageModelName);
+        final ContainerModel container = controller.findContainer(app,
+                                                                  pageModel,
+                                                                  containerKey);
+        final ComponentModel component = controller
+            .findComponentModel(app, pageModel, container, componentKey);
+
+        containerManager.removeComponentModel(container, component);
+    }
+
+    /**
+     * Helper method for mapping a {@link ComponentModel} to JSON.
+     *
+     * @param componentModel The {@link ComponentModel} to map.
+     *
+     * @return The JSON representation of the
+     *         {@link ComponentModel} {@code componentModel}.
+     */
     private JsonObject mapComponentModelToJson(
         final ComponentModel componentModel) {
+
+        Objects.requireNonNull(componentModel);
 
         final JsonObjectBuilder objectBuilder = Json
             .createObjectBuilder()
@@ -198,10 +307,48 @@ public class Components {
                               componentModel.getStyleAttribute());
         }
 
+        final Class<? extends ComponentModel> clazz = componentModel.getClass();
+        final BeanInfo beanInfo;
+        try {
+            beanInfo = Introspector.getBeanInfo(clazz);
+        } catch (IntrospectionException ex) {
+            throw new WebApplicationException(ex);
+        }
+
+        for (final PropertyDescriptor propertyDescriptor
+                 : beanInfo.getPropertyDescriptors()) {
+
+            final Method readMethod = propertyDescriptor.getReadMethod();
+            final Object value;
+            try {
+                value = readMethod.invoke(componentModel);
+            } catch (IllegalAccessException
+                     | InvocationTargetException ex) {
+                throw new WebApplicationException(ex);
+            }
+
+            objectBuilder.add(propertyDescriptor.getName(),
+                              value.toString());
+
+        }
+
         return objectBuilder.build();
     }
 
+    /**
+     * Creates a new {@link ComponentModel} instance.
+     *
+     * Uses reflection and the value of {@code type} property from the JSON
+     * {@code data} to determine the correct class.
+     *
+     * @param data The data from which the new {@link ComponentModel} is
+     *             created.
+     *
+     * @return The new {@link ComponentModel}.
+     */
     private ComponentModel createComponentModel(final JsonObject data) {
+
+        Objects.requireNonNull(data);
 
         if (!data.containsKey("type")) {
             throw new BadRequestException("The JSON data for creating the "
@@ -226,9 +373,26 @@ public class Components {
         return componentModel;
     }
 
+    /**
+     * Helper method for finding the correct subclass of {@link ComponentModel}
+     * using the fully qualified name the class.
+     *
+     * @param type The fully qualified name of the subclass of
+     *             {@link ComponentModel}.
+     *
+     * @return The subclass of {@link ComponentModel}.
+     *
+     * @throws BadRequestException If there is no subclass of
+     *                             {@link ComponentModel} with the fully
+     *                             qualified name provided by the {@code type}
+     *                             parameter.
+     */
     @SuppressWarnings("unchecked")
     private Class<? extends ComponentModel> findComponentModelClass(
         final String type) {
+
+        Objects.requireNonNull(type);;
+
         try {
             final Class<?> clazz = Class.forName(type);
 
@@ -248,6 +412,13 @@ public class Components {
         }
     }
 
+    /**
+     * Helper method for setting the properties of a {@link ComponentModel} from
+     * the JSON data.
+     *
+     * @param data           The JSON data.
+     * @param componentModel The {@link ComponentModel}.
+     */
     private void setComponentPropertiesFromJson(
         final JsonObject data,
         final ComponentModel componentModel) {
@@ -267,6 +438,16 @@ public class Components {
                                                              data));
     }
 
+    /**
+     * Helper emthod for setting a property of a {@link ComponentModel} using a
+     * value from JSON data.
+     *
+     * @param componentModel The {@link ComponentModel}
+     * @param propertyDesc   The {@link PropertyDescriptor} for the property to
+     *                       set.
+     * @param data           The JSON data containing the new value of the
+     *                       property.
+     */
     private void setComponentPropertyFromJson(
         final ComponentModel componentModel,
         final PropertyDescriptor propertyDesc,

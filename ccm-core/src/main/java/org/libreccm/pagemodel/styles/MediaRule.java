@@ -56,7 +56,7 @@ public class MediaRule implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "MEDIA_QUERY_ID")
-     @Cascade(CascadeType.ALL)
+    @Cascade(CascadeType.ALL)
     private MediaQuery mediaQuery;
 
     @OneToMany
