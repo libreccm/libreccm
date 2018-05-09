@@ -20,13 +20,13 @@ package org.libreccm.pagemodel.rs;
 
 import org.libreccm.core.CoreConstants;
 import org.libreccm.l10n.GlobalizationHelper;
-import org.libreccm.pagemodel.ComponentModelRepository;
-import org.libreccm.pagemodel.ContainerModelRepository;
 import org.libreccm.pagemodel.PageModel;
 import org.libreccm.pagemodel.PageModelRepository;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.web.CcmApplication;
+
+import java.util.Objects;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -45,6 +45,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 /**
+ * Provides RESTful endpoints for retrieving, creating, updating and deleting
+ * {@link PageModels}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -56,36 +58,25 @@ public class PageModels {
     private PageModelsController controller;
 
     @Inject
-    private ComponentModelRepository componentModelRepo;
-
-    @Inject
-    private ContainerModelRepository containerRepo;
-
-    @Inject
     private PageModelRepository pageModelRepo;
 
     @Inject
     private GlobalizationHelper globalizationHelper;
 
-//    @GET
-//    @Path("/{appPath}")
-//    @Produces("application/json; charset=utf-8")
-//    @Transactional(Transactional.TxType.REQUIRED)
-//    @AuthorizationRequired
-//    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-//    public List<Map<String, String>> getAllPageModels(
-//        @PathParam("appPath") String appPath) {
-//
-//        final CcmApplication app = findCcmApplication(
-//            String.format("/%s/", appPath));
-//        return pageModelRepo
-//            .findDraftByApplication(app)
-//            .stream()
-//            .map(this::mapPageModelToDataMap)
-//            .collect(Collectors.toList());
-//    }
+    /**
+     * Retrieves all {@link PageModel}s available for an {@link CcmApplication}.
+     *
+     * @param appPath The path of the {@code app}.
+     *
+     * @return A JSON array with the data of all {@link PageModel}s of the
+     *         {@link CcmApplication} {@code app}.
+     *
+     * @throws NotFoundException If there is no {@link CcmApplication} with the
+     *                           primary URL {@code appPath} an
+     *                           {@link NotFoundException} thrown resulting in
+     *                           404 response.
+     */
     @GET
-//    @Path("/{appPath}")
     @Path(PageModelsApp.PAGE_MODELS_PATH)
     @Produces("application/json; charset=utf-8")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -93,6 +84,8 @@ public class PageModels {
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     public JsonArray getAllPageModels(
         @PathParam(PageModelsApp.APP_NAME) String appPath) {
+        
+        Objects.requireNonNull(appPath);
 
         final CcmApplication app = controller
             .findCcmApplication(String.format("/%s/", appPath));
@@ -106,6 +99,27 @@ public class PageModels {
         return arrayBuilder.build();
     }
 
+    /**
+     * Retrieves a specific {@link PageModel}.
+     *
+     * @param appPath       The path ({@link CcmApplication#primaryUrl} of the
+     *                      {@link CcmApplication} to which the
+     *                      {@link PageModel} belongs (see
+     *                      {@link PageModel#application}).
+     * @param pageModelName The name of the {@link PageModel} to retrieve (see
+     *                      {@link PageModel#name}).
+     *
+     * @return A JSON object containing the data of the {@link PageModel}.
+     *
+     * @throws NotFoundException If there is not {@link CcmApplication} with the
+     *                           primary URL {@code appPath} a
+     *                           {@link NotFoundException} is thrown resulting
+     *                           in a 404 response. A {@link NotFoundException}
+     *                           is also thrown if there no {@link PageModel}
+     *                           identified by {@code pageModelName} for the
+     *                           {@link CcmApplication} with the primary URL
+     *                           {@code appPath}.
+     */
     @GET
     @Path(PageModelsApp.PAGE_MODEL_PATH)
     @Produces("application/json; charset=utf-8")
@@ -115,6 +129,9 @@ public class PageModels {
     public JsonObject getPageModel(
         @PathParam(PageModelsApp.APP_NAME) final String appPath,
         @PathParam(PageModelsApp.PAGE_MODEL_NAME) final String pageModelName) {
+        
+        Objects.requireNonNull(appPath);
+        Objects.requireNonNull(pageModelName);
 
         final CcmApplication app = controller
             .findCcmApplication(String.format("/%s/", appPath));
@@ -123,6 +140,24 @@ public class PageModels {
         return mapPageModelToJson(pageModel);
     }
 
+    /**
+     * Creates or updates a {@link PageModel}.
+     *
+     * If a {@link PageModel} with the name {@code pageModelName} already exists
+     * for the {@link CcmApplication} with the primary URL {@code appPath} the
+     * {@link PageModel} is updated. If there is no such {@link PageModel} a new
+     * {@link PageModel} is created and associated with the
+     * {@link CcmApplication} identified by the primary URL {@code appPath}.
+     *
+     *
+     * @param appPath       The primary URL of the {@link CcmApplication} to
+     *                      which the {@link PageModel} belongs.
+     * @param pageModelName The name of the {@link PageModel}.
+     * @param pageModelData The data for creating or updating the
+     *                      {@link PageModel}.
+     *
+     * @return The new or updated {@link PageModel}.
+     */
     @PUT
     @Path(PageModelsApp.PAGE_MODEL_PATH)
     @Consumes("application/json; charset=utf-8")
@@ -133,7 +168,10 @@ public class PageModels {
     public JsonObject putPageModel(
         @PathParam(PageModelsApp.APP_NAME) final String appPath,
         @PathParam(PageModelsApp.PAGE_MODEL_NAME) final String pageModelName,
-        final JsonObject pageModelJson) {
+        final JsonObject pageModelData) {
+        
+        Objects.requireNonNull(appPath);
+        Objects.requireNonNull(pageModelName);
 
         final CcmApplication app = controller
             .findCcmApplication(String.format("/%s/", appPath));
@@ -152,6 +190,13 @@ public class PageModels {
         return mapPageModelToJson(controller.findPageModel(app, pageModelName));
     }
 
+    /**
+     * Deletes a {@link PageModel}.
+     *
+     * @param appPath       The primary URL of the {@link CcmApplication} to
+     *                      which the {@link PageModel} belongs.
+     * @param pageModelName The name of the {@link PageModel} to delete.
+     */
     @DELETE
     @Path(PageModelsApp.PAGE_MODEL_PATH)
     @Transactional(Transactional.TxType.REQUIRED)
@@ -160,15 +205,28 @@ public class PageModels {
     public void deletePageModel(
         @PathParam(PageModelsApp.APP_NAME) final String appPath,
         @PathParam(PageModelsApp.PAGE_MODEL_NAME) final String pageModelName) {
+        
+        Objects.requireNonNull(appPath);
+        Objects.requireNonNull(pageModelName);
 
         final CcmApplication app = controller
-        .findCcmApplication(String.format("/%s/", appPath));
+            .findCcmApplication(String.format("/%s/", appPath));
         final PageModel pageModel = controller.findPageModel(app,
                                                              pageModelName);
         pageModelRepo.delete(pageModel);
     }
 
+    /**
+     * Helper method for mapping a {@link PageModel} object to JSON:
+     *
+     * @param pageModel The {@link PageModel} to map.
+     *
+     * @return A {@link JSON} object with the data of the provided
+     *         {@link PageModel}.
+     */
     private JsonObject mapPageModelToJson(final PageModel pageModel) {
+
+        Objects.requireNonNull(pageModel);
 
         return Json
             .createObjectBuilder()
