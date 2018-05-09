@@ -16,99 +16,95 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.webdav.xml.elements.properties;
+package org.libreccm.webdav.xml.properties;
 
 import org.libreccm.webdav.ConstantsAdapter;
+import org.libreccm.webdav.xml.elements.Rfc1123DateFormat;
 
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Objects;
 
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import static javax.xml.bind.annotation.XmlAccessType.*;
-
 /**
  *
- * WebDAV getcontentlength Property.
+ * WebDAV getlastmodified Property.
  *
  * The class is based on a class/interface from java.net WebDAV Project:
  *
  * <a href="https://gitlab.com/headcrashing/webdav-jaxrs/blob/master/src/main/java/net/java/dev/webdav/jaxrs/Headers.java">https://gitlab.com/headcrashing/webdav-jaxrs/blob/master/src/main/java/net/java/dev/webdav/jaxrs/Headers.java</a>
  *
+ *
  * @author Markus KARG (mkarg@java.net)
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  *
  * @see
- * <a href="http://www.webdav.org/specs/rfc4918.html#PROPERTY_getcontentlength">Chapter
- * 15.4 "getcontentlength Property" of RFC 4918 "HTTP Extensions for Web
+ * <a href="http://www.webdav.org/specs/rfc4918.html#PROPERTY_getlastmodified">Chapter
+ * 15.7 "getlastmodified Property" of RFC 4918 "HTTP Extensions for Web
  * Distributed Authoring and Versioning (WebDAV)"</a>
  *
- *
  */
-@XmlAccessorType(NONE)
-@XmlJavaTypeAdapter(GetContentLength.Adapter.class)
-@XmlRootElement(name = "getcontentlength")
-public final class GetContentLength {
+@XmlJavaTypeAdapter(GetLastModified.Adapter.class)
+@XmlRootElement(name = "getlastmodified")
+public final class GetLastModified {
 
     /**
      * Singleton empty instance for use as property name only, providing
      * improved performance and the ability to compare by <em>same</em>
      * instance.
      *
-     * @since 1.2
      */
-    public static final GetContentLength GETCONTENTLENGTH
-                                             = new GetContentLength();
+    public static final GetLastModified GETLASTMODIFIED = new GetLastModified();
 
-    private Long contentLength;
+    private Date dateTime;
 
-    @SuppressWarnings("unused")
-    private String getXmlValue() {
+    private GetLastModified() {
+        // For unmarshalling only.
+    }
 
-        if (contentLength == null) {
+    public GetLastModified(final Date dateTime) {
+        this.dateTime = Objects.requireNonNull(dateTime);
+    }
+
+    public final Date getDateTime() {
+
+        if (dateTime == null) {
             return null;
         } else {
-            return Long.toString(contentLength);
+            return (Date) dateTime.clone();
         }
     }
 
     @XmlValue
-    private void setXmlValue(final String xmlValue) {
+    private String getXmlValue() {
+
+        if (dateTime == null) {
+            return null;
+        } else {
+            return new Rfc1123DateFormat().format(dateTime);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private void setXmlValue(final String xmlValue) throws ParseException {
 
         if (xmlValue == null || xmlValue.isEmpty()) {
-            contentLength = null;
+            dateTime = null;
         } else {
-            contentLength = Long.parseLong(xmlValue);
+            dateTime = new Rfc1123DateFormat().parse(xmlValue);
         }
 
-        this.contentLength = xmlValue == null || xmlValue.isEmpty() ? null
-                                 : Long.parseLong(xmlValue);
-    }
-
-    private GetContentLength() {
-        // For unmarshalling only
-    }
-
-    public GetContentLength(final long contentLength) {
-        this.contentLength = contentLength;
-    }
-
-    public final long getContentLength() {
-        if (contentLength == null) {
-            return 0;
-        } else {
-            return contentLength;
-        }
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 47 * hash + Objects.hashCode(contentLength);
+        int hash = 3;
+        hash = 79 * hash + Objects.hashCode(dateTime);
         return hash;
     }
 
@@ -120,18 +116,18 @@ public final class GetContentLength {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof GetContentLength)) {
+        if (!(obj instanceof GetLastModified)) {
             return false;
         }
-        final GetContentLength other = (GetContentLength) obj;
-        return Objects.equals(contentLength, other.getContentLength());
+        final GetLastModified other = (GetLastModified) obj;
+        return Objects.equals(dateTime, other.getDateTime());
     }
 
     @Override
     public String toString() {
-        return String.format("%s{ contentLength = %d }",
+        return String.format("%s{ dateTime = %s }",
                              super.toString(),
-                             contentLength);
+                             Objects.toString(dateTime));
     }
 
     /**
@@ -141,11 +137,11 @@ public final class GetContentLength {
      *
      */
     protected static final class Adapter
-        extends ConstantsAdapter<GetContentLength> {
+        extends ConstantsAdapter<GetLastModified> {
 
         @Override
-        protected final Collection<GetContentLength> getConstants() {
-            return Collections.singleton(GETCONTENTLENGTH);
+        protected final Collection<GetLastModified> getConstants() {
+            return Collections.singleton(GETLASTMODIFIED);
         }
 
     }

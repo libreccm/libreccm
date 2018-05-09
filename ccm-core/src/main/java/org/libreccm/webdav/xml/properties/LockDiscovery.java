@@ -16,20 +16,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.webdav.xml.elements.properties;
+package org.libreccm.webdav.xml.properties;
 
 import org.libreccm.webdav.ConstantsAdapter;
+import org.libreccm.webdav.xml.elements.ActiveLock;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
- * WebDAV getcontenttype Property.
+ * WebDAV lockdiscovery Property.
+ *
  *
  * The class is based on a class/interface from java.net WebDAV Project:
  *
@@ -40,15 +45,14 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  *
  * @see
- * <a href="http://www.webdav.org/specs/rfc4918.html#PROPERTY_getcontenttype">Chapter
- * 15.5 "getcontenttype Property" of RFC 4918 "HTTP Extensions for Web
+ * <a href="http://www.webdav.org/specs/rfc4918.html#PROPERTY_lockdiscovery">Chapter
+ * 15.8 "lockdiscovery Property" of RFC 4918 "HTTP Extensions for Web
  * Distributed Authoring and Versioning (WebDAV)"</a>
  *
- *
  */
-@XmlJavaTypeAdapter(GetContentType.Adapter.class)
-@XmlRootElement(name = "getcontenttype")
-public final class GetContentType {
+@XmlJavaTypeAdapter(LockDiscovery.Adapter.class)
+@XmlRootElement(name = "lockdiscovery")
+public final class LockDiscovery {
 
     /**
      * Singleton empty instance for use as property name only, providing
@@ -56,27 +60,28 @@ public final class GetContentType {
      * instance.
      *
      */
-    public static final GetContentType GETCONTENTTYPE = new GetContentType();
+    public static final LockDiscovery LOCKDISCOVERY = new LockDiscovery();
 
-    @XmlValue
-    private final String mediaType;
+    @XmlElement(name = "activelock")
+    private final List<ActiveLock> activeLocks;
 
-    private GetContentType() {
-        this.mediaType = "";
+    private LockDiscovery() {
+        this.activeLocks = new LinkedList<>();
     }
 
-    public GetContentType(final String mediaType) {
-        this.mediaType = Objects.requireNonNull(mediaType);
+    public LockDiscovery(final ActiveLock... activeLocks) {
+
+        this.activeLocks = Arrays.asList(Objects.requireNonNull(activeLocks));
     }
 
-    public final String getMediaType() {
-        return this.mediaType;
+    public final List<ActiveLock> getActiveLocks() {
+        return Collections.unmodifiableList(activeLocks);
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 61 * hash + Objects.hashCode(mediaType);
+        int hash = 3;
+        hash = 61 * hash + Objects.hashCode(activeLocks);
         return hash;
     }
 
@@ -88,26 +93,32 @@ public final class GetContentType {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof GetContentType)) {
+        if (!(obj instanceof LockDiscovery)) {
             return false;
         }
-        final GetContentType other = (GetContentType) obj;
-        return Objects.equals(mediaType, other.getMediaType());
+        final LockDiscovery other = (LockDiscovery) obj;
+        return Objects.equals(activeLocks, other.getActiveLocks());
     }
 
     @Override
     public String toString() {
-        return String.format("%s{ mediaType = \"%s\" }",
+        return String.format("%s{ activeLocks = %s }",
                              super.toString(),
-                             mediaType);
+                             Objects.toString(activeLocks));
     }
 
-    protected static final class Adapter 
-        extends ConstantsAdapter<GetContentType> {
+    /**
+     * Guarantees that any unmarshalled enum constants effectively are the
+     * constant Java instances itself, so that {@code ==} can be used form
+     * comparison.
+     *
+     */
+    protected static final class Adapter
+        extends ConstantsAdapter<LockDiscovery> {
 
         @Override
-        protected final Collection<GetContentType> getConstants() {
-            return Collections.singleton(GETCONTENTTYPE);
+        protected final Collection<LockDiscovery> getConstants() {
+            return Collections.singleton(LOCKDISCOVERY);
         }
 
     }
