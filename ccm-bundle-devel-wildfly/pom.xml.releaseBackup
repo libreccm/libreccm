@@ -1,0 +1,205 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd" 
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <wildfly.version>10.0.0.Final</wildfly.version>
+    </properties>
+    
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>org.libreccm</groupId>
+        <artifactId>libreccm-parent</artifactId>
+        <version>7.0.0-SNAPSHOT</version>
+    </parent>
+    
+    <groupId>org.libreccm</groupId>
+    <artifactId>ccm-bundle-devel-wildfly</artifactId>
+    <!--<version>7.0.0-SNAPSHOT</version>-->
+    <packaging>ear</packaging>
+    
+    <name>LibreCCM Devel Bundle for Wildfly</name>
+    <url>http://www.libreccm.org/bundles/devel/wildfly</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.libreccm</groupId>
+            <artifactId>ccm-bundle-devel-wildfly-web</artifactId>
+            <version>${project.parent.version}</version>
+            <type>war</type>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <finalName>libreccm-devel-${project.version}</finalName>
+        
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ear-plugin</artifactId>
+                <configuration>
+                    <!-- Tell Maven we are using Java EE 7 -->
+                    <version>7</version>
+                    <!-- Use Java EE ear libraries as needed. Java EE ear libraries 
+                    are an easy way to package any libraries needed in the ear, 
+                    and automatically 
+                    have any modules (EJB-JARs and WARs) use them -->
+                    <defaultLibBundleDir>lib</defaultLibBundleDir>
+                    <fileNameMapping>no-version</fileNameMapping>
+                    <modules>
+                        <webModule>
+                            <groupId>org.libreccm</groupId>
+                            <artifactId>ccm-bundle-devel-wildfly-web</artifactId>
+                            <contextRoot>/libreccm</contextRoot>
+                        </webModule>
+                    </modules>
+                </configuration>
+            </plugin>
+            
+        </plugins>
+    </build>
+
+    <!-- Profiles for running the bundle in a development environment -->
+    <profiles>
+        
+        <!-- Profile which uses a H2 database. The DB file is put into the
+            project build directory and therefore deleted when the clean phase
+            runs.
+        -->
+        <profile>
+            <id>h2</id>
+            
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
+                        
+                        <configuration>
+                            <version>${wildfly.version}</version>
+                            
+                            <skip>false</skip>
+
+                            <add-user>
+                                <users>
+                                    <user>
+                                        <username>admin</username>
+                                        <password>admin123</password>
+                                    </user>
+                                </users>
+                            </add-user>
+
+                            <beforeDeployment>
+                                <commands>
+                                    <command>data-source add --jndi-name=java:/comp/env/jdbc/libreccm/db --name=ccm-devel --connection-url=jdbc:h2:${project.build.directory}/libreccm-db;DB_CLOSE_ON_EXIT=FALSE --driver-name=h2 --driver-class=org.h2.Driver --user-name=sa --password=sa</command>
+                                </commands>
+                            </beforeDeployment>
+                            
+                            <java-opts>
+                                <java-opt>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8787</java-opt>
+                            </java-opts>
+                            
+                        </configuration>
+                        
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        <!-- 
+            Profile which uses a PostgreSQL datasource with a generic 
+            configuration. When using this profile PostgreSQL must run on the
+            local system and a database with the name "libreccm-devel" which
+            is accessible by the user "ccm" with the password "ccm47web" must
+            exist.
+        -->
+        <profile>
+            <id>pgsql</id>
+            
+            <dependencies>
+                <dependency>
+                    <groupId>org.postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                    <version>9.4.1208</version>
+                </dependency>
+            </dependencies>
+            
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
+                        
+                        <configuration>
+                            <version>${wildfly.version}</version>
+                            
+                            <skip>false</skip>
+                            
+                            <add-user>
+                                <users>
+                                    <user>
+                                        <username>admin</username>
+                                        <password>admin1234</password>
+                                    </user>
+                                </users>
+                            </add-user>
+                            
+                            <beforeDeployment>
+                                <commands>
+                                    <!--jdbc-drivers/postgresql-9.4.1208.jar-->
+                                    <command>module add --name=org.postgres --resources=${project.build.directory}/${project.build.finalName}/lib/postgresql.jar --dependencies=javax.api,javax.transaction.api</command>
+                                    <command>/subsystem=datasources/jdbc-driver=postgres:add(driver-name="postgres",driver-module-name="org.postgres",driver-class-name=org.postgresql.Driver)</command>
+                                    <command>data-source add --jndi-name=java:/comp/env/jdbc/libreccm/db --name=libreccm-devel --connection-url=jdbc:postgresql://localhost:5432/libreccm-devel --driver-name=postgres --driver-class=org.postgresql.Driver --user-name=ccm --password=ccm47web</command>
+                                </commands>
+                            </beforeDeployment>
+                            
+                            <java-opts>
+                                <java-opt>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8787</java-opt>
+                            </java-opts>
+                            
+                        </configuration>
+                        
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        <!-- 
+            Generic profile for using an existing Wildfly installation. 
+            The datasource for CCM must be configured in the Wildfly instance.
+            Also the plugin must know where the wildfly installation is. This 
+            can either be done by setting the JBOSS_HOME environment variable or
+            by providing the location using -Djboss-as.home=/path/to/wildfly
+            on the command line.
+        -->
+        <profile>
+            <id>generic</id>
+            
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
+                        
+                        <configuration>
+                            <version>${wildfly.version}</version>
+                            
+                            <skip>false</skip>
+                            <startupTimeout>120</startupTimeout>
+                            
+                            <java-opts>
+                                <java-opt>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8787</java-opt>
+                            </java-opts>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            
+        </profile>
+    </profiles>
+
+</project>

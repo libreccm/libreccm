@@ -35,6 +35,8 @@ import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
 
 /**
+ * A helper class providing some functionality used by the JAX-RS classes in
+ * this package.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -53,6 +55,13 @@ class PageModelsController {
     @Inject
     private PageModelRepository pageModelRepo;
 
+    /**
+     * Finds a {@link CcmApplication} using its {@code primaryUrl}.
+     *
+     * @param appPath The primary URL of the {@link CcmApplication}.
+     *
+     * @return The {@link CcmApplication} with the provided primary URL.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     protected CcmApplication findCcmApplication(final String appPath) {
 
@@ -63,6 +72,17 @@ class PageModelsController {
                     appPath)));
     }
 
+    /**
+     * Finds a {@link ComponentModel} using its {@code componentKey}.
+     *
+     * @param app            The {@link CcmApplication}.
+     * @param pageModel      The {@link PageModel}.
+     * @param containerModel The {@link ContainerModel}.
+     * @param componentKey   The key the {@link ComponentModel}.
+     *
+     * @return The {@link ComponentModel} identified by the provided
+     *         {@code componentKey}.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     protected ComponentModel findComponentModel(
         final CcmApplication app,
@@ -73,14 +93,25 @@ class PageModelsController {
         return componentModelRepo
             .findComponentByContainerAndKey(containerModel, componentKey)
             .orElseThrow(() -> new NotFoundException(String
-            .format("The Container \"%s\" of the PageModel \"%s\" of application"
-                + "\"%s\" does not contain a component with the key \"%s\".",
-                    containerModel.getKey(),
-                    pageModel.getName(),
-                    app.getPrimaryUrl(),
-                    componentKey)));
+            .format(
+                "The Container \"%s\" of the PageModel \"%s\" of application"
+                    + "\"%s\" does not contain a component with the key \"%s\".",
+                containerModel.getKey(),
+                pageModel.getName(),
+                app.getPrimaryUrl(),
+                componentKey)));
     }
 
+    /**
+     * Finds a {@link ContainerModel} using its {@code containerKey}.
+     *
+     * @param app          The {@link CcmApplication}.
+     * @param pageModel    The {@link PageModel}.
+     * @param containerKey The key of the {@link ContainerModel}.
+     *
+     * @return The {@link ContainerModel} identified by the provided
+     *         {@code containerKey}.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     protected ContainerModel findContainer(final CcmApplication app,
                                            final PageModel pageModel,
@@ -98,8 +129,18 @@ class PageModelsController {
                     containerKey)));
     }
 
-    
-    
+    /**
+     * Determines if a {@link PageModel} with the provided name exists for the
+     * provided {@link CcmApplication}.
+     *
+     * @param app           The {@link CcmApplication} to which the
+     *                      {@link PageModel} belongs.
+     * @param pageModelName The name of the {@link PageModel}.
+     *
+     * @return {@code true} if a {@link PageModel} with the name provided by the
+     *         parameter {@code pageModelName} exists for the provided
+     *         {@link CcmApplication} {@code app}, {@code false} otherwise.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     protected boolean existsPageModel(final CcmApplication app,
                                       final String pageModelName) {
@@ -107,7 +148,17 @@ class PageModelsController {
             .findDraftByApplicationAndName(app, pageModelName)
             .isPresent();
     }
-    
+
+    /**
+     * Finds a {@link PageModel} using its name.
+     *
+     * @param app           The {@link CcmApplication} to which the
+     *                      {@link PageModel} belongs.
+     * @param pageModelName The name of the {@link PageModel} to retrieve.
+     *
+     * @return The {@link PageModel} identified by the name
+     *         {@code pageModelName} for the {@link CcmApplication} {@code app}.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     protected PageModel findPageModel(final CcmApplication app,
                                       final String pageModelName) {
@@ -120,7 +171,7 @@ class PageModelsController {
             "No PageModel with name \"%s\" for application \"%s\".",
             pageModelName, app.getPrimaryUrl())));
     }
-    
+
     @Transactional(Transactional.TxType.REQUIRED)
     protected void savePageModel(final PageModel pageModel) {
         pageModelRepo.save(pageModel);

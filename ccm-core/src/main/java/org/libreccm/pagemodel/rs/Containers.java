@@ -23,7 +23,6 @@ import org.libreccm.pagemodel.ContainerModel;
 import org.libreccm.pagemodel.ContainerModelRepository;
 import org.libreccm.pagemodel.PageModel;
 import org.libreccm.pagemodel.PageModelManager;
-import org.libreccm.pagemodel.PageModelRepository;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.web.CcmApplication;
@@ -46,6 +45,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 /**
+ * Provides RESTful endpoints for managing the {@link ContainerModel}s of a
+ * {@link PageModel}
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -62,9 +63,18 @@ public class Containers {
     @Inject
     private PageModelManager pageModelManager;
 
-    @Inject
-    private PageModelRepository pageModelRepo;
-
+    /**
+     * Retrieves all {@link ContainerModel}s of a {@link PageModel}.
+     *
+     * @param appPath       The primary URL of the {@link CcmApplication} to
+     *                      which the {@link PageModel} belongs.
+     * @param pageModelName The name of the {@link PageModel} of which the
+     *                      containers are retrieved.
+     *
+     * @return A JSON array containing the data of all {@link ContainerModel}s
+     *         of the {@link PageModel} identified by {@code pageModelName} of
+     *         the {@link CcmApplication} with the primary URL {@code appPath}.
+     */
     @GET
     @Path(PageModelsApp.CONTAINERS_PATH)
     @Produces("application/json; charset=utf-8")
@@ -91,6 +101,18 @@ public class Containers {
         return arrayBuilder.build();
     }
 
+    /**
+     * Retrieve a specific {@link ContainerModel}.
+     *
+     * @param appPath       The primary URL of the {@link CcmApplication} to
+     *                      which the {@link PageModel} belongs.
+     * @param pageModelName The name of the {@link PageModel} to which the
+     *                      {@link ContainerModel} belongs.
+     * @param containerKey  The value of the {@link ContainerModel#key} property
+     *                      of the {@link ContainerModel} to retrieve.
+     *
+     * @return A JSON object containing the data of the {@link PageModel}.
+     */
     @GET
     @Path(PageModelsApp.CONTAINER_PATH)
     @Produces("application/json; charset=utf-8")
@@ -115,6 +137,24 @@ public class Containers {
         return mapContainerModelToJson(container);
     }
 
+    /**
+     * Creates or updates a {@link ContainerModel}. If there is already a
+     * {@link ContainerModel} for the container identified by the provided
+     * {@code containerKey}, {@code pageModelName} and {@code appPath} the
+     * {@link ContainerModel} is updated with the data from the
+     * {@link JsonObject} {@code containerModelData}.
+     *
+     * If there is no such {@link ContainerModel} a new {@link ContainerModel}
+     * is created using the data provided by {@code containerModelData}.
+     *
+     * @param appPath            The path of the {@link CcmApplication}.
+     * @param pageModelName      The name of the {@link PageModel}.
+     * @param containerKey       The key identifying the {@link ContainerModel}.
+     * @param containerModelData The data for updating or creating the
+     *                           {@link ContainerModel}.
+     *
+     * @return The new or updated {@link ContainerModel}.
+     */
     @PUT
     @Path(PageModelsApp.CONTAINER_PATH)
     @Consumes("application/json; charset=utf-8")
@@ -126,7 +166,7 @@ public class Containers {
         @PathParam(PageModelsApp.APP_NAME) final String appPath,
         @PathParam(PageModelsApp.PAGE_MODEL_NAME) final String pageModelName,
         @PathParam(PageModelsApp.CONTAINER_KEY) final String containerKey,
-        final JsonObject containerModelJson) {
+        final JsonObject containerModelData) {
 
         final CcmApplication app = controller.findCcmApplication(
             String.format("/%s/", appPath));
@@ -158,6 +198,14 @@ public class Containers {
         return mapContainerModelToJson(containerModel);
     }
 
+    /**
+     * Deletes the {@link ContainerModel} identified by the provided parameters.
+     *
+     * @param appPath       The path of the {@link CcmApplication}.
+     * @param pageModelName The name of the {@link PageModel}.
+     * @param containerKey  The key identifying the {@link ContainerModel} to
+     *                      delete.
+     */
     @DELETE
     @Path(PageModelsApp.CONTAINER_PATH)
     @Transactional(Transactional.TxType.REQUIRED)
@@ -181,6 +229,14 @@ public class Containers {
         pageModelManager.removeContainerModel(pageModel, container);
     }
 
+    /**
+     * Helper method for mapping a {@link ContainerModel} to JSON:
+     *
+     * @param containerModel The {@link ContainerModel} to map.
+     *
+     * @return A {@link JsonObject} containing the data of the
+     *         {@link ContainerModel}.
+     */
     private JsonObject mapContainerModelToJson(
         final ContainerModel containerModel) {
 
