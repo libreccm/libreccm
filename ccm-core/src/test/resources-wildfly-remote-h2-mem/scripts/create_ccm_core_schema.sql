@@ -581,10 +581,10 @@ drop sequence if exists HIBERNATE_SEQUENCE;
     create table CCM_CORE.STYLE_MEDIA_QUERIES (
         MEDIA_QUERY_ID bigint not null,
         MAX_WIDTH_UNIT varchar(255),
-        MAX_WIDTH_VALUE float,
+        MAX_WIDTH_VALUE double,
         MEDIA_TYPE varchar(255),
         MIN_WIDTH_UNIT varchar(255),
-        MIN_WIDTH_VALUE float,
+        MIN_WIDTH_VALUE double,
         primary key (MEDIA_QUERY_ID)
     );
 
