@@ -23,10 +23,10 @@ import com.arsdigita.bebop.Form;
 import com.arsdigita.bebop.FormData;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
-import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.ParameterSingleSelectionModel;
 import com.arsdigita.bebop.SaveCancelSection;
+import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.TabbedPane;
 import com.arsdigita.bebop.Text;
 import com.arsdigita.bebop.Tree;
@@ -39,14 +39,18 @@ import com.arsdigita.bebop.form.SingleSelect;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.tree.TreeModel;
 import com.arsdigita.bebop.tree.TreeModelBuilder;
+import com.arsdigita.cms.ui.CMSApplicationPage;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.LayoutPanel;
+import com.arsdigita.ui.ReactApp;
+import com.arsdigita.ui.admin.AdminUiConstants;
 import com.arsdigita.ui.admin.categories.CategoriesTreeModel;
 import com.arsdigita.util.LockableImpl;
 
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.core.CoreConstants;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.pagemodel.PageModel;
@@ -64,7 +68,7 @@ import java.util.TooManyListenersException;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class PagesAdminPage extends Page {
+public class PagesAdminPage extends CMSApplicationPage {
 
     private static final String INDEX_PAGE_MODEL_SELECT = "indexPageModelSelect";
     private static final String ITEM_PAGE_MODEL_SELECT = "itemPageModelSelect";
@@ -83,10 +87,12 @@ public class PagesAdminPage extends Page {
 
     public PagesAdminPage() {
 
+        super("", new SimpleContainer());
+
         super.setAttribute("application", "admin");
-        super.setClassAttr("simplePage");
-        super.setTitle(new Label(new GlobalizedMessage("cms.ui.pages.title",
-                                                       CmsConstants.CMS_BUNDLE)));
+        super.setClassAttr("cms-admin");
+//        super.setTitle(new Label(new GlobalizedMessage("cms.ui.pages.title",
+//                                                       CmsConstants.CMS_BUNDLE)));
 
         selectedCategory = new ParameterSingleSelectionModel<>(
             new StringParameter("selectedCategory"));
@@ -113,6 +119,9 @@ public class PagesAdminPage extends Page {
         pageModelForm.add(heading);
 
         indexPageModelSelect = new SingleSelect(INDEX_PAGE_MODEL_SELECT);
+        indexPageModelSelect
+            .setLabel(new GlobalizedMessage("cms.ui.pages.index_page_model",
+                                            CmsConstants.CMS_BUNDLE));
         try {
             indexPageModelSelect.addPrintListener(this::populatePageModelSelect);
         } catch (TooManyListenersException ex) {
@@ -122,6 +131,9 @@ public class PagesAdminPage extends Page {
 //        super.setVisibleDefault(indexPageModelSelect, false);
 
         itemPageModelSelect = new SingleSelect(ITEM_PAGE_MODEL_SELECT);
+        itemPageModelSelect
+            .setLabel(new GlobalizedMessage("cms.ui.pages.item_page_model",
+                                            CmsConstants.CMS_BUNDLE));
         try {
             itemPageModelSelect.addPrintListener(this::populatePageModelSelect);
         } catch (TooManyListenersException ex) {
@@ -139,14 +151,25 @@ public class PagesAdminPage extends Page {
         pageModelForm.addProcessListener(this::processPageModelForm);
 
         final BoxPanel rightPanel = new BoxPanel(BoxPanel.VERTICAL);
+        rightPanel.setClassAttr("right-panel");
         rightPanel.add(nothingSelectedLabel);
         rightPanel.add(pageModelForm);
         panel.setRight(rightPanel);
+
+//        final SimpleContainer pageModelsManager = new SimpleContainer(
+//            "admin:pageModelsManager", AdminUiConstants.ADMIN_XML_NS);
+//        pageModelsManager.add(new Text("Placeholder page models editor"));
+        final ReactApp pageModelsManager = new ReactApp(
+            "page-models-editor", "dist/ccm-pagemodelseditor.js");
 
         final TabbedPane tabbedPane = new TabbedPane();
         tabbedPane.addTab(new Label(new GlobalizedMessage(
             "cms.ui.pages.tab.pages", CmsConstants.CMS_BUNDLE)),
                           panel);
+        tabbedPane
+            .addTab(new Label(new GlobalizedMessage(
+                "cms.ui.pages.tab.page_models", CmsConstants.CMS_BUNDLE)),
+                    pageModelsManager);
         super.add(tabbedPane);
 
         super.addActionListener(this::initPage);

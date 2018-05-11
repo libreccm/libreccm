@@ -50,48 +50,56 @@
             <show-tabbed-pane class="min-width" />
         </div>
         <div id="cms-content" class="min-width header-height">
-            <div id="left">
-                <div class="column-head">
-                    <show-content-type/>
-                </div>
-                <div class="column-content">
-                    <show-left-column/>
-                </div>
-            </div>
-            <div id="right">
-                <div class="column-head">
-                    <div class="content-title">
-                        <show-bebop-page-title/>
+            <!--<if-contains-react-app>
+                <when>
+                    <show-body-column />
+                </when>
+                <otherwise>-->
+                    <div id="left">
+                        <div class="column-head">
+                            <show-content-type/>
+                        </div>
+                        <div class="column-content">
+                            <show-left-column/>
+                        </div>
                     </div>
-                    <div id="content-view-menu">
-                        <show-cms-content-view-menu/>
-                        <show-cms-global-navigation>
-                            <div class="cms-global-navigation">                            
-                            <show-preview-link/>
+                    <div id="right">
+                        <div class="column-head">
+                            <div class="content-title">
+                                <show-bebop-page-title/>
                             </div>
-                        </show-cms-global-navigation>
+                            <div id="content-view-menu">
+                                <show-cms-content-view-menu/>
+                                <show-cms-global-navigation>
+                                    <div class="cms-global-navigation">
+                                        <show-preview-link/>
+                                    </div>
+                                </show-cms-global-navigation>
+                            </div>
+                        </div>
+                        <div id="content" class="column-content">
+                            <show-body-column/>
+                        </div>
                     </div>
-                </div>
-                <div id="content" class="column-content">
-                    <show-body-column/>
-                </div>
-            </div>
+                <!--</otherwise>
+            </if-contains-react-app>-->
             <div class="end-float" />
         </div>
+        <load-react-app />
         
         <div id="cms-footer">
             <div class="min-width">
                 <show-system-information/>
                 <show-cms-global-navigation>
                     <div class="cms-global-navigation">
-                    <show-contentcenter-link/>
-                    <show-workspace-link/>
-                    <show-admincenter-link/>
+                        <show-contentcenter-link/>
+                        <show-workspace-link/>
+                        <show-admincenter-link/>
                     </div>
                 </show-cms-global-navigation>
                 <show-cms-global-navigation>
                     <div class="cms-global-navigation">
-                    <use-help-link/>
+                        <use-help-link/>
                     </div>
                 </show-cms-global-navigation>
             </div>

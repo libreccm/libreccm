@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "jsx": "React",
+        "module": "amd",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "target": "es6"
+    },
+    "include": [
+        "src/main/typescript/**/*"
+    ]
+}

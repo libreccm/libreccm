@@ -36,7 +36,6 @@ import org.libreccm.security.PermissionChecker;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentType;
-import org.librecms.pages.PagesPrivileges;
 
 //  ////////////////////////////////////////////////////////////////////////////
 //
