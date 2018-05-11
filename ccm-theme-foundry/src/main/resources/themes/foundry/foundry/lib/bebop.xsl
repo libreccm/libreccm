@@ -37,6 +37,7 @@
     <xsl:import href="bebop/page.xsl"/>
     <xsl:import href="bebop/panel.xsl"/>
     <xsl:import href="bebop/property-list.xsl"/>
+    <xsl:import href="bebop/reactApp.xsl"/>
     <xsl:import href="bebop/system-information.xsl"/>
     <xsl:import href="bebop/tabbed-pane.xsl"/>
     <xsl:import href="bebop/table.xsl"/>
