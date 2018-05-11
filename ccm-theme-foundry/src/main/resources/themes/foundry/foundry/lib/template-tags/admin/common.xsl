@@ -88,6 +88,7 @@
                                              | $data-tree//bebop:currentPane/cms:lifecycleSummary 
                                              | $data-tree//bebop:currentPane/cms:workflowSummary 
                                              | $data-tree//bebop:currentPane/cms:transactionSummary"/>
+                <!--| $data-tree//bebop:currentPane/bebop:reactApp-->
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -103,7 +104,7 @@
                     <!--<xsl:attribute name="method" select="'post'"/>-->
                     <xsl:call-template name="foundry:process-datatree-attributes"/>
                     <xsl:apply-templates select="$data-tree//bebop:currentPane/bebop:form//bebop:layoutPanel/bebop:left"/>
-                     <!--<xsl:message>
+                    <!--<xsl:message>
                         <xsl:value-of select="concat('Applying template for bebop:pageState to ', 
                                                      count($data-tree//bebop:currentPane/bebop:form//bebop:pageState), 
                                                      ' objects...')"/>
@@ -150,6 +151,27 @@
                 <img src="{foundry:gen-path('images/scientificcms_logo.png', 'internal')}"/>
             </xsl:otherwise>
         </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template match="if-contains-react-app">
+        <xsl:choose>
+            <xsl:when test="$data-tree//bebop:reactApp">
+                <xsl:apply-templates select="./when/*" />
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:apply-templates select="./otherwise/*" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template match="load-react-app">
+        <xsl:if test="$data-tree//bebop:reactApp">
+            <div class="react-data" 
+                 id="{$data-tree//bebop:reactApp/@appId}"
+                 data-ccm-application="{$data-tree//bebop:reactApp/@ccmApplication}">
+            </div>
+            <script src="{$data-tree//bebop:reactApp/@scriptPath}"></script>
+        </xsl:if>
     </xsl:template>
 
 </xsl:stylesheet>

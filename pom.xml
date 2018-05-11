@@ -53,6 +53,9 @@
 
         <!-- Simple HTML editor for use in the backend -->
         <module>ccm-editor</module>
+        
+        <!-- React.js based editor for PageModels -->
+        <module>ccm-pagemodelseditor</module>
 
         <!-- CMS modules -->
         <module>ccm-cms</module>

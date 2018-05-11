@@ -66,6 +66,11 @@
                             <artifactId>ccm-editor</artifactId>
                             <type>jar</type>
                         </overlay>
+                         <overlay>
+                            <groupId>org.libreccm</groupId>
+                            <artifactId>ccm-pagemodelseditor</artifactId>
+                            <type>jar</type>
+                        </overlay>
                        <overlay>
                             <groupId>org.libreccm</groupId>
                             <artifactId>ccm-theme-foundry</artifactId>

@@ -30,6 +30,11 @@
         </dependency>
         <dependency>
             <groupId>org.libreccm</groupId>
+            <artifactId>ccm-pagemodelseditor</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.libreccm</groupId>
             <artifactId>ccm-theme-foundry</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
