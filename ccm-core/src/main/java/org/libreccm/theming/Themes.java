@@ -194,5 +194,36 @@ public class Themes implements Serializable {
             }
         }
     }
+    
+    /**
+     * List all files in a theme at the specified path
+     * 
+     * @param theme The theme from which the file is retrieved.
+     * @param path The path of the file relative to the root directory of the
+     *              theme.
+     * @return A list of all files in the provided directory. If there is no
+     *         such path in the theme the list is empty. If the path is the path
+     *         of a file and not a directory the list should have one element,
+     *         the data about the file itself.
+     */
+    public List<ThemeFileInfo> listThemesFiles(final ThemeInfo theme,
+                                               final String path) {
+        
+        final Instance<? extends ThemeProvider> forTheme = providers.select(
+            theme.getProvider());
+
+        if (forTheme.isUnsatisfied()) {
+            LOGGER.error("ThemeProvider \"{}\" not found.",
+                         theme.getProvider().getName());
+            throw new UnexpectedErrorException(String.format(
+                "ThemeProvider \"%s\" not found.",
+                theme.getProvider().getName()));
+        }
+
+        final ThemeProvider provider = forTheme.get();
+        return provider.listThemeFiles(theme.getName(), 
+                                       theme.getVersion(), 
+                                       path);
+    }
 
 }

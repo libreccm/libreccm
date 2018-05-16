@@ -84,6 +84,8 @@
         <!-- Archetypes -->
         <module>ccm-archetype-module</module>
         <module>ccm-cms-archetype-contenttype</module>
+        
+<!--        <module>ccm-cms-js</module>-->
     </modules>
 
     <reporting>
