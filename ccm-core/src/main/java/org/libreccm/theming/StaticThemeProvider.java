@@ -28,21 +28,32 @@ import org.reflections.scanners.ResourcesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 
 /**
  *
@@ -66,6 +77,9 @@ public class StaticThemeProvider implements ThemeProvider {
 
     @Inject
     private ThemeManifestUtil manifestUtil;
+
+    @Inject
+    private ThemeFileInfoUtil themeFileInfoUtil;
 
     @Override
     public List<ThemeInfo> getThemes() {
@@ -248,7 +262,30 @@ public class StaticThemeProvider implements ThemeProvider {
                                               final ThemeVersion version,
                                               final String path) {
 
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Objects.requireNonNull(theme);
+        Objects.requireNonNull(version);
+        Objects.requireNonNull(path);
+
+        if (theme.isEmpty() || theme.matches("\\s*")) {
+            throw new IllegalArgumentException(
+                "The name of the theme can't be empty.");
+        }
+
+        final String[] pathTokens = path.split("/");
+
+        final String indexFilePath = String.format("/"
+                                                       + THEMES_PACKAGE
+                                                       + "/%s/theme-index.json",
+                                                   theme);
+        final InputStream stream = getClass()
+            .getResourceAsStream(indexFilePath);
+        final JsonReader reader = Json.createReader(stream);
+        final JsonObject indexObj = reader.readObject();
+        final JsonArray filesArray = indexObj.getJsonArray("files");
+        filesArray
+            .forEach(value -> LOGGER.warn(value.toString()));
+
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -289,12 +326,12 @@ public class StaticThemeProvider implements ThemeProvider {
     }
 
     @Override
-    public OutputStream getOutputStreamForThemeFile(final String theme, 
+    public OutputStream getOutputStreamForThemeFile(final String theme,
                                                     final String path) {
-        
+
         throw new UnsupportedOperationException(String
             .format("This implementation of %s interface does not support "
-                + "changes to the theme files.",
+                        + "changes to the theme files.",
                     ThemeProvider.class.getName()));
     }
 
@@ -311,6 +348,35 @@ public class StaticThemeProvider implements ThemeProvider {
     @Override
     public void publishTheme(final String theme) {
         //No op in this implementation.
+    }
+
+    private URI getJarUri() {
+
+        LOGGER.debug("Getting URI of JAR...");
+
+        final String themesUrl = getClass().getResource(THEMES_DIR).toString();
+        LOGGER.debug("Full URL of " + THEMES_DIR + " directory: {}", themesUrl);
+
+        final int index = themesUrl.indexOf('!');
+        final String pathToJar = themesUrl.substring(0, index);
+
+        final URI uri = URI.create(pathToJar);
+        LOGGER.debug("URI to JAR is \"%s\".", uri.toString());
+        return uri;
+    }
+
+    private boolean isTheme(final Path path) {
+
+        Objects.requireNonNull(path);
+
+        if (!Files.isDirectory(path)) {
+            return false;
+        }
+
+        final Path manifestPathJson = path.resolve(THEME_MANIFEST_JSON);
+        final Path manifestPathXml = path.resolve(THEME_MANIFEST_XML);
+
+        return Files.exists(manifestPathJson) || Files.exists(manifestPathXml);
     }
 
 }

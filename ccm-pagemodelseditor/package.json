@@ -9,7 +9,7 @@
     "author": "Jens Pelzetter",
     "license": "GPL-3.0",
     "scripts": {
-        "build": "webpack",
+        "build": "tsc",
         "tslint": "tslint --project ."
     },
     "dependencies": {
