@@ -50,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
 public final class MultiStatus {
 
     @XmlElement(name = "response")
-    private final List<Response> responses;
+    private final List<WebDavResponse> responses;
 
     @XmlElement(name = "responsedescription")
     private final ResponseDescription responseDescription;
@@ -61,7 +61,7 @@ public final class MultiStatus {
     }
 
     public MultiStatus(final ResponseDescription responseDescription,
-                       final Response... responses) {
+                       final WebDavResponse... responses) {
 
         if (responses == null || responses.length == 0) {
             this.responses = Collections.emptyList();
@@ -72,15 +72,15 @@ public final class MultiStatus {
         this.responseDescription = responseDescription;
     }
 
-    public MultiStatus(final Response... responses) {
+    public MultiStatus(final WebDavResponse... responses) {
         this(null, responses);
     }
 
     public MultiStatus(final ResponseDescription responseDescription) {
-        this(responseDescription, (Response[]) null);
+        this(responseDescription, (WebDavResponse[]) null);
     }
 
-    public final List<Response> getResponses() {
+    public final List<WebDavResponse> getResponses() {
         return Collections.unmodifiableList(responses);
     }
 

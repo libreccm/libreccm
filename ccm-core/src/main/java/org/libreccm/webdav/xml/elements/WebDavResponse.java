@@ -51,8 +51,8 @@ import static javax.xml.bind.annotation.XmlAccessType.*;
 @XmlAccessorType(FIELD)
 @XmlType(propOrder = {"hRefs", "status", "propStats", "error",
                       "responseDescription", "location"})
-@XmlRootElement
-public final class Response {
+@XmlRootElement(name = "response")
+public final class WebDavResponse {
 
     @XmlElement(name = "href")
     private final List<HRef> hRefs;
@@ -70,7 +70,7 @@ public final class Response {
     private Location location;
 
     @SuppressWarnings("unused")
-    private Response() {
+    private WebDavResponse() {
         this(new LinkedList<HRef>(),
              null,
              new LinkedList<PropStat>(),
@@ -79,7 +79,7 @@ public final class Response {
              null);
     }
 
-    private Response(final List<HRef> hRefs,
+    private WebDavResponse(final List<HRef> hRefs,
                      final Status status,
                      final List<PropStat> propStats,
                      final Error error,
@@ -93,7 +93,7 @@ public final class Response {
         this.location = location;
     }
 
-    public Response(final HRef hRef,
+    public WebDavResponse(final HRef hRef,
                     final Error error,
                     final ResponseDescription responseDescription,
                     final Location location,
@@ -107,7 +107,7 @@ public final class Response {
              responseDescription, location);
     }
 
-    public Response(final Status status,
+    public WebDavResponse(final Status status,
                     final Error error,
                     final ResponseDescription responseDescription,
                     final Location location,
@@ -175,10 +175,10 @@ public final class Response {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof Response)) {
+        if (!(obj instanceof WebDavResponse)) {
             return false;
         }
-        final Response other = (Response) obj;
+        final WebDavResponse other = (WebDavResponse) obj;
         if (!Objects.equals(hRefs, other.getHRefs())) {
             return false;
         }

@@ -1,0 +1,62 @@
+{
+    "files": [
+        {
+            "name": "foo",
+            "isDirectory": true,
+            "files": [
+                {
+                    "name": "bar",
+                    "isDirectory": true,
+                    "files": [
+                        {
+                            "name": "theme.json",
+                            "isDirectory": false,
+                            "mimeType": "application/json"
+                        }
+                    ]
+                },
+                {
+                    "name": "theme.xml",
+                    "isDirectory": false,
+                    "mimeType": "text/xml"
+                }
+            ]
+        },
+        {
+            "name": "category-page.xsl",
+            "isDirectory": false,
+            "mimeType": "application/xml"
+        },
+        {
+            "name": "footer.xsl",
+            "isDirectory": false,
+            "mimeType": "application/xml"
+        },
+        {
+            "name": "settings.properties",
+            "isDirectory": false,
+            "mimeType": "text/plain"
+        },
+        {
+            "name": "style.css",
+            "isDirectory": false,
+            "mimeType": "text/css"
+        },
+        {
+            "name": "theme-bundle.properties",
+            "isDirectory": false,
+            "mimeType": "text/plain"
+        },
+        {
+            "name": "texts",
+            "isDirectory": true,
+            "files": [
+                {
+                    "name": "labels.properties",
+                    "isDirectory": false,
+                    "mimeType": "text/x-java-properties"
+                }
+            ]
+        }
+    ]
+}

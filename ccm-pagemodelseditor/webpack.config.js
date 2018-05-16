@@ -9,7 +9,8 @@ module.exports = {
     },
 
     output: {
-        path: path.resolve(__dirname, "src/main/resources/dist"),
+        //path: path.resolve(__dirname, "src/main/resources/dist"),
+        path: path.resolve(__dirname, "target/generated-resources/dist"),
         filename: "ccm-pagemodelseditor.js"
     },
 
