@@ -61,7 +61,7 @@ public final class PropFindFiniteDepth {
         // For unmarshalling only.
     }
 
-    private static PropFindFiniteDepth createInstance() {
+    private static PropFindFiniteDepth createSingleton() {
         return PROPFIND_FINITE_DEPTH;
     }
     

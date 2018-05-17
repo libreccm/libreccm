@@ -18,6 +18,9 @@
  */
 package org.libreccm.webdav.xml.elements;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
 /**
  * WebDAV collection XML Element.
  *
@@ -38,6 +41,9 @@ package org.libreccm.webdav.xml.elements;
  * Distributed Authoring and Versioning (WebDAV)"</a>
  *
  */
+@XmlRootElement
+@XmlType(factoryMethod = "createSingleton")
+
 public final class Collection {
 
     private Collection() {

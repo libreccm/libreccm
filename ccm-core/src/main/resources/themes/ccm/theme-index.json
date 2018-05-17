@@ -57,6 +57,11 @@
                     "mimeType": "text/x-java-properties"
                 }
             ]
+        },
+        {
+            "name": "theme.json",
+            "isDirectory": false,
+            "mimeType": "application/json"
         }
     ]
 }
