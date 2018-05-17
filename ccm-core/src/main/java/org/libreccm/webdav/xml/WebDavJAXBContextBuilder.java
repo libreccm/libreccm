@@ -48,6 +48,7 @@ import org.libreccm.webdav.xml.elements.PropStat;
 import org.libreccm.webdav.xml.elements.PropertyUpdate;
 import org.libreccm.webdav.xml.elements.Remove;
 import org.libreccm.webdav.xml.elements.ResponseDescription;
+import org.libreccm.webdav.xml.elements.Set;
 import org.libreccm.webdav.xml.elements.Shared;
 import org.libreccm.webdav.xml.elements.Status;
 import org.libreccm.webdav.xml.elements.TimeOut;
@@ -66,9 +67,7 @@ import org.libreccm.webdav.xml.properties.SupportedLock;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
-import javax.swing.text.Utilities;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -148,7 +147,8 @@ final class WebDavJAXBContextBuilder {
             ResourceType.class,
             Response.class,
             ResponseDescription.class,
-            Set.class, Shared.class,
+            Set.class, 
+            Shared.class,
             Status.class,
             SupportedLock.class,
             TimeOut.class,

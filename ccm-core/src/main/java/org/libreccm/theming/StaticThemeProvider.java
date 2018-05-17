@@ -28,7 +28,6 @@ import org.reflections.scanners.ResourcesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -36,15 +35,13 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -54,6 +51,8 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import javax.json.JsonStructure;
+import javax.json.JsonValue;
 
 /**
  *
@@ -271,7 +270,7 @@ public class StaticThemeProvider implements ThemeProvider {
                 "The name of the theme can't be empty.");
         }
 
-        final String[] pathTokens = path.split("/");
+        final List<String> pathTokens = Arrays.asList(path.split("/"));
 
         final String indexFilePath = String.format("/"
                                                        + THEMES_PACKAGE
@@ -281,11 +280,30 @@ public class StaticThemeProvider implements ThemeProvider {
             .getResourceAsStream(indexFilePath);
         final JsonReader reader = Json.createReader(stream);
         final JsonObject indexObj = reader.readObject();
-        final JsonArray filesArray = indexObj.getJsonArray("files");
-        filesArray
-            .forEach(value -> LOGGER.warn(value.toString()));
-
-        throw new UnsupportedOperationException();
+        final JsonArray currentDir = indexObj.getJsonArray("files");
+        currentDir.forEach(value -> LOGGER.warn(value.toString()));
+        
+        final Optional<JsonObject> targetFile = findFile(pathTokens, 
+                                                         currentDir);
+        
+        final List<ThemeFileInfo> result;
+        if (targetFile.isPresent()) {
+            if (targetFile.get().getBoolean("isDirectory")) {
+                final JsonArray files = targetFile.get().getJsonArray("files");
+                result = files
+                    .stream()
+                    .map(value -> generateFileInfo((JsonObject) value))
+                    .collect(Collectors.toList());
+            } else {
+                final ThemeFileInfo fileInfo = generateFileInfo(
+                    targetFile.get());
+                result = new ArrayList<>();
+                result.add(fileInfo);
+            }
+        } else {
+            result = Collections.emptyList();
+        }
+        return result;
     }
 
     @Override
@@ -377,6 +395,61 @@ public class StaticThemeProvider implements ThemeProvider {
         final Path manifestPathXml = path.resolve(THEME_MANIFEST_XML);
 
         return Files.exists(manifestPathJson) || Files.exists(manifestPathXml);
+    }
+
+    private Optional<JsonObject> findFile(final List<String> path,
+                                          final JsonArray currentDirectory) {
+
+        Objects.requireNonNull(path);
+        Objects.requireNonNull(currentDirectory);
+
+        if (path.isEmpty()) {
+            return Optional.empty();
+        }
+
+        final String fileName = path.get(0);
+
+        final Optional<JsonObject> fileData = currentDirectory
+                .stream()
+                .map(value -> (JsonObject) value)
+                .filter(value -> filterFileData(value, fileName))
+                .findAny();
+        if (path.size() == 1) {
+            return fileData;
+        } else {
+            
+            if (fileData.get().getBoolean("isDirectory")) {
+                return findFile(path.subList(1, path.size()), 
+                                fileData.get().getJsonArray("files"));
+            } else {
+                return Optional.empty();
+            }
+        }
+    }
+
+    private boolean filterFileData(final JsonObject fileData,
+                                   final String fileName) {
+        return fileData.getString("name").equals(fileName);
+    }
+
+    private ThemeFileInfo generateFileInfo(final JsonObject fileData) {
+
+        Objects.requireNonNull(fileData);
+
+        final ThemeFileInfo fileInfo = new ThemeFileInfo();
+        fileInfo.setName(fileData.getString("name"));
+        if (fileData.getBoolean("isDirectory")) {
+            fileInfo.setDirectory(true);
+        } else {
+            fileInfo.setDirectory(false);
+            fileInfo.setMimeType(fileData.getString("mimeType"));
+        }
+        fileInfo.setWritable(false);
+        if (fileData.getJsonNumber("size") != null) {
+            fileInfo.setSize(fileData.getJsonNumber("size").longValue());
+        }
+
+        return fileInfo;
     }
 
 }
