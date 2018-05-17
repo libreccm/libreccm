@@ -41,6 +41,7 @@ import org.libreccm.theming.ThemeInfo;
 import org.libreccm.theming.ThemeVersion;
 import org.libreccm.theming.Themes;
 import org.libreccm.webdav.ResponseStatus;
+import org.libreccm.webdav.xml.elements.Collection;
 import org.libreccm.webdav.xml.elements.HRef;
 import org.libreccm.webdav.xml.elements.MultiStatus;
 import org.libreccm.webdav.xml.elements.Prop;
@@ -51,11 +52,12 @@ import org.libreccm.webdav.xml.properties.DisplayName;
 import org.libreccm.webdav.xml.properties.GetContentLength;
 import org.libreccm.webdav.xml.properties.GetContentType;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
@@ -72,6 +74,12 @@ public class ThemeFiles {
     @Inject
     private Themes themes;
 
+    @Inject
+    private ServletContext servletContext;
+    
+    @Inject
+    private HttpServletRequest request;
+    
     @GET
     @Path("/{path}")
     public Response getFile(@PathParam("theme") final String theme,
@@ -137,10 +145,15 @@ public class ThemeFiles {
         final List<ThemeFileInfo> fileInfos = themes.listThemesFiles(themeInfo,
                                                                      path);
         final MultiStatus result;
-        if (fileInfos.size() == 1) {
+        if (fileInfos.isEmpty()) {
+            throw new NotFoundException(String.format(
+                "No file \"%s\" in theme \"%s\".",
+                path,
+                theme));
+        } else if (fileInfos.size() == 1) {
 
-            final ThemeFileInfo fileInfo = fileInfos.get(1);
-            
+            final ThemeFileInfo fileInfo = fileInfos.get(0);
+
             result = new MultiStatus(buildWebDavResponse(fileInfo, uriInfo));
 
         } else {
@@ -150,7 +163,7 @@ public class ThemeFiles {
                 null,
                 null,
                 new PropStat(new Prop(new DisplayName(path),
-                                      org.libreccm.webdav.xml.elements.Collection.COLLECTION),
+                                      Collection.COLLECTION),
                              new Status(javax.ws.rs.core.Response.Status.OK)));
 
             final List<WebDavResponse> responses = new LinkedList<>();
@@ -158,13 +171,13 @@ public class ThemeFiles {
 
             final List<WebDavResponse> fileResponses = fileInfos
                 .stream()
-            .map(fileInfo -> buildWebDavResponse(fileInfo, uriInfo))
-            .collect(Collectors.toList());
+                .map(fileInfo -> buildWebDavResponse(path, fileInfo))
+                .collect(Collectors.toList());
             responses.addAll(fileResponses);
-            
+
             result = new MultiStatus(responses.toArray(new WebDavResponse[]{}));
         }
-        
+
         return Response
             .status(ResponseStatus.MULTI_STATUS)
             .entity(result)
@@ -174,14 +187,53 @@ public class ThemeFiles {
     private WebDavResponse buildWebDavResponse(final ThemeFileInfo fileInfo,
                                                final UriInfo uriInfo) {
 
-        final PropStat propStat = new PropStat(
-            new Prop(new DisplayName(fileInfo.getName()),
-                     new GetContentLength(fileInfo.getSize()),
-                     new GetContentType(fileInfo.getMimeType())),
-            new Status(javax.ws.rs.core.Response.Status.OK));
+        final PropStat propStat;
+        if (fileInfo.isDirectory()) {
+            propStat = new PropStat(
+                new Prop(new DisplayName(fileInfo.getName())),
+                new Status(javax.ws.rs.core.Response.Status.OK));
+        } else {
+            propStat = new PropStat(
+                new Prop(new DisplayName(fileInfo.getName()),
+                         new GetContentLength(fileInfo.getSize()),
+                         new GetContentType(fileInfo.getMimeType())),
+                new Status(javax.ws.rs.core.Response.Status.OK));
+        }
 
         final WebDavResponse response = new WebDavResponse(
             new HRef(uriInfo.getRequestUri()),
+            null,
+            null,
+            null,
+            propStat);
+
+        return response;
+    }
+    
+    private WebDavResponse buildWebDavResponse(final String basePath,
+                                               final ThemeFileInfo fileInfo) {
+        
+        final PropStat propStat;
+        if (fileInfo.isDirectory()) {
+            propStat = new PropStat(
+                new Prop(new DisplayName(fileInfo.getName())),
+                new Status(javax.ws.rs.core.Response.Status.OK));
+        } else {
+            propStat = new PropStat(
+                new Prop(new DisplayName(fileInfo.getName()),
+                         new GetContentLength(fileInfo.getSize()),
+                         new GetContentType(fileInfo.getMimeType())),
+                new Status(javax.ws.rs.core.Response.Status.OK));
+        }
+
+        final WebDavResponse response = new WebDavResponse(
+            new HRef(String.format("%s://%s:%d%s/DAV/themes/%s/%s",
+                                   request.getScheme(),
+                                   request.getServerName(),
+                                   request.getServerPort(),
+                                   servletContext.getContextPath(),
+                                   basePath,
+                                   fileInfo.getName())),
             null,
             null,
             null,

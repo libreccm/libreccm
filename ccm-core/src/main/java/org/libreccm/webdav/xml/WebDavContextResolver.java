@@ -60,6 +60,12 @@ public class WebDavContextResolver implements ContextResolver<JAXBContext> {
 
     private final JAXBIntrospector introspector;
 
+    public WebDavContextResolver() throws JAXBException {
+        
+        this.context = WebDavJAXBContextBuilder.build();
+        this.introspector = this.context.createJAXBIntrospector();
+    }
+    
     /**
      * Creates an instance of this resolver, registering the provided custom XML
      * Elements and Properties.

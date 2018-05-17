@@ -18,11 +18,17 @@
  */
 package org.libreccm.theming.webdav;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.libreccm.core.UnexpectedErrorException;
+import org.libreccm.webdav.xml.WebDavContextResolver;
+
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
+import javax.xml.bind.JAXBException;
 
 /**
  *
@@ -31,6 +37,8 @@ import javax.ws.rs.core.Application;
 @ApplicationPath("/DAV/themes")
 public class WebDAV extends Application {
 
+    private static final Logger LOGGER = LogManager.getLogger(WebDAV.class);
+    
     @Override
     public Set<Class<?>> getClasses() {
 
@@ -38,6 +46,22 @@ public class WebDAV extends Application {
         classes.add(ThemeFiles.class);
 
         return classes;
+    }
+
+    @Override
+    public Set<Object> getSingletons() {
+
+        LOGGER.warn("Adding singletons...");
+        
+        final HashSet<Object> singletons = new HashSet<>();
+        try {
+            singletons.add(new WebDavContextResolver());
+        } catch (JAXBException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+
+        LOGGER.warn("Added singletons");
+        return singletons;
     }
 
 }
