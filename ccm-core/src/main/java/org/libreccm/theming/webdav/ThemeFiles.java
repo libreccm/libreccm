@@ -67,6 +67,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.core.Context;
@@ -92,6 +93,20 @@ public class ThemeFiles {
 
     @Inject
     private ThemeFilesLockManager lockManager;
+
+    @DELETE
+    @Path("/{path}")
+    public void delete(@PathParam("theme") final String theme,
+                           @PathParam("path") final String path) {
+
+         final ThemeInfo info = themes
+            .getTheme(theme, ThemeVersion.LIVE)
+            .orElseThrow(() -> new NotFoundException(String
+            .format("Theme \"%s\" does not exist.", theme)));
+        
+        lockManager.unlockFile(String.format("%s/%s", theme, path));
+        themes.deleteThemeFile(info, path);
+    }
 
     @GET
     @Path("/{path}")
@@ -239,7 +254,7 @@ public class ThemeFiles {
         @HeaderParam("Lock-Tocken") final String lockToken) {
 
         lockManager.unlock(lockToken);
-        
+
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 

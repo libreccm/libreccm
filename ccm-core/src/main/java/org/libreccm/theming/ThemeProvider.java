@@ -153,6 +153,8 @@ public interface ThemeProvider extends Serializable {
      */
     OutputStream getOutputStreamForThemeFile(String theme, String path);
 
+    void deleteThemeFile(String theme, String path);
+    
     /**
      * Determines if the implementation supports changes to the files of the
      * themes.

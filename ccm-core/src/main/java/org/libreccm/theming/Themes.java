@@ -225,5 +225,24 @@ public class Themes implements Serializable {
                                        theme.getVersion(), 
                                        path);
     }
+    
+    public void deleteThemeFile(final ThemeInfo theme, 
+                                final String path) {
+        
+        final Instance<? extends ThemeProvider> forTheme = providers.select(
+            theme.getProvider());
+        
+        if (forTheme.isUnsatisfied()) {
+            LOGGER.error("ThemeProvider \"{}\" not found.",
+                         theme.getProvider().getName());
+            throw new UnexpectedErrorException(String.format(
+                "ThemeProvider \"%s\" not found.",
+                theme.getProvider().getName()));
+        }
+
+        final ThemeProvider provider = forTheme.get();
+        provider.deleteThemeFile(theme.getName(), path);
+        
+    }
 
 }
