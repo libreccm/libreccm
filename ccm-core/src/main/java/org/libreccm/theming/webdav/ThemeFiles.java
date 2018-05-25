@@ -42,6 +42,7 @@ import org.libreccm.theming.ThemeVersion;
 import org.libreccm.theming.Themes;
 import org.libreccm.webdav.ResponseStatus;
 import org.libreccm.webdav.methods.LOCK;
+import org.libreccm.webdav.methods.UNLOCK;
 import org.libreccm.webdav.xml.elements.ActiveLock;
 import org.libreccm.webdav.xml.elements.Collection;
 import org.libreccm.webdav.xml.elements.Depth;
@@ -66,6 +67,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
@@ -131,7 +133,7 @@ public class ThemeFiles {
     @LOCK
     @Path("/{path}")
     public Prop lock(@PathParam("theme")
-                     final String theme,
+        final String theme,
                      @PathParam("path")
                      final String path,
                      final LockInfo lockInfo) {
@@ -139,7 +141,7 @@ public class ThemeFiles {
         final String lockedPath = String.format("%s/path",
                                                 theme,
                                                 path);
-        
+
         try {
             final String lockToken = lockManager.lockFile(lockedPath);
 
@@ -225,6 +227,20 @@ public class ThemeFiles {
             .status(ResponseStatus.MULTI_STATUS)
             .entity(result)
             .build();
+    }
+
+    @UNLOCK
+    @Path("/{path}")
+    public Response unlock(
+        @PathParam("theme")
+        final String theme,
+        @PathParam("path")
+        final String path,
+        @HeaderParam("Lock-Tocken") final String lockToken) {
+
+        lockManager.unlock(lockToken);
+        
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 
     private WebDavResponse buildWebDavResponse(final ThemeFileInfo fileInfo,
