@@ -18,6 +18,8 @@
  */
 package org.libreccm.theming.webdav;
 
+import org.libreccm.webdav.conditions.LockTokenSubmitted;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -93,6 +95,13 @@ class ThemeFilesLockManager {
         final String file = locks.get(lockToken);
         locks.remove(lockToken);
         lockedFiles.remove(file);
+    }
+    
+    protected void unlockFile(final String file) {
+        
+        final String lockToken = lockedFiles.get(file);
+        lockedFiles.remove(file);
+        locks.remove(lockToken);
     }
 
 }

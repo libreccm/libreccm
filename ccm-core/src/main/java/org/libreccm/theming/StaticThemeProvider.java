@@ -282,10 +282,10 @@ public class StaticThemeProvider implements ThemeProvider {
         final JsonObject indexObj = reader.readObject();
         final JsonArray currentDir = indexObj.getJsonArray("files");
         currentDir.forEach(value -> LOGGER.warn(value.toString()));
-        
-        final Optional<JsonObject> targetFile = findFile(pathTokens, 
+
+        final Optional<JsonObject> targetFile = findFile(pathTokens,
                                                          currentDir);
-        
+
         final List<ThemeFileInfo> result;
         if (targetFile.isPresent()) {
             if (targetFile.get().getBoolean("isDirectory")) {
@@ -354,6 +354,15 @@ public class StaticThemeProvider implements ThemeProvider {
     }
 
     @Override
+    public void deleteThemeFile(final String theme, final String path) {
+
+        throw new UnsupportedOperationException(String
+            .format("This implementation of %s interface does not support "
+                        + "changes to the theme files.",
+                    ThemeProvider.class.getName()));
+    }
+
+    @Override
     public boolean supportsChanges() {
         return false;
     }
@@ -410,16 +419,16 @@ public class StaticThemeProvider implements ThemeProvider {
         final String fileName = path.get(0);
 
         final Optional<JsonObject> fileData = currentDirectory
-                .stream()
-                .map(value -> (JsonObject) value)
-                .filter(value -> filterFileData(value, fileName))
-                .findAny();
+            .stream()
+            .map(value -> (JsonObject) value)
+            .filter(value -> filterFileData(value, fileName))
+            .findAny();
         if (path.size() == 1) {
             return fileData;
         } else {
-            
+
             if (fileData.get().getBoolean("isDirectory")) {
-                return findFile(path.subList(1, path.size()), 
+                return findFile(path.subList(1, path.size()),
                                 fileData.get().getJsonArray("files"));
             } else {
                 return Optional.empty();
