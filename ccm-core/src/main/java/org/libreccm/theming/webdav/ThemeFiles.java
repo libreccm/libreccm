@@ -41,16 +41,24 @@ import org.libreccm.theming.ThemeInfo;
 import org.libreccm.theming.ThemeVersion;
 import org.libreccm.theming.Themes;
 import org.libreccm.webdav.ResponseStatus;
+import org.libreccm.webdav.methods.LOCK;
+import org.libreccm.webdav.xml.elements.ActiveLock;
 import org.libreccm.webdav.xml.elements.Collection;
+import org.libreccm.webdav.xml.elements.Depth;
 import org.libreccm.webdav.xml.elements.HRef;
+import org.libreccm.webdav.xml.elements.LockInfo;
+import org.libreccm.webdav.xml.elements.LockRoot;
+import org.libreccm.webdav.xml.elements.LockToken;
 import org.libreccm.webdav.xml.elements.MultiStatus;
 import org.libreccm.webdav.xml.elements.Prop;
 import org.libreccm.webdav.xml.elements.PropStat;
 import org.libreccm.webdav.xml.elements.Status;
+import org.libreccm.webdav.xml.elements.TimeOut;
 import org.libreccm.webdav.xml.elements.WebDavResponse;
 import org.libreccm.webdav.xml.properties.DisplayName;
 import org.libreccm.webdav.xml.properties.GetContentLength;
 import org.libreccm.webdav.xml.properties.GetContentType;
+import org.libreccm.webdav.xml.properties.LockDiscovery;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -72,14 +80,17 @@ import javax.ws.rs.ext.Providers;
 public class ThemeFiles {
 
     @Inject
-    private Themes themes;
+    private HttpServletRequest request;
 
     @Inject
     private ServletContext servletContext;
-    
+
     @Inject
-    private HttpServletRequest request;
-    
+    private Themes themes;
+
+    @Inject
+    private ThemeFilesLockManager lockManager;
+
     @GET
     @Path("/{path}")
     public Response getFile(@PathParam("theme") final String theme,
@@ -115,6 +126,38 @@ public class ThemeFiles {
         final byte[] data = outputStream.toByteArray();
         return Response.ok(data, mediaType).build();
 
+    }
+
+    @LOCK
+    @Path("/{path}")
+    public Prop lock(@PathParam("theme")
+                     final String theme,
+                     @PathParam("path")
+                     final String path,
+                     final LockInfo lockInfo) {
+
+        final String lockedPath = String.format("%s/path",
+                                                theme,
+                                                path);
+        
+        try {
+            final String lockToken = lockManager.lockFile(lockedPath);
+
+            return new Prop(new LockDiscovery(
+                new ActiveLock(lockInfo.getLockScope(),
+                               lockInfo.getLockType(),
+                               Depth.ZERO,
+                               lockInfo.getOwner(),
+                               new TimeOut(3600),
+                               new LockToken(new HRef(String
+                                   .format("opaquelocktoken:%s",
+                                           lockToken))),
+                               new LockRoot(new HRef(lockedPath)))));
+
+        } catch (AlreadyLockedException ex) {
+            throw new WebApplicationException(
+                ResponseStatus.LOCKED.getStatusCode());
+        }
     }
 
     @OPTIONS
@@ -209,10 +252,10 @@ public class ThemeFiles {
 
         return response;
     }
-    
+
     private WebDavResponse buildWebDavResponse(final String basePath,
                                                final ThemeFileInfo fileInfo) {
-        
+
         final PropStat propStat;
         if (fileInfo.isDirectory()) {
             propStat = new PropStat(
