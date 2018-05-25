@@ -188,15 +188,15 @@ public class DatabaseThemeProvider implements ThemeProvider {
 
         Objects.requireNonNull(themeName);
         Objects.requireNonNull(path);
-        
+
         if (themeName.matches("\\s*")) {
             throw new IllegalArgumentException("themeName can't be empty.");
         }
-        
+
         if (path.matches("\\s*")) {
             throw new IllegalArgumentException("path can't be empty.");
         }
-        
+
         final Theme theme = themeRepository
             .findThemeByName(path, ThemeVersion.DRAFT)
             .orElseThrow(() -> new IllegalArgumentException(String
@@ -210,8 +210,8 @@ public class DatabaseThemeProvider implements ThemeProvider {
             return new DataFileOutputStream((DataFile) file);
         } else {
             throw new IllegalArgumentException(String
-            .format("The path \"%s\" does not point to a DataFile.",
-                    path));
+                .format("The path \"%s\" does not point to a DataFile.",
+                        path));
         }
     }
 
@@ -232,16 +232,46 @@ public class DatabaseThemeProvider implements ThemeProvider {
             .orElseThrow(() -> new IllegalArgumentException(String
             .format("The path \"%s\" does not point to a directory.",
                     path)));
-        
+
         if (parent instanceof Directory) {
             final Directory parentDirectory = (Directory) parent;
-            
+
             return fileManager.createDataFile(theme, parentDirectory, path);
-            
+
         } else {
-            throw new  IllegalArgumentException(String
-            .format("The path \"%s\" does not point to a directory.",
-                    path));
+            throw new IllegalArgumentException(String
+                .format("The path \"%s\" does not point to a directory.",
+                        path));
+        }
+    }
+
+    @Override
+    public void deleteThemeFile(final String themeName, final String path) {
+        
+        Objects.requireNonNull(themeName);
+        Objects.requireNonNull(path);
+
+        if (themeName.matches("\\s*")) {
+            throw new IllegalArgumentException("themeName can't be empty.");
+        }
+
+        if (path.matches("\\s*")) {
+            throw new IllegalArgumentException("path can't be empty.");
+        }
+
+        final Theme theme = themeRepository
+            .findThemeByName(path, ThemeVersion.DRAFT)
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("Theme \"%s\" does not exist.", themeName)));
+
+        final ThemeFile file = fileRepository
+            .findByPath(theme, path, ThemeVersion.DRAFT)
+            .orElse(createDataFile(theme, path));
+        
+        if (file instanceof DataFile) {
+            fileManager.delete(file);
+        } else if(file instanceof Directory) {
+            fileManager.deleteRecursive(file);
         }
     }
 
