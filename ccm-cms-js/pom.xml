@@ -57,23 +57,8 @@
 
         <plugins>
 
-            <!-- <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-remote-resources-plugin</artifactId>
-                <version>1.5</version>
-                <configuration>
-                    <resourceBundles>
-                        <resourceBundle>org.libreccm:ccm-pagemodelseditor:${project.version}</resourceBundle>
-                    </resourceBundles>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin> -->
+            <!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-remote-resources-plugin</artifactId> <version>1.5</version> <configuration> <resourceBundles>
+            <resourceBundle>org.libreccm:ccm-pagemodelseditor:${project.version}</resourceBundle> </resourceBundles> </configuration> <executions> <execution> <goals> <goal>process</goal> </goals> </execution> </executions> </plugin> -->
 
             <plugin>
                 <groupId>com.github.eirslett</groupId>
@@ -115,6 +100,15 @@
                         </goals>
                         <configuration>
                             <arguments>run build</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm link</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>link</arguments>
                         </configuration>
                     </execution>
                 </executions>
