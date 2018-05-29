@@ -31,7 +31,7 @@
 
     <build>
         <finalName>ccm-pagemodelseditor</finalName>
-        
+
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -43,10 +43,10 @@
                 <directory>${project.build.directory}/generated-resources</directory>
             </resource>
         </resources>
-        
+
         <plugins>
-            
-            <plugin>
+
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-remote-resources-plugin</artifactId>
                 <version>1.5</version>
@@ -64,16 +64,16 @@
                         <include>**/*.tsx</include>
                     </includes>
                 </configuration>
-            </plugin>
-            
+            </plugin>-->
+
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                
+
                 <configuration>
                     <installDirectory>../node</installDirectory>
                 </configuration>
-                
+
                 <executions>
                     <execution>
                         <id>Install node.js and NPM</id>
@@ -113,10 +113,10 @@
                     </execution>
                 </executions>
             </plugin>
-            
-            
+
+
         </plugins>
-        
+
     </build>
 
 </project>

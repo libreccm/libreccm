@@ -1,10 +1,12 @@
 {
     "compilerOptions": {
         "jsx": "React",
-        "module": "amd",
+        "module": "commonjs",
         "moduleResolution": "node",
-        "outDir": "target/generated-resources/dist",
+        "outDir": "target/dist",
+        "declaration": true,
         "sourceMap": true,
+        "strict": true,
         "target": "es6"
     },
     "include": [
