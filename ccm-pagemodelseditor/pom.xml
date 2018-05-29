@@ -70,6 +70,10 @@
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
                 
+                <configuration>
+                    <installDirectory>../node</installDirectory>
+                </configuration>
+                
                 <executions>
                     <execution>
                         <id>Install node.js and NPM</id>
@@ -85,6 +89,9 @@
                         <goals>
                             <goal>npm</goal>
                         </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>build</id>
@@ -93,6 +100,15 @@
                         </goals>
                         <configuration>
                             <arguments>run build</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm link</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>link</arguments>
                         </configuration>
                     </execution>
                 </executions>
