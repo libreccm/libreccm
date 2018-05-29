@@ -1,27 +1,27 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    
+
     <modelVersion>4.0.0</modelVersion>
-    
+
     <parent>
         <groupId>org.libreccm</groupId>
         <artifactId>ccm-bundle-devel</artifactId>
         <relativePath>../ccm-bundle-devel</relativePath>
         <version>7.0.0-SNAPSHOT</version>
     </parent>
-    
+
     <groupId>org.libreccm</groupId>
     <artifactId>ccm-bundle-devel-wildfly-web</artifactId>
     <!--<version>7.0.0-SNAPSHOT</version>-->
     <packaging>war</packaging>
-    
+
     <name>LibreCCM Devel Bundle Web for Wildfly</name>
     <url>http://www.libreccm.org/modules/web/wildfly</url>
-    
+
     <dependencies>
         <dependency>
             <groupId>org.webjars</groupId>
@@ -38,10 +38,24 @@
             <artifactId>requirejs-domready</artifactId>
             <version>2.0.1-2</version>
         </dependency>
+        <dependency>
+            <groupId>org.librecms</groupId>
+            <artifactId>ccm-cms-js</artifactId>
+            <version>7.0.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
-    
+
     <build>
         <finalName>libreccm-web-wildfly</finalName>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${project.build.directory}/generated-resources</directory>
+            </resource>
+        </resources>
         
         <plugins>
             <plugin>
@@ -55,23 +69,87 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
-            
+
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+
+                <configuration>
+                    <installDirectory>../node</installDirectory>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>Install node.js and NPM</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>v8.11.1</nodeVersion>
+                        </configuration>
+                    </execution>
+                    <!--<execution>
+                        <id>npm link ccm-pagemodelseditor</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>link ccm-pagemodelseditor</arguments>
+                        </configuration>
+                    </execution>-->
+                    <execution>
+                        <id>npm link ccm-cms-js</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>link ccm-cms-js</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>build</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run build</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
+                    
+                    <webResources>
+                        <resource>
+                            <directory>src/main/resources</directory>
+                        </resource>
+                        <resource>
+                            <directory>${project.build.directory}/generated-resources</directory>
+                        </resource>
+                    </webResources>
+                    
                     <overlays>
                         <overlay>
                             <groupId>org.libreccm</groupId>
                             <artifactId>ccm-editor</artifactId>
                             <type>jar</type>
                         </overlay>
-                         <overlay>
+                        <overlay>
                             <groupId>org.libreccm</groupId>
                             <artifactId>ccm-pagemodelseditor</artifactId>
                             <type>jar</type>
                         </overlay>
-                       <overlay>
+                        <overlay>
                             <groupId>org.libreccm</groupId>
                             <artifactId>ccm-theme-foundry</artifactId>
                             <type>jar</type>
@@ -96,7 +174,7 @@
                     </overlays>
                 </configuration>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>

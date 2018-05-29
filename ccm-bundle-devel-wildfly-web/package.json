@@ -1,0 +1,17 @@
+{
+    "name": "ccm-bundle-devel",
+    "version": "7.0.0",
+    "scripts": {
+        "build": "webpack"
+    },
+    "dependencies": {
+        "ccm-cms-js": "7.0.0"
+    },
+    "devDependencies": {
+        "ts-loader": "^4.3.0",
+        "tslint": "^5.10.0",
+        "typescript": "^2.8.3",
+        "webpack": "^4.8.1",
+        "webpack-cli": "^2.1.3"
+    }
+}
