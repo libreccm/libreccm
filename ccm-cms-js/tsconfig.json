@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "jsx": "React",
+        "module": "amd",
+        "moduleResolution": "node",
+        "outDir": "target/generated-resources/dist",
+        "sourceMap": true,
+        "target": "es6"
+    },
+    "include": [
+        "src/main/typescript/**/*"
+    ]
+}

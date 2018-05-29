@@ -1,16 +1,15 @@
 {
-    "name": "ccm-pagemodelseditor",
-    "version": "7.0.0-SNAPSHOT",
-    "main": "index.js",
-    "description": "Editor for PageModels build using React.js",
+    "name": "ccm-cms-js",
+    "version": "7.0.0",
+    "description": "JavaScript for the ccm-cms-module",
     "repository": {
         "type": "svn",
-        "url": "https://svn.libreccm.org/ccm/ccm_ng/ccm-pagemodelseditor"
+        "url": "https://svn.libreccm.org/ccm/ccm_ng/ccm-cms-js"
     },
     "author": "Jens Pelzetter",
     "license": "GPL-3.0",
     "scripts": {
-        "build": "tsc",
+        "build": "webpack",
         "tslint": "tslint --project ."
     },
     "dependencies": {
@@ -26,6 +25,7 @@
         "tslint": "^5.10.0",
         "typescript": "^2.8.3",
         "webpack": "^4.8.1",
-        "webpack-cli": "^2.1.3"
+        "webpack-cli": "^2.1.3",
+        "ccm-pagemodelseditor": "^7.0.0-SNAPSHOT"
     }
 }
