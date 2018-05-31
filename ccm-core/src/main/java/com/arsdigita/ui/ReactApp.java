@@ -66,6 +66,9 @@ public class ReactApp extends SimpleComponent {
 
         reactAppElem
             .addAttribute("ccmApplication", primaryUrl);
+        
+        reactAppElem
+            .addAttribute("dispatcherPrefix", Web.getWebappContextPath());
     }
 
     private String getPrimaryUrl() {

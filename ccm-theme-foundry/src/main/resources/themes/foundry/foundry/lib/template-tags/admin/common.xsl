@@ -167,8 +167,9 @@
     <xsl:template match="load-react-app">
         <xsl:if test="$data-tree//bebop:reactApp">
             <div class="react-data" 
-                 id="{$data-tree//bebop:reactApp/@appId}"
-                 data-ccm-application="{$data-tree//bebop:reactApp/@ccmApplication}">
+                 id="{$data-tree//bebop:reactApp/@appId}"            
+                 data-ccm-application="{$data-tree//bebop:reactApp/@ccmApplication}"
+                 data-dispatcher-prefix="{$data-tree//bebop:reactApp/@dispatcherPrefix}">
             </div>
             <script src="{$data-tree//bebop:reactApp/@scriptPath}"></script>
         </xsl:if>

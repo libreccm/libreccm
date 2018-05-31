@@ -43,14 +43,12 @@ import com.arsdigita.cms.ui.CMSApplicationPage;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.LayoutPanel;
 import com.arsdigita.ui.ReactApp;
-import com.arsdigita.ui.admin.AdminUiConstants;
 import com.arsdigita.ui.admin.categories.CategoriesTreeModel;
 import com.arsdigita.util.LockableImpl;
 
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.CoreConstants;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.pagemodel.PageModel;
@@ -84,6 +82,7 @@ public class PagesAdminPage extends CMSApplicationPage {
     private final SaveCancelSection saveCancelSection;
 
     private Pages pagesInstance;
+    private PagesContextBar pagesContextBar;
 
     public PagesAdminPage() {
 
@@ -160,8 +159,11 @@ public class PagesAdminPage extends CMSApplicationPage {
 //            "admin:pageModelsManager", AdminUiConstants.ADMIN_XML_NS);
 //        pageModelsManager.add(new Text("Placeholder page models editor"));
         final ReactApp pageModelsManager = new ReactApp(
-            "page-models-editor", "dist/ccm-pagemodelseditor.js");
+            "page-models-editor", "scripts/dist/ccm-cms.js");
 
+        pagesContextBar = new PagesContextBar();
+        super.add(pagesContextBar);
+        
         final TabbedPane tabbedPane = new TabbedPane();
         tabbedPane.addTab(new Label(new GlobalizedMessage(
             "cms.ui.pages.tab.pages", CmsConstants.CMS_BUNDLE)),
@@ -183,6 +185,7 @@ public class PagesAdminPage extends CMSApplicationPage {
 
     public void setPagesInstance(final Pages pagesInstance) {
         this.pagesInstance = pagesInstance;
+        pagesContextBar.setPagesInstance(pagesInstance);
     }
 
 //    @Override
