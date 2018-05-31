@@ -65,14 +65,13 @@ public class WorkspaceContextBar extends ContextBar {
         final ApplicationRepository appRepo = cdiUtil.findBean(
             ApplicationRepository.class);
         final List<CcmApplication> apps = appRepo.findByType(
-            CmsConstants.CONTENT_SECTION_APP_TYPE);
+            CmsConstants.CONTENT_CENTER_APP_TYPE);
 
         final String centerPath = apps.get(0).getPrimaryUrl();
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Got Url: " + centerPath);
         }
         final URL url = URL.there(state.getRequest(), centerPath);
-
         entries.add(new Entry(centerTitle, url));
 
         return entries;

@@ -1093,7 +1093,7 @@ div.bebop-segment {
 }
 
 #left div.bebop-segment-body {
-    padding-left: 10px;
+    padding: 10px;
 }
 
 div.bebop-left div.bebop-panel-row { 
@@ -1976,4 +1976,37 @@ span#quickLinksCascade {
 
 .preformatted-text {
     white-space: pre;
+}
+
+button.pagemodels.addbutton {
+    
+    border: none;
+    border-radius: 0.25em;
+    
+    background-color: #383838;
+    
+    color: #fff;
+    
+    padding: 0.2em 0.33em;
+}
+
+button.pagemodels.addbutton > span {
+    
+    border-right: 1px solid #eee;
+    
+    font-weight: bold;
+    
+    padding-right: 0.2em;
+    
+}
+
+div.pageModelsList {
+    
+    margin-top: 0.66em;
+    margin-bottom: 0.66em;
+    border-top: 1px solid #0776A0;
+    padding-top: 0.66em;
+    border-bottom: 1px solid #0776A0;
+    padding-bottom: 0.66em;
+    
 }
