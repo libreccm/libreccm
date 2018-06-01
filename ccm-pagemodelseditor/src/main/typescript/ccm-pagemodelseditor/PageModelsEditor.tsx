@@ -22,10 +22,32 @@ export {
  * );
  */
 
+interface PageModelEditorContext {
+
+    selectedPageModel: PageModel;
+}
+
+const newPageModel: PageModel = {
+    description: "New PageModel",
+    modelUuid: "",
+    name: "newPageModel",
+    pageModelId: 0,
+    title: "A new PageModel",
+    type: "",
+    uuid: "",
+    version: PageModelVersion.DRAFT,
+};
+
+const pageModelEditorContext = React.createContext({
+    pageModelSelected: false,
+    selectedPageModel: newPageModel,
+});
+
 interface PageModelsListProps {
 
     ccmApplication: string;
     dispatcherPrefix: string;
+    selectPageModel: (selectedPageModel: PageModel) => void;
 }
 
 interface PageModelsListState {
@@ -104,7 +126,8 @@ class PageModelsList
             {this.state.pageModels.length > 0 &&
                 <ul>
                     {this.state.pageModels.map((pageModel: PageModel) =>
-                        <PageModelListItem pageModel={pageModel} />,
+                        <PageModelListItem pageModel={pageModel}
+                            selectPageModel={this.props.selectPageModel} />,
                     )}
                 </ul>
             }
@@ -114,6 +137,7 @@ class PageModelsList
 
 interface PageModelListItemProps {
     pageModel: PageModel;
+    selectPageModel: (selectedPageModel: PageModel) => void;
 }
 
 // interface PageModelListItemState {
@@ -123,9 +147,19 @@ interface PageModelListItemProps {
 class PageModelListItem
     extends React.Component<PageModelListItemProps, {}> {
 
+    private onClick(event: any): void {
+
+        console.log(`Setting selected PageModel. this is ${this}`);
+        this.props.selectPageModel(this.props.pageModel);
+    }
+
     public render() {
         return <li>
-            <a>
+            <a data-pagemodel-id="{this.props.pageModel.pageModelId}"
+                href="#"
+                onClick={
+                    (event) => this.props.selectPageModel(this.props.pageModel)
+                }>
                 {this.props.pageModel.title}
             </a>
         </li>;
@@ -138,50 +172,80 @@ class PageModelListItem
 //
 // interface PageModelEditorState {
 //
+//     selectedPageModel: PageModel | null;
+//
 // }
 
 class PageModelEditor
-    extends React.Component<{}, {}> {
+    extends React.Component<{}, any> {
+
+    constructor(props: any) {
+
+        super(props);
+
+        this.state = {
+            selectedPageModel: newPageModel,
+        };
+    }
 
     public render() {
 
         return <React.Fragment>
-            <div id="left">
-                <div className="column-head"></div>
-                <div className="column-content">
-                    <div className="bebop-left">
-                        <div className="bebop-segmented-panel">
-                            <div className="bebop-segment">
-                                <h3 className="bebop-segment-header">
-                                    Available PageModels
+            <pageModelEditorContext.Provider value={this.state.selectedPageModel}>
+                <div id="left">
+                    <div className="column-head"></div>
+                    <div className="column-content">
+                        <div className="bebop-left">
+                            <div className="bebop-segmented-panel">
+                                <div className="bebop-segment">
+                                    <h3 className="bebop-segment-header">
+                                        Available PageModels
                                 </h3>
-                                <div className="bebop-segment-body">
-                                    <button className="pagemodels addbutton">
-                                        <span>+</span> Create new PageModel
-                                </button>
-                                    <PageModelsList
-                                        ccmApplication={this.getCcmApplication()}
-                                        dispatcherPrefix={this
-                                            .getDispatcherPrefix()} />
-                                    <button className="pagemodels addbutton">
-                                        <span>+</span> Create new PageModel
+                                    <div className="bebop-segment-body">
+                                        <button
+                                            className="pagemodels addbutton">
+                                            <span>+</span> Create new PageModel
+                                        </button>
+                                        <PageModelsList
+                                            ccmApplication={this.getCcmApplication()}
+                                            dispatcherPrefix={this.getDispatcherPrefix()}
+                                            selectPageModel={(pageModel: PageModel) => {
+                                                this.setState((state: any) => {
+                                                    return {
+                                                        ...state,
+                                                        selectedPageModel: pageModel,
+                                                    };
+                                                });
+                                            }} />
+                                        <button className="pagemodels addbutton">
+                                            <span>+</span> Create new PageModel
                                     </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div id="right">
-                <div className="column-head">
+                <div id="right">
+                    <div className="column-head">
+                    </div>
+                    <div className="column-content">
+                        PageModelEditor Placeholder
+                    <pageModelEditorContext.Consumer>
+                            {(context) =>
+                                <pre>
+                                    {context.pageModelSelected &&
+                                        context.selectedPageModel.name
+                                    }
+                                </pre>
+                            }
+                        </pageModelEditorContext.Consumer>
+                        <pre>
+                            {this.getCcmApplication()}
+                        </pre>
+                    </div>
                 </div>
-                <div className="column-content">
-                    PageModelEditor Placeholder
-                    <pre>
-                        {this.getCcmApplication()}
-                    </pre>
-                </div>
-            </div>
+            </pageModelEditorContext.Provider>
         </React.Fragment>;
     }
 
@@ -220,4 +284,14 @@ class PageModelEditor
             }
         }
     }
+
+    // private setSelectedPageModel(selectedPageModel: PageModel): void {
+    //
+    //     this.setState((state: any) => {
+    //         return {
+    //             ...state,
+    //             selectedPageModel,
+    //         };
+    //     });
+    // }
 }
