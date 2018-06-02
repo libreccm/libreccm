@@ -24,6 +24,7 @@ export {
 
 interface PageModelEditorContext {
 
+    pageModelSelected: boolean;
     selectedPageModel: PageModel;
 }
 
@@ -158,7 +159,10 @@ class PageModelListItem
             <a data-pagemodel-id="{this.props.pageModel.pageModelId}"
                 href="#"
                 onClick={
-                    (event) => this.props.selectPageModel(this.props.pageModel)
+                    (event) => {
+                        console.log("A PageModel has been selected");
+                        this.props.selectPageModel(this.props.pageModel)
+                    }
                 }>
                 {this.props.pageModel.title}
             </a>
@@ -184,14 +188,18 @@ class PageModelEditor
         super(props);
 
         this.state = {
-            selectedPageModel: newPageModel,
+            // selectedPageModel: newPageModel,
+            context: {
+                pageModelSelected: false,
+                selectedPageModel: newPageModel,
+            },
         };
     }
 
     public render() {
 
         return <React.Fragment>
-            <pageModelEditorContext.Provider value={this.state.selectedPageModel}>
+            <pageModelEditorContext.Provider value={this.state.context}>
                 <div id="left">
                     <div className="column-head"></div>
                     <div className="column-content">
@@ -211,9 +219,13 @@ class PageModelEditor
                                             dispatcherPrefix={this.getDispatcherPrefix()}
                                             selectPageModel={(pageModel: PageModel) => {
                                                 this.setState((state: any) => {
+                                                    console.log("Updating state for selectedPageModel");
                                                     return {
-                                                        ...state,
-                                                        selectedPageModel: pageModel,
+                                                        // ...state,
+                                                        context: {
+                                                            pageModelSelected: true,
+                                                            selectedPageModel: pageModel,
+                                                        }
                                                     };
                                                 });
                                             }} />
@@ -233,11 +245,16 @@ class PageModelEditor
                         PageModelEditor Placeholder
                     <pageModelEditorContext.Consumer>
                             {(context) =>
-                                <pre>
-                                    {context.pageModelSelected &&
-                                        context.selectedPageModel.name
+                                <React.Fragment>
+                                    <pre>
+                                        pageModelSelected: {context.pageModelSelected ? "true" : "false" }
+                                    </pre>
+                                    {context.pageModelSelected && <pre>
+
+                                        {context.selectedPageModel.name}
+                                    </pre>
                                     }
-                                </pre>
+                                </React.Fragment>
                             }
                         </pageModelEditorContext.Consumer>
                         <pre>
