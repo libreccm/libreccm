@@ -39,10 +39,11 @@ const newPageModel: PageModel = {
     version: PageModelVersion.DRAFT,
 };
 
-const pageModelEditorContext = React.createContext({
-    pageModelSelected: false,
-    selectedPageModel: newPageModel,
-});
+const pageModelEditorContext: React.Context<PageModelEditorContext>
+    = React.createContext({
+        pageModelSelected: false,
+        selectedPageModel: newPageModel,
+    });
 
 interface PageModelsListProps {
 
@@ -116,7 +117,7 @@ class PageModelsList
             });
     }
 
-    public render() {
+    public render(): React.ReactNode {
 
         return <div className="pageModelsList">
             {this.state.errorMsg !== null &&
@@ -148,26 +149,65 @@ interface PageModelListItemProps {
 class PageModelListItem
     extends React.Component<PageModelListItemProps, {}> {
 
-    private onClick(event: any): void {
-
-        console.log(`Setting selected PageModel. this is ${this}`);
-        this.props.selectPageModel(this.props.pageModel);
-    }
-
-    public render() {
+    public render(): React.ReactNode {
         return <li>
             <a data-pagemodel-id="{this.props.pageModel.pageModelId}"
                 href="#"
                 onClick={
                     (event) => {
-                        console.log("A PageModel has been selected");
-                        this.props.selectPageModel(this.props.pageModel)
+                        // console.log("A PageModel has been selected");
+                        this.props.selectPageModel(this.props.pageModel);
                     }
                 }>
                 {this.props.pageModel.title}
             </a>
         </li>;
     }
+}
+
+interface PageModelComponentProps {
+
+    pageModel: PageModel;
+}
+
+class PageModelComponent extends React.Component<PageModelComponentProps, {}> {
+
+    constructor(props: PageModelComponentProps) {
+        super(props);
+    }
+
+    public render(): React.ReactNode {
+
+        return <div className="bebop-body">
+            <dl className="properties-list">
+                <dt>Name</dt>
+                <dd>{this.props.pageModel.name}</dd>
+                <dt>Title</dt>
+                <dd>{this.props.pageModel.title}</dd>
+                <dt>Type</dt>
+                <dd>{this.props.pageModel.type}</dd>
+                <dt>Version</dt>
+                <dd>{this.props.pageModel.version}</dd>
+                <dt>Description</dt>
+                <dd>{this.props.pageModel.description}</dd>
+            </dl>
+            <button>Edit</button>
+        </div>;
+
+        // return <dl>
+        //     <dt>Name</dt>
+        //     <dd>{this.props.pageModel.name}</dd>
+        //     <dt>Title</dt>
+        //     <dd>{this.props.pageModel.title}</dd>
+        //     <dt>Type</dt>
+        //     <dd>{this.props.pageModel.type}</dd>
+        //     <dt>Version</dt>
+        //     <dd>{this.props.pageModel.version}</dd>
+        //     <dt>Description</dt>
+        //     <dd>{this.props.pageModel.description}</dd>
+        // </dl>;
+    }
+
 }
 
 // interface PageModelEditorProps {
@@ -196,7 +236,7 @@ class PageModelEditor
         };
     }
 
-    public render() {
+    public render(): React.ReactNode {
 
         return <React.Fragment>
             <pageModelEditorContext.Provider value={this.state.context}>
@@ -208,7 +248,7 @@ class PageModelEditor
                                 <div className="bebop-segment">
                                     <h3 className="bebop-segment-header">
                                         Available PageModels
-                                </h3>
+                                    </h3>
                                     <div className="bebop-segment-body">
                                         <button
                                             className="pagemodels addbutton">
@@ -219,13 +259,13 @@ class PageModelEditor
                                             dispatcherPrefix={this.getDispatcherPrefix()}
                                             selectPageModel={(pageModel: PageModel) => {
                                                 this.setState((state: any) => {
-                                                    console.log("Updating state for selectedPageModel");
+                                                    // console.log("Updating state for selectedPageModel");
                                                     return {
                                                         // ...state,
                                                         context: {
                                                             pageModelSelected: true,
                                                             selectedPageModel: pageModel,
-                                                        }
+                                                        },
                                                     };
                                                 });
                                             }} />
@@ -242,19 +282,23 @@ class PageModelEditor
                     <div className="column-head">
                     </div>
                     <div className="column-content">
-                        PageModelEditor Placeholder
-                    <pageModelEditorContext.Consumer>
+                        <pageModelEditorContext.Consumer>
                             {(context) =>
                                 <React.Fragment>
-                                    <pre>
-                                        pageModelSelected: {context.pageModelSelected ? "true" : "false" }
-                                    </pre>
-                                    {context.pageModelSelected && <pre>
-
-                                        {context.selectedPageModel.name}
-                                    </pre>
+                                    {context.pageModelSelected &&
+                                        <PageModelComponent pageModel={context.selectedPageModel} />
                                     }
                                 </React.Fragment>
+                                // <React.Fragment>
+                                //     <pre>
+                                //         pageModelSelected: {context.pageModelSelected ? "true" : "false" }
+                                //     </pre>
+                                //     {context.pageModelSelected && <pre>
+                                //
+                                //         {context.selectedPageModel.name}
+                                //     </pre>
+                                //     }
+                                // </React.Fragment>
                             }
                         </pageModelEditorContext.Consumer>
                         <pre>
