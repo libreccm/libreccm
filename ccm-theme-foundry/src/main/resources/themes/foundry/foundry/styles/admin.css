@@ -1,6 +1,6 @@
-/* 
+/*
     Copyright: 2006, 2007, 2008 Sören Bernstein
-  
+
     This file is part of Mandalay.
 
     Mandalay is free software: you can redistribute it and/or modify
@@ -205,18 +205,18 @@ table.htmlarea td.toolbarElement {
     background-image: -o-linear-gradient(top, #56a1bd 5%, #024C68 95%);
     background-image: -ie-linear-gradient(top, #56a1bd 5%, #024C68 95%);
     background-image: -moz-linear-gradient(top, #56a1bd 5%, #024C68 95%);
-    background-image: -webkit-linear-gradient(top, #56a1bd 5%, #024C68 95%); 
+    background-image: -webkit-linear-gradient(top, #56a1bd 5%, #024C68 95%);
     /*Compatibility IE- es fuktioniert noch nicht ganz*/
-    filter: progid:DXImageTransform.Microsoft.gradient(enabled='true',gradientType='0',startColorstr='#56a1bd', 
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled='true',gradientType='0',startColorstr='#56a1bd',
         endColorstr='#024C68'); /* IE6 & IE7 */
-    -ms-filter: progid:DXImageTransform.Microsoft.gradient(enabled='true',gradientType='0',startColorstr='#56a1bd', 
-        endColorstr='#024C68'); /* IE8 */ 
+    -ms-filter: progid:DXImageTransform.Microsoft.gradient(enabled='true',gradientType='0',startColorstr='#56a1bd',
+        endColorstr='#024C68'); /* IE8 */
     font-size: 0.8em;
 }
 
 div#cms-header .min-width,
 div#cms-header .logo,
-div#cms-header .logo img { 
+div#cms-header .logo img {
     height: 100%;
 }
 
@@ -267,7 +267,7 @@ div#cms-header .cms-greeting .cms-username {
 }
 
 
-div#cms-header h1 { 
+div#cms-header h1 {
     margin: 2em 0em 0em 0em;
     clear: left;
 }
@@ -320,7 +320,7 @@ span.bebopTab.current {
     color: #ffffff;
     background-color: #4a4747;
     margin: 0 -1.25em 0 0;
-    font-family: 'colaborate-mediumregular', Verdana, Helvetica, Arial, sans-serif; 
+    font-family: 'colaborate-mediumregular', Verdana, Helvetica, Arial, sans-serif;
     font-size: 1.2em;
 }
 
@@ -399,7 +399,7 @@ div#bebop-tabbed-pane span.user_admin:before {
 }
 
 div#bebop-tabbed-pane span.user_admin.current:before {
-    content: url('../../images/cms/admin-current.png'); 
+    content: url('../../images/cms/admin-current.png');
 }
 
 div#bebop-tabbed-pane span.cse:before {
@@ -435,7 +435,7 @@ div#cms-breadcrumbs {
 }
 
 div.bebop-contextbar {
-    color:#767676; 
+    color:#767676;
     font-weight:bold;
 }
 
@@ -459,7 +459,7 @@ div.bebop-contextbar span.bebop-contextbar-current-element {
 div.bebop-contextbar span.bebop-contextbar-seperator {
     margin-left: 5px;
     border-left: 1px solid #a4a4a4;
-    color: transparent; 
+    color: transparent;
     background-image:url('../images/scrumb.png');
     background-repeat:no-repeat;
     background-position: center;
@@ -471,11 +471,11 @@ div.bebop-contextbar a:focus,
 div.bebop-contextbar a:active,
 div.bebop-contextbar a:visited
 {
-    color: #767676; 
+    color: #767676;
 }
 
 div .bebop-contextbar-current-element{
-    padding: 2px 5px; 
+    padding: 2px 5px;
 }
 
 /*----cmscontent----*/
@@ -488,7 +488,7 @@ div#cms-content {
     margin-top: 75px !important;
     font-size: 1em;
     overflow: hidden;
-    /*border-radius: 0.3em; jensp 2014-07-11: border-radius causes silly problems in this combination when scrolling in Firefox running under Linux*/ 
+    /*border-radius: 0.3em; jensp 2014-07-11: border-radius causes silly problems in this combination when scrolling in Firefox running under Linux*/
     background-color: #e6dcde;
     box-shadow: 0px 0px 5px #4a4a4a;
 }
@@ -627,7 +627,7 @@ a:hover {
     color: #FF9200;
 }
 
-a img { 
+a img {
     border:none;
 }
 
@@ -642,7 +642,7 @@ ul ul li{
     margin-left: 2.3em;
 }
 
-table { 
+table {
     width: 100%;
     border-bottom: 1px solid #999999;
     border-collapse: separate;
@@ -664,7 +664,7 @@ table * table ,form table {
     margin: 0;
 }
 
-table thead tr th { 
+table thead tr th {
     /*padding-left: 0.9em;*/
     color: #999999;
     text-align: left;
@@ -676,7 +676,7 @@ table tbody tr:nth-child(2n) {
     background-color: inherit;
 }
 
-table tbody tr td { 
+table tbody tr td {
     text-align: left;
     vertical-align: middle;
     border: none !important;
@@ -686,7 +686,7 @@ table tbody tr td {
     -o-hyphens: none;
 }
 
-table tbody tr td + td{ 
+table tbody tr td + td{
     text-align: left;
 }
 
@@ -746,7 +746,7 @@ input #draft_search{
 textarea, select{
     vertical-align: baseline;
     /*margin-left: 0.4em;*/
-    background-color: #fbfbfb; 
+    background-color: #fbfbfb;
     -moz-border-radius:3px;
     -webkit-border-radius:3px;
     border-radius: 3px;
@@ -767,7 +767,7 @@ input{
     -webkit-border-radius:3px;
     padding: 0.2em;
     vertical-align: baseline;
-    background-color: #fbfbfb; 
+    background-color: #fbfbfb;
     box-shadow: inset 0 0 3px rgba(74,74,74,0.5);
 }
 
@@ -787,7 +787,7 @@ span.key {
     -o-hyphens: none;
 }
 
-div.action-link {  
+div.action-link {
     margin-bottom: 1em;
     margin-top: 1em;
 }
@@ -825,26 +825,26 @@ ul.bebop-list {
     border-collapse: collapse;
 }
 
-#folder-browse table.dataTable thead tr th { 
+#folder-browse table.dataTable thead tr th {
     text-align: left;
     color:#633e69;
 }
 
-#folder-browse table.dataTable thead tr th + th + th + th + th { 
+#folder-browse table.dataTable thead tr th + th + th + th + th {
     text-align: center;
 }
 
-#folder-browse table.dataTable tbody tr td { 
+#folder-browse table.dataTable tbody tr td {
     text-align: left;
     padding:5px;
 }
 
-#folder-browse table.dataTable tbody tr td + td + td + td + td { 
+#folder-browse table.dataTable tbody tr td + td + td + td + td {
     text-align: center;
 }
 
-div#bebop-current-pane table.dataTable tbody tr:hover{ 
-    background-color: #ffe0e0; 
+div#bebop-current-pane table.dataTable tbody tr:hover{
+    background-color: #ffe0e0;
 }
 
 /* special layout for folder-permissions */
@@ -858,7 +858,7 @@ div#bebop-current-pane table.dataTable tbody tr:hover{
     padding-right: 0.4em;
 }
 
-#folder-permissions table.dataTable tbody tr td + td { 
+#folder-permissions table.dataTable tbody tr td + td {
     text-align: center;
 }
 
@@ -898,7 +898,7 @@ div .query{
 }
 
 div#search fieldset {
-    margin-top: 25px; 
+    margin-top: 25px;
     -o-border-radius:5px;
     -ie-border-radius:5px;
     -moz-border-radius:5px;
@@ -930,9 +930,9 @@ div#search .terms {
 }
 
 div#search .filterName {
-    text-align: left; 
-    vertical-align: top; 
-    font-weight: bold; 
+    text-align: left;
+    vertical-align: top;
+    font-weight: bold;
     padding-right: 1em;
     color: #0776A0;
 }
@@ -945,7 +945,7 @@ div#search .filterParam {
 div#search .filterParam >select{
     -moz-border-radius:5px;
     -webkit-border-radius:5px;
-    border-radius:5px; 
+    border-radius:5px;
     background-color: #fbfbfb;
     width: 100%;
     overflow: scroll;
@@ -1017,7 +1017,7 @@ div#content .bebop-body .bebop-panel-row span {
 
 div#content .bebop-body .bebop-panel-row span.option-group:after,
 div#content .bebop-body .bebop-panel-row span.action:after,
-div#content .bebop-body .bebop-panel-row span[key="not_yet_published_user"]:after, 
+div#content .bebop-body .bebop-panel-row span[key="not_yet_published_user"]:after,
 div#content .bebop-body .bebop-panel-row span[key="not_yet_published_date"]:after{
   content: "";
 }*/
@@ -1041,7 +1041,7 @@ div.bebop-left, form[name="category"] table {
     position: absolute;
     float: left;
     width: auto;
-    background: #e6dcde; 
+    background: #e6dcde;
     padding: 0em 1em;
     margin-top: 10px;
     border-radius: 10px;
@@ -1052,18 +1052,18 @@ div.bebop-left, form[name="category"] table {
 }
 
 form[name="category"] table table{
-    background: none; 
+    background: none;
 }
 
 form[name="category"] ul li.notSelectedAncestorCategory {
-    background-color: #e6dcde; 
+    background-color: #e6dcde;
 }
 
 form[name="category"] ul li ul li.selectedAncestorCategory {
     background-color: #fff;
 }
 
-div.bebop-segment { 
+div.bebop-segment {
     margin-bottom:1em;
     padding-bottom:0.5em;
     border-bottom:1px solid rgba(102, 102, 102, 0.5);
@@ -1096,16 +1096,16 @@ div.bebop-segment {
     padding: 10px;
 }
 
-div.bebop-left div.bebop-panel-row { 
+div.bebop-left div.bebop-panel-row {
     width:100%;
 }
 
-div.bebop-panel-row { 
+div.bebop-panel-row {
     margin-bottom:1em;
     padding: 0;
     width:40%;
 }
-div.bebop-panel-row table tr td { 
+div.bebop-panel-row table tr td {
     margin-bottom: 1em;
     padding: 3px;
 }
@@ -1114,7 +1114,7 @@ div.bebop-panel-row textarea{
     width:100%;
 }
 
-div.bebop-segment div.bebop-segment-header { 
+div.bebop-segment div.bebop-segment-header {
     padding-left:1em;
     border-bottom:1px solid #cacaca;
     font-weight:bold;
@@ -1132,7 +1132,7 @@ div#right div.bebop-body {
     overflow: auto;
     position: absolute;
     padding: 0em 1em;
-    background-color: #fff; 
+    background-color: #fff;
 }
 
 div.bebop-body table tr{
@@ -1142,7 +1142,7 @@ div.bebop-body table tr{
 
 div.bebop-body div.bebop-panel-row {
     width:99%;
-} 
+}
 
 div.bebop-body form #search span {
     display: inline;
@@ -1165,7 +1165,7 @@ div .bebop-body ul li{
     margin-top: 5px;
 }
 
-h3.bebop-segment-header{ 
+h3.bebop-segment-header{
     margin-bottom:0.15em;
     margin-top: 15px;
     color: #0776A0;
@@ -1204,12 +1204,12 @@ ul.bebop-tree * ul {
 }
 
 /* Bebop CurrentPane*/
-div#bebop-current-pane { 
+div#bebop-current-pane {
     position: absolute;
     text-align: left;
 }
 
-/* ActionGroupSet */ 
+/* ActionGroupSet */
 div.action-group-subject tr{
     text-align: left;
 }
@@ -1260,11 +1260,11 @@ div.cmsSortableList > ul li:nth-child(2n+1)
 }
 
 /* CMS Summary Section */
-div.cmsSummarySection { 
+div.cmsSummarySection {
     padding: 0 1em;
 }
 
-div.cmsSummarySection div.cmsSummaryHeading { 
+div.cmsSummarySection div.cmsSummaryHeading {
     font-weight: bold;
     margin-bottom:0.3em;
 }
@@ -1273,7 +1273,7 @@ div.cmsSummarySection .cmsSummaryHeading {
     color: #0776A0;
 }
 
-div.cmsSummaryBody {  
+div.cmsSummaryBody {
     margin-bottom:0.7em;
     padding-bottom:0.3em;
     border-bottom: 1px solid rgba(102, 102, 102, 0.5);
@@ -1285,7 +1285,7 @@ div.cmsSummaryBody ul.categoryList li{
 
 div.cmsSummarySection ul {
     text-indent: -2.5em;
-}  
+}
 
 span.cmsCurrentRevision {
     font-style:italic;
@@ -1478,7 +1478,7 @@ div.item-search-widget dialog .controls label {
     margin-right: 0.5em;
 }
 
-div.asset-search-widget dialog .dialogarea controls button, 
+div.asset-search-widget dialog .dialogarea controls button,
 div.item-search-widget dialog .dialogarea controls button{
 
     margin-left: 0.5em;
@@ -1507,7 +1507,7 @@ div.item-search-widget dialog .titlebar {
 	-moz-border-radius-topright: 10px;
 	border-top-left-radius: 10px;
     border-top-right-radius: 10px;
-    
+
     color: white;
 }
 
@@ -1761,7 +1761,7 @@ form#propertyedit input[type='text'].minute {
 
 #content span.option-group input[value="internalLink"]:checked ~ fieldset[class="externalLink"]{
     display:none;
-} 
+}
 
 #content form select {
     padding: 0.25em;
@@ -1829,7 +1829,7 @@ a#preview_link:hover{
 
 a#preview_link:visited{
     color: white;
-    border: none; 
+    border: none;
 }
 
 div.bebop-grid-panel{
@@ -1861,12 +1861,12 @@ table span.hint{
     font-size: 0.65em;
     z-index: 65535;
     font-family: 'DejaVuSansMono', Verdana, Helvetica, Arial, sans-serif;
-    background-image: linear-gradient(top, #eeeeee, #cccccc);  
+    background-image: linear-gradient(top, #eeeeee, #cccccc);
     background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #eeeeee),color-stop(1, #cccccc));
-    background-image: -webkit-linear-gradient(top, #eeeeee, #cccccc);  
-    background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);  
-    background-image: -ms-linear-gradient(top, #eeeeee, #cccccc);  
-    background-image: -o-linear-gradient(top, #eeeeee, #cccccc); 
+    background-image: -webkit-linear-gradient(top, #eeeeee, #cccccc);
+    background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);
+    background-image: -ms-linear-gradient(top, #eeeeee, #cccccc);
+    background-image: -o-linear-gradient(top, #eeeeee, #cccccc);
 }
 
 /*ul.bebop-tree li a[type="control"] {
@@ -1964,7 +1964,7 @@ span#quickLinksCascade {
 }
 
 .wysiwg div.image.center {
-    text-align: center;    
+    text-align: center;
 }
 
 .wysiwg div.image.center span.caption {
@@ -1978,35 +1978,60 @@ span#quickLinksCascade {
     white-space: pre;
 }
 
-button.pagemodels.addbutton {
-    
+button.pagemodeleditor.addbutton {
+
     border: none;
     border-radius: 0.25em;
-    
+
     background-color: #383838;
-    
+
     color: #fff;
-    
+
     padding: 0.2em 0.33em;
 }
 
-button.pagemodels.addbutton > span {
-    
+button.pagemodeleditor.addbutton > span {
+
     border-right: 1px solid #eee;
-    
+
     font-weight: bold;
-    
+
     padding-right: 0.2em;
-    
+
 }
 
-div.pageModelsList {
-    
+div.pagemodeleditor.pageModelsList {
+
     margin-top: 0.66em;
     margin-bottom: 0.66em;
     border-top: 1px solid #0776A0;
     padding-top: 0.66em;
     border-bottom: 1px solid #0776A0;
     padding-bottom: 0.66em;
-    
+}
+
+dl.pagemodeleditor.pagemodel.propertiesList {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    max-width: 30em;
+}
+
+dl.pagemodeleditor.pagemodel.propertiesList dt{
+    font-weight: bold;
+}
+
+dl.pagemodeleditor.pagemodel.propertiesList dd {
+}
+
+dl.pagemodeleditor.pagemodel.propertiesForm {
+
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+
+    max-width: 30em;
+}
+
+dl.pagemodeleditor.pagemodel.propertiesForm label {
+
+    font-weight: bold;
 }
