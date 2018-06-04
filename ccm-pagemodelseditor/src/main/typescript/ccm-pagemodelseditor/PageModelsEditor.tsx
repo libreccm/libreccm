@@ -119,7 +119,7 @@ class PageModelsList
 
     public render(): React.ReactNode {
 
-        return <div className="pageModelsList">
+        return <div className="pagemodeleditor pageModelsList">
             {this.state.errorMsg !== null &&
                 <div className="errorPanel">
                     {this.state.errorMsg}
@@ -170,30 +170,77 @@ interface PageModelComponentProps {
     pageModel: PageModel;
 }
 
-class PageModelComponent extends React.Component<PageModelComponentProps, {}> {
+interface PageModelComponentState {
+
+    editMode: boolean;
+}
+
+class PageModelComponent
+    extends React.Component<PageModelComponentProps, PageModelComponentState> {
 
     constructor(props: PageModelComponentProps) {
         super(props);
+
+        this.state = {
+            editMode: false
+        };
     }
 
     public render(): React.ReactNode {
 
-        return <div className="bebop-body">
-            <dl className="properties-list">
-                <dt>Name</dt>
-                <dd>{this.props.pageModel.name}</dd>
-                <dt>Title</dt>
-                <dd>{this.props.pageModel.title}</dd>
-                <dt>Type</dt>
-                <dd>{this.props.pageModel.type}</dd>
-                <dt>Version</dt>
-                <dd>{this.props.pageModel.version}</dd>
-                <dt>Description</dt>
-                <dd>{this.props.pageModel.description}</dd>
-            </dl>
-            <button>Edit</button>
-        </div>;
+        if (this.state.editMode) {
+            return <div className="bebop-body">
+                <form className="pagemodeleditor pagemodel propertiesForm">
+                    <label htmlFor="pageModelName">
+                        Name
+                    </label>
+                    <input
+                        id="pageModelName"
+                        size={32}
+                        type="text"
+                        value={this.props.pageModel.name} />
 
+                    <label htmlFor="pageModelTitle">
+                        Name
+                    </label>
+                    <input
+                        id="pageModelTitle"
+                        size={32}
+                        type="text"
+                        value={this.props.pageModel.title}/>
+
+                    <label htmlFor="pageModelDescription">
+                        Name
+                    </label>
+                    <textarea id="pageModeDescription" cols={80} rows={20}>
+                        {this.props.pageModel.description}
+                    </textarea>
+                </form>
+            </div>
+        } else {
+            return <div className="bebop-body">
+                <dl className="pagemodeleditor pagemodel propertiesList">
+                    <dt>Name</dt>
+                    <dd>{this.props.pageModel.name}</dd>
+                    <dt>Title</dt>
+                    <dd>{this.props.pageModel.title}</dd>
+                    <dt>Type</dt>
+                    <dd>{this.props.pageModel.type}</dd>
+                    <dt>Version</dt>
+                    <dd>{this.props.pageModel.version}</dd>
+                    <dt>Description</dt>
+                    <dd>{this.props.pageModel.description}</dd>
+                </dl>
+                <button onClick={(event) => {
+
+                    event.preventDefault();
+
+                    this.setState({
+                        editMode: true
+                    });
+                }}>Edit</button>
+            </div>;
+        }
         // return <dl>
         //     <dt>Name</dt>
         //     <dd>{this.props.pageModel.name}</dd>
@@ -251,7 +298,7 @@ class PageModelEditor
                                     </h3>
                                     <div className="bebop-segment-body">
                                         <button
-                                            className="pagemodels addbutton">
+                                            className="pagemodeleditor addbutton">
                                             <span>+</span> Create new PageModel
                                         </button>
                                         <PageModelsList
@@ -269,7 +316,7 @@ class PageModelEditor
                                                     };
                                                 });
                                             }} />
-                                        <button className="pagemodels addbutton">
+                                        <button className="pagemodeleditor addbutton">
                                             <span>+</span> Create new PageModel
                                     </button>
                                     </div>
@@ -301,9 +348,6 @@ class PageModelEditor
                                 // </React.Fragment>
                             }
                         </pageModelEditorContext.Consumer>
-                        <pre>
-                            {this.getCcmApplication()}
-                        </pre>
                     </div>
                 </div>
             </pageModelEditorContext.Provider>
