@@ -167,12 +167,22 @@ class PageModelListItem
 
 interface PageModelComponentProps {
 
+    ccmApplication: string;
+    dispatcherPrefix: string;
     pageModel: PageModel;
 }
 
 interface PageModelComponentState {
 
     editMode: boolean;
+
+    errorMsg: string | null;
+
+    form: {
+        name: string;
+        title: string;
+        description: string;
+    }
 }
 
 class PageModelComponent
@@ -182,39 +192,70 @@ class PageModelComponent
         super(props);
 
         this.state = {
-            editMode: false
+            editMode: false,
+            errorMsg: null,
+            form: {
+                name: this.props.pageModel.name,
+                title: this.props.pageModel.title,
+                description: this.props.pageModel.description
+            }
         };
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     public render(): React.ReactNode {
 
         if (this.state.editMode) {
             return <div className="bebop-body">
-                <form className="pagemodeleditor pagemodel propertiesForm">
+                {this.state.errorMsg !== null &&
+                    <div className="errorPanel">
+                        {this.state.errorMsg}
+                    </div>
+                }
+                <form
+                    className="pagemodeleditor pagemodel propertiesForm"
+                    onSubmit={this.handleSubmit} >
+
                     <label htmlFor="pageModelName">
                         Name
                     </label>
                     <input
+                        disabled={this.props.pageModel.pageModelId === 0 ? true : false}
                         id="pageModelName"
+                        onChange={this.handleChange}
                         size={32}
                         type="text"
-                        value={this.props.pageModel.name} />
+                        value={this.state.form.name} />
 
                     <label htmlFor="pageModelTitle">
-                        Name
+                        Title
                     </label>
                     <input
                         id="pageModelTitle"
+                        onChange={this.handleChange}
                         size={32}
                         type="text"
-                        value={this.props.pageModel.title}/>
+                        value={this.state.form.title} />
 
                     <label htmlFor="pageModelDescription">
-                        Name
+                        Description
                     </label>
-                    <textarea id="pageModeDescription" cols={80} rows={20}>
-                        {this.props.pageModel.description}
-                    </textarea>
+                    <textarea
+                        cols={80}
+                        id="pageModelDescription"
+                        onChange={this.handleChange}
+                        rows={20}
+                        value={this.state.form.description} />
+                    <div>
+                        <button type="submit">Save</button>
+                        <button
+                            id="pageModelDiscard"
+                            onClick={event => this.discardChanges(event)}>
+                            Discard changes
+                        </button>
+                    </div>
                 </form>
             </div>
         } else {
@@ -236,23 +277,122 @@ class PageModelComponent
                     event.preventDefault();
 
                     this.setState({
-                        editMode: true
+                        editMode: true,
                     });
                 }}>Edit</button>
             </div>;
         }
-        // return <dl>
-        //     <dt>Name</dt>
-        //     <dd>{this.props.pageModel.name}</dd>
-        //     <dt>Title</dt>
-        //     <dd>{this.props.pageModel.title}</dd>
-        //     <dt>Type</dt>
-        //     <dd>{this.props.pageModel.type}</dd>
-        //     <dt>Version</dt>
-        //     <dd>{this.props.pageModel.version}</dd>
-        //     <dt>Description</dt>
-        //     <dd>{this.props.pageModel.description}</dd>
-        // </dl>;
+    }
+
+    private discardChanges(event: React.MouseEvent<HTMLElement>): void {
+
+        event.preventDefault();
+
+        this.setState({
+            ...this.state,
+            editMode: false,
+            form: {
+                name: this.props.pageModel.name,
+                title: this.props.pageModel.title,
+                description: this.props.pageModel.description,
+            }
+        });
+    }
+
+    private handleChange(event: React.ChangeEvent<HTMLElement>): void {
+
+        const target: HTMLElement = event.target as HTMLElement;
+
+        switch (target.id) {
+            case "pageModelName": {
+                const targetInput: HTMLInputElement
+                    = target as HTMLInputElement;
+                this.setState({
+                    editMode: this.state.editMode,
+                    form: {
+                        name: targetInput.value,
+                        title: this.state.form.title,
+                        description: this.state.form.description,
+                    }
+                });
+                break;
+            }
+            case "pageModelTitle": {
+                const targetInput: HTMLInputElement
+                    = target as HTMLInputElement;
+                this.setState({
+                    editMode: this.state.editMode,
+                    form: {
+                        name: this.state.form.name,
+                        title: targetInput.value,
+                        description: this.state.form.description,
+                    }
+                });
+                break;
+            }
+            case "pageModelDescription": {
+                const targetArea: HTMLTextAreaElement
+                    = target as HTMLTextAreaElement;
+                this.setState({
+                    editMode: this.state.editMode,
+                    form: {
+                        name: this.state.form.name,
+                        title: this.state.form.title,
+                        description: targetArea.value,
+                    }
+                });
+                break;
+            }
+        }
+    }
+
+    private handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
+
+        event.preventDefault();
+
+        this.props.pageModel.name = this.state.form.name;
+        this.props.pageModel.title = this.state.form.title;
+        this.props.pageModel.description = this.state.form.description;
+
+        const headers: Headers = new Headers();
+        headers.append("Content-Type", "application/json");
+
+        const init: RequestInit = {
+            body: JSON.stringify({
+                title: this.state.form.title,
+                description: this.state.form.description,
+            }),
+            credentials: "same-origin",
+            headers,
+            method: "PUT",
+        }
+
+        const url: string = `${this.props.dispatcherPrefix}`
+            + `/page-models/${this.props.ccmApplication}/`
+            + `${this.props.pageModel.name}`
+
+        fetch(url, init)
+            .then((response: Response) => {
+
+                if (response.ok) {
+                    this.setState({
+                        ...this.state,
+                        editMode: false,
+                    });
+                } else {
+                    this.setState({
+                        ...this.state,
+                        errorMsg: `Failed to update/create PageModel: `
+                            + ` ${response.status} ${response.statusText}`,
+                    });
+                }
+            })
+            .catch((error) => {
+                this.setState({
+                    ...this.state,
+                    errorMsg: `Failed to update/create PageModel: ${error.message}`,
+                });
+            });
     }
 
 }
@@ -266,6 +406,12 @@ class PageModelComponent
 //     selectedPageModel: PageModel | null;
 //
 // }
+
+interface PageModelEditorState {
+
+    pageModels: PageModel[];
+    selectedPageModelIndex: number;
+}
 
 class PageModelEditor
     extends React.Component<{}, any> {
@@ -333,7 +479,10 @@ class PageModelEditor
                             {(context) =>
                                 <React.Fragment>
                                     {context.pageModelSelected &&
-                                        <PageModelComponent pageModel={context.selectedPageModel} />
+                                        <PageModelComponent
+                                            ccmApplication={this.getCcmApplication()}
+                                            dispatcherPrefix={this.getDispatcherPrefix()}
+                                            pageModel={context.selectedPageModel} />
                                     }
                                 </React.Fragment>
                                 // <React.Fragment>
