@@ -3,6 +3,7 @@ import { PageModel, PageModelVersion } from "./datatypes";
 
 export {
     PageModelEditor,
+    PageModelEditorState,
     // PageModelEditorProps,
     // PageModelEditorState,
 };
@@ -22,114 +23,113 @@ export {
  * );
  */
 
-interface PageModelEditorContext {
+// interface PageModelEditorContext {
+//
+//     pageModelSelected: boolean;
+//     selectedPageModel: PageModel;
+// }
 
-    pageModelSelected: boolean;
-    selectedPageModel: PageModel;
-}
+// const newPageModel: PageModel = {
+//     description: "New PageModel",
+//     modelUuid: "",
+//     name: "newPageModel",
+//     pageModelId: 0,
+//     title: "A new PageModel",
+//     type: "",
+//     uuid: "",
+//     version: PageModelVersion.DRAFT,
+// };
 
-const newPageModel: PageModel = {
-    description: "New PageModel",
-    modelUuid: "",
-    name: "newPageModel",
-    pageModelId: 0,
-    title: "A new PageModel",
-    type: "",
-    uuid: "",
-    version: PageModelVersion.DRAFT,
-};
-
-const pageModelEditorContext: React.Context<PageModelEditorContext>
-    = React.createContext({
-        pageModelSelected: false,
-        selectedPageModel: newPageModel,
-    });
+// const pageModelEditorContext: React.Context<PageModelEditorContext>
+//     = React.createContext({
+//         pageModelSelected: false,
+//         selectedPageModel: newPageModel,
+//     });
 
 interface PageModelsListProps {
 
     ccmApplication: string;
     dispatcherPrefix: string;
+    pageModels: PageModel[],
     selectPageModel: (selectedPageModel: PageModel) => void;
 }
 
-interface PageModelsListState {
-
-    errorMsg: string | null;
-    pageModels: PageModel[];
-}
+// interface PageModelsListState {
+//
+//     errorMsg: string | null;
+//     pageModels: PageModel[];
+// }
 
 class PageModelsList
-    extends React.Component<PageModelsListProps, PageModelsListState> {
+    extends React.Component<PageModelsListProps, {}> {
 
     constructor(props: PageModelsListProps) {
         super(props);
 
-        this.state = {
-            errorMsg: null,
-            pageModels: [],
-        };
+        // this.state = {
+        //     errorMsg: null,
+        //     pageModels: [],
+        // };
     }
 
-    public componentDidMount() {
-
-        const init: RequestInit = {
-            credentials: "same-origin",
-            method: "GET",
-        };
-
-        const url: string = `${this.props.dispatcherPrefix}`
-            + `/page-models/${this.props.ccmApplication}`;
-
-        fetch(url, init)
-            .then((response: Response) => {
-                if (response.ok) {
-                    response
-                        .json()
-                        .then((pageModels: PageModel[]) => {
-                            this.setState({
-                                ...this.state,
-                                pageModels,
-                            });
-                        })
-                        .catch((error) => {
-                            this.setState({
-                                ...this.state,
-                                errorMsg: `Failed to retrieve PageModels from `
-                                    + `${url}: ${error.message}`,
-                            });
-                        });
-                } else {
-                    this.setState({
-                        ...this.state,
-                        errorMsg: `Failed to retrieve PageModels from `
-                            + `\"${url}\": HTTP Status Code: `
-                            + `${response.status}; `
-                            + `message: ${response.statusText}`,
-                    });
-                }
-            })
-            .catch((error) => {
-                this.setState({
-                    ...this.state,
-                    errorMsg: `Failed to retrieve PageModels from `
-                        + `${url}: ${error.message}`,
-                });
-            });
-    }
+    // public componentDidMount() {
+    //
+    //     const init: RequestInit = {
+    //         credentials: "same-origin",
+    //         method: "GET",
+    //     };
+    //
+    //     const url: string = `${this.props.dispatcherPrefix}`
+    //         + `/page-models/${this.props.ccmApplication}`;
+    //
+    //     fetch(url, init)
+    //         .then((response: Response) => {
+    //             if (response.ok) {
+    //                 response
+    //                     .json()
+    //                     .then((pageModels: PageModel[]) => {
+    //                         this.setState({
+    //                             ...this.state,
+    //                             pageModels,
+    //                         });
+    //                     })
+    //                     .catch((error) => {
+    //                         this.setState({
+    //                             ...this.state,
+    //                             errorMsg: `Failed to retrieve PageModels from `
+    //                                 + `${url}: ${error.message}`,
+    //                         });
+    //                     });
+    //             } else {
+    //                 this.setState({
+    //                     ...this.state,
+    //                     errorMsg: `Failed to retrieve PageModels from `
+    //                         + `\"${url}\": HTTP Status Code: `
+    //                         + `${response.status}; `
+    //                         + `message: ${response.statusText}`,
+    //                 });
+    //             }
+    //         })
+    //         .catch((error) => {
+    //             this.setState({
+    //                 ...this.state,
+    //                 errorMsg: `Failed to retrieve PageModels from `
+    //                     + `${url}: ${error.message}`,
+    //             });
+    //         });
+    // }
 
     public render(): React.ReactNode {
 
         return <div className="pagemodeleditor pageModelsList">
-            {this.state.errorMsg !== null &&
-                <div className="errorPanel">
-                    {this.state.errorMsg}
-                </div>
-            }
-            {this.state.pageModels.length > 0 &&
+            {this.props.pageModels.length > 0 &&
                 <ul>
-                    {this.state.pageModels.map((pageModel: PageModel) =>
-                        <PageModelListItem pageModel={pageModel}
-                            selectPageModel={this.props.selectPageModel} />,
+                    {this.props.pageModels
+                        .map((pageModel: PageModel, index: number) =>
+                            <PageModelListItem
+                                index={index}
+                                pageModel={pageModel}
+                                selectPageModel={this.props.selectPageModel} />,
                     )}
                 </ul>
             }
@@ -138,6 +138,7 @@ class PageModelsList
 }
 
 interface PageModelListItemProps {
+    index: number,
     pageModel: PageModel;
     selectPageModel: (selectedPageModel: PageModel) => void;
 }
@@ -155,6 +156,7 @@ class PageModelListItem
                 href="#"
                 onClick={
                     (event) => {
+                        event.preventDefault();
                         // console.log("A PageModel has been selected");
                         this.props.selectPageModel(this.props.pageModel);
                     }
@@ -170,6 +172,7 @@ interface PageModelComponentProps {
     ccmApplication: string;
     dispatcherPrefix: string;
     pageModel: PageModel;
+    reload: () => void;
 }
 
 interface PageModelComponentState {
@@ -379,6 +382,7 @@ class PageModelComponent
                         ...this.state,
                         editMode: false,
                     });
+                    this.props.reload();
                 } else {
                     this.setState({
                         ...this.state,
@@ -409,99 +413,159 @@ class PageModelComponent
 
 interface PageModelEditorState {
 
+    errorMessages: string[],
     pageModels: PageModel[];
-    selectedPageModelIndex: number;
+    selectedPageModel: PageModel | null;
 }
 
 class PageModelEditor
-    extends React.Component<{}, any> {
+    extends React.Component<{}, PageModelEditorState> {
 
     constructor(props: any) {
 
         super(props);
 
+        // this.state = {
+        //     // selectedPageModel: newPageModel,
+        //     context: {
+        //         pageModelSelected: false,
+        //         selectedPageModel: newPageModel,
+        //     },
+        // };
         this.state = {
-            // selectedPageModel: newPageModel,
-            context: {
-                pageModelSelected: false,
-                selectedPageModel: newPageModel,
-            },
-        };
+            errorMessages: [],
+            pageModels: [],
+            selectedPageModel: null,
+        }
+    }
+
+    public componentDidMount() {
+
+        this.fetchPageModels();
     }
 
     public render(): React.ReactNode {
 
         return <React.Fragment>
-            <pageModelEditorContext.Provider value={this.state.context}>
-                <div id="left">
-                    <div className="column-head"></div>
-                    <div className="column-content">
-                        <div className="bebop-left">
-                            <div className="bebop-segmented-panel">
-                                <div className="bebop-segment">
-                                    <h3 className="bebop-segment-header">
-                                        Available PageModels
+            <div id="left">
+                <div className="column-head"></div>
+                <div className="column-content">
+                    <div className="bebop-left">
+                        <div className="bebop-segmented-panel">
+                            <div className="bebop-segment">
+                                <h3 className="bebop-segment-header">
+                                    Available PageModels
                                     </h3>
-                                    <div className="bebop-segment-body">
-                                        <button
-                                            className="pagemodeleditor addbutton">
-                                            <span>+</span> Create new PageModel
+                                <div className="bebop-segment-body">
+                                    <button
+                                        className="pagemodeleditor addbutton">
+                                        <span>+</span> Create new PageModel
                                         </button>
-                                        <PageModelsList
-                                            ccmApplication={this.getCcmApplication()}
-                                            dispatcherPrefix={this.getDispatcherPrefix()}
-                                            selectPageModel={(pageModel: PageModel) => {
-                                                this.setState((state: any) => {
-                                                    // console.log("Updating state for selectedPageModel");
-                                                    return {
-                                                        // ...state,
-                                                        context: {
-                                                            pageModelSelected: true,
-                                                            selectedPageModel: pageModel,
-                                                        },
-                                                    };
-                                                });
-                                            }} />
-                                        <button className="pagemodeleditor addbutton">
-                                            <span>+</span> Create new PageModel
+                                    <PageModelsList
+                                        ccmApplication={this.getCcmApplication()}
+                                        dispatcherPrefix={this.getDispatcherPrefix()}
+                                        pageModels={this.state.pageModels}
+                                        selectPageModel={(selectedPageModel: PageModel) => {
+                                            this.setState((state: PageModelEditorState) => {
+                                                return {
+                                                    ...state,
+                                                    selectedPageModel,
+                                                };
+                                            });
+                                        }} />
+                                    <button className="pagemodeleditor addbutton">
+                                        <span>+</span> Create new PageModel
                                     </button>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div id="right">
-                    <div className="column-head">
-                    </div>
-                    <div className="column-content">
-                        <pageModelEditorContext.Consumer>
-                            {(context) =>
-                                <React.Fragment>
-                                    {context.pageModelSelected &&
-                                        <PageModelComponent
-                                            ccmApplication={this.getCcmApplication()}
-                                            dispatcherPrefix={this.getDispatcherPrefix()}
-                                            pageModel={context.selectedPageModel} />
-                                    }
-                                </React.Fragment>
-                                // <React.Fragment>
-                                //     <pre>
-                                //         pageModelSelected: {context.pageModelSelected ? "true" : "false" }
-                                //     </pre>
-                                //     {context.pageModelSelected && <pre>
-                                //
-                                //         {context.selectedPageModel.name}
-                                //     </pre>
-                                //     }
-                                // </React.Fragment>
-                            }
-                        </pageModelEditorContext.Consumer>
-                    </div>
+            </div>
+            <div id="right">
+                <div className="column-head">
                 </div>
-            </pageModelEditorContext.Provider>
+                <div className="column-content">
+                    {this.state.errorMessages.length > 0 &&
+                        <div className="errorPanel">
+                            {this.state.errorMessages.map((msg) => {
+                                <p>
+                                    {msg}
+                                </p>
+                            })}
+                        </div>
+                    }
+                    {this.state.selectedPageModel !== null &&
+                        <PageModelComponent
+                            ccmApplication={this.getCcmApplication()}
+                            dispatcherPrefix={this.getDispatcherPrefix()}
+                            pageModel={this.state.selectedPageModel}
+                            reload={() => { this.reload(); }} />
+                    }
+                </div>
+            </div>
         </React.Fragment>;
     }
+
+    private fetchPageModels(): void {
+
+        const init: RequestInit = {
+            credentials: "same-origin",
+            method: "GET",
+        }
+
+        const url: string = `${this.getDispatcherPrefix()}`
+            + `/page-models/${this.getCcmApplication()}`;
+
+        fetch(url, init)
+            .then((response) => {
+                if (response.ok) {
+                    response
+                        .json()
+                        .then((pageModels: PageModel[]) => {
+                            this.setState({
+                                ...this.state,
+                                pageModels
+                            })
+                        })
+                        .catch((error) => {
+                            const errorMessages: string[] = this
+                                .state.errorMessages;
+                            errorMessages.push(`Failed to retrieve PageModels ` +
+                                `from ${url}: ${error.message}`);
+
+                            this.setState({
+                                ...this.state,
+                                errorMessages,
+                            });
+                        });
+                } else {
+                    const errorMessages: string[] = this
+                        .state.errorMessages;
+                    errorMessages.push(`Failed to retrieve PageModels from `
+                        + `\"${url}\": HTTP Status Code: `
+                        + `${response.status}; `
+                        + `message: ${response.statusText}`);
+
+                    this.setState({
+                        ...this.state,
+                        errorMessages,
+                    });
+                }
+            })
+            .catch((error) => {
+                const errorMessages: string[] = this
+                    .state.errorMessages;
+                errorMessages.push(`Failed to retrieve PageModels ` +
+                    `from ${url}: ${error.message}`);
+
+                this.setState({
+                    ...this.state,
+                    errorMessages,
+                });
+            });
+    }
+
 
     private getDispatcherPrefix(): string {
 
@@ -538,6 +602,16 @@ class PageModelEditor
             }
         }
     }
+
+    private reload(): void {
+
+        this.fetchPageModels();
+        // this.setState({
+        //     ...this.state,
+        //     selectedPageModel: null,
+        // });
+    }
+
 
     // private setSelectedPageModel(selectedPageModel: PageModel): void {
     //
