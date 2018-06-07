@@ -2035,3 +2035,9 @@ dl.pagemodeleditor.pagemodel.propertiesForm label {
 
     font-weight: bold;
 }
+
+form.pagemodeleditor.propertiesForm {
+
+    display: flex;
+    flex-direction: column;
+}

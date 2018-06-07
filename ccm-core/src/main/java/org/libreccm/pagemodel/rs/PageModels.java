@@ -26,6 +26,7 @@ import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.web.CcmApplication;
 
+import java.util.Locale;
 import java.util.Objects;
 
 import javax.enterprise.context.RequestScoped;
@@ -84,7 +85,7 @@ public class PageModels {
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     public JsonArray getAllPageModels(
         @PathParam(PageModelsApp.APP_NAME) String appPath) {
-        
+
         Objects.requireNonNull(appPath);
 
         final CcmApplication app = controller
@@ -129,7 +130,7 @@ public class PageModels {
     public JsonObject getPageModel(
         @PathParam(PageModelsApp.APP_NAME) final String appPath,
         @PathParam(PageModelsApp.PAGE_MODEL_NAME) final String pageModelName) {
-        
+
         Objects.requireNonNull(appPath);
         Objects.requireNonNull(pageModelName);
 
@@ -169,7 +170,7 @@ public class PageModels {
         @PathParam(PageModelsApp.APP_NAME) final String appPath,
         @PathParam(PageModelsApp.PAGE_MODEL_NAME) final String pageModelName,
         final JsonObject pageModelData) {
-        
+
         Objects.requireNonNull(appPath);
         Objects.requireNonNull(pageModelName);
 
@@ -184,6 +185,16 @@ public class PageModels {
             pageModel.setApplication(app);
         }
         pageModel.setName(pageModelName);
+        if (pageModelData.containsKey("title")) {
+            pageModel.getTitle().addValue(Locale.ROOT,
+                                          pageModelData.getString("title"));
+        }
+        if (pageModelData.containsKey("description")) {
+            pageModel
+                .getDescription()
+                .addValue(Locale.ROOT,
+                          pageModelData.getString("description"));
+        }
 
         controller.savePageModel(pageModel);
 
@@ -205,7 +216,7 @@ public class PageModels {
     public void deletePageModel(
         @PathParam(PageModelsApp.APP_NAME) final String appPath,
         @PathParam(PageModelsApp.PAGE_MODEL_NAME) final String pageModelName) {
-        
+
         Objects.requireNonNull(appPath);
         Objects.requireNonNull(pageModelName);
 
