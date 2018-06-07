@@ -195,7 +195,7 @@ class PageModelComponent
         super(props);
 
         this.state = {
-            editMode: false,
+            editMode: this.props.pageModel.pageModelId === 0,
             errorMsg: null,
             form: {
                 name: this.props.pageModel.name,
@@ -225,7 +225,7 @@ class PageModelComponent
                         Name
                     </label>
                     <input
-                        disabled={this.props.pageModel.pageModelId === 0 ? true : false}
+                        disabled={this.props.pageModel.pageModelId === 0 ? false : true}
                         id="pageModelName"
                         onChange={this.handleChange}
                         size={32}
@@ -271,7 +271,7 @@ class PageModelComponent
                     <dt>Type</dt>
                     <dd>{this.props.pageModel.type}</dd>
                     <dt>Version</dt>
-                    <dd>{this.props.pageModel.version}</dd>
+                    <dd>{this.props.pageModel.version.toString()}</dd>
                     <dt>Description</dt>
                     <dd>{this.props.pageModel.description}</dd>
                 </dl>
@@ -458,9 +458,12 @@ class PageModelEditor
                                     </h3>
                                 <div className="bebop-segment-body">
                                     <button
-                                        className="pagemodeleditor addbutton">
+                                        className="pagemodeleditor addbutton"
+                                        onClick={
+                                            (event) => this.createNewPageModel(event)
+                                        }>
                                         <span>+</span> Create new PageModel
-                                        </button>
+                                    </button>
                                     <PageModelsList
                                         ccmApplication={this.getCcmApplication()}
                                         dispatcherPrefix={this.getDispatcherPrefix()}
@@ -473,7 +476,11 @@ class PageModelEditor
                                                 };
                                             });
                                         }} />
-                                    <button className="pagemodeleditor addbutton">
+                                    <button
+                                        className="pagemodeleditor addbutton"
+                                        onClick={
+                                            (event) => this.createNewPageModel(event)
+                                        }>
                                         <span>+</span> Create new PageModel
                                     </button>
                                 </div>
@@ -505,6 +512,25 @@ class PageModelEditor
                 </div>
             </div>
         </React.Fragment>;
+    }
+
+    private createNewPageModel(event: React.MouseEvent<HTMLButtonElement>): void {
+
+        event.preventDefault();
+
+        this.setState({
+            ...this.state,
+            selectedPageModel: {
+                description: "",
+                modelUuid: "",
+                name: "",
+                pageModelId: 0,
+                title: "",
+                type: "",
+                uuid: "",
+                version: PageModelVersion.DRAFT,
+            }
+        });
     }
 
     private fetchPageModels(): void {

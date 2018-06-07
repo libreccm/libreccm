@@ -24,6 +24,7 @@ import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.pagemodel.PageModel;
+import org.libreccm.pagemodel.PageModelManager;
 import org.libreccm.pagemodel.PageModelRepository;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
@@ -60,6 +61,9 @@ public class PageModels {
 
     @Inject
     private PageModelsController controller;
+
+    @Inject
+    private PageModelManager pageModelManager;
 
     @Inject
     private PageModelRepository pageModelRepo;
@@ -189,11 +193,10 @@ public class PageModels {
         final PageModel pageModel;
         if (controller.existsPageModel(app, pageModelName)) {
             pageModel = controller.findPageModel(app, pageModelName);
+
         } else {
-            pageModel = new PageModel();
-            pageModel.setApplication(app);
+            pageModel = pageModelManager.createPageModel(pageModelName, app);
         }
-        pageModel.setName(pageModelName);
         if (pageModelData.containsKey("title")) {
             pageModel.getTitle().addValue(kernelConfig.getDefaultLocale(),
                                           pageModelData.getString("title"));
@@ -207,7 +210,7 @@ public class PageModels {
 
         controller.savePageModel(pageModel);
 
-        return mapPageModelToJson(controller.findPageModel(app, pageModelName));
+        return mapPageModelToJson(pageModel);
     }
 
     /**
