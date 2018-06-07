@@ -18,6 +18,9 @@
  */
 package org.libreccm.pagemodel.rs;
 
+import com.arsdigita.kernel.KernelConfig;
+
+import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.pagemodel.PageModel;
@@ -63,6 +66,9 @@ public class PageModels {
 
     @Inject
     private GlobalizationHelper globalizationHelper;
+
+    @Inject
+    private ConfigurationManager confManager;
 
     /**
      * Retrieves all {@link PageModel}s available for an {@link CcmApplication}.
@@ -177,6 +183,9 @@ public class PageModels {
         final CcmApplication app = controller
             .findCcmApplication(String.format("/%s/", appPath));
 
+        final KernelConfig kernelConfig = confManager
+            .findConfiguration(KernelConfig.class);
+
         final PageModel pageModel;
         if (controller.existsPageModel(app, pageModelName)) {
             pageModel = controller.findPageModel(app, pageModelName);
@@ -186,13 +195,13 @@ public class PageModels {
         }
         pageModel.setName(pageModelName);
         if (pageModelData.containsKey("title")) {
-            pageModel.getTitle().addValue(Locale.ROOT,
+            pageModel.getTitle().addValue(kernelConfig.getDefaultLocale(),
                                           pageModelData.getString("title"));
         }
         if (pageModelData.containsKey("description")) {
             pageModel
                 .getDescription()
-                .addValue(Locale.ROOT,
+                .addValue(kernelConfig.getDefaultLocale(),
                           pageModelData.getString("description"));
         }
 
