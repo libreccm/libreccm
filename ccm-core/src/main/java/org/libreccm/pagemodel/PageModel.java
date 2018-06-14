@@ -22,11 +22,14 @@ import org.libreccm.core.CoreConstants;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.web.CcmApplication;
 
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -202,6 +205,11 @@ public class PageModel implements Serializable {
     @Enumerated(EnumType.STRING)
     private PageModelVersion version;
 
+
+    @Column(name = "LAST_MODIFIED")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastModified;
+
     /**
      * The localised title of this {@code PageModel} (shown in the
      * administration UI),
@@ -292,6 +300,14 @@ public class PageModel implements Serializable {
 
     protected void setVersion(final PageModelVersion version) {
         this.version = version;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    protected void setLastModified(final Date lastModified) {
+        this.lastModified = new Date(lastModified.getTime());
     }
 
     public LocalizedString getTitle() {

@@ -19,7 +19,6 @@
 package org.libreccm.pagemodel.rs;
 
 import com.arsdigita.kernel.KernelConfig;
-
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.l10n.GlobalizationHelper;
@@ -29,9 +28,6 @@ import org.libreccm.pagemodel.PageModelRepository;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.web.CcmApplication;
-
-import java.util.Locale;
-import java.util.Objects;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -48,6 +44,9 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import java.util.Date;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Provides RESTful endpoints for retrieving, creating, updating and deleting
@@ -75,17 +74,18 @@ public class PageModels {
     private ConfigurationManager confManager;
 
     /**
-     * Retrieves all {@link PageModel}s available for an {@link CcmApplication}.
+     * Retrieves all {@link PageModel}s available for an {@link
+     * CcmApplication}.
      *
      * @param appPath The path of the {@code app}.
      *
      * @return A JSON array with the data of all {@link PageModel}s of the
-     *         {@link CcmApplication} {@code app}.
+     *     {@link CcmApplication} {@code app}.
      *
      * @throws NotFoundException If there is no {@link CcmApplication} with the
-     *                           primary URL {@code appPath} an
-     *                           {@link NotFoundException} thrown resulting in
-     *                           404 response.
+     *                           primary URL {@code appPath} an {@link
+     *                           NotFoundException} thrown resulting in 404
+     *                           response.
      */
     @GET
     @Path(PageModelsApp.PAGE_MODELS_PATH)
@@ -114,8 +114,8 @@ public class PageModels {
      * Retrieves a specific {@link PageModel}.
      *
      * @param appPath       The path ({@link CcmApplication#primaryUrl} of the
-     *                      {@link CcmApplication} to which the
-     *                      {@link PageModel} belongs (see
+     *                      {@link CcmApplication} to which the {@link
+     *                      PageModel} belongs (see
      *                      {@link PageModel#application}).
      * @param pageModelName The name of the {@link PageModel} to retrieve (see
      *                      {@link PageModel#name}).
@@ -123,13 +123,13 @@ public class PageModels {
      * @return A JSON object containing the data of the {@link PageModel}.
      *
      * @throws NotFoundException If there is not {@link CcmApplication} with the
-     *                           primary URL {@code appPath} a
-     *                           {@link NotFoundException} is thrown resulting
-     *                           in a 404 response. A {@link NotFoundException}
-     *                           is also thrown if there no {@link PageModel}
-     *                           identified by {@code pageModelName} for the
-     *                           {@link CcmApplication} with the primary URL
-     *                           {@code appPath}.
+     *                           primary URL {@code appPath} a {@link
+     *                           NotFoundException} is thrown resulting in a 404
+     *                           response. A {@link NotFoundException} is also
+     *                           thrown if there no {@link PageModel} identified
+     *                           by {@code pageModelName} for the {@link
+     *                           CcmApplication} with the primary URL {@code
+     *                           appPath}.
      */
     @GET
     @Path(PageModelsApp.PAGE_MODEL_PATH)
@@ -157,15 +157,14 @@ public class PageModels {
      * If a {@link PageModel} with the name {@code pageModelName} already exists
      * for the {@link CcmApplication} with the primary URL {@code appPath} the
      * {@link PageModel} is updated. If there is no such {@link PageModel} a new
-     * {@link PageModel} is created and associated with the
-     * {@link CcmApplication} identified by the primary URL {@code appPath}.
-     *
+     * {@link PageModel} is created and associated with the {@link
+     * CcmApplication} identified by the primary URL {@code appPath}.
      *
      * @param appPath       The primary URL of the {@link CcmApplication} to
      *                      which the {@link PageModel} belongs.
      * @param pageModelName The name of the {@link PageModel}.
-     * @param pageModelData The data for creating or updating the
-     *                      {@link PageModel}.
+     * @param pageModelData The data for creating or updating the {@link
+     *                      PageModel}.
      *
      * @return The new or updated {@link PageModel}.
      */
@@ -244,12 +243,22 @@ public class PageModels {
      *
      * @param pageModel The {@link PageModel} to map.
      *
-     * @return A {@link JSON} object with the data of the provided
-     *         {@link PageModel}.
+     * @return A {@link JsonObject} object with the data of the provided {@link
+     *     PageModel}.
      */
     private JsonObject mapPageModelToJson(final PageModel pageModel) {
 
         Objects.requireNonNull(pageModel);
+
+        final long lastPublished;
+        final Optional<PageModel> liveModel = pageModelManager
+            .getLiveVersion(pageModel);
+        if (liveModel.isPresent()
+            && liveModel.get().getLastModified() != null) {
+            lastPublished = liveModel.get().getLastModified().getTime();
+        } else {
+            lastPublished = 0;
+        }
 
         return Json
             .createObjectBuilder()
@@ -265,7 +274,48 @@ public class PageModels {
             .add("type", pageModel.getType())
             .add("uuid", pageModel.getUuid())
             .add("version", pageModel.getVersion().toString())
+            .add("publicationStatus",
+                 getPublicationStatus(pageModel).toString())
+            .add("lastPublished", lastPublished)
             .build();
+    }
+
+    /**
+     * Check if the {@link PublicationStatus} of the provided PageModel.
+     *
+     * @param pageModel
+     *
+     * @return
+     */
+    private PublicationStatus getPublicationStatus(final PageModel pageModel) {
+
+        final PageModel draftModel = pageModelManager
+            .getDraftVersion(pageModel);
+        final Optional<PageModel> liveModel = pageModelManager
+            .getLiveVersion(pageModel);
+
+        final PublicationStatus publicationStatus;
+        if (liveModel.isPresent()) {
+
+            // Fallback if one the last modified dates is null
+            if (draftModel.getLastModified() == null
+                || liveModel.get().getLastModified() == null) {
+
+                return PublicationStatus.NEEDS_UPDATE;
+            } else if (liveModel
+                .get()
+                .getLastModified()
+                .before(draftModel.getLastModified())) {
+
+                publicationStatus = PublicationStatus.PUBLISHED;
+            } else {
+                publicationStatus = PublicationStatus.NEEDS_UPDATE;
+            }
+        } else {
+            publicationStatus = PublicationStatus.NOT_PUBLISHED;
+        }
+
+        return publicationStatus;
     }
 
 }

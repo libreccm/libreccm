@@ -47,6 +47,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -313,6 +314,8 @@ public class PageModelManager {
             .map(this::publishContainerModel)
             .forEach(liveContainerModel -> addContainerModel(pageModel,
                                                              liveContainerModel));
+
+        liveModel.setLastModified(new Date());
 
         LOGGER.debug("Successfully published PageModel \"{}\".",
                      liveModel.getName());

@@ -431,6 +431,7 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
 
     create table CCM_CORE.PAGE_MODELS (
         PAGE_MODEL_ID int8 not null,
+        LAST_MODIFIED timestamp,
         MODEL_UUID varchar(255) not null,
         NAME varchar(255),
         TYPE varchar(255) not null,
