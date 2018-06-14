@@ -1,5 +1,5 @@
 import * as React from "react";
-import { PageModel, PageModelVersion } from "./datatypes";
+import {PageModel, PageModelVersion, PublicationStatus} from "./datatypes";
 
 export {
     PageModelEditor,
@@ -123,15 +123,15 @@ class PageModelsList
 
         return <div className="pagemodeleditor pageModelsList">
             {this.props.pageModels.length > 0 &&
-                <ul>
-                    {this.props.pageModels
-                        .map((pageModel: PageModel, index: number) =>
-                            <PageModelListItem
-                                index={index}
-                                pageModel={pageModel}
-                                selectPageModel={this.props.selectPageModel} />,
+            <ul>
+                {this.props.pageModels
+                    .map((pageModel: PageModel, index: number) =>
+                        <PageModelListItem
+                            index={index}
+                            pageModel={pageModel}
+                            selectPageModel={this.props.selectPageModel}/>,
                     )}
-                </ul>
+            </ul>
             }
         </div>;
     }
@@ -153,14 +153,14 @@ class PageModelListItem
     public render(): React.ReactNode {
         return <li>
             <a data-pagemodel-id="{this.props.pageModel.pageModelId}"
-                href="#"
-                onClick={
-                    (event) => {
-                        event.preventDefault();
-                        // console.log("A PageModel has been selected");
-                        this.props.selectPageModel(this.props.pageModel);
-                    }
-                }>
+               href="#"
+               onClick={
+                   (event) => {
+                       event.preventDefault();
+                       // console.log("A PageModel has been selected");
+                       this.props.selectPageModel(this.props.pageModel);
+                   }
+               }>
                 {this.props.pageModel.title}
             </a>
         </li>;
@@ -213,24 +213,24 @@ class PageModelComponent
         if (this.state.editMode) {
             return <div className="bebop-body">
                 {this.state.errorMsg !== null &&
-                    <div className="errorPanel">
-                        {this.state.errorMsg}
-                    </div>
+                <div className="errorPanel">
+                    {this.state.errorMsg}
+                </div>
                 }
                 <form
                     className="pagemodeleditor pagemodel propertiesForm"
-                    onSubmit={this.handleSubmit} >
+                    onSubmit={this.handleSubmit}>
 
                     <label htmlFor="pageModelName">
                         Name
                     </label>
                     <input
-                        disabled={this.props.pageModel.pageModelId === 0 ? false : true}
+                        disabled={this.props.pageModel.pageModelId !== 0}
                         id="pageModelName"
                         onChange={this.handleChange}
                         size={32}
                         type="text"
-                        value={this.state.form.name} />
+                        value={this.state.form.name}/>
 
                     <label htmlFor="pageModelTitle">
                         Title
@@ -240,7 +240,7 @@ class PageModelComponent
                         onChange={this.handleChange}
                         size={32}
                         type="text"
-                        value={this.state.form.title} />
+                        value={this.state.form.title}/>
 
                     <label htmlFor="pageModelDescription">
                         Description
@@ -250,7 +250,7 @@ class PageModelComponent
                         id="pageModelDescription"
                         onChange={this.handleChange}
                         rows={20}
-                        value={this.state.form.description} />
+                        value={this.state.form.description}/>
                     <div>
                         <button type="submit">Save</button>
                         <button
@@ -274,6 +274,14 @@ class PageModelComponent
                     <dd>{this.props.pageModel.version.toString()}</dd>
                     <dt>Description</dt>
                     <dd>{this.props.pageModel.description}</dd>
+                    <dt>Last published</dt>
+                    <dd>{this.getLastPublishedDate()}</dd>
+                    <dt>PublicationStatus</dt>
+                    <dd>{this.props.pageModel.publicationStatus}</dd>
+                    <dt>Publish</dt>
+                    <dd>{this.props.pageModel.publicationStatus === PublicationStatus.NOT_PUBLISHED}</dd>
+                    <dt>Republish</dt>
+                    <dd>{this.props.pageModel.publicationStatus === PublicationStatus.NEEDS_UPDATE}</dd>
                 </dl>
                 <button onClick={(event) => {
 
@@ -282,7 +290,14 @@ class PageModelComponent
                     this.setState({
                         editMode: true,
                     });
-                }}>Edit</button>
+                }}>Edit
+                </button>
+                {this.props.pageModel.publicationStatus === PublicationStatus.NOT_PUBLISHED
+                && <button>Publish</button>
+                }
+                {this.props.pageModel.publicationStatus === PublicationStatus.NEEDS_UPDATE
+                && <button>Republish</button>
+                }
             </div>;
         }
     }
@@ -300,6 +315,18 @@ class PageModelComponent
                 description: this.props.pageModel.description,
             }
         });
+    }
+
+    private getLastPublishedDate(): string {
+
+        if (this.props.pageModel.lastPublished === 0) {
+            return "";
+        } else {
+            const lastPublished: Date = new Date();
+            lastPublished.setTime(this.props.pageModel.lastPublished);
+
+            return lastPublished.toISOString();
+        }
     }
 
     private handleChange(event: React.ChangeEvent<HTMLElement>): void {
@@ -387,7 +414,7 @@ class PageModelComponent
                     this.setState({
                         ...this.state,
                         errorMsg: `Failed to update/create PageModel: `
-                            + ` ${response.status} ${response.statusText}`,
+                        + ` ${response.status} ${response.statusText}`,
                     });
                 }
             })
@@ -455,7 +482,7 @@ class PageModelEditor
                             <div className="bebop-segment">
                                 <h3 className="bebop-segment-header">
                                     Available PageModels
-                                    </h3>
+                                </h3>
                                 <div className="bebop-segment-body">
                                     <button
                                         className="pagemodeleditor addbutton"
@@ -475,7 +502,7 @@ class PageModelEditor
                                                     selectedPageModel,
                                                 };
                                             });
-                                        }} />
+                                        }}/>
                                     <button
                                         className="pagemodeleditor addbutton"
                                         onClick={
@@ -494,20 +521,22 @@ class PageModelEditor
                 </div>
                 <div className="column-content">
                     {this.state.errorMessages.length > 0 &&
-                        <div className="errorPanel">
-                            {this.state.errorMessages.map((msg) => {
-                                <p>
-                                    {msg}
-                                </p>
-                            })}
-                        </div>
+                    <div className="errorPanel">
+                        {this.state.errorMessages.map((msg) => {
+                            <p>
+                                {msg}
+                            </p>
+                        })}
+                    </div>
                     }
                     {this.state.selectedPageModel !== null &&
-                        <PageModelComponent
-                            ccmApplication={this.getCcmApplication()}
-                            dispatcherPrefix={this.getDispatcherPrefix()}
-                            pageModel={this.state.selectedPageModel}
-                            reload={() => { this.reload(); }} />
+                    <PageModelComponent
+                        ccmApplication={this.getCcmApplication()}
+                        dispatcherPrefix={this.getDispatcherPrefix()}
+                        pageModel={this.state.selectedPageModel}
+                        reload={() => {
+                            this.reload();
+                        }}/>
                     }
                 </div>
             </div>
@@ -522,9 +551,11 @@ class PageModelEditor
             ...this.state,
             selectedPageModel: {
                 description: "",
+                lastPublished: 0,
                 modelUuid: "",
                 name: "",
                 pageModelId: 0,
+                publicationStatus: PublicationStatus.NOT_PUBLISHED,
                 title: "",
                 type: "",
                 uuid: "",
