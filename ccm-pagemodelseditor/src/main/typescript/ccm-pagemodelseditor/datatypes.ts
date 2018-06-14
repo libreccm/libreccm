@@ -1,4 +1,4 @@
-export { PageModel, PageModelVersion };
+export { PageModel, PageModelVersion, PublicationStatus };
 
 interface PageModel {
 
@@ -10,10 +10,19 @@ interface PageModel {
     type: string;
     uuid: string;
     version: PageModelVersion;
+    publicationStatus: PublicationStatus;
+    lastPublished: number;
 }
 
 enum PageModelVersion {
 
     DRAFT,
     LIVE,
+}
+
+enum PublicationStatus {
+
+    NOT_PUBLISHED,
+    PUBLISHED,
+    NEEDS_UPDATE,
 }

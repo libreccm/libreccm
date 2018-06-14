@@ -28,6 +28,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -90,6 +91,9 @@ public class PageModelRepository extends AbstractEntityRepository<Long, PageMode
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void save(final PageModel pageModel) {
+
+        pageModel.setLastModified(new Date());
+
         super.save(pageModel);
     }
 

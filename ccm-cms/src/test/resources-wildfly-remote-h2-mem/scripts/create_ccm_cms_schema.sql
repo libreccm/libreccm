@@ -1331,6 +1331,7 @@ drop sequence if exists HIBERNATE_SEQUENCE;
 
     create table CCM_CORE.PAGE_MODELS (
         PAGE_MODEL_ID bigint not null,
+        LAST_MODIFIED timestamp,
         MODEL_UUID varchar(255) not null,
         NAME varchar(255),
         TYPE varchar(255) not null,
