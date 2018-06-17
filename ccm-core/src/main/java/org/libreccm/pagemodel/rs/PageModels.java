@@ -38,8 +38,10 @@ import javax.json.JsonObject;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -151,6 +153,29 @@ public class PageModels {
         return mapPageModelToJson(pageModel);
     }
 
+    @POST
+    @Path(PageModelsApp.PAGE_MODEL_PATH)
+    @Produces("application/json; charset=utf-8")
+    @Transactional(Transactional.TxType.REQUIRED)
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    public JsonObject publishPageModel(
+        @PathParam(PageModelsApp.APP_NAME) final String appPath,
+        @PathParam(PageModelsApp.PAGE_MODEL_NAME) final String pageModelName,
+        @FormParam("action") String action) {
+
+        if ("publish".equals(action)) {
+
+            final CcmApplication app = controller
+                .findCcmApplication(String.format("/%s/", appPath));
+            final PageModel pageModel = controller.findPageModel(app,
+                                                                 pageModelName);
+            pageModelManager.publish(pageModel);
+        }
+
+        return getPageModel(appPath, pageModelName);
+    }
+
     /**
      * Creates or updates a {@link PageModel}.
      *
@@ -259,6 +284,12 @@ public class PageModels {
         } else {
             lastPublished = 0;
         }
+        final long lastModified;
+        if (pageModel.getLastModified() == null) {
+            lastModified = 0;
+        } else {
+            lastModified = pageModel.getLastModified().getTime();
+        }
 
         return Json
             .createObjectBuilder()
@@ -276,6 +307,7 @@ public class PageModels {
             .add("version", pageModel.getVersion().toString())
             .add("publicationStatus",
                  getPublicationStatus(pageModel).toString())
+            .add("lastModified", lastModified)
             .add("lastPublished", lastPublished)
             .build();
     }
@@ -302,10 +334,9 @@ public class PageModels {
                 || liveModel.get().getLastModified() == null) {
 
                 return PublicationStatus.NEEDS_UPDATE;
-            } else if (liveModel
-                .get()
+            } else if (draftModel
                 .getLastModified()
-                .before(draftModel.getLastModified())) {
+                .before(liveModel.get().getLastModified())) {
 
                 publicationStatus = PublicationStatus.PUBLISHED;
             } else {

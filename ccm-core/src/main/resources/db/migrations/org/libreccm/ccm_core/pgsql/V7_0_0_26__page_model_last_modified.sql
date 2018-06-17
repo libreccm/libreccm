@@ -1,0 +1,2 @@
+alter table CCM_CORE.PAGE_MODELS
+  add column LAST_MODIFIED TIMESTAMP;
