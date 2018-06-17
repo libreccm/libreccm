@@ -10,7 +10,8 @@ interface PageModel {
     type: string;
     uuid: string;
     version: PageModelVersion;
-    publicationStatus: PublicationStatus;
+    publicationStatus: string;
+    lastModified: number;
     lastPublished: number;
 }
 
@@ -22,7 +23,7 @@ enum PageModelVersion {
 
 enum PublicationStatus {
 
-    NOT_PUBLISHED,
-    PUBLISHED,
-    NEEDS_UPDATE,
+    NOT_PUBLISHED = "NOT_PUBLISHED",
+    PUBLISHED = "PUBLISHED",
+    NEEDS_UPDATE = "NEEDS_UPDATE",
 }

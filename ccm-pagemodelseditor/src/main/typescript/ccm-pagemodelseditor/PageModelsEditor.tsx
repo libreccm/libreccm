@@ -274,14 +274,12 @@ class PageModelComponent
                     <dd>{this.props.pageModel.version.toString()}</dd>
                     <dt>Description</dt>
                     <dd>{this.props.pageModel.description}</dd>
+                    <dt>Last modified</dt>
+                    <dd>{this.getLastModifiedDate()}</dd>
                     <dt>Last published</dt>
                     <dd>{this.getLastPublishedDate()}</dd>
                     <dt>PublicationStatus</dt>
                     <dd>{this.props.pageModel.publicationStatus}</dd>
-                    <dt>Publish</dt>
-                    <dd>{this.props.pageModel.publicationStatus === PublicationStatus.NOT_PUBLISHED}</dd>
-                    <dt>Republish</dt>
-                    <dd>{this.props.pageModel.publicationStatus === PublicationStatus.NEEDS_UPDATE}</dd>
                 </dl>
                 <button onClick={(event) => {
 
@@ -292,11 +290,11 @@ class PageModelComponent
                     });
                 }}>Edit
                 </button>
-                {this.props.pageModel.publicationStatus === PublicationStatus.NOT_PUBLISHED
-                && <button>Publish</button>
+                {this.props.pageModel.publicationStatus === PublicationStatus.NOT_PUBLISHED.toString()
+                && <button onClick={(event) => this.publishPageModel(event)}>Publish</button>
                 }
-                {this.props.pageModel.publicationStatus === PublicationStatus.NEEDS_UPDATE
-                && <button>Republish</button>
+                {this.props.pageModel.publicationStatus === PublicationStatus.NEEDS_UPDATE.toString()
+                && <button onClick={(event) => this.publishPageModel(event)}>Republish</button>
                 }
             </div>;
         }
@@ -315,6 +313,18 @@ class PageModelComponent
                 description: this.props.pageModel.description,
             }
         });
+    }
+
+    private getLastModifiedDate():string {
+
+        if (this.props.pageModel.lastPublished === 0) {
+            return "";
+        } else {
+            const lastModified: Date = new Date();
+            lastModified.setTime(this.props.pageModel.lastModified);
+
+            return lastModified.toISOString();
+        }
     }
 
     private getLastPublishedDate(): string {
@@ -424,6 +434,53 @@ class PageModelComponent
                     errorMsg: `Failed to update/create PageModel: ${error.message}`,
                 });
             });
+    }
+
+    private publishPageModel(event: React.MouseEvent<HTMLButtonElement>): void {
+
+        event.preventDefault();
+
+        const headers: Headers = new Headers();
+        //headers.append("Content-Type", "application/json");
+        headers.append("Content-Type", "application/x-www-form-urlencoded");
+
+        //const formData: FormData = new FormData();
+        //formData.set("action", "publish");
+        //const data: URLSearchParams = new URLSearchParams();
+        //data.append("action", "publish");
+
+        const init: RequestInit = {
+
+            body: "action=publish",
+            credentials: "same-origin",
+            headers,
+            method: "POST",
+        }
+
+        const url: string = `${this.props.dispatcherPrefix}`
+            + `/page-models/${this.props.ccmApplication}/`
+            + `${this.props.pageModel.name}`
+
+        fetch(url, init)
+            .then((response: Response) => {
+                if (response.ok) {
+
+                    this.props.reload();
+                } else {
+                    this.setState({
+                        ...this.state,
+                        errorMsg: `Failed to publish PageModel: `
+                            + ` ${response.status} ${response.statusText}`,
+                    });
+                }
+            })
+            .catch((error) => {
+               this.setState({
+                   ...this.state,
+                   errorMsg: `Failed to publish PageModel: ${error.message}`,
+               })
+            });
+
     }
 
 }
@@ -551,11 +608,12 @@ class PageModelEditor
             ...this.state,
             selectedPageModel: {
                 description: "",
+                lastModified: 0,
                 lastPublished: 0,
                 modelUuid: "",
                 name: "",
                 pageModelId: 0,
-                publicationStatus: PublicationStatus.NOT_PUBLISHED,
+                publicationStatus: PublicationStatus.NOT_PUBLISHED.toString(),
                 title: "",
                 type: "",
                 uuid: "",

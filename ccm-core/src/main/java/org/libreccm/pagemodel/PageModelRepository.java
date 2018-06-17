@@ -205,7 +205,7 @@ public class PageModelRepository extends AbstractEntityRepository<Long, PageMode
                 "The name of a page model can't be null or empty.");
         }
 
-        final long count = countLiveByApplicationAndName(application, name);
+        final long count = countDraftByApplicationAndName(application, name);
         if (count == 0) {
             return Optional.empty();
         }

@@ -62,7 +62,6 @@ import javax.xml.bind.annotation.XmlTransient;
  * page.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- *
  * @see PageModelRepository
  * @see PageModelManager
  * @see PageRenderer
@@ -71,102 +70,116 @@ import javax.xml.bind.annotation.XmlTransient;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "PAGE_MODELS", schema = CoreConstants.DB_SCHEMA)
 @NamedQueries({
-    @NamedQuery(
-        name = "PageModel.findAllDraftModels",
-        query = "SELECT p FROM PageModel p "
-                    + "WHERE p.version = org.libreccm.pagemodel.PageModelVersion.DRAFT")
-    ,
-    @NamedQuery(
-        name = "PageModel.findAllLiveModels",
-        query = "SELECT p FROM PageModel p "
-                    + "WHERE p.version = org.libreccm.pagemodel.PageModelVersion.LIVE")
-    ,
-    @NamedQuery(
-        name = "PageModel.findDraftVersion",
-        query = "SELECT p FROM PageModel p "
-                    + "WHERE p.modelUuid = :uuid "
-                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.DRAFT")
-    ,
-    @NamedQuery(
-        name = "PageModel.hasLiveVersion",
-        query = "SELECT (CASE WHEN COUNT(p) > 0 THEN true ELSE False END) "
-                    + "FROM PageModel p "
-                    + "WHERE p.modelUuid = :uuid "
-                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE"
-    )
-    ,
-    @NamedQuery(
-        name = "PageModel.findLiveVersion",
-        query = "SELECT p FROM PageModel p "
-                    + "WHERE p.modelUuid = :uuid "
-                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE")
-    ,
-    @NamedQuery(
-        name = "PageModel.findDraftByApplication",
-        query = "SELECT p FROM PageModel p "
-                    + "WHERE  p.application = :application "
-                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.DRAFT"
-    )
-    ,
-    @NamedQuery(
-        name = "PageModel.findDraftByApplicationAndName",
-        query = "SELECT p FROM PageModel p "
-                    + "WHERE p.application = :application "
-                    + "AND p.name = :name "
-                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.DRAFT"
-    )
-    ,
-    @NamedQuery(
-        name = "PageModel.countDraftByApplicationAndName",
-        query = "SELECT COUNT(p) FROM PageModel p "
-                    + "WHERE p.application = :application "
-                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.DRAFT"
-    )
-    ,
-    @NamedQuery(
-        name = "PageModel.countDraftByApplication",
-        query = "SELECT COUNT(p) FROM PageModel p "
-                    + "WHERE p.application = :application "
-                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.DRAFT"
-    )
-    ,
-    @NamedQuery(
-        name = "PageModel.findLiveByApplication",
-        query = "SELECT p FROM PageModel p "
-                    + "WHERE p.application = :application "
-                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE")
-    ,
-    @NamedQuery(
-        name = "PageModel.countLiveByApplication",
-        query = "SELECT COUNT(p) FROM PageModel p "
-                    + "WHERE p.application = :application "
-                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE")
-    ,
-    @NamedQuery(
-        name = "PageModel.findLiveByApplicationAndName",
-        query = "SELECT p FROM PageModel p "
-                    + "WHERE p.name = :name "
-                    + "AND p.application = :application "
-                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE"
-    )
-    ,
-    @NamedQuery(
-        name = "PageModel.countLiveByApplicationAndName",
-        query = "SELECT COUNT(p) FROM PageModel p "
-                    + "WHERE p.name = :name "
-                    + "AND p.application = :application "
-                    + "AND p.version = org.libreccm.pagemodel.PageModelVersion.LIVE"
-    )
-})
+                  @NamedQuery(
+                      name = "PageModel.findAllDraftModels",
+                      query = "SELECT p FROM PageModel p "
+                              + "WHERE p.version = org.libreccm.pagemodel"
+                              + ".PageModelVersion.DRAFT")
+                  ,
+                  @NamedQuery(
+                      name = "PageModel.findAllLiveModels",
+                      query = "SELECT p FROM PageModel p "
+                              + "WHERE p.version = org.libreccm.pagemodel"
+                              + ".PageModelVersion.LIVE")
+                  ,
+                  @NamedQuery(
+                      name = "PageModel.findDraftVersion",
+                      query = "SELECT p FROM PageModel p "
+                              + "WHERE p.modelUuid = :uuid "
+                              + "AND p.version = org.libreccm.pagemodel"
+                              + ".PageModelVersion.DRAFT")
+                  ,
+                  @NamedQuery(
+                      name = "PageModel.hasLiveVersion",
+                      query =
+                          "SELECT (CASE WHEN COUNT(p) > 0 THEN true ELSE "
+                          + "False END) "
+                          + "FROM PageModel p "
+                          + "WHERE p.modelUuid = :uuid "
+                          + "AND p.version = org.libreccm.pagemodel"
+                          + ".PageModelVersion.LIVE"
+                  )
+                  ,
+                  @NamedQuery(
+                      name = "PageModel.findLiveVersion",
+                      query = "SELECT p FROM PageModel p "
+                              + "WHERE p.modelUuid = :uuid "
+                              + "AND p.version = org.libreccm.pagemodel"
+                              + ".PageModelVersion.LIVE")
+                  ,
+                  @NamedQuery(
+                      name = "PageModel.findDraftByApplication",
+                      query = "SELECT p FROM PageModel p "
+                              + "WHERE  p.application = :application "
+                              + "AND p.version = org.libreccm.pagemodel"
+                              + ".PageModelVersion.DRAFT"
+                  )
+                  ,
+                  @NamedQuery(
+                      name = "PageModel.findDraftByApplicationAndName",
+                      query = "SELECT p FROM PageModel p "
+                              + "WHERE p.application = :application "
+                              + "AND p.name = :name "
+                              + "AND p.version = org.libreccm.pagemodel"
+                              + ".PageModelVersion.DRAFT"
+                  )
+                  ,
+                  @NamedQuery(
+                      name = "PageModel.countDraftByApplicationAndName",
+                      query = "SELECT COUNT(p) FROM PageModel p "
+                              + "WHERE p.name = :name "
+                              + "AND p.application = :application "
+                              + "AND p.version = org.libreccm.pagemodel"
+                              + ".PageModelVersion.DRAFT"
+                  )
+                  ,
+                  @NamedQuery(
+                      name = "PageModel.countDraftByApplication",
+                      query = "SELECT COUNT(p) FROM PageModel p "
+                              + "WHERE p.application = :application "
+                              + "AND p.version = org.libreccm.pagemodel"
+                              + ".PageModelVersion.DRAFT"
+                  )
+                  ,
+                  @NamedQuery(
+                      name = "PageModel.findLiveByApplication",
+                      query = "SELECT p FROM PageModel p "
+                              + "WHERE p.application = :application "
+                              + "AND p.version = org.libreccm.pagemodel"
+                              + ".PageModelVersion.LIVE")
+                  ,
+                  @NamedQuery(
+                      name = "PageModel.countLiveByApplication",
+                      query = "SELECT COUNT(p) FROM PageModel p "
+                              + "WHERE p.application = :application "
+                              + "AND p.version = org.libreccm.pagemodel"
+                              + ".PageModelVersion.LIVE")
+                  ,
+                  @NamedQuery(
+                      name = "PageModel.findLiveByApplicationAndName",
+                      query = "SELECT p FROM PageModel p "
+                              + "WHERE p.name = :name "
+                              + "AND p.application = :application "
+                              + "AND p.version = org.libreccm.pagemodel"
+                              + ".PageModelVersion.LIVE"
+                  )
+                  ,
+                  @NamedQuery(
+                      name = "PageModel.countLiveByApplicationAndName",
+                      query = "SELECT COUNT(p) FROM PageModel p "
+                              + "WHERE p.name = :name "
+                              + "AND p.application = :application "
+                              + "AND p.version = org.libreccm.pagemodel"
+                              + ".PageModelVersion.LIVE"
+                  )
+              })
 @XmlRootElement(name = "pagemodel")
 public class PageModel implements Serializable {
 
     private static final long serialVersionUID = 7252512839926020978L;
 
     /**
-     *
      * The ID of the entity in the database.
-     *
      */
     @Id
     @Column(name = "PAGE_MODEL_ID")
@@ -175,11 +188,9 @@ public class PageModel implements Serializable {
     private long pageModelId;
 
     /**
-     *
      * The UUID of this {@code PageModel}. Please note that this UUID identifies
      * the dataset not the model. Therefore the draft and the live version have
      * different values for this field.
-     *
      */
     @Column(name = "UUID", length = 255, nullable = false)
     @NotNull
@@ -257,115 +268,142 @@ public class PageModel implements Serializable {
     private List<ContainerModel> containers;
 
     public PageModel() {
+
         title = new LocalizedString();
         description = new LocalizedString();
         containers = new ArrayList<>();
     }
 
     public long getPageModelId() {
+
         return pageModelId;
     }
 
     protected void setPageModelId(final long pageModelId) {
+
         this.pageModelId = pageModelId;
     }
 
     public String getUuid() {
+
         return uuid;
     }
 
     protected void setUuid(final String uuid) {
+
         this.uuid = uuid;
     }
 
     public String getModelUuid() {
+
         return modelUuid;
     }
 
     protected void setModelUuid(final String modelUuid) {
+
         this.modelUuid = modelUuid;
     }
 
     public String getName() {
+
         return name;
     }
 
     public void setName(final String name) {
+
         this.name = name;
     }
 
     public PageModelVersion getVersion() {
+
         return version;
     }
 
     protected void setVersion(final PageModelVersion version) {
+
         this.version = version;
     }
 
     public Date getLastModified() {
+
         return lastModified;
     }
 
     protected void setLastModified(final Date lastModified) {
+
         this.lastModified = new Date(lastModified.getTime());
     }
 
     public LocalizedString getTitle() {
+
         return title;
     }
 
     protected void setTitle(final LocalizedString title) {
+
         Objects.requireNonNull(title);
         this.title = title;
     }
 
     public LocalizedString getDescription() {
+
         return description;
     }
 
     protected void setDescription(final LocalizedString description) {
+
         Objects.requireNonNull(description);
         this.description = description;
     }
 
     public CcmApplication getApplication() {
+
         return application;
     }
 
     public void setApplication(final CcmApplication application) {
+
         this.application = application;
     }
 
     public String getType() {
+
         return type;
     }
 
     public void setType(final String type) {
+
         this.type = type;
     }
 
     public List<ContainerModel> getContainers() {
+
         return Collections.unmodifiableList(containers);
     }
 
     protected void setContainers(final List<ContainerModel> containers) {
+
         this.containers = new ArrayList<>(containers);
     }
 
     protected void addContainer(final ContainerModel container) {
+
         containers.add(container);
     }
 
     protected void removeContainer(final ContainerModel container) {
+
         containers.remove(container);
     }
 
     protected void clearContainers() {
+
         containers.clear();
     }
 
     @Override
     public int hashCode() {
+
         int hash = 7;
         hash = 71 * hash + (int) (pageModelId ^ (pageModelId >>> 32));
         hash = 71 * hash + Objects.hashCode(uuid);
@@ -378,6 +416,7 @@ public class PageModel implements Serializable {
 
     @Override
     public boolean equals(final Object obj) {
+
         if (this == obj) {
             return true;
         }
@@ -410,6 +449,7 @@ public class PageModel implements Serializable {
     }
 
     public boolean canEqual(final Object obj) {
+
         return obj instanceof PageModel;
     }
 
@@ -424,13 +464,13 @@ public class PageModel implements Serializable {
     public String toString(final String data) {
 
         return String.format("%s{ "
-                                 + "pageModelId = %d, "
-                                 + "uuid = %s, "
-                                 + "name = \"%s\", "
-                                 + "title = %s, "
-                                 + "description = %s, "
-                                 + "type = \"%s\""
-                                 + " }",
+                             + "pageModelId = %d, "
+                             + "uuid = %s, "
+                             + "name = \"%s\", "
+                             + "title = %s, "
+                             + "description = %s, "
+                             + "type = \"%s\""
+                             + " }",
                              super.toString(),
                              pageModelId,
                              uuid,
