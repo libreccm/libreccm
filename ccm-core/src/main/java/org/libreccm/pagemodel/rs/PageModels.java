@@ -22,6 +22,7 @@ import com.arsdigita.kernel.KernelConfig;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.pagemodel.ContainerModel;
 import org.libreccm.pagemodel.PageModel;
 import org.libreccm.pagemodel.PageModelManager;
 import org.libreccm.pagemodel.PageModelRepository;
@@ -47,8 +48,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Provides RESTful endpoints for retrieving, creating, updating and deleting
@@ -293,6 +296,7 @@ public class PageModels {
 
         return Json
             .createObjectBuilder()
+            .add("containers", mapContainersToJson(pageModel))
             .add("description",
                  globalizationHelper
                      .getValueFromLocalizedString(pageModel.getDescription()))
@@ -309,6 +313,29 @@ public class PageModels {
                  getPublicationStatus(pageModel).toString())
             .add("lastModified", lastModified)
             .add("lastPublished", lastPublished)
+            .build();
+    }
+
+    private JsonArray mapContainersToJson(final PageModel pageModel) {
+
+        final JsonArrayBuilder containers = Json.createArrayBuilder();
+
+        pageModel
+            .getContainers()
+            .stream()
+            .map(this::mapContainerToJson)
+            .forEach(container -> containers.add(container));
+
+        return containers.build();
+    }
+
+    private JsonObject mapContainerToJson(final ContainerModel container) {
+
+        return Json
+            .createObjectBuilder()
+            .add("containerUuid", container.getContainerUuid())
+            .add("key", container.getKey())
+            .add("uuid", container.getUuid())
             .build();
     }
 

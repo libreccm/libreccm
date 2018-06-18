@@ -72,7 +72,7 @@ public class ContainerModel implements Serializable {
      */
     @Id
     @Column(name = "CONTAINER_ID")
-    @XmlElement(name = "ocntainer-model-id")
+    @XmlElement(name = "container-model-id")
     private long containerId;
 
     /**
