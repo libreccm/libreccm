@@ -1,7 +1,15 @@
-export { PageModel, PageModelVersion, PublicationStatus };
+export { ContainerModel, PageModel, PageModelVersion, PublicationStatus };
+
+interface ContainerModel {
+
+    containerUuid: string;
+    key: string;
+    uuid: string;
+}
 
 interface PageModel {
 
+    containers: ContainerModel[],
     description: string;
     modelUuid: string;
     name: string;

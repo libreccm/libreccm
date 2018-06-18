@@ -1,5 +1,10 @@
 import * as React from "react";
-import {PageModel, PageModelVersion, PublicationStatus} from "./datatypes";
+import {
+    ContainerModel,
+    PageModel,
+    PageModelVersion,
+    PublicationStatus
+} from "./datatypes";
 
 export {
     PageModelEditor,
@@ -291,11 +296,15 @@ class PageModelComponent
                 }}>Edit
                 </button>
                 {this.props.pageModel.publicationStatus === PublicationStatus.NOT_PUBLISHED.toString()
-                && <button onClick={(event) => this.publishPageModel(event)}>Publish</button>
+                && <button
+                    onClick={(event) => this.publishPageModel(event)}>Publish</button>
                 }
                 {this.props.pageModel.publicationStatus === PublicationStatus.NEEDS_UPDATE.toString()
-                && <button onClick={(event) => this.publishPageModel(event)}>Republish</button>
+                && <button
+                    onClick={(event) => this.publishPageModel(event)}>Republish</button>
                 }
+                <ContainerListComponent
+                    containers={this.props.pageModel.containers}/>
             </div>;
         }
     }
@@ -315,7 +324,7 @@ class PageModelComponent
         });
     }
 
-    private getLastModifiedDate():string {
+    private getLastModifiedDate(): string {
 
         if (this.props.pageModel.lastPublished === 0) {
             return "";
@@ -405,11 +414,11 @@ class PageModelComponent
             credentials: "same-origin",
             headers,
             method: "PUT",
-        }
+        };
 
         const url: string = `${this.props.dispatcherPrefix}`
             + `/page-models/${this.props.ccmApplication}/`
-            + `${this.props.pageModel.name}`
+            + `${this.props.pageModel.name}`;
 
         fetch(url, init)
             .then((response: Response) => {
@@ -455,11 +464,11 @@ class PageModelComponent
             credentials: "same-origin",
             headers,
             method: "POST",
-        }
+        };
 
         const url: string = `${this.props.dispatcherPrefix}`
             + `/page-models/${this.props.ccmApplication}/`
-            + `${this.props.pageModel.name}`
+            + `${this.props.pageModel.name}`;
 
         fetch(url, init)
             .then((response: Response) => {
@@ -470,19 +479,43 @@ class PageModelComponent
                     this.setState({
                         ...this.state,
                         errorMsg: `Failed to publish PageModel: `
-                            + ` ${response.status} ${response.statusText}`,
+                        + ` ${response.status} ${response.statusText}`,
                     });
                 }
             })
             .catch((error) => {
-               this.setState({
-                   ...this.state,
-                   errorMsg: `Failed to publish PageModel: ${error.message}`,
-               })
+                this.setState({
+                    ...this.state,
+                    errorMsg: `Failed to publish PageModel: ${error.message}`,
+                })
             });
 
     }
 
+}
+
+interface ContainerListProps {
+
+    containers: ContainerModel[],
+}
+
+class ContainerListComponent extends React.Component<ContainerListProps, {}> {
+
+    public render(): React.ReactNode {
+        return <div className="containerList">
+            <button>Add container</button>
+            <ul className="containerList">
+                {this.props.containers
+                && this.props.containers.map((container) =>
+                    <li>
+                        <span>{container.key}</span>
+                        <button>Down</button>
+                        <button>Up</button>
+                        <button>Delete</button>
+                    </li>)}
+            </ul>
+        </div>
+    }
 }
 
 // interface PageModelEditorProps {
@@ -549,8 +582,8 @@ class PageModelEditor
                                         <span>+</span> Create new PageModel
                                     </button>
                                     <PageModelsList
-                                        ccmApplication={this.getCcmApplication()}
-                                        dispatcherPrefix={this.getDispatcherPrefix()}
+                                        ccmApplication={PageModelEditor.getCcmApplication()}
+                                        dispatcherPrefix={PageModelEditor.getDispatcherPrefix()}
                                         pageModels={this.state.pageModels}
                                         selectPageModel={(selectedPageModel: PageModel) => {
                                             this.setState((state: PageModelEditorState) => {
@@ -588,8 +621,8 @@ class PageModelEditor
                     }
                     {this.state.selectedPageModel !== null &&
                     <PageModelComponent
-                        ccmApplication={this.getCcmApplication()}
-                        dispatcherPrefix={this.getDispatcherPrefix()}
+                        ccmApplication={PageModelEditor.getCcmApplication()}
+                        dispatcherPrefix={PageModelEditor.getDispatcherPrefix()}
                         pageModel={this.state.selectedPageModel}
                         reload={() => {
                             this.reload();
@@ -607,6 +640,7 @@ class PageModelEditor
         this.setState({
             ...this.state,
             selectedPageModel: {
+                containers: [],
                 description: "",
                 lastModified: 0,
                 lastPublished: 0,
@@ -627,10 +661,10 @@ class PageModelEditor
         const init: RequestInit = {
             credentials: "same-origin",
             method: "GET",
-        }
+        };
 
-        const url: string = `${this.getDispatcherPrefix()}`
-            + `/page-models/${this.getCcmApplication()}`;
+        const url: string = `${PageModelEditor.getDispatcherPrefix()}`
+            + `/page-models/${PageModelEditor.getCcmApplication()}`;
 
         fetch(url, init)
             .then((response) => {
@@ -682,7 +716,7 @@ class PageModelEditor
     }
 
 
-    private getDispatcherPrefix(): string {
+    private static getDispatcherPrefix(): string {
 
         const dataElem: HTMLElement | null = document
             .querySelector("#page-models-editor.react-data");
@@ -700,7 +734,7 @@ class PageModelEditor
         }
     }
 
-    private getCcmApplication(): string {
+    private static getCcmApplication(): string {
 
         const dataElem: HTMLElement | null = document
             .querySelector("#page-models-editor.react-data");
