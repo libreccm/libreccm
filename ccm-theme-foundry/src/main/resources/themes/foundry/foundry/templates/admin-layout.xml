@@ -7,6 +7,7 @@
             <show-page-title/>
         </title>
         <load-css-files/>
+        <link href="font-awesome/css/fontawesome-all.min.css" rel="stylesheet" />
         <load-jquery/>
         <script src="scripts/category-step.js" origin="internal" />
         <script src="scripts/cms-admin.js" origin="internal" />
