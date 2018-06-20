@@ -1992,8 +1992,6 @@ button.pagemodeleditor.addbutton {
 
 button.pagemodeleditor.addbutton > span {
 
-    border-right: 1px solid #eee;
-
     font-weight: bold;
 
     padding-right: 0.2em;

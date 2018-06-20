@@ -14,6 +14,7 @@
         <css-file>public.css</css-file>
     </application>
     <application name="none" class="cms-admin">
+        <css-file origin="internal">font-awesome/css/fontawesome-all.min.css</css-file>
         <css-file origin="internal">admin.css</css-file>
     </application>
     <application name="portal">
