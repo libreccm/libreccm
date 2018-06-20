@@ -38,6 +38,7 @@
 <css-files>
     <!-- CSS file used for admin applications like the Content Centre -->
     <application name="admin">
+        <css-file origin="internal">font-awesome/css/fontawesome-all.min.css</css-file>
         <css-file origin="internal">admin.css</css-file>
     </application>
     <application name="login">
@@ -70,6 +71,7 @@
     </application>
     <application name="none" class="cms-admin">
         <!-- Other admin applications -->
+        <css-file origin="internal">font-awesome/css/fontawesome-all.min.css</css-file>
         <css-file origin="internal">admin.css</css-file>
     </application>
     <application name="portal">

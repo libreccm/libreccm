@@ -522,11 +522,11 @@ class ContainerListComponent extends React.Component<ContainerListProps, {}> {
 //
 // }
 //
-// interface PageModelEditorState {
-//
-//     selectedPageModel: PageModel | null;
-//
-// }
+interface PageModelEditorState {
+
+    selectedPageModel: PageModel | null;
+
+}
 
 interface PageModelEditorState {
 
@@ -577,28 +577,38 @@ class PageModelEditor
                                     <button
                                         className="pagemodeleditor addbutton"
                                         onClick={
-                                            (event) => this.createNewPageModel(event)
+                                            (event) => this.createNewPageModel(
+                                                event)
                                         }>
-                                        <span>+</span> Create new PageModel
+                                        <span className="fa fa-plus-circle">
+                                        </span>
+                                        Create new PageModel
                                     </button>
                                     <PageModelsList
-                                        ccmApplication={PageModelEditor.getCcmApplication()}
-                                        dispatcherPrefix={PageModelEditor.getDispatcherPrefix()}
+                                        ccmApplication={PageModelEditor
+                                            .getCcmApplication()}
+                                        dispatcherPrefix={PageModelEditor
+                                            .getDispatcherPrefix()}
                                         pageModels={this.state.pageModels}
-                                        selectPageModel={(selectedPageModel: PageModel) => {
-                                            this.setState((state: PageModelEditorState) => {
-                                                return {
-                                                    ...state,
-                                                    selectedPageModel,
-                                                };
-                                            });
-                                        }}/>
+                                        selectPageModel={
+                                            (selectedPageModel: PageModel) => {
+                                                this.setState(
+                                                    (state: PageModelEditorState) => {
+                                                        return {
+                                                            ...state,
+                                                            selectedPageModel,
+                                                        };
+                                                    });
+                                            }}/>
                                     <button
                                         className="pagemodeleditor addbutton"
                                         onClick={
-                                            (event) => this.createNewPageModel(event)
+                                            (event) =>
+                                                this.createNewPageModel(event)
                                         }>
-                                        <span>+</span> Create new PageModel
+                                        <span className="fa fa-plus-circle">
+                                        </span>
+                                        Create new PageModel
                                     </button>
                                 </div>
                             </div>
@@ -760,7 +770,6 @@ class PageModelEditor
         //     selectedPageModel: null,
         // });
     }
-
 
     // private setSelectedPageModel(selectedPageModel: PageModel): void {
     //
