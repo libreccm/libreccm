@@ -310,7 +310,8 @@ class PageModelComponent
                 <ContainerListComponent
                     ccmApplication={this.props.ccmApplication}
                     containers={this.props.pageModel.containers}
-                    dispatcherPrefix={this.props.dispatcherPrefix} />
+                    dispatcherPrefix={this.props.dispatcherPrefix}
+                    pageModelName={this.props.pageModel.name} />
             </div>;
         }
     }
@@ -506,11 +507,14 @@ interface ContainerListProps {
     ccmApplication: string;
     containers: ContainerModel[];
     dispatcherPrefix: string;
+    pageModelName: string;
 }
 
 interface ContainerListState {
 
+    errorMsg: string;
     newContainerName: string;
+    containers: ContainerModel[];
 }
 
 class ContainerListComponent
@@ -521,10 +525,13 @@ class ContainerListComponent
         super(props);
 
         this.state = {
+            errorMsg: "",
+            containers: props.containers,
             newContainerName: "",
         }
 
         this.addContainer = this.addContainer.bind(this);
+        this.updateNewContainerName = this.updateNewContainerName.bind(this);
     }
 
     public render(): React.ReactNode {
@@ -542,9 +549,14 @@ class ContainerListComponent
                     Add container
                 </button>
             </form>
+            {this.state.errorMsg !== ""
+            && <div className="errorPanel">
+                <span className="fa fa-exclamation-triangle"></span>
+                {this.state.errorMsg}
+            </div>}
             <ul className="containerList">
-                {this.props.containers
-                    && this.props.containers.map((container) =>
+                {this.state.containers
+                    && this.state.containers.map((container) =>
                         <li>
                             <span>{container.key}</span>
                             <button>
@@ -582,6 +594,15 @@ class ContainerListComponent
 
         event.preventDefault();
 
+        if (this.state.newContainerName === null
+            || this.state.newContainerName === "") {
+
+            this.setState({
+                ...this.state,
+                errorMsg: "A container needs a name!",
+            });
+        }
+
         const headers: Headers = new Headers();
         headers.append("Content-Type", "application/json");
 
@@ -595,7 +616,47 @@ class ContainerListComponent
 
         const url: string = `${this.props.dispatcherPrefix}`
             + `/page-models/${this.props.ccmApplication}/`
+            + `${this.props.pageModelName}`
+            + `/containers/`
             + `${this.state.newContainerName}`;
+
+        fetch(url, init)
+            .then((response: Response) => {
+                if (response.ok) {
+
+                    response
+                        .json()
+                        .then((newContainer) => {
+                            this.setState({
+                                ...this.state,
+                                containers: [
+                                    ...this.state.containers,
+                                    newContainer],
+                                newContainerName: "",
+                            });
+                        })
+                        .catch((error) => {
+                            this.setState({
+                                ...this.state,
+                                errorMsg: `Failed to parse response: `
+                                    + `${error.message}`,
+                            });
+                        });
+                } else {
+                    this.setState({
+                        ...this.state,
+                        errorMsg: `Failed to create new container: `
+                            + `${response.status} ${response.statusText}`,
+                    });
+                }
+            })
+            .catch((error) => {
+                this.setState({
+                    ...this.state,
+                    errorMsg: `Failed to create new container: `
+                        + `${error.message}`,
+                });
+            });
     }
 }
 
