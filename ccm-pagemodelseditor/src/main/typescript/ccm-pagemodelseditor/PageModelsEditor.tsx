@@ -513,7 +513,7 @@ interface ContainerListProps {
 interface ContainerListState {
 
     errorMsg: string;
-    newContainerName: string;
+    containerName: string;
     containers: ContainerModel[];
 }
 
@@ -527,7 +527,7 @@ class ContainerListComponent
         this.state = {
             errorMsg: "",
             containers: props.containers,
-            newContainerName: "",
+            containerName: "",
         }
 
         this.addContainer = this.addContainer.bind(this);
@@ -543,7 +543,8 @@ class ContainerListComponent
                 <input id="newContainerName"
                 onChange={this.updateNewContainerName}
                 size={32}
-                type="text" />
+                type="text"
+                value={this.state.containerName} />
                 <button type="submit">
                     <span className="fa fa-plus-circle"></span>
                     Add container
@@ -560,20 +561,17 @@ class ContainerListComponent
                         <li>
                             <span>{container.key}</span>
                             <button>
-                                <span className="fa fa-arrow-alt-circle-down">
+                                <span className="fa fa-edit">
                                 </span>
-                                Down
-                        </button>
-                            <button>
-                                <span className="fa fa-arrow-alt-circle-up">
-                                </span>
-                                Up
-                        </button>
+                                Rename
+                            </button>
                             <button>
                                 <span className="fa fa-minus-circle"></span>
                                 Delete
-                        </button>
-                        </li>)}
+                            </button>
+                        </li>)
+                    }
+                }
             </ul>
         </div>;
     }
@@ -585,7 +583,7 @@ class ContainerListComponent
 
         this.setState({
             ...this.state,
-            newContainerName: target.value,
+            containerName: target.value,
         });
     }
 
@@ -594,13 +592,28 @@ class ContainerListComponent
 
         event.preventDefault();
 
-        if (this.state.newContainerName === null
-            || this.state.newContainerName === "") {
+        if (this.state.containerName === null
+            || this.state.containerName === "") {
 
             this.setState({
                 ...this.state,
                 errorMsg: "A container needs a name!",
             });
+
+            return;
+        }
+
+        if(this.state.containers.findIndex((container: ContainerModel) => {
+            return container.key === this.state.containerName;
+        }) >= 0) {
+
+            this.setState({
+                ...this.state,
+                errorMsg: `A container with the key `
+                    + `"${this.state.containerName}" already exists.`,
+            });
+
+            return;
         }
 
         const headers: Headers = new Headers();
@@ -618,7 +631,7 @@ class ContainerListComponent
             + `/page-models/${this.props.ccmApplication}/`
             + `${this.props.pageModelName}`
             + `/containers/`
-            + `${this.state.newContainerName}`;
+            + `${this.state.containerName}`;
 
         fetch(url, init)
             .then((response: Response) => {
@@ -627,12 +640,28 @@ class ContainerListComponent
                     response
                         .json()
                         .then((newContainer) => {
+
+                            const containers = [
+                                ...this.state.containers,
+                                newContainer,
+                            ];
+                            containers.sort((container1, container2) => {
+                                const key1: string = container1.key;
+                                const key2: string = container2.key;
+
+                                if (key1 < key2) {
+                                    return -1;
+                                } else if(key1 > key2) {
+                                    return 1;
+                                } else {
+                                    return 0;
+                                }
+                            });
+
                             this.setState({
                                 ...this.state,
-                                containers: [
-                                    ...this.state.containers,
-                                    newContainer],
-                                newContainerName: "",
+                                containers,
+                                containerName: "",
                             });
                         })
                         .catch((error) => {
