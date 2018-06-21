@@ -2039,3 +2039,16 @@ form.pagemodeleditor.propertiesForm {
     display: flex;
     flex-direction: column;
 }
+
+/* dialog.pageModelEditor {
+
+    background-color: #fff;
+
+    border-radius: 5%;
+
+    position: fixed;
+    top: 5em;
+    right: 5em;
+    bottom: 5em;
+    left: 5em;
+} */

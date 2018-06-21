@@ -12,7 +12,7 @@
             "options": [100]
         },
         "max-line-length": {
-            "options": [120]
+            "options": [80]
         }
     },
     "rulesDirectory": []
