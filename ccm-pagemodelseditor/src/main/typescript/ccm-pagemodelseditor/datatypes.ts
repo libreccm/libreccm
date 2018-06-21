@@ -9,7 +9,7 @@ interface ContainerModel {
 
 interface PageModel {
 
-    containers: ContainerModel[],
+    containers: ContainerModel[];
     description: string;
     modelUuid: string;
     name: string;
