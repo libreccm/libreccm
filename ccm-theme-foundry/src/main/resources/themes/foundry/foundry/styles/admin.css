@@ -2040,6 +2040,18 @@ form.pagemodeleditor.propertiesForm {
     flex-direction: column;
 }
 
+div.errorPanel {
+
+    border: 2px solid #f00;
+    border-radius: 1em;
+
+    color: #f00;
+
+    margin: 1em 0;
+
+    padding: 0.5em;
+}
+
 /* dialog.pageModelEditor {
 
     background-color: #fff;

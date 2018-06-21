@@ -85,7 +85,7 @@ public class PageModelManager {
     private PageModelRepository pageModelRepo;
 
     private final Map<String, PageModelComponentModel> components
-        = new HashMap<>();
+                                                           = new HashMap<>();
 
     /**
      * Called by CDI after an instance of this class is created. Initialises the
@@ -151,17 +151,17 @@ public class PageModelManager {
 
         Objects.requireNonNull(application,
                                "Can't create a page model for application "
-                               + "null");
+                                   + "null");
         Objects.requireNonNull(name, "Then name of a Pagemodel can't be null.");
         if (name.isEmpty()
-            || name.matches("\\s*")) {
+                || name.matches("\\s*")) {
             throw new IllegalArgumentException(
                 "The name of a PageModel can't be empty.");
         }
 
         LOGGER.debug(
             "Creating new PageModel with name \"{}\" for application \"{}\" "
-            + "and type \"{}\".",
+                + "and type \"{}\".",
             name,
             application.getPrimaryUrl(),
             type);
@@ -172,12 +172,12 @@ public class PageModelManager {
 
         if (count > 0) {
             LOGGER.error("A page model with the name \"{}\" for the "
-                         + "application \"{}\" already exists.",
+                             + "application \"{}\" already exists.",
                          name,
                          application.getPrimaryUrl());
             throw new IllegalArgumentException(String.format(
                 "A page model with the name \"%s\" for the application \"%s\" "
-                + "already exists.",
+                    + "already exists.",
                 name,
                 application.getPrimaryUrl()));
         }
@@ -246,8 +246,8 @@ public class PageModelManager {
      *                  retrieved.
      *
      * @return An {@link Optional} containing the live version of the provided
-     *     {@link PageModel} if there is a live version. Otherwise an empty
-     *     {@link Optional} is returned.
+     *         {@link PageModel} if there is a live version. Otherwise an empty
+     *         {@link Optional} is returned.
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<PageModel> getLiveVersion(final PageModel pageModel) {
@@ -349,15 +349,15 @@ public class PageModelManager {
             final Styles liveStyles = new Styles();
             liveStyles.setStyleName(draftStyles.getStyleName());
             liveStyles.setRules(draftStyles
-                                    .getRules()
-                                    .stream()
-                                    .map(this::publishRule)
-                                    .collect(Collectors.toList()));
+                .getRules()
+                .stream()
+                .map(this::publishRule)
+                .collect(Collectors.toList()));
             liveStyles.setMediaRules(draftStyles
-                                         .getMediaRules()
-                                         .stream()
-                                         .map(this::publishMediaRule)
-                                         .collect(Collectors.toList()));
+                .getMediaRules()
+                .stream()
+                .map(this::publishMediaRule)
+                .collect(Collectors.toList()));
         }
 
         draftModel
@@ -375,7 +375,7 @@ public class PageModelManager {
 
         Objects.requireNonNull(draftMediaRule);
 
-        final MediaRule  liveMediaRule  = new MediaRule();
+        final MediaRule liveMediaRule = new MediaRule();
         final MediaQuery liveMediaQuery = new MediaQuery();
         liveMediaQuery
             .setMaxWidth(draftMediaRule.getMediaQuery().getMaxWidth());
@@ -385,10 +385,10 @@ public class PageModelManager {
             .setMinWidth(draftMediaRule.getMediaQuery().getMinWidth());
 
         liveMediaRule.setRules(draftMediaRule
-                                   .getRules()
-                                   .stream()
-                                   .map(this::publishRule)
-                                   .collect(Collectors.toList()));
+            .getRules()
+            .stream()
+            .map(this::publishRule)
+            .collect(Collectors.toList()));
 
         return liveMediaRule;
     }
@@ -400,10 +400,10 @@ public class PageModelManager {
         final Rule liveRule = new Rule();
         liveRule.setSelector(draftRule.getSelector());
         liveRule.setProperties(draftRule
-                                   .getProperties()
-                                   .stream()
-                                   .map(this::publishCssProperty)
-                                   .collect(Collectors.toList()));
+            .getProperties()
+            .stream()
+            .map(this::publishCssProperty)
+            .collect(Collectors.toList()));
 
         return liveRule;
     }
@@ -429,8 +429,7 @@ public class PageModelManager {
      * @return The live version of the {@link ComponentModel}.
      */
     @SuppressWarnings("unchecked")
-    private ComponentModel publishComponentModel(final ComponentModel
-                                                         draftModel) {
+    private ComponentModel publishComponentModel(final ComponentModel draftModel) {
 
         Objects.requireNonNull(draftModel,
                                "Can't publish ComponentModel null.");
@@ -464,9 +463,9 @@ public class PageModelManager {
                 propertyDescriptor.getName(),
                 draftModel.getKey());
 
-            final Class<?> propType    = propertyDescriptor.getPropertyType();
-            final Method   readMethod  = propertyDescriptor.getReadMethod();
-            final Method   writeMethod = propertyDescriptor.getWriteMethod();
+            final Class<?> propType = propertyDescriptor.getPropertyType();
+            final Method readMethod = propertyDescriptor.getReadMethod();
+            final Method writeMethod = propertyDescriptor.getWriteMethod();
 
             if (propertyIsExcluded(propertyDescriptor.getName())) {
                 continue;
@@ -477,7 +476,7 @@ public class PageModelManager {
             }
 
             if (propType != null
-                && propType.isAssignableFrom(List.class)) {
+                    && propType.isAssignableFrom(List.class)) {
 
                 try {
                     final List<Object> source = (List<Object>) readMethod
@@ -486,13 +485,13 @@ public class PageModelManager {
                     target.addAll(source);
                     writeMethod.invoke(draftModel, target);
                 } catch (IllegalAccessException
-                    | IllegalArgumentException
-                    | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new UnexpectedErrorException(ex);
                 }
 
             } else if (propType != null
-                       && propType.isAssignableFrom(Map.class)) {
+                           && propType.isAssignableFrom(Map.class)) {
 
                 final Map<Object, Object> source;
                 final Map<Object, Object> target;
@@ -502,15 +501,15 @@ public class PageModelManager {
                         = (Map<Object, Object>) readMethod.invoke(draftModel);
                     target = (Map<Object, Object>) readMethod.invoke(liveModel);
                 } catch (IllegalAccessException
-                    | IllegalArgumentException
-                    | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new UnexpectedErrorException(ex);
                 }
 
                 source.forEach((key, value) -> target.put(key, value));
 
             } else if (propType != null
-                       && propType.isAssignableFrom(Set.class)) {
+                           && propType.isAssignableFrom(Set.class)) {
 
                 final Set<Object> source;
                 final Set<Object> target;
@@ -519,8 +518,8 @@ public class PageModelManager {
                     source = (Set<Object>) readMethod.invoke(draftModel);
                     target = (Set<Object>) readMethod.invoke(liveModel);
                 } catch (IllegalAccessException
-                    | IllegalArgumentException
-                    | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new UnexpectedErrorException(ex);
                 }
 
@@ -531,8 +530,8 @@ public class PageModelManager {
                     value = readMethod.invoke(draftModel);
                     writeMethod.invoke(liveModel, value);
                 } catch (IllegalAccessException
-                    | IllegalArgumentException
-                    | InvocationTargetException ex) {
+                             | IllegalArgumentException
+                             | InvocationTargetException ex) {
                     throw new UnexpectedErrorException(ex);
                 }
             }
@@ -552,7 +551,7 @@ public class PageModelManager {
      * @param name The name of the property.
      *
      * @return {@code true} if the property is excluded from the publishing
-     *     process, {@link false} if not.
+     *         process, {@link false} if not.
      */
     private boolean propertyIsExcluded(final String name) {
 
@@ -583,8 +582,8 @@ public class PageModelManager {
         pageModel.addContainer(container);
         container.setPageModel(pageModel);
 
-        pageModelRepo.save(pageModel);
         containerModelRepo.save(container);
+        pageModelRepo.save(pageModel);
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
