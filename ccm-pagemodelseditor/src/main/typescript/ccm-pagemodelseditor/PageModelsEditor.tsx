@@ -531,6 +531,7 @@ class ContainerListComponent
         }
 
         this.addContainer = this.addContainer.bind(this);
+        this.deleteContainer = this.deleteContainer.bind(this);
         this.updateNewContainerName = this.updateNewContainerName.bind(this);
     }
 
@@ -560,17 +561,12 @@ class ContainerListComponent
                     && this.state.containers.map((container) =>
                         <li>
                             <span>{container.key}</span>
-                            <button>
-                                <span className="fa fa-edit">
-                                </span>
-                                Rename
-                            </button>
-                            <button>
+                            <button onClick={this.deleteContainer}
+                                    data-containerKey={container.key}>
                                 <span className="fa fa-minus-circle"></span>
                                 Delete
                             </button>
                         </li>)
-                    }
                 }
             </ul>
         </div>;
@@ -684,6 +680,63 @@ class ContainerListComponent
                     ...this.state,
                     errorMsg: `Failed to create new container: `
                         + `${error.message}`,
+                });
+            });
+    }
+
+    private deleteContainer(event: React.MouseEvent<HTMLButtonElement>): void {
+
+        event.preventDefault();
+
+        const deleteButton: HTMLButtonElement
+            = event.target as HTMLButtonElement
+        const containerKey: string = deleteButton
+            .getAttribute("data-containerKey") as string;
+
+        const init: RequestInit = {
+
+            body: JSON.stringify({}),
+            credentials: "same-origin",
+            method: "DELETE",
+        }
+
+        const url: string = `${this.props.dispatcherPrefix}`
+            + `/page-models/${this.props.ccmApplication}/`
+            + `${this.props.pageModelName}`
+            + `/containers/${containerKey}`;
+
+        fetch(url, init)
+            .then((response: Response) => {
+
+                if (response.ok) {
+
+                    const containers = this
+                        .state
+                        .containers
+                        .filter((container) => {
+                            return container.key !== containerKey;
+                        });
+
+                    this.setState({
+                        ...this.state,
+                        containers,
+                    })
+
+                } else {
+                    this.setState({
+                        ...this.state,
+                        errorMsg: `Failed to delete container `
+                            + `"${containerKey}": `
+                            + ` ${response.status} ${response.statusText}`,
+                    });
+                }
+
+            })
+            .catch((error) => {
+                this.setState({
+                    ...this.state,
+                    errorMsg: `Failed to delete container `
+                        + `"${containerKey}": ${error.message}`,
                 });
             });
     }
