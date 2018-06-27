@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactModal from "react-modal";
 import {
+    ComponentModel,
     ContainerModel,
     PageModel,
     PageModelVersion,
@@ -183,6 +184,8 @@ interface PageModelComponentProps {
 
 interface PageModelComponentState {
 
+    containers: ContainerModel[];
+
     editMode: boolean;
 
     errorMsg: string | null;
@@ -201,6 +204,7 @@ class PageModelComponent
         super(props);
 
         this.state = {
+            containers: this.props.pageModel.containers,
             editMode: this.props.pageModel.pageModelId === 0,
             errorMsg: null,
             form: {
@@ -512,9 +516,9 @@ interface ContainerListProps {
 
 interface ContainerListState {
 
-    errorMsg: string;
     containerName: string;
     containers: ContainerModel[];
+    errorMsg: string;
 }
 
 class ContainerListComponent
@@ -525,10 +529,10 @@ class ContainerListComponent
         super(props);
 
         this.state = {
-            errorMsg: "",
-            containers: props.containers,
             containerName: "",
-        }
+            containers: props.containers,
+            errorMsg: "",
+        };
 
         this.addContainer = this.addContainer.bind(this);
         this.deleteContainer = this.deleteContainer.bind(this);
@@ -542,31 +546,38 @@ class ContainerListComponent
                     Name of new container
                 </label>
                 <input id="newContainerName"
-                onChange={this.updateNewContainerName}
-                size={32}
-                type="text"
-                value={this.state.containerName} />
+                    onChange={this.updateNewContainerName}
+                    size={32}
+                    type="text"
+                    value={this.state.containerName} />
                 <button type="submit">
                     <span className="fa fa-plus-circle"></span>
                     Add container
                 </button>
             </form>
             {this.state.errorMsg !== ""
-            && <div className="errorPanel">
-                <span className="fa fa-exclamation-triangle"></span>
-                {this.state.errorMsg}
-            </div>}
+                && <div className="errorPanel">
+                    <span className="fa fa-exclamation-triangle"></span>
+                    {this.state.errorMsg}
+                </div>}
             <ul className="containerList">
                 {this.state.containers
-                    && this.state.containers.map((container) =>
-                        <li>
-                            <span>{container.key}</span>
-                            <button onClick={this.deleteContainer}
-                                    data-containerKey={container.key}>
-                                <span className="fa fa-minus-circle"></span>
-                                Delete
-                            </button>
-                        </li>)
+                    && this.props.containers.map((container) =>
+                        <ContainerModelComponent
+                            ccmApplication={this.props.ccmApplication}
+                            container={container}
+                            deleteContainer={this.deleteContainer}
+                            dispatcherPrefix={this.props.dispatcherPrefix}
+                            errorMsg="" />)
+                        // <li>
+                        //     <span>{container.key}</span>
+                        //     <button
+                        //         // onClick={this.deleteContainer}
+                        //         data-containerKey={container.key}>
+                        //         <span className="fa fa-minus-circle"></span>
+                        //         Delete
+                        //     </button>
+                        // </li>)
                 }
             </ul>
         </div>;
@@ -599,7 +610,7 @@ class ContainerListComponent
             return;
         }
 
-        if(this.state.containers.findIndex((container: ContainerModel) => {
+        if (this.state.containers.findIndex((container: ContainerModel) => {
             return container.key === this.state.containerName;
         }) >= 0) {
 
@@ -621,7 +632,7 @@ class ContainerListComponent
             credentials: "same-origin",
             headers,
             method: "PUT",
-        }
+        };
 
         const url: string = `${this.props.dispatcherPrefix}`
             + `/page-models/${this.props.ccmApplication}/`
@@ -647,7 +658,7 @@ class ContainerListComponent
 
                                 if (key1 < key2) {
                                     return -1;
-                                } else if(key1 > key2) {
+                                } else if (key1 > key2) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -656,8 +667,8 @@ class ContainerListComponent
 
                             this.setState({
                                 ...this.state,
-                                containers,
                                 containerName: "",
+                                containers,
                             });
                         })
                         .catch((error) => {
@@ -684,21 +695,22 @@ class ContainerListComponent
             });
     }
 
-    private deleteContainer(event: React.MouseEvent<HTMLButtonElement>): void {
+    // private deleteContainer(event: React.MouseEvent<HTMLButtonElement>): void {
+    private deleteContainer(containerKey: string): void {
 
-        event.preventDefault();
+        // event.preventDefault();
 
-        const deleteButton: HTMLButtonElement
-            = event.target as HTMLButtonElement
-        const containerKey: string = deleteButton
-            .getAttribute("data-containerKey") as string;
+        // const deleteButton: HTMLButtonElement
+        //     = event.target as HTMLButtonElement;
+        // const containerKey: string = deleteButton
+        //     .getAttribute("data-containerKey") as string;
 
         const init: RequestInit = {
 
             body: JSON.stringify({}),
             credentials: "same-origin",
             method: "DELETE",
-        }
+        };
 
         const url: string = `${this.props.dispatcherPrefix}`
             + `/page-models/${this.props.ccmApplication}/`
@@ -720,7 +732,7 @@ class ContainerListComponent
                     this.setState({
                         ...this.state,
                         containers,
-                    })
+                    });
 
                 } else {
                     this.setState({
@@ -742,6 +754,47 @@ class ContainerListComponent
     }
 }
 
+interface ContainerModelComponentProps {
+
+    ccmApplication: string;
+    container: ContainerModel;
+    deleteContainer: (key: string) => void;
+    dispatcherPrefix: string;
+    errorMsg: string;
+}
+
+class ContainerModelComponent
+    extends React.Component<ContainerModelComponentProps, {}> {
+
+    constructor(props: ContainerModelComponentProps) {
+
+        super(props);
+    }
+
+    public render(): React.ReactNode {
+
+        return <li>
+            <span>{this.props.container.key}</span>
+            <button
+                onClick={(event) => this.deleteContainer(
+                    event,
+                    this.props.container.key)}>
+                <span className="fa fa-minus-circle"></span>
+                Delete
+            </button>
+        </li>
+    }
+
+    private deleteContainer(
+        event: React.MouseEvent<HTMLButtonElement>,
+        containerKey: string): void {
+
+        event.preventDefault();
+
+        this.props.deleteContainer(containerKey);
+    }
+}
+
 // interface PageModelEditorProps {
 //
 // }
@@ -759,8 +812,18 @@ interface PageModelEditorState {
     selectedPageModel: PageModel | null;
 }
 
+interface ComponentInfo {
+
+    javaClass: string;
+    editorComponent: any;
+    label: string;
+}
+
+
 class PageModelEditor
     extends React.Component<{}, PageModelEditorState> {
+
+    private static components: ComponentInfo[];
 
     private static getDispatcherPrefix(): string {
 
@@ -796,6 +859,25 @@ class PageModelEditor
                 return value;
             }
         }
+    }
+
+    private static registerComponent(component: ComponentInfo): void {
+
+        PageModelEditor.components = [
+            ...PageModelEditor.components,
+            component,
+        ];
+
+        PageModelEditor.components.sort((component1, component2) => {
+
+            if (component1.label < component2.label) {
+                return -1;
+            } else if (component1.label > component2.label) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
     }
 
     constructor(props: any) {
