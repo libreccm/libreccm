@@ -1,4 +1,21 @@
-export { ContainerModel, PageModel, PageModelVersion, PublicationStatus };
+export {
+    ComponentModel,
+    ContainerModel,
+    PageModel,
+    PageModelVersion,
+    PublicationStatus
+};
+
+interface ComponentModel {
+
+    componentModelId: number;
+    idAttribute: string;
+    classAttribute: string;
+    key: string;
+    modelUuid: string;
+    styleAttribute: string;
+    uuid: string;
+}
 
 interface ContainerModel {
 
