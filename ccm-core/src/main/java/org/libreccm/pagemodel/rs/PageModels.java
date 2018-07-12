@@ -19,9 +19,11 @@
 package org.libreccm.pagemodel.rs;
 
 import com.arsdigita.kernel.KernelConfig;
+
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.pagemodel.ComponentModel;
 import org.libreccm.pagemodel.ContainerModel;
 import org.libreccm.pagemodel.PageModel;
 import org.libreccm.pagemodel.PageModelManager;
@@ -47,6 +49,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -338,7 +341,7 @@ public class PageModels {
             .add("uuid", container.getUuid())
             .build();
     }
-
+    
     /**
      * Check if the {@link PublicationStatus} of the provided PageModel.
      *
