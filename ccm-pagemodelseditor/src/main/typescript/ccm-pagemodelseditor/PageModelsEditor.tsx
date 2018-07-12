@@ -568,7 +568,8 @@ class ContainerListComponent
                             container={container}
                             deleteContainer={this.deleteContainer}
                             dispatcherPrefix={this.props.dispatcherPrefix}
-                            errorMsg="" />)
+                            errorMsg=""
+                            pageModelName={this.props.pageModelName} />)
                         // <li>
                         //     <span>{container.key}</span>
                         //     <button
@@ -761,28 +762,122 @@ interface ContainerModelComponentProps {
     deleteContainer: (key: string) => void;
     dispatcherPrefix: string;
     errorMsg: string;
+    pageModelName: string;
+}
+
+interface ContainerModelComponentState {
+
+    components: ComponentModel[];
+    errorMessages: string[];
 }
 
 class ContainerModelComponent
-    extends React.Component<ContainerModelComponentProps, {}> {
+    extends React.Component<ContainerModelComponentProps,
+                            ContainerModelComponentState> {
 
     constructor(props: ContainerModelComponentProps) {
 
         super(props);
+
+        this.state = {
+
+            components: [],
+            errorMessages: [],
+        };
+    }
+
+    public componentDidMount() {
+
+        this.fetchComponents();
     }
 
     public render(): React.ReactNode {
 
         return <li>
-            <span>{this.props.container.key}</span>
-            <button
-                onClick={(event) => this.deleteContainer(
-                    event,
-                    this.props.container.key)}>
-                <span className="fa fa-minus-circle"></span>
-                Delete
-            </button>
+            <div className="container-header">
+                <span>{this.props.container.key}</span>
+                <button
+                    onClick={(event) => this.deleteContainer(
+                        event,
+                        this.props.container.key)}>
+                    <span className="fa fa-minus-circle"></span>
+                    Delete
+                </button>
+            </div>
+            <div className="components-list">
+                <ul>
+                    {this.state.components.map((component: ComponentModel) =>
+                        <li>
+                            {component.key}
+                        </li>
+                    )}
+                </ul>
+            </div>
         </li>
+    }
+
+    private fetchComponents(): void {
+
+        const componentsUrl = `${this.props.dispatcherPrefix}`
+            + `/page-models/${this.props.ccmApplication}`
+            + `/${this.props.pageModelName}`
+            + `/containers/${this.props.container.key}`
+            + `/components`;
+
+        const init: RequestInit = {
+            credentials: "same-origin",
+            method: "GET",
+        };
+
+        fetch(componentsUrl, init)
+            .then((response) => {
+                if (response.ok) {
+
+                    response
+                        .json()
+                        .then((components) => {
+
+                            this.setState({
+                                ...this.state,
+                                components,
+                            });
+                        })
+                        .catch((error) => {
+                            const errorMessages: string[] = this
+                                .state.errorMessages;
+                            errorMessages.push(`Failed to retrieve PageModels ` +
+                                `from ${componentsUrl}: ${error.message}`);
+
+                            this.setState({
+                                ...this.state,
+                                errorMessages,
+                            });
+                        });
+                } else {
+                    const errorMessages: string[] = this
+                        .state.errorMessages;
+                    errorMessages.push(`Failed to retrieve PageModels from `
+                        + `\"${componentsUrl}\": HTTP Status Code: `
+                        + `${response.status}; `
+                        + `message: ${response.statusText}`);
+
+                    this.setState({
+                        ...this.state,
+                        errorMessages,
+                    });
+                }
+            })
+            .catch((error) => {
+                const errorMessages: string[] = this
+                    .state.errorMessages;
+                errorMessages.push(`Failed to retrieve PageModels ` +
+                    `from ${componentsUrl}: ${error.message}`);
+
+                this.setState({
+                    ...this.state,
+                    errorMessages,
+                });
+            });
     }
 
     private deleteContainer(
@@ -818,7 +913,6 @@ interface ComponentInfo {
     editorComponent: any;
     label: string;
 }
-
 
 class PageModelEditor
     extends React.Component<{}, PageModelEditorState> {

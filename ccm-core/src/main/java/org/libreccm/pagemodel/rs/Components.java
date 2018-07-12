@@ -326,9 +326,15 @@ public class Components {
                      | InvocationTargetException ex) {
                 throw new WebApplicationException(ex);
             }
+            
+            final String valueStr;
+            if (value == null) {
+                valueStr = "";
+            } else {
+                valueStr = value.toString();
+            }
 
-            objectBuilder.add(propertyDescriptor.getName(),
-                              value.toString());
+            objectBuilder.add(propertyDescriptor.getName(), valueStr);
 
         }
 
