@@ -9,6 +9,9 @@ import {
 } from "./datatypes";
 
 export {
+    AbstractComponentModelEditor,
+    ComponentModelEditorProps,
+    ComponentInfo,
     PageModelEditor,
     PageModelEditorState,
     // PageModelEditorProps,
@@ -696,15 +699,7 @@ class ContainerListComponent
             });
     }
 
-    // private deleteContainer(event: React.MouseEvent<HTMLButtonElement>): void {
     private deleteContainer(containerKey: string): void {
-
-        // event.preventDefault();
-
-        // const deleteButton: HTMLButtonElement
-        //     = event.target as HTMLButtonElement;
-        // const containerKey: string = deleteButton
-        //     .getAttribute("data-containerKey") as string;
 
         const init: RequestInit = {
 
@@ -807,13 +802,11 @@ class ContainerModelComponent
             <div className="components-list">
                 <ul>
                     {this.state.components.map((component: ComponentModel) =>
-                        <li>
-                            {component.key}
-                        </li>
+                        this.getComponentModelEditor(component),
                     )}
                 </ul>
             </div>
-        </li>
+        </li>;
     }
 
     private fetchComponents(): void {
@@ -845,8 +838,8 @@ class ContainerModelComponent
                         .catch((error) => {
                             const errorMessages: string[] = this
                                 .state.errorMessages;
-                            errorMessages.push(`Failed to retrieve PageModels ` +
-                                `from ${componentsUrl}: ${error.message}`);
+                            errorMessages.push(`Failed to retrieve PageModels `
+                                + `from ${componentsUrl}: ${error.message}`);
 
                             this.setState({
                                 ...this.state,
@@ -880,6 +873,18 @@ class ContainerModelComponent
             });
     }
 
+    private getComponentModelEditor(
+        component: ComponentModel): React.ReactNode {
+
+        if (PageModelEditor.getAvailableComponents()[component.type] === null) {
+            return PageModelEditor
+                .getAvailableComponents()[component.type](component);
+
+        } else {
+            return <DefaultComponentModelEditor component={component} />;
+        }
+    }
+
     private deleteContainer(
         event: React.MouseEvent<HTMLButtonElement>,
         containerKey: string): void {
@@ -888,6 +893,55 @@ class ContainerModelComponent
 
         this.props.deleteContainer(containerKey);
     }
+}
+
+interface ComponentModelEditorProps {
+
+    component: ComponentModel;
+}
+
+abstract class AbstractComponentModelEditor
+    extends React.Component<ComponentModelEditorProps, {}> {
+
+    constructor(props: ComponentModelEditorProps) {
+
+        super(props);
+    }
+
+    public abstract renderPropertyList(): React.ReactFragment;
+
+    public abstract renderEditorDialog(): React.ReactFragment;
+
+    public render(): React.ReactNode {
+
+        return <li>
+            <dl>
+                <dt>Key</dt>
+                <dd>{this.props.component.key}</dd>
+                <dt>Type</dt>
+                <dd>{this.props.component.type}</dd>
+                {this.renderPropertyList}
+            </dl>
+        </li>;
+    }
+}
+
+class DefaultComponentModelEditor extends AbstractComponentModelEditor {
+
+    public renderPropertyList(): React.ReactFragment {
+
+        return <React.Fragment />;
+    }
+
+    public renderEditorDialog(): React.ReactFragment {
+
+        return <React.Fragment />;
+    }
+
+    public render(): React.ReactNode {
+        return super.render();
+    }
+
 }
 
 // interface PageModelEditorProps {
@@ -917,7 +971,27 @@ interface ComponentInfo {
 class PageModelEditor
     extends React.Component<{}, PageModelEditorState> {
 
-    private static components: ComponentInfo[];
+    public static getAvailableComponents(): {
+        [type: string]: (component: ComponentModel) => React.ReactFragment} {
+
+        return {
+            ...PageModelEditor.componentModelEditors,
+        };
+    }
+
+    public static registerComponentModelEditor(
+        type: string,
+        generator: ((component: ComponentModel) => React.ReactFragment)): void {
+
+        PageModelEditor.componentModelEditors = {
+            ...PageModelEditor.componentModelEditors,
+            type: generator,
+        };
+    }
+
+    private static componentModelEditors: {
+        [type: string]: (component: ComponentModel) => React.ReactFragment;
+    };
 
     private static getDispatcherPrefix(): string {
 
@@ -953,25 +1027,6 @@ class PageModelEditor
                 return value;
             }
         }
-    }
-
-    private static registerComponent(component: ComponentInfo): void {
-
-        PageModelEditor.components = [
-            ...PageModelEditor.components,
-            component,
-        ];
-
-        PageModelEditor.components.sort((component1, component2) => {
-
-            if (component1.label < component2.label) {
-                return -1;
-            } else if (component1.label > component2.label) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
     }
 
     constructor(props: any) {
