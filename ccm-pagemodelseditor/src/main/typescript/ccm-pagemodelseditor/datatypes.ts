@@ -3,7 +3,7 @@ export {
     ContainerModel,
     PageModel,
     PageModelVersion,
-    PublicationStatus
+    PublicationStatus,
 };
 
 interface ComponentModel {
@@ -14,6 +14,7 @@ interface ComponentModel {
     key: string;
     modelUuid: string;
     styleAttribute: string;
+    type: string;
     uuid: string;
 }
 
