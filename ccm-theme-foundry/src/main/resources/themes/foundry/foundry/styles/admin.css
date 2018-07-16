@@ -2064,3 +2064,24 @@ div.errorPanel {
     bottom: 5em;
     left: 5em;
 } */
+
+li.componentModelEditor dialog.closed {
+    display: none;
+}
+
+li.componentModelEditor dialog.closed {
+
+    border: 2px solid #ccc;
+    border-radius: 3em;
+
+    display: block;
+
+    position: fixed;
+    top: 10vh;
+    right: 10vw;
+    bottom: 10vh;
+    left: 10vw;
+
+    width: 80vw;
+    height: 80vh;
+}
