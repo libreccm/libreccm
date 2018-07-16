@@ -10,7 +10,9 @@ import {
 
 export {
     AbstractComponentModelEditor,
+    ComponentModel,
     ComponentModelEditorProps,
+    ComponentModelEditorState,
     ComponentInfo,
     PageModelEditor,
     PageModelEditorState,
@@ -876,10 +878,10 @@ class ContainerModelComponent
     private getComponentModelEditor(
         component: ComponentModel): React.ReactNode {
 
-        if (PageModelEditor.getAvailableComponents()[component.type] === null) {
+        if (PageModelEditor.getAvailableComponents()[component.type]) {
+            console.log(`Found editor generator: ${PageModelEditor.getAvailableComponents()[component.type]}`);
             return PageModelEditor
                 .getAvailableComponents()[component.type](component);
-
         } else {
             return <DefaultComponentModelEditor component={component} />;
         }
@@ -895,17 +897,31 @@ class ContainerModelComponent
     }
 }
 
-interface ComponentModelEditorProps {
+interface ComponentModelEditorProps<C extends ComponentModel> {
 
-    component: ComponentModel;
+    component: C;
 }
 
-abstract class AbstractComponentModelEditor
-    extends React.Component<ComponentModelEditorProps, {}> {
+interface ComponentModelEditorState {
 
-    constructor(props: ComponentModelEditorProps) {
+    dialogExpanded: string;
+}
 
-        super(props);
+abstract class AbstractComponentModelEditor<
+    C extends ComponentModel,
+    P extends ComponentModelEditorProps<C>,
+    S extends ComponentModelEditorState>
+
+    extends React.Component<P, S> {
+
+    constructor(props: ComponentModelEditorProps<C>) {
+
+        super(props as any);
+
+        this.setState({
+            ...this.state as any,
+            dialogExpanded: "dialogClosed",
+        });
     }
 
     public abstract renderPropertyList(): React.ReactFragment;
@@ -914,7 +930,7 @@ abstract class AbstractComponentModelEditor
 
     public render(): React.ReactNode {
 
-        return <li>
+        return <li className="componentModelEditor">
             <dl>
                 <dt>Key</dt>
                 <dd>{this.props.component.key}</dd>
@@ -922,11 +938,46 @@ abstract class AbstractComponentModelEditor
                 <dd>{this.props.component.type}</dd>
                 {this.renderPropertyList}
             </dl>
+            <button onClick={this.toggleEditorDialog}>
+                Edit
+            </button>
+            <dialog className="{this.state.dialogExpanded}">
+                {this.renderEditorDialog}
+            </dialog>
         </li>;
+    }
+
+    private toggleEditorDialog(
+        event: React.MouseEvent<HTMLButtonElement>): void {
+
+        if (this.state.dialogExpanded === "dialogExpanded") {
+            this.setState({
+                ...this.state as any,
+                dialogExpanded: "dialogClosed",
+            });
+        } else {
+            this.setState({
+                ...this.state as any,
+                dialogExpanded: "dialogExpanded",
+            });
+        }
     }
 }
 
-class DefaultComponentModelEditor extends AbstractComponentModelEditor {
+class DefaultComponentModelEditor
+    extends AbstractComponentModelEditor<
+        ComponentModel,
+        ComponentModelEditorProps<ComponentModel>,
+        ComponentModelEditorState> {
+
+    constructor(props: ComponentModelEditorProps<ComponentModel>) {
+
+        super(props);
+
+        this.setState({
+            dialogExpanded: "dialogClosed",
+        });
+    }
 
     public renderPropertyList(): React.ReactFragment {
 
@@ -973,6 +1024,9 @@ class PageModelEditor
 
     public static getAvailableComponents(): {
         [type: string]: (component: ComponentModel) => React.ReactFragment} {
+
+        console.log("Available editors:");
+        console.log(PageModelEditor.componentModelEditors.toString());
 
         return {
             ...PageModelEditor.componentModelEditors,
