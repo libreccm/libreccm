@@ -878,11 +878,20 @@ class ContainerModelComponent
     private getComponentModelEditor(
         component: ComponentModel): React.ReactNode {
 
+        console.log(`Trying to find editor for ${component.type}`);
+        // console.log("Available editors:");
+        // for(let key of Object.keys(PageModelEditor.getAvailableComponents())) {
+        //
+        //     console.log(`${key} -> ${PageModelEditor.getAvailableComponents()[key]}`);
+        // }
+
         if (PageModelEditor.getAvailableComponents()[component.type]) {
-            console.log(`Found editor generator: ${PageModelEditor.getAvailableComponents()[component.type]}`);
+            console.log(`Found a editor generator for ${component.type} `);
             return PageModelEditor
                 .getAvailableComponents()[component.type](component);
         } else {
+            console.warn(`No editor for type ${component.type} found. `
+                + `Using default editor.`);
             return <DefaultComponentModelEditor component={component} />;
         }
     }
@@ -936,13 +945,13 @@ abstract class AbstractComponentModelEditor<
                 <dd>{this.props.component.key}</dd>
                 <dt>Type</dt>
                 <dd>{this.props.component.type}</dd>
-                {this.renderPropertyList}
+                {this.renderPropertyList()}
             </dl>
             <button onClick={this.toggleEditorDialog}>
                 Edit
             </button>
             <dialog className="{this.state.dialogExpanded}">
-                {this.renderEditorDialog}
+                {this.renderEditorDialog()}
             </dialog>
         </li>;
     }
@@ -1026,7 +1035,10 @@ class PageModelEditor
         [type: string]: (component: ComponentModel) => React.ReactFragment} {
 
         console.log("Available editors:");
-        console.log(PageModelEditor.componentModelEditors.toString());
+        for(let key of Object.keys(PageModelEditor.componentModelEditors)) {
+
+            console.log(`${key} -> ${PageModelEditor.componentModelEditors}`);
+        }
 
         return {
             ...PageModelEditor.componentModelEditors,
@@ -1037,10 +1049,21 @@ class PageModelEditor
         type: string,
         generator: ((component: ComponentModel) => React.ReactFragment)): void {
 
-        PageModelEditor.componentModelEditors = {
+        console.log(`Registering editor for type ${type}...`);
+
+        const editors = {
             ...PageModelEditor.componentModelEditors,
-            type: generator,
         };
+
+        editors[type] = generator;
+        PageModelEditor.componentModelEditors = editors;
+
+        console.log("The following editors are now available:");
+        for(let key of Object.keys(PageModelEditor.componentModelEditors)) {
+
+            console.log(`${key} -> ${PageModelEditor.componentModelEditors}`);
+        }
+        console.log("-----------------------");
     }
 
     private static componentModelEditors: {

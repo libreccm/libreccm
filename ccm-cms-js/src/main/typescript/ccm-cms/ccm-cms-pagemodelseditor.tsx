@@ -113,11 +113,14 @@ class ItemListComponentEditor
             descending: false,
             limitToType: "",
             pageSize: 30,
-            listOrder: [ "objectId", ],
+            listOrder: [],
         });
     }
 
     public renderPropertyList(): React.ReactFragment {
+
+        console.log("Rendering properties list for ItemListComponent...");
+        console.log(`listOrder = ${this.props.component.listOrder}`);
 
         return <React.Fragment>
             <dt>descending</dt>
@@ -128,13 +131,15 @@ class ItemListComponentEditor
             <dd>{this.props.component.pageSize}</dd>
             <dt>listOrder</dt>
             <dd>
-                <ul>
-                {this.props.component.listOrder.map((order) => {
-                    <li>
-                        {order}
-                    </li>
-                })}
-                </ul>
+                {Array.isArray(this.props.component.listOrder) ?
+                    (
+                        this.props.component.listOrder.map((order) => {
+                            <li>
+                                {order}
+                            </li>
+                        })
+                    ) : ("No order set")
+                }
             </dd>
         </React.Fragment>
     }
