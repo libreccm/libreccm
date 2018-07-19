@@ -978,11 +978,12 @@ abstract class AbstractComponentModelEditor<
             <dialog aria-labelledby={this.props.component.key
                         + "_editDialogHeading"}
                     className={this.state.dialogExpanded}
-                    onKeyDown={(event) => this.closeOnEsc}
-                    open={this.state.dialogOpened}>
+                    onKeyPress={(event) => this.closeOnEsc(event)}
+                    open={this.state.dialogOpened}
+                    tabIndex={0}>
                 <button className="closeButton"
-                        onClick={(event) => this.toggleEditorDialog}>
-                    <span className="accessibility hidden">Close</span>
+                        onClick={(event) => this.closeOnButton(event)}>
+                    <span className="screenreader">Close</span>
                     <span className="fa fa-times-circle"></span>
                 </button>
                 <h1 id={this.props.component.key + "_editDialogHeading"}>
@@ -1013,7 +1014,9 @@ abstract class AbstractComponentModelEditor<
 
     private closeOnEsc(event: React.KeyboardEvent<HTMLElement>): void {
 
-        if (event.keyCode === 27) {
+        console.log(`Key press detected: ${event.key}`);
+
+        if (event.key === "27") {
             this.toggleEditorDialog();
         }
     }

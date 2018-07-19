@@ -108,6 +108,14 @@
 }
 /* Schriften Ende */
 
+.screenreader {
+    position: absolute;
+    top: -99em;
+    left: -99em;
+    width: 1px;
+    height: 1px;
+}
+
 /* Colors */
 h1, h2, h3 {
     margin: 0;
@@ -2091,7 +2099,7 @@ li.componentModelEditor dialog.dialogExpanded {
 
 li.componentModelEditor dialog.dialogExpanded button.closeButton {
 
-    background-color: none;
+    background-color: transparent;
 
     border: none;
 
