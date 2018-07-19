@@ -914,6 +914,8 @@ interface ComponentModelEditorProps<C extends ComponentModel> {
 interface ComponentModelEditorState {
 
     dialogExpanded: string;
+    dialogOpened: boolean | undefined;
+    componentKey: string;
 }
 
 abstract class AbstractComponentModelEditor<
@@ -927,10 +929,33 @@ abstract class AbstractComponentModelEditor<
 
         super(props as any);
 
-        this.setState({
+        this.state = {
             ...this.state as any,
             dialogExpanded: "dialogClosed",
-        });
+            dialogOpened: false,
+        };
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    public handleChange(event: React.ChangeEvent<HTMLElement>): void {
+
+        if (event.currentTarget.id === this.props.component.key + "_componentKey") {
+
+            const target: HTMLInputElement
+                = event.currentTarget as HTMLInputElement;
+
+            this.setState({
+                ...this.state as any,
+                componentKey: target.value,
+            });
+        }
+
+    }
+
+    public handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
+
     }
 
     public abstract renderPropertyList(): React.ReactFragment;
@@ -947,27 +972,65 @@ abstract class AbstractComponentModelEditor<
                 <dd>{this.props.component.type}</dd>
                 {this.renderPropertyList()}
             </dl>
-            <button onClick={this.toggleEditorDialog}>
+            <button onClick={(event) => this.closeOnButton(event)}>
                 Edit
             </button>
-            <dialog className="{this.state.dialogExpanded}">
-                {this.renderEditorDialog()}
+            <dialog aria-labelledby={this.props.component.key
+                        + "_editDialogHeading"}
+                    className={this.state.dialogExpanded}
+                    onKeyDown={(event) => this.closeOnEsc}
+                    open={this.state.dialogOpened}>
+                <button className="closeButton"
+                        onClick={(event) => this.toggleEditorDialog}>
+                    <span className="accessibility hidden">Close</span>
+                    <span className="fa fa-times-circle"></span>
+                </button>
+                <h1 id={this.props.component.key + "_editDialogHeading"}>
+                    Edit component {this.props.component.key}
+                </h1>
+                <form onSubmit={this.handleSubmit}>
+                    <label htmlFor={this.props.component.key + "_componentKey"}>
+                        Key
+                    </label>
+                    <input id={this.props.component.key + "_componentKey"}
+                           onChange={this.handleChange}
+                           required={true}
+                           type="text"
+                           value={this.state.componentKey} />
+                    {this.renderEditorDialog()}
+                </form>
+                <div className="backdrop"></div>
             </dialog>
         </li>;
     }
 
-    private toggleEditorDialog(
-        event: React.MouseEvent<HTMLButtonElement>): void {
+    private closeOnButton(event: React.MouseEvent<HTMLButtonElement>): void {
+
+        event.preventDefault();
+
+        this.toggleEditorDialog();
+    }
+
+    private closeOnEsc(event: React.KeyboardEvent<HTMLElement>): void {
+
+        if (event.keyCode === 27) {
+            this.toggleEditorDialog();
+        }
+    }
+
+    private toggleEditorDialog(): void {
 
         if (this.state.dialogExpanded === "dialogExpanded") {
             this.setState({
                 ...this.state as any,
                 dialogExpanded: "dialogClosed",
+                dialogOpened: false,
             });
         } else {
             this.setState({
                 ...this.state as any,
                 dialogExpanded: "dialogExpanded",
+                dialogOpened: true,
             });
         }
     }

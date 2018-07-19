@@ -146,6 +146,32 @@ class ItemListComponentEditor
 
     public renderEditorDialog(): React.ReactFragment {
 
-        return <React.Fragment />;
+        return <React.Fragment>
+            <label htmlFor="descending">
+                Descending?
+            </label>
+            <input checked={this.props.component.descending}
+                   id="descending"
+                   type="checkbox" />
+            <label htmlFor="limitToType">Limit to type</label>
+            <input id="limitToType"
+                   maxLength={1024}
+                   size={64}
+                   type="text"
+                   value={this.props.component.limitToType}/>
+            <label htmlFor="pageSize">Page size</label>
+            <input id="pageSize"
+                   min="1"
+                   type="number"
+                   value={this.props.component.pageSize}/>
+            <label htmlFor="listOrder">List Order</label>
+            <textarea cols={40} id="listOrder" rows={5}>
+                {Array.isArray(this.props.component.listOrder) ? (
+                    this.props.component.listOrder.join(", ")
+                ) : (
+                    ""
+                )}
+            </textarea>
+        </React.Fragment>;
     }
 }
