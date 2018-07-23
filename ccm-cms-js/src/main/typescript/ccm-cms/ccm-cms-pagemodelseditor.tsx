@@ -6,21 +6,28 @@ import { AbstractComponentModelEditor,
          ComponentModelEditorProps,
          ComponentModelEditorState,
          PageModelEditor,
-
 } from "ccm-pagemodelseditor";
 
 PageModelEditor.registerComponentModelEditor(
     "org.librecms.pagemodel.CategoryTreeComponent",
-    (categoryTree) => {
+    (props: ComponentModelEditorProps<ComponentModel>) => {
         return <CategoryTreeComponentEditor
-            component={categoryTree as CategoryTreeComponent} />
+            ccmApplication={props.ccmApplication}
+            component={props.component as CategoryTreeComponent}
+            containerKey={props.containerKey}
+            dispatcherPrefix={props.dispatcherPrefix}
+            pageModelName={props.pageModelName} />
     }
 );
 PageModelEditor.registerComponentModelEditor(
     "org.librecms.pagemodel.ItemListComponent",
-    (itemList) => {
+    (props: ComponentModelEditorProps<ComponentModel>) => {
         return <ItemListComponentEditor
-            component={itemList as ItemListComponent} />
+            ccmApplication={props.ccmApplication}
+            component={props.component as ItemListComponent}
+            containerKey={props.containerKey}
+            dispatcherPrefix={props.dispatcherPrefix}
+            pageModelName={props.pageModelName} />
     }
 );
 
