@@ -888,11 +888,22 @@ class ContainerModelComponent
         if (PageModelEditor.getAvailableComponents()[component.type]) {
             console.log(`Found a editor generator for ${component.type} `);
             return PageModelEditor
-                .getAvailableComponents()[component.type](component);
+                .getAvailableComponents()[component.type]({
+                    ccmApplication: this.props.ccmApplication,
+                    component,
+                    containerKey: this.props.container.key,
+                    dispatcherPrefix: this.props.dispatcherPrefix,
+                    pageModelName: this.props.pageModelName,
+                });
         } else {
             console.warn(`No editor for type ${component.type} found. `
                 + `Using default editor.`);
-            return <DefaultComponentModelEditor component={component} />;
+            return <DefaultComponentModelEditor
+                ccmApplication={this.props.ccmApplication}
+                component={component}
+                containerKey={this.props.container.key}
+                dispatcherPrefix={this.props.dispatcherPrefix}
+                pageModelName={this.props.pageModelName} />;
         }
     }
 
@@ -908,14 +919,19 @@ class ContainerModelComponent
 
 interface ComponentModelEditorProps<C extends ComponentModel> {
 
+    ccmApplication: string;
     component: C;
+    containerKey: string;
+    dispatcherPrefix: string;
+    pageModelName: string;
 }
 
 interface ComponentModelEditorState {
 
+    componentKey: string;
     dialogExpanded: string;
     dialogOpened: boolean | undefined;
-    componentKey: string;
+    errorMsg: string;
 }
 
 abstract class AbstractComponentModelEditor<
@@ -933,6 +949,7 @@ abstract class AbstractComponentModelEditor<
             ...this.state as any,
             dialogExpanded: "dialogClosed",
             dialogOpened: false,
+            errorMsg: null,
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -956,6 +973,50 @@ abstract class AbstractComponentModelEditor<
 
     public handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
 
+        const componentData: any = this.getComponentData();
+
+        const headers: Headers = new Headers();
+        headers.append("Content-Type", "application/json");
+
+        const init: RequestInit = {
+            body: JSON.stringify(componentData),
+            credentials: "same-origin",
+            headers,
+            method: "PUT",
+        };
+
+        const componentUrl = `${this.props.dispatcherPrefix}`
+            + `/page-models/${this.props.ccmApplication}`
+            + `/${this.props.pageModelName}`
+            + `/containers/${this.props.containerKey}`
+            + `/components/${this.state.componentKey}`;
+
+        fetch(componentUrl, init)
+            .then((response: Response) => {
+                if (response.ok) {
+                    this.toggleEditorDialog();
+                } else {
+                    this.setState({
+                        ...this.state as any,
+                        errorMsg: `Failed to update/create ComponentModel: `
+                            + ` ${response.status} ${response.statusText}`,
+                    });
+                }
+            })
+            .catch((error) => {
+                this.setState({
+                    ...this.state as any,
+                    errorMsg: `Failed to update/create ComponentModel: `
+                        + `${error.message}`,
+                })
+            });
+    }
+
+    public getComponentData(): any {
+
+        return {
+            key: this.state.componentKey,
+        };
     }
 
     public abstract renderPropertyList(): React.ReactFragment;
@@ -999,8 +1060,19 @@ abstract class AbstractComponentModelEditor<
                            type="text"
                            value={this.state.componentKey} />
                     {this.renderEditorDialog()}
+
+                    {this.state.errorMsg !== null &&
+                        <div className="errorPanel">
+                            {this.state.errorMsg}
+                        </div>
+                    }
+                    <div className="dialogButtonBar">
+                        <button type="submit">Save</button>
+                        <button onClick={(event) => this.closeOnButton(event)}>
+                            Cancel
+                        </button>
+                    </div>
                 </form>
-                <div className="backdrop"></div>
             </dialog>
         </li>;
     }
@@ -1098,7 +1170,8 @@ class PageModelEditor
     extends React.Component<{}, PageModelEditorState> {
 
     public static getAvailableComponents(): {
-        [type: string]: (component: ComponentModel) => React.ReactFragment} {
+        [type: string]: (props: ComponentModelEditorProps<ComponentModel>)
+                            => React.ReactFragment} {
 
         console.log("Available editors:");
         for(let key of Object.keys(PageModelEditor.componentModelEditors)) {
@@ -1113,7 +1186,8 @@ class PageModelEditor
 
     public static registerComponentModelEditor(
         type: string,
-        generator: ((component: ComponentModel) => React.ReactFragment)): void {
+        generator: ((props: ComponentModelEditorProps<ComponentModel>)
+                        => React.ReactFragment)): void {
 
         console.log(`Registering editor for type ${type}...`);
 
@@ -1133,7 +1207,8 @@ class PageModelEditor
     }
 
     private static componentModelEditors: {
-        [type: string]: (component: ComponentModel) => React.ReactFragment;
+        [type: string]: <C extends ComponentModel>(
+                props: ComponentModelEditorProps<C>) => React.ReactFragment;
     };
 
     private static getDispatcherPrefix(): string {
