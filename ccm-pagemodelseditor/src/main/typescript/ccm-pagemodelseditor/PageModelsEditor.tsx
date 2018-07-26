@@ -10,10 +10,19 @@ import {
 
 export {
     // OldAbstractComponentModelEditor,
-    ComponentModel,
+    BasicComponentModelEditorDialog,
+    BasicComponentModelEditorDialogProps,
+    BasicComponentModelEditorDialogState,
+    BasicComponentModelPropertiesList,
+    BasicComponentModelPropertiesListProps,
     // OldComponentModelEditorProps,
     // OldComponentModelEditorState,
+    ComponentModel,
+    ComponentModelEditor,
+    ComponentModelEditorProps,
+    ComponentModelEditorDialogProps,
     ComponentInfo,
+    EditorComponents,
     PageModelEditor,
     PageModelEditorState,
     // PageModelEditorProps,
@@ -1128,8 +1137,8 @@ class BasicComponentModelEditorDialog
 
 interface EditorComponents {
 
-    propertiesList: typeof React.Component;
     editorDialog: typeof React.Component;
+    propertiesList: typeof React.Component;
 }
 
 interface ComponentModelEditorProps {
@@ -1144,42 +1153,42 @@ interface ComponentModelEditorProps {
 class ComponentModelEditor
     extends React.Component<ComponentModelEditorProps, {}> {
 
-    private editorComponents: {[type: string]: EditorComponents};
-    private propertiesListComponents: {[type: string]: typeof React.Component};
-    private editorDialogComponents: {[type: string]: typeof React.Component};
+    private static editorComponents: {[type: string]: EditorComponents} = {};
+    // private propertiesListComponents: {[type: string]: typeof React.Component};
+    // private editorDialogComponents: {[type: string]: typeof React.Component};
 
     constructor(props: ComponentModelEditorProps) {
 
         super(props);
 
-        this.editorComponents = {};
-        this.propertiesListComponents = {};
-        this.editorDialogComponents = {};
+        // this.editorComponents = {};
+        // this.propertiesListComponents = {};
+        // this.editorDialogComponents = {};
     }
 
-    public registerEditorComponents(type: string,
-                                    components: EditorComponents) {
+    public static registerEditorComponents(type: string,
+                                           components: EditorComponents) {
 
-        this.editorComponents = {
-            ...this.editorComponents,
+        ComponentModelEditor.editorComponents = {
+            ...ComponentModelEditor.editorComponents,
             type: components,
         };
 
-        this.propertiesListComponents = {
-            ...this.propertiesListComponents,
-            type: components.propertiesList,
-        };
-
-        this.editorDialogComponents = {
-            ...this.editorDialogComponents,
-            type: components.editorDialog,
-        }
+        // this.propertiesListComponents = {
+        //     ...this.propertiesListComponents,
+        //     type: components.propertiesList,
+        // };
+        //
+        // this.editorDialogComponents = {
+        //     ...this.editorDialogComponents,
+        //     type: components.editorDialog,
+        // }
     }
 
     public render(): React.ReactNode {
 
         const components: EditorComponents
-            = this.editorComponents[this.props.component.type];
+            = ComponentModelEditor.editorComponents[this.props.component.type];
         const PropertiesList: typeof React.Component
             = components.propertiesList;
         const EditorDialog: typeof React.Component
@@ -1199,8 +1208,8 @@ class ComponentModelEditor
 
     private getEditorComponents(type: string): EditorComponents {
 
-        if (this.editorComponents.hasOwnProperty(type)) {
-            return this.editorComponents[type];
+        if (ComponentModelEditor.editorComponents.hasOwnProperty(type)) {
+            return ComponentModelEditor.editorComponents[type];
         } else {
             const basicComponents: EditorComponents = {
                 propertiesList:
