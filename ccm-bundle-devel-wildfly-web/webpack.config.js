@@ -8,7 +8,7 @@ module.exports = {
         ccmcms: "./src/main/typescript/ccm-cms.ts"
     },
 
-    mode: "production",
+    mode: "development",
 
     output: {
         //path: path.resolve(__dirname, "src/main/resources/dist"),

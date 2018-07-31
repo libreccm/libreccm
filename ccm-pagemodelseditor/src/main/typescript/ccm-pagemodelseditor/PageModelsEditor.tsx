@@ -1153,7 +1153,9 @@ interface ComponentModelEditorProps {
 class ComponentModelEditor
     extends React.Component<ComponentModelEditorProps, {}> {
 
-    private static editorComponents: {[type: string]: EditorComponents} = {};
+    private static editorComponents: Map<string, EditorComponents>
+        = new Map<string, EditorComponents>();
+    //{[type: string]: EditorComponents} = {};
     // private propertiesListComponents: {[type: string]: typeof React.Component};
     // private editorDialogComponents: {[type: string]: typeof React.Component};
 
@@ -1169,10 +1171,12 @@ class ComponentModelEditor
     public static registerEditorComponents(type: string,
                                            components: EditorComponents) {
 
-        ComponentModelEditor.editorComponents = {
-            ...ComponentModelEditor.editorComponents,
-            type: components,
-        };
+        ComponentModelEditor.editorComponents.set(type, components);
+
+        // ComponentModelEditor.editorComponents = {
+        //     ...ComponentModelEditor.editorComponents,
+        //     type: components,
+        // };
 
         // this.propertiesListComponents = {
         //     ...this.propertiesListComponents,
@@ -1188,11 +1192,12 @@ class ComponentModelEditor
     public render(): React.ReactNode {
 
         const components: EditorComponents
-            = ComponentModelEditor.editorComponents[this.props.component.type];
+            = this.getEditorComponents(this.props.component.type);
+            //= ComponentModelEditor.editorComponents[this.props.component.type];
         const PropertiesList: typeof React.Component
             = components.propertiesList;
         const EditorDialog: typeof React.Component
-            = components.propertiesList;
+            = components.editorDialog;
 
         return <li className="componentModelEditor">
             <PropertiesList component={this.props.component} />
@@ -1208,8 +1213,9 @@ class ComponentModelEditor
 
     private getEditorComponents(type: string): EditorComponents {
 
-        if (ComponentModelEditor.editorComponents.hasOwnProperty(type)) {
-            return ComponentModelEditor.editorComponents[type];
+        if (ComponentModelEditor.editorComponents.has(type)) {
+            return ComponentModelEditor
+                .editorComponents.get(type) as EditorComponents;
         } else {
             const basicComponents: EditorComponents = {
                 propertiesList:
