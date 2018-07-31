@@ -2113,6 +2113,23 @@ li.componentModelEditor dialog.dialogExpanded button.closeButton {
     z-index: 1200;
 }
 
+li.componentModelEditor {
+
+    border-bottom: 1px solid #ccc;
+
+    margin-bottom: 1em;
+
+    padding-bottom: 0.33em;
+}
+
+li.componentModelEditor dl dt {
+    font-weight: bold;
+}
+
+li.componentModelEditor dl dd {
+    margin-bottom: 0.5em;
+}
+
 li.componentModelEditor dialog.dialogExpanded h1 {
 
     background-color: #0776a0;
