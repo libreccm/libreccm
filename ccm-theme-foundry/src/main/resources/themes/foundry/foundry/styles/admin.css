@@ -2073,12 +2073,13 @@ div.errorPanel {
     left: 5em;
 } */
 
-li.componentModelEditor dialog.dialogClosed {
+li.componentModelEditor dialog.dialogClosed
+li.componentModelEditor dialog {
     display: none;
 }
 
-li.componentModelEditor dialog.dialogExpanded {
-
+li.componentModelEditor dialog.dialogExpanded,
+li.componentModelEditor dialog[open] {
     border: 2px solid #ccc;
     border-radius: 3rem;
 
@@ -2097,7 +2098,8 @@ li.componentModelEditor dialog.dialogExpanded {
     z-index: 1000;
 }
 
-li.componentModelEditor dialog.dialogExpanded button.closeButton {
+li.componentModelEditor dialog.dialogExpanded button.closeButton,
+li.componentModelEditor dialog[open] button.closeButton {
 
     background-color: transparent;
 
@@ -2130,7 +2132,8 @@ li.componentModelEditor dl dd {
     margin-bottom: 0.5em;
 }
 
-li.componentModelEditor dialog.dialogExpanded h1 {
+li.componentModelEditor dialog.dialogExpanded h1,
+li.componentModelEditor dialog[open] h1 {
 
     background-color: #0776a0;
 
@@ -2158,13 +2161,18 @@ li.componentModelEditor dialog.dialogExpanded h1 {
 
 li.componentModelEditor dialog.dialogExpanded input,
 li.componentModelEditor dialog.dialogExpanded label,
-li.componentModelEditor dialog.dialogExpanded textarea {
+li.componentModelEditor dialog.dialogExpanded textarea,
+li.componentModelEditor dialog[open] input,
+li.componentModelEditor dialog[open] label,
+li.componentModelEditor dialog[open] textarea {
 
     display: block;
 }
 
 li.componentModelEditor dialog.dialogExpanded input,
-li.componentModelEditor dialog.dialogExpanded textarea {
+li.componentModelEditor dialog.dialogExpanded textarea,
+li.componentModelEditor dialog[open] input,
+li.componentModelEditor dialog[open] textarea {
 
     margin-bottom: 1em;
 }

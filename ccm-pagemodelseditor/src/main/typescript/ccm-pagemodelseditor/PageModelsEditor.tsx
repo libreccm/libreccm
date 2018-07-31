@@ -797,6 +797,11 @@ class ContainerModelComponent
         this.fetchComponents();
     }
 
+    public componentDidUpdate() {
+
+        this.fetchComponents();
+    }
+
     public render(): React.ReactNode {
 
         return <li>
