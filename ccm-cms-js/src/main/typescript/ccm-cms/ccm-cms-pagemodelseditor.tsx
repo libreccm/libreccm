@@ -188,7 +188,7 @@ class ItemListComponentEditorDialog extends React.Component<
             <label htmlFor={`${idPrefix}descending`}>
                 Descending?
             </label>
-            <input checked={this.props.component.descending}
+            <input checked={this.state.descending}
                    id={`${idPrefix}descending`}
                    onChange={this.handleChange}
                    type="checkbox" />
@@ -200,15 +200,15 @@ class ItemListComponentEditorDialog extends React.Component<
                    onChange={this.handleChange}
                    size={64}
                    type="text"
-                   value={this.props.component.limitToType}/>
-            <label htmlFor={`$idPrefix}pageSize`}>
+                   value={this.state.limitToType}/>
+            <label htmlFor={`{$idPrefix}pageSize`}>
                 Page size
             </label>
             <input id={`${idPrefix}pageSize`}
                    min="1"
                    onChange={this.handleChange}
                    type="number"
-                   value={this.props.component.pageSize}/>
+                   value={this.state.pageSize}/>
             <label htmlFor={`${idPrefix}listOrder`}>
                 List Order
             </label>
@@ -216,8 +216,8 @@ class ItemListComponentEditorDialog extends React.Component<
                       id={`${idPrefix}listOrder`}
                       onChange={this.handleListOrderChange}
                       rows={5}>
-                {Array.isArray(this.props.component.listOrder) ? (
-                    this.props.component.listOrder.join("\n")
+                {Array.isArray(this.state.listOrder) ? (
+                    this.state.listOrder.join("\n")
                 ) : (
                     ""
                 )}
