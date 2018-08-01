@@ -171,6 +171,9 @@ class ItemListComponentEditorDialog extends React.Component<
         };
 
         this.handleChange = this.handleChange.bind(this);
+
+        this.getComponentModelProperties
+            = this.getComponentModelProperties.bind(this);
     }
 
     public render(): React.ReactNode {
@@ -215,12 +218,12 @@ class ItemListComponentEditorDialog extends React.Component<
             <textarea cols={40}
                       id={`${idPrefix}listOrder`}
                       onChange={this.handleListOrderChange}
-                      rows={5}>
-                {Array.isArray(this.state.listOrder) ? (
-                    this.state.listOrder.join("\n")
-                ) : (
-                    ""
-                )}
+                      rows={5}
+                      value={Array.isArray(this.state.listOrder) ? (
+                          this.state.listOrder.join("\n")
+                      ) : (
+                          ""
+                      )}>
             </textarea>
 
         </BasicComponentModelEditorDialog>;
