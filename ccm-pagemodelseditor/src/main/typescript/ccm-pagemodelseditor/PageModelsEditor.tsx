@@ -149,6 +149,7 @@ class PageModelsList
                         .map((pageModel: PageModel, index: number) =>
                             <PageModelListItem
                                 index={index}
+                                 key={pageModel.pageModelId}
                                 pageModel={pageModel}
                                 selectPageModel={this.props.selectPageModel} />,
                     )}
@@ -583,6 +584,7 @@ class ContainerListComponent
                             deleteContainer={this.deleteContainer}
                             dispatcherPrefix={this.props.dispatcherPrefix}
                             errorMsg=""
+                            key={container.containerUuid}
                             pageModelName={this.props.pageModelName} />)
                         // <li>
                         //     <span>{container.key}</span>
@@ -797,11 +799,6 @@ class ContainerModelComponent
         this.fetchComponents();
     }
 
-    public componentDidUpdate() {
-
-        this.fetchComponents();
-    }
-
     public render(): React.ReactNode {
 
         return <li>
@@ -823,6 +820,7 @@ class ContainerModelComponent
                             component={component}
                             containerKey={this.props.container.key}
                             dispatcherPrefix={this.props.dispatcherPrefix}
+                            key={component.componentModelId}
                             pageModelName={this.props.pageModelName} />
                         // this.getComponentModelEditor(component),
                     )}
@@ -1027,6 +1025,8 @@ class BasicComponentModelEditorDialog
     }
 
     public handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
+
+        event.preventDefault();
 
         const componentProperties: {[name: string]: any}
             = this.props.getComponentModelProperties();

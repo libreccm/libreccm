@@ -326,7 +326,7 @@ public class Components {
                      | InvocationTargetException ex) {
                 throw new WebApplicationException(ex);
             }
-            
+
             final String valueStr;
             if (value == null) {
                 valueStr = "";
@@ -469,11 +469,35 @@ public class Components {
         if (data.containsKey(propertyDesc.getName())) {
 
             final Method writeMethod = propertyDesc.getWriteMethod();
+            final Class<?> propertyType = propertyDesc.getPropertyType();
 
             if (writeMethod != null) {
                 try {
-                    writeMethod.invoke(componentModel,
-                                       data.getString(propertyDesc.getName()));
+
+                    final String value = data.getString(propertyDesc.getName());
+
+                    if (propertyType == Boolean.TYPE) {
+                        writeMethod.invoke(componentModel,
+                                           Boolean.parseBoolean(value));
+                    } else if (propertyType == Double.TYPE) {
+                        writeMethod.invoke(componentModel, 
+                                           Double.parseDouble(value));
+                    } else if (propertyType == Float.TYPE) {
+                        writeMethod.invoke(componentModel, 
+                                           Float.parseFloat(value));
+                    } else if (propertyType == Integer.TYPE) {
+                        writeMethod.invoke(componentModel,
+                                           Integer.parseInt(value));
+                    } else if (propertyType == Long.TYPE) {
+                        writeMethod.invoke(componentModel,
+                                           Long.parseLong(value));
+                    } else if (propertyType == String.class) {
+                        writeMethod.invoke(componentModel, value);
+                    } else {
+                        throw new IllegalArgumentException(
+                            "Unsupported property type.");
+                    }
+
                 } catch (IllegalAccessException
                          | InvocationTargetException ex) {
                     throw new WebApplicationException(ex);
