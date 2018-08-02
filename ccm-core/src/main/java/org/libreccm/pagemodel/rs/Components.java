@@ -34,10 +34,12 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -46,6 +48,7 @@ import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
@@ -323,7 +326,7 @@ public class Components {
             try {
                 value = readMethod.invoke(componentModel);
             } catch (IllegalAccessException
-                     | InvocationTargetException ex) {
+                         | InvocationTargetException ex) {
                 throw new WebApplicationException(ex);
             }
 
@@ -370,9 +373,9 @@ public class Components {
         try {
             componentModel = clazz.getConstructor().newInstance();
         } catch (IllegalAccessException
-                 | InstantiationException
-                 | InvocationTargetException
-                 | NoSuchMethodException ex) {
+                     | InstantiationException
+                     | InvocationTargetException
+                     | NoSuchMethodException ex) {
             throw new WebApplicationException(ex);
         }
 
@@ -474,32 +477,70 @@ public class Components {
             if (writeMethod != null) {
                 try {
 
-                    final String value = data.getString(propertyDesc.getName());
+//                    final String value = data.getString(propertyDesc.getName());
+                    final JsonValue value = data.get(propertyDesc.getName());
+//                    final JsonValue.ValueType valueType = value.getValueType();
 
                     if (propertyType == Boolean.TYPE) {
-                        writeMethod.invoke(componentModel,
-                                           Boolean.parseBoolean(value));
+                        writeMethod.invoke(
+                            componentModel,
+                            Boolean.parseBoolean(value.toString()));
                     } else if (propertyType == Double.TYPE) {
-                        writeMethod.invoke(componentModel, 
-                                           Double.parseDouble(value));
+                        writeMethod.invoke(
+                            componentModel,
+                                           Double.parseDouble(value.toString()));
                     } else if (propertyType == Float.TYPE) {
-                        writeMethod.invoke(componentModel, 
-                                           Float.parseFloat(value));
+                        writeMethod.invoke(componentModel,
+                                           Float.parseFloat(value.toString()));
                     } else if (propertyType == Integer.TYPE) {
                         writeMethod.invoke(componentModel,
-                                           Integer.parseInt(value));
+                                           Integer.parseInt(value.toString()));
                     } else if (propertyType == Long.TYPE) {
                         writeMethod.invoke(componentModel,
-                                           Long.parseLong(value));
+                                           Long.parseLong(value.toString()));
                     } else if (propertyType == String.class) {
-                        writeMethod.invoke(componentModel, value);
+                        writeMethod.invoke(componentModel, value.toString());
+                    } else if (propertyType == List.class) {
+
+                        final JsonValue valueObj = data
+                            .get(propertyDesc.getName());
+                        if (valueObj.getValueType()
+                                == JsonValue.ValueType.ARRAY) {
+
+                            final JsonArray dataArray = data
+                                .getJsonArray(propertyDesc.getName());
+                            final List<String> values = dataArray
+                                .stream()
+                                .map(jsonValue -> jsonValue.toString())
+                                .collect(Collectors.toList());
+                            writeMethod.invoke(componentModel, values);
+                        } else {
+
+                            String valueStr = value.toString();
+                            if (valueStr.startsWith("[")) {
+                                valueStr = valueStr.substring(1);
+                            }
+
+                            if (valueStr.endsWith("]")) {
+                                valueStr = valueStr
+                                    .substring(valueStr.length() - 1);
+                            }
+
+                            final String[] tokens = valueStr.split(",");
+
+                            final List<String> values = Arrays
+                                .stream(tokens)
+                                .map(token -> token.trim())
+                                .collect(Collectors.toList());
+                            writeMethod.invoke(componentModel, values);
+                        }
                     } else {
                         throw new IllegalArgumentException(
                             "Unsupported property type.");
                     }
 
                 } catch (IllegalAccessException
-                         | InvocationTargetException ex) {
+                             | InvocationTargetException ex) {
                     throw new WebApplicationException(ex);
                 }
             }
