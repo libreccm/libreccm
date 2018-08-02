@@ -821,7 +821,7 @@ class ContainerModelComponent
                             containerKey={this.props.container.key}
                             dispatcherPrefix={this.props.dispatcherPrefix}
                             key={component.componentModelId}
-                            pageModelName={this.props.pageModelName} />
+                            pageModelName={this.props.pageModelName} />,
                         // this.getComponentModelEditor(component),
                     )}
                 </ul>
@@ -892,40 +892,8 @@ class ContainerModelComponent
                 });
             });
     }
-    //
-    // private getComponentModelEditor(
-    //     component: ComponentModel): React.ReactNode {
-    //
-    //     console.log(`Trying to find editor for ${component.type}`);
-    //     // console.log("Available editors:");
-    //     // for(let key of Object.keys(PageModelEditor.getAvailableComponents())) {
-    //     //
-    //     //     console.log(`${key} -> ${PageModelEditor.getAvailableComponents()[key]}`);
-    //     // }
-    //
-    //     if (PageModelEditor.getAvailableComponents()[component.type]) {
-    //         console.log(`Found a editor generator for ${component.type} `);
-    //         return PageModelEditor
-    //             .getAvailableComponents()[component.type]({
-    //                 ccmApplication: this.props.ccmApplication,
-    //                 component,
-    //                 containerKey: this.props.container.key,
-    //                 dispatcherPrefix: this.props.dispatcherPrefix,
-    //                 pageModelName: this.props.pageModelName,
-    //             });
-    //     } else {
-    //         console.warn(`No editor for type ${component.type} found. `
-    //             + `Using default editor.`);
-    //         return <OldDefaultComponentModelEditor
-    //             ccmApplication={this.props.ccmApplication}
-    //             component={component}
-    //             containerKey={this.props.container.key}
-    //             dispatcherPrefix={this.props.dispatcherPrefix}
-    //             pageModelName={this.props.pageModelName} />;
-    //     }
-    // }
 
-    private deleteContainer(
+        private deleteContainer(
         event: React.MouseEvent<HTMLButtonElement>,
         containerKey: string): void {
 
@@ -962,16 +930,9 @@ interface BasicComponentModelEditorDialogState {
     errorMsg: string | null;
 }
 
-
-
 class BasicComponentModelPropertiesList
     extends React.Component<
         BasicComponentModelPropertiesListProps<ComponentModel>, {}> {
-
-    // constructor(props: BasicComponentModelPropertiesListProps<ComponentModel>) {
-    //
-    //     super(props);
-    // }
 
     public render(): React.ReactNode {
 
@@ -981,7 +942,7 @@ class BasicComponentModelPropertiesList
             <dt>Type</dt>
             <dd>{this.props.component.type}</dd>
             {this.props.children}
-        </dl>
+        </dl>;
     }
 }
 
@@ -1011,7 +972,7 @@ class BasicComponentModelEditorDialog
         const idPrefix: string
             = `${this.props.containerKey}_${this.props.component.key}_`;
 
-        switch(target.id) {
+        switch (target.id) {
             case `${idPrefix}componentKey`: {
 
                 const componentKey: string = target.value;
@@ -1069,7 +1030,7 @@ class BasicComponentModelEditorDialog
                     ...this.state as any,
                     errorMsg: `Failed to update/create ComponentModel: `
                         + `${error.message}`,
-                })
+                });
             });
     }
 
@@ -1115,7 +1076,8 @@ class BasicComponentModelEditorDialog
 
                     <div className="dialogButtonBar">
                         <button type="submit">Save</button>
-                        <button onClick={(event) => this.openCloseOnButton(event)}>
+                        <button
+                            onClick={(event) => this.openCloseOnButton(event)}>
                             Cancel
                         </button>
                     </div>
@@ -1158,47 +1120,24 @@ interface ComponentModelEditorProps {
 class ComponentModelEditor
     extends React.Component<ComponentModelEditorProps, {}> {
 
-    private static editorComponents: Map<string, EditorComponents>
-        = new Map<string, EditorComponents>();
-    //{[type: string]: EditorComponents} = {};
-    // private propertiesListComponents: {[type: string]: typeof React.Component};
-    // private editorDialogComponents: {[type: string]: typeof React.Component};
-
-    constructor(props: ComponentModelEditorProps) {
-
-        super(props);
-
-        // this.editorComponents = {};
-        // this.propertiesListComponents = {};
-        // this.editorDialogComponents = {};
-    }
-
     public static registerEditorComponents(type: string,
                                            components: EditorComponents) {
 
         ComponentModelEditor.editorComponents.set(type, components);
+    }
 
-        // ComponentModelEditor.editorComponents = {
-        //     ...ComponentModelEditor.editorComponents,
-        //     type: components,
-        // };
+    private static editorComponents: Map<string, EditorComponents>
+        = new Map<string, EditorComponents>();
 
-        // this.propertiesListComponents = {
-        //     ...this.propertiesListComponents,
-        //     type: components.propertiesList,
-        // };
-        //
-        // this.editorDialogComponents = {
-        //     ...this.editorDialogComponents,
-        //     type: components.editorDialog,
-        // }
+    constructor(props: ComponentModelEditorProps) {
+
+        super(props);
     }
 
     public render(): React.ReactNode {
 
         const components: EditorComponents
             = this.getEditorComponents(this.props.component.type);
-            //= ComponentModelEditor.editorComponents[this.props.component.type];
         const PropertiesList: typeof React.Component
             = components.propertiesList;
         const EditorDialog: typeof React.Component
@@ -1213,7 +1152,7 @@ class ComponentModelEditor
                 containerKey={this.props.containerKey}
                 dispatcherPrefix={this.props.dispatcherPrefix}
                 pageModelName={this.props.pageModelName} />
-        </li>
+        </li>;
     }
 
     private getEditorComponents(type: string): EditorComponents {
@@ -1223,10 +1162,10 @@ class ComponentModelEditor
                 .editorComponents.get(type) as EditorComponents;
         } else {
             const basicComponents: EditorComponents = {
-                propertiesList:
-                    BasicComponentModelPropertiesList as typeof React.Component,
                 editorDialog:
                     BasicComponentModelEditorDialog as typeof React.Component,
+                propertiesList:
+                    BasicComponentModelPropertiesList as typeof React.Component,
             };
 
             return basicComponents;
@@ -1234,235 +1173,6 @@ class ComponentModelEditor
     }
 }
 
-// interface OldComponentModelEditorProps<C extends ComponentModel> {
-//
-//     ccmApplication: string;
-//     component: C;
-//     containerKey: string;
-//     dispatcherPrefix: string;
-//     pageModelName: string;
-// }
-//
-// interface OldComponentModelEditorState {
-//
-//     componentKey: string;
-//     dialogExpanded: string;
-//     dialogOpened: boolean | undefined;
-//     errorMsg: string;
-// }
-//
-// abstract class OldAbstractComponentModelEditor<
-//     C extends ComponentModel,
-//     P extends OldComponentModelEditorProps<C>,
-//     S extends OldComponentModelEditorState>
-//
-//     extends React.Component<P, S> {
-//
-//     constructor(props: OldComponentModelEditorProps<C>) {
-//
-//         super(props as any);
-//
-//         this.state = {
-//             ...this.state as any,
-//             dialogExpanded: "dialogClosed",
-//             dialogOpened: false,
-//             errorMsg: null,
-//         };
-//
-//         this.handleChange = this.handleChange.bind(this);
-//         this.handleSubmit = this.handleSubmit.bind(this);
-//     }
-//
-//     public handleChange(event: React.ChangeEvent<HTMLElement>): void {
-//
-//         if (event.currentTarget.id === this.props.component.key + "_componentKey") {
-//
-//             const target: HTMLInputElement
-//                 = event.currentTarget as HTMLInputElement;
-//
-//             this.setState({
-//                 ...this.state as any,
-//                 componentKey: target.value,
-//             });
-//         }
-//
-//     }
-//
-//     public handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
-//
-//         const componentData: any = this.getComponentData();
-//
-//         const headers: Headers = new Headers();
-//         headers.append("Content-Type", "application/json");
-//
-//         const init: RequestInit = {
-//             body: JSON.stringify(componentData),
-//             credentials: "same-origin",
-//             headers,
-//             method: "PUT",
-//         };
-//
-//         const componentUrl = `${this.props.dispatcherPrefix}`
-//             + `/page-models/${this.props.ccmApplication}`
-//             + `/${this.props.pageModelName}`
-//             + `/containers/${this.props.containerKey}`
-//             + `/components/${this.state.componentKey}`;
-//
-//         fetch(componentUrl, init)
-//             .then((response: Response) => {
-//                 if (response.ok) {
-//                     this.toggleEditorDialog();
-//                 } else {
-//                     this.setState({
-//                         ...this.state as any,
-//                         errorMsg: `Failed to update/create ComponentModel: `
-//                             + ` ${response.status} ${response.statusText}`,
-//                     });
-//                 }
-//             })
-//             .catch((error) => {
-//                 this.setState({
-//                     ...this.state as any,
-//                     errorMsg: `Failed to update/create ComponentModel: `
-//                         + `${error.message}`,
-//                 })
-//             });
-//     }
-//
-//     public getComponentData(): any {
-//
-//         return {
-//             key: this.state.componentKey,
-//         };
-//     }
-//
-//     public abstract renderPropertyList(): React.ReactFragment;
-//
-//     public abstract renderEditorDialog(): React.ReactFragment;
-//
-//     public render(): React.ReactNode {
-//
-//         return <li className="componentModelEditor">
-//             <dl>
-//                 <dt>Key</dt>
-//                 <dd>{this.props.component.key}</dd>
-//                 <dt>Type</dt>
-//                 <dd>{this.props.component.type}</dd>
-//                 {this.renderPropertyList()}
-//             </dl>
-//             <button onClick={(event) => this.closeOnButton(event)}>
-//                 Edit
-//             </button>
-//             <dialog aria-labelledby={this.props.component.key
-//                         + "_editDialogHeading"}
-//                     className={this.state.dialogExpanded}
-//                     onKeyPress={(event) => this.closeOnEsc(event)}
-//                     open={this.state.dialogOpened}
-//                     tabIndex={0}>
-//                 <button className="closeButton"
-//                         onClick={(event) => this.closeOnButton(event)}>
-//                     <span className="screenreader">Close</span>
-//                     <span className="fa fa-times-circle"></span>
-//                 </button>
-//                 <h1 id={this.props.component.key + "_editDialogHeading"}>
-//                     Edit component {this.props.component.key}
-//                 </h1>
-//                 <form onSubmit={this.handleSubmit}>
-//                     <label htmlFor={this.props.component.key + "_componentKey"}>
-//                         Key
-//                     </label>
-//                     <input id={this.props.component.key + "_componentKey"}
-//                            onChange={this.handleChange}
-//                            required={true}
-//                            type="text"
-//                            value={this.state.componentKey} />
-//                     {this.renderEditorDialog()}
-//
-//                     {this.state.errorMsg !== null &&
-//                         <div className="errorPanel">
-//                             {this.state.errorMsg}
-//                         </div>
-//                     }
-//                     <div className="dialogButtonBar">
-//                         <button type="submit">Save</button>
-//                         <button onClick={(event) => this.closeOnButton(event)}>
-//                             Cancel
-//                         </button>
-//                     </div>
-//                 </form>
-//             </dialog>
-//         </li>;
-//     }
-//
-//     private closeOnButton(event: React.MouseEvent<HTMLButtonElement>): void {
-//
-//         event.preventDefault();
-//
-//         this.toggleEditorDialog();
-//     }
-//
-//     private closeOnEsc(event: React.KeyboardEvent<HTMLElement>): void {
-//
-//         console.log(`Key press detected: ${event.key}`);
-//
-//         if (event.key === "27") {
-//             this.toggleEditorDialog();
-//         }
-//     }
-//
-//     private toggleEditorDialog(): void {
-//
-//         if (this.state.dialogExpanded === "dialogExpanded") {
-//             this.setState({
-//                 ...this.state as any,
-//                 dialogExpanded: "dialogClosed",
-//                 dialogOpened: false,
-//             });
-//         } else {
-//             this.setState({
-//                 ...this.state as any,
-//                 dialogExpanded: "dialogExpanded",
-//                 dialogOpened: true,
-//             });
-//         }
-//     }
-// }
-//
-// class OldDefaultComponentModelEditor
-//     extends OldAbstractComponentModelEditor<
-//         ComponentModel,
-//         OldComponentModelEditorProps<ComponentModel>,
-//         OldComponentModelEditorState> {
-//
-//     constructor(props: OldComponentModelEditorProps<ComponentModel>) {
-//
-//         super(props);
-//
-//         this.setState({
-//             dialogExpanded: "dialogClosed",
-//         });
-//     }
-//
-//     public renderPropertyList(): React.ReactFragment {
-//
-//         return <React.Fragment />;
-//     }
-//
-//     public renderEditorDialog(): React.ReactFragment {
-//
-//         return <React.Fragment />;
-//     }
-//
-//     public render(): React.ReactNode {
-//         return super.render();
-//     }
-//
-// }
-
-// interface PageModelEditorProps {
-//
-// }
-//
 interface PageModelEditorState {
 
     selectedPageModel: PageModel | null;
@@ -1485,48 +1195,6 @@ interface ComponentInfo {
 
 class PageModelEditor
     extends React.Component<{}, PageModelEditorState> {
-
-    // public static getAvailableComponents(): {
-    //     [type: string]: (props: OldComponentModelEditorProps<ComponentModel>)
-    //                         => React.ReactFragment} {
-    //
-    //     console.log("Available editors:");
-    //     for(let key of Object.keys(PageModelEditor.componentModelEditors)) {
-    //
-    //         console.log(`${key} -> ${PageModelEditor.componentModelEditors}`);
-    //     }
-    //
-    //     return {
-    //         ...PageModelEditor.componentModelEditors,
-    //     };
-    // }
-
-    // public static registerComponentModelEditor(
-    //     type: string,
-    //     generator: ((props: OldComponentModelEditorProps<ComponentModel>)
-    //                     => React.ReactFragment)): void {
-    //
-    //     console.log(`Registering editor for type ${type}...`);
-    //
-    //     const editors = {
-    //         ...PageModelEditor.componentModelEditors,
-    //     };
-    //
-    //     editors[type] = generator;
-    //     PageModelEditor.componentModelEditors = editors;
-    //
-    //     console.log("The following editors are now available:");
-    //     for(let key of Object.keys(PageModelEditor.componentModelEditors)) {
-    //
-    //         console.log(`${key} -> ${PageModelEditor.componentModelEditors}`);
-    //     }
-    //     console.log("-----------------------");
-    // }
-    //
-    // private static componentModelEditors: {
-    //     [type: string]: <C extends ComponentModel>(
-    //             props: OldComponentModelEditorProps<C>) => React.ReactFragment;
-    // };
 
     private static getDispatcherPrefix(): string {
 
@@ -1568,13 +1236,6 @@ class PageModelEditor
 
         super(props);
 
-        // this.state = {
-        //     // selectedPageModel: newPageModel,
-        //     context: {
-        //         pageModelSelected: false,
-        //         selectedPageModel: newPageModel,
-        //     },
-        // };
         this.state = {
             errorMessages: [],
             pageModels: [],
@@ -1745,10 +1406,6 @@ class PageModelEditor
     private reload(): void {
 
         this.fetchPageModels();
-        // this.setState({
-        //     ...this.state,
-        //     selectedPageModel: null,
-        // });
     }
 
     private selectPageModel(selectedPageModel: PageModel): void {
@@ -1761,14 +1418,4 @@ class PageModelEditor
                 };
             });
     }
-
-    // private setSelectedPageModel(selectedPageModel: PageModel): void {
-    //
-    //     this.setState((state: any) => {
-    //         return {
-    //             ...state,
-    //             selectedPageModel,
-    //         };
-    //     });
-    // }
 }
