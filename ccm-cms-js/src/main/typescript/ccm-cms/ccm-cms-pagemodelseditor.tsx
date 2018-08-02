@@ -2,21 +2,18 @@ import * as React from "react";
 import { render } from "react-dom";
 
 import {
-        // AbstractComponentModelEditor,
-        ComponentModel,
         BasicComponentModelEditorDialog,
         BasicComponentModelEditorDialogProps,
         BasicComponentModelEditorDialogState,
         BasicComponentModelPropertiesList,
         BasicComponentModelPropertiesListProps,
-        ComponentModelEditor,
-        ComponentModelEditorProps,
-        ComponentModelEditorDialogProps,
         ComponentInfo,
+        ComponentModel,
+        ComponentModelEditor,
+        ComponentModelEditorDialogProps,
+        ComponentModelEditorProps,
         EditorComponents,
-         // ComponentModelEditorProps,
-         // ComponentModelEditorState,
-         PageModelEditor,
+        PageModelEditor,
 } from "ccm-pagemodelseditor";
 
 class CategoryTreeComponentPropertiesList
@@ -35,7 +32,7 @@ class CategoryTreeComponentPropertiesList
             component={this.props.component}>
             <dt>showFullTree</dt>
             <dd>{this.props.component.showFullTree}</dd>
-        </BasicComponentModelPropertiesList>
+        </BasicComponentModelPropertiesList>;
     }
 }
 
@@ -81,7 +78,7 @@ class CategoryTreeComponentEditorDialog
                    id={`${idPrefix}showFullTree`}
                    onChange={this.handleChange}
                    type="checkbox" />
-        </BasicComponentModelEditorDialog>
+        </BasicComponentModelEditorDialog>;
     }
 
     private getComponentModelProperties(): {[name: string]: any} {
@@ -97,7 +94,7 @@ class CategoryTreeComponentEditorDialog
         const idPrefix: string
             = `${this.props.containerKey}_${this.props.component.key}_`;
 
-        switch(target.id) {
+        switch (target.id) {
             case `${idPrefix}showFullTree`: {
                 this.setState({
                     ...this.state,
@@ -132,15 +129,15 @@ class ItemListComponentPropertiesList extends React.Component<
             <dd>
                 {Array.isArray(this.props.component.listOrder) ?
                     (
-                        this.props.component.listOrder.map((order) => {
+                        this.props.component.listOrder.map((order) =>
                             <li>
                                 {order}
-                            </li>
-                        })
+                            </li>,
+                        )
                     ) : ("No order set")
                 }
             </dd>
-        </BasicComponentModelPropertiesList>
+        </BasicComponentModelPropertiesList>;
     }
 }
 
@@ -166,8 +163,8 @@ class ItemListComponentEditorDialog extends React.Component<
             ...this.state,
             descending: this.props.component.descending,
             limitToType: this.props.component.limitToType,
-            pageSize: this.props.component.pageSize,
             listOrder: this.props.component.listOrder,
+            pageSize: this.props.component.pageSize,
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -234,8 +231,8 @@ class ItemListComponentEditorDialog extends React.Component<
         return {
             descending: this.state.descending,
             limitToType: this.state.limitToType,
-            pageSize: this.state.pageSize,
             listOrder: this.state.listOrder,
+            pageSize: this.state.pageSize,
         };
     }
 
@@ -245,7 +242,7 @@ class ItemListComponentEditorDialog extends React.Component<
         const idPrefix: string
             = `${this.props.containerKey}_${this.props.component.key}_`;
 
-        switch(target.id) {
+        switch (target.id) {
             case `${idPrefix}descending`: {
                 this.setState({
                     ...this.state,
@@ -287,29 +284,6 @@ class ItemListComponentEditorDialog extends React.Component<
 
 }
 
-// PageModelEditor.registerComponentModelEditor(
-//     "org.librecms.pagemodel.CategoryTreeComponent",
-//     (props: ComponentModelEditorProps<ComponentModel>) => {
-//         return <CategoryTreeComponentEditor
-//             ccmApplication={props.ccmApplication}
-//             component={props.component as CategoryTreeComponent}
-//             containerKey={props.containerKey}
-//             dispatcherPrefix={props.dispatcherPrefix}
-//             pageModelName={props.pageModelName} />
-//     }
-// );
-// PageModelEditor.registerComponentModelEditor(
-//     "org.librecms.pagemodel.ItemListComponent",
-//     (props: ComponentModelEditorProps<ComponentModel>) => {
-//         return <ItemListComponentEditor
-//             ccmApplication={props.ccmApplication}
-//             component={props.component as ItemListComponent}
-//             containerKey={props.containerKey}
-//             dispatcherPrefix={props.dispatcherPrefix}
-//             pageModelName={props.pageModelName} />
-//     }
-// );
-
 render(
     <PageModelEditor />,
     document.getElementById("cms-content"),
@@ -320,54 +294,12 @@ interface CategoryTreeComponent extends ComponentModel {
     showFullTree: boolean;
 }
 
-// interface CategoryTreeComponentEditorProps
-//     extends ComponentModelEditorProps<CategoryTreeComponent> {
-//
-// }
-//
-// interface CategoryTreeComponentEditorState
-//     extends ComponentModelEditorState {
-//
-//     showFullTree: boolean;
-// }
-//
-//
-// class CategoryTreeComponentEditor
-//     extends AbstractComponentModelEditor<CategoryTreeComponent,
-//                                          CategoryTreeComponentEditorProps,
-//                                          CategoryTreeComponentEditorState> {
-//
-//     public constructor(props: CategoryTreeComponentEditorProps) {
-//
-//         super(props);
-//
-//         this.setState({
-//             ...this.state as any,
-//             dialogExpanded: "dialogClosed",
-//             showFullTree: false,
-//         });
-//     }
-//
-//     public renderPropertyList(): React.ReactFragment {
-//
-//         return <React.Fragment>
-//             <dt>Show full tree</dt>
-//             <dd>{this.props.component.showFullTree}</dd>
-//         </React.Fragment>;
-//     }
-//
-//     public renderEditorDialog(): React.ReactFragment {
-//
-//         return <React.Fragment />;
-//     }
-// }
-
 interface ItemListComponent extends ComponentModel {
 
     descending: boolean;
     limitToType: string;
+    listOrder: string[];
     pageSize: number;
-    listOrder: string[],
 }
 
 ComponentModelEditor.registerEditorComponents(
@@ -377,7 +309,7 @@ ComponentModelEditor.registerEditorComponents(
             CategoryTreeComponentEditorDialog as typeof React.Component,
         propertiesList:
             CategoryTreeComponentPropertiesList as typeof React.Component,
-    }
+    },
 );
 
 ComponentModelEditor.registerEditorComponents(
@@ -387,98 +319,5 @@ ComponentModelEditor.registerEditorComponents(
             ItemListComponentEditorDialog as typeof React.Component,
         propertiesList:
             ItemListComponentPropertiesList as typeof React.Component,
-    }
+    },
 );
-
-
-// interface ItemListComponentEditorProps
-//     extends ComponentModelEditorProps<ItemListComponent> {
-//
-// }
-//
-// interface ItemListComponentEditorState
-//     extends ComponentModelEditorState {
-//
-//     descending: boolean;
-//     limitToType: string;
-//     pageSize: number;
-//     listOrder: string[];
-// }
-//
-// class ItemListComponentEditor
-//     extends AbstractComponentModelEditor<ItemListComponent,
-//                                          ItemListComponentEditorProps,
-//                                          ItemListComponentEditorState> {
-//
-//     public constructor(props: ItemListComponentEditorProps) {
-//
-//         super(props as any);
-//
-//         this.setState({
-//             ...this.state,
-//             dialogExpanded: "dialogClosed",
-//             descending: false,
-//             limitToType: "",
-//             pageSize: 30,
-//             listOrder: [],
-//         });
-//     }
-//
-//     public renderPropertyList(): React.ReactFragment {
-//
-//         console.log("Rendering properties list for ItemListComponent...");
-//         console.log(`listOrder = ${this.props.component.listOrder}`);
-//
-//         return <React.Fragment>
-//             <dt>descending</dt>
-//             <dd>{this.props.component.descending}</dd>
-//             <dt>limitToType</dt>
-//             <dd>{this.props.component.limitToType}</dd>
-//             <dt>pageSize</dt>
-//             <dd>{this.props.component.pageSize}</dd>
-//             <dt>listOrder</dt>
-//             <dd>
-//                 {Array.isArray(this.props.component.listOrder) ?
-//                     (
-//                         this.props.component.listOrder.map((order) => {
-//                             <li>
-//                                 {order}
-//                             </li>
-//                         })
-//                     ) : ("No order set")
-//                 }
-//             </dd>
-//         </React.Fragment>
-//     }
-//
-//     public renderEditorDialog(): React.ReactFragment {
-//
-//         return <React.Fragment>
-//             <label htmlFor="descending">
-//                 Descending?
-//             </label>
-//             <input checked={this.props.component.descending}
-//                    id="descending"
-//                    type="checkbox" />
-//             <label htmlFor="limitToType">Limit to type</label>
-//             <input id="limitToType"
-//                    maxLength={1024}
-//                    size={64}
-//                    type="text"
-//                    value={this.props.component.limitToType}/>
-//             <label htmlFor="pageSize">Page size</label>
-//             <input id="pageSize"
-//                    min="1"
-//                    type="number"
-//                    value={this.props.component.pageSize}/>
-//             <label htmlFor="listOrder">List Order</label>
-//             <textarea cols={40} id="listOrder" rows={5}>
-//                 {Array.isArray(this.props.component.listOrder) ? (
-//                     this.props.component.listOrder.join(", ")
-//                 ) : (
-//                     ""
-//                 )}
-//             </textarea>
-//         </React.Fragment>;
-//     }
-// }
