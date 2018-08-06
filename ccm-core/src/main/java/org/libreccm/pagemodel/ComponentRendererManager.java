@@ -71,7 +71,7 @@ public class ComponentRendererManager {
                          + "and type \"{}\"...",
                      componentModelClass.getName());
 
-        final ComponentModelTypeLiteral literal = new ComponentModelTypeLiteral(
+        final RenderComponentLiteral literal = new RenderComponentLiteral(
             componentModelClass);
 
         final Instance<ComponentRenderer<?>> instance = componentRenderers
@@ -99,7 +99,7 @@ public class ComponentRendererManager {
     /**
      * Annotation literal for the {@link RendersComponent} annotation.
      */
-    private static class ComponentModelTypeLiteral
+    private static class RenderComponentLiteral
         extends AnnotationLiteral<RendersComponent>
         implements RendersComponent {
 
@@ -107,7 +107,7 @@ public class ComponentRendererManager {
 
         private final Class<? extends ComponentModel> componentModel;
 
-        public ComponentModelTypeLiteral(
+        public RenderComponentLiteral(
             final Class<? extends ComponentModel> componentModel) {
             this.componentModel = componentModel;
         }

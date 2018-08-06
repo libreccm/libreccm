@@ -19,10 +19,13 @@
 package org.libreccm.pagemodel.rs;
 
 import org.libreccm.core.CoreConstants;
+import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.pagemodel.ComponentModel;
+import org.libreccm.pagemodel.ComponentModelJsonConverter;
 import org.libreccm.pagemodel.ComponentModelRepository;
 import org.libreccm.pagemodel.ContainerModel;
 import org.libreccm.pagemodel.ContainerModelManager;
+import org.libreccm.pagemodel.ConvertsComponentModel;
 import org.libreccm.pagemodel.PageModel;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
@@ -34,14 +37,17 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -78,6 +84,10 @@ public class Components {
 
     @Inject
     private PageModelsController controller;
+
+    @Inject
+    @Any
+    private Instance<ComponentModelJsonConverter> jsonConverters;
 
     /**
      * Retrieve all {@link ComponentModel} of a {@link ContainerModel}.
@@ -285,63 +295,74 @@ public class Components {
     private JsonObject mapComponentModelToJson(
         final ComponentModel componentModel) {
 
-        Objects.requireNonNull(componentModel);
+        final Class<? extends ComponentModel> clazz = Objects
+            .requireNonNull(componentModel.getClass());
 
-        final JsonObjectBuilder objectBuilder = Json
-            .createObjectBuilder()
-            .add("componentModelId",
-                 Long.toString(componentModel.getComponentModelId()))
-            .add("uuid", componentModel.getUuid())
-            .add("modelUuid", componentModel.getModelUuid())
-            .add("key", componentModel.getKey())
-            .add("type", componentModel.getClass().getName());
+        final ComponentModelJsonConverter jsonConverter
+                                                 = findJsonConverter(clazz)
+            .orElseThrow(() -> new WebApplicationException(String.format(
+                "No JSON converter available for component model \"%s\".",
+                clazz.getName())));
+        
+        return jsonConverter.toJson(componentModel);
 
-        if (componentModel.getIdAttribute() != null) {
-            objectBuilder.add("idAttribute", componentModel.getIdAttribute());
-        }
-
-        if (componentModel.getClassAttribute() != null) {
-            objectBuilder.add("classAttribute",
-                              componentModel.getClassAttribute());
-        }
-
-        if (componentModel.getStyleAttribute() != null) {
-            objectBuilder.add("styleAttribute",
-                              componentModel.getStyleAttribute());
-        }
-
-        final Class<? extends ComponentModel> clazz = componentModel.getClass();
-        final BeanInfo beanInfo;
-        try {
-            beanInfo = Introspector.getBeanInfo(clazz);
-        } catch (IntrospectionException ex) {
-            throw new WebApplicationException(ex);
-        }
-
-        for (final PropertyDescriptor propertyDescriptor
-                 : beanInfo.getPropertyDescriptors()) {
-
-            final Method readMethod = propertyDescriptor.getReadMethod();
-            final Object value;
-            try {
-                value = readMethod.invoke(componentModel);
-            } catch (IllegalAccessException
-                         | InvocationTargetException ex) {
-                throw new WebApplicationException(ex);
-            }
-
-            final String valueStr;
-            if (value == null) {
-                valueStr = "";
-            } else {
-                valueStr = value.toString();
-            }
-
-            objectBuilder.add(propertyDescriptor.getName(), valueStr);
-
-        }
-
-        return objectBuilder.build();
+//        Objects.requireNonNull(componentModel);
+//
+//        final JsonObjectBuilder objectBuilder = Json
+//            .createObjectBuilder()
+//            .add("componentModelId",
+//                 Long.toString(componentModel.getComponentModelId()))
+//            .add("uuid", componentModel.getUuid())
+//            .add("modelUuid", componentModel.getModelUuid())
+//            .add("key", componentModel.getKey())
+//            .add("type", componentModel.getClass().getName());
+//
+//        if (componentModel.getIdAttribute() != null) {
+//            objectBuilder.add("idAttribute", componentModel.getIdAttribute());
+//        }
+//
+//        if (componentModel.getClassAttribute() != null) {
+//            objectBuilder.add("classAttribute",
+//                              componentModel.getClassAttribute());
+//        }
+//
+//        if (componentModel.getStyleAttribute() != null) {
+//            objectBuilder.add("styleAttribute",
+//                              componentModel.getStyleAttribute());
+//        }
+//
+//        final Class<? extends ComponentModel> clazz = componentModel.getClass();
+//        final BeanInfo beanInfo;
+//        try {
+//            beanInfo = Introspector.getBeanInfo(clazz);
+//        } catch (IntrospectionException ex) {
+//            throw new WebApplicationException(ex);
+//        }
+//
+//        for (final PropertyDescriptor propertyDescriptor
+//                 : beanInfo.getPropertyDescriptors()) {
+//
+//            final Method readMethod = propertyDescriptor.getReadMethod();
+//            final Object value;
+//            try {
+//                value = readMethod.invoke(componentModel);
+//            } catch (IllegalAccessException
+//                         | InvocationTargetException ex) {
+//                throw new WebApplicationException(ex);
+//            }
+//
+//            final String valueStr;
+//            if (value == null) {
+//                valueStr = "";
+//            } else {
+//                valueStr = value.toString();
+//            }
+//
+//            objectBuilder.add(propertyDescriptor.getName(), valueStr);
+//
+//        }
+//
+//        return objectBuilder.build();
     }
 
     /**
@@ -373,9 +394,9 @@ public class Components {
         try {
             componentModel = clazz.getConstructor().newInstance();
         } catch (IllegalAccessException
-                     | InstantiationException
-                     | InvocationTargetException
-                     | NoSuchMethodException ex) {
+                 | InstantiationException
+                 | InvocationTargetException
+                 | NoSuchMethodException ex) {
             throw new WebApplicationException(ex);
         }
 
@@ -488,7 +509,7 @@ public class Components {
                     } else if (propertyType == Double.TYPE) {
                         writeMethod.invoke(
                             componentModel,
-                                           Double.parseDouble(value.toString()));
+                            Double.parseDouble(value.toString()));
                     } else if (propertyType == Float.TYPE) {
                         writeMethod.invoke(componentModel,
                                            Float.parseFloat(value.toString()));
@@ -540,11 +561,57 @@ public class Components {
                     }
 
                 } catch (IllegalAccessException
-                             | InvocationTargetException ex) {
+                         | InvocationTargetException ex) {
                     throw new WebApplicationException(ex);
                 }
             }
         }
+    }
+
+    private Optional<ComponentModelJsonConverter>
+        findJsonConverter(
+            final Class<? extends ComponentModel> componentModelClass) {
+
+        final ConvertsComponentModelLiteral literal
+                                                = new ConvertsComponentModelLiteral(
+                componentModelClass);
+        final Instance<ComponentModelJsonConverter> instance = jsonConverters
+            .select(literal);
+        if (instance.isUnsatisfied()) {
+            return Optional.empty();
+        } else if (instance.isAmbiguous()) {
+            throw new IllegalStateException(String.format(
+                "Multiple JSONConverter for \"%s\".",
+                componentModelClass.getName()));
+        } else {
+            final Iterator<ComponentModelJsonConverter> iterator = instance
+                .iterator();
+            @SuppressWarnings("unchecked")
+            final ComponentModelJsonConverter converter = iterator.next();
+
+            return Optional.of(converter);
+        }
+    }
+
+    private static class ConvertsComponentModelLiteral
+        extends AnnotationLiteral<ConvertsComponentModel>
+        implements ConvertsComponentModel {
+
+        private static final long serialVersionUID = 1L;
+
+        private final Class<? extends ComponentModel> componentModel;
+
+        public ConvertsComponentModelLiteral(
+            final Class<? extends ComponentModel> componentModel) {
+
+            this.componentModel = componentModel;
+        }
+
+        @Override
+        public Class<? extends ComponentModel> componentModel() {
+            return componentModel;
+        }
+
     }
 
 }
