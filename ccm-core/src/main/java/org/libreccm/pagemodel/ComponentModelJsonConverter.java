@@ -26,21 +26,24 @@ import javax.json.JsonObject;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public interface ComponentModelJsonConverter {
-    
+
     /**
      * Convert a {@link ComponentModel} to JSON.
-     * 
+     *
      * @param componentModel The {@link ComponentModel} to convert.
+     *
      * @return The JSON representation of the provided {@link ComponentModel}.
      */
     JsonObject toJson(ComponentModel componentModel);
-    
+
     /**
-     * Read the values of a {@link ComponentModel} from a JSON object.
-     * 
-     * @param jsonObject The JSON object with the values.
-     * @return The {@link ComponentModel}.
+     * Read the values of a {@link ComponentModel} from a JSON object and set
+     * them on the provided component model.
+     *
+     * @param jsonObject     The JSON object with the values.
+     * @param componentModel The {@link ComponentModel} on which the values are
+     *                       set.
      */
-    ComponentModel fromJson(JsonObject jsonObject);
-    
+    void fromJson(JsonObject jsonObject, ComponentModel componentModel);
+
 }

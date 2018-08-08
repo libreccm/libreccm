@@ -37,7 +37,7 @@ import javax.json.JsonObjectBuilder;
 @ConvertsComponentModel(componentModel = CategoryTreeComponent.class)
 public class CategoryTreeComponentJsonConverter
     extends AbstractComponentModelJsonConverter {
-    
+
     private static final String SHOW_FULL_TREE = "showFullTree";
 
     @Override
@@ -57,25 +57,34 @@ public class CategoryTreeComponentJsonConverter
         convertBasePropertiesToJson(categoryTree, builder);
 
         builder.add(SHOW_FULL_TREE, categoryTree.isShowFullTree());
-        
+
         return builder.build();
     }
-    
 
     @Override
-    public ComponentModel fromJson(final JsonObject jsonObject) {
-        
+    public void fromJson(final JsonObject jsonObject,
+                         final ComponentModel componentModel) {
+
         Objects.requireNonNull(jsonObject);
-        
-        final CategoryTreeComponent categoryTree = new CategoryTreeComponent();
-        
+
+        if (!(componentModel instanceof CategoryTreeComponent)) {
+            throw new IllegalArgumentException(
+                "This converter only processes CategoryTreeComponents.");
+        }
+
+        final CategoryTreeComponent categoryTree
+                                    = (CategoryTreeComponent) componentModel;
+
+        if (!(componentModel instanceof CategoryTreeComponent)) {
+            throw new IllegalArgumentException(
+                "This converter only processes CategoryTreeComponents.");
+        }
+
         readBasePropertiesFromJson(jsonObject, categoryTree);
-        
+
         if (!jsonObject.isNull(SHOW_FULL_TREE)) {
             categoryTree.setShowFullTree(jsonObject.getBoolean(SHOW_FULL_TREE));
         }
-        
-        return categoryTree;
     }
 
 }

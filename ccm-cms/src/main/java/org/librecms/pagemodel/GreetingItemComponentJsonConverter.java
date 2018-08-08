@@ -48,7 +48,7 @@ public class GreetingItemComponentJsonConverter
         }
 
         final GreetingItemComponent component
-                                    = (GreetingItemComponent) componentModel;
+                                        = (GreetingItemComponent) componentModel;
 
         final JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
 
@@ -59,16 +59,21 @@ public class GreetingItemComponentJsonConverter
     }
 
     @Override
-    public ComponentModel fromJson(final JsonObject jsonObject) {
-        
+    public void fromJson(final JsonObject jsonObject,
+                         final ComponentModel componentModel) {
+
         Objects.requireNonNull(jsonObject);
-        
-        final GreetingItemComponent component = new GreetingItemComponent();
-        
+
+        if (!(componentModel instanceof GreetingItemComponent)) {
+            throw new IllegalArgumentException(
+                "This converter only processes GreetingItemComponents.");
+        }
+
+        final GreetingItemComponent component
+                                        = (GreetingItemComponent) componentModel;
+
         readBasePropertiesFromJson(jsonObject, component);
         readContentItemComponentPropertiesFromJson(jsonObject, component);
-        
-        return component;
     }
 
 }
