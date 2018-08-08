@@ -41,7 +41,7 @@ public class FixedContentItemComponentJsonConverter
     extends AbstractContentItemComponentJsonConverter {
 
     private static final String CONTENT_ITEM = "contentItem";
-    
+
     @Inject
     private ContentItemRepository itemRepo;
 
@@ -72,30 +72,33 @@ public class FixedContentItemComponentJsonConverter
     }
 
     @Override
-    public ComponentModel fromJson(final JsonObject jsonObject) {
+    public void fromJson(final JsonObject jsonObject,
+                         final ComponentModel componentModel) {
 
         Objects.requireNonNull(jsonObject);
 
+        if (!(componentModel instanceof FixedContentItemComponent)) {
+            throw new IllegalArgumentException(
+                "This converter only processes FixedContentItemComponents.");
+        }
+
         final FixedContentItemComponent component
-                                            = new FixedContentItemComponent();
+                                        = (FixedContentItemComponent) componentModel;
 
         readBasePropertiesFromJson(jsonObject, component);
         readContentItemComponentPropertiesFromJson(jsonObject, component);
 
         if (!jsonObject.isNull(CONTENT_ITEM)) {
-            
+
             final String uuid = jsonObject.getString(CONTENT_ITEM);
-            
+
             component
                 .setContentItem(itemRepo
                     .findByUuid(uuid)
                     .orElseThrow(() -> new UnexpectedErrorException(
-                        String.format("No ContentItem with UUID \"%s\" exists.",
-                                      uuid))));
-            
+                    String.format("No ContentItem with UUID \"%s\" exists.",
+                                  uuid))));
         }
-        
-        return component;
     }
 
 }

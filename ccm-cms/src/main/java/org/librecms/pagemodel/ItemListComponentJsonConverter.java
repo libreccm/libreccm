@@ -78,11 +78,17 @@ public class ItemListComponentJsonConverter
     }
 
     @Override
-    public ComponentModel fromJson(final JsonObject jsonObject) {
+    public void fromJson(final JsonObject jsonObject,
+                   final ComponentModel componentModel) {
 
         Objects.requireNonNull(jsonObject);
+        
+        if (!(componentModel instanceof ItemListComponent)) {
+            throw new IllegalArgumentException(
+                "This implementation does only handle ItemListComponents.");
+        }
 
-        final ItemListComponent itemList = new ItemListComponent();
+        final ItemListComponent itemList = (ItemListComponent) componentModel;
         readBasePropertiesFromJson(jsonObject, itemList);
 
         if (!jsonObject.isNull(DESCENDING)) {
@@ -107,8 +113,6 @@ public class ItemListComponentJsonConverter
             .collect(Collectors.toList()));
             
         }
-
-        return itemList;
     }
 
 }

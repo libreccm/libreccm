@@ -50,8 +50,8 @@ public class CategorizedItemComponentJsonBuilder
         }
 
         final CategorizedItemComponent component
-                                       = (CategorizedItemComponent) componentModel;
-        
+                                           = (CategorizedItemComponent) componentModel;
+
         convertBasePropertiesToJson(component, objectBuilder);
         convertContentItemComponentPropertiesToJson(component, objectBuilder);
 
@@ -59,16 +59,21 @@ public class CategorizedItemComponentJsonBuilder
     }
 
     @Override
-    public ComponentModel fromJson(final JsonObject jsonObject) {
-        
+    public void fromJson(final JsonObject jsonObject,
+                         final ComponentModel componentModel) {
+
         Objects.requireNonNull(jsonObject);
-        
-        final CategorizedItemComponent component = new CategorizedItemComponent();
-        
+
+        if (!(componentModel instanceof CategorizedItemComponent)) {
+            throw new IllegalArgumentException(
+                "This converter only processes CategorizedItemComponents.");
+        }
+
+        final CategorizedItemComponent component
+                                       = (CategorizedItemComponent) componentModel;
+
         readBasePropertiesFromJson(jsonObject, component);
         readContentItemComponentPropertiesFromJson(jsonObject, component);
-        
-        return component;
     }
 
 }
