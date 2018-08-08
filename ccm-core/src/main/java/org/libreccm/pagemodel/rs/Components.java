@@ -296,14 +296,15 @@ public class Components {
         final ComponentModel componentModel) {
 
         final Class<? extends ComponentModel> clazz = Objects
-            .requireNonNull(componentModel.getClass());
+            .requireNonNull(componentModel)
+            .getClass();
 
         final ComponentModelJsonConverter jsonConverter
-                                                 = findJsonConverter(clazz)
-            .orElseThrow(() -> new WebApplicationException(String.format(
+                                              = findJsonConverter(clazz)
+                .orElseThrow(() -> new WebApplicationException(String.format(
                 "No JSON converter available for component model \"%s\".",
                 clazz.getName())));
-        
+
         return jsonConverter.toJson(componentModel);
 
 //        Objects.requireNonNull(componentModel);
@@ -394,9 +395,9 @@ public class Components {
         try {
             componentModel = clazz.getConstructor().newInstance();
         } catch (IllegalAccessException
-                 | InstantiationException
-                 | InvocationTargetException
-                 | NoSuchMethodException ex) {
+                     | InstantiationException
+                     | InvocationTargetException
+                     | NoSuchMethodException ex) {
             throw new WebApplicationException(ex);
         }
 
@@ -453,19 +454,31 @@ public class Components {
         final JsonObject data,
         final ComponentModel componentModel) {
 
-        final BeanInfo beanInfo;
-        try {
-            beanInfo = Introspector.getBeanInfo(componentModel.getClass());
-        } catch (IntrospectionException ex) {
-            throw new WebApplicationException(ex);
-        }
+        final Class<? extends ComponentModel> clazz = Objects
+            .requireNonNull(componentModel)
+            .getClass();
 
-        Arrays
-            .stream(beanInfo.getPropertyDescriptors())
-            .forEach(
-                propertyDesc -> setComponentPropertyFromJson(componentModel,
-                                                             propertyDesc,
-                                                             data));
+        final ComponentModelJsonConverter jsonConverter
+                                              = findJsonConverter(clazz)
+                .orElseThrow(() -> new WebApplicationException(String.format(
+                "No JSON converter available for component model \"%s\".",
+                clazz.getName())));
+        
+        jsonConverter.fromJson(data, componentModel);
+
+//        final BeanInfo beanInfo;
+//        try {
+//            beanInfo = Introspector.getBeanInfo(componentModel.getClass());
+//        } catch (IntrospectionException ex) {
+//            throw new WebApplicationException(ex);
+//        }
+//
+//        Arrays
+//            .stream(beanInfo.getPropertyDescriptors())
+//            .forEach(
+//                propertyDesc -> setComponentPropertyFromJson(componentModel,
+//                                                             propertyDesc,
+//                                                             data));
     }
 
     /**
@@ -561,7 +574,7 @@ public class Components {
                     }
 
                 } catch (IllegalAccessException
-                         | InvocationTargetException ex) {
+                             | InvocationTargetException ex) {
                     throw new WebApplicationException(ex);
                 }
             }
