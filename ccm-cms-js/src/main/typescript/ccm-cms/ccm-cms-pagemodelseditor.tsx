@@ -32,6 +32,9 @@ class CategoryTreeComponentPropertiesList
             component={this.props.component}>
             <dt>showFullTree</dt>
             <dd>{this.props.component.showFullTree}</dd>
+
+            {this.props.children}
+
         </BasicComponentModelPropertiesList>;
     }
 }
@@ -78,6 +81,9 @@ class CategoryTreeComponentEditorDialog
                    id={`${idPrefix}showFullTree`}
                    onChange={this.handleChange}
                    type="checkbox" />
+
+            {this.props.children}
+
         </BasicComponentModelEditorDialog>;
     }
 
@@ -105,6 +111,319 @@ class CategoryTreeComponentEditorDialog
         }
     }
 }
+
+class ContentItemComponentPropertiesList extends React.Component<
+    BasicComponentModelPropertiesListProps<ContentItemComponent>, {}> {
+
+    constructor(
+        props: BasicComponentModelPropertiesListProps<ContentItemComponent>) {
+
+            super(props);
+    }
+
+    public render(): React.ReactNode {
+
+        return <BasicComponentModelPropertiesList
+            component={this.props.component}>
+
+            <dt>Mode</dt>
+            <dd>{this.props.component.mode}</dd>
+            {this.props.children}
+
+        </BasicComponentModelPropertiesList>;
+    }
+}
+
+interface ContentItemComponentEditorDialogState
+    extends BasicComponentModelEditorDialogState {
+
+    mode: string;
+}
+
+class ContentItemComponentEditorDialog extends React.Component<
+    BasicComponentModelEditorDialogProps<ContentItemComponent>,
+    ContentItemComponentEditorDialogState> {
+
+    constructor(
+        props: BasicComponentModelEditorDialogProps<ContentItemComponent>) {
+
+        super(props);
+
+        this.state = {
+            ...this.state,
+            mode: this.props.component.mode,
+        };
+
+        this.handleChange = this.handleChange.bind(this);
+
+        this.getComponentModelProperties
+            = this.getComponentModelProperties.bind(this);
+    }
+
+    public render(): React.ReactNode {
+
+        const idPrefix: string
+            = `${this.props.containerKey}_${this.props.component.key}_`;
+
+        return <BasicComponentModelEditorDialog
+            ccmApplication={this.props.ccmApplication}
+            component={this.props.component}
+            containerKey={this.props.containerKey}
+            dispatcherPrefix={this.props.dispatcherPrefix}
+            pageModelName={this.props.pageModelName}
+            getComponentModelProperties={this.getComponentModelProperties}>
+
+            <label htmlFor={`${idPrefix}mode`}>
+                Mode
+            </label>
+            <input id={`${idPrefix}mode`}
+                   maxLength={256}
+                   onChange={this.handleChange}
+                   size={64}
+                   type="text"
+                   value={this.state.mode} />
+
+            {this.props.children}
+
+        </BasicComponentModelEditorDialog>;
+    }
+
+    private getComponentModelProperties(): {[name: string]: any} {
+
+        return {
+            mode: this.state.mode,
+        };
+    }
+
+    private handleChange(event: React.ChangeEvent<HTMLInputElement>): void {
+
+        const target: HTMLInputElement = event.currentTarget;
+        const idPrefix: string
+            = `${this.props.containerKey}_${this.props.component.key}_`;
+
+        switch (target.id) {
+            case `${idPrefix}mode`: {
+                this.setState({
+                    ...this.state,
+                    mode: target.value,
+                });
+                break;
+            }
+        }
+    }
+}
+
+class CategorizedItemComponentPropertiesList extends React.Component<
+    BasicComponentModelPropertiesListProps<ContentItemComponent>, {}> {
+
+    constructor(
+        props: BasicComponentModelPropertiesListProps<ContentItemComponent>) {
+
+        super(props);
+    }
+
+    public render(): React.ReactNode {
+
+        return <ContentItemComponentPropertiesList
+            component={this.props.component}>
+
+            {this.props.children}
+
+        </ContentItemComponentPropertiesList>
+    }
+}
+
+class CategorizedItemComponentEditorDialog extends React.Component<
+    BasicComponentModelEditorDialogProps<ContentItemComponent>,
+    ContentItemComponentEditorDialogState> {
+
+    constructor(
+        props: BasicComponentModelEditorDialogProps<ContentItemComponent>) {
+
+        super(props);
+
+        this.getComponentModelProperties
+            = this.getComponentModelProperties.bind(this);
+    }
+
+    public render(): React.ReactNode {
+
+        return <ContentItemComponentEditorDialog
+            ccmApplication={this.props.ccmApplication}
+            component={this.props.component}
+            containerKey={this.props.containerKey}
+            dispatcherPrefix={this.props.dispatcherPrefix}
+            pageModelName={this.props.pageModelName}
+            getComponentModelProperties={this.getComponentModelProperties}>
+
+            {this.props.children}
+
+        </ContentItemComponentEditorDialog>
+    }
+
+    private getComponentModelProperties(): {[name: string]: any} {
+
+        return {};
+    }
+}
+
+class FixedContentItemComponentPropertiesList extends React.Component<
+    BasicComponentModelPropertiesListProps<FixedContentItemComponent>, {}> {
+
+    constructor(
+        props: BasicComponentModelPropertiesListProps<FixedContentItemComponent>
+    ) {
+
+        super(props);
+    }
+
+    public render(): React.ReactNode {
+
+        return <ContentItemComponentPropertiesList
+            component={this.props.component}>
+
+            <dt>Content Item UUID</dt>
+            <dd>{this.props.component.contentItem}</dd>
+            {this.props.children}
+
+        </ContentItemComponentPropertiesList>
+    }
+}
+
+interface FixedContentItemComponentEditorDialogState
+    extends ContentItemComponentEditorDialogState {
+
+    contentItem: string;
+}
+
+class FixedContentItemComponentEditorDialog extends React.Component<
+    BasicComponentModelEditorDialogProps<FixedContentItemComponent>,
+    FixedContentItemComponentEditorDialogState> {
+
+    constructor(
+        props: BasicComponentModelEditorDialogProps<FixedContentItemComponent>
+    ) {
+        super(props);
+
+        this.state = {
+            ...this.state,
+            contentItem: this.props.component.contentItem,
+        };
+
+        this.handleChange = this.handleChange.bind(this);
+
+        this.getComponentModelProperties
+            = this.getComponentModelProperties.bind(this);
+    }
+
+    public render(): React.ReactNode {
+
+        const idPrefix: string
+            = `${this.props.containerKey}_${this.props.component.key}_`;
+
+        return <ContentItemComponentEditorDialog
+            ccmApplication={this.props.ccmApplication}
+            component={this.props.component}
+            containerKey={this.props.containerKey}
+            dispatcherPrefix={this.props.dispatcherPrefix}
+            pageModelName={this.props.pageModelName}
+            getComponentModelProperties={this.getComponentModelProperties}>
+
+            <label htmlFor={`${idPrefix}contentItemUuid`}>
+                ContentItem UUID
+            </label>
+            <input id={`${idPrefix}contentItemUuid`}
+                   maxLength={36}
+                   onChange={this.handleChange}
+                   size={36}
+                   type="text"
+                   value={this.state.contentItem} />
+
+            {this.props.children}
+
+        </ContentItemComponentEditorDialog>;
+    }
+
+    private getComponentModelProperties(): {[name: string]: any} {
+
+        return {
+            contentItem: this.state.contentItem,
+        };
+
+    }
+
+    private handleChange(event: React.ChangeEvent<HTMLInputElement>): void {
+
+        const target: HTMLInputElement = event.currentTarget;
+        const idPrefix: string
+            = `${this.props.containerKey}_${this.props.component.key}_`;
+
+        switch (target.id) {
+            case `${idPrefix}contentItemUuid`: {
+                this.setState({
+                    ...this.state,
+                    contentItem: target.value,
+                });
+                break;
+            }
+        }
+    }
+}
+
+class GreetingItemComponentPropertiesList extends React.Component<
+    BasicComponentModelPropertiesListProps<ContentItemComponent>, {}> {
+
+    constructor(
+        props: BasicComponentModelPropertiesListProps<ContentItemComponent>) {
+
+        super(props);
+    }
+
+    public render(): React.ReactNode {
+
+        return <ContentItemComponentPropertiesList
+            component={this.props.component}>
+
+            {this.props.children}
+
+        </ContentItemComponentPropertiesList>
+    }
+}
+
+class GreetingItemComponentEditorDialog extends React.Component<
+    BasicComponentModelEditorDialogProps<ContentItemComponent>,
+    ContentItemComponentEditorDialogState> {
+
+    constructor(
+        props: BasicComponentModelEditorDialogProps<ContentItemComponent>) {
+
+        super(props);
+
+        this.getComponentModelProperties
+            = this.getComponentModelProperties.bind(this);
+    }
+
+    public render(): React.ReactNode {
+
+        return <ContentItemComponentEditorDialog
+            ccmApplication={this.props.ccmApplication}
+            component={this.props.component}
+            containerKey={this.props.containerKey}
+            dispatcherPrefix={this.props.dispatcherPrefix}
+            pageModelName={this.props.pageModelName}
+            getComponentModelProperties={this.getComponentModelProperties}>
+
+            {this.props.children}
+
+        </ContentItemComponentEditorDialog>
+    }
+
+    private getComponentModelProperties(): {[name: string]: any} {
+
+        return {};
+    }
+}
+
 
 class ItemListComponentPropertiesList extends React.Component<
     BasicComponentModelPropertiesListProps<ItemListComponent>, {}> {
@@ -137,6 +456,9 @@ class ItemListComponentPropertiesList extends React.Component<
                     ) : ("No order set")
                 }
             </dd>
+
+            {this.props.children}
+
         </BasicComponentModelPropertiesList>;
     }
 }
@@ -223,6 +545,8 @@ class ItemListComponentEditorDialog extends React.Component<
                       )}>
             </textarea>
 
+            {this.props.children}
+
         </BasicComponentModelEditorDialog>;
     }
 
@@ -294,6 +618,16 @@ interface CategoryTreeComponent extends ComponentModel {
     showFullTree: boolean;
 }
 
+interface ContentItemComponent extends ComponentModel {
+
+    mode: string;
+}
+
+interface FixedContentItemComponent extends ContentItemComponent {
+
+    contentItem: string;
+}
+
 interface ItemListComponent extends ComponentModel {
 
     descending: boolean;
@@ -319,5 +653,25 @@ ComponentModelEditor.registerEditorComponents(
             ItemListComponentEditorDialog as typeof React.Component,
         propertiesList:
             ItemListComponentPropertiesList as typeof React.Component,
+    },
+);
+
+ComponentModelEditor.registerEditorComponents(
+    "org.librecms.pagemodel.FixedContentItemComponent",
+    {
+        editorDialog:
+            FixedContentItemComponentEditorDialog as typeof React.Component,
+        propertiesList:
+            FixedContentItemComponentPropertiesList as typeof React.Component,
+    },
+);
+
+ComponentModelEditor.registerEditorComponents(
+    "org.librecms.pagemodel.GreetingItemComponent",
+    {
+        editorDialog:
+            GreetingItemComponentEditorDialog as typeof React.Component,
+        propertiesList:
+            GreetingItemComponentPropertiesList as typeof React.Component
     },
 );
