@@ -775,6 +775,8 @@ interface ContainerModelComponentProps {
 
 interface ContainerModelComponentState {
 
+    addComponentOfType: string;
+    addComponentWithKey: string;
     components: ComponentModel[];
     errorMessages: string[];
 }
@@ -789,9 +791,15 @@ class ContainerModelComponent
 
         this.state = {
 
+            addComponentOfType: "",
+            addComponentWithKey: "",
             components: [],
             errorMessages: [],
         };
+
+        this.handleKeyChange = this.handleKeyChange.bind(this);
+        this.handleTypeSelectChange = this.handleTypeSelectChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     public componentDidMount() {
@@ -812,7 +820,41 @@ class ContainerModelComponent
                     Delete
                 </button>
             </div>
+            {this.state.errorMessages.length > 0
+                && <div className="errorPanel">
+                    <ul>
+                    {this.state.errorMessages.map((msg, index) =>
+                        <li key={index}>{msg}</li>
+                    )}
+                    </ul>
+                </div>
+            }
             <div className="components-list">
+                <form onSubmit={this.handleSubmit}>
+                    <label htmlFor={`${this.props.container.key}_add_component_type`}>
+                        Add component of type
+                    </label>
+                    <select id={`${this.props.container.key}_add_component_type`}
+                            onChange={this.handleTypeSelectChange}>
+                        <option value=""></option>
+                        {ComponentModelEditor.getAvailableComponents()
+                            .map((component) =>
+                            <option key={component.componentType}
+                                    value={component.componentType}>
+                                {component.componentTitle}
+                            </option>
+                        )}
+                    </select>
+                    <label htmlFor={`${this.props.container.key}_add_component_key`}>
+                        with key
+                    </label>
+                    <input id={`${this.props.container.key}_add_component_key`}
+                           onChange={this.handleKeyChange}
+                           type="text" />
+                    <button>
+                        Add component
+                    </button>
+                </form>
                 <ul>
                     {this.state.components.map((component: ComponentModel) =>
                         <ComponentModelEditor
@@ -827,6 +869,15 @@ class ContainerModelComponent
                 </ul>
             </div>
         </li>;
+    }
+
+    private deleteContainer(
+        event: React.MouseEvent<HTMLButtonElement>,
+        containerKey: string): void {
+
+        event.preventDefault();
+
+        this.props.deleteContainer(containerKey);
     }
 
     private fetchComponents(): void {
@@ -893,13 +944,126 @@ class ContainerModelComponent
             });
     }
 
-        private deleteContainer(
-        event: React.MouseEvent<HTMLButtonElement>,
-        containerKey: string): void {
+    private handleKeyChange(event: React.ChangeEvent<HTMLInputElement>): void {
+
+        const target: HTMLInputElement = event.currentTarget;
+
+        this.setState({
+            ...this.state,
+            addComponentWithKey: target.value,
+        });
+    }
+
+    private handleTypeSelectChange(
+        event: React.ChangeEvent<HTMLSelectElement>): void {
+
+        const target: HTMLSelectElement = event.currentTarget;
+
+        this.setState({
+
+            ...this.state,
+            addComponentOfType: target.value,
+        });
+    }
+
+    private handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
 
         event.preventDefault();
 
-        this.props.deleteContainer(containerKey);
+        if (this.state.addComponentOfType === ""
+            || this.state.addComponentWithKey === "") {
+
+            this.setState({
+                ...this.state,
+                errorMessages: [
+                    ...this.state.errorMessages,
+                    `Type and key are mandantory!`,
+                ],
+            });
+
+            return;
+        }
+
+        const headers: Headers = new Headers();
+        headers.append("Content-Type", "application/json");
+
+        const init: RequestInit = {
+
+            body: JSON.stringify({
+                type: this.state.addComponentOfType,
+                key: this.state.addComponentWithKey,
+            }),
+            credentials: "same-origin",
+            headers,
+            method: "PUT",
+        }
+
+        const url: string = `${this.props.dispatcherPrefix}`
+            + `/page-models/${this.props.ccmApplication}/`
+            + `${this.props.pageModelName}`
+            + `/containers/`
+            + `${this.props.container.key}`
+            + `/components/`
+            + `${this.state.addComponentWithKey}`;
+
+        fetch(url, init)
+            .then((response: Response) => {
+
+                if (response.ok) {
+
+                    response
+                        .json()
+                        .then((newComponent) => {
+
+                            const components = [
+                                ...this.state.components,
+                                newComponent,
+                            ];
+                            components.sort((component1, component2) => {
+                                const key1: string = component1.key;
+                                const key2: string = component2.key;
+
+                                return key1.localeCompare(key2);
+                            });
+
+                            this.setState({
+                                ...this.state,
+                                addComponentWithKey: "",
+                                addComponentOfType: "",
+                                components,
+                            });
+                        })
+                        .catch((error) => {
+                            this.setState({
+                                ...this.state,
+                                errorMessages: [
+                                    ...this.state.errorMessages,
+                                    `Failed to parse response: `
+                                        + `${error.message}`,
+                                ],
+                            });
+                        });
+                } else {
+                    this.setState({
+                        ...this.state,
+                        errorMessages: [
+                            ...this.state.errorMessages,
+                            `Failed to add component to container`
+                                + `${response.status} ${response.statusText}`,
+                        ]
+                    });
+                }
+            })
+            .catch((error) => {
+                this.setState({
+                    ...this.state,
+                    errorMessages: [
+                        ...this.state.errorMessages,
+                        `Failed to add component to container`
+                            + ` ${this.props.container.key}: ${error.message}`
+                    ],
+                });
+            });
     }
 }
 
@@ -1104,6 +1268,8 @@ class BasicComponentModelEditorDialog
 
 interface EditorComponents {
 
+    componentType: string;
+    componentTitle: string;
     editorDialog: typeof React.Component;
     propertiesList: typeof React.Component;
 }
@@ -1120,10 +1286,30 @@ interface ComponentModelEditorProps {
 class ComponentModelEditor
     extends React.Component<ComponentModelEditorProps, {}> {
 
-    public static registerEditorComponents(type: string,
-                                           components: EditorComponents) {
+    public static getAvailableComponents(): EditorComponents[] {
 
-        ComponentModelEditor.editorComponents.set(type, components);
+        const components: EditorComponents[] = [];
+
+        for(let editorComponents
+                of ComponentModelEditor.editorComponents.values()) {
+
+            components.push(editorComponents);
+        }
+
+        components.sort((component1, component2) => {
+
+            return component1
+                .componentTitle
+                .localeCompare(component2.componentTitle);
+        });
+
+        return components;
+    }
+
+    public static registerEditorComponents(components: EditorComponents) {
+
+        ComponentModelEditor.editorComponents.set(components.componentType,
+                                                  components);
     }
 
     private static editorComponents: Map<string, EditorComponents>
@@ -1162,6 +1348,8 @@ class ComponentModelEditor
                 .editorComponents.get(type) as EditorComponents;
         } else {
             const basicComponents: EditorComponents = {
+                componentType: type,
+                componentTitle: "",
                 editorDialog:
                     BasicComponentModelEditorDialog as typeof React.Component,
                 propertiesList:
