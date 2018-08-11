@@ -824,17 +824,21 @@ class ContainerModelComponent
                 && <div className="errorPanel">
                     <ul>
                     {this.state.errorMessages.map((msg, index) =>
-                        <li key={index}>{msg}</li>
+                        <li key={index}>
+                            {msg}
+                        </li>,
                     )}
                     </ul>
                 </div>
             }
             <div className="components-list">
                 <form onSubmit={this.handleSubmit}>
-                    <label htmlFor={`${this.props.container.key}_add_component_type`}>
+                    <label htmlFor={`${this.props.container.key}`
+                        + `_add_component_type`}>
                         Add component of type
                     </label>
-                    <select id={`${this.props.container.key}_add_component_type`}
+                    <select id={`${this.props.container.key}`
+                                    + `_add_component_type`}
                             onChange={this.handleTypeSelectChange}>
                         <option value=""></option>
                         {ComponentModelEditor.getAvailableComponents()
@@ -842,10 +846,11 @@ class ContainerModelComponent
                             <option key={component.componentType}
                                     value={component.componentType}>
                                 {component.componentTitle}
-                            </option>
+                            </option>,
                         )}
                     </select>
-                    <label htmlFor={`${this.props.container.key}_add_component_key`}>
+                    <label htmlFor={`${this.props.container.key}`
+                                + `_add_component_key`}>
                         with key
                     </label>
                     <input id={`${this.props.container.key}_add_component_key`}
@@ -990,13 +995,13 @@ class ContainerModelComponent
         const init: RequestInit = {
 
             body: JSON.stringify({
-                type: this.state.addComponentOfType,
                 key: this.state.addComponentWithKey,
+                type: this.state.addComponentOfType,
             }),
             credentials: "same-origin",
             headers,
             method: "PUT",
-        }
+        };
 
         const url: string = `${this.props.dispatcherPrefix}`
             + `/page-models/${this.props.ccmApplication}/`
@@ -1028,8 +1033,8 @@ class ContainerModelComponent
 
                             this.setState({
                                 ...this.state,
-                                addComponentWithKey: "",
                                 addComponentOfType: "",
+                                addComponentWithKey: "",
                                 components,
                             });
                         })
@@ -1050,7 +1055,7 @@ class ContainerModelComponent
                             ...this.state.errorMessages,
                             `Failed to add component to container`
                                 + `${response.status} ${response.statusText}`,
-                        ]
+                        ],
                     });
                 }
             })
@@ -1060,7 +1065,7 @@ class ContainerModelComponent
                     errorMessages: [
                         ...this.state.errorMessages,
                         `Failed to add component to container`
-                            + ` ${this.props.container.key}: ${error.message}`
+                            + ` ${this.props.container.key}: ${error.message}`,
                     ],
                 });
             });
@@ -1290,7 +1295,7 @@ class ComponentModelEditor
 
         const components: EditorComponents[] = [];
 
-        for(let editorComponents
+        for (const editorComponents
                 of ComponentModelEditor.editorComponents.values()) {
 
             components.push(editorComponents);
@@ -1348,8 +1353,8 @@ class ComponentModelEditor
                 .editorComponents.get(type) as EditorComponents;
         } else {
             const basicComponents: EditorComponents = {
-                componentType: type,
                 componentTitle: "",
+                componentType: type,
                 editorDialog:
                     BasicComponentModelEditorDialog as typeof React.Component,
                 propertiesList:
