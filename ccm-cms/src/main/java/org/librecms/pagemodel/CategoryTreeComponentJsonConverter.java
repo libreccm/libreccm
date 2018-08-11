@@ -82,7 +82,7 @@ public class CategoryTreeComponentJsonConverter
 
         readBasePropertiesFromJson(jsonObject, categoryTree);
 
-        if (!jsonObject.isNull(SHOW_FULL_TREE)) {
+        if (jsonObject.containsKey(SHOW_FULL_TREE)) {
             categoryTree.setShowFullTree(jsonObject.getBoolean(SHOW_FULL_TREE));
         }
     }
