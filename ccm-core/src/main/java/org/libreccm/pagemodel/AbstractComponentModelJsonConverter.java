@@ -83,22 +83,25 @@ public abstract class AbstractComponentModelJsonConverter
         Objects.requireNonNull(jsonObject);
         Objects.requireNonNull(componentModel);
 
-        componentModel.setComponentModelId(
-            jsonObject.getInt("componentModelId"));
-        componentModel.setUuid(jsonObject.getString("uuid"));
-        componentModel.setModelUuid(jsonObject.getString("modelUuid"));
+          //UUIDs are solely managed by the server!
+//        if (jsonObject.containsKey("uuid")) {
+//            componentModel.setUuid(jsonObject.getString("uuid"));
+//        }
+//        if (jsonObject.containsKey("modelUuid")) {
+//            componentModel.setModelUuid(jsonObject.getString("modelUuid"));
+//        }
         componentModel.setKey(jsonObject.getString("key"));
 
-        if (jsonObject.getString("idAttribute") != null) {
+        if (jsonObject.getString("idAttribute", null) != null) {
             componentModel.setIdAttribute(jsonObject.getString("idAttribute"));
         }
 
-        if (jsonObject.getString("classAttribute") != null) {
+        if (jsonObject.getString("classAttribute", null) != null) {
             componentModel
                 .setClassAttribute(jsonObject.getString("classAttribute"));
         }
 
-        if (jsonObject.getString("styleAttribute") != null) {
+        if (jsonObject.getString("styleAttribute", null) != null) {
             componentModel
                 .setStyleAttribute(jsonObject.getString("styleAttribute"));
         }

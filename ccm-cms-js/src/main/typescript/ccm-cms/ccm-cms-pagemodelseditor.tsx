@@ -77,7 +77,7 @@ class CategoryTreeComponentEditorDialog
             pageModelName={this.props.pageModelName}>
 
             <label htmlFor={`${idPrefix}showFullTree`}>Show full tree?</label>
-            <input checked={this.props.component.showFullTree}
+            <input checked={this.state.showFullTree}
                    id={`${idPrefix}showFullTree`}
                    onChange={this.handleChange}
                    type="checkbox" />
@@ -637,41 +637,45 @@ interface ItemListComponent extends ComponentModel {
 }
 
 ComponentModelEditor.registerEditorComponents(
-    "org.librecms.pagemodel.CategoryTreeComponent",
     {
+        componentTitle: "Category Tree",
+        componentType: "org.librecms.pagemodel.CategoryTreeComponent",
         editorDialog:
             CategoryTreeComponentEditorDialog as typeof React.Component,
         propertiesList:
             CategoryTreeComponentPropertiesList as typeof React.Component,
-    },
+    }
 );
 
 ComponentModelEditor.registerEditorComponents(
-    "org.librecms.pagemodel.ItemListComponent",
     {
+        componentTitle: "Item List",
+        componentType: "org.librecms.pagemodel.ItemListComponent",
         editorDialog:
             ItemListComponentEditorDialog as typeof React.Component,
         propertiesList:
             ItemListComponentPropertiesList as typeof React.Component,
-    },
+    }
 );
 
 ComponentModelEditor.registerEditorComponents(
-    "org.librecms.pagemodel.FixedContentItemComponent",
     {
+        componentTitle: "Fixed Content Item",
+        componentType: "org.librecms.pagemodel.FixedContentItemComponent",
         editorDialog:
             FixedContentItemComponentEditorDialog as typeof React.Component,
         propertiesList:
             FixedContentItemComponentPropertiesList as typeof React.Component,
-    },
+    }
 );
 
 ComponentModelEditor.registerEditorComponents(
-    "org.librecms.pagemodel.GreetingItemComponent",
     {
+        componentTitle: "Greeting Item",
+        componentType: "org.librecms.pagemodel.GreetingItemComponent",
         editorDialog:
             GreetingItemComponentEditorDialog as typeof React.Component,
         propertiesList:
             GreetingItemComponentPropertiesList as typeof React.Component
-    },
+    }
 );

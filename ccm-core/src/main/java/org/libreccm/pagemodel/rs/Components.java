@@ -19,7 +19,6 @@
 package org.libreccm.pagemodel.rs;
 
 import org.libreccm.core.CoreConstants;
-import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.pagemodel.ComponentModel;
 import org.libreccm.pagemodel.ComponentModelJsonConverter;
 import org.libreccm.pagemodel.ComponentModelRepository;
@@ -31,9 +30,6 @@ import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.web.CcmApplication;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -53,7 +49,6 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
@@ -242,8 +237,10 @@ public class Components {
         setComponentPropertiesFromJson(componentModelData, componentModel);
 
         componentRepo.save(componentModel);
-
-        return mapComponentModelToJson(componentModel);
+        
+        final ComponentModel saved = controller
+            .findComponentModel(app, pageModel, container, componentKey);
+        return mapComponentModelToJson(saved);
     }
 
     /**
@@ -427,7 +424,7 @@ public class Components {
         try {
             final Class<?> clazz = Class.forName(type);
 
-            if (clazz.isAssignableFrom(ComponentModel.class)) {
+            if (ComponentModel.class.isAssignableFrom(clazz)) {
                 return (Class<? extends ComponentModel>) clazz;
             } else {
                 throw new BadRequestException(String.format(
