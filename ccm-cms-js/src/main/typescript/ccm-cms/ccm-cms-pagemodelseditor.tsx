@@ -229,7 +229,7 @@ class CategorizedItemComponentPropertiesList extends React.Component<
 
             {this.props.children}
 
-        </ContentItemComponentPropertiesList>
+        </ContentItemComponentPropertiesList>;
     }
 }
 
@@ -258,7 +258,7 @@ class CategorizedItemComponentEditorDialog extends React.Component<
 
             {this.props.children}
 
-        </ContentItemComponentEditorDialog>
+        </ContentItemComponentEditorDialog>;
     }
 
     private getComponentModelProperties(): {[name: string]: any} {
@@ -271,7 +271,8 @@ class FixedContentItemComponentPropertiesList extends React.Component<
     BasicComponentModelPropertiesListProps<FixedContentItemComponent>, {}> {
 
     constructor(
-        props: BasicComponentModelPropertiesListProps<FixedContentItemComponent>
+        props: BasicComponentModelPropertiesListProps<
+            FixedContentItemComponent>,
     ) {
 
         super(props);
@@ -286,7 +287,7 @@ class FixedContentItemComponentPropertiesList extends React.Component<
             <dd>{this.props.component.contentItem}</dd>
             {this.props.children}
 
-        </ContentItemComponentPropertiesList>
+        </ContentItemComponentPropertiesList>;
     }
 }
 
@@ -301,7 +302,8 @@ class FixedContentItemComponentEditorDialog extends React.Component<
     FixedContentItemComponentEditorDialogState> {
 
     constructor(
-        props: BasicComponentModelEditorDialogProps<FixedContentItemComponent>
+        props: BasicComponentModelEditorDialogProps<
+            FixedContentItemComponent>,
     ) {
         super(props);
 
@@ -386,7 +388,7 @@ class GreetingItemComponentPropertiesList extends React.Component<
 
             {this.props.children}
 
-        </ContentItemComponentPropertiesList>
+        </ContentItemComponentPropertiesList>;
     }
 }
 
@@ -415,7 +417,7 @@ class GreetingItemComponentEditorDialog extends React.Component<
 
             {this.props.children}
 
-        </ContentItemComponentEditorDialog>
+        </ContentItemComponentEditorDialog>;
     }
 
     private getComponentModelProperties(): {[name: string]: any} {
@@ -423,7 +425,6 @@ class GreetingItemComponentEditorDialog extends React.Component<
         return {};
     }
 }
-
 
 class ItemListComponentPropertiesList extends React.Component<
     BasicComponentModelPropertiesListProps<ItemListComponent>, {}> {
@@ -644,7 +645,7 @@ ComponentModelEditor.registerEditorComponents(
             CategoryTreeComponentEditorDialog as typeof React.Component,
         propertiesList:
             CategoryTreeComponentPropertiesList as typeof React.Component,
-    }
+    },
 );
 
 ComponentModelEditor.registerEditorComponents(
@@ -655,7 +656,7 @@ ComponentModelEditor.registerEditorComponents(
             ItemListComponentEditorDialog as typeof React.Component,
         propertiesList:
             ItemListComponentPropertiesList as typeof React.Component,
-    }
+    },
 );
 
 ComponentModelEditor.registerEditorComponents(
@@ -666,7 +667,7 @@ ComponentModelEditor.registerEditorComponents(
             FixedContentItemComponentEditorDialog as typeof React.Component,
         propertiesList:
             FixedContentItemComponentPropertiesList as typeof React.Component,
-    }
+    },
 );
 
 ComponentModelEditor.registerEditorComponents(
@@ -676,6 +677,6 @@ ComponentModelEditor.registerEditorComponents(
         editorDialog:
             GreetingItemComponentEditorDialog as typeof React.Component,
         propertiesList:
-            GreetingItemComponentPropertiesList as typeof React.Component
-    }
+            GreetingItemComponentPropertiesList as typeof React.Component,
+    },
 );
