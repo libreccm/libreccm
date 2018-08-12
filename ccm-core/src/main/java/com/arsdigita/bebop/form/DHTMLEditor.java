@@ -103,13 +103,16 @@ public class DHTMLEditor extends TextArea {
          * Example old HTMLarea configuration.
          */
         public static final Config HTMLAREA
-                                   = new Config("HTMLArea.Config", null);
+                                       = new Config("HTMLArea.Config", null);
 
         /**
          * Example of configuration for ccm-editor
          */
-        public static final Config STANDARD = new Config("ccm-editor.loader",
+        public static final Config CCM_EDITOR = new Config("ccm-editor.loader",
                                                          "/ccm-editor/ccm-editor-loader.js");
+
+        public static final Config STANDARD = new Config("tinymce.config",
+                                                        "/tinymce(tinymce-config.js");
 
         private String m_name;
         private String m_path;
@@ -316,8 +319,10 @@ public class DHTMLEditor extends TextArea {
         Element config = editor.newChildElement("bebop:config", BEBOP_XML_NS);
         config.addAttribute("name", m_config.getName());
         if (m_config.getPath() != null) {
-            config.addAttribute("path", Web.getWebappContextPath().concat(
-                                m_config.getPath()));
+            config.addAttribute(
+                "path", String.format("%s/%s",
+                                      Web.getWebappContextPath(),
+                                      m_config.getPath()));
         }
         if (m_hiddenButtons.size() > 0) {
 

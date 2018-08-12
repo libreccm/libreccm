@@ -83,7 +83,7 @@ public class CMSConfig {
      */
     @Setting
     private List<String> dhtmlEditorConfig = Arrays.asList(new String[]{
-        "ccm-editor.loader", "/ccm-editor/ccm-editor-loader.js"});
+        "TinyMCE.Config", "/tinymce/tinymce_cms_config.js"});
 
     /**
      * Defines which plugins to use, e.g.TableOperations,CSS Format:
@@ -444,7 +444,7 @@ public class CMSConfig {
             return DHTMLEditor.Config.STANDARD;
         } else {
             return new DHTMLEditor.Config(dhtmlEditorConfig.get(0),
-                                          dhtmlEditorConfig.get(0));
+                                          dhtmlEditorConfig.get(1));
         }
 
     }
