@@ -258,6 +258,34 @@
         </textarea>
     
     </xsl:template>
+    
+    <xsl:template match="bebop:tinymce">
+        
+        <xsl:variable name="first-match">
+            <xsl:value-of select="//bebop:tinymce/@name" />
+        </xsl:variable>
+
+        <xsl:if test="@name=$first-match">
+            
+            <script src="{./@editor_src}"></script>
+            <script src="{./bebop:config[@name='TinyMCE.Config']/@path}">
+            </script>
+            
+        </xsl:if>
+        
+         <xsl:call-template name="process-label">
+            <xsl:with-param name="widget" select="."/>
+        </xsl:call-template>
+        <textarea id="ta_{@name}"
+                  class="tinymce"
+                  name="{@name}" 
+                  rows="{@rows}" 
+                  cols="{@cols}" 
+                  wrap="{@wrap}">
+            <xsl:value-of disable-output-escaping="no" select="text()"/>
+        </textarea>
+                        
+    </xsl:template>
  
     <!-- DE Benutze Xinha -->
     <!-- EN Use Xinha -->

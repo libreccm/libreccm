@@ -71,13 +71,15 @@ public final class BebopConfig {
         Arrays.asList(new String[]{BebopConstants.BEBOP_XINHAEDITOR,
                                    BebopConstants.BEBOP_FCKEDITOR,
                                    BebopConstants.BEBOP_DHTMLEDITOR,
-                                   BebopConstants.BEBOP_CCMEDITOR}));
+                                   BebopConstants.BEBOP_CCMEDITOR,
+                                   BebopConstants.BEBOP_TINYMCE_EDITOR}));
 
     @Setting
-    private String defaultDhtmlEditor = BebopConstants.BEBOP_CCMEDITOR;
+    private String defaultDhtmlEditor = BebopConstants.BEBOP_TINYMCE_EDITOR;
 
     @Setting
-    private String dhtmlEditorSrcFile = "/ccm-editor/ccm-editor-loader.js";
+//    private String dhtmlEditorSrcFile = "/ccm-editor/ccm-editor-loader.js";
+    private String dhtmlEditorSrcFile = "/tinymce/js/tinymce/tinymce.min.js";
 
     @Setting
     private Boolean showClassName = false;
