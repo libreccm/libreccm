@@ -42,6 +42,7 @@ public interface BebopConstants {
     String BEBOP_FCKEDITOR = "bebop:fckeditor";
     String BEBOP_XINHAEDITOR = "bebop:xinha";
     String BEBOP_CCMEDITOR = "bebop:ccmeditor";
+    String BEBOP_TINYMCE_EDITOR = "bebop:tinymce";
     String BEBOP_FORMWIDGET = "bebop:formWidget";
     String BEBOP_FORMERRORS = "bebop:formErrors";
     String BEBOP_PORTAL = "bebop:portal";
