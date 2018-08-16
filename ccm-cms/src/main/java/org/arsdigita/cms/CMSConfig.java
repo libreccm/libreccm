@@ -83,7 +83,8 @@ public class CMSConfig {
      */
     @Setting
     private List<String> dhtmlEditorConfig = Arrays.asList(new String[]{
-        "TinyMCE.Config", "/tinymce/tinymce_cms_config.js"});
+        "TinyMCE.Config", "/scripts/dist/ccm-cms-tinymce.js"});
+//        "TinyMCE.Config", "/tinymce/tinymce_cms_config.js"});
 
     /**
      * Defines which plugins to use, e.g.TableOperations,CSS Format:

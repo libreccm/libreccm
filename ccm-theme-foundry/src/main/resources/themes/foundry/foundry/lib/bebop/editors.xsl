@@ -267,7 +267,7 @@
 
         <xsl:if test="@name=$first-match">
             
-            <script src="{./@editor_src}"></script>
+            <!--<script src="{./@editor_src}"></script>-->
             <script src="{./bebop:config[@name='TinyMCE.Config']/@path}">
             </script>
             

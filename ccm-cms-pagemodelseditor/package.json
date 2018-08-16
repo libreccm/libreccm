@@ -1,10 +1,10 @@
 {
-    "name": "ccm-cms-js",
+    "name": "ccm-cms-pagemodelseditor",
     "version": "7.0.0",
-    "description": "JavaScript for the ccm-cms-module",
+    "description": "Adds editor components for PageModels components provided by ccm-cms",
     "repository": {
         "type": "svn",
-        "url": "https://svn.libreccm.org/ccm/ccm_ng/ccm-cms-js"
+        "url": "https://svn.libreccm.org/ccm/ccm_ng/ccm-cms-pagemodelseditor"
     },
     "author": "Jens Pelzetter",
     "license": "GPL-3.0",
@@ -17,15 +17,11 @@
     "dependencies": {
         "ccm-pagemodelseditor": "7.0.0",
         "react": "^16.4.2",
-        "react-dom": "^16.4.2",
-        "react-redux": "^5.0.7",
-        "redux": "^4.0.0",
-        "tinymce": "^4.8.2"
+        "react-dom": "^16.4.2"
     },
     "devDependencies": {
         "@types/react": "^16.4.11",
         "@types/react-dom": "^16.0.7",
-        "@types/tinymce": "^4.5.16",
         "tslint": "^5.11.0",
         "typescript": "^3.0.1"
     }

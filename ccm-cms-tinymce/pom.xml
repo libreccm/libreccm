@@ -16,10 +16,10 @@
     </parent>
 
     <groupId>org.librecms</groupId>
-    <artifactId>ccm-cms-js</artifactId>
+    <artifactId>ccm-cms-tinymce</artifactId>
     <version>7.0.0-SNAPSHOT</version>
 
-    <name>LibreCMS JS</name>
+    <name>LibreCMS TinyMCE</name>
 
     <licenses>
         <license>
@@ -29,15 +29,11 @@
     </licenses>
 
     <dependencies>
-        <dependency>
-            <groupId>org.libreccm</groupId>
-            <artifactId>ccm-pagemodelseditor</artifactId>
-            <version>7.0.0-SNAPSHOT</version>
-        </dependency>
+
     </dependencies>
 
     <build>
-        <finalName>ccm-cms-js</finalName>
+        <finalName>ccm-cms-tinymce</finalName>
 
         <resources>
             <resource>
@@ -49,9 +45,9 @@
             <resource>
                 <directory>${project.build.directory}/generated-resources</directory>
             </resource>
-            <resource>
+            <!--<resource>
                 <directory>${project.build.directory}/maven-shared-archive-resources/ccm-pagemodelseditor</directory>
-            </resource>
+            </resource>-->
 
         </resources>
 
@@ -78,7 +74,7 @@
                             <nodeVersion>v8.11.4</nodeVersion>
                         </configuration>
                     </execution>
-                    <execution>
+                    <!--<execution>
                         <id>npm link ccm-pagemodelseditor</id>
                         <goals>
                             <goal>npm</goal>
@@ -86,7 +82,7 @@
                         <configuration>
                             <arguments>link ccm-pagemodelseditor</arguments>
                         </configuration>
-                    </execution>
+                    </execution>-->
                     <execution>
                         <id>npm install</id>
                         <goals>
