@@ -5,7 +5,8 @@ module.exports = {
     devtool: "source-map",
 
     entry: {
-        ccmcms: "./src/main/typescript/ccm-cms.ts"
+        "ccm-cms-pagemodelseditor": "./src/main/typescript/ccm-cms-pagemodelseditor.ts",
+        "ccm-cms-tinymce": "./src/main/typescript/ccm-cms-tinymce.ts",
     },
 
     mode: "development",
@@ -13,7 +14,7 @@ module.exports = {
     output: {
         //path: path.resolve(__dirname, "src/main/resources/dist"),
         path: path.resolve(__dirname, "target/generated-resources/scripts/dist"),
-        filename: "ccm-cms.js"
+        filename: "[name].js"
     },
 
     resolve: {

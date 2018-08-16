@@ -1,0 +1,25 @@
+{
+    "name": "ccm-cms-tinymce",
+    "version": "7.0.0",
+    "description": "Extensions for TinyMCE specific for ccm-cms",
+    "repository": {
+        "type": "svn",
+        "url": "https://svn.libreccm.org/ccm/ccm_ng/ccm-cms-tinymce"
+    },
+    "author": "Jens Pelzetter",
+    "license": "GPL-3.0",
+    "main": "target/dist/ccm-cms-tinymce.js",
+    "types": "target/dist/ccm-cms-tinymce.d.ts",
+    "scripts": {
+        "build": "tsc",
+        "tslint": "tslint --project ."
+    },
+    "dependencies": {
+        "tinymce": "^4.8.2"
+    },
+    "devDependencies": {
+        "@types/tinymce": "^4.5.16",
+        "tslint": "^5.11.0",
+        "typescript": "^3.0.1"
+    }
+}
