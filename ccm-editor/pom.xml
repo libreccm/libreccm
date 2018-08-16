@@ -19,9 +19,9 @@
     <artifactId>ccm-editor</artifactId>
     <version>7.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    
+
     <name>LibreCCM Editor</name>
-    
+
     <licenses>
         <license>
             <name>Lesser GPL 2.1</name>
@@ -31,7 +31,7 @@
 
     <build>
         <finalName>ccm-editor</finalName>
-        
+
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -40,12 +40,12 @@
                 <directory>src/main/typescript</directory>
             </resource>
         </resources>
-        
+
         <plugins>
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                
+
                 <executions>
                     <execution>
                         <id>Install node.js and NPM</id>
@@ -53,7 +53,7 @@
                             <goal>install-node-and-npm</goal>
                         </goals>
                         <configuration>
-                            <nodeVersion>v8.11.1</nodeVersion>
+                            <nodeVersion>v8.11.4</nodeVersion>
                         </configuration>
                     </execution>
                     <execution>
@@ -71,7 +71,7 @@
                 </executions>
             </plugin>
         </plugins>
-        
+
     </build>
 
 

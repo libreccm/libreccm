@@ -159,7 +159,7 @@ public class PagesAdminPage extends CMSApplicationPage {
 //            "admin:pageModelsManager", AdminUiConstants.ADMIN_XML_NS);
 //        pageModelsManager.add(new Text("Placeholder page models editor"));
         final ReactApp pageModelsManager = new ReactApp(
-            "page-models-editor", "scripts/dist/ccm-cms.js");
+            "page-models-editor", "scripts/dist/ccm-cms-pagemodelseditor.js");
 
         pagesContextBar = new PagesContextBar();
         super.add(pagesContextBar);
