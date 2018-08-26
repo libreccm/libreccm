@@ -14,6 +14,7 @@ import org.xadisk.filesystem.exceptions.LockingFailedException;
 import org.xadisk.filesystem.exceptions.NoTransactionAssociatedException;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.resource.ResourceException;
 
@@ -23,26 +24,30 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.enterprise.context.RequestScoped;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.transaction.Transactional;
 
 /**
- * An implementation of the {@link FileSystemAdapter} which uses XADisk to provides
- * a transaction safe access to the file system. 
+ * An implementation of the {@link FileSystemAdapter} which uses XADisk to
+ * provides a transaction safe access to the file system.
  *
  * This {@link FileSystemAdapter} requires that XADisk.rar is deployed into the
  * application server and that a resource adapter is configured to provided
- * access to the file system. Please refer the documentation of this module
- * for more information.
+ * access to the file system. Please refer the documentation of this module for
+ * more information.
  *
  * @see http://xadisk.java.net
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -136,8 +141,8 @@ public class XAFileSystemAdapter implements FileSystemAdapter {
         } catch (InsufficientPermissionOnFileException ex) {
             throw new InsufficientPermissionsException(path, ex);
         } catch (InterruptedException
-                 | LockingFailedException
-                 | NoTransactionAssociatedException ex) {
+                     | LockingFailedException
+                     | NoTransactionAssociatedException ex) {
             throw new FileAccessException(path, ex);
         }
 
@@ -159,10 +164,10 @@ public class XAFileSystemAdapter implements FileSystemAdapter {
             } catch (InsufficientPermissionOnFileException ex) {
                 throw new InsufficientPermissionsException(path, ex);
             } catch (org.xadisk.filesystem.exceptions.FileAlreadyExistsException
-                     | FileNotExistsException
-                     | LockingFailedException
-                     | NoTransactionAssociatedException
-                     | InterruptedException ex) {
+                         | FileNotExistsException
+                         | LockingFailedException
+                         | NoTransactionAssociatedException
+                         | InterruptedException ex) {
                 throw new FileAccessException(path, ex);
             }
         }
@@ -175,10 +180,10 @@ public class XAFileSystemAdapter implements FileSystemAdapter {
         } catch (InsufficientPermissionOnFileException ex) {
             throw new InsufficientPermissionsException(path, ex);
         } catch (FileNotExistsException
-                 | FileUnderUseException
-                 | InterruptedException
-                 | LockingFailedException
-                 | NoTransactionAssociatedException ex) {
+                     | FileUnderUseException
+                     | InterruptedException
+                     | LockingFailedException
+                     | NoTransactionAssociatedException ex) {
             throw new FileAccessException(path, ex);
         }
 
@@ -198,17 +203,74 @@ public class XAFileSystemAdapter implements FileSystemAdapter {
         } catch (InsufficientPermissionOnFileException ex) {
             throw new InsufficientPermissionsException(path, ex);
         } catch (LockingFailedException
-                 | NoTransactionAssociatedException
-                 | InterruptedException ex) {
+                     | NoTransactionAssociatedException
+                     | InterruptedException ex) {
             throw new FileAccessException(path, ex);
+        }
+    }
+
+    @Override
+    public String getMimeType(final String path) throws FileAccessException {
+
+        final File file = new File(path);
+
+        return MimetypesFileTypeMap
+            .getDefaultFileTypeMap()
+            .getContentType(file);
+    }
+
+    @Override
+    public long getSize(final String path) throws FileAccessException {
+
+        final XADiskConnection connection = connect();
+
+        final File file = new File(path);
+        try {
+            return connection.getFileLength(file);
+        } catch (FileNotExistsException
+                     | InsufficientPermissionOnFileException
+                     | LockingFailedException
+                     | NoTransactionAssociatedException
+                     | InterruptedException ex) {
+
+            throw new FileAccessException(path, ex);
+        }
+    }
+
+    @Override
+    public void copy(final String sourcePath,
+                     final String targetPath,
+                     boolean recursive) throws FileAccessException {
+
+        final XADiskConnection connection = connect();
+        final File sourceFile = new File(sourcePath);
+        final File targetFile = new File(targetPath);
+
+        try {
+            if (connection.fileExists(targetFile)) {
+                connection.deleteFile(targetFile);
+                connection.copyFile(sourceFile, targetFile);
+            }
+            connection.copyFile(sourceFile, targetFile);
+        } catch (org.xadisk.filesystem.exceptions.DirectoryNotEmptyException
+                     | org.xadisk.filesystem.exceptions.FileAlreadyExistsException
+                 | FileNotExistsException
+                     | FileUnderUseException
+                     | InsufficientPermissionOnFileException
+                     | InterruptedException
+                     | LockingFailedException
+                     | NoTransactionAssociatedException ex) {
+
+            throw new FileAccessException(targetPath, ex);
         }
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
-    public boolean isDirectory(final String path) throws FileAccessException,
-                                                         FileDoesNotExistException,
-                                                         InsufficientPermissionsException {
+    public boolean isDirectory(final String path)
+        throws FileAccessException,
+               FileDoesNotExistException,
+               InsufficientPermissionsException {
 
         final XADiskConnection connection = connect();
         final File file = new File(path);
@@ -218,8 +280,8 @@ public class XAFileSystemAdapter implements FileSystemAdapter {
         } catch (InsufficientPermissionOnFileException ex) {
             throw new InsufficientPermissionsException(path, ex);
         } catch (LockingFailedException
-                 | NoTransactionAssociatedException
-                 | InterruptedException ex) {
+                     | NoTransactionAssociatedException
+                     | InterruptedException ex) {
             throw new FileAccessException(path, ex);
         }
     }
@@ -240,9 +302,9 @@ public class XAFileSystemAdapter implements FileSystemAdapter {
         } catch (InsufficientPermissionOnFileException ex) {
             throw new InsufficientPermissionsException(path, ex);
         } catch (FileNotExistsException
-                 | LockingFailedException
-                 | InterruptedException
-                 | NoTransactionAssociatedException ex) {
+                     | LockingFailedException
+                     | InterruptedException
+                     | NoTransactionAssociatedException ex) {
             throw new FileAccessException(path, ex);
         }
     }
@@ -264,8 +326,8 @@ public class XAFileSystemAdapter implements FileSystemAdapter {
         } catch (InsufficientPermissionOnFileException ex) {
             throw new InsufficientPermissionsException(path, ex);
         } catch (LockingFailedException
-                 | NoTransactionAssociatedException
-                 | InterruptedException ex) {
+                     | NoTransactionAssociatedException
+                     | InterruptedException ex) {
             throw new FileAccessException(path, ex);
         }
 
@@ -295,9 +357,9 @@ public class XAFileSystemAdapter implements FileSystemAdapter {
         } catch (InsufficientPermissionOnFileException ex) {
             throw new InsufficientPermissionsException(path, ex);
         } catch (FileUnderUseException
-                 | LockingFailedException
-                 | NoTransactionAssociatedException
-                 | InterruptedException ex) {
+                     | LockingFailedException
+                     | NoTransactionAssociatedException
+                     | InterruptedException ex) {
             throw new FileAccessException(path, ex);
         }
     }
