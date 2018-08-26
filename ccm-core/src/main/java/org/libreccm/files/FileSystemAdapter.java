@@ -135,6 +135,14 @@ public interface FileSystemAdapter {
         throws FileAccessException,
                InsufficientPermissionsException;
 
+    String getMimeType(String path) throws FileAccessException;
+    
+    long getSize(String path) throws FileAccessException;
+    
+    void copy(String sourcePath, 
+              String targetPath, 
+              boolean recursive) throws FileAccessException;
+    
     /**
      * checks if the provided path points to a directory.
      *

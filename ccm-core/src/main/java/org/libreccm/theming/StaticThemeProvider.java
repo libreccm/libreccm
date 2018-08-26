@@ -51,8 +51,6 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.JsonStructure;
-import javax.json.JsonValue;
 
 /**
  *
@@ -61,7 +59,7 @@ import javax.json.JsonValue;
 @RequestScoped
 public class StaticThemeProvider implements ThemeProvider {
 
-    private static final long serialVersionUID = 7174370298224448067L;
+    private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LogManager.getLogger(
         StaticThemeProvider.class);
 

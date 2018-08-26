@@ -20,15 +20,31 @@ package org.libreccm.files;
 
 import org.libreccm.configuration.ConfigurationManager;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
-import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.rmi.UnexpectedException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -188,6 +204,122 @@ public class NIOFileSystemAdapter implements FileSystemAdapter {
         final Path nioPath = Paths.get(path);
 
         return Files.exists(nioPath);
+    }
+
+    @Override
+    public String getMimeType(final String path) throws FileAccessException {
+
+        final Path nioPath = Paths.get(path);
+        try {
+            return Files.probeContentType(nioPath);
+        } catch (IOException ex) {
+            throw new FileAccessException(path, ex);
+        }
+    }
+
+    @Override
+    public long getSize(final String path) throws FileAccessException {
+
+        final Path nioPath = Paths.get(path);
+        try {
+            return Files.size(nioPath);
+        } catch (IOException ex) {
+            throw new FileAccessException(path, ex);
+        }
+
+    }
+
+    @Override
+    public void copy(final String sourcePath,
+                     final String targetPath,
+                     boolean recursive) throws FileAccessException {
+
+        final Path nioSourcePath = Paths.get(sourcePath);
+        final Path nioTargetPath = Paths.get(targetPath);
+
+        if (recursive) {
+
+            try {
+                Files.walkFileTree(
+                    nioTargetPath,
+                    new FileVisitor<Path>() {
+
+                    @Override
+                    public FileVisitResult preVisitDirectory(
+                        final Path dir,
+                        final BasicFileAttributes attrs)
+                        throws IOException {
+
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult visitFile(
+                        final Path file,
+                        final BasicFileAttributes attrs) throws IOException {
+
+                        Files.copy(
+                            file,
+                            nioTargetPath
+                                .resolve(nioSourcePath.relativize(file)),
+                            StandardCopyOption.ATOMIC_MOVE,
+                            StandardCopyOption.COPY_ATTRIBUTES,
+                            StandardCopyOption.REPLACE_EXISTING,
+                            LinkOption.NOFOLLOW_LINKS);
+                        
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult visitFileFailed(
+                        final Path file,
+                        final IOException ex) throws IOException {
+
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult postVisitDirectory(
+                        final Path dir,
+                        final IOException ex)
+                        throws IOException {
+
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                });
+            } catch (IOException ex) {
+                throw new FileAccessException(targetPath, ex);
+            }
+//            );
+//            source -> {
+//
+//                Files.copy(
+//                    source,
+//                    nioTargetPath
+//                        .resolve(nioSourcePath.relativize(
+//                            source,
+//                            StandardCopyOption.ATOMIC_MOVE,
+//                            StandardCopyOption.COPY_ATTRIBUTES,
+//                            StandardCopyOption.REPLACE_EXISTING,
+//                            LinkOption.NOFOLLOW_LINKS)));
+//            }
+//          
+//            );
+
+        } else {
+            try {
+                Files.copy(nioSourcePath,
+                           nioTargetPath,
+                           StandardCopyOption.ATOMIC_MOVE,
+                           StandardCopyOption.COPY_ATTRIBUTES,
+                           StandardCopyOption.REPLACE_EXISTING,
+                           LinkOption.NOFOLLOW_LINKS);
+            } catch (IOException ex) {
+                throw new FileAccessException(sourcePath, ex);
+            }
+        }
+
     }
 
     @Override

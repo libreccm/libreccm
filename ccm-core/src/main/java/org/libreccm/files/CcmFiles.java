@@ -384,7 +384,25 @@ public class CcmFiles {
 
         return getFileSystemAdapter().listFiles(getDataPath(path));
     }
+    
+    public String getMimeType(final String path) throws FileAccessException {
+        
+        return getFileSystemAdapter().getMimeType(path);
+    }
 
+    public void copyFile(final String sourcePath, 
+                    final String targetPath) throws FileAccessException {
+        
+         getFileSystemAdapter().copy(sourcePath, targetPath, false);
+    }
+    
+    public void copyFile(final String sourcePath, 
+                    final String targetPath,
+                    final boolean recursive) throws FileAccessException{
+        
+         getFileSystemAdapter().copy(sourcePath, targetPath, recursive);
+    }
+    
     /**
      * Delete a file or directory. If the file is a directory the directory must
      * be empty.
