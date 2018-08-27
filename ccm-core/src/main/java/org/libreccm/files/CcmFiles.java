@@ -403,6 +403,12 @@ public class CcmFiles {
          getFileSystemAdapter().copy(sourcePath, targetPath, recursive);
     }
     
+    public void moveFile(final String sourcePath,
+                         final String targetPath) throws FileAccessException {
+        
+        getFileSystemAdapter().move(sourcePath, targetPath);
+    }
+    
     /**
      * Delete a file or directory. If the file is a directory the directory must
      * be empty.
