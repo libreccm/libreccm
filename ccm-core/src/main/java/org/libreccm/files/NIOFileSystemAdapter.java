@@ -266,7 +266,7 @@ public class NIOFileSystemAdapter implements FileSystemAdapter {
                             StandardCopyOption.COPY_ATTRIBUTES,
                             StandardCopyOption.REPLACE_EXISTING,
                             LinkOption.NOFOLLOW_LINKS);
-                        
+
                         return FileVisitResult.CONTINUE;
                     }
 
@@ -319,7 +319,25 @@ public class NIOFileSystemAdapter implements FileSystemAdapter {
                 throw new FileAccessException(sourcePath, ex);
             }
         }
+    }
 
+    @Override
+    public void move(final String sourcePath, final String targetPath)
+        throws FileAccessException {
+
+        final Path nioSourcePath = Paths.get(sourcePath);
+        final Path nioTargetPath = Paths.get(targetPath);
+
+        try {
+        Files.move(nioSourcePath,
+                   nioTargetPath,
+                   StandardCopyOption.ATOMIC_MOVE,
+                   StandardCopyOption.COPY_ATTRIBUTES,
+                   StandardCopyOption.REPLACE_EXISTING,
+                   LinkOption.NOFOLLOW_LINKS);
+        } catch(IOException ex) {
+            throw new FileAccessException(targetPath, ex);
+        }
     }
 
     @Override

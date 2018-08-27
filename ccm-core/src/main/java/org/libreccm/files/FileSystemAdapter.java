@@ -143,6 +143,8 @@ public interface FileSystemAdapter {
               String targetPath, 
               boolean recursive) throws FileAccessException;
     
+    void move(String sourcePath, String targetPath) throws FileAccessException;
+    
     /**
      * checks if the provided path points to a directory.
      *
