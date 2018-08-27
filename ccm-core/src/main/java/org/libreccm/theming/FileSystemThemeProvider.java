@@ -32,6 +32,8 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -233,13 +235,21 @@ public class FileSystemThemeProvider implements ThemeProvider {
                                                       ThemeVersion.DRAFT);
         final String liveThemePath = createThemePath(theme,
                                                      ThemeVersion.LIVE);
+        final String liveThemePathTmp = String.format("%_tmp", liveThemePath);
 
         try {
-            ccmFiles.copyFile(draftThemePath, liveThemePath, true);
-        } catch (FileAccessException ex) {
+            ccmFiles.copyFile(draftThemePath, liveThemePathTmp, true);
+            if (ccmFiles.existsFile(liveThemePath)) {
+                ccmFiles.deleteFile(liveThemePath, true);
+            }
+            
+            ccmFiles.moveFile(liveThemePathTmp, liveThemePath);
+        } catch (DirectoryNotEmptyException
+                 | FileAccessException 
+                 | FileDoesNotExistException
+                 | InsufficientPermissionsException ex) {
             throw new UnexpectedErrorException();
-        }
-
+        } 
     }
 
     private String createThemePath(final String theme,

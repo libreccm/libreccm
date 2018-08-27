@@ -264,6 +264,28 @@ public class XAFileSystemAdapter implements FileSystemAdapter {
             throw new FileAccessException(targetPath, ex);
         }
     }
+    
+    @Override
+    public void move(final String sourcePath,
+                     final String targetPath) 
+    throws FileAccessException {
+        
+        final XADiskConnection connection = connect();
+        final File sourceFile = new File(sourcePath);
+        final File targetFile = new File(targetPath);
+        
+        try {
+            connection.moveFile(sourceFile, targetFile);
+        } catch(org.xadisk.filesystem.exceptions.FileAlreadyExistsException
+                | FileNotExistsException 
+                | FileUnderUseException 
+                | InsufficientPermissionOnFileException 
+                | InterruptedException
+                | LockingFailedException 
+                | NoTransactionAssociatedException ex) {
+            throw new FileAccessException(targetPath, ex);
+        }
+    }
 
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
