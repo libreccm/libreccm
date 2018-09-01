@@ -38,6 +38,11 @@
             <artifactId>requirejs-domready</artifactId>
             <version>2.0.1-2</version>
         </dependency>
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>tinymce</artifactId>
+            <version>4.8.2</version>
+        </dependency>
         <!-- <dependency>
             <groupId>org.librecms</groupId>
             <artifactId>ccm-cms-js</artifactId>
@@ -197,6 +202,14 @@
                             <type>jar</type>
                             <includes>
                                 <include>templates/</include>
+                            </includes>
+                        </overlay>
+                        <overlay>
+                            <groupId>org.librecms</groupId>
+                            <artifactId>ccm-cms-tinymce</artifactId>
+                            <type>jar</type>
+                            <includes>
+                                <include>scripts/</include>
                             </includes>
                         </overlay>
                     </overlays>
