@@ -83,15 +83,18 @@ public class CMSConfig {
      */
     @Setting
     private List<String> dhtmlEditorConfig = Arrays.asList(new String[]{
-        "TinyMCE.Config", "/scripts/dist/ccm-cms-tinymce.js"});
-//        "TinyMCE.Config", "/tinymce/tinymce_cms_config.js"});
+        "TinyMCE.Config", "scripts/ccm-cms/tinymce-loader.js"
+    });
+//        "TinyMCE.Config", "scripts/dist/tinymce/tinymce_cms_config.js"});
 
     /**
      * Defines which plugins to use, e.g.TableOperations,CSS Format:
      * [string,string,string]
      */
     @Setting
-    private List<String> dhtmlEditorPlugins = Collections.emptyList();
+    private List<String> dhtmlEditorPlugins = Arrays.asList(new String[]{
+        "scripts/ccm-cms/tinymce/plugins/insertmedia.js"
+    });
 
     /**
      * Prevent undesirable functions from being made available, eg images should

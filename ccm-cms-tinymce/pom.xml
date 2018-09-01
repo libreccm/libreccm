@@ -39,24 +39,18 @@
             <resource>
                 <directory>src/main/resources</directory>
             </resource>
-            <resource>
+            <!-- <resource>
                 <directory>src/main/typescript</directory>
             </resource>
             <resource>
                 <directory>${project.build.directory}/generated-resources</directory>
-            </resource>
-            <!--<resource>
-                <directory>${project.build.directory}/maven-shared-archive-resources/ccm-pagemodelseditor</directory>
-            </resource>-->
+            </resource> -->
 
         </resources>
 
         <plugins>
 
-            <!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-remote-resources-plugin</artifactId> <version>1.5</version> <configuration> <resourceBundles>
-            <resourceBundle>org.libreccm:ccm-pagemodelseditor:${project.version}</resourceBundle> </resourceBundles> </configuration> <executions> <execution> <goals> <goal>process</goal> </goals> </execution> </executions> </plugin> -->
-
-            <plugin>
+            <!--<plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
 
@@ -74,15 +68,6 @@
                             <nodeVersion>v8.11.4</nodeVersion>
                         </configuration>
                     </execution>
-                    <!--<execution>
-                        <id>npm link ccm-pagemodelseditor</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>link ccm-pagemodelseditor</arguments>
-                        </configuration>
-                    </execution>-->
                     <execution>
                         <id>npm install</id>
                         <goals>
@@ -108,7 +93,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
 
         </plugins>
     </build>

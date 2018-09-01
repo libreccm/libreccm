@@ -112,7 +112,7 @@ public class DHTMLEditor extends TextArea {
                                                          "/ccm-editor/ccm-editor-loader.js");
 
         public static final Config STANDARD = new Config("tinymce.config",
-                                                        "/tinymce(tinymce-config.js");
+                                                        "/tinymce/tinymce-config.js");
 
         private String m_name;
         private String m_path;
