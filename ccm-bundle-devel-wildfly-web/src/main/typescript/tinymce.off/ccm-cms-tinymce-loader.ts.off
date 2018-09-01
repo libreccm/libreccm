@@ -1,0 +1,30 @@
+import * as tinymce from "tinymce";
+
+import "tinymce/themes/modern/theme";
+
+import "tinymce/plugins/code";
+import "tinymce/plugins/lists";
+import "tinymce/plugins/nonbreaking";
+import "tinymce/plugins/noneditable";
+import "tinymce/plugins/paste";
+import "tinymce/plugins/searchreplace";
+import "tinymce/plugins/table";
+import "tinymce/plugins/template";
+import "tinymce/plugins/visualblocks";
+import "tinymce/plugins/wordcount";
+
+import plugin from "ccm-cms-tinymce";
+
+require.context(
+    "file-loader?name=[path][name].[ext]"
+        + "&context=node_modules/tinymce!tinymce/skins",
+    true,
+    /.*/,
+);
+
+tinymce.init({
+    //menubar: "tools",
+    plugins: "ccm-cms-tinymce-insertmedia code lists nonbreaking noneditable paste searchreplace table template visualblocks wordcount",
+    selector: ".tinymce",
+    //toolbar: "code",
+});

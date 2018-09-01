@@ -79,7 +79,7 @@ public final class BebopConfig {
 
     @Setting
 //    private String dhtmlEditorSrcFile = "/ccm-editor/ccm-editor-loader.js";
-    private String dhtmlEditorSrcFile = "/tinymce/js/tinymce/tinymce.min.js";
+    private String dhtmlEditorSrcFile = "/webjars/tinymce/4.8.2/tinymce.js";
 
     @Setting
     private Boolean showClassName = false;

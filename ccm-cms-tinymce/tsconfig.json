@@ -3,13 +3,13 @@
         "jsx": "React",
         "module": "commonjs",
         "moduleResolution": "node",
-        "outDir": "target/dist",
+        "rootDir": "src/main/typescript",
         "sourceMap": true,
         "declaration": true,
         "strict": true,
         "target": "es6"
     },
     "include": [
-        "src/main/typescript/**/*"
+        "src/main/typescript/tinymce/plugins/ccm-cms-tinymce-insertmedia/**/*"
     ]
 }

@@ -6,7 +6,7 @@ module.exports = {
 
     entry: {
         "ccm-cms-pagemodelseditor": "./src/main/typescript/ccm-cms-pagemodelseditor.ts",
-        "ccm-cms-tinymce": "./src/main/typescript/ccm-cms-tinymce.ts",
+        // "ccm-cms-tinymce-loader": "./src/main/typescript/tinymce/ccm-cms-tinymce-loader.ts",
     },
 
     mode: "development",
