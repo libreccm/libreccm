@@ -10,7 +10,7 @@ tinymce.PluginManager.add("ccm-cms-insertmedia",
             text: "Insert media",
             icon: false,
             onclick: function() {
-                openDialog(editor);
+                const dialog = openDialog(editor);
             }
         }
     );
