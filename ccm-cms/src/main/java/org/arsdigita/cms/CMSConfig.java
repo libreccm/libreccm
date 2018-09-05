@@ -93,7 +93,8 @@ public class CMSConfig {
      */
     @Setting
     private List<String> dhtmlEditorPlugins = Arrays.asList(new String[]{
-        "scripts/ccm-cms/tinymce/plugins/insertmedia.js"
+//        "scripts/ccm-cms/tinymce/plugins/insertimage.js"
+          "http://localhost/web/ccm-cms-tinymce/insertimage.js"
     });
 
     /**
