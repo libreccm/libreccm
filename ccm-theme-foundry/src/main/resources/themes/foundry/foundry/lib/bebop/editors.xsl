@@ -253,7 +253,12 @@
         <xsl:call-template name="process-label">
             <xsl:with-param name="widget" select="."/>
         </xsl:call-template>
-        <textarea id="ta_{@name}" name="{@name}" style="width:100%" rows="{@rows}" cols="{@cols}" wrap="{@wrap}">
+        <textarea id="ta_{@name}"
+                  name="{@name}"
+                  style="width:100%"
+                  rows="{@rows}"
+                  cols="{@cols}"
+                  wrap="{@wrap}">
             <xsl:value-of disable-output-escaping="no" select="text()"/>
         </textarea>
 
@@ -272,7 +277,14 @@
             </script>
             <xsl:if test="bebop:plugin">
                 <xsl:for-each select="bebop:plugin">
-                    <script src="{$context-prefix}/{./@name}"></script>
+                    <xsl:choose>
+                        <xsl:when test="starts-with(./@name, 'http://') or starts-with(./@name, 'https://')">
+                            <script src="{./@name}"></script>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <script src="{$context-prefix}/{./@name}"></script>
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </xsl:for-each>
             </xsl:if>
 
@@ -286,7 +298,9 @@
                   name="{@name}"
                   rows="{@rows}"
                   cols="{@cols}"
-                  wrap="{@wrap}">
+                  wrap="{@wrap}"
+                  data-contextprefix="{$context-prefix}"
+                  data-contentsection="{./@current-contentsection-primaryurl}">
             <xsl:value-of disable-output-escaping="no" select="text()"/>
         </textarea>
 
