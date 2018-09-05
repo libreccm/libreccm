@@ -21,6 +21,7 @@ package org.librecms.contentsection.rs;
 import com.arsdigita.cms.ui.assets.AssetSearchWidget;
 import com.arsdigita.kernel.KernelConfig;
 
+import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.assets.AssetTypeInfo;
 import org.librecms.assets.AssetTypesManager;
@@ -34,16 +35,23 @@ import org.librecms.contentsection.FolderManager;
 import org.librecms.contentsection.FolderRepository;
 import org.librecms.contentsection.FolderType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.StringWriter;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonWriter;
 import javax.transaction.Transactional;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
@@ -51,6 +59,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 /**
  * Provides a Web Service (build using JAX-RS). Used for example by the
@@ -63,103 +72,48 @@ import javax.ws.rs.QueryParam;
 public class Assets {
 
     @Inject
-    private ContentSectionRepository sectionRepo;
-
-    @Inject
-    private FolderRepository folderRepo;
-
-    @Inject
-    private FolderManager folderManager;
+    private AssetManager assetManager;
 
     @Inject
     private AssetRepository assetRepo;
 
     @Inject
-    private AssetManager assetManager;
+    private AssetTypesManager assetTypesManager;
 
     @Inject
-    private AssetTypesManager assetTypesManager;
+    private ConfigurationManager confManager;
+
+    @Inject
+    private ContentSectionRepository sectionRepo;
+
+    @Inject
+    private FolderManager folderManager;
+
+    @Inject
+    private FolderRepository folderRepo;
 
     @Inject
     private GlobalizationHelper globalizationHelper;
 
-    private Class<? extends Asset> toAssetTypeClass(final String type) {
-        final Class<?> clazz;
-        try {
-            clazz = Class.forName(type);
-        } catch (ClassNotFoundException ex) {
-            throw new IllegalArgumentException(String.format(
-                "Type '%s' is not a valid class.",
-                type));
-        }
+    @Inject
+    @Any
+    private Instance<AssetPropertiesProvider> assetPropertiesProviders;
 
-        if (Asset.class.isAssignableFrom(clazz)) {
-            @SuppressWarnings("unchecked")
-            final Class<? extends Asset> typeClass
-                                             = (Class<? extends Asset>) clazz;
-            return typeClass;
-        } else {
-            throw new IllegalArgumentException(String.format(
-                "Type '%s is not a subclass of '%s'.",
-                type,
-                Asset.class.getName()));
-        }
-    }
+    private Locale defaultLocale;
 
-    private Map<String, String> createAssetMapEntry(final Folder folder) {
-        final Map<String, String> result = new HashMap<>();
+    @PostConstruct
+    private void init() {
 
-        result.put("title",
-                   folder
-                       .getTitle()
-                       .getValue(KernelConfig.getConfig().getDefaultLocale()));
-        result.put("type",
-                   Folder.class.getName());
-        result.put("place", "");
-
-        return result;
-    }
-
-    private Map<String, String> createAssetMapEntry(final Asset asset) {
-        final Map<String, String> result = new HashMap<>();
-
-        result.put("assetId",
-                   Long.toString(asset.getObjectId()));
-
-        result.put("uuid", asset.getUuid());
-
-        result.put("name", asset.getDisplayName());
-
-        result.put("title",
-                   globalizationHelper
-                       .getValueFromLocalizedString(asset.getTitle()));
-
-        result.put("type",
-                   asset.getClass().getName());
-
-        final AssetTypeInfo typeInfo = assetTypesManager
-            .getAssetTypeInfo(asset.getClass());
-        final ResourceBundle bundle = ResourceBundle
-            .getBundle(typeInfo.getLabelBundle(),
-                       globalizationHelper.getNegotiatedLocale());
-        result.put("typeLabel", bundle.getString(typeInfo.getLabelKey()));
-
-        final Optional<Folder> assetFolder = assetManager.getAssetFolder(asset);
-        if (assetFolder.isPresent()) {
-            result.put("place",
-                       folderManager.getFolderPath(assetFolder.get()));
-        } else {
-            result.put("place", "");
-        }
-
-        return result;
+        final KernelConfig kernelConfig = confManager
+            .findConfiguration(KernelConfig.class);
+        defaultLocale = kernelConfig.getDefaultLocale();
     }
 
     @GET
     @Path("/")
-    @Produces("application/json; charset=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<Map<String, String>> findAssets(
+    public String findAssets(
         @PathParam("content-section") final String section,
         @QueryParam("query") final String query,
         @QueryParam("type") final String type) {
@@ -190,17 +144,25 @@ public class Assets {
                 contentSection);
         }
 
-        return assets
+        final JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+
+        assets
             .stream()
-            .map(asset -> createAssetMapEntry(asset))
-            .collect(Collectors.toList());
+            .map(this::assetToJson)
+            .forEach(arrayBuilder::add);
+
+        final StringWriter writer = new StringWriter();
+        final JsonWriter jsonWriter = Json.createWriter(writer);
+        jsonWriter.writeArray(arrayBuilder.build());
+
+        return writer.toString();
     }
 
     @GET
     @Path("/folders/")
-    @Produces("application/json; charset=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<Map<String, String>> findAssetsInRootFolder(
+    public String findAssetsInRootFolder(
         @PathParam("content-section") final String section,
         @QueryParam("query") final String query,
         @QueryParam("type") final String type) {
@@ -217,9 +179,9 @@ public class Assets {
 
     @GET
     @Path("/folders/{folder}/")
-    @Produces("application/json; charset=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<Map<String, String>> findAssetsInFolder(
+    public String findAssetsInFolder(
         @PathParam("content-section") final String section,
         @PathParam("folder") final String folderPath,
         @QueryParam("query") final String query,
@@ -241,15 +203,9 @@ public class Assets {
         return findAssetsInFolder(folder, query, type);
     }
 
-    private List<Map<String, String>> findAssetsInFolder(final Folder folder,
-                                                         final String query,
-                                                         final String type) {
-
-        final List<Map<String, String>> subFolderEntries = folder
-            .getSubFolders()
-            .stream()
-            .map(subFolder -> createAssetMapEntry(subFolder))
-            .collect(Collectors.toList());
+    private String findAssetsInFolder(final Folder folder,
+                                      final String query,
+                                      final String type) {
 
         final List<Asset> assets;
         if ((query == null || query.trim().isEmpty())
@@ -270,16 +226,128 @@ public class Assets {
                                                              query);
         }
 
-        final List<Map<String, String>> assetEntries = assets
+        final JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        folder
+            .getSubFolders()
             .stream()
-            .map(asset -> createAssetMapEntry(asset))
-            .collect(Collectors.toList());
+            .map(this::assetToJson)
+            .forEach(arrayBuilder::add);
 
-        final List<Map<String, String>> result = new ArrayList<>();
-        result.addAll(subFolderEntries);
-        result.addAll(assetEntries);
+        assets
+            .stream()
+            .map(this::assetToJson)
+            .forEach(arrayBuilder::add);
 
-        return result;
+        final StringWriter writer = new StringWriter();
+        final JsonWriter jsonWriter = Json.createWriter(writer);
+        jsonWriter.writeArray(arrayBuilder.build());
+
+        return writer.toString();
+    }
+
+    private Class<? extends Asset> toAssetTypeClass(final String type) {
+        final Class<?> clazz;
+        try {
+            clazz = Class.forName(type);
+        } catch (ClassNotFoundException ex) {
+            throw new IllegalArgumentException(String.format(
+                "Type '%s' is not a valid class.",
+                type));
+        }
+
+        if (Asset.class.isAssignableFrom(clazz)) {
+            @SuppressWarnings("unchecked")
+            final Class<? extends Asset> typeClass
+                                             = (Class<? extends Asset>) clazz;
+            return typeClass;
+        } else {
+            throw new IllegalArgumentException(String.format(
+                "Type '%s is not a subclass of '%s'.",
+                type,
+                Asset.class.getName()));
+        }
+    }
+
+    private JsonObject assetToJson(final Folder folder) {
+
+        return Json
+            .createObjectBuilder()
+            .add("title",
+                 folder.getTitle().getValue(defaultLocale))
+            .add("type", Folder.class.getName())
+            .add("place", "")
+            .build();
+    }
+
+    private JsonObject assetToJson(final Asset asset) {
+
+        final AssetTypeInfo typeInfo = assetTypesManager
+            .getAssetTypeInfo(asset.getClass());
+        final ResourceBundle bundle = ResourceBundle
+            .getBundle(typeInfo.getLabelBundle(),
+                       globalizationHelper.getNegotiatedLocale());
+        final String place;
+        final Optional<Folder> assetFolder = assetManager.getAssetFolder(asset);
+        if (assetFolder.isPresent()) {
+            place = folderManager.getFolderPath(assetFolder.get());
+        } else {
+            place = "";
+        }
+
+        return Json
+            .createObjectBuilder()
+            .add("assetId", asset.getObjectId())
+            .add("uuid", asset.getUuid())
+            .add("name", asset.getDisplayName())
+            .add("title", globalizationHelper.getValueFromLocalizedString(
+                 asset.getTitle()))
+            .add("type", asset.getClass().getName())
+            .add("typeLabel", bundle.getString(typeInfo.getLabelKey()))
+            .add("place", place)
+            .add("properties", getAssetProperties(asset))
+            .build();
+    }
+
+    private JsonObject getAssetProperties(final Asset asset) {
+
+        final ProvidesPropertiesForAssetTypeLiteral literal
+                                                 = new ProvidesPropertiesForAssetTypeLiteral(
+                asset.getClass());
+
+        final Instance<AssetPropertiesProvider> instance
+                                                    = assetPropertiesProviders
+                .select(literal);
+
+        final JsonObjectBuilder objBuilder = Json.createObjectBuilder();
+        if (!instance.isUnsatisfied()) {
+
+            instance
+                .forEach(provider -> provider.addProperties(asset, objBuilder));
+        }
+
+        return objBuilder.build();
+    }
+
+    private static class ProvidesPropertiesForAssetTypeLiteral
+        extends AnnotationLiteral<ProvidesPropertiesForAssetType>
+        implements ProvidesPropertiesForAssetType {
+
+        private static final long serialVersionUID = 1L;
+
+        private final Class<? extends Asset> forAssetType;
+
+        public ProvidesPropertiesForAssetTypeLiteral(
+            final Class<? extends Asset> forAssetType) {
+
+            this.forAssetType = forAssetType;
+        }
+
+        @Override
+        public Class<? extends Asset> value() {
+
+            return forAssetType;
+        }
+
     }
 
 }
