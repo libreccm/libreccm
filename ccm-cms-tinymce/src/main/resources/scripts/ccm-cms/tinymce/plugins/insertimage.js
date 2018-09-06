@@ -30,6 +30,19 @@ function openDialog(editor) {
 
     console.log("Opening dialog");
 
+    const selectedImage = {
+
+        selectedUuid: undefined,
+
+        get imageUuid() {
+            this.selectedUuid;
+        },
+        set imageUuid(value) {
+            this.selectedUuid = value;
+            console.log(`Set imageUuid to ${this.imageUuid}`);
+        },
+    };
+
     editor.windowManager.open({
         body: [
             {
@@ -47,7 +60,7 @@ function openDialog(editor) {
                             {
                                 name: "browse",
                                 onclick: function()  {
-                                    openBrowseDialog(editor);
+                                    openBrowseDialog(editor, selectedImage);
                                 },
                                 text: "Browse",
                                 type: "button",
@@ -107,7 +120,7 @@ function openDialog(editor) {
             },
         ],
         onsubmit: function(event) {
-
+            console.log(selectedImage.imageUuid);
         },
         title: "Insert image",
     });
@@ -115,28 +128,169 @@ function openDialog(editor) {
     console.log("Dialog opened.");
 }
 
-function openBrowseDialog(editor) {
+function openBrowseDialog(editor, selectedImage) {
 
     editor.windowManager.open({
-
         body: [
             {
-                items: [
-                    {
-                        text: "foo",
-                        type: "label",
-                    }
-                ],
+                // items: [
+                //     {
+                //         html: '<ul></ul>',
+                //         name: "imageList",
+                //         onPostRender: function() {
+                //             console.log(`contentSection: ${editor.getParam("contentsection")}`);
+                //             console.log(`contextPrefix: ${editor.getParam("contextprefix")}`);
+                //
+                //             const contextPrefix = editor.getParam("contextprefix");
+                //             const contentSection = editor.getParam("contentsection");
+                //
+                //
+                //
+                //         },
+                //         type: "container",
+                //     }
+                // ],
                 layout: "flow",
-                minHeigth: 400,
-                minWidth: 400,
+                minHeight: 400,
+                minWidth: 600,
+                onClick: function(event) {
+
+                    console.log("Click in Image Container...");
+                    console.log(`...on image ${event.target.getAttribute("data-uuid")}`);
+                    selectedImage.imageUuid = event.target.getAttribute("data-uuid");
+                    editor.windowManager.close();
+                },
                 onPostRender: function() {
+
                     console.log(`contentSection: ${editor.getParam("contentsection")}`);
                     console.log(`contextPrefix: ${editor.getParam("contextprefix")}`);
+
+                    const contextPrefix = editor.getParam("contextprefix");
+                    const contentSection = editor.getParam("contentsection");
+
+                    // console.log(`this.find(#imageList) = ${JSON.stringify(this.find("#imageList"))}`);
+                    // this.find("#imageList").innerHtml("<ul><li>bar</li><li>barbar</li></ul>");
+
+                    // const Throbber = tinymce.ui.Factory.get("Throbber");
+                    // this.append(new tinymce.ui.Throbber(this.getContainerElm()));
+
+                    console.log(`containerElm = ${this.getEl()}`);
+                    const throbber = new tinymce.ui.Throbber(this.getEl());
+                    throbber.show();
+                    // const throbber = tinymce.ui.Factory.create({
+                    //     elm: this,
+                    //     type: "Throbber"});
+                    // this.append(throbber);
+
+                    const url = `${contextPrefix}/content-sections`
+                        + `${contentSection}assets/`
+                        + `?type=org.librecms.assets.Image`;
+                    const requestInit = {
+                        credentials: "same-origin",
+                        method: "GET",
+                    };
+                    fetch(url, requestInit)
+                    .then((response) => {
+                        if (response.ok) {
+                            response
+                            .json()
+                            .then((data) => {
+
+                                // console.log(`imageList = ${this.find("#imageList")}`);
+                                // console.log(JSON.stringify(this.find("#imageList")));
+
+                                // let imageList = `Found ${data.length} images</pre>`;
+                                // imageList = imageList + "<ul>";
+                                const images = [];
+                                for(const image of data) {
+                                    images.push(
+                                        `<div style="display: flex; margin-top: 10px; margin-bottom: 10px;">\
+                                            <dt style="margin-right: 15px">\
+                                                <img data-uuid="${image.uuid}"
+                                                     src="${contextPrefix}/content-sections${contentSection}images/uuid-${image.uuid}"\
+                                                     alt="${image.title}"
+                                                     width="150"
+                                                     style="width: 150px; cursor: pointer">\
+                                            </dt>\
+                                            <dd style="width: 430px; overflow: hidden">\
+                                                <dl style="display: block">\
+                                                    <div style="display: flex">\
+                                                        <dt style="width: 5em">Title</dt>\
+                                                        <dd style="hypens:auto; max-width: 15em; overflow: hidden">${image.title}</dd>\
+                                                    </div>\
+                                                    <div style="display: flex">\
+                                                        <dt style="width: 5em">Filename</dt>\
+                                                        <dd style="hypens:auto max-width: 15em; overflow: hidden">${image.properties.filename}</dd>\
+                                                    </div>\
+                                                    <div style="display: flex">\
+                                                        <dt style="width: 5em">Width</dt>\
+                                                        <dd style="">${image.properties.width}</dd>\
+                                                    </div>\
+                                                    <div style="display: flex">\
+                                                        <dt style="width: 5em">Height</dt>\
+                                                        <dd style="">${image.properties.height}</dd>\
+                                                    </div>\
+                                            </dl>\
+                                        </dd>\
+                                    </div>`);
+                                }
+                                // imageList = imageList + "</ul>";
+
+                                const html = `<pre style="margin-bottom: 20px">Found ${data.length} images</pre>\
+                                <dl>\
+                                ${images.join("\n")}\
+                                </dl>`;
+
+                                this.innerHtml(html);
+                                throbber.hide();
+                                // for(const property of dialog.find("#imageList").getOwnPropertyNames()) {
+                                //     console.log(`imageList.${propery}`);
+                                // }
+                                // console.log(`imageList.getEl = ${dialog.find("#imageList").getEl}`);
+                                // const imageList = dialog.find("#imageList").getEl();
+                                //
+                                // for(const image of data) {
+                                //     console.log(image.name);
+                                //     imageList.append({
+                                //         html: `<li>${image.name}</li>`,
+                                //     });
+                                // }
+                            })
+                            .catch((error) => {
+                                throbber.hide();
+                                editor.notificationManager.open({
+                                    text: `Failed to retrieve available images: `
+                                        + ` ${error}`,
+                                    type: "error",
+                                });
+                            });
+                        } else {
+                            throbber.hide();
+                            editor.notificationManager.open({
+                                text: `Failed to retrieve images: `
+                                    + `Status: ${response.status} `
+                                    + `${response.statusText}`
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                        throbber.hide();
+                        editor.notificationManager.open({
+                            text: `Failed to retrieve available images: `
+                                + ` ${error}`,
+                            type: "error",
+                        });
+                    });
                 },
+                style: "overflow: auto",
                 type: "container",
             }
         ],
+        minWidth: 600,
+        minHeight: 400,
+        // onSubmit: function() {
+        //     selectedImage.imageUuid = "0000-0000-0000-0000";
+        // },
         title: "Select image",
     });
 }
