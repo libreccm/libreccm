@@ -45,6 +45,8 @@ function openDialog(editor) {
     // };
 
     let imageUuid = undefined;
+    let origWidth = undefined;
+    let origHeight = undefined;
 
     editor.windowManager.open({
         body: [
@@ -68,7 +70,7 @@ function openDialog(editor) {
                             {
                                 name: "browse",
                                 onclick: (event) => {
-                                    openBrowseDialog(editor, (uuid) => {
+                                    openBrowseDialog(editor, (uuid, width, height) => {
                                         console.log(`Selected image ${uuid}`);
                                         // editor.windowManager.getWindows()[0].find("#imageUuid").value(uuid);
                                         imageUuid = uuid;
@@ -79,8 +81,20 @@ function openDialog(editor) {
                                                             .getWindows()[0]
                                                             .find("#imageViewer")
                                                             .toArray()[0];
+                                        const widthField = editor
+                                                            .windowManager
+                                                            .getWindows()[0]
+                                                            .find("#width")
+                                                            .toArray()[0];
+                                        const heightField = editor
+                                                            .windowManager
+                                                            .getWindows()[0]
+                                                            .find("#height")
+                                                            .toArray()[0];
                                         imageViewer
                                             .innerHtml(`<img src="${contextPrefix}/content-sections${contentSection}images/uuid-${uuid}?width=150" />`);
+                                        widthField.value(width);
+                                        heightField.value(height);
                                     });
                                 },
                                 text: "Browse",
@@ -141,7 +155,44 @@ function openDialog(editor) {
             },
         ],
         onsubmit: function(event) {
-            // console.log(selectedImage.imageUuid);
+            console.log(imageUuid);
+            const tinyMceWindow = editor
+                                .windowManager
+                                .getWindows()[0];
+            const captionField = tinyMceWindow.find("#caption").toArray()[0];
+            const widthField = tinyMceWindow.find("#width").toArray()[0];
+            const heightField = tinyMceWindow.find("#width").toArray()[0];
+            const lightboxField = tinyMceWindow.find("#lightbox").toArray[0];
+
+            const contextPrefix = editor.getParam("contextprefix");
+            const contentSection = editor.getParam("contentsection");
+
+            let figureHtml = "";
+            let widthAttr = "";
+            let heightAttr = "";
+            let lightbox = "";
+
+            if (widthField.value()) {
+                widthAttr = `width="${widthField.value()}"`;
+            }
+            if (heightField.value()) {
+                heightAttr = `height="${heightField.value()}"`;
+            }
+            if (lightbox.value) {
+                lightbox = "class=\"ccm-lightbox\"";
+            }
+
+            if (captionField.value()) {
+                figureHtml = `<figure>\
+                    <img src="${contextPrefix}/content-sections${contentSection}images/uuid-${imageUuid}" ${lightbox} ${widthAttr} ${heightAttr} />\
+                    <figcaption>${captionField.value()}</figcaption>\
+                </figure>`
+            } else {
+                figureHtml = `<img alt="${contextPrefix}/content-sections${contentSection}images/uuid-${imageUuid}" src="${imageUuid}" ${lightbox} ${widthAttr} ${heightAttr} />`
+            }
+
+            console.log(`Inserting figure html: ${figureHtml}`)
+            editor.insertContent(figureHtml);
         },
         title: "Insert image",
     });
@@ -152,6 +203,7 @@ function openDialog(editor) {
 function openBrowseDialog(editor, selectImage) {
 
     editor.windowManager.open({
+        buttons: [],
         body: [
             {
                 // items: [
@@ -179,7 +231,9 @@ function openBrowseDialog(editor, selectImage) {
                     console.log("Click in Image Container...");
                     console.log(`...on image ${event.target.getAttribute("data-uuid")}`);
                     // selectedImage.imageUuid = event.target.getAttribute("data-uuid");
-                    selectImage(event.target.getAttribute("data-uuid"));
+                    selectImage(event.target.getAttribute("data-uuid"),
+                                event.target.getAttribute("data-width"),
+                                event.target.getAttribute("data-height"));
                     editor.windowManager.close();
                 },
                 onPostRender: function() {
@@ -229,6 +283,8 @@ function openBrowseDialog(editor, selectImage) {
                                         `<div style="display: flex; margin-top: 10px; margin-bottom: 10px;">\
                                             <dt style="margin-right: 15px">\
                                                 <img data-uuid="${image.uuid}"
+                                                     data-width="${image.properties.width}"
+                                                     data-height="${image.properties.height}"
                                                      src="${contextPrefix}/content-sections${contentSection}images/uuid-${image.uuid}?width=150"\
                                                      alt="${image.title}"
                                                      width="150"
@@ -310,9 +366,6 @@ function openBrowseDialog(editor, selectImage) {
         ],
         minWidth: 600,
         minHeight: 400,
-        // onSubmit: function() {
-        //     selectedImage.imageUuid = "0000-0000-0000-0000";
-        // },
         title: "Select image",
     });
 }
