@@ -30,18 +30,21 @@ function openDialog(editor) {
 
     console.log("Opening dialog");
 
-    const selectedImage = {
+    // const selectedImage = {
+    //
+    //     selectedUuid: undefined,
+    //
+    //     get imageUuid() {
+    //         this.selectedUuid;
+    //     },
+    //     set imageUuid(value) {
+    //         this.selectedUuid = value;
+    //         console.log(`Set imageUuid to ${this.selectedUuid}`);
+    //         editor.windowManager
+    //     },
+    // };
 
-        selectedUuid: undefined,
-
-        get imageUuid() {
-            this.selectedUuid;
-        },
-        set imageUuid(value) {
-            this.selectedUuid = value;
-            console.log(`Set imageUuid to ${this.imageUuid}`);
-        },
-    };
+    let imageUuid = undefined;
 
     editor.windowManager.open({
         body: [
@@ -51,22 +54,40 @@ function openDialog(editor) {
                         direction: "row",
                         items: [
                             {
-                                disabled: true,
-                                label: "Image",
-                                name: "imageUuid",
-                                type: "textbox",
-                                value: "foobar",
+                                // disabled: true,
+                                // label: "Image",
+                                // name: "imageUuid",
+                                // type: "textbox",
+                                // value: "foobar",
+                                border: "1 1 1 1",
+                                minWidth: 150,
+                                minHeight: 150,
+                                name: "imageViewer",
+                                type: "container",
                             },
                             {
                                 name: "browse",
-                                onclick: function()  {
-                                    openBrowseDialog(editor, selectedImage);
+                                onclick: (event) => {
+                                    openBrowseDialog(editor, (uuid) => {
+                                        console.log(`Selected image ${uuid}`);
+                                        // editor.windowManager.getWindows()[0].find("#imageUuid").value(uuid);
+                                        imageUuid = uuid;
+                                        const contextPrefix = editor.getParam("contextprefix");
+                                        const contentSection = editor.getParam("contentsection");
+                                        const imageViewer = editor
+                                                            .windowManager
+                                                            .getWindows()[0]
+                                                            .find("#imageViewer")
+                                                            .toArray()[0];
+                                        imageViewer
+                                            .innerHtml(`<img src="${contextPrefix}/content-sections${contentSection}images/uuid-${uuid}?width=150" />`);
+                                    });
                                 },
                                 text: "Browse",
                                 type: "button",
                             },
                         ],
-                        label: "Image",
+                        label: "Selected image",
                         layout: "flex",
                         type: "container",
                     },
@@ -104,7 +125,7 @@ function openDialog(editor) {
                 onPostRender: function() {
                     // console.log(`imageUuid = ${this.find("#imageUuid").value()}`);
                     const imageUuid = this.find("#imageUuid").value();
-                    console.log(`imageUuid = ${imageUuid}`);
+                     console.log(`imageUuid = ${imageUuid}`);
                     // this.find("#imagePanel").innerHTML = `<pre>${imageUuid}</pre>`;
                     this.find("#imagePanel").append([
                         {
@@ -120,7 +141,7 @@ function openDialog(editor) {
             },
         ],
         onsubmit: function(event) {
-            console.log(selectedImage.imageUuid);
+            // console.log(selectedImage.imageUuid);
         },
         title: "Insert image",
     });
@@ -128,7 +149,7 @@ function openDialog(editor) {
     console.log("Dialog opened.");
 }
 
-function openBrowseDialog(editor, selectedImage) {
+function openBrowseDialog(editor, selectImage) {
 
     editor.windowManager.open({
         body: [
@@ -157,7 +178,8 @@ function openBrowseDialog(editor, selectedImage) {
 
                     console.log("Click in Image Container...");
                     console.log(`...on image ${event.target.getAttribute("data-uuid")}`);
-                    selectedImage.imageUuid = event.target.getAttribute("data-uuid");
+                    // selectedImage.imageUuid = event.target.getAttribute("data-uuid");
+                    selectImage(event.target.getAttribute("data-uuid"));
                     editor.windowManager.close();
                 },
                 onPostRender: function() {
@@ -207,7 +229,7 @@ function openBrowseDialog(editor, selectedImage) {
                                         `<div style="display: flex; margin-top: 10px; margin-bottom: 10px;">\
                                             <dt style="margin-right: 15px">\
                                                 <img data-uuid="${image.uuid}"
-                                                     src="${contextPrefix}/content-sections${contentSection}images/uuid-${image.uuid}"\
+                                                     src="${contextPrefix}/content-sections${contentSection}images/uuid-${image.uuid}?width=150"\
                                                      alt="${image.title}"
                                                      width="150"
                                                      style="width: 150px; cursor: pointer">\
