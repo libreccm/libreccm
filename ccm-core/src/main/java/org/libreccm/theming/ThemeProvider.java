@@ -80,6 +80,36 @@ public interface ThemeProvider extends Serializable {
     boolean providesTheme(String theme, ThemeVersion version);
 
     /**
+     * Creates a new theme.
+     *
+     * The theme should be empty besides the manifest file. If a theme with the
+     * provided name already exists implementations should throw an
+     * {@link IllegalArgumentException}.
+     *
+     * {@code ThemeProvider} implementations which do not support the the
+     * creation of new themes the implementation of the method should throw a
+     * {@link UnsupportedOperationException}.
+     *
+     * @param themeName The name of the new theme.
+     *
+     * @return The {@link ThemeInfo} about the new theme.
+     */
+    ThemeInfo createTheme(String themeName);
+
+    /**
+     * Deletes a theme and all its content.
+     *
+     * If the is live implementations should throw an exception.
+     *
+     * {@code ThemeProvider} implementations which do not support the the
+     * deletion of themes the implementation of the method should throw a
+     * {@link UnsupportedOperationException}.
+     *
+     * @param themeName The theme to delete.
+     */
+    void deleteTheme(String themeName);
+
+    /**
      * List all files in a theme at the specified path.
      *
      * @param theme   The theme of which the files are listed.
@@ -154,7 +184,7 @@ public interface ThemeProvider extends Serializable {
     OutputStream getOutputStreamForThemeFile(String theme, String path);
 
     void deleteThemeFile(String theme, String path);
-    
+
     /**
      * Determines if the implementation supports changes to the files of the
      * themes.

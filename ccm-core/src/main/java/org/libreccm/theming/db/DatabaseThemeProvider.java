@@ -113,6 +113,39 @@ public class DatabaseThemeProvider implements ThemeProvider {
     }
 
     @Override
+    public ThemeInfo createTheme(final String themeName) {
+
+        Objects.requireNonNull(themeName);
+
+        if (themeName.isEmpty() || themeName.matches("\\s*")) {
+            throw new IllegalArgumentException(
+                "The name of a theme can't be empty.");
+        }
+
+        final Theme theme = themeManager.createTheme(themeName);
+
+        return createThemeInfo(theme);
+    }
+
+    @Override
+    public void deleteTheme(final String themeName) {
+
+        Objects.requireNonNull(themeName);
+
+        if (themeName.isEmpty() || themeName.matches("\\s*")) {
+            throw new IllegalArgumentException(
+                "The name of a theme can't be empty.");
+        }
+
+        final Theme theme = themeRepository
+            .findThemeByName(themeName, ThemeVersion.DRAFT)
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No theme with name \"%s\" is managed by this provider.",
+            themeName)));
+        themeManager.deleteTheme(theme);
+    }
+
+    @Override
     public List<ThemeFileInfo> listThemeFiles(final String themeName,
                                               final ThemeVersion version,
                                               final String path) {
@@ -247,7 +280,7 @@ public class DatabaseThemeProvider implements ThemeProvider {
 
     @Override
     public void deleteThemeFile(final String themeName, final String path) {
-        
+
         Objects.requireNonNull(themeName);
         Objects.requireNonNull(path);
 
@@ -267,10 +300,10 @@ public class DatabaseThemeProvider implements ThemeProvider {
         final ThemeFile file = fileRepository
             .findByPath(theme, path, ThemeVersion.DRAFT)
             .orElse(createDataFile(theme, path));
-        
+
         if (file instanceof DataFile) {
             fileManager.delete(file);
-        } else if(file instanceof Directory) {
+        } else if (file instanceof Directory) {
             fileManager.deleteRecursive(file);
         }
     }
