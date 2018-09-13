@@ -21,6 +21,7 @@ package org.libreccm.theming.manifest;
 import static org.libreccm.theming.ThemeConstants.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
@@ -149,6 +150,7 @@ public class ThemeManifestUtil implements Serializable {
         }
 
         mapper.registerModule(new JaxbAnnotationModule());
+        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 
         final StringWriter writer = new StringWriter();
         try {
