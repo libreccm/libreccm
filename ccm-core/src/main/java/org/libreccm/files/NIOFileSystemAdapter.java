@@ -434,14 +434,6 @@ public class NIOFileSystemAdapter implements FileSystemAdapter {
             throw new InsufficientPermissionsException(path);
         }
 
-        try {
-            if (Files.isDirectory(nioPath) && Files.list(nioPath).count() > 0) {
-                throw new DirectoryNotEmptyException(path);
-            }
-        } catch (IOException ex) {
-            throw new FileAccessException(path, ex);
-        }
-
         if (recursively && Files.isDirectory(nioPath)) {
             final List<String> files;
             try {
@@ -455,7 +447,11 @@ public class NIOFileSystemAdapter implements FileSystemAdapter {
             for (final String file : files) {
                 deleteFile(file, recursively);
             }
+            
+            deleteFile(path);
         } else {
+            
+            
             deleteFile(path);
         }
     }

@@ -184,9 +184,9 @@ public class Themes implements Serializable {
             return Optional.empty();
         } else {
             final Optional<ThemeInfo> masterTheme = getTheme(
-                theme.getManifest().getMasterTheme(), 
+                theme.getManifest().getMasterTheme(),
                 theme.getVersion());
-            
+
             if (masterTheme.isPresent()) {
                 return getFileFromTheme(masterTheme.get(), path);
             } else {
@@ -194,21 +194,22 @@ public class Themes implements Serializable {
             }
         }
     }
-    
+
     /**
      * List all files in a theme at the specified path
-     * 
+     *
      * @param theme The theme from which the file is retrieved.
-     * @param path The path of the file relative to the root directory of the
+     * @param path  The path of the file relative to the root directory of the
      *              theme.
+     *
      * @return A list of all files in the provided directory. If there is no
      *         such path in the theme the list is empty. If the path is the path
      *         of a file and not a directory the list should have one element,
      *         the data about the file itself.
      */
-    public List<ThemeFileInfo> listThemesFiles(final ThemeInfo theme,
-                                               final String path) {
-        
+    public List<ThemeFileInfo> listThemeFiles(final ThemeInfo theme,
+                                              final String path) {
+
         final Instance<? extends ThemeProvider> forTheme = providers.select(
             theme.getProvider());
 
@@ -221,17 +222,17 @@ public class Themes implements Serializable {
         }
 
         final ThemeProvider provider = forTheme.get();
-        return provider.listThemeFiles(theme.getName(), 
-                                       theme.getVersion(), 
+        return provider.listThemeFiles(theme.getName(),
+                                       theme.getVersion(),
                                        path);
     }
-    
-    public void deleteThemeFile(final ThemeInfo theme, 
+
+    public void deleteThemeFile(final ThemeInfo theme,
                                 final String path) {
-        
-        final Instance<? extends ThemeProvider> forTheme = providers.select(
-            theme.getProvider());
-        
+
+        final Instance<? extends ThemeProvider> forTheme = providers
+            .select(theme.getProvider());
+
         if (forTheme.isUnsatisfied()) {
             LOGGER.error("ThemeProvider \"{}\" not found.",
                          theme.getProvider().getName());
@@ -242,7 +243,7 @@ public class Themes implements Serializable {
 
         final ThemeProvider provider = forTheme.get();
         provider.deleteThemeFile(theme.getName(), path);
-        
+
     }
 
 }

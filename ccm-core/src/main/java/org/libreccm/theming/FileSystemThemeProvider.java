@@ -22,15 +22,20 @@ import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.files.CcmFiles;
 import org.libreccm.files.DirectoryNotEmptyException;
 import org.libreccm.files.FileAccessException;
+import org.libreccm.files.FileAlreadyExistsException;
 import org.libreccm.files.FileDoesNotExistException;
 import org.libreccm.files.InsufficientPermissionsException;
 import org.libreccm.theming.manifest.ThemeManifest;
 import org.libreccm.theming.manifest.ThemeManifestUtil;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -84,8 +89,8 @@ public class FileSystemThemeProvider implements ThemeProvider {
                 .collect(Collectors.toList());
 
         } catch (FileAccessException
-                     | FileDoesNotExistException
-                     | InsufficientPermissionsException ex) {
+                 | FileDoesNotExistException
+                 | InsufficientPermissionsException ex) {
 
             throw new UnexpectedErrorException(ex);
         }
@@ -96,7 +101,7 @@ public class FileSystemThemeProvider implements ThemeProvider {
 
         try {
             if (!ccmFiles.isDirectory(BASE_PATH)
-                    || !ccmFiles.isDirectory(DRAFT_THEMES_PATH)) {
+                    || !ccmFiles.isDirectory(LIVE_THEMES_PATH)) {
 
                 return Collections.emptyList();
             }
@@ -109,8 +114,8 @@ public class FileSystemThemeProvider implements ThemeProvider {
                 .map(info -> info.get())
                 .collect(Collectors.toList());
         } catch (FileAccessException
-                     | FileDoesNotExistException
-                     | InsufficientPermissionsException ex) {
+                 | FileDoesNotExistException
+                 | InsufficientPermissionsException ex) {
 
             throw new UnexpectedErrorException(ex);
         }
@@ -138,6 +143,86 @@ public class FileSystemThemeProvider implements ThemeProvider {
     }
 
     @Override
+    public ThemeInfo createTheme(final String themeName) {
+
+        Objects.requireNonNull(themeName);
+
+        if (themeName.isEmpty() || themeName.matches("\\s*")) {
+            throw new IllegalArgumentException(
+                "The name of a theme can't be empty.");
+        }
+
+        try {
+            ccmFiles.createDirectory(String.format(DRAFT_THEMES_PATH + "/%s",
+                                                   themeName));
+        } catch (FileAccessException
+                 | FileAlreadyExistsException
+                 | InsufficientPermissionsException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+
+        final ThemeManifest manifest = new ThemeManifest();
+        manifest.setName(themeName);
+
+        final OutputStream outputStream;
+        try {
+            outputStream = ccmFiles.createOutputStream(
+                String.format(DRAFT_THEMES_PATH + "/%s/"
+                                  + ThemeConstants.THEME_MANIFEST_JSON,
+                              themeName));
+        } catch (FileAccessException
+                 | InsufficientPermissionsException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+
+        try(final OutputStreamWriter writer = new OutputStreamWriter(
+            outputStream, StandardCharsets.UTF_8)) {
+            writer
+                .append(manifestUtil
+                    .serializeManifest(manifest,
+                                       ThemeConstants.THEME_MANIFEST_JSON));
+            writer.flush();
+        } catch (IOException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+
+        return getThemeInfo(themeName, ThemeVersion.DRAFT).get();
+    }
+
+    @Override
+    public void deleteTheme(final String themeName) {
+
+        Objects.requireNonNull(themeName);
+
+        if (themeName.isEmpty() || themeName.matches("\\s*")) {
+            throw new IllegalArgumentException(
+                "The name of a theme can't be empty.");
+        }
+
+        final Optional<ThemeInfo> liveTheme = getLiveThemes()
+            .stream()
+            .filter(theme -> theme.getName().equals(themeName))
+            .findAny();
+        
+        if (liveTheme.isPresent()) {
+            throw new IllegalArgumentException(String
+                .format("The theme \"%s\" is live and can't be deleted.",
+                        themeName));
+        }
+        
+        try {
+            ccmFiles.deleteFile(String.format(DRAFT_THEMES_PATH + "/%s", 
+                                              themeName),
+                                true);
+        } catch (FileAccessException 
+            | FileDoesNotExistException 
+            | DirectoryNotEmptyException 
+            | InsufficientPermissionsException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+    }
+
+    @Override
     public List<ThemeFileInfo> listThemeFiles(final String theme,
                                               final ThemeVersion version,
                                               final String path) {
@@ -154,8 +239,8 @@ public class FileSystemThemeProvider implements ThemeProvider {
                 .collect(Collectors.toList());
 
         } catch (FileAccessException
-                     | FileDoesNotExistException
-                     | InsufficientPermissionsException ex) {
+                 | FileDoesNotExistException
+                 | InsufficientPermissionsException ex) {
 
             throw new UnexpectedErrorException(ex);
         }
@@ -166,7 +251,7 @@ public class FileSystemThemeProvider implements ThemeProvider {
         final String theme, final ThemeVersion version, final String path) {
 
         final String themePath = createThemePath(theme, version);
-        final String filePath = String.join(theme, path, "/");
+        final String filePath = String.join(themePath, path, "/");
 
         try {
             if (ccmFiles.existsFile(path)) {
@@ -175,8 +260,8 @@ public class FileSystemThemeProvider implements ThemeProvider {
                 return Optional.of(ccmFiles.createInputStream(filePath));
             }
         } catch (FileAccessException
-                     | FileDoesNotExistException
-                     | InsufficientPermissionsException ex) {
+                 | FileDoesNotExistException
+                 | InsufficientPermissionsException ex) {
 
             throw new UnexpectedErrorException(ex);
         }
@@ -194,7 +279,7 @@ public class FileSystemThemeProvider implements ThemeProvider {
             return ccmFiles.createOutputStream(filePath);
 
         } catch (FileAccessException
-                     | InsufficientPermissionsException ex) {
+                 | InsufficientPermissionsException ex) {
 
             throw new UnexpectedErrorException(ex);
         }
@@ -209,9 +294,9 @@ public class FileSystemThemeProvider implements ThemeProvider {
         try {
             ccmFiles.deleteFile(filePath, true);
         } catch (FileAccessException
-                     | FileDoesNotExistException
-                     | DirectoryNotEmptyException
-                     | InsufficientPermissionsException ex) {
+                 | FileDoesNotExistException
+                 | DirectoryNotEmptyException
+                 | InsufficientPermissionsException ex) {
 
             throw new UnexpectedErrorException(ex);
         }
@@ -242,14 +327,14 @@ public class FileSystemThemeProvider implements ThemeProvider {
             if (ccmFiles.existsFile(liveThemePath)) {
                 ccmFiles.deleteFile(liveThemePath, true);
             }
-            
+
             ccmFiles.moveFile(liveThemePathTmp, liveThemePath);
         } catch (DirectoryNotEmptyException
-                 | FileAccessException 
+                 | FileAccessException
                  | FileDoesNotExistException
                  | InsufficientPermissionsException ex) {
             throw new UnexpectedErrorException();
-        } 
+        }
     }
 
     private String createThemePath(final String theme,
@@ -258,9 +343,9 @@ public class FileSystemThemeProvider implements ThemeProvider {
         switch (version) {
 
             case DRAFT:
-                return String.format(DRAFT_THEMES_PATH, theme);
+                return String.format(DRAFT_THEMES_PATH + "/%s", theme);
             case LIVE:
-                return String.format(LIVE_THEMES_PATH, theme);
+                return String.format(LIVE_THEMES_PATH + "/%s", theme);
             default:
                 throw new IllegalArgumentException(String
                     .format("Illegal argument for ThemeVersion \"%s\".",
@@ -286,8 +371,8 @@ public class FileSystemThemeProvider implements ThemeProvider {
                 return Optional.empty();
             }
         } catch (FileAccessException
-                     | FileDoesNotExistException
-                     | InsufficientPermissionsException ex) {
+                 | FileDoesNotExistException
+                 | InsufficientPermissionsException ex) {
 
             throw new UnexpectedErrorException(ex);
         }
@@ -310,8 +395,8 @@ public class FileSystemThemeProvider implements ThemeProvider {
 
             return fileInfo;
         } catch (FileAccessException
-                     | FileDoesNotExistException
-                     | InsufficientPermissionsException ex) {
+                 | FileDoesNotExistException
+                 | InsufficientPermissionsException ex) {
 
             throw new UnexpectedErrorException(ex);
         }

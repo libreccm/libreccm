@@ -255,6 +255,22 @@ public class StaticThemeProvider implements ThemeProvider {
     }
 
     @Override
+    public ThemeInfo createTheme(final String theme) {
+        
+        throw new UnsupportedOperationException(String.format(
+        "The ThemeProvider %s does support the creation of new themes.",
+        getClass().getName()));
+    }
+    
+    @Override
+    public void deleteTheme(final String theme) {
+        
+         throw new UnsupportedOperationException(String.format(
+        "The ThemeProvider %s does support the deltion of themes.",
+        getClass().getName()));
+    }
+    
+    @Override
     public List<ThemeFileInfo> listThemeFiles(final String theme,
                                               final ThemeVersion version,
                                               final String path) {

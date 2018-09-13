@@ -202,7 +202,7 @@ public class ThemeFiles {
             "No theme with name \"%s\" exists.",
             theme)));
 
-        final List<ThemeFileInfo> fileInfos = themes.listThemesFiles(themeInfo,
+        final List<ThemeFileInfo> fileInfos = themes.listThemeFiles(themeInfo,
                                                                      path);
         final MultiStatus result;
         if (fileInfos.isEmpty()) {
