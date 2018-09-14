@@ -54,8 +54,8 @@ public class FileSystemThemeProvider implements ThemeProvider {
     private static final long serialVersionUID = 1L;
 
     private static final String BASE_PATH = "/themes";
-    private static final String DRAFT_THEMES_PATH = "/themes" + "/draft";
-    private static final String LIVE_THEMES_PATH = "/themes" + "/live";
+    private static final String DRAFT_THEMES_PATH = BASE_PATH + "/draft";
+    private static final String LIVE_THEMES_PATH = BASE_PATH + "/live";
 
     private static final String THEME_JSON = "%s/theme.json";
     private static final String THEME_XML = "%s/theme.xml";
@@ -175,7 +175,7 @@ public class FileSystemThemeProvider implements ThemeProvider {
             throw new UnexpectedErrorException(ex);
         }
 
-        try(final OutputStreamWriter writer = new OutputStreamWriter(
+        try (final OutputStreamWriter writer = new OutputStreamWriter(
             outputStream, StandardCharsets.UTF_8)) {
             writer
                 .append(manifestUtil
@@ -203,21 +203,21 @@ public class FileSystemThemeProvider implements ThemeProvider {
             .stream()
             .filter(theme -> theme.getName().equals(themeName))
             .findAny();
-        
+
         if (liveTheme.isPresent()) {
             throw new IllegalArgumentException(String
                 .format("The theme \"%s\" is live and can't be deleted.",
                         themeName));
         }
-        
+
         try {
-            ccmFiles.deleteFile(String.format(DRAFT_THEMES_PATH + "/%s", 
+            ccmFiles.deleteFile(String.format(DRAFT_THEMES_PATH + "/%s",
                                               themeName),
                                 true);
-        } catch (FileAccessException 
-            | FileDoesNotExistException 
-            | DirectoryNotEmptyException 
-            | InsufficientPermissionsException ex) {
+        } catch (FileAccessException
+                 | FileDoesNotExistException
+                 | DirectoryNotEmptyException
+                 | InsufficientPermissionsException ex) {
             throw new UnexpectedErrorException(ex);
         }
     }
@@ -320,20 +320,50 @@ public class FileSystemThemeProvider implements ThemeProvider {
                                                       ThemeVersion.DRAFT);
         final String liveThemePath = createThemePath(theme,
                                                      ThemeVersion.LIVE);
-        final String liveThemePathTmp = String.format("%_tmp", liveThemePath);
+        final String liveThemePathTmp = String.format("%s_tmp", liveThemePath);
 
         try {
+            if (!ccmFiles.existsFile(LIVE_THEMES_PATH)) {
+                ccmFiles.createDirectory(LIVE_THEMES_PATH);
+            }
+        } catch (FileAccessException
+                 | InsufficientPermissionsException
+                 | FileAlreadyExistsException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+
+        try {
+
+            ccmFiles.createDirectory(liveThemePathTmp);
+
             ccmFiles.copyFile(draftThemePath, liveThemePathTmp, true);
             if (ccmFiles.existsFile(liveThemePath)) {
                 ccmFiles.deleteFile(liveThemePath, true);
             }
 
             ccmFiles.moveFile(liveThemePathTmp, liveThemePath);
+
+        } catch (DirectoryNotEmptyException
+                 | FileAccessException
+                 | FileAlreadyExistsException
+                 | FileDoesNotExistException
+                 | InsufficientPermissionsException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+    }
+
+    @Override
+    public void unpublishTheme(final String theme) {
+
+        final String liveThemePath = createThemePath(theme,
+                                                     ThemeVersion.LIVE);
+        try {
+            ccmFiles.deleteFile(liveThemePath, true);
         } catch (DirectoryNotEmptyException
                  | FileAccessException
                  | FileDoesNotExistException
                  | InsufficientPermissionsException ex) {
-            throw new UnexpectedErrorException();
+            throw new UnexpectedErrorException(ex);
         }
     }
 
@@ -357,15 +387,19 @@ public class FileSystemThemeProvider implements ThemeProvider {
 
         final ThemeManifest manifest;
         try {
-            final InputStream inputStream = ccmFiles
-                .createInputStream(String.format(THEME_JSON,
-                                                 themePath));
-            if (ccmFiles.existsFile(String.format(THEME_JSON,
-                                                  themePath))) {
 
+            final String jsonPath = String.format(
+                DRAFT_THEMES_PATH + "/" + THEME_JSON, themePath);
+            final String xmlPath = String.format(
+                DRAFT_THEMES_PATH + "/" + THEME_XML, themePath);
+
+            if (ccmFiles.existsFile(jsonPath)) {
+                final InputStream inputStream = ccmFiles
+                    .createInputStream(jsonPath);
                 manifest = manifestUtil.loadManifest(inputStream, "theme.json");
-            } else if (ccmFiles.existsFile(String.format(THEME_XML,
-                                                         themePath))) {
+            } else if (ccmFiles.existsFile(xmlPath)) {
+                final InputStream inputStream = ccmFiles
+                    .createInputStream(xmlPath);
                 manifest = manifestUtil.loadManifest(inputStream, "theme.xml");
             } else {
                 return Optional.empty();

@@ -390,6 +390,11 @@ public class StaticThemeProvider implements ThemeProvider {
     public void publishTheme(final String theme) {
         //No op in this implementation.
     }
+    
+    @Override
+    public void unpublishTheme(final String theme) {
+        //No op in this implementation.
+    }
 
     private URI getJarUri() {
 
