@@ -325,6 +325,14 @@ public class DatabaseThemeProvider implements ThemeProvider {
             .findThemeByName(themeName, ThemeVersion.DRAFT)
             .ifPresent(themeManager::publishTheme);
     }
+    
+    @Override
+    public void unpublishTheme(final String themeName) {
+        
+        themeRepository
+            .findThemeByName(themeName, ThemeVersion.LIVE)
+            .ifPresent(themeManager::unpublishTheme);
+    }
 
     private ThemeInfo createThemeInfo(final Theme theme) {
 
