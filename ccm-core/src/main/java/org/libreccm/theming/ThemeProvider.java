@@ -208,5 +208,14 @@ public interface ThemeProvider extends Serializable {
      * @param theme The theme to publish.
      */
     void publishTheme(String theme);
+    
+    /**
+     * Unpublishes (deletes) the live version of a theme. For
+     * implementations which do not support draft/live themes the implementation
+     * of this method should be a noop, but not throw an exception.
+     *
+     * @param theme The theme to publish.
+     */
+    void unpublishTheme(String theme);
 
 }

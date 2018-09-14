@@ -44,7 +44,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.rmi.UnexpectedException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -234,14 +233,16 @@ public class NIOFileSystemAdapter implements FileSystemAdapter {
                      final String targetPath,
                      boolean recursive) throws FileAccessException {
 
-        final Path nioSourcePath = Paths.get(sourcePath);
-        final Path nioTargetPath = Paths.get(targetPath);
+        final Path nioSourcePath = Paths
+            .get(String.join("/", dataPath, sourcePath));
+        final Path nioTargetPath = Paths
+            .get(String.join("/", dataPath, targetPath));
 
         if (recursive) {
 
             try {
                 Files.walkFileTree(
-                    nioTargetPath,
+                    nioSourcePath,
                     new FileVisitor<Path>() {
 
                     @Override
@@ -262,7 +263,7 @@ public class NIOFileSystemAdapter implements FileSystemAdapter {
                             file,
                             nioTargetPath
                                 .resolve(nioSourcePath.relativize(file)),
-                            StandardCopyOption.ATOMIC_MOVE,
+//                            StandardCopyOption.ATOMIC_MOVE,
                             StandardCopyOption.COPY_ATTRIBUTES,
                             StandardCopyOption.REPLACE_EXISTING,
                             LinkOption.NOFOLLOW_LINKS);
@@ -311,7 +312,7 @@ public class NIOFileSystemAdapter implements FileSystemAdapter {
             try {
                 Files.copy(nioSourcePath,
                            nioTargetPath,
-                           StandardCopyOption.ATOMIC_MOVE,
+//                           StandardCopyOption.ATOMIC_MOVE,
                            StandardCopyOption.COPY_ATTRIBUTES,
                            StandardCopyOption.REPLACE_EXISTING,
                            LinkOption.NOFOLLOW_LINKS);
@@ -325,14 +326,16 @@ public class NIOFileSystemAdapter implements FileSystemAdapter {
     public void move(final String sourcePath, final String targetPath)
         throws FileAccessException {
 
-        final Path nioSourcePath = Paths.get(sourcePath);
-        final Path nioTargetPath = Paths.get(targetPath);
+        final Path nioSourcePath = Paths.get(
+            String.join("/", dataPath, sourcePath));
+        final Path nioTargetPath = Paths.get(
+            String.join("/", dataPath, targetPath));
 
         try {
         Files.move(nioSourcePath,
                    nioTargetPath,
                    StandardCopyOption.ATOMIC_MOVE,
-                   StandardCopyOption.COPY_ATTRIBUTES,
+//                   StandardCopyOption.COPY_ATTRIBUTES,
                    StandardCopyOption.REPLACE_EXISTING,
                    LinkOption.NOFOLLOW_LINKS);
         } catch(IOException ex) {

@@ -20,9 +20,11 @@ package org.libreccm.theming.manager;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.theming.ThemeInfo;
 import org.libreccm.theming.ThemeProvider;
 import org.libreccm.theming.ThemeVersion;
+import org.libreccm.theming.ThemingPrivileges;
 
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -40,6 +42,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonWriter;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -49,8 +52,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import static javassist.CtClass.*;
-import static org.reflections.util.Utils.*;
 
 /**
  *
@@ -74,6 +75,8 @@ public class Themes implements Serializable {
     @GET
     @Path("/providers")
     @Produces(MediaType.APPLICATION_JSON)
+    //@AuthorizationRequired
+    @RequiresPrivilege(ThemingPrivileges.ADMINISTER_THEMES)
     public String getThemeProviders() {
 
         final List<ThemeProvider> providersList = new ArrayList<>();
@@ -100,6 +103,8 @@ public class Themes implements Serializable {
     @GET
     @Path("/themes")
     @Produces(MediaType.APPLICATION_JSON)
+    //@AuthorizationRequired
+    @RequiresPrivilege(ThemingPrivileges.ADMINISTER_THEMES)
     public List<ThemeInfo> getAvailableThemes() {
 
         final List<ThemeInfo> availableThemes = new ArrayList<>();
@@ -115,6 +120,8 @@ public class Themes implements Serializable {
     @GET
     @Path("/themes/{theme}")
     @Produces(MediaType.APPLICATION_JSON)
+    //@AuthorizationRequired
+    @RequiresPrivilege(ThemingPrivileges.EDIT_THEME)
     public ThemeInfo getTheme(@PathParam("theme") final String themeName) {
 
         for (final ThemeProvider provider : providers) {
@@ -133,6 +140,8 @@ public class Themes implements Serializable {
     @Path("/themes/{theme}")
     @Produces(MediaType.APPLICATION_JSON)
     @SuppressWarnings("unchecked")
+    //@AuthorizationRequired
+    @RequiresPrivilege(ThemingPrivileges.ADMINISTER_THEMES)
     public ThemeInfo createTheme(
         @PathParam("theme") final String themeName,
         @QueryParam("provider") final String providerName) {
@@ -167,27 +176,57 @@ public class Themes implements Serializable {
 
     @DELETE
     @Path("/themes/{theme}")
+    //@AuthorizationRequired
+    @RequiresPrivilege(ThemingPrivileges.ADMINISTER_THEMES)
     public void deleteTheme(@PathParam("theme") final String themeName) {
 
         Objects.requireNonNull(themeName);
 
-        final List<ThemeProvider> providersList = new ArrayList<>();
-        providers
-            .forEach(provider -> providersList.add(provider));
-        
-        final Optional<ThemeProvider> provider = providersList
-        .stream()
-        .filter(current -> current.providesTheme(themeName,
-                                                   ThemeVersion.DRAFT))
-        .findAny();
-        
+        final Optional<ThemeProvider> provider = findProvider(themeName);
+
         if (provider.isPresent()) {
-            
+
             provider.get().deleteTheme(themeName);
-            
+
         } else {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
+    }
+
+    @POST
+    @Path("/themes/{theme}/live")
+    //@AuthorizationRequired
+    @RequiresPrivilege(ThemingPrivileges.ADMINISTER_THEMES)
+    public void publishTheme(@PathParam("theme") final String themeName) {
+
+        final Optional<ThemeProvider> provider = findProvider(themeName);
+
+        if (provider.isPresent()) {
+
+            provider.get().publishTheme(themeName);
+
+        } else {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+
+    }
+
+    @DELETE
+    @Path("/themes/{theme}/live")
+    //@AuthorizationRequired
+    @RequiresPrivilege(ThemingPrivileges.ADMINISTER_THEMES)
+    public void unPublishTheme(@PathParam("theme") final String themeName) {
+
+        final Optional<ThemeProvider> provider = findProvider(themeName);
+
+        if (provider.isPresent()) {
+
+            provider.get().unpublishTheme(themeName);
+
+        } else {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+
     }
 
     private String getProviderName(final ThemeProvider provider) {
@@ -205,6 +244,19 @@ public class Themes implements Serializable {
             return provider.getClass().getName();
         }
 
+    }
+
+    private Optional<ThemeProvider> findProvider(final String forTheme) {
+
+        final List<ThemeProvider> providersList = new ArrayList<>();
+        providers
+            .forEach(provider -> providersList.add(provider));
+
+        return providersList
+            .stream()
+            .filter(current -> current.providesTheme(forTheme,
+                                                     ThemeVersion.DRAFT))
+            .findAny();
     }
 
 }
