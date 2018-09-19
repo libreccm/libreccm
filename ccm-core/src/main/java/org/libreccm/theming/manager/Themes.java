@@ -20,12 +20,16 @@ package org.libreccm.theming.manager;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
+import org.libreccm.theming.ThemeFileInfo;
 import org.libreccm.theming.ThemeInfo;
 import org.libreccm.theming.ThemeProvider;
 import org.libreccm.theming.ThemeVersion;
 import org.libreccm.theming.ThemingPrivileges;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -52,7 +56,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -75,7 +78,7 @@ public class Themes implements Serializable {
     @GET
     @Path("/providers")
     @Produces(MediaType.APPLICATION_JSON)
-    //@AuthorizationRequired
+    @AuthorizationRequired
     @RequiresPrivilege(ThemingPrivileges.ADMINISTER_THEMES)
     public String getThemeProviders() {
 
@@ -103,7 +106,7 @@ public class Themes implements Serializable {
     @GET
     @Path("/themes")
     @Produces(MediaType.APPLICATION_JSON)
-    //@AuthorizationRequired
+    @AuthorizationRequired
     @RequiresPrivilege(ThemingPrivileges.ADMINISTER_THEMES)
     public List<ThemeInfo> getAvailableThemes() {
 
@@ -120,7 +123,7 @@ public class Themes implements Serializable {
     @GET
     @Path("/themes/{theme}")
     @Produces(MediaType.APPLICATION_JSON)
-    //@AuthorizationRequired
+    @AuthorizationRequired
     @RequiresPrivilege(ThemingPrivileges.EDIT_THEME)
     public ThemeInfo getTheme(@PathParam("theme") final String themeName) {
 
@@ -140,7 +143,7 @@ public class Themes implements Serializable {
     @Path("/themes/{theme}")
     @Produces(MediaType.APPLICATION_JSON)
     @SuppressWarnings("unchecked")
-    //@AuthorizationRequired
+    @AuthorizationRequired
     @RequiresPrivilege(ThemingPrivileges.ADMINISTER_THEMES)
     public ThemeInfo createTheme(
         @PathParam("theme") final String themeName,
@@ -176,7 +179,7 @@ public class Themes implements Serializable {
 
     @DELETE
     @Path("/themes/{theme}")
-    //@AuthorizationRequired
+    @AuthorizationRequired
     @RequiresPrivilege(ThemingPrivileges.ADMINISTER_THEMES)
     public void deleteTheme(@PathParam("theme") final String themeName) {
 
@@ -195,7 +198,7 @@ public class Themes implements Serializable {
 
     @POST
     @Path("/themes/{theme}/live")
-    //@AuthorizationRequired
+    @AuthorizationRequired
     @RequiresPrivilege(ThemingPrivileges.ADMINISTER_THEMES)
     public void publishTheme(@PathParam("theme") final String themeName) {
 
@@ -213,7 +216,7 @@ public class Themes implements Serializable {
 
     @DELETE
     @Path("/themes/{theme}/live")
-    //@AuthorizationRequired
+    @AuthorizationRequired
     @RequiresPrivilege(ThemingPrivileges.ADMINISTER_THEMES)
     public void unPublishTheme(@PathParam("theme") final String themeName) {
 
@@ -226,7 +229,134 @@ public class Themes implements Serializable {
         } else {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
+    }
 
+    @GET
+    @Path("/themes/{theme}/files/")
+    @AuthorizationRequired
+    @RequiresPrivilege(ThemingPrivileges.ADMINISTER_THEMES)
+    public Response getThemeRootDir(@PathParam("theme") final String themeName) {
+
+        final Optional<ThemeProvider> provider = findProvider(themeName);
+
+        if (provider.isPresent()) {
+
+            final Optional<ThemeFileInfo> fileInfo = provider
+                .get()
+                .getThemeFileInfo(themeName, ThemeVersion.DRAFT, "/");
+
+            if (fileInfo.isPresent()) {
+
+                if (fileInfo.get().isDirectory()) {
+
+                    final List<ThemeFileInfo> fileInfos = provider
+                        .get()
+                        .listThemeFiles(themeName, ThemeVersion.DRAFT, "/");
+
+                    return Response
+                        .ok(fileInfos)
+                        .type(MediaType.APPLICATION_JSON)
+                        .build();
+
+                } else {
+
+                    throw new WebApplicationException(
+                        String.format(
+                            "File \"/\" in theme %s is not a directory.",
+                            themeName),
+                        Response.Status.INTERNAL_SERVER_ERROR);
+                }
+
+            } else {
+                return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .entity(String.format(
+                        "File \"/\" does not exist in theme %s.",
+                        themeName))
+                    .build();
+            }
+
+        } else {
+            return Response
+                .status(Response.Status.NOT_FOUND)
+                .entity(String.format("Theme \"%s\" does not exist.",
+                                      themeName))
+                .build();
+        }
+
+    }
+
+    @GET
+    @Path("/themes/{theme}/files/{path:.+}")
+    @AuthorizationRequired
+    @RequiresPrivilege(ThemingPrivileges.ADMINISTER_THEMES)
+    public Response getThemeFile(@PathParam("theme") final String themeName,
+                                 @PathParam("path") final String path) {
+
+        final Optional<ThemeProvider> provider = findProvider(themeName);
+
+        if (provider.isPresent()) {
+
+            final Optional<ThemeFileInfo> fileInfo = provider
+                .get()
+                .getThemeFileInfo(themeName, ThemeVersion.DRAFT, path);
+
+            if (fileInfo.isPresent()) {
+
+                final ThemeFileInfo themeFileInfo = fileInfo.get();
+
+                if (themeFileInfo.isDirectory()) {
+
+                    final List<ThemeFileInfo> fileInfos = provider
+                        .get()
+                        .listThemeFiles(themeName, ThemeVersion.DRAFT, path);
+
+                    return Response
+                        .ok(fileInfos)
+                        .type(MediaType.APPLICATION_JSON)
+                        .build();
+
+                } else {
+                    final Optional<InputStream> inputStream = provider
+                        .get()
+                        .getThemeFileAsStream(themeName,
+                                              ThemeVersion.DRAFT,
+                                              path);
+
+                    if (inputStream.isPresent()) {
+
+                        final InputStream inStream = inputStream.get();
+                        return Response
+                            .ok(inStream)
+                            .type(themeFileInfo.getMimeType())
+                            .build();
+                    } else {
+                        return Response
+                            .status(Response.Status.NOT_FOUND)
+                            .entity(String.format(
+                                "File \"%s\" does not exist in theme %s.",
+                                path,
+                                themeName))
+                            .build();
+                    }
+                }
+            } else {
+                return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .entity(String.format(
+                        "File \"%s\" does not exist in theme %s.",
+                        path,
+                        themeName))
+                    .build();
+            }
+
+        } else {
+            return Response
+                .status(Response.Status.NOT_FOUND)
+                .entity(String.format("Theme \"%s\" does not exist.",
+                                      themeName))
+                .build();
+        }
     }
 
     private String getProviderName(final ThemeProvider provider) {

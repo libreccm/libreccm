@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -125,8 +126,7 @@ public class FileSystemThemeProvider implements ThemeProvider {
     public Optional<ThemeInfo> getThemeInfo(final String theme,
                                             final ThemeVersion version) {
 
-        final String themePath = createThemePath(theme, version);
-        return readInfo(themePath);
+        return readInfo(theme);
     }
 
     @Override
@@ -228,15 +228,23 @@ public class FileSystemThemeProvider implements ThemeProvider {
                                               final String path) {
 
         final String themePath = createThemePath(theme, version);
-        final String filePath = String.join(themePath, path, "/");
+        final String filePath = String.join("/", themePath, path);
 
         try {
+            if (ccmFiles.isDirectory(filePath)) {
+                return ccmFiles
+                    .listFiles(filePath)
+                    .stream()
+                    .map(currentPath -> buildThemeFileInfo(
+                        String.join("/", theme, currentPath)))
+                    .collect(Collectors.toList());
+            } else {
+                final List<ThemeFileInfo> result = new ArrayList<>();
+                final ThemeFileInfo fileInfo = buildThemeFileInfo(filePath);
+                result.add(fileInfo);
 
-            return ccmFiles
-                .listFiles(filePath)
-                .stream()
-                .map(currentPath -> buildThemeFileInfo(currentPath))
-                .collect(Collectors.toList());
+                return result;
+            }
 
         } catch (FileAccessException
                  | FileDoesNotExistException
@@ -247,11 +255,31 @@ public class FileSystemThemeProvider implements ThemeProvider {
     }
 
     @Override
+    public Optional<ThemeFileInfo> getThemeFileInfo(
+        final String theme, final ThemeVersion version, final String path) {
+
+        final String themePath = createThemePath(theme, version);
+        final String filePath = String.join("/", themePath, path);
+
+        try {
+            if (ccmFiles.existsFile(filePath)) {
+
+                return Optional.of(buildThemeFileInfo(filePath));
+                
+            } else {
+                return Optional.empty();
+            }
+        } catch (FileAccessException | InsufficientPermissionsException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+    }
+
+    @Override
     public Optional<InputStream> getThemeFileAsStream(
         final String theme, final ThemeVersion version, final String path) {
 
         final String themePath = createThemePath(theme, version);
-        final String filePath = String.join(themePath, path, "/");
+        final String filePath = String.join("/", themePath, path);
 
         try {
             if (ccmFiles.existsFile(path)) {
@@ -272,7 +300,7 @@ public class FileSystemThemeProvider implements ThemeProvider {
                                                     final String path) {
 
         final String themePath = createThemePath(theme, ThemeVersion.DRAFT);
-        final String filePath = String.join(themePath, path, "/");
+        final String filePath = String.join("/", themePath, path);
 
         try {
 
@@ -289,7 +317,7 @@ public class FileSystemThemeProvider implements ThemeProvider {
     public void deleteThemeFile(final String theme, final String path) {
 
         final String themePath = createThemePath(theme, ThemeVersion.DRAFT);
-        final String filePath = String.join(themePath, path, "/");
+        final String filePath = String.join("/", themePath, path);
 
         try {
             ccmFiles.deleteFile(filePath, true);
@@ -383,15 +411,15 @@ public class FileSystemThemeProvider implements ThemeProvider {
         }
     }
 
-    private Optional<ThemeInfo> readInfo(final String themePath) {
+    private Optional<ThemeInfo> readInfo(final String themeName) {
 
         final ThemeManifest manifest;
         try {
 
             final String jsonPath = String.format(
-                DRAFT_THEMES_PATH + "/" + THEME_JSON, themePath);
+                DRAFT_THEMES_PATH + "/" + THEME_JSON, themeName);
             final String xmlPath = String.format(
-                DRAFT_THEMES_PATH + "/" + THEME_XML, themePath);
+                DRAFT_THEMES_PATH + "/" + THEME_XML, themeName);
 
             if (ccmFiles.existsFile(jsonPath)) {
                 final InputStream inputStream = ccmFiles
