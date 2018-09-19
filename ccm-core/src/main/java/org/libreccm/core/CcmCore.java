@@ -47,6 +47,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import javax.transaction.Transactional;
+
 
 /**
  *
@@ -143,6 +145,7 @@ public class CcmCore implements CcmModule {
 
     @Override
     public void init(final InitEvent event) {
+        // Nothing
     }
 
     @Override
