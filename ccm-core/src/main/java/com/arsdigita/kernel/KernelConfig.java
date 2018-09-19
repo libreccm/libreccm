@@ -78,6 +78,9 @@ public final class KernelConfig {
 
     @Setting
     private String importPath = "";
+    
+    @Setting
+    private String jwtSecret = "";
 
     public static KernelConfig getConfig() {
         final ConfigurationManager confManager = CdiUtil.createCdiUtil()
@@ -233,6 +236,14 @@ public final class KernelConfig {
     public void setImportPath(final String importPath) {
         this.importPath = importPath;
     }
+    
+    public String getJwtSecret() {
+        return jwtSecret;
+    }
+    
+    public void setJwtSecret(final String jwtSecret) {
+        this.jwtSecret = jwtSecret;
+    }
 
     @Override
     public int hashCode() {
@@ -249,6 +260,7 @@ public final class KernelConfig {
         hash = 61 * hash + Objects.hashCode(systemEmailAddress);
         hash = 61 * hash + Objects.hashCode(exportPath);
         hash = 61 * hash + Objects.hashCode(importPath);
+        hash = 61 * hash * Objects.hashCode(jwtSecret);
         return hash;
     }
 
@@ -304,7 +316,11 @@ public final class KernelConfig {
             return false;
         }
 
-        return Objects.equals(importPath, other.getImportPath());
+        if (!Objects.equals(importPath, other.getImportPath())) {
+            return false;
+        }
+        
+        return Objects.equals(jwtSecret, other.getJwtSecret());
     }
 
     @Override

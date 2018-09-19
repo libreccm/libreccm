@@ -183,10 +183,28 @@ public class DatabaseThemeProvider implements ThemeProvider {
     }
 
     @Override
+    public Optional<ThemeFileInfo> getThemeFileInfo(
+        final String themeName, final ThemeVersion version, final String path) {
+
+        final Theme theme = themeRepository
+            .findThemeByName(path, version)
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No Theme \"%s\" in the database.", themeName)));
+
+        final Optional<ThemeFile> themeFile = fileRepository
+            .findByPath(theme, path, version);
+        
+        if (themeFile.isPresent()) {
+            return Optional.of(createThemeFileInfo(themeFile.get()));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     @Transactional(Transactional.TxType.REQUIRED)
-    public Optional<InputStream> getThemeFileAsStream(final String themeName,
-                                                      final ThemeVersion version,
-                                                      final String path) {
+    public Optional<InputStream> getThemeFileAsStream(
+        final String themeName, final ThemeVersion version, final String path) {
 
         final Optional<Theme> theme = themeRepository
             .findThemeByName(themeName, version);
@@ -325,10 +343,10 @@ public class DatabaseThemeProvider implements ThemeProvider {
             .findThemeByName(themeName, ThemeVersion.DRAFT)
             .ifPresent(themeManager::publishTheme);
     }
-    
+
     @Override
     public void unpublishTheme(final String themeName) {
-        
+
         themeRepository
             .findThemeByName(themeName, ThemeVersion.LIVE)
             .ifPresent(themeManager::unpublishTheme);

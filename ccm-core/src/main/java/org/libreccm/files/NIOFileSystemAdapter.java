@@ -381,7 +381,8 @@ public class NIOFileSystemAdapter implements FileSystemAdapter {
         final Path nioPath = Paths.get(path);
 
         if (!Files.isDirectory(nioPath)) {
-            throw new FileAccessException(path);
+            throw new FileAccessException(String.format(
+                "%s is not a directory.", path));
         }
 
         final Stream<Path> paths;

@@ -316,8 +316,11 @@ public class CcmFiles {
     public boolean existsFile(final String path)
         throws FileAccessException,
                InsufficientPermissionsException {
+        
+        final String dataPath = getDataPath(path);
+        final boolean result = getFileSystemAdapter().existsFile(dataPath);
 
-        return getFileSystemAdapter().existsFile(getDataPath(path));
+        return result;
     }
 
     /**

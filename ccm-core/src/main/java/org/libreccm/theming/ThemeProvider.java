@@ -138,6 +138,21 @@ public interface ThemeProvider extends Serializable {
                                        String path);
 
     /**
+     * Retrieve the metadata for a particular file in the theme.
+     *
+     * @param theme   The name of the theme.
+     * @param version The version of the theme
+     * @param path    The path of the file, relative to the theme directory.
+     *
+     * @return An {@link Optional} containing a {@link ThemeInfo} object with
+     *         the metadata of the file is its exists. Otherwise an empty
+     *         {@link Optional}.
+     */
+    Optional<ThemeFileInfo> getThemeFileInfo(String theme,
+                                         ThemeVersion version,
+                                         String path);
+
+    /**
      * Retrieve a file from a theme. We use an {@link InputStream} here because
      * that is the most universal interface in the Java API which works for all
      * sorts of resources and is independent from any other API. Hint: In most
@@ -208,11 +223,11 @@ public interface ThemeProvider extends Serializable {
      * @param theme The theme to publish.
      */
     void publishTheme(String theme);
-    
+
     /**
-     * Unpublishes (deletes) the live version of a theme. For
-     * implementations which do not support draft/live themes the implementation
-     * of this method should be a noop, but not throw an exception.
+     * Unpublishes (deletes) the live version of a theme. For implementations
+     * which do not support draft/live themes the implementation of this method
+     * should be a noop, but not throw an exception.
      *
      * @param theme The theme to publish.
      */

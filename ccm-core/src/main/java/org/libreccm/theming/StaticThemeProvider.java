@@ -256,20 +256,20 @@ public class StaticThemeProvider implements ThemeProvider {
 
     @Override
     public ThemeInfo createTheme(final String theme) {
-        
+
         throw new UnsupportedOperationException(String.format(
-        "The ThemeProvider %s does support the creation of new themes.",
-        getClass().getName()));
+            "The ThemeProvider %s does support the creation of new themes.",
+            getClass().getName()));
     }
-    
+
     @Override
     public void deleteTheme(final String theme) {
-        
-         throw new UnsupportedOperationException(String.format(
-        "The ThemeProvider %s does support the deltion of themes.",
-        getClass().getName()));
+
+        throw new UnsupportedOperationException(String.format(
+            "The ThemeProvider %s does support the deltion of themes.",
+            getClass().getName()));
     }
-    
+
     @Override
     public List<ThemeFileInfo> listThemeFiles(final String theme,
                                               final ThemeVersion version,
@@ -321,9 +321,37 @@ public class StaticThemeProvider implements ThemeProvider {
     }
 
     @Override
-    public Optional<InputStream> getThemeFileAsStream(final String theme,
-                                                      final ThemeVersion version,
-                                                      final String path) {
+    public Optional<ThemeFileInfo> getThemeFileInfo(
+        final String theme, final ThemeVersion version, final String path) {
+
+        Objects.requireNonNull(theme);
+        Objects.requireNonNull(version);
+        Objects.requireNonNull(path);
+
+        final List<String> pathTokens = Arrays.asList(path.split("/"));
+
+        final String indexFilePath = String.format("/"
+                                                       + THEMES_PACKAGE
+                                                       + "/%s/theme-index.json",
+                                                   theme);
+        final InputStream stream = getClass()
+            .getResourceAsStream(indexFilePath);
+        final JsonReader reader = Json.createReader(stream);
+        final JsonObject indexObj = reader.readObject();
+        final JsonArray currentDir = indexObj.getJsonArray("files");
+
+        final Optional<JsonObject> targetFile = findFile(pathTokens,
+                                                         currentDir);
+        if (targetFile.isPresent()) {
+            return Optional.of(generateFileInfo(targetFile.get()));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<InputStream> getThemeFileAsStream(
+        final String theme, final ThemeVersion version, final String path) {
 
         Objects.requireNonNull(theme);
         Objects.requireNonNull(path);
@@ -390,7 +418,7 @@ public class StaticThemeProvider implements ThemeProvider {
     public void publishTheme(final String theme) {
         //No op in this implementation.
     }
-    
+
     @Override
     public void unpublishTheme(final String theme) {
         //No op in this implementation.
