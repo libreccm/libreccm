@@ -102,26 +102,30 @@ public class ImportExport {
                     importName));
             }
         } catch (FileAccessException
-                     | FileDoesNotExistException
-                     | InsufficientPermissionsException ex) {
+                 | FileDoesNotExistException
+                 | InsufficientPermissionsException ex) {
 
             throw new UnexpectedErrorException(ex);
         }
 
-        final String manifestPath = String.format("%s/ccm-export.json",
-                                                  importsPath);
-        try (final InputStream manifestInputStream = ccmFiles
-            .createInputStream(importsPath)) {
+        final List<EntityImExporter<?>> imExportersList = new ArrayList<>();
+        imExporters.forEach(imExporter -> imExportersList.add(imExporter));
 
-            final JsonReader manifestReader = Json
-                .createReader(manifestInputStream);
-            final JsonObject manifest = manifestReader.readObject();
+        try {
+            final EntityImExporterTreeManager treeManager
+                                                  = new EntityImExporterTreeManager();
+            final List<EntityImExporterTreeNode> tree = treeManager
+                .generateTree(
+                    imExportersList);
+            final List<EntityImExporterTreeNode> orderedNodes = treeManager
+                .orderImExporters(tree);
 
-        } catch (IOException
-                     | FileDoesNotExistException
-                     | FileAccessException
-                     | InsufficientPermissionsException ex) {
+            final ImportManifest manifest = createImportManifest(importName);
 
+            //ToDo
+            
+        } catch (DependencyException ex) {
+            throw new UnexpectedErrorException(ex);
         }
 
         throw new UnsupportedOperationException();
@@ -134,8 +138,8 @@ public class ImportExport {
         try {
             importArchivePaths = ccmFiles.listFiles("imports");
         } catch (FileAccessException
-                     | FileDoesNotExistException
-                     | InsufficientPermissionsException ex) {
+                 | FileDoesNotExistException
+                 | InsufficientPermissionsException ex) {
 
             throw new UnexpectedErrorException(ex);
         }
@@ -168,52 +172,53 @@ public class ImportExport {
         final String manifestPath = String.format("imports/%s/ccm-export.json",
                                                   path);
 
-        final InputStream inputStream;
-        try {
-            inputStream = ccmFiles.createInputStream(manifestPath);
-        } catch (FileAccessException
-                     | FileDoesNotExistException
-                     | InsufficientPermissionsException ex) {
+        try (final InputStream inputStream = ccmFiles
+            .createInputStream(manifestPath)) {
+
+            final JsonReader reader = Json.createReader(inputStream);
+            final JsonObject manifestJson = reader.readObject();
+
+            if (!manifestJson.containsKey("created")) {
+                throw new IllegalArgumentException(String.format(
+                    "The manifest file \"%s\" is malformed. "
+                        + "Key \"created\" is missing.",
+                    manifestPath));
+            }
+
+            if (!manifestJson.containsKey("onServer")) {
+                throw new IllegalArgumentException(String.format(
+                    "The manifest file \"%s\" is malformed. "
+                        + "Key \"onServer\" is missing.",
+                    manifestPath));
+            }
+
+            if (!manifestJson.containsKey("types")) {
+                throw new IllegalArgumentException(String.format(
+                    "The manifest file \"%s\" is malformed. "
+                        + "Key \"types\" is missing.",
+                    manifestPath));
+            }
+
+            final LocalDateTime created = LocalDateTime
+                .parse(manifestJson.getString("created"));
+            final String onServer = manifestJson.getString("onServer");
+            final List<String> types = manifestJson.getJsonArray("types")
+                .stream()
+                .map(value -> value.toString())
+                .collect(Collectors.toList());
+
+            return new ImportManifest(
+                Date.from(created.atZone(ZoneId.of("UTC")).toInstant()),
+                onServer,
+                types);
+        } catch (IOException
+                 | FileAccessException
+                 | FileDoesNotExistException
+                 | InsufficientPermissionsException ex) {
 
             throw new UnexpectedErrorException(ex);
         }
 
-        final JsonReader reader = Json.createReader(inputStream);
-        final JsonObject manifestJson = reader.readObject();
-
-        if (!manifestJson.containsKey("created")) {
-            throw new IllegalArgumentException(String.format(
-                "The manifest file \"%s\" is malformed. "
-                    + "Key \"created\" is missing.",
-                manifestPath));
-        }
-
-        if (!manifestJson.containsKey("onServer")) {
-            throw new IllegalArgumentException(String.format(
-                "The manifest file \"%s\" is malformed. "
-                    + "Key \"onServer\" is missing.",
-                manifestPath));
-        }
-
-        if (!manifestJson.containsKey("types")) {
-            throw new IllegalArgumentException(String.format(
-                "The manifest file \"%s\" is malformed. "
-                    + "Key \"types\" is missing.",
-                manifestPath));
-        }
-
-        final LocalDateTime created = LocalDateTime
-            .parse(manifestJson.getString("created"));
-        final String onServer = manifestJson.getString("onServer");
-        final List<String> types = manifestJson.getJsonArray("types")
-            .stream()
-            .map(value -> value.toString())
-            .collect(Collectors.toList());
-
-        return new ImportManifest(
-            Date.from(created.atZone(ZoneId.of("UTC")).toInstant()),
-            onServer,
-            types);
     }
 
 }
