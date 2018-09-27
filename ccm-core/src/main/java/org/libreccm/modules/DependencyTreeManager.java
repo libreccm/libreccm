@@ -34,10 +34,10 @@ import java.util.Map;
  * The class is used by creating an instance with the parameterless constructor.
  * To create the tree/graph call the
  * {@link #generateTree(javax.enterprise.inject.Instance)} method. With the
- * returned list of nodes call the the {@link #orderModules(java.util.List)}
+ * returned list of nodes call the {@link #orderModules(java.util.List)}
  * method. The list returned by {@link #orderModules(java.util.List)} contains
  * all modules in order.
- * 
+ *
  * This class is <strong>not</strong> part of the public API.
  *
  * More information about topological sorting:
@@ -52,13 +52,15 @@ final class DependencyTreeManager {
 
     /**
      * Initialises the tree with the provided list of modules.
-     * 
+     *
      * @param modules The module for which a dependency tree is generated.
+     *
      * @return An ordered list of tree nodes.
-     * 
-     * @throws DependencyException If something is wrong with the dependency 
-     * tree. For example if a module on which another module depends is missing
-     * or if a cycle is detected in the dependency tree.
+     *
+     * @throws DependencyException If something is wrong with the dependency
+     *                             tree. For example if a module on which
+     *                             another module depends is missing or if a
+     *                             cycle is detected in the dependency tree.
      */
     public List<TreeNode> generateTree(final Iterable<CcmModule> modules)
         throws DependencyException {
@@ -89,15 +91,17 @@ final class DependencyTreeManager {
     }
 
     /**
-     * Generates an ordered list of the tree nodes which can be used to 
+     * Generates an ordered list of the tree nodes which can be used to
      * initialise the modules in correct order.
-     * 
+     *
      * In this method the topological sorting happens.
-     * 
+     *
      * @param dependencyTree The list of tree nodes of the dependency tree.
+     *
      * @return A ordered list of the tree nodes.
-     * @throws DependencyException If something is wrong with the dependency 
-     * tree.
+     *
+     * @throws DependencyException If something is wrong with the dependency
+     *                             tree.
      */
     public List<TreeNode> orderModules(final List<TreeNode> dependencyTree)
         throws DependencyException {
@@ -127,7 +131,7 @@ final class DependencyTreeManager {
             final TreeNode current = resolvedModules.remove(0);
             LOGGER.info("\tProcessing node for module \"{}\"...",
                         current.getModuleInfo().getModuleName());
-            
+
             //Add the node to the ordered modules list.
             orderedModules.add(current);
 
@@ -135,7 +139,7 @@ final class DependencyTreeManager {
             for (final TreeNode dependent : current.getDependentModules()) {
                 dependent.removeDependsOn(current);
 
-                //If the dependent node has node more dependsOn relations put
+                //If the dependent node has no more dependsOn relations put
                 //the node into the resolved modules list.
                 if (dependent.getDependsOn().isEmpty()) {
                     resolvedModules.add(dependent);
@@ -172,13 +176,13 @@ final class DependencyTreeManager {
     }
 
     /**
-     * Helper method for adding the dependency relations for a module to the 
+     * Helper method for adding the dependency relations for a module to the
      * nodes.
-     * 
+     *
      * @param module The module.
-     * @param nodes The map of nodes.
-     * 
-     * @throws DependencyException  If something goes wrong.
+     * @param nodes  The map of nodes.
+     *
+     * @throws DependencyException If something goes wrong.
      */
     private void addDependencyRelations(final CcmModule module,
                                         final Map<String, TreeNode> nodes)
@@ -220,11 +224,13 @@ final class DependencyTreeManager {
 
     /**
      * Helper method for adding a single dependency relation.
-     * 
-     * @param nodes The map of tree nodes.
-     * @param node The node to which the dependency relations are added.
+     *
+     * @param nodes          The map of tree nodes.
+     * @param node           The node to which the dependency relations are
+     *                       added.
      * @param requiredModule The module required by the current module/node.
-     * @throws DependencyException 
+     *
+     * @throws DependencyException
      */
     private void addDependencyRelation(final Map<String, TreeNode> nodes,
                                        final TreeNode node,
@@ -301,11 +307,11 @@ final class DependencyTreeManager {
 
         if ((minRequiredVersion == null || minRequiredVersion.isEmpty())
                 && (maxRequiredVersion == null || maxRequiredVersion.
-                    isEmpty())) {
+                        isEmpty())) {
             return true;
         } else if ((minRequiredVersion != null && !minRequiredVersion.isEmpty())
                        && (maxRequiredVersion == null || maxRequiredVersion
-                           .isEmpty())) {
+                               .isEmpty())) {
             final ComparableVersion minVersion = new ComparableVersion(
                 minRequiredVersion);
             final ComparableVersion version = new ComparableVersion(
@@ -314,7 +320,7 @@ final class DependencyTreeManager {
             return minVersion.compareTo(version) <= 0;
         } else if ((minRequiredVersion == null || minRequiredVersion.isEmpty())
                        && (maxRequiredVersion != null && !maxRequiredVersion
-                           .isEmpty())) {
+                               .isEmpty())) {
             final ComparableVersion maxVersion = new ComparableVersion(
                 maxRequiredVersion);
             final ComparableVersion version = new ComparableVersion(
