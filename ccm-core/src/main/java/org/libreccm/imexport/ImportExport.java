@@ -18,15 +18,29 @@
  */
 package org.libreccm.imexport;
 
-
+import org.libreccm.core.UnexpectedErrorException;
+import org.libreccm.files.CcmFiles;
 import org.libreccm.files.CcmFilesConfiguration;
+import org.libreccm.files.FileAccessException;
+import org.libreccm.files.FileDoesNotExistException;
+import org.libreccm.files.InsufficientPermissionsException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 
 /**
  * Central service for importing and exporting entities.
@@ -37,12 +51,11 @@ import javax.inject.Inject;
 public class ImportExport {
 
     @Inject
-    @Any
-    private Instance<EntityImporter<?>> importers;
+    private CcmFiles ccmFiles;
 
     @Inject
     @Any
-    private Instance<EntityExporter<?>> exporters;
+    private Instance<EntityImExporter<?>> imExporters;
 
     /**
      * Exports the provided entities. The export will be written to a to the
@@ -53,36 +66,154 @@ public class ImportExport {
      * file the provided name will be used.
      *
      *
-     * @param entities The entities to export.
+     * @param entities   The entities to export.
      * @param exportName The name file to which the export is written.
-     * @param split Split the entities by package?
      *
      * @see CcmFilesConfiguration#dataPath
      */
     public void exportEntities(final List<Exportable> entities,
-                               final String exportName,
-                               final boolean split) {
+                               final String exportName) {
 
         throw new UnsupportedOperationException();
     }
-    
+
     /**
-     * Imports all entities from the files in the {@link imports} directory inside
-     * the CCM files data directory. The data to import can either be a file with
-     * the provided name or a directory with the provided name. If it is a directory 
-     * the entry file must also use the provided name.
-     * 
+     * Imports all entities from the files in the {@link imports} directory
+     * inside the CCM files data directory. The data to import can either be a
+     * file with the provided name or a directory with the provided name. If it
+     * is a directory the entry file must also use the provided name.
+     *
      * If an entity which is part of the import already exists in the database
      * the values from the import are used to update the entity.
-     * 
+     *
      * @param importName The name of the import.
-     * 
+     *
      * @see CcmFilesConfiguration#dataPath
      */
     public void importEntities(final String importName) {
-        
+
+        final String importsPath = String.format("imports/%s", importName);
+
+        try {
+            if (!ccmFiles.isDirectory(importsPath)) {
+
+                throw new IllegalArgumentException(String.format(
+                    "No imports with name \"%s\" available.",
+                    importName));
+            }
+        } catch (FileAccessException
+                     | FileDoesNotExistException
+                     | InsufficientPermissionsException ex) {
+
+            throw new UnexpectedErrorException(ex);
+        }
+
+        final String manifestPath = String.format("%s/ccm-export.json",
+                                                  importsPath);
+        try (final InputStream manifestInputStream = ccmFiles
+            .createInputStream(importsPath)) {
+
+            final JsonReader manifestReader = Json
+                .createReader(manifestInputStream);
+            final JsonObject manifest = manifestReader.readObject();
+
+        } catch (IOException
+                     | FileDoesNotExistException
+                     | FileAccessException
+                     | InsufficientPermissionsException ex) {
+
+        }
+
         throw new UnsupportedOperationException();
-        
+
+    }
+
+    public List<ImportManifest> listAvailableImportArchivies() {
+
+        final List<String> importArchivePaths;
+        try {
+            importArchivePaths = ccmFiles.listFiles("imports");
+        } catch (FileAccessException
+                     | FileDoesNotExistException
+                     | InsufficientPermissionsException ex) {
+
+            throw new UnexpectedErrorException(ex);
+        }
+
+        return importArchivePaths.
+            stream()
+            .filter(this::isImportArchive)
+            .map(this::createImportManifest)
+            .collect(Collectors.toList());
+    }
+
+    private boolean isImportArchive(final String path) {
+
+        final String manifestPath = String.format("imports/%s/ccm-export.json",
+                                                  path);
+
+        final boolean result;
+        try {
+            result = ccmFiles.existsFile(manifestPath);
+        } catch (FileAccessException | InsufficientPermissionsException ex) {
+
+            throw new UnexpectedErrorException(ex);
+        }
+
+        return result;
+    }
+
+    private ImportManifest createImportManifest(final String path) {
+
+        final String manifestPath = String.format("imports/%s/ccm-export.json",
+                                                  path);
+
+        final InputStream inputStream;
+        try {
+            inputStream = ccmFiles.createInputStream(manifestPath);
+        } catch (FileAccessException
+                     | FileDoesNotExistException
+                     | InsufficientPermissionsException ex) {
+
+            throw new UnexpectedErrorException(ex);
+        }
+
+        final JsonReader reader = Json.createReader(inputStream);
+        final JsonObject manifestJson = reader.readObject();
+
+        if (!manifestJson.containsKey("created")) {
+            throw new IllegalArgumentException(String.format(
+                "The manifest file \"%s\" is malformed. "
+                    + "Key \"created\" is missing.",
+                manifestPath));
+        }
+
+        if (!manifestJson.containsKey("onServer")) {
+            throw new IllegalArgumentException(String.format(
+                "The manifest file \"%s\" is malformed. "
+                    + "Key \"onServer\" is missing.",
+                manifestPath));
+        }
+
+        if (!manifestJson.containsKey("types")) {
+            throw new IllegalArgumentException(String.format(
+                "The manifest file \"%s\" is malformed. "
+                    + "Key \"types\" is missing.",
+                manifestPath));
+        }
+
+        final LocalDateTime created = LocalDateTime
+            .parse(manifestJson.getString("created"));
+        final String onServer = manifestJson.getString("onServer");
+        final List<String> types = manifestJson.getJsonArray("types")
+            .stream()
+            .map(value -> value.toString())
+            .collect(Collectors.toList());
+
+        return new ImportManifest(
+            Date.from(created.atZone(ZoneId.of("UTC")).toInstant()),
+            onServer,
+            types);
     }
 
 }
