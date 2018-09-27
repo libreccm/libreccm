@@ -18,27 +18,39 @@
  */
 package org.libreccm.imexport;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import javax.inject.Qualifier;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 /**
- * Declares which entity types an implementation of {@link Importer} can
- * process.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Qualifier
-@Target({ElementType.TYPE,
-        ElementType.PARAMETER,
-        ElementType.FIELD,
-        ElementType.METHOD})
-public @interface Imports {
+public class ImportManifest {
 
-    Class<? extends Exportable> value();
+    private final Date created;
+    private final String onServer;
+    private final List<String> types;
+
+    public ImportManifest(final Date created,
+                          final String onServer,
+                          final List<String> types) {
+
+        this.created = created;
+        this.onServer = onServer;
+        this.types = types;
+    }
+
+    public Date getCreated() {
+        return new Date(created.getTime());
+    }
+
+    public String getOnServer() {
+        return onServer;
+    }
+
+    public List<String> getTypes() {
+        return Collections.unmodifiableList(types);
+    }
 
 }
