@@ -86,7 +86,7 @@ final class TreeNode {
     }
 
     void setDependentModules(final List<TreeNode> dependentModules) {
-        this.dependentModules = dependentModules;
+        this.dependentModules = new ArrayList<>(dependentModules);
     }
 
     void addDependentModule(final TreeNode node) {
@@ -102,7 +102,7 @@ final class TreeNode {
     }
 
     void setDependsOn(final List<TreeNode> dependsOn) {
-        this.dependsOn = dependsOn;
+        this.dependsOn = new ArrayList<>(dependsOn);
     }
 
     void addDependsOn(final TreeNode node) {

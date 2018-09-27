@@ -18,42 +18,23 @@
  */
 package org.libreccm.imexport;
 
-import java.util.Objects;
-import java.util.Optional;
-
-import javax.json.JsonArray;
+import javax.enterprise.context.RequestScoped;
 import javax.json.JsonObject;
 
 /**
- * A transfer object used by {@link Exporter} to wrap the exported object and
- * optionally the associations extracted from the object.
+ * Interface for importers/exporters. Implementations must be annotated with
+ * {@link Procsses} to register the implementation in the Import/Export service.
+ * 
+ * Implementations must also be CDI beans. It is recommended that the beans
+ * are {@link RequestScoped}.
  * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * @param <T> The type of the entity which is processed by the implementation.
  */
-public class ExportedEntity {
+public interface EntityImExporter<T extends Exportable> {
     
-    private final JsonObject entity;
-    private final JsonArray associations;
+    T importEntity(JsonObject data);
     
-    public ExportedEntity(final JsonObject entity) {
-        
-        this.entity = Objects.requireNonNull(entity);
-        this.associations = null;
-    }
-    
-    public ExportedEntity(final JsonObject entity,
-                          final JsonArray associations) {
-        
-        this.entity = Objects.requireNonNull(entity);
-        this.associations = Objects.requireNonNull(associations);
-    }
-    
-    public JsonObject getEntity() {
-        return entity;
-    }
-    
-    public Optional<JsonArray> getAssociations() {
-        return Optional.of(associations);
-    }
+    JsonObject exportEntity(T entity);
     
 }

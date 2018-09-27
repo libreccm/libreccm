@@ -18,27 +18,31 @@
  */
 package org.libreccm.imexport;
 
-import javax.enterprise.context.RequestScoped;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.enterprise.util.Nonbinding;
+import javax.inject.Qualifier;
 
 /**
- * Interface for exporters. Implementation must be annotated with
- * {@link Exports} to register the implementation in the Import/Export system.
- *
- * Implementations must be CDI beans with annotated with {@link RequestScoped}.
+ * Declares which entity types an implementation of {@link Importer} and/or
+ * {@link Exporter} can process.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * @param <T> The type of the entity which is processed by the implementation.
  */
-public interface EntityExporter<T extends Exportable> {
+@Retention(RetentionPolicy.RUNTIME)
+@Qualifier
+@Target({ElementType.TYPE,
+         ElementType.PARAMETER,
+         ElementType.FIELD,
+         ElementType.METHOD})
+public @interface Processes {
 
-    /**
-     * Converts the provided entity to a JSON object and an optional array of
-     * associations.
-     *
-     * @param entity The entity to export.
-     *
-     * @return The JSON representation of the entity.
-     */
-    ExportedEntity exportEntity(T entity);
+    Class<? extends Exportable> type();
+
+    @Nonbinding
+    Class<? extends Exportable>[] dependsOn();
 
 }
