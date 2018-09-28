@@ -1,8 +1,10 @@
 ccm_core.parties:
     # John Doe
     - party_id: -10
+      uuid: 631be113-7e86-453d-9f8b-8cb6cb6df268
       name: jdoe
     - party_id: -20
+      uuid: 3a61d302-97a5-4e46-bbc9-8d716f7c54c4
       name: admins
 ccm_core.groups:
     - party_id: -20

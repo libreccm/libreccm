@@ -1,5 +1,6 @@
 ccm_core.parties:
     - party_id: -20
+      uuid: 3a61d302-97a5-4e46-bbc9-8d716f7c54c4
       name: admins
 ccm_core.groups:
     - party_id: -20

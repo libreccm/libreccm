@@ -77,9 +77,7 @@ final class EntityImExporterTreeManager {
                     node -> node
                         .getEntityImExporter()
                         .getClass()
-                        .getAnnotation(Processes.class)
-                        .type()
-                        .getName(),
+                        .getAnnotation(Processes.class).value().getName(),
                     node -> node));
 
         //Add the dependency relations to the nodes
@@ -199,9 +197,9 @@ final class EntityImExporterTreeManager {
         throws DependencyException {
 
         //Get the dependencies of the current EntityImExporter
-        final Processes processes = imExporter
+        final DependsOn dependsOn = imExporter
             .getClass()
-            .getAnnotation(Processes.class);
+            .getAnnotation(DependsOn.class);
 
         //Get the name of the module from the module info.
         final String className = imExporter.getClass().getName();
@@ -229,7 +227,7 @@ final class EntityImExporterTreeManager {
                   className);
         //Process the EntityImExporter required by the current module and add 
         //the dependency relations.
-        for (final Class<? extends Exportable> clazz : processes.dependsOn()) {
+        for (final Class<? extends Exportable> clazz : dependsOn.value()) {
 
             addDependencyRelation(nodes, node, clazz);
         }
@@ -265,8 +263,10 @@ final class EntityImExporterTreeManager {
             throw new DependencyException(String.format(
                 "EntityImExporter for type \"%s\" depends on type \"%s\" "
                     + "but no EntityImExporter for type \"%s\" is available.",
-                node.getEntityImExporter().getClass().getAnnotation(
-                    Processes.class).type().getName(),
+                node
+                    .getEntityImExporter()
+                    .getClass()
+                    .getAnnotation(Processes.class).value().getName(),
                 requiredClass.getName(),
                 requiredClass.getName()));
         }

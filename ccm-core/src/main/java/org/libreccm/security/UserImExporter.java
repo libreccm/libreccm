@@ -16,29 +16,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.imexport;
+package org.libreccm.security;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.libreccm.imexport.EntityImExporter;
+import org.libreccm.imexport.Exportable;
+import org.libreccm.imexport.Processes;
 
-import javax.inject.Qualifier;
+import javax.enterprise.context.RequestScoped;
+import javax.json.JsonObject;
 
 /**
- * Declares which entity types an implementation of {@link Importer} and/or
- * {@link Exporter} can process.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Qualifier
-@Target({ElementType.TYPE,
-         ElementType.PARAMETER,
-         ElementType.FIELD,
-         ElementType.METHOD})
-public @interface Processes {
+@RequestScoped
+@Processes(User.class)
+public class UserImExporter implements EntityImExporter<User> {
 
-    Class<? extends Exportable> value();
+    @Override
+    public User importEntity(final JsonObject data) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
+    @Override
+    public JsonObject exportEntity(final Exportable entity) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
 }
