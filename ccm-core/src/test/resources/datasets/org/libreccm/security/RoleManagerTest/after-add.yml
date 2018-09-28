@@ -1,21 +1,27 @@
 ccm_core.parties:
     # John Doe
     - party_id: -10
+      uuid: 631be113-7e86-453d-9f8b-8cb6cb6df268
       name: jdoe
     # Max Muster
     - party_id: -20
+      uuid: 3a61d302-97a5-4e46-bbc9-8d716f7c54c4
       name: mmuster
     # Joe Public
     - party_id: -30
+      uuid: 7d5ad4a7-c2bd-4e49-8716-0bfb40413c75
       name: joe
     # group1
     - party_id: -100
+      uuid: 0fc446b7-a242-4407-9d04-b8ccaaa9dee5
       name: group1
     # group2
     - party_id: -200
+      uuid: 2082d7fc-8268-4195-8cbe-eb826b1afaeb
       name: group2
     # group3
     - party_id: -300
+      uuid: 176bfecc-c0fa-4e76-8935-5d6d0ec60e8c
       name: group3
 ccm_core.users:
     # John Doe

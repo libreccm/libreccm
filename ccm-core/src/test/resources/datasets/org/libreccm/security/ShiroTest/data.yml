@@ -1,19 +1,27 @@
 ccm_core.parties:
     - party_id: -41001
+      uuid: 631be113-7e86-453d-9f8b-8cb6cb6df268
       name: jdoe
     - party_id: -41002
+      uuid: 3a61d302-97a5-4e46-bbc9-8d716f7c54c4
       name: mmuster
     - party_id: -41003
+      uuid: 7d5ad4a7-c2bd-4e49-8716-0bfb40413c75
       name: joe
     - party_id: -41004
+      uuid: 0fc446b7-a242-4407-9d04-b8ccaaa9dee5
       name: public-user
     - party_id: -41005
+      uuid: 2082d7fc-8268-4195-8cbe-eb826b1afaeb
       name: emuster
     - party_id: -42001
+      uuid: 176bfecc-c0fa-4e76-8935-5d6d0ec60e8c
       name: group1
     - party_id: -42002
+      uuid: 32521349-12f0-4d72-8468-c2bc9e33d4f1
       name: group2
     - party_id: -42003
+      uuid: 9c7c8689-f248-4f8b-a245-41545999395c
       name: group3
 ccm_core.users:
     # John Doe

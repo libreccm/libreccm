@@ -35,6 +35,6 @@ public interface EntityImExporter<T extends Exportable> {
     
     T importEntity(JsonObject data);
     
-    JsonObject exportEntity(T entity);
+    JsonObject exportEntity(Exportable entity);
     
 }

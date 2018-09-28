@@ -23,22 +23,20 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.inject.Qualifier;
-
 /**
- * Declares which entity types an implementation of {@link Importer} and/or
- * {@link Exporter} can process.
- *
+ * Used to describe dependencies of an {@link EntityImExporter} when importing
+ * entities. Used by {@link EntityImExporterTreeManager} to 
+ * create a dependency tree and do topological sorting.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Qualifier
 @Target({ElementType.TYPE,
          ElementType.PARAMETER,
          ElementType.FIELD,
          ElementType.METHOD})
-public @interface Processes {
+public @interface DependsOn {
 
-    Class<? extends Exportable> value();
+    Class<? extends Exportable>[] value();
 
 }

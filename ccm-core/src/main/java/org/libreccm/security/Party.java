@@ -95,6 +95,9 @@ public class Party implements Serializable {
     @Column(name = "PARTY_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long partyId;
+    
+    @Column(name = "UUID", unique = true, nullable = false)
+    private String uuid;
 
     /**
      * The name of the party. Must only contain the letters a to z and A to Z,
@@ -124,6 +127,14 @@ public class Party implements Serializable {
 
     protected void setPartyId(final long partyId) {
         this.partyId = partyId;
+    }
+    
+    public String getUuid() {
+        return uuid;
+    }
+    
+    protected void setUuid(final String uuid) {
+        this.uuid = uuid;
     }
 
     public String getName() {
