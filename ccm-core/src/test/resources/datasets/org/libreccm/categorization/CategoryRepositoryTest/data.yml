@@ -46,10 +46,13 @@ ccm_core.category_domains:
           
 ccm_core.parties:
     - party_id: -100
+      uuid: 631be113-7e86-453d-9f8b-8cb6cb6df268
       name: public-user
     - party_id: -200
+      uuid: 3a61d302-97a5-4e46-bbc9-8d716f7c54c4
       name: jdoe
     - party_id: -300
+      uuid: 7d5ad4a7-c2bd-4e49-8716-0bfb40413c75
       name: mmuster
       
 ccm_core.users:

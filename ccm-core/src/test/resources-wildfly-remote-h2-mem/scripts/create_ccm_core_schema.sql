@@ -440,6 +440,7 @@ drop sequence if exists HIBERNATE_SEQUENCE;
     create table CCM_CORE.PARTIES (
         PARTY_ID bigint not null,
         NAME varchar(256) not null,
+        UUID varchar(255) not null,
         primary key (PARTY_ID)
     );
 
@@ -540,11 +541,11 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         SETTING_ID bigint not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
-        SETTING_VALUE_STRING varchar(1024),
-        SETTING_VALUE_LONG bigint,
-        SETTING_VALUE_BOOLEAN boolean,
-        SETTING_VALUE_DOUBLE double,
         SETTING_VALUE_BIG_DECIMAL decimal(19,2),
+        SETTING_VALUE_BOOLEAN boolean,
+        SETTING_VALUE_STRING varchar(1024),
+        SETTING_VALUE_DOUBLE double,
+        SETTING_VALUE_LONG bigint,
         primary key (SETTING_ID)
     );
 
@@ -775,6 +776,9 @@ drop sequence if exists HIBERNATE_SEQUENCE;
 
     alter table CCM_CORE.INSTALLED_MODULES 
         add constraint UK_11imwgfojyi4hpr18uw9g3jvx unique (MODULE_CLASS_NAME);
+
+    alter table CCM_CORE.PARTIES 
+        add constraint UK_1hv061qace2mn4loroe3fwdel unique (UUID);
 
     alter table CCM_CORE.SETTINGS 
         add constraint UK5whinfxdaepqs09e5ia9y71uk unique (CONFIGURATION_CLASS, NAME);
