@@ -29,6 +29,9 @@ import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.libreccm.imexport.Exportable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -53,50 +56,54 @@ import javax.persistence.Table;
 @Table(name = "CATEGORIZATIONS", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(
-            name = "Categorization.find",
-            query = "SELECT c FROM Categorization c "
-                            + "WHERE c.category = :category "
-                            + "AND c.categorizedObject = :object")
+        name = "Categorization.findByUuid",
+        query = "SELECT c FROM Categorization c WHERE c.uuid = :uuid"
+    ),
+    @NamedQuery(
+        name = "Categorization.find",
+        query = "SELECT c FROM Categorization c "
+                    + "WHERE c.category = :category "
+                    + "AND c.categorizedObject = :object")
     ,
     @NamedQuery(
-            name = "Categorization.isAssignedTo",
-            query = "SELECT (CASE WHEN COUNT(c) > 0 THEN true ELSE false END) "
-                            + "FROM Categorization c "
-                            + "WHERE c.category = :category "
-                            + "AND c.categorizedObject = :object")
+        name = "Categorization.isAssignedTo",
+        query = "SELECT (CASE WHEN COUNT(c) > 0 THEN true ELSE false END) "
+                    + "FROM Categorization c "
+                    + "WHERE c.category = :category "
+                    + "AND c.categorizedObject = :object")
     ,
     @NamedQuery(
-            name = "Categorization.isAssignedToWithType",
-            query = "SELECT (CASE WHEN COUNT(c) > 0 THEN true ELSE false END) "
-                            + "FROM Categorization c "
-                            + "WHERE c.category = :category "
-                            + "AND c.categorizedObject = :object "
-                            + "AND c.type = :type")
+        name = "Categorization.isAssignedToWithType",
+        query = "SELECT (CASE WHEN COUNT(c) > 0 THEN true ELSE false END) "
+                    + "FROM Categorization c "
+                    + "WHERE c.category = :category "
+                    + "AND c.categorizedObject = :object "
+                    + "AND c.type = :type")
     ,
     @NamedQuery(
-            name = "Categorization.findIndexObject",
-            query = "SELECT c.categorizedObject FROM Categorization c "
-                            + "WHERE c.category = :category "
-                            + "AND c.indexObject = TRUE")
+        name = "Categorization.findIndexObject",
+        query = "SELECT c.categorizedObject FROM Categorization c "
+                    + "WHERE c.category = :category "
+                    + "AND c.indexObject = TRUE")
     ,
     @NamedQuery(
-            name = "Categorization.findIndexObjectCategorization",
-            query = "SELECT c FROM Categorization c "
-                            + "WHERE c.category = :category "
-                            + "AND c.indexObject = TRUE"
+        name = "Categorization.findIndexObjectCategorization",
+        query = "SELECT c FROM Categorization c "
+                    + "WHERE c.category = :category "
+                    + "AND c.indexObject = TRUE"
     )
     ,
     @NamedQuery(
-            name = "Categorization.hasIndexObject",
-            query = "SELECT (CASE WHEN COUNT(c.categorizedObject) > 0 THEN true "
+        name = "Categorization.hasIndexObject",
+        query = "SELECT (CASE WHEN COUNT(c.categorizedObject) > 0 THEN true "
                     + "ELSE false END) "
-                            + "FROM Categorization c "
-                            + "WHERE c.category = :category "
-                            + "AND c.indexObject = TRUE")
+                    + "FROM Categorization c "
+                    + "WHERE c.category = :category "
+                    + "AND c.indexObject = TRUE")
 })
-@JsonIdentityInfo(generator = CategorizationIdGenerator.class,
-                  property = "customCatId")
-public class Categorization implements Serializable, Relation, Portable {
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+                  property = "uuid")
+public class Categorization implements Serializable, Relation, Exportable {
 
     private static final long serialVersionUID = 201504301320L;
 
@@ -107,6 +114,9 @@ public class Categorization implements Serializable, Relation, Portable {
     @Column(name = "CATEGORIZATION_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long categorizationId;
+
+    @Column(name = "UUID", unique = true, nullable = false)
+    private String uuid;
 
     /**
      * The category to which this {@code Categorization} object belongs.
@@ -126,7 +136,7 @@ public class Categorization implements Serializable, Relation, Portable {
 
     /**
      * If the categorised object is the indexObject object of the category this
- property is set to {@code true}.
+     * property is set to {@code true}.
      */
     @Column(name = "CATEGORY_INDEX")
     private boolean indexObject;
@@ -166,6 +176,15 @@ public class Categorization implements Serializable, Relation, Portable {
         this.categorizationId = categorizationId;
     }
 
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
+
+    protected void setUuid(final String uuid) {
+        this.uuid = uuid;
+    }
+
     public Category getCategory() {
         return category;
     }
@@ -195,7 +214,6 @@ public class Categorization implements Serializable, Relation, Portable {
 //    public boolean getIndex() {
 //        return indexObject;
 //    }
-    
     public boolean isIndexObject() {
         return indexObject;
     }
@@ -232,7 +250,7 @@ public class Categorization implements Serializable, Relation, Portable {
     public int hashCode() {
         int hash = 7;
         hash
-        = 89 * hash + (int) (categorizationId ^ (categorizationId >>> 32));
+            = 89 * hash + (int) (categorizationId ^ (categorizationId >>> 32));
         hash = 89 * hash + Objects.hashCode(category);
         hash = 89 * hash + Objects.hashCode(categorizedObject);
         hash = 89 * hash + (indexObject ? 1 : 0);
@@ -293,14 +311,14 @@ public class Categorization implements Serializable, Relation, Portable {
 
     public String toString(final String data) {
         return String.format("%s{ "
-                                     + "categorizationId = %d, "
-                                     + "category = %s, "
-                                     + "categorizedObject = %s, "
-                                     + "index = %b,"
-                                     + "categoryOrder = %d, "
-                                     + "objectOrder = %d"
-                                     + "type = %s"
-                                     + "%s }",
+                                 + "categorizationId = %d, "
+                                 + "category = %s, "
+                                 + "categorizedObject = %s, "
+                                 + "index = %b,"
+                                 + "categoryOrder = %d, "
+                                 + "objectOrder = %d"
+                                 + "type = %s"
+                                 + "%s }",
                              super.toString(),
                              categorizationId,
                              Objects.toString(category),

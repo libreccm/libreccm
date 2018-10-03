@@ -41,6 +41,8 @@ import java.io.Serializable;
 import static org.libreccm.categorization.CategorizationConstants.CAT_XML_NS;
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
+import org.libreccm.imexport.Exportable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -123,7 +125,7 @@ import javax.persistence.TemporalType;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
                   resolver = DomainIdResolver.class,
                   property = "uuid")
-public class Domain extends CcmObject implements Serializable, Portable {
+public class Domain extends CcmObject implements Serializable, Exportable {
 
     private static final long serialVersionUID = 4012590760598188732L;
 

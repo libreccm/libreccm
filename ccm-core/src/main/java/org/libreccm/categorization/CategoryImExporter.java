@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 LibreCCM Foundation.
+ * Copyright (C) 2018 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,33 +18,37 @@
  */
 package org.libreccm.categorization;
 
-import org.libreccm.portation.AbstractMarshaller;
-import org.libreccm.portation.Marshals;
+import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.DependsOn;
+import org.libreccm.imexport.Processes;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import java.io.Serializable;
+import javax.transaction.Transactional;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers<\a>
- * @version created the 8/22/17
+ *
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Marshals(Domain.class)
-public class DomainMarshaller extends AbstractMarshaller<Domain> {
-
-    private static final long serialVersionUID = -2435714410695539890L;
+@Processes(Category.class)
+@DependsOn({Domain.class})
+public class CategoryImExporter extends AbstractEntityImExporter<Category> {
 
     @Inject
-    private DomainRepository domainRepository;
+    private CategoryRepository categoryRepository;
 
     @Override
-    protected Class<Domain> getObjectClass() {
-        return Domain.class;
+    protected Class<Category> getEntityClass() {
+
+        return Category.class;
     }
 
     @Override
-    protected void insertIntoDb(Domain portableObject) {
-        domainRepository.save(portableObject);
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void saveImportedEntity(final Category entity) {
+
+        categoryRepository.save(entity);
     }
+
 }

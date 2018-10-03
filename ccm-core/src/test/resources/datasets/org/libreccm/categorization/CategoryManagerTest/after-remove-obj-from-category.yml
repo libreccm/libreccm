@@ -54,9 +54,10 @@ ccm_core.category_domains:
           version: 1.0
 
 ccm_core.categorizations:
-    - categorization_id: -10100
-      category_id: -2200
-      object_id: -3300
-      category_order: 1
+    - categorization_id: -10000
+      uuid: 5ace8dbb-2e8a-4bf6-932a-22591be326bf
+      category_id: -2100
+      object_id: -3100
       object_order: 1
-      category_index: true
+      category_order: 1
+      category_index: false

@@ -41,6 +41,8 @@ import java.util.Objects;
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 import static org.libreccm.web.WebConstants.WEB_XML_NS;
 
+import org.libreccm.imexport.Exportable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedAttributeNode;
@@ -79,7 +81,7 @@ import javax.persistence.Table;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
                   resolver = ApplicationIdResolver.class,
                   property = "uuid")
-public class CcmApplication extends Resource implements Serializable, Portable {
+public class CcmApplication extends Resource implements Serializable, Portable, Exportable {
 
     private static final long serialVersionUID = 9205226362368890784L;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 LibreCCM Foundation.
+ * Copyright (C) 2018 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,40 +18,40 @@
  */
 package org.libreccm.categorization;
 
-import org.libreccm.portation.AbstractMarshaller;
-import org.libreccm.portation.Marshals;
+import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.DependsOn;
+import org.libreccm.imexport.Processes;
+import org.libreccm.web.CcmApplication;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
-import java.io.Serializable;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
- * @version created on 11/7/16
+ *
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Marshals(Categorization.class)
-public class CategorizationMarshaller extends AbstractMarshaller<Categorization> {
-
-    private static final long serialVersionUID = -4388218720510005447L;
+@Processes(DomainOwnership.class)
+@DependsOn({CcmApplication.class, Domain.class})
+public class DomainOwnershipImExporter 
+    extends AbstractEntityImExporter<DomainOwnership>{
 
     @Inject
     private EntityManager entityManager;
-
+    
     @Override
-    protected Class<Categorization> getObjectClass() {
-        return Categorization.class;
+    protected Class<DomainOwnership> getEntityClass() {
+        
+        return DomainOwnership.class;
     }
 
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
-    protected void insertIntoDb(Categorization portableObject) {
-        if (portableObject.getCategorizationId() == 0) {
-            entityManager.persist(portableObject);
-        } else {
-            entityManager.merge(portableObject);
-        }
+    protected void saveImportedEntity(final DomainOwnership entity) {
+        
+        entityManager.persist(entity);
     }
+    
 }

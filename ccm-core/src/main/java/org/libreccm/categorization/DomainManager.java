@@ -28,9 +28,11 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Provides several methods when managing the relations between {@link Domain}s
@@ -103,6 +105,7 @@ public class DomainManager implements Serializable {
     public void addDomainOwner(final CcmApplication application,
                                final Domain domain) {
         final DomainOwnership ownership = new DomainOwnership();
+        ownership.setUuid(UUID.randomUUID().toString());
         ownership.setDomain(domain);
         ownership.setOwner(application);
         ownership.setOwnerOrder(domain.getOwners().size() + 1);
