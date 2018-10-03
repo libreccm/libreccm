@@ -104,7 +104,6 @@ public class ShortcutRepositoryTest {
                 .getPackage())
             .addPackage(org.libreccm.l10n.LocalizedString.class
                 .getPackage())
-            .addClass(org.libreccm.portation.Portable.class)
             .addPackage(org.libreccm.security.Permission.class.getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())

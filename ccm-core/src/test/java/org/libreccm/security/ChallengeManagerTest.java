@@ -132,7 +132,6 @@ public class ChallengeManagerTest {
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
             .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addClass(org.libreccm.portation.Portable.class)
             .addClass(com.arsdigita.kernel.KernelConfig.class)
             .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
             .addAsLibraries(getModuleDependencies())

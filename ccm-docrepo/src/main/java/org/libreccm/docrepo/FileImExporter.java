@@ -18,32 +18,37 @@
  */
 package org.libreccm.docrepo;
 
-import org.libreccm.portation.Marshals;
+import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.Processes;
 
-import javax.faces.bean.RequestScoped;
+import javax.enterprise.context.RequestScoped;
+
+
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 /**
- * Marshaller class for importing and exporting {@code Folder}s from the
+ * Im/Exporter  for importing and exporting {@code File}s from the
  * system into a specified file and the other way around.
  *
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
- * @version created the 3/16/16
+ * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Marshals(Folder.class)
-public class FolderMarshaller extends AbstractResourceMarshaller<Folder> {
+@Processes(File.class)
+public class FileImExporter extends AbstractEntityImExporter<File> {
 
     @Inject
-    private FolderRepository folderRepository;
+    private FileRepository fileRepository;
 
     @Override
-    protected Class<Folder> getObjectClass() {
-        return Folder.class;
+    protected Class<File> getEntityClass() {
+        return File.class;
     }
 
     @Override
-    protected void insertIntoDb(Folder portableObject) {
-        folderRepository.save(portableObject);
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void saveImportedEntity(final File portableObject) {
+        fileRepository.save(portableObject);
     }
 }

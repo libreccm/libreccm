@@ -108,7 +108,6 @@ public class FolderManagerTest {
                 .getPackage())
             .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class.
                 getPackage())
-            .addClass(org.libreccm.portation.Portable.class)
             .addPackage(org.libreccm.security.Permission.class.getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())

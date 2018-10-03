@@ -18,33 +18,38 @@
  */
 package org.libreccm.workflow;
 
-import org.libreccm.portation.AbstractMarshaller;
-import org.libreccm.portation.Marshals;
+import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.DependsOn;
+import org.libreccm.imexport.Processes;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
- * @version created on 11/18/16
+ * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ *
  */
 @RequestScoped
-@Marshals(AssignableTask.class)
-public class AssignableTaskMarshaller extends AbstractMarshaller<AssignableTask> {
-    private static final long serialVersionUID = -2787744872933470651L;
+@Processes(AssignableTask.class)
+@DependsOn(Workflow.class)
+public class AssignableTaskImExporter
+    extends AbstractEntityImExporter<AssignableTask> {
 
     @Inject
     private AssignableTaskRepository assignableTaskRepository;
 
     @Override
-    protected Class<AssignableTask> getObjectClass() {
+    protected Class<AssignableTask> getEntityClass() {
         return AssignableTask.class;
     }
 
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
-    protected void insertIntoDb(AssignableTask portableObject) {
-        assignableTaskRepository.save(portableObject);
+    protected void saveImportedEntity(final AssignableTask entity) {
+
+        assignableTaskRepository.save(entity);
     }
+
 }

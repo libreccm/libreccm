@@ -21,7 +21,6 @@ package org.libreccm.categorization;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import org.libreccm.core.CcmObject;
-import org.libreccm.portation.Portable;
 import org.libreccm.security.Relation;
 
 import java.io.Serializable;

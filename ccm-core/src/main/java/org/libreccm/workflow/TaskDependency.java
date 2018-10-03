@@ -20,8 +20,9 @@ package org.libreccm.workflow;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.libreccm.core.CoreConstants;
-import org.libreccm.portation.Portable;
+import org.libreccm.imexport.Exportable;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -41,9 +42,9 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "WORKFLOW_TASK_DEPENDENCIES", schema = CoreConstants.DB_SCHEMA)
-@JsonIdentityInfo(generator = TaskDependencyIdGenerator.class,
-                  property = "customDepId")
-public class TaskDependency implements Serializable, Portable {
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+                  property = "uuid")
+public class TaskDependency implements Serializable, Exportable {
 
     private static final long serialVersionUID = -4383255770131633943L;
 
@@ -51,6 +52,9 @@ public class TaskDependency implements Serializable, Portable {
     @Column(name = "TASK_DEPENDENCY_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long taskDependencyId;
+
+    @Column(name = "uuid", unique = true, nullable = false)
+    private String uuid;
 
     @ManyToOne
     @JoinColumn(name = "BLOCKED_TASK_ID")
@@ -66,8 +70,17 @@ public class TaskDependency implements Serializable, Portable {
         return taskDependencyId;
     }
 
-    public void setTaskDependencyId(final long taskDependencyId) {
+    protected void setTaskDependencyId(final long taskDependencyId) {
         this.taskDependencyId = taskDependencyId;
+    }
+
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
+
+    protected void setUuid(final String uuid) {
+        this.uuid = uuid;
     }
 
     public Task getBlockedTask() {
@@ -128,7 +141,7 @@ public class TaskDependency implements Serializable, Portable {
     public final String toString() {
         return toString("");
     }
-    
+
     public String toString(final String data) {
 
         return String.format("%s{ "

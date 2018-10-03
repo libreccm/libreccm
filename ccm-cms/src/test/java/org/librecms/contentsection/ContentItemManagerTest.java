@@ -138,7 +138,6 @@ public class ContentItemManagerTest {
             .addPackage(org.libreccm.l10n.LocalizedString.class
                 .getPackage())
             .addPackage(org.libreccm.security.Permission.class.getPackage())
-            .addClass(org.libreccm.portation.Portable.class)
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
             .addPackage(com.arsdigita.bebop.Component.class.getPackage())

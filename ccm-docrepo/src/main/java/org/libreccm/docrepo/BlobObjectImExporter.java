@@ -18,30 +18,37 @@
  */
 package org.libreccm.docrepo;
 
-import org.libreccm.portation.AbstractMarshaller;
-import org.libreccm.portation.Marshals;
+import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.Processes;
 
 import javax.faces.bean.RequestScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
- * @version created the 3/16/16
+ * Im/Exporter for importing and exporting {@code BlobObject}s from the
+ * system into a specified file and the other way around.
+ *
+ * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * 
  */
 @RequestScoped
-@Marshals(Repository.class)
-public class RepositoryMarshaller extends AbstractMarshaller<Repository> {
+@Processes(BlobObject.class)
+public class BlobObjectImExporter extends AbstractEntityImExporter<BlobObject> {
 
     @Inject
-    private RepositoryRepository repositoryRepository;
+    private BlobObjectRepository blobObjectRepository;
 
     @Override
-    protected Class<Repository> getObjectClass() {
-        return Repository.class;
+    protected Class<BlobObject> getEntityClass() {
+        return BlobObject.class;
     }
 
     @Override
-    protected void insertIntoDb(Repository portableObject) {
-        repositoryRepository.save(portableObject);
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void saveImportedEntity(final BlobObject entity) {
+        
+        blobObjectRepository.save(entity);
     }
 }

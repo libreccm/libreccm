@@ -24,13 +24,26 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.Type;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.core.Identifiable;
-import org.libreccm.portation.Portable;
+import org.libreccm.imexport.Exportable;
 import org.libreccm.security.User;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+
 import java.io.Serializable;
 import java.util.Objects;
+
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 /**
  * A comment for a task. Comments are intended for other users, for example to
@@ -48,7 +61,7 @@ import java.util.Objects;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
                   resolver = TaskCommentIdResolver.class,
                   property = "uuid")
-public class TaskComment implements Identifiable, Serializable, Portable {
+public class TaskComment implements Identifiable, Serializable, Exportable {
 
     private static final long serialVersionUID = 3842991529698351698L;
 

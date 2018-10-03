@@ -16,31 +16,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.portation;
+package org.libreccm.docrepo;
 
-import org.libreccm.core.Identifiable;
-
-import javax.inject.Qualifier;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.libreccm.imexport.AbstractEntityImExporter;
 
 /**
- * Qualifier annotation for implementations of {@link AbstractMarshaller}. The
- * value is the implementation of {@link Identifiable} for which the annotated
- * {@link AbstractMarshaller} implementation exports and imports its instances.
+ * Abstract Im/Exporter class for importing and exporting the {@code
+ * AbstractResource}s.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
- * @version created the 2/24/16
+ * @author <a href="mailto:jens.pelzetter@uni-bremen.de">Jens Pelzetter</a>
+ * @param <R> Type of resource
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Qualifier
-@Target({ElementType.TYPE,
-        ElementType.PARAMETER,
-        ElementType.FIELD,
-        ElementType.METHOD})
-public @interface Marshals {
+public abstract class AbstractResourceImExporter<R extends AbstractResource>
+    extends AbstractEntityImExporter<R> {
 
-    Class<? extends Portable> value();
 }

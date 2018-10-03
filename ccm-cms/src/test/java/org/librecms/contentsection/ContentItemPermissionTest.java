@@ -122,7 +122,6 @@ public class ContentItemPermissionTest {
             .addClass(org.libreccm.workflow.TaskAssignment.class)
             //Classes used by Role.class, User.class, 
             //org.libreccm.core.CcmObject.class
-            .addClass(org.libreccm.portation.Portable.class)
             //Classes used by Shiro.class
             .addClass(org.libreccm.security.UserRepository.class)
             //Class used by User.class

@@ -22,14 +22,30 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import org.libreccm.portation.Portable;
 import org.libreccm.security.User;
 
-import javax.persistence.*;
 import java.io.Serializable;
-import java.util.*;
 
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import org.libreccm.imexport.Exportable;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * A task which can be assigned to a user. Also a {@code AssignableTask} can be
@@ -86,7 +102,7 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
                   resolver = AssignableTaskIdResolver.class,
                   property = "uuid")
-public class AssignableTask extends Task implements Serializable, Portable {
+public class AssignableTask extends Task implements Serializable, Exportable {
 
     private static final long serialVersionUID = 4188064584389893019L;
 

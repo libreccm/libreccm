@@ -25,7 +25,6 @@ import org.libreccm.categorization.Domain;
 import org.libreccm.categorization.DomainManager;
 import org.libreccm.categorization.DomainOwnership;
 import org.libreccm.core.Resource;
-import org.libreccm.portation.Portable;
 
 import javax.persistence.FetchType;
 import javax.xml.bind.annotation.XmlElement;
