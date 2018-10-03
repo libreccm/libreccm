@@ -26,7 +26,7 @@ import javax.enterprise.context.RequestScoped;
 import java.io.Serializable;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
+ * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version created on 3/23/17
  */
 @RequestScoped
@@ -43,14 +43,15 @@ public class PartyIdResolver implements Serializable, ObjectIdResolver {
 
     @Override
     public Object resolveId(final ObjectIdGenerator.IdKey id) {
+        
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final PartyRepository partyRepository = cdiUtil
                 .findBean(PartyRepository.class);
 
         return partyRepository
-                .findByName(id.key.toString())
+                .findByUuid(id.key.toString())
                 .orElseThrow(() -> new IllegalArgumentException(String
-                        .format("No Party with name %s in the database.",
+                        .format("No Party with uuid %s in the database.",
                                 id.key.toString())));
     }
 

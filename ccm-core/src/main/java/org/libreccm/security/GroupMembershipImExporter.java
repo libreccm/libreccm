@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 LibreCCM Foundation.
+ * Copyright (C) 2018 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,41 +18,37 @@
  */
 package org.libreccm.security;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.libreccm.portation.AbstractMarshaller;
-import org.libreccm.portation.Marshals;
+import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.DependsOn;
+import org.libreccm.imexport.Processes;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
- * @version created on 11/7/16
+ *
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@RequestScoped
-@Marshals(RoleMembership.class)
-public class RoleMembershipMarshaller extends AbstractMarshaller<RoleMembership> {
-    private static final long serialVersionUID = 1304404004268502935L;
-
-    private static final Logger LOGGER = LogManager.getLogger(RoleMembershipMarshaller.class);
+@Processes(GroupMembership.class)
+@DependsOn({User.class, Group.class})
+public class GroupMembershipImExporter extends AbstractEntityImExporter<GroupMembership> {
 
     @Inject
     private EntityManager entityManager;
 
     @Override
-    protected Class<RoleMembership> getObjectClass() {
-        return RoleMembership.class;
+    protected Class<GroupMembership> getEntityClass() {
+
+        return GroupMembership.class;
+
     }
 
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
-    protected void insertIntoDb(final RoleMembership portableObject) {
-        portableObject.setMembershipId(portableObject.getMembershipId() * -1);
-        entityManager.merge(portableObject);
-        entityManager.flush();
+    protected void saveImportedEntity(final GroupMembership entity) {
+
+        entityManager.persist(entity);
     }
 
 }

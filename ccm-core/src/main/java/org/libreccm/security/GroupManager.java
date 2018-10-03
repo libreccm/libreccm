@@ -26,8 +26,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Manager class providing methods for adding and removing members to and from
@@ -74,6 +76,7 @@ public class GroupManager implements Serializable {
         }
 
         final GroupMembership membership = new GroupMembership();
+        membership.setUuid(UUID.randomUUID().toString());
         membership.setGroup(group);
         membership.setMember(user);
 

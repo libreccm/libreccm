@@ -1,9 +1,13 @@
 ccm_core.ccm_roles:
     - role_id: -10
+      uuid: 42038ba3-35b9-4894-843f-cb39ae1be763
       name: administrator
     - role_id: -20
+      uuid: c821a93d-78aa-4b87-ac1b-3e3229e0fdd9
       name: user
     - role_id: -30
+      uuid: 0e73623c-8d6a-4544-88a4-e4b104e7c0b6
       name: reader
     - role_id: -40
+      uuid: 9feb2623-671a-4fd4-bd3f-1adc7f51f62e
       name: editor

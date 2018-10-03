@@ -26,11 +26,15 @@ import org.libreccm.files.FileAlreadyExistsException;
 import org.libreccm.files.FileDoesNotExistException;
 import org.libreccm.files.InsufficientPermissionsException;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -39,6 +43,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -68,7 +74,7 @@ public class ImportExport {
 
     @Inject
     @Any
-    private Instance<EntityImExporter<?>> imExporters;
+    private Instance<AbstractEntityImExporter<?>> imExporters;
 
     /**
      * Exports the provided entities. The export will be written to a to the
@@ -128,7 +134,7 @@ public class ImportExport {
                                                   exportName));
             try (JsonWriter manifestWriter = Json.
                 createWriter(manifestOutputStream)) {
-                
+
                 manifestWriter.writeObject(manifestBuilder.build());
             }
 
@@ -138,10 +144,10 @@ public class ImportExport {
             throw new UnexpectedErrorException(ex);
         }
 
-        for(final Map.Entry<String, List<Exportable>> entry 
-            : typeEntityMap.entrySet()) {
-            
-            createExportedEntities(exportName, 
+        for (final Map.Entry<String, List<Exportable>> entry
+                 : typeEntityMap.entrySet()) {
+
+            createExportedEntities(exportName,
                                    entry.getKey(),
                                    entry.getValue());
         }
@@ -162,10 +168,10 @@ public class ImportExport {
             throw new UnexpectedErrorException(ex);
         }
 
-        final Instance<EntityImExporter<?>> instance = imExporters
+        final Instance<AbstractEntityImExporter<?>> instance = imExporters
             .select(new ProcessesLiteral(clazz));
 
-        final EntityImExporter<?> imExporter;
+        final AbstractEntityImExporter<?> imExporter;
         if (instance.isUnsatisfied()) {
             throw new UnexpectedErrorException(String.format(
                 "No EntityImExporter for entity type \"%s\" available.",
@@ -195,10 +201,23 @@ public class ImportExport {
                 throw new UnexpectedErrorException(ex);
             }
 
-            final JsonObject exportedEntity = imExporter.exportEntity(entity);
-            try (JsonWriter writer = Json.createWriter(outputStream)) {
-                writer.writeObject(exportedEntity);
+            final String exportedEntity;
+            try {
+                exportedEntity = imExporter.exportEntity(entity);
+            } catch (ExportException ex) {
+                throw new UnexpectedErrorException(ex);
             }
+            try (final OutputStreamWriter writer = new OutputStreamWriter(
+                outputStream, StandardCharsets.UTF_8)) {
+
+                writer.write(exportedEntity);
+
+            } catch (IOException ex) {
+                throw new UnexpectedErrorException(ex);
+            }
+//            try (JsonWriter writer = Json.createWriter(outputStream)) {
+//                writer.writeObject(exportedEntity);
+//            }
         }
 
         return filesArrayBuilder;
@@ -235,7 +254,8 @@ public class ImportExport {
             throw new UnexpectedErrorException(ex);
         }
 
-        final List<EntityImExporter<?>> imExportersList = new ArrayList<>();
+        final List<AbstractEntityImExporter<?>> imExportersList
+                                                    = new ArrayList<>();
         imExporters.forEach(imExporter -> imExportersList.add(imExporter));
 
         try {
@@ -270,7 +290,8 @@ public class ImportExport {
     private boolean filterImporters(final ImportManifest manifest,
                                     final EntityImExporterTreeNode node) {
 
-        final EntityImExporter<?> imExporter = node.getEntityImExporter();
+        final AbstractEntityImExporter<?> imExporter = node
+            .getEntityImExporter();
         final String type = imExporter
             .getClass()
             .getAnnotation(Processes.class).value().getName();
@@ -280,7 +301,7 @@ public class ImportExport {
 
     private void importEntitiesOfType(
         final String importName,
-        final EntityImExporter<?> entityImExporter) {
+        final AbstractEntityImExporter<?> entityImExporter) {
 
         final String type = entityImExporter
             .getClass()
@@ -313,7 +334,7 @@ public class ImportExport {
     private void importEntity(final String importName,
                               final String type,
                               final String fileName,
-                              final EntityImExporter<?> imExporter) {
+                              final AbstractEntityImExporter<?> imExporter) {
 
         final String filePath = String.format("imports/%s/%s/%s",
                                               importName,
@@ -322,15 +343,20 @@ public class ImportExport {
         try (final InputStream inputStream
                                    = ccmFiles.createInputStream(filePath)) {
 
-            final JsonReader reader = Json.createReader(inputStream);
-            final JsonObject data = reader.readObject();
+            final String data = new BufferedReader(
+                new InputStreamReader(inputStream, StandardCharsets.UTF_8))
+                .lines()
+                .collect(Collectors.joining("\n"));
 
+//            final JsonReader reader = Json.createReader(inputStream);
+//            final JsonObject data = reader.readObject();
             imExporter.importEntity(data);
 
         } catch (IOException
                  | FileDoesNotExistException
                  | FileAccessException
-                 | InsufficientPermissionsException ex) {
+                 | InsufficientPermissionsException 
+                 | ImportExpection ex) {
             throw new UnexpectedErrorException(ex);
         }
 

@@ -21,7 +21,6 @@ package org.libreccm.security;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import org.libreccm.portation.Portable;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -34,6 +33,8 @@ import java.util.Set;
 
 import static org.libreccm.core.CoreConstants.CORE_XML_NS;
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import org.libreccm.imexport.Exportable;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -58,6 +59,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "GROUPS", schema = DB_SCHEMA)
 @NamedQueries({
+    @NamedQuery(
+        name = "Group.findByUuid",
+        query = "SELECT g FROM Group g WHERE g.uuid = :uuid"
+    ),
     @NamedQuery(
         name = "Group.findByName",
         query = "SELECT g FROM Group g WHERE g.name = :name "
@@ -105,8 +110,8 @@ import javax.persistence.Table;
 @XmlRootElement(name = "user-group", namespace = CORE_XML_NS)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
                   resolver = GroupIdResolver.class,
-                  property = "name")
-public class Group extends Party implements Serializable, Portable {
+                  property = "uuid")
+public class Group extends Party implements Serializable, Exportable {
 
     private static final long serialVersionUID = -4800759206452780739L;
 

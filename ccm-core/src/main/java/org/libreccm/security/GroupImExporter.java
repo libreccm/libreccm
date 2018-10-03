@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 LibreCCM Foundation.
+ * Copyright (C) 2018 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,35 +18,34 @@
  */
 package org.libreccm.security;
 
-import org.libreccm.portation.AbstractMarshaller;
-import org.libreccm.portation.Marshals;
+import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.Processes;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
- * @version created on 11/7/16
+ *
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Marshals(Group.class)
-public class GroupMarshaller extends AbstractMarshaller<Group> {
-
-    private static final long serialVersionUID = 5004457104585052013L;
+@Processes(Group.class)
+public class GroupImExporter extends AbstractEntityImExporter<Group>{
 
     @Inject
     private GroupRepository groupRepository;
-
+    
     @Override
-    protected Class<Group> getObjectClass() {
+    protected Class<Group> getEntityClass() {
         return Group.class;
     }
 
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
-    protected void insertIntoDb(Group portableObject) {
-        portableObject.setPartyId(portableObject.getPartyId() * -1);
-        groupRepository.save(portableObject);
+    protected void saveImportedEntity(final Group entity) {
+        
+        groupRepository.save(entity);
     }
+    
 }

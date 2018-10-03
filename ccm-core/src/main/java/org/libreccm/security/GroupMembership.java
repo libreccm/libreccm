@@ -20,34 +20,50 @@ package org.libreccm.security;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import org.libreccm.portation.Portable;
 
-import javax.persistence.*;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
 import java.io.Serializable;
 import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.CORE_XML_NS;
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.libreccm.imexport.Exportable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
 /**
- * A association class representing the assoication between a {@link User} and
- * a {@code Group}.
- * 
+ * A association class representing the association between a {@link User} and a
+ * {@code Group}.
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
 @Table(name = "GROUP_MEMBERSHIPS", schema = DB_SCHEMA)
 @NamedQueries({
+    @NamedQuery(name = "GroupMembership.findByUuid",
+                query = "SELECT m FROM GroupMembership m WHERE m.uuid = :uuid")
+    ,
     @NamedQuery(name = "GroupMembership.findByGroupAndUser",
                 query = "SELECT m FROM GroupMembership m "
                             + "WHERE m.member = :member AND m.group = :group")})
 @XmlRootElement(name = "group-membership", namespace = CORE_XML_NS)
-@JsonIdentityInfo(generator = GroupMembershipIdGenerator.class,
-                  property = "customMemId")
-public class GroupMembership implements Serializable, Portable {
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+                  property = "uuid")
+public class GroupMembership implements Serializable, Exportable {
 
     private static final long serialVersionUID = 83192968306850665L;
 
@@ -56,6 +72,10 @@ public class GroupMembership implements Serializable, Portable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @XmlElement(name = "membership-id", namespace = CORE_XML_NS)
     private long membershipId;
+
+    @Column(name = "UUID", unique = true, nullable = false)
+    @XmlElement(name = "uuid", namespace = CORE_XML_NS)
+    private String uuid;
 
     @ManyToOne
     @JoinColumn(name = "GROUP_ID")
@@ -75,6 +95,15 @@ public class GroupMembership implements Serializable, Portable {
 
     protected void setMembershipId(final long membershipId) {
         this.membershipId = membershipId;
+    }
+
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
+
+    protected void setUuid(final String uuid) {
+        this.uuid = uuid;
     }
 
     public Group getGroup() {
