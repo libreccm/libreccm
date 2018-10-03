@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 LibreCCM Foundation.
+ * Copyright (C) 2018 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,37 +18,37 @@
  */
 package org.libreccm.categorization;
 
-import org.libreccm.portation.AbstractMarshaller;
-import org.libreccm.portation.Marshals;
+import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.DependsOn;
+import org.libreccm.imexport.Processes;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers<\a>
- * @version created the 8/23/17
+ *
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@RequestScoped
-@Marshals(DomainOwnership.class)
-public class DomainOwnershipMarshaller extends AbstractMarshaller<DomainOwnership> {
-
-    private static final long serialVersionUID = 6743023023790517330L;
+@Processes(Categorization.class)
+@DependsOn({Category.class})
+public class CategorizationImExporter
+    extends AbstractEntityImExporter<Categorization> {
 
     @Inject
-    private EntityManager entityManager;
-
+    private EntityManager entityManager; 
+    
     @Override
-    protected Class<DomainOwnership> getObjectClass() {
-        return DomainOwnership.class;
+    protected Class<Categorization> getEntityClass() {
+
+        return Categorization.class;
     }
 
     @Override
-    protected void insertIntoDb(DomainOwnership portableObject) {
-        if (portableObject.getOwnershipId() == 0) {
-            entityManager.persist(portableObject);
-        } else {
-            entityManager.merge(portableObject);
-        }
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void saveImportedEntity(final Categorization entity) {
+
+        entityManager.persist(entity);
     }
+
 }

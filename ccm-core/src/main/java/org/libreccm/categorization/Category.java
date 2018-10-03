@@ -41,6 +41,8 @@ import java.util.Objects;
 import static org.libreccm.categorization.CategorizationConstants.CAT_XML_NS;
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
+import org.libreccm.imexport.Exportable;
+
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -148,7 +150,7 @@ import javax.persistence.Table;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
                   resolver = CategoryIdResolver.class,
                   property = "uuid")
-public class Category extends CcmObject implements Serializable, Portable {
+public class Category extends CcmObject implements Serializable, Exportable {
 
     private static final long serialVersionUID = -7250208963391878547L;
 

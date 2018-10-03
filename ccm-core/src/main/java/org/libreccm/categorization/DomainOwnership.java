@@ -21,14 +21,27 @@ package org.libreccm.categorization;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import org.libreccm.core.CcmObject;
-import org.libreccm.portation.Portable;
 import org.libreccm.web.CcmApplication;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.libreccm.core.CoreConstants;
+import org.libreccm.imexport.Exportable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlElement;
 
 /**
  * Association class for the association between a {@link Domain} and a
@@ -42,13 +55,18 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 @Table(name = "DOMAIN_OWNERSHIPS", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(
+        name = "DomainOwnership.findByUuid",
+        query = "SELECT o FROM DomainOwnership o WHERE o.uuid = :uuid"
+    )
+    ,
+    @NamedQuery(
         name = "DomainOwnership.findByOwnerAndDomain",
         query = "SELECT o FROM DomainOwnership o "
                     + "WHERE o.owner = :owner AND o.domain = :domain")
 })
-@JsonIdentityInfo(generator = DomainOwnershipIdGenerator.class,
-                  property = "customOwnId")
-public class DomainOwnership implements Serializable, Portable {
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+                  property = "uuid")
+public class DomainOwnership implements Serializable, Exportable {
 
     private static final long serialVersionUID = 201504301305L;
 
@@ -59,6 +77,10 @@ public class DomainOwnership implements Serializable, Portable {
     @Column(name = "OWNERSHIP_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long ownershipId;
+    
+    @Column(name = "UUID", unique = true, nullable = false)
+    @XmlElement(name = "uuid", namespace = CoreConstants.CORE_XML_NS)
+    private String uuid;
 
     /**
      * The {@link Domain} owned by the {@link CcmObject}.
@@ -102,6 +124,15 @@ public class DomainOwnership implements Serializable, Portable {
         this.ownershipId = ownershipId;
     }
 
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
+
+    protected void setUuid(final String uuid) {
+        this.uuid = uuid;
+    }
+    
     public CcmApplication getOwner() {
         return owner;
     }

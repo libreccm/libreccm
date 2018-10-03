@@ -29,6 +29,8 @@ import java.io.Serializable;
 
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
+import org.libreccm.imexport.Exportable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -73,7 +75,7 @@ import javax.persistence.TemporalType;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
                   resolver = ResourceIdResolver.class,
                   property = "uuid")
-public class Resource extends CcmObject implements Serializable {
+public class Resource extends CcmObject implements Serializable, Exportable {
 
     private static final long serialVersionUID = 7345482620613842781L;
 

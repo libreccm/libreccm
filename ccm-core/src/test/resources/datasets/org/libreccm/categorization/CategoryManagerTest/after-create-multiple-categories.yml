@@ -99,12 +99,14 @@ ccm_core.category_domains:
 
 ccm_core.categorizations:
     - categorization_id: -10000
+      uuid: 5ace8dbb-2e8a-4bf6-932a-22591be326bf
       category_id: -2100
       object_id: -3100
       object_order: 1
       category_order: 1
       category_index: false
     - categorization_id: -10100
+      uuid: 50780558-5851-4eb2-8398-460173507a1b
       category_id: -2200
       object_id: -3300
       category_order: 1

@@ -85,24 +85,30 @@ ccm_core.users:
 
 ccm_core.ccm_roles:
     - role_id: -500
+      uuid: 420f5f60-18a6-4dbe-9160-c730bbe18f45
       name: category_manager
     - role_id: -510
+      uuid: 0aeea94d-3d8e-4a50-807b-e3c857038e22
       name: category_manager_domain_test
       
 ccm_core.role_memberships:
     - membership_id: -600
+      uuid: 59bfad40-2bd1-4ddd-91cf-60c51724e29c
       role_id: -500
       member_id: -200
     - membership_id: -610
+      uuid: 192024a9-0489-44a0-940f-725b5579a52d
       role_id: -510
       member_id: -300
       
 ccm_core.permissions:
     - permission_id: -700
+      uuid: 70e8b64c-505d-48bd-b196-36c10ed2321a
       granted_privilege: manage_category
       grantee_id: -500
       inherited: false
     - permission_id: -710
+      uuid: 1a798119-a4a4-477b-8092-4423d7185e1b
       granted_privilege: manage_category
       grantee_id: -510
       object_id: -1000

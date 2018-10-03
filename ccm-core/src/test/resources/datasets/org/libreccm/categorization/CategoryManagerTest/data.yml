@@ -55,12 +55,14 @@ ccm_core.category_domains:
 
 ccm_core.categorizations:
     - categorization_id: -10000
+      uuid: 5ace8dbb-2e8a-4bf6-932a-22591be326bf
       category_id: -2100
       object_id: -3100
       object_order: 1
       category_order: 1
       category_index: false
     - categorization_id: -10100
+      uuid: 50780558-5851-4eb2-8398-460173507a1b
       category_id: -2200
       object_id: -3300
       category_order: 1
@@ -110,70 +112,84 @@ ccm_core.users:
 
 ccm_core.ccm_roles:
     - role_id: -4000
+      uuid: cb07e4f7-9a77-41e8-af1a-eed318aed596
       name: domain_test_category_manager
     - role_id: -4100
+      uuid: e9d4bb0a-7218-4ecb-a759-d1623b2d5c00
       name: category_foo_manager
       
 ccm_core.role_memberships:
     - membership_id: -5000
+      uuid: a62fab65-94e0-463b-8d51-6f7585e2417c
       role_id: -4000
       member_id: -3100
     - membership_id: 5100
+      uuid: 8fb7b7cc-fe04-4986-93de-73132b94e2fa
       role_id: -4100
       member_id: -3200
       
 ccm_core.permissions:
     - permission_id: -6000
+      uuid: 1f9cd01d-b04f-4cb8-83b7-502a53b442c9
       granted_privilege: manage_category
       grantee_id: -4000
       object_id: -2000
       inherited: false
     - permission_id: -6010
+      uuid: 964ab653-eadf-4c69-b4cb-d90e9834bb81
       granted_privilege: manage_category
       grantee_id: -4000
       object_id: -2100
       inherited: true
       inherited_from_id: -2000
     - permission_id: -6020
+      uuid: c44261af-6522-418d-b7c5-ae3b3dcb02a3
       granted_privilege: manage_category
       grantee_id: -4000
       object_id: -2200
       inherited: true
       inherited_from_id: -2000
     - permission_id: -6100
+      uuid: 8aa98e4d-6fa9-411b-bcb0-3e51bba63a5b
       granted_privilege: manage_category_objects
       grantee_id: -4000
       object_id: -2000
       inherited: false
     - permission_id: -6110
+      uuid: 89fe50b0-6f59-4dfd-8520-f9059ad9d629
       granted_privilege: manage_category_objects
       grantee_id: -4000
       object_id: -2100
       inherited: true
       inherited_from_id: -2000
     - permission_id: -6120
+      uuid: 052ea99f-a0de-4d8b-aebd-69ad9680f921
       granted_privilege: manage_category_objects
       grantee_id: -4000
       object_id: -2200
       inherited: true
       inherited_from_id: -2000
     - permission_id: -6200
+      uuid: daf465e7-bfb3-4847-a5f8-2c985f20cbb8
       granted_privilege: manage_category
       grantee_id: -4100
       object_id: -2100
       inherited: false
     - permission_id: -6210
+      uuid: 23424b24-fa6f-4e2c-86f6-6c10c4342dd7
       granted_privilege: manage_category
       grantee_id: -4100
       object_id: -2200
       inherited: true
       inherited_from_id: -2100
     - permission_id: -6300
+      uuid: 1b58b9ab-7c8a-402f-9fe5-d5f4af8dfa00
       granted_privilege: manage_category_objects
       grantee_id: -4100
       object_id: -2100
       inherited: false
     - permission_id: -6310
+      uuid: 9aafe40c-ce25-4344-bc3f-144a0457191a
       granted_privilege: manage_category_objects
       grantee_id: -4100
       object_id: -2200
