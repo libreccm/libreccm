@@ -48,9 +48,9 @@ public class RoleIdResolver implements Serializable, ObjectIdResolver {
                 .findBean(RoleRepository.class);
 
         return roleRepository
-                .findByName(id.key.toString())
+                .findByUuid(id.key.toString())
                 .orElseThrow(() -> new IllegalArgumentException(String
-                .format("No Role with name %s in the database.",
+                .format("No Role with uuid %s in the database.",
                         id.key.toString())));
     }
 

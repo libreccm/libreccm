@@ -21,13 +21,10 @@ package org.libreccm.security;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdResolver;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.core.CcmObject;
-import org.libreccm.core.CcmObjectRepository;
-import org.libreccm.core.UnexpectedErrorException;
 
 import javax.enterprise.context.RequestScoped;
+
 import java.io.Serializable;
-import java.util.Optional;
 
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
@@ -47,43 +44,16 @@ public class PermissionIdResolver implements Serializable, ObjectIdResolver {
 
     @Override
     public Object resolveId(final ObjectIdGenerator.IdKey id) {
+        
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final CcmObjectRepository ccmObjectRepository = cdiUtil
-                .findBean(CcmObjectRepository.class);
-        final RoleRepository roleRepository = cdiUtil
-                .findBean(RoleRepository.class);
         final PermissionRepository permissionRepository = cdiUtil
                 .findBean(PermissionRepository.class);
 
-        String[] customPermId = id.key.toString().split("_");
-
-        String privilege = customPermId[0];
-        final String granteeName = customPermId[1];
-        final String objectUuid = customPermId[2];
-
-        final Optional<CcmObject> object = ccmObjectRepository
-                .findObjectByUuid(objectUuid);
-        final Optional<Role> grantee = roleRepository
-                .findByName(granteeName);
-        if (!grantee.isPresent()) {
-            throw new UnexpectedErrorException(String.format(
-                    "Role with id \"%s\" was not found in the database," +
-                            " but has been associated with a permission.",
-                    granteeName));
-        }
-        Optional<Permission> permission = permissionRepository
-                .findByCustomPermId(privilege,
-                                    grantee.get(),
-                                    object.orElse(null));
-
-        if (!permission.isPresent()) {
-            throw new UnexpectedErrorException(String.format(
-                    "Permission with privilege \"%s\", grantee \"%s and " +
-                    "object \"%s\" was not found in the database.",
-                    privilege, grantee.toString(), object.toString()));
-        }
-
-        return permission.get();
+        return permissionRepository
+            .findByUuid(id.key.toString())
+            .orElseThrow(() -> new IllegalArgumentException(String
+                .format("No Permission with UUID %s in the database.",
+                        id.key.toString())));
     }
 
     @Override

@@ -23,7 +23,9 @@ import org.libreccm.core.AbstractEntityRepository;
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * A repository class for {@link Permission}.
@@ -53,13 +55,27 @@ public class PermissionRepository
     }
 
     @Override
-    public boolean isNew(Permission entity) {
+    public boolean isNew(final Permission entity) {
         if (entity == null) {
             throw new IllegalArgumentException("Can't save null");
         }
         return entity.getPermissionId() == 0;
     }
 
+    @Override
+    public void initNewEntity(final Permission permission)  {
+        
+        permission.setUuid(UUID.randomUUID().toString());
+    }
+    
+    public Optional<Permission> findByUuid(final String uuid) {
+        final TypedQuery<Permission> query = getEntityManager()
+        .createNamedQuery("Permission.findByUuid", Permission.class);
+        query.setParameter("uuid", uuid);
+        
+        return getSingleResult(query);
+    }
+    
     /**
      * Finds a {@link Permission} by the privilege, the grantee and the object.
      * Where the grantee has been granted the given privilege on the given

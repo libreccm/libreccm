@@ -18,12 +18,12 @@
  */
 package org.libreccm.security;
 
-import org.libreccm.imexport.EntityImExporter;
-import org.libreccm.imexport.Exportable;
+import org.libreccm.imexport.AbstractEntityImExporter;
 import org.libreccm.imexport.Processes;
 
 import javax.enterprise.context.RequestScoped;
-import javax.json.JsonObject;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 /**
  *
@@ -31,16 +31,21 @@ import javax.json.JsonObject;
  */
 @RequestScoped
 @Processes(User.class)
-public class UserImExporter implements EntityImExporter<User> {
+public class UserImExporter extends AbstractEntityImExporter<User> {
+
+    @Inject
+    private UserRepository userRepository;
 
     @Override
-    public User importEntity(final JsonObject data) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    protected Class<User> getEntityClass() {
+        return User.class;
     }
 
     @Override
-    public JsonObject exportEntity(final Exportable entity) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void saveImportedEntity(final User entity) {
+
+        userRepository.save(entity);
     }
-    
+
 }

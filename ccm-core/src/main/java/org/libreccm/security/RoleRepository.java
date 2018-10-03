@@ -26,8 +26,10 @@ import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Repository class for {@link Role} entities.
@@ -61,11 +63,27 @@ public class RoleRepository extends AbstractEntityRepository<Long, Role> {
         }
         return entity.getRoleId() == 0;
     }
+    
+    @Override
+    public void initNewEntity(final Role role) {
+        
+        role.setUuid(UUID.randomUUID().toString());
+        
+    }
 
     public long count() {
         final TypedQuery<Long> query = getEntityManager().createNamedQuery(
             "Role.count", Long.class);
         return query.getSingleResult();
+    }
+    
+    public Optional<Role> findByUuid(final String uuid) {
+        
+        final TypedQuery<Role> query = getEntityManager()
+        .createNamedQuery("Role.findByUuid", Role.class);
+        query.setParameter("uuid", uuid);
+        
+        return getSingleResult(query);
     }
 
     /**

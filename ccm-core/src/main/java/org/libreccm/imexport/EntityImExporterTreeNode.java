@@ -29,7 +29,7 @@ import java.util.Objects;
  */
 final class EntityImExporterTreeNode {
     
-    private EntityImExporter<?> entityImExporter;
+    private AbstractEntityImExporter<?> entityImExporter;
     
     private List<EntityImExporterTreeNode> dependentImExporters;
     
@@ -44,18 +44,19 @@ final class EntityImExporterTreeNode {
     }
     
     public EntityImExporterTreeNode(
-        final EntityImExporter<?> entityImExporter) {
+        final AbstractEntityImExporter<?> entityImExporter) {
         
         this();
         this.entityImExporter = entityImExporter;
     }
     
-    public EntityImExporter<?> getEntityImExporter() {
+    public AbstractEntityImExporter<?> getEntityImExporter() {
         
         return entityImExporter;
     }
     
-    void setEntityImExporter(final EntityImExporter<?> entityImExporter) {
+    void setEntityImExporter(
+        final AbstractEntityImExporter<?> entityImExporter) {
         
         this.entityImExporter = entityImExporter;
     }

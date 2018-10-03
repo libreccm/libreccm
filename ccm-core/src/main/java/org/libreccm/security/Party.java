@@ -18,6 +18,8 @@
  */
 package org.libreccm.security;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -32,9 +34,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
-import static org.libreccm.core.CoreConstants.CORE_XML_NS;
-import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -63,6 +62,10 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries({
     @NamedQuery(
+        name = "Party.findByUuid",
+        query = "SELECT p FROM Party p WHERE p.uuid = :uuid"
+    ),
+    @NamedQuery(
         name = "Party.findByName",
         query = "SELECT p FROM Party p WHERE p.name = :name")
     ,
@@ -86,7 +89,7 @@ import javax.persistence.Table;
 })
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
                   resolver = PartyIdResolver.class,
-                  property = "name")
+                  property = "uuid")
 public class Party implements Serializable {
 
     private static final long serialVersionUID = 3319997992281332204L;
@@ -94,9 +97,11 @@ public class Party implements Serializable {
     @Id
     @Column(name = "PARTY_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @XmlElement(name = "party-id", namespace = CORE_XML_NS)
     private long partyId;
     
     @Column(name = "UUID", unique = true, nullable = false)
+    @XmlElement(name = "uuid", namespace = CORE_XML_NS)
     private String uuid;
 
     /**
@@ -105,6 +110,7 @@ public class Party implements Serializable {
      */
     @Column(name = "NAME", length = 256, nullable = false)
     @NotNull
+    @XmlElement(name = "name", namespace = CORE_XML_NS)
 //    @Pattern(regexp = "[a-zA-Z0-9\\-_\\.]*")
     private String name;
 

@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.libreccm.core.EmailAddress;
-import org.libreccm.portation.Portable;
 
 import javax.validation.constraints.NotNull;
 
@@ -73,6 +72,9 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "USERS", schema = DB_SCHEMA)
 @NamedQueries({
+    @NamedQuery(name = "User.findByUuid",
+                query = "SELECT u FROM User u WHERE u.uuid = :uuid")
+    ,
     @NamedQuery(name = "User.findByName",
                 query = "SELECT u FROM User u WHERE u.name = :name "
                             + "ORDER BY u.name, "
@@ -151,8 +153,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @SuppressWarnings({"PMD.ShortClassName", "PMD.LongVariable"})
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
                   resolver = UserIdResolver.class,
-                  property = "name")
-public class User extends Party implements Serializable, Exportable, Portable {
+                  property = "uuid")
+public class User extends Party implements Serializable, Exportable {
 
     private static final long serialVersionUID = 4035223413596611393L;
 

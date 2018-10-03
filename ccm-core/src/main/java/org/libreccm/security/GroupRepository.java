@@ -60,6 +60,19 @@ public class GroupRepository extends AbstractEntityRepository<Long, Group> {
 
         return entity.getPartyId() == 0;
     }
+    
+    public Optional<Group> findByUuid(final String uuid) {
+        
+        final TypedQuery<Group> query = getEntityManager()
+        .createNamedQuery("Group.findByUuid", Group.class);
+        query.setParameter("uuid", uuid);
+        final List<Group> result = query.getResultList();
+        if (result.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(result.get(0));
+        }
+    }
 
     /**
      * Finds a group by its name.
