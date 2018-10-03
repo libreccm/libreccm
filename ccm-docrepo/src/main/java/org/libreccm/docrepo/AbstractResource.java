@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.CcmObject;
-import org.libreccm.portation.Portable;
+import org.libreccm.imexport.Exportable;
 import org.libreccm.security.User;
 
 import javax.persistence.Column;
@@ -33,6 +33,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+
 import java.util.Date;
 
 /**
@@ -47,7 +48,7 @@ import java.util.Date;
  */
 @Entity
 @Table(schema = "CCM_DOCREPO", name = "RESOURCES")
-public abstract class AbstractResource extends CcmObject implements Portable {
+public abstract class AbstractResource extends CcmObject implements Exportable {
 
     private static final Logger log = LogManager.getLogger(AbstractResource.class);
 

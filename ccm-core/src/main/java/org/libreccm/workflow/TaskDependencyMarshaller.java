@@ -18,38 +18,38 @@
  */
 package org.libreccm.workflow;
 
-import org.libreccm.portation.AbstractMarshaller;
-import org.libreccm.portation.Marshals;
+import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.DependsOn;
+import org.libreccm.imexport.Processes;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
-
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers<\a>
  * @version created the 12/12/17
  */
 @RequestScoped
-@Marshals(TaskDependency.class)
-public class TaskDependencyMarshaller extends AbstractMarshaller<TaskDependency> {
-    private static final long serialVersionUID = 2753329911463298832L;
+@Processes(TaskDependency.class)
+@DependsOn({AssignableTask.class})
+public class TaskDependencyMarshaller 
+    extends AbstractEntityImExporter<TaskDependency> {
 
     @Inject
     private EntityManager entityManager;
 
     @Override
-    protected Class<TaskDependency> getObjectClass() {
+    protected Class<TaskDependency> getEntityClass() {
         return TaskDependency.class;
     }
 
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
-    protected void insertIntoDb(TaskDependency portableObject) {
-        portableObject.setTaskDependencyId(portableObject
-                .getTaskDependencyId() * -1);
-        entityManager.merge(portableObject);
-        entityManager.flush();
+    protected void saveImportedEntity(final TaskDependency entity) {
+        
+        entityManager.persist(entity);
     }
+
 }

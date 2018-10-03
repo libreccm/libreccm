@@ -21,24 +21,37 @@ package org.libreccm.core;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.libreccm.l10n.LocalizedString;
-import org.libreccm.portation.Portable;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
+import org.libreccm.imexport.Exportable;
+
+import javax.persistence.AssociationOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
 /**
- * This class is a port of the old {@code ResourceType} entity. 
- * 
- * @deprecated The real purpose of this class is not clear. Also the 
+ * This class is a port of the old {@code ResourceType} entity.
+ *
+ * @deprecated The real purpose of this class is not clear. Also the
  * informations provided by the entities of this class are all quite static or
  * can be interfered from the classes itself. In modern Java most if not all the
- * informations provided by the entities of this class would be expressed as 
- * annotations. At the moment it is not clear of we can remove this class 
+ * informations provided by the entities of this class would be expressed as
+ * annotations. At the moment it is not clear of we can remove this class
  * completely therefore it is still here but will maybe removed very soon.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Deprecated
@@ -46,24 +59,30 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 @Table(name = "RESOURCE_TYPES", schema = DB_SCHEMA)
 @Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries({
+    @NamedQuery(name = "ResourceType.findByUuid",
+                query = "SELECT r FROM ResourceType r WHERE r.uuid = :uuid")
+    ,
         @NamedQuery(name = "ResourceType.findByTitle",
                 query = "SELECT r FROM ResourceType r WHERE r.title = :title")
 })
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
                   resolver = ResourceTypeIdResolver.class,
-                  property = "title")
+                  property = "uuid")
 @SuppressWarnings({"PMD.CyclomaticComplexity",
                    "PMD.StdCyclomaticComplexity",
                    "PMD.ModifiedCyclomaticComplexity",
                    "PMD.NPathComplexity",
                    "PMD.LongVariable"})
-public class ResourceType implements Serializable, Portable {
+public class ResourceType implements Serializable, Exportable {
 
     private static final long serialVersionUID = 4563584142251370627L;
 
     @Id
     @Column(name = "RESOURCE_TYPE_ID")
     private long resourceTypeId;
+
+    @Column(name = "UUID", unique = true, nullable = false)
+    private String uuid;
 
     @Column(name = "TITLE", length = 254, nullable = false)
     private String title;
@@ -97,8 +116,17 @@ public class ResourceType implements Serializable, Portable {
         return resourceTypeId;
     }
 
-    public void setResourceTypeId(final long resourceTypeId) {
+    protected void setResourceTypeId(final long resourceTypeId) {
         this.resourceTypeId = resourceTypeId;
+    }
+
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
+
+    protected void setUuid(final String uuid) {
+        this.uuid = uuid;
     }
 
     public String getTitle() {

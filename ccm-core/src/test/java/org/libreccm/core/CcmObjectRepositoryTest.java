@@ -128,8 +128,6 @@ public class CcmObjectRepositoryTest {
                 .getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-//            .addClass(org.libreccm.portation.Portable.class)
-            .addPackage(org.libreccm.portation.Portable.class.getPackage())
             .addPackage(com.arsdigita.kernel.security.SecurityConfig.class
                 .getPackage())
             .addAsLibraries(getModuleDependencies())

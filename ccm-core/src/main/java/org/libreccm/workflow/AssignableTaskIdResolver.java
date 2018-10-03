@@ -31,7 +31,8 @@ import java.io.Serializable;
  */
 @RequestScoped
 public class AssignableTaskIdResolver implements Serializable,
-        ObjectIdResolver {
+                                                 ObjectIdResolver {
+
     private static final long serialVersionUID = -4634332219001315735L;
 
     @Override
@@ -46,13 +47,13 @@ public class AssignableTaskIdResolver implements Serializable,
     public Object resolveId(final ObjectIdGenerator.IdKey id) {
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final AssignableTaskRepository assignableTaskRepository = cdiUtil
-                .findBean(AssignableTaskRepository.class);
+            .findBean(AssignableTaskRepository.class);
 
         return assignableTaskRepository
-                .findByUuid(id.key.toString())
-                .orElseThrow(() -> new IllegalArgumentException(String
-                        .format("No assignable tasks with uuid %s in the " +
-                                "database.", id.key.toString())));
+            .findByUuid(id.key.toString())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No assignable tasks with uuid %s in the " + "database.",
+                    id.key.toString())));
     }
 
     @Override
@@ -64,4 +65,5 @@ public class AssignableTaskIdResolver implements Serializable,
     public boolean canUseFor(final ObjectIdResolver resolverType) {
         return resolverType instanceof AssignableTaskIdResolver;
     }
+
 }

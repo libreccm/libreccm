@@ -21,7 +21,9 @@ package org.libreccm.core;
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * A repository for executing CRUD operations on {@link ResourceType} objects.
@@ -30,7 +32,7 @@ import java.util.Optional;
  * {@link ResourceType}s from the database. This is the responsibility of the
  * application using the {@link ResourceType}.
  *
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
+ * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * 
  */
 @RequestScoped
@@ -58,7 +60,29 @@ public class ResourceTypeRepository
     public boolean isNew(final ResourceType entity) {
         return entity.getTitle() == null;
     }
+    
+    @Override
+    public void initNewEntity(final ResourceType entity) {
+        
+        if (entity.getResourceTypeId() == 0) {
+            
+            if (entity.getUuid() == null) {
+                entity.setUuid(UUID.randomUUID().toString());
+            }
+            
+        }
+        
+    }
 
+    public Optional<ResourceType> findByUuid(final String uuid) {
+        
+        final TypedQuery<ResourceType> query = getEntityManager()
+        .createNamedQuery("ResourceType.findByUuid", ResourceType.class);
+        query.setParameter("uuid", uuid);
+        
+        return getSingleResult(query);
+    }
+    
     /**
      * Finds a {@link ResourceType} by its title.
      *

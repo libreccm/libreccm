@@ -4,7 +4,6 @@ drop sequence if exists HIBERNATE_SEQUENCE;
 
     create schema CCM_CORE;
 
-
     create table CCM_CORE.APPLICATIONS (
         APPLICATION_TYPE varchar(1024) not null,
         PRIMARY_URL varchar(1024) not null,
@@ -40,6 +39,7 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         CATEGORY_INDEX boolean,
         OBJECT_ORDER bigint,
         TYPE varchar(255),
+        UUID varchar(255) not null,
         OBJECT_ID bigint,
         CATEGORY_ID bigint,
         primary key (CATEGORIZATION_ID)
@@ -123,6 +123,7 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         CONTEXT varchar(255),
         DOMAIN_ORDER bigint,
         OWNER_ORDER bigint,
+        UUID varchar(255) not null,
         domain_OBJECT_ID bigint not null,
         owner_OBJECT_ID bigint not null,
         primary key (OWNERSHIP_ID)
@@ -297,6 +298,7 @@ drop sequence if exists HIBERNATE_SEQUENCE;
 
     create table CCM_CORE.GROUP_MEMBERSHIPS (
         MEMBERSHIP_ID bigint not null,
+        UUID varchar(255) not null,
         GROUP_ID bigint,
         MEMBER_ID bigint,
         primary key (MEMBERSHIP_ID)
@@ -452,6 +454,7 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         CREATION_IP varchar(255),
         GRANTED_PRIVILEGE varchar(255),
         INHERITED boolean,
+        UUID varchar(255) not null,
         CREATION_USER_ID bigint,
         GRANTEE_ID bigint,
         INHERITED_FROM_ID bigint,
@@ -510,6 +513,7 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         RESOURCE_TYPE_ID bigint not null,
         SINGLETON boolean,
         TITLE varchar(254) not null,
+        UUID varchar(255) not null,
         EMBEDDED_VIEW boolean,
         FULL_PAGE_VIEW boolean,
         WORKSPACE_APP boolean,
@@ -533,6 +537,7 @@ drop sequence if exists HIBERNATE_SEQUENCE;
 
     create table CCM_CORE.ROLE_MEMBERSHIPS (
         MEMBERSHIP_ID bigint not null,
+        UUID varchar(255) not null,
         MEMBER_ID bigint,
         ROLE_ID bigint,
         primary key (MEMBERSHIP_ID)
@@ -543,11 +548,11 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         SETTING_ID bigint not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
-        SETTING_VALUE_LONG bigint,
-        SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         SETTING_VALUE_BOOLEAN boolean,
-        SETTING_VALUE_DOUBLE double,
+        SETTING_VALUE_LONG bigint,
         SETTING_VALUE_STRING varchar(1024),
+        SETTING_VALUE_DOUBLE double,
+        SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         primary key (SETTING_ID)
     );
 
@@ -708,6 +713,7 @@ drop sequence if exists HIBERNATE_SEQUENCE;
 
     create table CCM_CORE.WORKFLOW_TASK_ASSIGNMENTS (
         TASK_ASSIGNMENT_ID bigint not null,
+        UUID varchar(255) not null,
         ROLE_ID bigint,
         TASK_ID bigint,
         primary key (TASK_ASSIGNMENT_ID)
@@ -724,6 +730,7 @@ drop sequence if exists HIBERNATE_SEQUENCE;
 
     create table CCM_CORE.WORKFLOW_TASK_DEPENDENCIES (
         TASK_DEPENDENCY_ID bigint not null,
+        uuid varchar(255) not null,
         BLOCKED_TASK_ID bigint,
         BLOCKING_TASK_ID bigint,
         primary key (TASK_DEPENDENCY_ID)
@@ -764,6 +771,9 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         primary key (WORKFLOW_ID)
     );
 
+    alter table CCM_CORE.CATEGORIZATIONS 
+        add constraint UK_da7jus3wn1tr8poyaw9btxbrc unique (UUID);
+
     alter table CCM_CORE.CATEGORY_DOMAINS 
         add constraint UK_mb1riernf8a88u3mwl0bgfj8y unique (DOMAIN_KEY);
 
@@ -776,6 +786,12 @@ drop sequence if exists HIBERNATE_SEQUENCE;
     alter table CCM_CORE.CCM_ROLES 
         add constraint UK_rfmsjqsq6kagolsod3ufkugll unique (UUID);
 
+    alter table CCM_CORE.DOMAIN_OWNERSHIPS 
+        add constraint UK_j86gai9740v9hshascbsboudb unique (UUID);
+
+    alter table CCM_CORE.GROUP_MEMBERSHIPS 
+        add constraint UK_kkdoia60bmiwhhdru169p3n9g unique (UUID);
+
     alter table CCM_CORE.HOSTS 
         add constraint UK9ramlv6uxwt13v0wj7q0tucsx unique (SERVER_NAME, SERVER_PORT);
 
@@ -785,14 +801,29 @@ drop sequence if exists HIBERNATE_SEQUENCE;
     alter table CCM_CORE.PARTIES 
         add constraint UK_1hv061qace2mn4loroe3fwdel unique (UUID);
 
+    alter table CCM_CORE.PERMISSIONS 
+        add constraint UK_p50se7rdexv7xnkiqsl6ijyti unique (UUID);
+
+    alter table CCM_CORE.RESOURCE_TYPES 
+        add constraint UK_ioax2ix2xmq3nw7el5k6orggb unique (UUID);
+
+    alter table CCM_CORE.ROLE_MEMBERSHIPS 
+        add constraint UK_82wdq214bfs99eii71fp50s97 unique (UUID);
+
     alter table CCM_CORE.SETTINGS 
         add constraint UK5whinfxdaepqs09e5ia9y71uk unique (CONFIGURATION_CLASS, NAME);
 
     alter table CCM_CORE.SITES 
         add constraint UK_kou1h4y4st2m173he44yy8grx unique (DOMAIN_OF_SITE);
 
+    alter table CCM_CORE.WORKFLOW_TASK_ASSIGNMENTS 
+        add constraint UK_gv93k167pe9qy3go9vjau1q2t unique (UUID);
+
     alter table CCM_CORE.WORKFLOW_TASK_COMMENTS 
         add constraint UK_4nnedf08odyjxalfkg16fmjoi unique (UUID);
+
+    alter table CCM_CORE.WORKFLOW_TASK_DEPENDENCIES 
+        add constraint UK_787va2ep8ucoul29qgsoaxnub unique (uuid);
 
     alter table CCM_CORE.WORKFLOW_TASKS 
         add constraint UK_2u6ruatxij8wfojl8a1eigqqd unique (UUID);

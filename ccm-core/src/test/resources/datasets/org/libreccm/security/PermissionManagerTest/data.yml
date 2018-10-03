@@ -17,15 +17,18 @@ ccm_core.ccm_objects:
       uuid: 1c31700a-f9db-4188-812f-12dba4186c75
 ccm_core.permissions:
     - permission_id: -30001
+      uuid: 0b6b8076-f88b-4111-880a-780103d06a55
       granted_privilege: privilege1
       grantee_id: -10001
       inherited: false
     - permission_id: -30002
+      uuid: 58210e1f-482c-4d69-9746-dd4d0d587491
       granted_privilege: privilege2
       object_id: -20001
       grantee_id: -10001
       inherited: false
     - permission_id: -30003
+      uuid: 350d8860-e6b1-4788-82e5-6e579996c983
       granted_privilege: privilege2
       object_id: -20002
       grantee_id: -10002

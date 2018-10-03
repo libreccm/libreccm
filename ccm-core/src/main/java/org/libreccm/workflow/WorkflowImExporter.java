@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 LibreCCM Foundation.
+ * Copyright (C) 2018 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,33 +18,35 @@
  */
 package org.libreccm.workflow;
 
-import org.libreccm.portation.AbstractMarshaller;
-import org.libreccm.portation.Marshals;
+import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.Processes;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
- * @version created on 11/7/16
+ *
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Marshals(Workflow.class)
-public class WorkflowMarshaller extends AbstractMarshaller<Workflow> {
-    private static final long serialVersionUID = 9126827334328274556L;
+@Processes(Workflow.class)
+public class WorkflowImExporter extends AbstractEntityImExporter<Workflow> {
 
     @Inject
     private WorkflowRepository workflowRepository;
 
     @Override
-    protected Class<Workflow> getObjectClass() {
+    protected Class<Workflow> getEntityClass() {
+
         return Workflow.class;
     }
 
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
-    protected void insertIntoDb(Workflow portableObject) {
-        workflowRepository.save(portableObject);
+    protected void saveImportedEntity(final Workflow entity) {
+        
+        workflowRepository.save(entity);
     }
+
 }

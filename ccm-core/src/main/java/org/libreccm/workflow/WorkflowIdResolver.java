@@ -26,11 +26,12 @@ import javax.enterprise.context.RequestScoped;
 import java.io.Serializable;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
+ * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version created on 3/23/17
  */
 @RequestScoped
 public class WorkflowIdResolver implements Serializable, ObjectIdResolver {
+
     private static final long serialVersionUID = 1951611806946125510L;
 
     @Override
@@ -45,13 +46,14 @@ public class WorkflowIdResolver implements Serializable, ObjectIdResolver {
     public Object resolveId(final ObjectIdGenerator.IdKey id) {
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final WorkflowRepository workflowRepository = cdiUtil
-                .findBean(WorkflowRepository.class);
+            .findBean(WorkflowRepository.class);
 
         return workflowRepository
-                .findByUuid(id.key.toString())
-                .orElseThrow(() -> new IllegalArgumentException(String
-                        .format("No workflows with uuid %s in the " +
-                                "database.", id.key.toString())));
+            .findByUuid(id.key.toString())
+            .orElseThrow(() -> new IllegalArgumentException(String
+            .format("No workflows with uuid %s in the "
+                        + "database.",
+                    id.key.toString())));
     }
 
     @Override
@@ -63,4 +65,5 @@ public class WorkflowIdResolver implements Serializable, ObjectIdResolver {
     public boolean canUseFor(final ObjectIdResolver resolverType) {
         return resolverType instanceof WorkflowIdResolver;
     }
+
 }

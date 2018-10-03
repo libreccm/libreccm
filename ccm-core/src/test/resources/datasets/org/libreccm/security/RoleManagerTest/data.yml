@@ -66,18 +66,22 @@ ccm_core.groups:
 ccm_core.group_memberships:
     # group1 <-> mmuster
     - membership_id: -1000
+      uuid: db6c2569-f97d-4668-b2a0-406cb9c8edd6
       group_id: -100
       member_id: -20
     # group2 <-> jdoe
     - membership_id: -1100
+      uuid: d82c3896-e574-49f6-b123-ed517a50f4be
       group_id: -200
       member_id: -10
     # group3 <-> mmuster
     - membership_id: -1200
+      uuid: 7d7395b9-48f9-4076-9a98-7fde98123bfd
       group_id: -300
       member_id: -20
     # group3 <-> joe
     - membership_id: -1300
+      uuid: 258610b3-96b0-434a-bc08-3d58ed7525e9
       group_id: -300
       member_id: -30
 ccm_core.ccm_roles: 
@@ -93,17 +97,21 @@ ccm_core.ccm_roles:
 ccm_core.role_memberships:
     # role1 <-> jdoe
     - membership_id: -3000
+      uuid: 364220da-f24d-448f-aed5-633e316acc29
       role_id: -2000
       member_id: -10
     # role1 <-> group3
     - membership_id: -3100
+      uuid: 28b9ee03-645d-4b8d-9b4e-9cc7442ffe77
       role_id: -2000
       member_id: -300
     # role2 <-> group1
     - membership_id: -3200
+      uuid: da515fdc-560d-44fb-8f6b-8dbc37fca39d
       role_id: -2100
       member_id: -100
     # role3 <-> joe
     - membership_id: -3300
+      uuid: 9ee86a1a-5aaf-4e8c-bfd5-77bfc846d0b5
       role_id: -2200
       member_id: -30

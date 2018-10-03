@@ -343,7 +343,6 @@ public class ContentTypeRepositoryTest {
             .addClass(org.libreccm.pagemodel.PageModelComponentModel.class)
             .addClass(org.libreccm.pagemodel.PageModelVersion.class)
             .addPackage(org.libreccm.pagemodel.styles.Styles.class.getPackage())
-            .addClass(org.libreccm.portation.Portable.class)
             .addClass(org.libreccm.security.AuthorizationInterceptor.class)
             .addClass(org.libreccm.security.AuthorizationRequired.class)
             .addClass(org.libreccm.security.CcmShiroRealm.class)

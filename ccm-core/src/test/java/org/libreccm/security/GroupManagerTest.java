@@ -123,7 +123,6 @@ public class GroupManagerTest {
             .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
             .addClass(com.arsdigita.kernel.KernelConfig.class)
             .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
-            .addClass(org.libreccm.portation.Portable.class)
             .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")

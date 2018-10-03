@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 LibreCCM Foundation.
+ * Copyright (C) 2018 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,33 +16,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.workflow;
+package org.libreccm.core;
 
-import org.libreccm.portation.AbstractMarshaller;
-import org.libreccm.portation.Marshals;
+import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.Processes;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers<\a>
- * @version created the 9/27/17
+ *
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@RequestScoped
-@Marshals(TaskComment.class)
-public class TaskCommentMarshaller extends AbstractMarshaller<TaskComment> {
-    private static final long serialVersionUID = -3259560130798503811L;
-
+@Processes(ResourceType.class)
+public class ResourceTypeImExporter 
+    extends AbstractEntityImExporter<ResourceType>{
+    
     @Inject
-    private TaskCommentRepository taskCommentRepository;
+    private ResourceTypeRepository repository;
 
     @Override
-    protected Class<TaskComment> getObjectClass() {
-        return TaskComment.class;
+    protected Class<ResourceType> getEntityClass() {
+        
+        return ResourceType.class;
     }
 
     @Override
-    protected void insertIntoDb(TaskComment portableObject) {
-        taskCommentRepository.save(portableObject);
+    protected void saveImportedEntity(final ResourceType entity) {
+        
+        repository.save(entity);
     }
+    
+    
+    
 }
