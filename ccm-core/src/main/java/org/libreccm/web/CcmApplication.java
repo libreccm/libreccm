@@ -81,7 +81,8 @@ import javax.persistence.Table;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
                   resolver = ApplicationIdResolver.class,
                   property = "uuid")
-public class CcmApplication extends Resource implements Serializable, Portable, Exportable {
+public class CcmApplication extends Resource implements Serializable, 
+                                                        Exportable {
 
     private static final long serialVersionUID = 9205226362368890784L;
 
