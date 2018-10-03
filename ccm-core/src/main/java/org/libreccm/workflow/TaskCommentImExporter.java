@@ -16,34 +16,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.core;
+package org.libreccm.workflow;
 
-import org.libreccm.portation.AbstractMarshaller;
-import org.libreccm.portation.Marshals;
+import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.DependsOn;
+import org.libreccm.imexport.Processes;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers<\a>
- * @version created the 8/22/17
+ * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
+ * @author <a href="mailto:jens.pelzetter@uni-bremen.de">Jens Pelzetter</a>
  */
 @RequestScoped
-@Marshals(ResourceType.class)
-public class ResourceTypeMarshaller extends AbstractMarshaller<ResourceType> {
-
-    private static final long serialVersionUID = 79174993117568181L;
+@Processes(TaskComment.class)
+@DependsOn(AssignableTask.class)
+public class TaskCommentImExporter extends AbstractEntityImExporter<TaskComment> {
 
     @Inject
-    private ResourceTypeRepository resourceTypeRepository;
+    private TaskCommentRepository taskCommentRepository;
 
     @Override
-    protected Class<ResourceType> getObjectClass() {
-        return ResourceType.class;
+    protected Class<TaskComment> getEntityClass() {
+        return TaskComment.class;
     }
 
     @Override
-    protected void insertIntoDb(ResourceType portableObject) {
-        resourceTypeRepository.save(portableObject);
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void saveImportedEntity(TaskComment entity) {
+        taskCommentRepository.save(entity);
     }
 }

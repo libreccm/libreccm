@@ -18,8 +18,9 @@
  */
 package org.libreccm.workflow;
 
-import org.libreccm.portation.AbstractMarshaller;
-import org.libreccm.portation.Marshals;
+import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.DependsOn;
+import org.libreccm.imexport.Processes;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -27,29 +28,29 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
- * @version created on 11/7/16
+ * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Marshals(TaskAssignment.class)
-public class TaskAssignmentMarshaller extends AbstractMarshaller<TaskAssignment> {
-    private static final long serialVersionUID = 3717946510122661215L;
+@Processes(TaskAssignment.class)
+@DependsOn({AssignableTask.class})
+public class TaskAssignmentMarshaller 
+    extends AbstractEntityImExporter<TaskAssignment> {
 
     @Inject
     private EntityManager entityManager;
 
     @Override
-    protected Class<TaskAssignment> getObjectClass() {
+    protected Class<TaskAssignment> getEntityClass() {
+
         return TaskAssignment.class;
     }
 
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
-    protected void insertIntoDb(TaskAssignment portableObject) {
-        if (portableObject.getTaskAssignmentId() == 0) {
-            entityManager.persist(portableObject);
-        } else {
-            entityManager.merge(portableObject);
-        }
+    protected void saveImportedEntity(final TaskAssignment entity) {
+        
+        entityManager.persist(entity);
+        
     }
 }

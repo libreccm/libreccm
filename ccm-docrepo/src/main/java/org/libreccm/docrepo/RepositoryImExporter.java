@@ -16,12 +16,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.portation;
+package org.libreccm.docrepo;
+
+import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.Processes;
+
+import javax.faces.bean.RequestScoped;
+import javax.inject.Inject;
 
 /**
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
- * @version created the 03.02.2016
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public enum Format {
-    XML
+@RequestScoped
+@Processes(Repository.class)
+public class RepositoryImExporter extends AbstractEntityImExporter<Repository> {
+
+    @Inject
+    private RepositoryRepository repositoryRepository;
+
+    @Override
+    protected Class<Repository> getEntityClass() {
+        return Repository.class;
+    }
+
+    @Override
+    protected void saveImportedEntity(final Repository portableObject) {
+        repositoryRepository.save(portableObject);
+    }
 }

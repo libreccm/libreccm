@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dataset>
     <ccm_core.parties party_id="-100"
+                      uuid="5141f8b6-cade-46c1-b64a-d1556aa285ad"
                       name="public-user" />
     <ccm_core.parties party_id="-110"
+                      uuid="7d98ad7e-b27c-401e-a116-217130ee5774"
                       name="jdoe" />
     
     <ccm_core.users party_id="-100" 
@@ -25,13 +27,16 @@
                     password_reset_required="false" />
     
     <ccm_core.ccm_roles role_id="-200"
+                        uuid="54a64f55-7f10-4cfb-b36d-2c1b5c2c18f5"
                         name="shortcuts-manager"/>
     
     <ccm_core.role_memberships membership_id="-300" 
+                               uuid="8a9c84fd-2fe2-45b6-aab4-a5aa68aba656"
                                role_id="-200" 
                                member_id="-110" />
     
     <ccm_core.permissions permission_id="-400"
+                          uuid="b8d46b90-3014-407c-9942-4776061dd292"
                           granted_privilege="manage_shortcuts"
                           grantee_id="-200"
                           inherited="false" />

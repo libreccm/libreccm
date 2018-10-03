@@ -20,14 +20,24 @@ package org.libreccm.workflow;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import org.libreccm.portation.Portable;
 import org.libreccm.security.Role;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.libreccm.imexport.Exportable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  * Represents the assignment of a {@link AssignableTask} to a {@link Role}.
@@ -36,9 +46,9 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
  */
 @Entity
 @Table(name = "WORKFLOW_TASK_ASSIGNMENTS", schema = DB_SCHEMA)
-@JsonIdentityInfo(generator = TaskAssignmentIdGenerator.class,
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
                   property = "customAssignId")
-public class TaskAssignment implements Serializable, Portable {
+public class TaskAssignment implements Serializable, Exportable {
 
     private static final long serialVersionUID = -4427537363301565707L;
 
@@ -50,6 +60,9 @@ public class TaskAssignment implements Serializable, Portable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long taskAssignmentId;
 
+    @Column(name = "UUID", unique = true, nullable = false)
+    private String uuid;
+    
     /**
      * The task.
      */
@@ -73,6 +86,16 @@ public class TaskAssignment implements Serializable, Portable {
     protected void setTaskAssignmentId(final long taskAssignmentId) {
         this.taskAssignmentId = taskAssignmentId;
     }
+    
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
+
+    protected void setUuid(final String uuid) {
+        this.uuid = uuid;
+    }
+    
 
     public AssignableTask getTask() {
         return task;

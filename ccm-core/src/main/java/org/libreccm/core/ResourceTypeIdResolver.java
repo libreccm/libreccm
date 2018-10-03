@@ -47,10 +47,11 @@ public class ResourceTypeIdResolver implements Serializable, ObjectIdResolver {
                 .findBean(ResourceTypeRepository.class);
 
         return resourceTypeRepository
-                .findByTitle(id.key.toString())
+                .findByUuid(id.key.toString())
                 .orElseThrow(() -> new IllegalArgumentException(String
-                        .format("No ResourceType with title %s in the " +
-                                        "database.", id.key.toString())));
+                        .format("No ResourceType with uuid %s in the " +
+                                        "database.", 
+                                id.key.toString())));
     }
 
     @Override

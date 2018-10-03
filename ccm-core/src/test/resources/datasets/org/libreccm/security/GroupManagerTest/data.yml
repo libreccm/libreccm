@@ -66,17 +66,21 @@ ccm_core.groups:
 ccm_core.group_memberships:
     # admins <-> jdoe
     - membership_id: -100
+      uuid: 1f9dad0a-c51a-49e7-8720-c3c669cde67e
       group_id: -40
       member_id: -10
     # users <-> mmuster
     - membership_id: -200
+      uuid: 3837b1c2-b4e4-44b9-a92f-2330d76b51df
       group_id: -50
       member_id: -20
     # users <-> joe
     - membership_id: -300
+      uuid: cf8ffbc6-96d3-4e23-9503-4b396ea112aa
       group_id: -50
       member_id: -30
     # editors <-> joe
     - membership_id: -400
+      uuid: 610ad227-cc55-4a8f-b532-3a5204f9d2dd
       group_id: -60
       member_id: -30

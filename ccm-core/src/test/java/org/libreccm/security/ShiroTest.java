@@ -121,7 +121,6 @@ public class ShiroTest {
             .addPackage(com.arsdigita.kernel.KernelConfig.class.getPackage())
             .addPackage(com.arsdigita.kernel.security.SecurityConfig.class
                 .getPackage())
-            .addClass(org.libreccm.portation.Portable.class)
             .addClass(org.libreccm.security.authorization.LabBean.class)
             .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",

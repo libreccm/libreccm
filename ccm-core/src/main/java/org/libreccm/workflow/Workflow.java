@@ -25,7 +25,6 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.Identifiable;
 import org.libreccm.l10n.LocalizedString;
-import org.libreccm.portation.Portable;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
@@ -48,6 +47,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,6 +55,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import org.libreccm.imexport.Exportable;
 
 /**
  * A workflow is a collection of tasks which are performed on an object. Tasks
@@ -78,7 +80,7 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
                   resolver = WorkflowIdResolver.class,
                   property = "uuid")
-public class Workflow implements Identifiable, Serializable, Portable {
+public class Workflow implements Identifiable, Serializable, Exportable {
 
     private static final long serialVersionUID = 4322500264543325829L;
 

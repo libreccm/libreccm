@@ -139,7 +139,6 @@ public class ContentSectionManagerTest {
                 .getPackage())
             .addPackage(org.libreccm.l10n.LocalizedString.class
                 .getPackage())
-            .addPackage(org.libreccm.portation.Portable.class.getPackage())
             .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class.
                 getPackage())
             .addPackage(org.libreccm.security.Permission.class.getPackage())
@@ -164,7 +163,6 @@ public class ContentSectionManagerTest {
                 com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class)
             .addClass(org.libreccm.modules.Module.class)
             .addClass(org.libreccm.modules.RequiredModule.class)
-            .addClass(org.libreccm.portation.Marshals.class)
             .addPackage(org.librecms.dispatcher.ItemResolver.class.getPackage())
             .addPackage(com.arsdigita.util.Lockable.class.getPackage())
             .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())

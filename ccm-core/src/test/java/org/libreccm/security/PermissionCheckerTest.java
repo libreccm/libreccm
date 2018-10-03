@@ -131,7 +131,6 @@ public class PermissionCheckerTest {
                 .getPackage())
             .addPackage(com.arsdigita.kernel.security.SecurityConfig.class
                 .getPackage())
-            .addClass(org.libreccm.portation.Portable.class)
             .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")

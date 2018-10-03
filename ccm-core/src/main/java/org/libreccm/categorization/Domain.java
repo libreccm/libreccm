@@ -26,7 +26,6 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
-import org.libreccm.portation.Portable;
 import org.libreccm.security.RecursivePermissions;
 import org.libreccm.web.CcmApplication;
 

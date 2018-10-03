@@ -19,7 +19,7 @@
 package org.libreccm.docrepo;
 
 import org.hibernate.validator.constraints.NotBlank;
-import org.libreccm.portation.Portable;
+import org.libreccm.imexport.Exportable;
 import org.libreccm.security.User;
 import org.libreccm.web.CcmApplication;
 
@@ -31,6 +31,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
 import java.util.List;
 
 /**
@@ -46,7 +47,7 @@ import java.util.List;
         @NamedQuery(name = "DocRepo.findRepositoriesForOwner",
                     query = "SELECT r FROM Repository r WHERE r.owner = :owner")
 })
-public class Repository extends CcmApplication implements Portable {
+public class Repository extends CcmApplication implements Exportable {
 
     private static final long serialVersionUID = 6673243021462798036L;
 
