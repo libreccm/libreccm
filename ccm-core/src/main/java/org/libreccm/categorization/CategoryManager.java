@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.UUID;
 
 /**
  * The {@code CategoryManager} provides several helper methods for managing
@@ -138,6 +139,7 @@ public class CategoryManager implements Serializable {
             category.getObjectId())));
 
         final Categorization categorization = new Categorization();
+        categorization.setUuid(UUID.randomUUID().toString());
         categorization.setCategorizedObject(object);
         categorization.setCategory(assignedCategory);
 
