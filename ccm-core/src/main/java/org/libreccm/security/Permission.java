@@ -24,19 +24,22 @@ import org.hibernate.search.annotations.ContainedIn;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.libreccm.core.CcmObject;
-import org.libreccm.portation.Portable;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.CORE_XML_NS;
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.libreccm.imexport.Exportable;
 
 /**
  * A permission grants a privilege on an object or system wide to {@link Role}.
@@ -46,6 +49,9 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 @Entity
 @Table(name = "PERMISSIONS", schema = DB_SCHEMA)
 @NamedQueries({
+    @NamedQuery(name = "Permission.findByUuid",
+                query = "SELECT p FROM Permission p WHERE p.uuid = :uuid")
+    ,
     @NamedQuery(name = "Permission.findByCustomPermId",
                 query = "SELECT p FROM Permission p "
                             + "WHERE p.grantedPrivilege = :privilege "
@@ -93,10 +99,10 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 })
 @XmlRootElement(name = "permission", namespace = CORE_XML_NS)
 @XmlAccessorType(XmlAccessType.FIELD)
-@JsonIdentityInfo(generator = PermissionIdGenerator.class,
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
                   resolver = PermissionIdResolver.class,
-                  property = "customPermId")
-public class Permission implements Serializable, Portable {
+                  property = "uuid")
+public class Permission implements Serializable, Exportable {
 
     private static final long serialVersionUID = -5178045844045517958L;
 
@@ -108,6 +114,10 @@ public class Permission implements Serializable, Portable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @XmlElement(name = "permission-id", namespace = CORE_XML_NS)
     private long permissionId;
+
+    @Column(name = "UUID", unique = true, nullable = false)
+    @XmlElement(name = "uuid", namespace = CORE_XML_NS)
+    private String uuid;
 
     /**
      * The granted privilege.
@@ -190,6 +200,15 @@ public class Permission implements Serializable, Portable {
 
     protected void setPermissionId(final long permissionId) {
         this.permissionId = permissionId;
+    }
+
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
+
+    protected void setUuid(final String uuid) {
+        this.uuid = uuid;
     }
 
     public String getGrantedPrivilege() {

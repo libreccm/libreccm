@@ -24,16 +24,44 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.l10n.LocalizedString;
-import org.libreccm.portation.Portable;
 import org.libreccm.workflow.TaskAssignment;
-
-import javax.persistence.*;
-import javax.xml.bind.annotation.*;
-import java.io.Serializable;
-import java.util.*;
 
 import static org.libreccm.core.CoreConstants.CORE_XML_NS;
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import org.libreccm.imexport.Exportable;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
+import javax.persistence.AssociationOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * A role is basically a collection a {@link Permission}s and {@code Task}s.
@@ -43,6 +71,8 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 @Entity
 @Table(name = "CCM_ROLES", schema = DB_SCHEMA)
 @NamedQueries({
+    @NamedQuery(name = "Role.findByUuid",
+                query = "SELECT r FROM Role r WHERE r.uuid = :uuid"),
     @NamedQuery(name = "Role.findByName",
                 query = "SELECT r FROM Role r "
                             + "WHERE r.name = :name")
@@ -118,8 +148,8 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 @SuppressWarnings({"PMD.ShortClassName", "PMD.TooManyMethods"})
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
                   resolver = RoleIdResolver.class,
-                  property = "name")
-public class Role implements Serializable, Portable {
+                  property = "uuid")
+public class Role implements Serializable, Exportable {
 
     private static final long serialVersionUID = -7121296514181469687L;
 
@@ -134,6 +164,10 @@ public class Role implements Serializable, Portable {
     @XmlElement(name = "role-id", namespace = CORE_XML_NS)
     private long roleId;
 
+    @Column(name = "UUID", unique = true, nullable = false)
+    @XmlElement(name = "uuid", namespace = CORE_XML_NS)
+    private String uuid;
+    
     /**
      * The name of the role. May only contain the letters a to z, A to Z, the
      * numbers 0 to 9, the {@code -} (dash) and the {@code _} (underscore).
@@ -192,6 +226,15 @@ public class Role implements Serializable, Portable {
 
     protected void setRoleId(final long roleId) {
         this.roleId = roleId;
+    }
+    
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
+    
+    protected void setUuid(final String uuid) {
+        this.uuid = uuid;
     }
 
     public String getName() {

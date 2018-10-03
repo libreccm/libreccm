@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  * method. With the returned list of nodes call the
  * {@link #orderImExporters(java.util.List)} method. The list returned by
  * {@link #orderImExporters(java.util.List)} contains all
- * {@link EntityImExporter} in the order.
+ * {@link AbstractEntityImExporter}s in the order.
  *
  * This class is <strong>not</strong> not part of the public API.
  *
@@ -50,9 +50,9 @@ final class EntityImExporterTreeManager {
         .getLogger(EntityImExporterTreeManager.class);
 
     /**
-     * Initialises the tree with the provided list of {@link EntityImExporter}s.
+     * Initialises the tree with the provided list of {@link AbstractEntityImExporter}s.
      *
-     * @param imExporters The available {@link EntityImExporter}s.
+     * @param imExporters The available {@link AbstractEntityImExporter}s.
      *
      * @return An ordered list of the tree nodes.
      *
@@ -62,7 +62,7 @@ final class EntityImExporterTreeManager {
      *                             cycle is detected in the dependency tree.
      */
     public List<EntityImExporterTreeNode> generateTree(
-        final List<EntityImExporter<?>> imExporters)
+        final List<AbstractEntityImExporter<?>> imExporters)
         throws DependencyException {
 
         LOGGER.info("Starting to generate dependency tree...");
@@ -81,7 +81,7 @@ final class EntityImExporterTreeManager {
                     node -> node));
 
         //Add the dependency relations to the nodes
-        for (final EntityImExporter<?> imExporter : imExporters) {
+        for (final AbstractEntityImExporter<?> imExporter : imExporters) {
             addDependencyRelations(imExporter, nodes);
         }
 
@@ -184,7 +184,7 @@ final class EntityImExporterTreeManager {
 
     /**
      * Helper method for adding the dependency relations for an
-     * {@link EntityImExporter} to the nodes.
+     * {@link AbstractEntityImExporter} to the nodes.
      *
      * @param imExporter The current {@link EntityImExporter}.
      * @param nodes      The map of nodes.
@@ -192,7 +192,7 @@ final class EntityImExporterTreeManager {
      * @throws DependencyException If something goes wrong.
      */
     private void addDependencyRelations(
-        final EntityImExporter<?> imExporter,
+        final AbstractEntityImExporter<?> imExporter,
         final Map<String, EntityImExporterTreeNode> nodes)
         throws DependencyException {
 

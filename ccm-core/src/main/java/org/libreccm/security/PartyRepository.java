@@ -67,6 +67,20 @@ public class PartyRepository extends AbstractEntityRepository<Long, Party> {
         party.setUuid(UUID.randomUUID().toString());
     }
     
+    
+    public Optional<Party> findByUuid(final String uuid) {
+        final TypedQuery<Party> query = getEntityManager().createNamedQuery(
+            "Party.findByUuid", Party.class);
+        query.setParameter("uuid", uuid);
+
+        final List<Party> result = query.getResultList();
+        if (result.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(result.get(0));
+        }
+    }
+    
     /**
      * Finds a {@link Party} (which can be a user or group) by its name.
      *

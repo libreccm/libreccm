@@ -82,10 +82,13 @@ ccm_core.group_memberships:
       member_id: -30
 ccm_core.ccm_roles: 
     - role_id: -2000
+      uuid: 42038ba3-35b9-4894-843f-cb39ae1be763
       name: role1
     - role_id: -2100
+      uuid: c821a93d-78aa-4b87-ac1b-3e3229e0fdd9
       name: role2
     - role_id: -2200
+      uuid: 0e73623c-8d6a-4544-88a4-e4b104e7c0b6
       name: role3
 ccm_core.role_memberships:
     # role1 <-> group3

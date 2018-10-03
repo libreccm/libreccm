@@ -20,17 +20,30 @@ package org.libreccm.security;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import org.libreccm.portation.Portable;
 
-import javax.persistence.*;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
 import java.io.Serializable;
 import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.CORE_XML_NS;
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.libreccm.imexport.Exportable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 /**
  * Association class representing the association between a {@link Role} and a
@@ -41,14 +54,17 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 @Entity
 @Table(name = "ROLE_MEMBERSHIPS", schema = DB_SCHEMA)
 @NamedQueries({
+    @NamedQuery(name = "RoleMembership.findByUuid",
+                query = "SELECT m FROM RoleMembership m WHERE m.uuid = :uuid")
+    ,
     @NamedQuery(name = "RoleMembership.findByRoleAndMember",
                 query = "SELECT m FROM RoleMembership m "
                             + "WHERE m.member = :member AND m.role = :role")
 })
 @XmlRootElement(name = "role-membership", namespace = CORE_XML_NS)
-@JsonIdentityInfo(generator = RoleMembershipIdGenerator.class,
-                  property = "customMemId")
-public class RoleMembership implements Serializable, Portable {
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+                  property = "uuid")
+public class RoleMembership implements Serializable, Exportable {
 
     private static final long serialVersionUID = -3049727720697964793L;
 
@@ -57,6 +73,10 @@ public class RoleMembership implements Serializable, Portable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @XmlElement(name = "membership-id", namespace = CORE_XML_NS)
     private long membershipId;
+
+    @Column(name = "UUID", unique = true, nullable = false)
+    @XmlElement(name = "uuid", namespace = CORE_XML_NS)
+    private String uuid;
 
     @ManyToOne
     @JoinColumn(name = "ROLE_ID")
@@ -76,6 +96,15 @@ public class RoleMembership implements Serializable, Portable {
 
     protected void setMembershipId(final long membershipId) {
         this.membershipId = membershipId;
+    }
+
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
+
+    protected void setUuid(final String uuid) {
+        this.uuid = uuid;
     }
 
     public Role getRole() {

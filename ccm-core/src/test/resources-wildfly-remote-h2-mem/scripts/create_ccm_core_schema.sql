@@ -4,6 +4,7 @@ drop sequence if exists HIBERNATE_SEQUENCE;
 
     create schema CCM_CORE;
 
+
     create table CCM_CORE.APPLICATIONS (
         APPLICATION_TYPE varchar(1024) not null,
         PRIMARY_URL varchar(1024) not null,
@@ -94,6 +95,7 @@ drop sequence if exists HIBERNATE_SEQUENCE;
     create table CCM_CORE.CCM_ROLES (
         ROLE_ID bigint not null,
         NAME varchar(512) not null,
+        UUID varchar(255) not null,
         primary key (ROLE_ID)
     );
 
@@ -541,11 +543,11 @@ drop sequence if exists HIBERNATE_SEQUENCE;
         SETTING_ID bigint not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
+        SETTING_VALUE_LONG bigint,
         SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         SETTING_VALUE_BOOLEAN boolean,
-        SETTING_VALUE_STRING varchar(1024),
         SETTING_VALUE_DOUBLE double,
-        SETTING_VALUE_LONG bigint,
+        SETTING_VALUE_STRING varchar(1024),
         primary key (SETTING_ID)
     );
 
@@ -770,6 +772,9 @@ drop sequence if exists HIBERNATE_SEQUENCE;
 
     alter table CCM_CORE.CCM_OBJECTS 
         add constraint UK_1cm71jlagvyvcnkqvxqyit3wx unique (UUID);
+
+    alter table CCM_CORE.CCM_ROLES 
+        add constraint UK_rfmsjqsq6kagolsod3ufkugll unique (UUID);
 
     alter table CCM_CORE.HOSTS 
         add constraint UK9ramlv6uxwt13v0wj7q0tucsx unique (SERVER_NAME, SERVER_PORT);

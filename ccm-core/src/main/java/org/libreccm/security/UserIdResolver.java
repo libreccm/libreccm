@@ -26,11 +26,12 @@ import javax.enterprise.context.RequestScoped;
 import java.io.Serializable;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
- * @version created on 3/23/17
+ * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 public class UserIdResolver implements Serializable, ObjectIdResolver {
+    
     private static final long serialVersionUID = -2541656707906049331L;
 
     @Override
@@ -43,12 +44,13 @@ public class UserIdResolver implements Serializable, ObjectIdResolver {
 
     @Override
     public Object resolveId(final ObjectIdGenerator.IdKey id) {
+        
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         final UserRepository userRepository = cdiUtil
                 .findBean(UserRepository.class);
 
         return userRepository
-                .findByName(id.key.toString())
+                .findByUuid(id.key.toString())
                 .orElseThrow(() -> new IllegalArgumentException(String
                 .format("No User with name %s in the database.",
                         id.key.toString())));

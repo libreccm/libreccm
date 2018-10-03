@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 LibreCCM Foundation.
+ * Copyright (C) 2018 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,33 +18,37 @@
  */
 package org.libreccm.security;
 
-import org.libreccm.portation.AbstractMarshaller;
-import org.libreccm.portation.Marshals;
+import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.DependsOn;
+import org.libreccm.imexport.Processes;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
- * @version created on 11/7/16
+ *
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@RequestScoped
-@Marshals(Role.class)
-public class RoleMarshaller extends AbstractMarshaller<Role> {
-    private static final long serialVersionUID = -2150833120444479902L;
+@Processes(RoleMembership.class)
+@DependsOn({User.class, Group.class, Role.class})
+public class RoleMembershipImExporter 
+    extends AbstractEntityImExporter<RoleMembership>{
 
     @Inject
-    private RoleRepository roleRepository;
-
+    private EntityManager entityManager;
+    
     @Override
-    protected Class<Role> getObjectClass() {
-        return Role.class;
+    protected Class<RoleMembership> getEntityClass() {
+        
+        return RoleMembership.class;
     }
 
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
-    protected void insertIntoDb(Role portableObject) {
-        roleRepository.save(portableObject);
+    protected void saveImportedEntity(final RoleMembership entity) {
+
+        entityManager.persist(entity);
     }
+    
 }

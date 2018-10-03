@@ -61,6 +61,14 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
         return user.getPartyId() == 0;
     }
 
+    public Optional<User> findByUuid(final String uuid) {
+        final TypedQuery<User> query = getEntityManager().createNamedQuery(
+            "User.findByUuid", User.class);
+        query.setParameter("uuid", uuid);
+
+        return getSingleResult(query);
+    }
+    
     /**
      * Finds a user by its user name.
      *
