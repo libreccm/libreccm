@@ -18,6 +18,8 @@
  */
 package org.librecms.contentsection;
 
+import static org.librecms.CmsConstants.*;
+
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.search.annotations.Field;
@@ -58,7 +60,6 @@ import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import javax.persistence.OrderBy;
 
-import static org.librecms.CmsConstants.*;
 
 /**
  * Base type for all content item types. Specifies some common properties.
@@ -835,7 +836,7 @@ public class ContentItem extends CcmObject implements Serializable {
         if (attachments == null) {
             this.attachments = new ArrayList<>();
         } else {
-            this.attachments = attachments;
+            this.attachments = new ArrayList<>(attachments);
         }
     }
 
