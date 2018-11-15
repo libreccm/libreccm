@@ -18,10 +18,11 @@
  */
 package org.librecms.contentsection;
 
+import static org.libreccm.core.CoreConstants.*;
+
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 
-import static org.librecms.CmsConstants.*;
 
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
