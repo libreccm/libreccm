@@ -18,11 +18,8 @@
  */
 package org.librecms.contentsection;
 
-import static org.libreccm.core.CoreConstants.*;
-
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
-
 
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
@@ -43,6 +40,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import static org.librecms.CmsConstants.*;
 
 /**
  * The {@code ContentType} entity links a content item with its content section.
