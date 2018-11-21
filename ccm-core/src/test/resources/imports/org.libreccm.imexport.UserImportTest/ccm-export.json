@@ -1,0 +1,13 @@
+{
+    "created": "2018-11-18T12:00:00",
+    "onServer": "tests.libreccm.example",
+    "types": [
+        "org.libreccm.security.User"
+    ],
+    "enities": {
+        "org.libreccm.security.User": [
+            "7cb9aba4-8071-4f27-af19-096e1473d050"
+        ]
+    }
+}
+
