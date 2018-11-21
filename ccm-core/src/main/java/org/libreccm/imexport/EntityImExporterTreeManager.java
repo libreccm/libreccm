@@ -196,11 +196,6 @@ final class EntityImExporterTreeManager {
         final Map<String, EntityImExporterTreeNode> nodes)
         throws DependencyException {
 
-        //Get the dependencies of the current EntityImExporter
-        final DependsOn dependsOn = imExporter
-            .getClass()
-            .getAnnotation(DependsOn.class);
-
         //Get the name of the module from the module info.
         final String className = imExporter.getClass().getName();
         LOGGER
@@ -227,7 +222,8 @@ final class EntityImExporterTreeManager {
                   className);
         //Process the EntityImExporter required by the current module and add 
         //the dependency relations.
-        for (final Class<? extends Exportable> clazz : dependsOn.value()) {
+        for (final Class<? extends Exportable> clazz
+                 : imExporter.getRequiredEntities()) {
 
             addDependencyRelation(nodes, node, clazz);
         }
