@@ -19,9 +19,12 @@
 package org.libreccm.categorization;
 
 import org.libreccm.imexport.AbstractEntityImExporter;
-import org.libreccm.imexport.DependsOn;
+import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
 import org.libreccm.web.CcmApplication;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -34,24 +37,33 @@ import javax.transaction.Transactional;
  */
 @RequestScoped
 @Processes(DomainOwnership.class)
-@DependsOn({CcmApplication.class, Domain.class})
-public class DomainOwnershipImExporter 
-    extends AbstractEntityImExporter<DomainOwnership>{
+public class DomainOwnershipImExporter
+    extends AbstractEntityImExporter<DomainOwnership> {
 
     @Inject
     private EntityManager entityManager;
-    
+
     @Override
     protected Class<DomainOwnership> getEntityClass() {
-        
+
         return DomainOwnership.class;
     }
 
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     protected void saveImportedEntity(final DomainOwnership entity) {
-        
+
         entityManager.persist(entity);
     }
-    
+
+    @Override
+    protected Set<Class<? extends Exportable>> getRequiredEntities() {
+
+        final Set<Class<? extends Exportable>> classes = new HashSet<>();
+        classes.add(CcmApplication.class);
+        classes.add(Domain.class);
+
+        return classes;
+    }
+
 }

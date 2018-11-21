@@ -19,8 +19,11 @@
 package org.libreccm.workflow;
 
 import org.libreccm.imexport.AbstractEntityImExporter;
-import org.libreccm.imexport.DependsOn;
+import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -33,7 +36,6 @@ import javax.transaction.Transactional;
  */
 @RequestScoped
 @Processes(TaskAssignment.class)
-@DependsOn({AssignableTask.class})
 public class TaskAssignmentMarshaller 
     extends AbstractEntityImExporter<TaskAssignment> {
 
@@ -52,5 +54,14 @@ public class TaskAssignmentMarshaller
         
         entityManager.persist(entity);
         
+    }
+
+    @Override
+    protected Set<Class<? extends Exportable>> getRequiredEntities() {
+        
+        final Set<Class<? extends Exportable>> classes = new HashSet<>();
+        classes.add(AssignableTask.class);
+        
+        return classes;
     }
 }
