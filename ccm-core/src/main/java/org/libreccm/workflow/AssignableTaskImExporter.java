@@ -19,8 +19,11 @@
 package org.libreccm.workflow;
 
 import org.libreccm.imexport.AbstractEntityImExporter;
-import org.libreccm.imexport.DependsOn;
+import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -33,7 +36,6 @@ import javax.transaction.Transactional;
  */
 @RequestScoped
 @Processes(AssignableTask.class)
-@DependsOn(Workflow.class)
 public class AssignableTaskImExporter
     extends AbstractEntityImExporter<AssignableTask> {
 
@@ -43,6 +45,15 @@ public class AssignableTaskImExporter
     @Override
     protected Class<AssignableTask> getEntityClass() {
         return AssignableTask.class;
+    }
+
+    @Override
+    protected Set<Class<? extends Exportable>> getRequiredEntities() {
+
+        final Set<Class<? extends Exportable>> entities = new HashSet<>();
+        entities.add(Workflow.class);
+
+        return entities;
     }
 
     @Override

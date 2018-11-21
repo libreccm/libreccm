@@ -272,7 +272,7 @@ public class User extends Party implements Serializable, Exportable {
     }
 
     protected void setEmailAddresses(final List<EmailAddress> emailAddresses) {
-        this.emailAddresses = emailAddresses;
+        this.emailAddresses = new ArrayList<>(emailAddresses);
     }
 
     public void addEmailAddress(final EmailAddress emailAddress) {
@@ -313,7 +313,7 @@ public class User extends Party implements Serializable, Exportable {
 
     protected void setGroupMemberships(
         final Set<GroupMembership> groupMemberships) {
-        this.groupMemberships = groupMemberships;
+        this.groupMemberships = new HashSet<>(groupMemberships);
     }
 
     protected void addGroupMembership(final GroupMembership groupMembership) {
