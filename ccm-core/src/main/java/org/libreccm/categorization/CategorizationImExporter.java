@@ -19,8 +19,11 @@
 package org.libreccm.categorization;
 
 import org.libreccm.imexport.AbstractEntityImExporter;
-import org.libreccm.imexport.DependsOn;
+import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -31,17 +34,25 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Processes(Categorization.class)
-@DependsOn({Category.class})
 public class CategorizationImExporter
     extends AbstractEntityImExporter<Categorization> {
 
     @Inject
-    private EntityManager entityManager; 
-    
+    private EntityManager entityManager;
+
     @Override
     protected Class<Categorization> getEntityClass() {
 
         return Categorization.class;
+    }
+
+    @Override
+    protected Set<Class<? extends Exportable>> getRequiredEntities() {
+        
+        final Set<Class<? extends Exportable>> entities = new HashSet<>();
+        entities.add(Category.class);
+        
+        return entities;
     }
 
     @Override

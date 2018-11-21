@@ -50,7 +50,8 @@ final class EntityImExporterTreeManager {
         .getLogger(EntityImExporterTreeManager.class);
 
     /**
-     * Initialises the tree with the provided list of {@link AbstractEntityImExporter}s.
+     * Initialises the tree with the provided list of
+     * {@link AbstractEntityImExporter}s.
      *
      * @param imExporters The available {@link AbstractEntityImExporter}s.
      *
@@ -72,13 +73,12 @@ final class EntityImExporterTreeManager {
         final Map<String, EntityImExporterTreeNode> nodes = imExporters
             .stream()
             .map(EntityImExporterTreeNode::new)
-            .collect(Collectors
-                .toMap(
-                    node -> node
-                        .getEntityImExporter()
-                        .getClass()
-                        .getAnnotation(Processes.class).value().getName(),
-                    node -> node));
+            .collect(Collectors.toMap(
+                node -> node
+                    .getEntityImExporter()
+                    .getClass()
+                    .getAnnotation(Processes.class).value().getName(),
+                node -> node));
 
         //Add the dependency relations to the nodes
         for (final AbstractEntityImExporter<?> imExporter : imExporters) {

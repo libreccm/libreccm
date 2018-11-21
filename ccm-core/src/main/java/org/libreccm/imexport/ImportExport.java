@@ -43,8 +43,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -139,8 +137,8 @@ public class ImportExport {
             }
 
         } catch (FileAccessException
-                 | FileAlreadyExistsException
-                 | InsufficientPermissionsException ex) {
+                     | FileAlreadyExistsException
+                     | InsufficientPermissionsException ex) {
             throw new UnexpectedErrorException(ex);
         }
 
@@ -197,7 +195,7 @@ public class ImportExport {
                     filename));
                 filesArrayBuilder.add(filename);
             } catch (FileAccessException
-                     | InsufficientPermissionsException ex) {
+                         | InsufficientPermissionsException ex) {
                 throw new UnexpectedErrorException(ex);
             }
 
@@ -248,8 +246,8 @@ public class ImportExport {
                     importName));
             }
         } catch (FileAccessException
-                 | FileDoesNotExistException
-                 | InsufficientPermissionsException ex) {
+                     | FileDoesNotExistException
+                     | InsufficientPermissionsException ex) {
 
             throw new UnexpectedErrorException(ex);
         }
@@ -262,8 +260,7 @@ public class ImportExport {
             final EntityImExporterTreeManager treeManager
                                                   = new EntityImExporterTreeManager();
             final List<EntityImExporterTreeNode> tree = treeManager
-                .generateTree(
-                    imExportersList);
+                .generateTree(imExportersList);
             final List<EntityImExporterTreeNode> orderedNodes = treeManager
                 .orderImExporters(tree);
 
@@ -323,9 +320,9 @@ public class ImportExport {
                                                 entityImExporter));
 
         } catch (IOException
-                 | FileDoesNotExistException
-                 | FileAccessException
-                 | InsufficientPermissionsException ex) {
+                     | FileDoesNotExistException
+                     | FileAccessException
+                     | InsufficientPermissionsException ex) {
 
             throw new UnexpectedErrorException(ex);
         }
@@ -353,10 +350,10 @@ public class ImportExport {
             imExporter.importEntity(data);
 
         } catch (IOException
-                 | FileDoesNotExistException
-                 | FileAccessException
-                 | InsufficientPermissionsException 
-                 | ImportExpection ex) {
+                     | FileDoesNotExistException
+                     | FileAccessException
+                     | InsufficientPermissionsException
+                     | ImportExpection ex) {
             throw new UnexpectedErrorException(ex);
         }
 
@@ -368,8 +365,8 @@ public class ImportExport {
         try {
             importArchivePaths = ccmFiles.listFiles("imports");
         } catch (FileAccessException
-                 | FileDoesNotExistException
-                 | InsufficientPermissionsException ex) {
+                     | FileDoesNotExistException
+                     | InsufficientPermissionsException ex) {
 
             throw new UnexpectedErrorException(ex);
         }
@@ -442,9 +439,9 @@ public class ImportExport {
                 onServer,
                 types);
         } catch (IOException
-                 | FileAccessException
-                 | FileDoesNotExistException
-                 | InsufficientPermissionsException ex) {
+                     | FileAccessException
+                     | FileDoesNotExistException
+                     | InsufficientPermissionsException ex) {
 
             throw new UnexpectedErrorException(ex);
         }
