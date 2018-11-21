@@ -19,7 +19,11 @@
 package org.libreccm.core;
 
 import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
+
+import java.util.Collections;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -44,6 +48,12 @@ public class ResourceTypeImExporter
     protected void saveImportedEntity(final ResourceType entity) {
         
         repository.save(entity);
+    }
+
+    @Override
+    protected Set<Class<? extends Exportable>> getRequiredEntities() {
+        
+        return Collections.emptySet();
     }
     
     

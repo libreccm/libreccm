@@ -19,8 +19,11 @@
 package org.libreccm.security;
 
 import org.libreccm.imexport.AbstractEntityImExporter;
-import org.libreccm.imexport.DependsOn;
+import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -31,7 +34,6 @@ import javax.inject.Inject;
  */
 @RequestScoped
 @Processes(Permission.class)
-@DependsOn({Role.class})
 public class PermissionImExporter extends AbstractEntityImExporter<Permission>{
 
     @Inject
@@ -46,6 +48,15 @@ public class PermissionImExporter extends AbstractEntityImExporter<Permission>{
     protected void saveImportedEntity(final Permission entity) {
         
         permissionRepository.save(entity);
+    }
+
+    @Override
+    protected Set<Class<? extends Exportable>> getRequiredEntities() {
+        
+        final Set<Class<? extends Exportable>> classes = new HashSet<>();
+        classes.add(Role.class);
+        
+        return classes;
     }
     
     

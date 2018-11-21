@@ -19,8 +19,11 @@
 package org.libreccm.security;
 
 import org.libreccm.imexport.AbstractEntityImExporter;
-import org.libreccm.imexport.DependsOn;
+import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -31,16 +34,15 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Processes(RoleMembership.class)
-@DependsOn({User.class, Group.class, Role.class})
-public class RoleMembershipImExporter 
-    extends AbstractEntityImExporter<RoleMembership>{
+public class RoleMembershipImExporter
+    extends AbstractEntityImExporter<RoleMembership> {
 
     @Inject
     private EntityManager entityManager;
-    
+
     @Override
     protected Class<RoleMembership> getEntityClass() {
-        
+
         return RoleMembership.class;
     }
 
@@ -50,5 +52,16 @@ public class RoleMembershipImExporter
 
         entityManager.persist(entity);
     }
-    
+
+    @Override
+    protected Set<Class<? extends Exportable>> getRequiredEntities() {
+
+        final Set<Class<? extends Exportable>> classes = new HashSet<>();
+        classes.add(User.class);
+        classes.add(Group.class);
+        classes.add(Role.class);
+        
+        return classes;
+    }
+
 }

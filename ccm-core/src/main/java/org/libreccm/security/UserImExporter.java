@@ -19,7 +19,11 @@
 package org.libreccm.security;
 
 import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
+
+import java.util.Collections;
+import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -46,6 +50,12 @@ public class UserImExporter extends AbstractEntityImExporter<User> {
     protected void saveImportedEntity(final User entity) {
 
         userRepository.save(entity);
+    }
+
+    @Override
+    protected Set<Class<? extends Exportable>> getRequiredEntities() {
+
+        return Collections.emptySet();
     }
 
 }

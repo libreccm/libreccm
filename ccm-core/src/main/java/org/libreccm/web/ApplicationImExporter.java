@@ -19,7 +19,11 @@
 package org.libreccm.web;
 
 import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
+
+import java.util.Collections;
+import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -48,6 +52,12 @@ public class ApplicationImExporter
     protected void saveImportedEntity(final CcmApplication entity) {
 
         applicationRepository.save(entity);
+    }
+
+    @Override
+    protected Set<Class<? extends Exportable>> getRequiredEntities() {
+        
+        return Collections.emptySet();
     }
     
     

@@ -19,7 +19,11 @@
 package org.libreccm.security;
 
 import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
+
+import java.util.Collections;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -43,6 +47,12 @@ public class RoleImExporter extends AbstractEntityImExporter<Role> {
     protected void saveImportedEntity(final Role entity) {
         
         roleRepository.save(entity);
+    }
+
+    @Override
+    protected Set<Class<? extends Exportable>> getRequiredEntities() {
+
+        return Collections.emptySet();
     }
     
 }
