@@ -57,6 +57,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
+import javax.json.JsonString;
 import javax.json.JsonWriter;
 
 /**
@@ -137,8 +138,8 @@ public class ImportExport {
             }
 
         } catch (FileAccessException
-                     | FileAlreadyExistsException
-                     | InsufficientPermissionsException ex) {
+                 | FileAlreadyExistsException
+                 | InsufficientPermissionsException ex) {
             throw new UnexpectedErrorException(ex);
         }
 
@@ -195,7 +196,7 @@ public class ImportExport {
                     filename));
                 filesArrayBuilder.add(filename);
             } catch (FileAccessException
-                         | InsufficientPermissionsException ex) {
+                     | InsufficientPermissionsException ex) {
                 throw new UnexpectedErrorException(ex);
             }
 
@@ -246,8 +247,8 @@ public class ImportExport {
                     importName));
             }
         } catch (FileAccessException
-                     | FileDoesNotExistException
-                     | InsufficientPermissionsException ex) {
+                 | FileDoesNotExistException
+                 | InsufficientPermissionsException ex) {
 
             throw new UnexpectedErrorException(ex);
         }
@@ -276,9 +277,6 @@ public class ImportExport {
                 .map(EntityImExporterTreeNode::getEntityImExporter)
                 .forEach(imExporter -> importEntitiesOfType(importName,
                                                             imExporter));
-
-            throw new UnsupportedOperationException();
-
         } catch (DependencyException ex) {
             throw new UnexpectedErrorException(ex);
         }
@@ -289,9 +287,7 @@ public class ImportExport {
 
         final AbstractEntityImExporter<?> imExporter = node
             .getEntityImExporter();
-        final String type = imExporter
-            .getClass()
-            .getAnnotation(Processes.class).value().getName();
+        final String type = imExporter.getEntityClass().getName();
 
         return manifest.getTypes().contains(type);
     }
@@ -300,9 +296,7 @@ public class ImportExport {
         final String importName,
         final AbstractEntityImExporter<?> entityImExporter) {
 
-        final String type = entityImExporter
-            .getClass()
-            .getAnnotation(Processes.class).value().getName();
+        final String type = entityImExporter.getEntityClass().getName();
 
         try (final InputStream tocInputStream = ccmFiles
             .createInputStream(String.format("imports/%s/%s/%s.json",
@@ -316,13 +310,13 @@ public class ImportExport {
 
             files.forEach(value -> importEntity(importName,
                                                 type,
-                                                value.toString(),
+                                                ((JsonString) value).getString(),
                                                 entityImExporter));
 
         } catch (IOException
-                     | FileDoesNotExistException
-                     | FileAccessException
-                     | InsufficientPermissionsException ex) {
+                 | FileDoesNotExistException
+                 | FileAccessException
+                 | InsufficientPermissionsException ex) {
 
             throw new UnexpectedErrorException(ex);
         }
@@ -350,10 +344,10 @@ public class ImportExport {
             imExporter.importEntity(data);
 
         } catch (IOException
-                     | FileDoesNotExistException
-                     | FileAccessException
-                     | InsufficientPermissionsException
-                     | ImportExpection ex) {
+                 | FileDoesNotExistException
+                 | FileAccessException
+                 | InsufficientPermissionsException
+                 | ImportExpection ex) {
             throw new UnexpectedErrorException(ex);
         }
 
@@ -365,8 +359,8 @@ public class ImportExport {
         try {
             importArchivePaths = ccmFiles.listFiles("imports");
         } catch (FileAccessException
-                     | FileDoesNotExistException
-                     | InsufficientPermissionsException ex) {
+                 | FileDoesNotExistException
+                 | InsufficientPermissionsException ex) {
 
             throw new UnexpectedErrorException(ex);
         }
@@ -429,19 +423,24 @@ public class ImportExport {
             final LocalDateTime created = LocalDateTime
                 .parse(manifestJson.getString("created"));
             final String onServer = manifestJson.getString("onServer");
-            final List<String> types = manifestJson.getJsonArray("types")
-                .stream()
-                .map(value -> value.toString())
-                .collect(Collectors.toList());
+//            final List<String> types = manifestJson.getJsonArray("types")
+//                .stream()
+//                .map(value -> value.toString())
+//                .collect(Collectors.toList());
+            final JsonArray typesArray = manifestJson.getJsonArray("types");
+            final List<String> types = new ArrayList<>();
+            for(int i = 0; i < typesArray.size(); i++) {
+                types.add(typesArray.getString(i));
+            }
 
             return new ImportManifest(
                 Date.from(created.atZone(ZoneId.of("UTC")).toInstant()),
                 onServer,
                 types);
         } catch (IOException
-                     | FileAccessException
-                     | FileDoesNotExistException
-                     | InsufficientPermissionsException ex) {
+                 | FileAccessException
+                 | FileDoesNotExistException
+                 | InsufficientPermissionsException ex) {
 
             throw new UnexpectedErrorException(ex);
         }

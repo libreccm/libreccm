@@ -43,7 +43,7 @@ import org.junit.runner.RunWith;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.files.CcmFilesConfiguration;
-import org.libreccm.security.UserRepository;
+import org.libreccm.security.Shiro;
 import org.libreccm.tests.categories.IntegrationTest;
 
 import java.io.FileOutputStream;
@@ -60,8 +60,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -82,6 +80,10 @@ public class UserImportTest {
     private static final String IMPORT_MANIFEST_SOURCE = "/imports"
                                                              + "/org.libreccm.imexport.UserImportTest"
                                                          + "/ccm-export.json";
+    private static final String IMPORT_USERS_TOC_SOURCE = "/imports"
+                                                              + "/org.libreccm.imexport.UserImportTest"
+                                                          + "/org.libreccm.security.User"
+                                                          + "/org.libreccm.security.User.json";
     private static final String IMPORT_DATA_SOURCE = "/imports"
                                                          + "/org.libreccm.imexport.UserImportTest"
                                                      + "/org.libreccm.security.User"
@@ -100,12 +102,9 @@ public class UserImportTest {
 
     @Inject
     private ImportExport importExport;
-
+    
     @Inject
-    private UserRepository userRepository;
-
-    @PersistenceContext
-    private EntityManager entityManager;
+    private Shiro shiro;
 
     public UserImportTest() {
 
@@ -143,15 +142,20 @@ public class UserImportTest {
 
         final InputStream manifestInputStream = getClass()
             .getResourceAsStream(IMPORT_MANIFEST_SOURCE);
+        final InputStream usersTocInputStream = getClass()
+            .getResourceAsStream(IMPORT_USERS_TOC_SOURCE);
         final InputStream user1DataInputStream = getClass()
             .getResourceAsStream(IMPORT_DATA_SOURCE);
 
         final Path manifestTargetPath = userImportsTestDirPath
             .resolve("ccm-export.json");
+        final Path usersTocTargetPath = importDataPath
+            .resolve("org.libreccm.security.User.json");
         final Path user1DataTargetPath = importDataPath
             .resolve("7cb9aba4-8071-4f27-af19-096e1473d050.json");
 
         copy(manifestInputStream, manifestTargetPath);
+        copy(usersTocInputStream, usersTocTargetPath);
         copy(user1DataInputStream, user1DataTargetPath);
     }
 
@@ -283,7 +287,9 @@ public class UserImportTest {
     @InSequence(200)
     public void importSingleUser() {
 
-        importExport.importEntities("org.libreccm.imexport.UserImportTest");
+        shiro.getSystemUser().execute(() -> 
+            importExport.importEntities("org.libreccm.imexport.UserImportTest")
+        );
     }
 
 }

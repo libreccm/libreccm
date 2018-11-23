@@ -49,6 +49,8 @@ public class UserImExporter extends AbstractEntityImExporter<User> {
     @Transactional(Transactional.TxType.REQUIRED)
     protected void saveImportedEntity(final User entity) {
 
+        // Reset partyId.
+        entity.setPartyId(0);
         userRepository.save(entity);
     }
 
