@@ -76,8 +76,8 @@ final class EntityImExporterTreeManager {
             .collect(Collectors.toMap(
                 node -> node
                     .getEntityImExporter()
-                    .getClass()
-                    .getAnnotation(Processes.class).value().getName(),
+                    .getEntityClass()
+                    .getName(),
                 node -> node));
 
         //Add the dependency relations to the nodes
@@ -140,7 +140,8 @@ final class EntityImExporterTreeManager {
             //Remove the first node from the resolved nodes list
             final EntityImExporterTreeNode current = resolvedNodes.remove(0);
             LOGGER.info("\tProcessing node for EntityImExporter \"{}\"...",
-                        current.getEntityImExporter().getClass().getName());
+                        current
+                            .getEntityImExporter().getClass().getName());
 
             //Add the node to the ordered modules list.
             orderedNodes.add(current);
@@ -197,7 +198,7 @@ final class EntityImExporterTreeManager {
         throws DependencyException {
 
         //Get the name of the module from the module info.
-        final String className = imExporter.getClass().getName();
+        final String className = imExporter.getEntityClass().getName();
         LOGGER
             .info("Adding dependency relations for EntityImExporter \"{}\"...",
                   className);

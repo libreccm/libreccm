@@ -72,7 +72,9 @@ public abstract class AbstractEntityImExporter<T extends Exportable> {
     public T importEntity(final String data) throws ImportExpection {
 
         try {
-            return objectMapper.readValue(data, getEntityClass());
+            final T entity = objectMapper.readValue(data, getEntityClass());
+            saveImportedEntity(entity);
+            return entity;
         } catch (IOException ex) {
             throw new ImportExpection(ex);
         }
