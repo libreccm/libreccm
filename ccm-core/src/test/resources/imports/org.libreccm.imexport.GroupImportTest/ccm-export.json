@@ -1,0 +1,14 @@
+{
+    "created": "2018-11-24T12:00:00",
+    "onServer": "tests.libreccm.example",
+    "types": [
+        "org.libreccm.security.Group"
+    ],
+    "enities": {
+        "org.libreccm.security.Group": [
+            "696592cd-db19-4aca-bb14-06490cfde243"
+        ]
+    }
+}
+
+
