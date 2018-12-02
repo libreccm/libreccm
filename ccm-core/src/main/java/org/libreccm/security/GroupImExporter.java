@@ -49,6 +49,7 @@ public class GroupImExporter extends AbstractEntityImExporter<Group>{
     @Transactional(Transactional.TxType.REQUIRED)
     protected void saveImportedEntity(final Group entity) {
         
+        entity.setPartyId(0);
         groupRepository.save(entity);
     }
 
