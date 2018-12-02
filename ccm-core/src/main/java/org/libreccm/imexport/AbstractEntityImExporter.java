@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
+import javax.transaction.Transactional;
 
 /**
  * Base class for importers/exporters. Implementations must be annotated with
@@ -69,6 +70,7 @@ public abstract class AbstractEntityImExporter<T extends Exportable> {
      */
     protected abstract Set<Class<? extends Exportable>> getRequiredEntities();
 
+    @Transactional(Transactional.TxType.REQUIRED)
     public T importEntity(final String data) throws ImportExpection {
 
         try {
@@ -81,6 +83,7 @@ public abstract class AbstractEntityImExporter<T extends Exportable> {
 
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
     public String exportEntity(final Exportable entity) throws ExportException {
 
         try {

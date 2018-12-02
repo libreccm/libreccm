@@ -59,6 +59,7 @@ public class GroupMembershipImExporter extends AbstractEntityImExporter<GroupMem
     @Transactional(Transactional.TxType.REQUIRED)
     protected void saveImportedEntity(final GroupMembership entity) {
 
+        entity.setMembershipId(0);
         entityManager.persist(entity);
     }
 
