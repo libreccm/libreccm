@@ -1,0 +1,12 @@
+{
+    "created": "2018-12-01T12:00:00",
+    "onServer": "tests.libreccm.example",
+    "types": [
+        "org.libreccm.security.GroupMembership"
+    ],
+    "entities": {
+        "org.libreccm.security.GroupMembership": [
+            "f8ac4073-447e-4bd6-ac96-3bf92bdc8ce7"
+        ]
+    }
+}

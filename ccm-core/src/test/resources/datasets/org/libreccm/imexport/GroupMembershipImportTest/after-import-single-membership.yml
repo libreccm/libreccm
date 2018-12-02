@@ -1,0 +1,70 @@
+ccm_core.parties:
+    # John Doe
+    - party_id: -10
+      uuid: 631be113-7e86-453d-9f8b-8cb6cb6df268
+      name: jdoe
+    # Max Muster
+    - party_id: -20
+      uuid: 3a61d302-97a5-4e46-bbc9-8d716f7c54c4
+      name: mmuster
+    # Joe Public
+    - party_id: -30
+      uuid: 7d5ad4a7-c2bd-4e49-8716-0bfb40413c75
+      name: joe
+    # Group 1
+    - party_id: -100
+      uuid: 7200c286-5045-4305-8f40-86cc078b5943
+      name: group-1
+    # Group 2
+    - party_id: -200
+      uuid: ebdc9a12-8f4e-48e8-92ec-900c65189895
+      name: group-2
+ccm_core.users:
+    # John Doe
+    - banned: false
+      bouncing: false
+      email_address: john.doe@example.com
+      family_name: Doe
+      given_name: John
+      party_id: -10
+      # foo123
+      password: $shiro1$SHA-512$500000$7xkDcZUN0/whJInHIvGsDw==$WhelBVmJU/cLV7lAkMOrE5B/mqCW0bUuid1WX+xBwzzAaekC5bYn9eeOFGJWhiDgmaC50ZCUmM96/iGsRoc4uA==
+      password_reset_required: false
+      verified: true
+    # Max Mustermann
+    - banned: false
+      bouncing: false
+      email_address: max.mustermann@example.org
+      family_name: Mustermann
+      given_name: Max
+      party_id: -20
+      # foo123
+      password: $shiro1$SHA-512$500000$Y7CnccN1h25sR7KCElMOXg==$CVLWBhetodaEzzhDfGjRcCFZtSW02xOnjH7xhBx0lbxO66grKIt6LWmXoUhLEydce1JZ7cbzNLYOxIwwTeqi5Q==
+      password_reset_required: false
+      verified: true
+    # Joe Public
+    - banned: false
+      bouncing: false
+      email_address: joe.public@example.com
+      family_name: Public
+      given_name: Joe
+      party_id: -30
+      password: $shiro1$SHA-512$500000$RUCYXAQt+XzUmj3x8oG5gw==$qU+lX160Jc6sNUOI9X85wlf2lzn4/hLJNURtjmw9LOYJ7vAqUFFmhyNCMxpzuHIpzeMELr+A0XReoSmtcZnOOw==
+      password_reset_required: false
+      verified: true
+ccm_core.groups:
+    # Group 1
+    - party_id: -100
+    # Group 2
+    - party_id: -200
+ccm_core.group_memberships:
+    - membership_id: -1000
+      uuid: b32bd614-00b7-4f1e-b1a3-4fc53f230082
+      group_id: -200
+      member_id: -30
+    - membership_id: -2000
+      uuid: f8ac4073-447e-4bd6-ac96-3bf92bdc8ce7
+      group_id: -100
+      member_id: -10
+
+
