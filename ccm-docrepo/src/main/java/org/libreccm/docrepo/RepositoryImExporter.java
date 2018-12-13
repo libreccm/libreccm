@@ -19,7 +19,11 @@
 package org.libreccm.docrepo;
 
 import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
+
+import java.util.Collections;
+import java.util.Set;
 
 import javax.faces.bean.RequestScoped;
 import javax.inject.Inject;
@@ -44,4 +48,12 @@ public class RepositoryImExporter extends AbstractEntityImExporter<Repository> {
     protected void saveImportedEntity(final Repository portableObject) {
         repositoryRepository.save(portableObject);
     }
+
+    @Override
+    protected Set<Class<? extends Exportable>> getRequiredEntities() {
+        return Collections.emptySet();
+    }
+    
+    
 }
+    
