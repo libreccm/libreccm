@@ -19,19 +19,23 @@
 package org.libreccm.docrepo;
 
 import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
+
+import java.util.Collections;
+import java.util.Set;
 
 import javax.faces.bean.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 /**
- * Im/Exporter for importing and exporting {@code BlobObject}s from the
- * system into a specified file and the other way around.
+ * Im/Exporter for importing and exporting {@code BlobObject}s from the system
+ * into a specified file and the other way around.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * 
+ *
  */
 @RequestScoped
 @Processes(BlobObject.class)
@@ -48,7 +52,13 @@ public class BlobObjectImExporter extends AbstractEntityImExporter<BlobObject> {
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     protected void saveImportedEntity(final BlobObject entity) {
-        
+
         blobObjectRepository.save(entity);
     }
+
+    @Override
+    protected Set<Class<? extends Exportable>> getRequiredEntities() {
+        return Collections.emptySet();
+    }
+
 }
