@@ -18,15 +18,19 @@
  */
 package org.libreccm.docrepo;
 
+import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
+
+import java.util.Collections;
+import java.util.Set;
 
 import javax.faces.bean.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 /**
- * Im/Exporter for importing and exporting {@link Folder}s from the
- * system into a specified file and the other way around.
+ * Im/Exporter for importing and exporting {@link Folder}s from the system into
+ * a specified file and the other way around.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @author <a href="mailto:jens.pelzetter@uni-bremen.de">Jens Pelzetter</a>
@@ -48,4 +52,10 @@ public class FolderImExporter extends AbstractResourceImExporter<Folder> {
     protected void saveImportedEntity(final Folder entity) {
         folderRepository.save(entity);
     }
+
+    @Override
+    protected Set<Class<? extends Exportable>> getRequiredEntities() {
+        return Collections.emptySet();
+    }
+
 }
