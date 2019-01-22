@@ -25,7 +25,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.web.filter.AccessControlFilter;
 
 import java.security.Key;
