@@ -17,10 +17,10 @@
     </parent>
 
     <groupId>org.libreccm</groupId>
-    <artifactId>ccm-bundle-devel-wildfly-swarm</artifactId>
+    <artifactId>ccm-bundle-devel-thorntail</artifactId>
     <packaging>war</packaging>
     
-    <name>LibreCCM Devel Bundle for Wildfly Swarm</name>
+    <name>LibreCCM Devel Bundle for Thorntail</name>
     <url>http://www.libreccm.org</url>
     <distributionManagement>
         <site>
@@ -48,9 +48,9 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.wildfly.swarm</groupId>
-                <artifactId>bom-all</artifactId>
-                <version>2017.11.0</version>
+                <groupId>io.thorntail</groupId>
+                <artifactId>bom</artifactId>
+                <version>2.3.0.Final</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -60,67 +60,72 @@
     <dependencies>
         
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>cdi</artifactId>
         </dependency>
-        
+                
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
-            <artifactId>container</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>datasources</artifactId>
         </dependency>
         
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>ejb</artifactId>
         </dependency>
         
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>hibernate-search</artifactId>
         </dependency>
         
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
         
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>jaxrs</artifactId>
         </dependency>
         
-        <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+        <!--        <dependency>
+            <groupId>io.thorntail</groupId>
             <artifactId>jaxrs-cdi</artifactId>
+        </dependency>-->
+        
+        <dependency>
+            <groupId>io.thorntail</groupId>
+            <artifactId>jaxrs-jsonp</artifactId>
         </dependency>
         
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>jpa</artifactId>
         </dependency>
         
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>jsf</artifactId>
         </dependency>
         
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
+            <artifactId>jsonp</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>io.thorntail</groupId>
             <artifactId>logging</artifactId>
         </dependency>
         
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>mail</artifactId>
         </dependency>
         
         <dependency>
-            <groupId>org.wildfly.swarm</groupId>
+            <groupId>io.thorntail</groupId>
             <artifactId>undertow</artifactId>
         </dependency>
         
@@ -157,11 +162,8 @@
         
         <plugins>
             <plugin>
-                <groupId>org.wildfly.swarm</groupId>
-                <artifactId>wildfly-swarm-plugin</artifactId> 
-                <!--<configuration>
-                    <mainClass>org.libreccm.CcmBundleDevel</mainClass>
-                </configuration>-->
+                <groupId>io.thorntail</groupId>
+                <artifactId>thorntail-maven-plugin</artifactId> 
                 <executions>
                     <execution>
                         <goals>

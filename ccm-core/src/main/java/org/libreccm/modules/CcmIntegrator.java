@@ -29,8 +29,14 @@ import org.hibernate.integrator.spi.Integrator;
 import org.hibernate.service.spi.SessionFactoryServiceRegistry;
 import org.libreccm.search.SearchConfig;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import javax.sql.DataSource;
-import java.sql.*;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;

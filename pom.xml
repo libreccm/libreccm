@@ -82,13 +82,14 @@
         <module>ccm-bundle-devel</module>
         <module>ccm-bundle-devel-wildfly-web</module>
         <module>ccm-bundle-devel-wildfly</module>
-        <module>ccm-bundle-devel-wildfly-swarm</module>
+        <module>ccm-bundle-devel-thorntail</module>
 
         <!-- Archetypes -->
         <module>ccm-archetype-module</module>
         <module>ccm-cms-archetype-contenttype</module>
         
         <!--<module>ccm-cms-js</module>-->
+        
     </modules>
 
     <reporting>
@@ -97,7 +98,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.9</version>
+                <!--                <version>2.9</version>-->
                 <reportSets>
                     <reportSet>
                         <reports>
@@ -113,7 +114,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.4</version>
+                <!--<version>2.4</version>-->
                 <configuration>
                     <rulesUri>file:///${session.executionRootDirectory}/maven-version-rules.xml</rulesUri>
                 </configuration>
@@ -277,6 +278,11 @@
                     <version>2.1.0</version>
                 </plugin>
                 <plugin>
+                    <groupId>io.thorntail</groupId>
+                    <artifactId>thorntail-maven-plugin</artifactId>
+                    <version>2.3.0.Final</version>
+                </plugin>
+                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>3.0.0</version>
@@ -301,7 +307,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.5</version>
+                    <version>2.7</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
@@ -312,11 +318,6 @@
                     <groupId>org.wildfly.plugins</groupId>
                     <artifactId>wildfly-maven-plugin</artifactId>
                     <version>1.2.1.Final</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.wildfly.swarm</groupId>
-                    <artifactId>wildfly-swarm-plugin</artifactId>
-                    <version>2017.11.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -468,17 +469,17 @@
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-api</artifactId>
                 <version>0.10.5</version>
-           </dependency>
-           <dependency>
-               <groupId>io.jsonwebtoken</groupId>
-               <artifactId>jjwt-impl</artifactId>
-               <version>0.10.5</version>
-           </dependency>
-           <dependency>
-               <groupId>io.jsonwebtoken</groupId>
-               <artifactId>jjwt-jackson</artifactId>
-               <version>0.10.5</version>
-           </dependency>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>0.10.5</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>0.10.5</version>
+            </dependency>
 
             <!-- PrimeFaces for JSF prototype -->
             <dependency>
