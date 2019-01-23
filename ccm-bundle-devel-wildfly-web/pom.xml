@@ -121,7 +121,7 @@
                             <arguments>link ccm-cms-pagemodelseditor</arguments>
                         </configuration>
                     </execution>
-                    <execution>
+<!--                    <execution>
                         <id>npm link ccm-cms-tinymce</id>
                         <goals>
                             <goal>npm</goal>
@@ -129,7 +129,7 @@
                         <configuration>
                             <arguments>link ccm-cms-tinymce</arguments>
                         </configuration>
-                    </execution>
+                    </execution>-->
                     <!--<execution>
                         <id>npm link ccm-cms-js</id>
                         <goals>
