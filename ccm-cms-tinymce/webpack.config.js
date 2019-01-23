@@ -5,7 +5,7 @@ module.exports = {
     devtool: "source-map",
 
     entry: {
-        "ccm-cms-tinymce-insertmedia/plugin": "./src/main/typescript/tinymce/plugins/ccm-cms-tinymce-insertmedia/index.ts",
+        "ccm-cms-tinymce-insertmedia/plugin": "./src/main/typescript/tinymce/plugins/ccm-cms-tinymce-insertmedia/index.ts"
     },
 
     output: {
