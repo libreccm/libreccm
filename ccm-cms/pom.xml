@@ -285,7 +285,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.4</version>
                 <configuration>
                     <detectLinks>true</detectLinks>
                     <detectJavaApiLinks>true</detectJavaApiLinks>
@@ -318,12 +317,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
-                <version>2.5</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.20</version>
                 <configuration>
                     <trimStackTrace>false</trimStackTrace>
                 </configuration>
@@ -331,18 +328,15 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.9</version>
             </plugin>
             
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
-                <version>3.0.5</version>
             </plugin>
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>3.1.0-RC8</version>
                 <!--<configuration>
                     <excludeFilterFile>findbugs-exclude.xml</excludeFilterFile>
                 </configuration>-->
@@ -351,12 +345,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.8</version>
                 <configuration>
                     <linkXref>true</linkXref>
                     <sourceEncoding>utf-8</sourceEncoding>
                     <targetJdk>1.8</targetJdk>
-                    <rulesets>
+<!--                    <rulesets>
                         <ruleset>/rulesets/java/basic.xml</ruleset>
                         <ruleset>/rulesets/java/braces.xml</ruleset>
                         <ruleset>/rulesets/java/clone.xml</ruleset>
@@ -374,7 +367,7 @@
                         <ruleset>/rulesets/java/typeresolution.xml</ruleset>
                         <ruleset>/rulesets/java/unnecessary.xml</ruleset>
                         <ruleset>/rulesets/java/unusedcode.xml</ruleset>
-                    </rulesets>
+                    </rulesets>-->
                 </configuration>
             </plugin>
             <!--<plugin>
@@ -385,7 +378,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.9</version>
                 <reportSets>
                     <reportSet>
                         <reports>

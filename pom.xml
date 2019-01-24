@@ -178,12 +178,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-pmd-plugin</artifactId>
-                    <version>3.8</version>
+                    <version>3.11.0</version>
                     <configuration>
                         <linkXref>true</linkXref>
                         <sourceEncoding>utf-8</sourceEncoding>
                         <targetJdk>1.8</targetJdk>
-                        <rulesets>
+<!--                        <rulesets>
                             <ruleset>/rulesets/basic.xml</ruleset>
                             <ruleset>/rulesets/braces.xml</ruleset>
                             <ruleset>/rulesets/codesize.xml</ruleset>
@@ -200,7 +200,7 @@
                             <ruleset>/rulesets/strings.xml</ruleset>
                             <ruleset>/rulesets/sunsecure.xml</ruleset>
                             <ruleset>/rulesets/unusedcode.xml</ruleset>
-                        </rulesets>
+                        </rulesets>-->
                     </configuration>
                     <executions>
                         <execution>
