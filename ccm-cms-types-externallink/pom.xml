@@ -300,7 +300,7 @@
                     <reportSet>
                         <reports>
                             <report>dependencies</report>
-                            <report>license</report>
+                            <report>licenses</report>
                         </reports>
                     </reportSet>
                 </reportSets>

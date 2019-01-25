@@ -46,7 +46,7 @@
                     and automatically 
                     have any modules (EJB-JARs and WARs) use them -->
                     <defaultLibBundleDir>lib</defaultLibBundleDir>
-                    <fileNameMapping>no-version</fileNameMapping>
+                    <outputFileNameMapping>no-version</outputFileNameMapping>
                     <modules>
                         <webModule>
                             <groupId>org.libreccm</groupId>

@@ -85,7 +85,7 @@
                     <reportSet>
                         <reports>
                             <report>summary</report>
-                            <report>license</report>
+                            <report>licenses</report>
                             <report>scm</report>
                             <report>dependency-management</report>
                             <report>plugin-management</report>
