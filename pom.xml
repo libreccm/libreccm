@@ -483,11 +483,11 @@
             </dependency>
 
             <!-- PrimeFaces for JSF prototype -->
-            <dependency>
+<!--            <dependency>
                 <groupId>org.primefaces</groupId>
                 <artifactId>primefaces</artifactId>
                 <version>6.1</version>
-            </dependency>
+            </dependency>-->
 
             <!-- Vaadin dependencies for Vaadin prototype -->
             <!-- Vaadin dependencies -->
