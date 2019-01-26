@@ -67,12 +67,6 @@
             <artifactId>log4j-api</artifactId>
         </dependency>
         
-        <!-- Vaadin dependencies for Vaadin prototype -->
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-cdi</artifactId>
-        </dependency>
-
     </dependencies>
 
     <reporting>

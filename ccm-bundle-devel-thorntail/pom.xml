@@ -194,7 +194,6 @@
                             <type>jar</type>
                             <includes>
                                 <include>assets/</include>
-                                <include>VAADIN/</include>
                             </includes>
                         </overlay>
                         <overlay>
