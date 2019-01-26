@@ -227,10 +227,10 @@
             <artifactId>Saxon-HE</artifactId>
         </dependency>
         
-        <dependency>
+<!--        <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
-        </dependency>
+        </dependency>-->
         
         <!-- Vaadin dependencies for Vaadin prototype -->
         <dependency>
