@@ -693,18 +693,6 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-transaction-bom</artifactId>
-                <version>1.0.5</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-transaction-impl-base</artifactId>
-                <version>1.0.5</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-persistence-dbunit</artifactId>
                 <version>1.0.0.Alpha7</version>
             </dependency>
