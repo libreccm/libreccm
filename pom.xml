@@ -270,7 +270,7 @@
                 </plugin>
                 <plugin>
                     <groupId>de.jpdigital</groupId>
-                    <artifactId>hibernate51-ddl-maven-plugin</artifactId>
+                    <artifactId>hibernate52-ddl-maven-plugin</artifactId>
                     <version>2.2.0</version>
                 </plugin>
                 <plugin>
@@ -308,7 +308,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.2</version>
+                    <version>0.8.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.wildfly.plugins</groupId>
@@ -380,7 +380,7 @@
             <dependency>
                 <groupId>javax</groupId>
                 <artifactId>javaee-api</artifactId>
-                <version>7.0</version>
+                <version>8.0.1-b5</version>
             </dependency>
 
             <!--
@@ -391,8 +391,8 @@
             -->
             <dependency>
                 <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-entitymanager</artifactId>
-                <version>5.1.10.Final</version>
+                <artifactId>hibernate-core</artifactId>
+                <version>5.3.7.Final</version>
             </dependency>
 
             <!--
@@ -402,7 +402,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-envers</artifactId>
-                <version>5.1.10.Final</version>
+                <version>5.3.7.Final</version>
             </dependency>
 
             <!--
@@ -411,22 +411,22 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>5.4.2.Final</version>
+                <version>6.0.14.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator-cdi</artifactId>
-                <version>5.4.2.Final</version>
+                <version>6.0.14.Final</version>
             </dependency>
             <dependency>
                 <groupId>javax.el</groupId>
                 <artifactId>javax.el-api</artifactId>
-                <version>3.0.0</version>
+                <version>3.0.1-b06</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish</groupId>
                 <artifactId>javax.el</artifactId>
-                <version>3.0.1-b08</version>
+                <version>3.0.1-b11</version>
             </dependency>
 
             <!--
@@ -687,16 +687,21 @@
             <dependency>
                 <groupId>org.jboss.arquillian</groupId>
                 <artifactId>arquillian-bom</artifactId>
-                <version>1.4.0.Final</version>
+                <version>1.4.1.Final</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-transaction-bom</artifactId>
-                <version>1.0.3.Final</version>
+                <version>1.0.5</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian.extension</groupId>
+                <artifactId>arquillian-transaction-impl-base</artifactId>
+                <version>1.0.5</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
@@ -706,18 +711,18 @@
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-jacoco</artifactId>
-                <version>1.0.0.Alpha9</version>
+                <version>1.0.0.Alpha10</version>
             </dependency>
             <dependency>
                 <groupId>org.wildfly.arquillian</groupId>
                 <artifactId>wildfly-arquillian-container-managed</artifactId>
-                <version>2.0.2.Final</version>
+                <version>2.1.1.Final</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.wildfly.arquillian</groupId>
                 <artifactId>wildfly-arquillian-container-remote</artifactId>
-                <version>2.1.0.Final</version>
+                <version>2.1.1.Final</version>
                 <scope>test</scope>
             </dependency>
 
@@ -727,7 +732,7 @@
             <dependency>
                 <groupId>org.jacoco</groupId>
                 <artifactId>org.jacoco.core</artifactId>
-                <version>0.8.2</version>
+                <version>0.8.3</version>
                 <scope>test</scope>
             </dependency>
 
