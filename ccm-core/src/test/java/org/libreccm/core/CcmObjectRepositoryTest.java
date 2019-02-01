@@ -119,6 +119,7 @@ public class CcmObjectRepositoryTest {
             .addClass(org.libreccm.modules.InstallEvent.class)
             .addClass(org.libreccm.modules.UnInstallEvent.class)
             .addClass(org.libreccm.modules.ShutdownEvent.class)
+            .addClass(org.libreccm.imexport.Exportable.class)
             .addPackage(org.libreccm.security.PermissionChecker.class
                 .getPackage())
             .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())

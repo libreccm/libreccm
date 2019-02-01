@@ -46,7 +46,7 @@
 
         <dependency>
             <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
+            <artifactId>hibernate-core</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -201,7 +201,7 @@
             </plugin>
             <plugin>
                 <groupId>de.jpdigital</groupId>
-                <artifactId>hibernate51-ddl-maven-plugin</artifactId>
+                <artifactId>hibernate52-ddl-maven-plugin</artifactId>
                 <configuration>
                     <dialects>
                         <param>h2</param>
@@ -389,7 +389,7 @@
                 <plugins>
                     <plugin>
                         <groupId>de.jpdigital</groupId>
-                        <artifactId>hibernate51-ddl-maven-plugin</artifactId>
+                        <artifactId>hibernate52-ddl-maven-plugin</artifactId>
                         <configuration>
                             <dialects>
                                 <param>h2</param>
@@ -472,7 +472,7 @@
                 <plugins>
                     <plugin>
                         <groupId>de.jpdigital</groupId>
-                        <artifactId>hibernate51-ddl-maven-plugin</artifactId>
+                        <artifactId>hibernate52-ddl-maven-plugin</artifactId>
                         <configuration>
                             <dialects>
                                 <param>h2</param>
@@ -560,7 +560,7 @@
                 <plugins>
                     <plugin>
                         <groupId>de.jpdigital</groupId>
-                        <artifactId>hibernate51-ddl-maven-plugin</artifactId>
+                        <artifactId>hibernate52-ddl-maven-plugin</artifactId>
                         <configuration>
                             <dialects>
                                 <param>h2</param>
@@ -643,7 +643,7 @@
                 <plugins>
                     <plugin>
                         <groupId>de.jpdigital</groupId>
-                        <artifactId>hibernate51-ddl-maven-plugin</artifactId>
+                        <artifactId>hibernate52-ddl-maven-plugin</artifactId>
                         <configuration>
                             <dialects>
                                 <param>h2</param>

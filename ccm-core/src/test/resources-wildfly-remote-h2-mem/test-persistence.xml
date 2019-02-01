@@ -26,6 +26,21 @@
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.id.new_generator_mappings" value="true"/>
             <property name="hibernate.connection.autocommit" value="false" />
+            <property name="hibernate.dialect" 
+                      value="org.hibernate.dialect.H2Dialect" />
+            
+            <property name="hibernate.jpa.compliance.transaction" 
+                        value="true" />
+            <property name="hibernate.jpa.compliance.query" 
+                      value="true" />
+            <property name="hibernate.jpa.compliance.list" 
+                      value="true" />
+            <property name="hibernate.jpa.compliance.closed" 
+                      value="true" />
+            <property name="hibernate.jpa.compliance.proxy" 
+                      value="true" />
+            <property name="hibernate.jpa.compliance.global_id_generators" 
+                      value="false" />
             
             <!-- 
                 Properties for Hibernate Envers 
@@ -33,7 +48,7 @@
                 when querying data than the DefaultStrategy
             -->
             <!--<property name="org.hibernate.envers.audit_strategy" 
-                      value="org.hibernate.envers.strategy.ValidityAuditStrategy"/>-->
+            value="org.hibernate.envers.strategy.ValidityAuditStrategy"/>-->
         </properties>
     </persistence-unit>
     
