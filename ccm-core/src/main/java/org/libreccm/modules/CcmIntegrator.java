@@ -223,7 +223,7 @@ public class CcmIntegrator implements Integrator {
                 throw new IntegrationException(String.format(
                     "Integration failed. Database \"%s\" is not supported yet.",
                     connection.getMetaData().
-                    getDatabaseProductName()));
+                        getDatabaseProductName()));
         }
     }
 
@@ -432,14 +432,16 @@ public class CcmIntegrator implements Integrator {
         if (directoryProvider.isPresent()) {
             LOGGER.debug("Found setting for directory provider: {}",
                          directoryProvider.orElse(""));
-            sessionFactory.getProperties().setProperty(
-                "hibernate.search.default.directory_provider",
-                directoryProvider.get());
+            sessionFactory
+                .getProperties()
+                .put("hibernate.search.default.directory_provider",
+                     directoryProvider.get());
         } else {
             LOGGER.debug("No setting for directory provider. "
                              + "Defaulting to RAM directory provider.");
-            sessionFactory.getProperties().setProperty(
-                "hibernate.search.default.directory_provider", "ram");
+            sessionFactory
+                .getProperties()
+                .put("hibernate.search.default.directory_provider", "ram");
         }
 
         final Optional<String> indexBase = getSetting(
@@ -448,23 +450,26 @@ public class CcmIntegrator implements Integrator {
             SearchConfig.INDEX_BASE);
         if (indexBase.isPresent()) {
             LOGGER.debug("Setting Index Base to \"{}\".", indexBase.get());
-            sessionFactory.getProperties().setProperty(
-                "hibernate.search.default.indexBase",
-                indexBase.get());
+            sessionFactory
+                .getProperties()
+                .put("hibernate.search.default.indexBase",
+                     indexBase.get());
         }
     }
 
     /**
-     * A helper method for getting a setting from the configuration database.
-     * We can't use JPA/Hibernate in this class because the JPA subsystem is 
-     * not initialised when this class runs. Therefore we have the fallback to 
-     * JDBC here.
-     * 
-     * @param connection Connection to the database.
+     * A helper method for getting a setting from the configuration database. We
+     * can't use JPA/Hibernate in this class because the JPA subsystem is not
+     * initialised when this class runs. Therefore we have the fallback to JDBC
+     * here.
+     *
+     * @param connection   Connection to the database.
      * @param settingClass Setting class used to represent the setting.
-     * @param settingName The name of the setting to retrieve.
+     * @param settingName  The name of the setting to retrieve.
+     *
      * @return The value of the setting.
-     * @throws SQLException 
+     *
+     * @throws SQLException
      */
     private Optional<String> getSetting(final Connection connection,
                                         final String settingClass,
