@@ -447,6 +447,21 @@
                 <artifactId>flyway-core</artifactId>
                 <version>4.0.3</version>
             </dependency>
+            
+            <!-- 
+                Since Java 11 jaxb is not longer part of the standard JDK.
+                Java EE implementations must provide an implementation.
+            -->
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>2.4.0-b180830.0359</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>2.4.0-b180830.0438</version>
+            </dependency>
 
             <!-- Shiro lib for security stuff -->
             <dependency>
