@@ -38,4 +38,4 @@ DELETE FROM ccm_core.ccm_objects_aud;
 
 DELETE FROM ccm_core.ccm_revisions;
 
-ALTER SEQUENCE hibernate_sequence RESTART;
+ALTER SEQUENCE hibernate_sequence RESTART with 100000;

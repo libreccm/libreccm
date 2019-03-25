@@ -1,10 +1,10 @@
 ---
 ccm_core.subjects:
-- subject_id: -10
-- subject_id: -20
-- subject_id: -30
-- subject_id: -40
-- subject_id: -50
+- subject_id: 10
+- subject_id: 20
+- subject_id: 30
+- subject_id: 40
+- subject_id: 50
 ccm_core.ccm_users:
 - banned: false
   hash_algorithm: SHA-512
@@ -14,7 +14,7 @@ ccm_core.ccm_users:
   password_reset_required: false
   salt: Fu8FPgqAal4GZp1hDjkOB+t6ITRCcO7HBoN5Xqf29UnVj5NUdUFZRTyKYMBEx6JmZGmHcMDG9OGVCKcEM9oyScSRreJs4B51wM44NM6KeRwbCf+VhBn14DkBrl40ygraNf+AJacKpMyCpFI0O/Am7mMDWL4flskBsylkxaQn3vKfzgN5MVG2szW//I6Q6YEH9AuL8LauS6fKaVynMzzu3xzD8Hjqvvlnzym898eom2lqScPfg5g4e8Ww13HCHAYe6twupAW/BjUNax5HSioEisZN/P1UGrde8uFEj+hbbavrWYZuilPuEu25+/98jyXx6542agqrWN8j0SFYcIyOgA==
   screen_name: jdoe
-  subject_id: -10
+  subject_id: 10
 - banned: false
   hash_algorithm: SHA-512
   family_name: Mustermann
@@ -23,73 +23,73 @@ ccm_core.ccm_users:
   password_reset_required: false
   salt: fjiajhigafgapoa
   screen_name: mmuster
-  subject_id: -50
+  subject_id: 50
 ccm_core.ccm_groups:
 - name: admins
-  subject_id: -20
+  subject_id: 20
 - name: users
-  subject_id: -30
+  subject_id: 30
 - name: authors
-  subject_id: -40
+  subject_id: 40
 ccm_core.user_email_addresses:
-- user_id: -10
+- user_id: 10
   email_address: john.doe@example.com
   bouncing: false
   verified: true
-- user_id: -50
+- user_id: 50
   email_address: max.mustermann@example.com
   bouncing: false
   verified: true
 ccm_core.group_memberships:
-- membership_id: -10
-  group_subject_id: -30
-  user_subject_id: -10
-- membership_id: -20
-  group_subject_id: -40
-  user_subject_id: -10
-- membership_id: -30
-  group_subject_id: -20
-  user_subject_id: -50
+- membership_id: 10
+  group_subject_id: 30
+  user_subject_id: 10
+- membership_id: 20
+  group_subject_id: 40
+  user_subject_id: 10
+- membership_id: 30
+  group_subject_id: 20
+  user_subject_id: 50
 ccm_core.ccm_privileges:
-- privilege_id: -10
+- privilege_id: 10
   label: admin
-- privilege_id: -20
+- privilege_id: 20
   label: read
-- privilege_id: -30
+- privilege_id: 30
   label: write
-- privilege_id: -40
+- privilege_id: 40
   label: unused
 ccm_core.ccm_objects:
-- object_id: -10
+- object_id: 10
   display_name: Test Object 1
-- object_id: -20
+- object_id: 20
   display_name: Test Object 2
-- object_id: -30
+- object_id: 30
   display_name: Test Object 3
-- object_id: -40
+- object_id: 40
   display_name: Test Object 4
 ccm_core.permissions:
-- permission_id: -10
+- permission_id: 10
   creation_date: '2015-07-29 14:32:46'
-  granted_privilege_id: -10
-  grantee_id: -20
-- permission_id: -20
+  granted_privilege_id: 10
+  grantee_id: 20
+- permission_id: 20
   creation_date: '2015-07-29 14:34:30'
-  granted_privilege_id: -20
-  grantee_id: -30
-  object_id: -10
-- permission_id: -30
+  granted_privilege_id: 20
+  grantee_id: 30
+  object_id: 10
+- permission_id: 30
   creation_date: '2015-07-29 14:36:05'
-  granted_privilege_id: -30
-  grantee_id: -40
-  object_id: -10
-- permission_id: -35
+  granted_privilege_id: 30
+  grantee_id: 40
+  object_id: 10
+- permission_id: 35
   creation_date: '2015-07-29 14:57:55'
-  granted_privilege_id: -20
-  grantee_id: -40
-  object_id: -10
-- permission_id: -40
+  granted_privilege_id: 20
+  grantee_id: 40
+  object_id: 10
+- permission_id: 40
   creation_date: '2015-07-29 14:37:22'
-  granted_privilege_id: -20
-  grantee_id: -30
-  object_id: -20
+  granted_privilege_id: 20
+  grantee_id: 30
+  object_id: 20

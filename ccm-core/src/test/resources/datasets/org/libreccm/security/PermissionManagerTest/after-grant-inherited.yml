@@ -1,94 +1,94 @@
 ccm_core.ccm_roles:
-    - role_id: -10001
+    - role_id: 10001
       uuid: 42038ba3-35b9-4894-843f-cb39ae1be763
       name: role1
-    - role_id: -10002
+    - role_id: 10002
       uuid: c821a93d-78aa-4b87-ac1b-3e3229e0fdd9
       name: role2
 ccm_core.ccm_objects:
-    - object_id: -20001
+    - object_id: 20001
       display_name: category1
       uuid: 17239bc1-5db3-4448-b37c-cac0fddd7342
-    - object_id: -20002
+    - object_id: 20002
       display_name: category2
       uuid: 686a5d09-36ec-46ba-9c97-a5d6db4b9008
-    - object_id: -20003
+    - object_id: 20003
       display_name: category3
       uuid: 1c31700a-f9db-4188-812f-12dba4186c75
-    - object_id: -20004
+    - object_id: 20004
       display_name: objectA
 ccm_core.categories:
-    - object_id: -20001
+    - object_id: 20001
       unique_id: 17239bc1-5db3-4448-b37c-cac0fddd7342
       name: category1
       enabled: true
       visible: true
       abstract_category: false
       category_order: 0
-    - object_id: -20002
+    - object_id: 20002
       unique_id: 686a5d09-36ec-46ba-9c97-a5d6db4b9008
       name: category2
       enabled: true
       visible: true
       abstract_category: false
       category_order: 0
-      parent_category_id: -20001
-    - object_id: -20003
+      parent_category_id: 20001
+    - object_id: 20003
       unique_id: 1c31700a-f9db-4188-812f-12dba4186c75
       name: category3
       enabled: true
       visible: true
       abstract_category: false
       category_order: 0
-      parent_category_id: -20002
+      parent_category_id: 20002
 ccm_core.categorizations:
-    - categorization_id: -40001
+    - categorization_id: 40001
       uuid: 3da32dd7-4f5f-4637-b87e-e431c44d5c14
-      category_id: -20003
-      object_id: -20004
+      category_id: 20003
+      object_id: 20004
 ccm_core.permissions:
-    - permission_id: -30001
+    - permission_id: 30001
       uuid: 0b6b8076-f88b-4111-880a-780103d06a55
       granted_privilege: privilege1
-      grantee_id: -10001
+      grantee_id: 10001
       inherited: false
-    - permission_id: -30002
+    - permission_id: 30002
       uuid: 58210e1f-482c-4d69-9746-dd4d0d587491
       granted_privilege: privilege2
-      object_id: -20001
-      grantee_id: -10001
+      object_id: 20001
+      grantee_id: 10001
       inherited: false
-    - permission_id: -30003
+    - permission_id: 30003
       uuid: 350d8860-e6b1-4788-82e5-6e579996c983
       granted_privilege: privilege2
-      object_id: -20002
-      grantee_id: -10002
+      object_id: 20002
+      grantee_id: 10002
       inherited: false
-    - permission_id: -30004
+    - permission_id: 30004
       uuid: 94efe5ec-94f0-4ffb-a6b1-720018915fd4
       granted_privilege: privilege4
-      object_id: -20001
-      grantee_id: -10001
+      object_id: 20001
+      grantee_id: 10001
       inherited: false
-    - permission_id: -30005
+    - permission_id: 30005
       uuid: a5e89679-6a93-4336-a802-d7120ba1ef5a
       granted_privilege: privilege4
-      object_id: -20002
-      grantee_id: -10001
+      object_id: 20002
+      grantee_id: 10001
       inherited: false
-    - permission_id: -30006
+    - permission_id: 30006
       uuid: db46a965-c6a9-490a-8dfb-28ddef1aa69a
       granted_privilege: privilege4
-      object_id: -20003
-      grantee_id: -10001
+      object_id: 20003
+      grantee_id: 10001
       inherited: true
-      inherited_from_id: -20002
-    - permission_id: -30007
+      inherited_from_id: 20002
+    - permission_id: 30007
       uuid: 152bbdeb-834a-49ea-8087-44e1286ea5c2
       granted_privilege: privilege4
-      object_id: -20004
-      grantee_id: -10001
+      object_id: 20004
+      grantee_id: 10001
       inherited: true
-      inherited_from_id: -20002
+      inherited_from_id: 20002
 
 

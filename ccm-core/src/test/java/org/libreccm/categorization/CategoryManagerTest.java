@@ -142,6 +142,7 @@ public class CategoryManagerTest {
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
             .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
+            .addClass(org.libreccm.imexport.Exportable.class)
             .addClass(com.arsdigita.kernel.KernelConfig.class)
             .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
             .addAsLibraries(getModuleDependencies())
@@ -197,16 +198,23 @@ public class CategoryManagerTest {
      * adds an object to a category.
      */
     @Test
-    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
-                      + "data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest"
+                      + "/data.yml")
     @ShouldMatchDataSet(
+        excludeColumns = {
+            "categorization_id",
+            "uuid"
+        },
+        orderBy = {
+            "categorizations.object_order"
+        },
         value = "datasets/org/libreccm/categorization/CategoryManagerTest/"
-                    + "after-add-obj-to-category.yml",
-        excludeColumns = {"categorization_id"})
+                    + "after-add-obj-to-category.yml"
+    )
     @InSequence(1100)
     public void addObjectToCategoryBySystemUser() {
-        final Optional<CcmObject> object2 = ccmObjectRepo.findById(-3200L);
-        final Optional<Category> foo = categoryRepo.findById(-2100L);
+        final Optional<CcmObject> object2 = ccmObjectRepo.findById(3200L);
+        final Optional<Category> foo = categoryRepo.findById(2100L);
 
         assertThat(object2.isPresent(), is(true));
         assertThat(foo.isPresent(), is(true));
@@ -220,16 +228,23 @@ public class CategoryManagerTest {
      * domain to the categories works.
      */
     @Test
-    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
-                      + "data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest"
+                      + "/data.yml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/categorization/CategoryManagerTest/"
-                    + "after-add-obj-to-category.yml",
-        excludeColumns = {"categorization_id"})
+        excludeColumns = {
+            "categorization_id",
+            "uuid"
+        },
+        orderBy = {
+            "categorizations.categorization_id"
+        },
+        value = "datasets/org/libreccm/categorization/CategoryManagerTest"
+                    + "/after-add-obj-to-category.yml"
+    )
     @InSequence(1200)
     public void addObjectToCategoryAuthByDomain() {
-        final Optional<CcmObject> object2 = ccmObjectRepo.findById(-3200L);
-        final Optional<Category> foo = categoryRepo.findById(-2100L);
+        final Optional<CcmObject> object2 = ccmObjectRepo.findById(3200L);
+        final Optional<Category> foo = categoryRepo.findById(2100L);
 
         assertThat(object2.isPresent(), is(true));
         assertThat(foo.isPresent(), is(true));
@@ -249,16 +264,23 @@ public class CategoryManagerTest {
      * categories.
      */
     @Test
-    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
-                      + "data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest"
+                      + "/data.yml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/categorization/CategoryManagerTest/"
-                    + "after-add-obj-to-category.yml",
-        excludeColumns = {"categorization_id"})
+        excludeColumns = {
+            "categorization_id",
+            "uuid"
+        },
+        orderBy = {
+            "categorizations.categorization_id"
+        },
+        value = "datasets/org/libreccm/categorization/CategoryManagerTest"
+                    + "/after-add-obj-to-category.yml"
+    )
     @InSequence(1300)
     public void addObjectToCategoryAuthByCategory() {
-        final Optional<CcmObject> object2 = ccmObjectRepo.findById(-3200L);
-        final Optional<Category> foo = categoryRepo.findById(-2100L);
+        final Optional<CcmObject> object2 = ccmObjectRepo.findById(3200L);
+        final Optional<Category> foo = categoryRepo.findById(2100L);
 
         assertThat(object2.isPresent(), is(true));
         assertThat(foo.isPresent(), is(true));
@@ -283,8 +305,8 @@ public class CategoryManagerTest {
     @ShouldThrowException(UnauthorizedException.class)
     @InSequence(1400)
     public void addObjectToCategoryNotAuthorized() {
-        final Optional<CcmObject> object2 = ccmObjectRepo.findById(-3200L);
-        final Optional<Category> foo = categoryRepo.findById(-2100L);
+        final Optional<CcmObject> object2 = ccmObjectRepo.findById(3200L);
+        final Optional<Category> foo = categoryRepo.findById(2100L);
 
         assertThat(object2.isPresent(), is(true));
         assertThat(foo.isPresent(), is(true));
@@ -311,8 +333,8 @@ public class CategoryManagerTest {
     public void removeObjectFromCategoryBySystemUser()
         throws ObjectNotAssignedToCategoryException {
 
-        final Optional<CcmObject> object1 = ccmObjectRepo.findById(-3100L);
-        final Optional<Category> foo = categoryRepo.findById(-2100L);
+        final Optional<CcmObject> object1 = ccmObjectRepo.findById(3300L);
+        final Optional<Category> foo = categoryRepo.findById(2200L);
 
         assertThat(object1.isPresent(), is(true));
         assertThat(foo.isPresent(), is(true));
@@ -344,8 +366,8 @@ public class CategoryManagerTest {
     public void removeObjectFromCategoryAuthByDomain()
         throws ObjectNotAssignedToCategoryException {
 
-        final Optional<CcmObject> object1 = ccmObjectRepo.findById(-3100L);
-        final Optional<Category> foo = categoryRepo.findById(-2100L);
+        final Optional<CcmObject> object1 = ccmObjectRepo.findById(3300L);
+        final Optional<Category> foo = categoryRepo.findById(2200L);
 
         assertThat(object1.isPresent(), is(true));
         assertThat(foo.isPresent(), is(true));
@@ -370,18 +392,20 @@ public class CategoryManagerTest {
      * @throws ObjectNotAssignedToCategoryException
      */
     @Test
-    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
-                      + "data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest"
+                      + "/data.yml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/categorization/CategoryManagerTest/"
-                    + "after-remove-obj-from-category.yml",
-        excludeColumns = {"categorization_id"})
+        excludeColumns = {
+        },
+        value = "datasets/org/libreccm/categorization/CategoryManagerTest"
+                    + "/after-remove-obj-from-category.yml"
+    )
     @InSequence(2200)
     public void removeObjectFromCategoryAuthByCategory()
         throws ObjectNotAssignedToCategoryException {
 
-        final Optional<CcmObject> object1 = ccmObjectRepo.findById(-3100L);
-        final Optional<Category> foo = categoryRepo.findById(-2100L);
+        final Optional<CcmObject> object1 = ccmObjectRepo.findById(3300L);
+        final Optional<Category> foo = categoryRepo.findById(2200L);
 
         assertThat(object1.isPresent(), is(true));
         assertThat(foo.isPresent(), is(true));
@@ -411,8 +435,8 @@ public class CategoryManagerTest {
     public void removeObjectFromCategoryNotAuthorized()
         throws ObjectNotAssignedToCategoryException {
 
-        final Optional<CcmObject> object1 = ccmObjectRepo.findById(-3100L);
-        final Optional<Category> foo = categoryRepo.findById(-2100L);
+        final Optional<CcmObject> object1 = ccmObjectRepo.findById(3100L);
+        final Optional<Category> foo = categoryRepo.findById(2100L);
 
         assertThat(object1.isPresent(), is(true));
         assertThat(foo.isPresent(), is(true));
@@ -444,7 +468,7 @@ public class CategoryManagerTest {
         query.setParameter("name", "category-new");
         final Category sub = query.getSingleResult();
 
-        final Optional<Category> foo = categoryRepo.findById(-2100L);
+        final Optional<Category> foo = categoryRepo.findById(2100L);
 
         shiro.getSystemUser().execute(
             () -> categoryManager.addSubCategoryToCategory(sub, foo.get()));
@@ -475,7 +499,7 @@ public class CategoryManagerTest {
         query.setParameter("name", "category-new");
         final Category sub = query.getSingleResult();
 
-        final Optional<Category> foo = categoryRepo.findById(-2100L);
+        final Optional<Category> foo = categoryRepo.findById(2100L);
 
         final UsernamePasswordToken token = new UsernamePasswordToken(
             "jane.doe@example.org", "foo123");
@@ -492,12 +516,16 @@ public class CategoryManagerTest {
      * set of the category.
      */
     @Test
-    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
-                      + "data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest"
+                      + "/data.yml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/categorization/"
-                    + "CategoryManagerTest/after-add-subcategory.yml",
-        excludeColumns = {"object_id", "uuid"})
+        excludeColumns = {
+            "object_id",
+            "uuid"
+        },
+        value = "datasets/org/libreccm/categorization"
+                    + "/CategoryManagerTest/after-add-subcategory.yml"
+    )
     @InSequence(3000)
     public void addSubCategoryToCategoryAuthByCategory() {
         final Category category = new Category();
@@ -512,7 +540,7 @@ public class CategoryManagerTest {
         query.setParameter("name", "category-new");
         final Category sub = query.getSingleResult();
 
-        final Optional<Category> foo = categoryRepo.findById(-2100L);
+        final Optional<Category> foo = categoryRepo.findById(2100L);
 
         final UsernamePasswordToken token = new UsernamePasswordToken(
             "mmuster@example.com", "foo123");
@@ -548,7 +576,7 @@ public class CategoryManagerTest {
         query.setParameter("name", "category-new");
         final Category sub = query.getSingleResult();
 
-        final Optional<Category> foo = categoryRepo.findById(-2100L);
+        final Optional<Category> foo = categoryRepo.findById(2100L);
 
         categoryManager.addSubCategoryToCategory(sub, foo.get());
     }
@@ -566,8 +594,8 @@ public class CategoryManagerTest {
         excludeColumns = {"categorization_id", "object_id"})
     @InSequence(4000)
     public void removeSubCategoryFromCategoryBySystemUser() {
-        final Optional<Category> foo = categoryRepo.findById(-2100L);
-        final Optional<Category> bar = categoryRepo.findById(-2200L);
+        final Optional<Category> foo = categoryRepo.findById(2100L);
+        final Optional<Category> bar = categoryRepo.findById(2200L);
 
         shiro.getSystemUser().execute(
             () -> categoryManager.removeSubCategoryFromCategory(bar.get(),
@@ -588,8 +616,8 @@ public class CategoryManagerTest {
         excludeColumns = {"categorization_id", "object_id"})
     @InSequence(4000)
     public void removeSubCategoryFromCategoryAuthByDomain() {
-        final Optional<Category> foo = categoryRepo.findById(-2100L);
-        final Optional<Category> bar = categoryRepo.findById(-2200L);
+        final Optional<Category> foo = categoryRepo.findById(2100L);
+        final Optional<Category> bar = categoryRepo.findById(2200L);
 
         final UsernamePasswordToken token = new UsernamePasswordToken(
             "jane.doe@example.org", "foo123");
@@ -614,8 +642,8 @@ public class CategoryManagerTest {
         excludeColumns = {"categorization_id", "object_id"})
     @InSequence(4000)
     public void removeSubCategoryFromCategoryAuthByCategory() {
-        final Optional<Category> foo = categoryRepo.findById(-2100L);
-        final Optional<Category> bar = categoryRepo.findById(-2200L);
+        final Optional<Category> foo = categoryRepo.findById(2100L);
+        final Optional<Category> bar = categoryRepo.findById(2200L);
 
         final UsernamePasswordToken token = new UsernamePasswordToken(
             "mmuster@example.com", "foo123");
@@ -639,8 +667,8 @@ public class CategoryManagerTest {
     @ShouldThrowException(UnauthorizedException.class)
     @InSequence(4000)
     public void removeSubCategoryFromCategoryNotAuthorized() {
-        final Optional<Category> foo = categoryRepo.findById(-2100L);
-        final Optional<Category> bar = categoryRepo.findById(-2200L);
+        final Optional<Category> foo = categoryRepo.findById(2100L);
+        final Optional<Category> bar = categoryRepo.findById(2200L);
 
         categoryManager.removeSubCategoryFromCategory(bar.get(), foo.get());
     }
@@ -650,12 +678,20 @@ public class CategoryManagerTest {
      * created without saving each category after the creation of each category.
      */
     @Test
-    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest/"
-                      + "data.yml")
+    @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest"
+                      + "/data.yml")
     @ShouldMatchDataSet(
+        excludeColumns = {
+            "object_id",
+            "parent_category_id",
+            "uuid"
+        },
+        orderBy = {
+            "categorizations.category_order"
+        },
         value = "datasets/org/libreccm/categorization/CategoryManagerTest/"
-                    + "after-create-multiple-categories.yml",
-        excludeColumns = {"object_id", "uuid"})
+                    + "after-create-multiple-categories.yml"
+    )
     @InSequence(5000)
     public void createMultipleCategories() {
 
@@ -703,8 +739,8 @@ public class CategoryManagerTest {
                       + "data.yml")
     @InSequence(6000)
     public void hasIndexObject() {
-        final Optional<Category> category1 = categoryRepo.findById(-2100L);
-        final Optional<Category> category2 = categoryRepo.findById(-2200L);
+        final Optional<Category> category1 = categoryRepo.findById(2100L);
+        final Optional<Category> category2 = categoryRepo.findById(2200L);
 
         assertThat(categoryManager.hasIndexObject(category1.get()), is(false));
         assertThat(categoryManager.hasIndexObject(category2.get()), is(true));
@@ -712,15 +748,16 @@ public class CategoryManagerTest {
 
     /**
      * Tries to retrieve the index object from several categories and verifies
-     * that the expected object is returned by null     {@link CategoryManager#getIndexObject(org.libreccm.categorization.Category).
+     * that the expected object is returned by null null null null null null
+     * null null     {@link CategoryManager#getIndexObject(org.libreccm.categorization.Category).
      */
     @Test
     @UsingDataSet(
         "datasets/org/libreccm/categorization/CategoryManagerTest/data.yml")
     @InSequence(6500)
     public void getIndexObject() {
-        final Optional<Category> category1 = categoryRepo.findById(-2100L);
-        final Optional<Category> category2 = categoryRepo.findById(-2200L);
+        final Optional<Category> category1 = categoryRepo.findById(2100L);
+        final Optional<Category> category2 = categoryRepo.findById(2200L);
 
         assertThat(categoryManager
             .getIndexObject(category1.get())
@@ -749,7 +786,7 @@ public class CategoryManagerTest {
     public void retrieveMultipleLazyCollections() {
         assertThat(controller, is(not(nullValue())));
 
-        final Map<String, List<String>> data = controller.getData(-2100L);
+        final Map<String, List<String>> data = controller.getData(2100L);
 
         final List<String> subCategories = data.get("subCategories");
         final List<String> objects = data.get("objects");

@@ -708,6 +708,11 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
+                <artifactId>arquillian-persistence-impl</artifactId>
+                <version>1.0.0.Alpha6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-persistence-dbunit</artifactId>
                 <version>1.0.0.Alpha7</version>
             </dependency>

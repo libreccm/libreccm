@@ -1,10 +1,10 @@
 ccm_core.parties:
-    - party_id: -10
+    - party_id: 10
       uuid: 631be113-7e86-453d-9f8b-8cb6cb6df268
       name: admins
-    - party_id: -30
+    - party_id: 30
       uuid: 7d5ad4a7-c2bd-4e49-8716-0bfb40413c75
       name: editors
 ccm_core.groups:
-    - party_id: -10
-    - party_id: -30
+    - party_id: 10
+    - party_id: 30

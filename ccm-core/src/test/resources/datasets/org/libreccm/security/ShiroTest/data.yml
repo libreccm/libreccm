@@ -1,26 +1,26 @@
 ccm_core.parties:
-    - party_id: -41001
+    - party_id: 41001
       uuid: 631be113-7e86-453d-9f8b-8cb6cb6df268
       name: jdoe
-    - party_id: -41002
+    - party_id: 41002
       uuid: 3a61d302-97a5-4e46-bbc9-8d716f7c54c4
       name: mmuster
-    - party_id: -41003
+    - party_id: 41003
       uuid: 7d5ad4a7-c2bd-4e49-8716-0bfb40413c75
       name: joe
-    - party_id: -41004
+    - party_id: 41004
       uuid: 0fc446b7-a242-4407-9d04-b8ccaaa9dee5
       name: public-user
-    - party_id: -41005
+    - party_id: 41005
       uuid: 2082d7fc-8268-4195-8cbe-eb826b1afaeb
       name: emuster
-    - party_id: -42001
+    - party_id: 42001
       uuid: 176bfecc-c0fa-4e76-8935-5d6d0ec60e8c
       name: group1
-    - party_id: -42002
+    - party_id: 42002
       uuid: 32521349-12f0-4d72-8468-c2bc9e33d4f1
       name: group2
-    - party_id: -42003
+    - party_id: 42003
       uuid: 9c7c8689-f248-4f8b-a245-41545999395c
       name: group3
 ccm_core.users:
@@ -30,7 +30,7 @@ ccm_core.users:
       email_address: john.doe@example.com
       family_name: Doe
       given_name: John
-      party_id: -41001
+      party_id: 41001
       # foo123
       password: $shiro1$SHA-512$500000$7xkDcZUN0/whJInHIvGsDw==$WhelBVmJU/cLV7lAkMOrE5B/mqCW0bUuid1WX+xBwzzAaekC5bYn9eeOFGJWhiDgmaC50ZCUmM96/iGsRoc4uA==
       password_reset_required: false
@@ -41,7 +41,7 @@ ccm_core.users:
       email_address: max.mustermann@example.org
       family_name: Mustermann
       given_name: Max
-      party_id: -41002
+      party_id: 41002
       # foo123
       password: $shiro1$SHA-512$500000$Y7CnccN1h25sR7KCElMOXg==$CVLWBhetodaEzzhDfGjRcCFZtSW02xOnjH7xhBx0lbxO66grKIt6LWmXoUhLEydce1JZ7cbzNLYOxIwwTeqi5Q==
       password_reset_required: false
@@ -52,7 +52,7 @@ ccm_core.users:
       email_address: joe.public@example.com
       family_name: Public
       given_name: Joe
-      party_id: -41003
+      party_id: 41003
       password: $shiro1$SHA-512$500000$RUCYXAQt+XzUmj3x8oG5gw==$qU+lX160Jc6sNUOI9X85wlf2lzn4/hLJNURtjmw9LOYJ7vAqUFFmhyNCMxpzuHIpzeMELr+A0XReoSmtcZnOOw==
       password_reset_required: false
       verified: true
@@ -62,7 +62,7 @@ ccm_core.users:
       email_address: public-user@example.org
       family_name: user
       given_name: public
-      party_id: -41004
+      party_id: 41004
       password_reset_required: false
       verified: true
     # Erik Mustermann (banned)
@@ -71,101 +71,101 @@ ccm_core.users:
       email_address: erik.mustermann@example.org
       family_name: Musterman
       given_name: Erik
-      party_id: -41005
+      party_id: 41005
       password: $shiro1$SHA-512$500000$RUCYXAQt+XzUmj3x8oG5gw==$qU+lX160Jc6sNUOI9X85wlf2lzn4/hLJNURtjmw9LOYJ7vAqUFFmhyNCMxpzuHIpzeMELr+A0XReoSmtcZnOOw==
       password_reset_required: false
       verified: true
 ccm_core.groups:
-    - party_id: -42001
-    - party_id: -42002
-    - party_id: -42003
+    - party_id: 42001
+    - party_id: 42002
+    - party_id: 42003
 ccm_core.group_memberships:
     # group1 <-> mmuster
-    - membership_id: -50001
+    - membership_id: 50001
       uuid: 488f36d0-f947-4fd9-b31b-98f3aa031d1f
-      group_id: -42001
-      member_id: -41002
+      group_id: 42001
+      member_id: 41002
     # group2 <-> jdoe
-    - membership_id: -50002
+    - membership_id: 50002
       uuid: ed169bec-cf86-4b74-9614-69fa93f9dde0
-      group_id: -42002
-      member_id: -41001
+      group_id: 42002
+      member_id: 41001
     # group3 <-> mmuster
-    - membership_id: -50003
+    - membership_id: 50003
       uuid: 9bde3956-c622-41d8-bad6-17074e6b2c6c
-      group_id: -42003
-      member_id: -41002
+      group_id: 42003
+      member_id: 41002
     # group3 <-> joe
-    - membership_id: -50004
+    - membership_id: 50004
       uuid: 59424686-dddd-4574-b1f3-8abee245fce4
-      group_id: -42003
-      member_id: -41003
+      group_id: 42003
+      member_id: 41003
 ccm_core.ccm_roles:
-    - role_id: -10001
+    - role_id: 10001
       uuid: 42038ba3-35b9-4894-843f-cb39ae1be763
       name: role1
-    - role_id: -10002
+    - role_id: 10002
       uuid: c821a93d-78aa-4b87-ac1b-3e3229e0fdd9
       name: role2
-    - role_id: -10003
+    - role_id: 10003
       uuid: 0e73623c-8d6a-4544-88a4-e4b104e7c0b6
       name: public-role
 ccm_core.role_memberships:
     # role1 <-> group1
-    - membership_id: -60001
+    - membership_id: 60001
       uuid: a0da173a-8825-4262-923f-61b0944d74e5
-      role_id: -10001
-      member_id: -42001
+      role_id: 10001
+      member_id: 42001
     # role2 <-> jdoe
-    - membership_id: -60002
+    - membership_id: 60002
       uuid: d4f4b611-7048-4239-9aa1-dd79e4a22980
-      role_id: -10002
-      member_id: -41001
+      role_id: 10002
+      member_id: 41001
     # public-role <-> public-user
-    - membership_id: -60003
+    - membership_id: 60003
       uuid: 5bee29d5-11d0-4015-b91a-27199ce5190a
-      role_id: -10003
-      member_id: -41004
+      role_id: 10003
+      member_id: 41004
 ccm_core.ccm_objects:
-    - object_id: -20001
+    - object_id: 20001
       display_name: object1
       uuid: d05fb5f0-7b66-470d-b4f7-d14f4d08d4b6
-    - object_id: -20002
+    - object_id: 20002
       display_name: object2
       uuid: bec86ea9-7d28-4faf-992d-0f880dbbd3ea
-    - object_id: -20003
+    - object_id: 20003
       display_name: object3
       uuid: 142041c0-163f-4359-931a-1faf465ee564
 ccm_core.permissions:
     # permission for privilege1 granted to role1
-    - permission_id: -30001
+    - permission_id: 30001
       uuid: fb5f1353-5138-4570-9143-38bd96d1481e
       granted_privilege: privilege1
-      grantee_id: -10001
+      grantee_id: 10001
       inherited: false
     # permission for privilege2 granted on object1 to role1
-    - permission_id: -30002
+    - permission_id: 30002
       uuid: d1d06a40-3394-44d5-910d-a003215f1a7e
       granted_privilege: privilege2
-      object_id: -20001
-      grantee_id: -10001
+      object_id: 20001
+      grantee_id: 10001
       inherited: false
     # permission for privilege2 granted on object2 to role2
-    - permission_id: -30003
+    - permission_id: 30003
       uuid: a714cb3d-af1e-4ee7-bd6e-2c184d629472
       granted_privilege: privilege2
-      object_id: -20002
-      grantee_id: -10002
+      object_id: 20002
+      grantee_id: 10002
       inherited: false
     # permission for privilege3 granted on object1 to public-role
-    - permission_id: -30004
+    - permission_id: 30004
       uuid: 4a724998-28cd-4060-a92a-a6225e7260e4
       granted_privilege: privilege3
-      object_id: -20001
-      grantee_id: -10003
+      object_id: 20001
+      grantee_id: 10003
       inherited: false
 ccm_core.settings:
-    - setting_id: -301
+    - setting_id: 301
       configuration_class: com.arsdigita.kernel.KernelConfig
       name: primaryUserIdentifier
       dtype: StringSetting
