@@ -2,129 +2,129 @@
     "ccm_core.subjects":
             [
                 {
-                    "subject_id": -10
+                    "subject_id": 10
                 },
                 {
-                    "subject_id": -20
+                    "subject_id": 20
                 },
                 {
-                    "subject_id": -30
+                    "subject_id": 30
                 },
                 {
-                    "subject_id": -40
+                    "subject_id": 40
                 },
                 {
-                    "subject_id": -50
+                    "subject_id": 50
                 },
                 {
-                    "subject_id": -60
+                    "subject_id": 60
                 },
                 {
-                    "subject_id": -70
+                    "subject_id": 70
                 },
                 {
-                    "subject_id": -80
+                    "subject_id": 80
                 },
                 {
-                    "subject_id": -90
+                    "subject_id": 90
                 },
                 {
-                    "subject_id": -100
+                    "subject_id": 100
                 }
             ],
     "ccm_core.ccm_groups":
             [
                 {
                     "name": "Site-wide Administrators",
-                    "subject_id": -10
+                    "subject_id": 10
                 },
                 {
                     "name": "info Administration",
-                    "subject_id": -20
+                    "subject_id": 20
                 },
                 {
                     "name": "info Viewers",
-                    "subject_id": -30
+                    "subject_id": 30
                 },
                 {
                     "name": "info Administration Author",
-                    "subject_id": -40
+                    "subject_id": 40
                 },
                 {
                     "name": "info Administration Editor",
-                    "subject_id": -50
+                    "subject_id": 50
                 },
                 {
                     "name": "info Administration Publisher",
-                    "subject_id": -60
+                    "subject_id": 60
                 },
                 {
                     "name": "info Administration Manager",
-                    "subject_id": -70
+                    "subject_id": 70
                 },
                 {
                     "name": "info Administration Trusted User",
-                    "subject_id": -80
+                    "subject_id": 80
                 },
                 {
                     "name": "info Viewers Content Reader",
-                    "subject_id": -90
+                    "subject_id": 90
                 },
                 {
                     "name": "info Administration Alert Recipient",
-                    "subject_id": -100
+                    "subject_id": 100
                 }
             ],
     "ccm_core.ccm_roles":
             [
                 {
-                    "role_id": -10,
+                    "role_id": 10,
                     "description": "Creates new content",
                     "name": "Author",
-                    "implicit_group_id": -40,
-                    "source_group_id": -20
+                    "implicit_group_id": 40,
+                    "source_group_id": 20
                 },
                 {
-                    "role_id": -20,
+                    "role_id": 20,
                     "description": "Reviews and approves the author's work",
                     "name": "Editor",
-                    "implicit_group_id": -50,
-                    "source_group_id": -20
+                    "implicit_group_id": 50,
+                    "source_group_id": 20
                 },
                 {
-                    "role_id": -30,
+                    "role_id": 30,
                     "description": "Deploys the content to the web site",
                     "name": "Publisher",
-                    "implicit_group_id": -60,
-                    "source_group_id": -20
+                    "implicit_group_id": 60,
+                    "source_group_id": 20
                 },
                 {
-                    "role_id": -40,
+                    "role_id": 40,
                     "description": "Manages the overall content section",
                     "name": "Manager",
-                    "implicit_group_id": -70,
-                    "source_group_id": -20
+                    "implicit_group_id": 70,
+                    "source_group_id": 20
                 },
                 {
-                    "role_id": -50,
+                    "role_id": 50,
                     "description": "A trusted user is allowed to create and publish items without review",
                     "name": "Trusted User",
-                    "implicit_group_id": -80,
-                    "source_group_id": -20
+                    "implicit_group_id": 80,
+                    "source_group_id": 20
                 },
                 {
-                    "role_id": -60,
+                    "role_id": 60,
                     "description": "Can view published pages within this section",
                     "name": "Content Reader",
-                    "implicit_group_id": -90,
-                    "source_group_id": -30
+                    "implicit_group_id": 90,
+                    "source_group_id": 30
                 },
                 {
-                    "role_id": -70,
+                    "role_id": 70,
                     "description": "Receive alerts regarding expiration of published content",
                     "name": "Alert Recipient",
-                    "implicit_group_id": -100,
-                    "source_group_id": -30
+                    "implicit_group_id": 100,
+                    "source_group_id": 30
                 }
                 
             ]

@@ -1,26 +1,26 @@
 ccm_core.parties:
     # John Doe
-    - party_id: -10
+    - party_id: 10
       uuid: 631be113-7e86-453d-9f8b-8cb6cb6df268
       name: jdoe
     # Max Muster
-    - party_id: -20
+    - party_id: 20
       uuid: 3a61d302-97a5-4e46-bbc9-8d716f7c54c4
       name: mmuster
     # Joe Public
-    - party_id: -30
+    - party_id: 30
       uuid: 7d5ad4a7-c2bd-4e49-8716-0bfb40413c75
       name: joe
     # group1
-    - party_id: -100
+    - party_id: 100
       uuid: 0fc446b7-a242-4407-9d04-b8ccaaa9dee5
       name: group1
     # group2
-    - party_id: -200
+    - party_id: 200
       uuid: 2082d7fc-8268-4195-8cbe-eb826b1afaeb
       name: group2
     # group3
-    - party_id: -300
+    - party_id: 300
       uuid: 176bfecc-c0fa-4e76-8935-5d6d0ec60e8c
       name: group3
 ccm_core.users:
@@ -30,7 +30,7 @@ ccm_core.users:
       email_address: john.doe@example.com
       family_name: Doe
       given_name: John
-      party_id: -10
+      party_id: 10
       # foo123
       password: $shiro1$SHA-512$500000$7xkDcZUN0/whJInHIvGsDw==$WhelBVmJU/cLV7lAkMOrE5B/mqCW0bUuid1WX+xBwzzAaekC5bYn9eeOFGJWhiDgmaC50ZCUmM96/iGsRoc4uA==
       password_reset_required: false
@@ -41,7 +41,7 @@ ccm_core.users:
       email_address: max.mustermann@example.org
       family_name: Mustermann
       given_name: Max
-      party_id: -20
+      party_id: 20
       # foo123
       password: $shiro1$SHA-512$500000$Y7CnccN1h25sR7KCElMOXg==$CVLWBhetodaEzzhDfGjRcCFZtSW02xOnjH7xhBx0lbxO66grKIt6LWmXoUhLEydce1JZ7cbzNLYOxIwwTeqi5Q==
       password_reset_required: false
@@ -52,76 +52,76 @@ ccm_core.users:
       email_address: joe.public@example.com
       family_name: Public
       given_name: Joe
-      party_id: -30
+      party_id: 30
       password: $shiro1$SHA-512$500000$RUCYXAQt+XzUmj3x8oG5gw==$qU+lX160Jc6sNUOI9X85wlf2lzn4/hLJNURtjmw9LOYJ7vAqUFFmhyNCMxpzuHIpzeMELr+A0XReoSmtcZnOOw==
       password_reset_required: false
       verified: true
 ccm_core.groups:
     # group1
-    - party_id: -100
+    - party_id: 100
     # group2
-    - party_id: -200
+    - party_id: 200
     # group3
-    - party_id: -300
+    - party_id: 300
 ccm_core.group_memberships:
     # group1 <-> mmuster
-    - membership_id: -1000
+    - membership_id: 1000
       uuid: db6c2569-f97d-4668-b2a0-406cb9c8edd6
-      group_id: -100
-      member_id: -20
+      group_id: 100
+      member_id: 20
     # group2 <-> jdoe
-    - membership_id: -1100
+    - membership_id: 1100
       uuid: d82c3896-e574-49f6-b123-ed517a50f4be
-      group_id: -200
-      member_id: -10
+      group_id: 200
+      member_id: 10
     # group3 <-> mmuster
-    - membership_id: -1200
+    - membership_id: 1200
       uuid: 7d7395b9-48f9-4076-9a98-7fde98123bfd
-      group_id: -300
-      member_id: -20
+      group_id: 300
+      member_id: 20
     # group3 <-> joe
-    - membership_id: -1300
+    - membership_id: 1300
       uuid: 258610b3-96b0-434a-bc08-3d58ed7525e9
-      group_id: -300
-      member_id: -30
+      group_id: 300
+      member_id: 30
 ccm_core.ccm_roles: 
-    - role_id: -2000
+    - role_id: 2000
       uuid: 42038ba3-35b9-4894-843f-cb39ae1be763
       name: role1
-    - role_id: -2100
+    - role_id: 2100
       uuid: c821a93d-78aa-4b87-ac1b-3e3229e0fdd9
       name: role2
-    - role_id: -2200
+    - role_id: 2200
       uuid: 0e73623c-8d6a-4544-88a4-e4b104e7c0b6
       name: role3
 ccm_core.role_memberships:
     # role1 <-> jdoe
-    - membership_id: -3000
+    - membership_id: 3000
       uuid: 364220da-f24d-448f-aed5-633e316acc29
-      role_id: -2000
-      member_id: -10
+      role_id: 2000
+      member_id: 10
     # role1 <-> group3
-    - membership_id: -3100
+    - membership_id: 3100
       uuid: 28b9ee03-645d-4b8d-9b4e-9cc7442ffe77
-      role_id: -2000
-      member_id: -300
+      role_id: 2000
+      member_id: 300
     # role2 <-> group1
-    - membership_id: -3200
+    - membership_id: 3200
       uuid: da515fdc-560d-44fb-8f6b-8dbc37fca39d
-      role_id: -2100
-      member_id: -100
+      role_id: 2100
+      member_id: 100
     # role3 <-> joe
-    - membership_id: -3300
+    - membership_id: 3300
       uuid: 9ee86a1a-5aaf-4e8c-bfd5-77bfc846d0b5
-      role_id: -2200
-      member_id: -30
+      role_id: 2200
+      member_id: 30
       # role1 <-> joe
-    - membership_id: -3400
+    - membership_id: 3400
       uuid: 8d3e7346-afa5-44b0-ae86-aafad4a8ebdd
-      role_id: -2000
-      member_id: -30
+      role_id: 2000
+      member_id: 30
     # role3 <-> group1
-    - membership_id: -3500
+    - membership_id: 3500
       uuid: 4c5007e9-fefc-4f2d-82de-2154c48fd908
-      role_id: -2200
-      member_id: -100
+      role_id: 2200
+      member_id: 100

@@ -2,15 +2,15 @@
     "ccm_core.ccm_privileges":
             [
                 {
-                    "privilege_id": -10,
+                    "privilege_id": 10,
                     "label": "admin"
                 },
                 {
-                    "privilege_id": -20,
+                    "privilege_id": 20,
                     "label": "read"
                 },
                 {
-                    "privilege_id": -30,
+                    "privilege_id": 30,
                     "label": "write"
                 }
             ]

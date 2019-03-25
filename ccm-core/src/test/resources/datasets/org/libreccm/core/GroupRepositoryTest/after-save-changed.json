@@ -2,28 +2,28 @@
     "ccm_core.subjects":
             [
                 {
-                    "subject_id": -10
+                    "subject_id": 10
                 },
                 {
-                    "subject_id": -20
+                    "subject_id": 20
                 },
                 {
-                    "subject_id": -30
+                    "subject_id": 30
                 }
             ],
     "ccm_core.ccm_groups":
             [
                 {
                     "name": "admins",
-                    "subject_id": -10
+                    "subject_id": 10
                 },
                 {
                     "name": "users",
-                    "subject_id": -20
+                    "subject_id": 20
                 },
                 {
                     "name": "editors",
-                    "subject_id": -30
+                    "subject_id": 30
                 }
             ]
 }

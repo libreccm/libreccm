@@ -36,7 +36,7 @@ import javax.persistence.Table;
  *
  * Only applications which are different for each site should extend this class.
  * For example for the Admin application or the Content Center application
- * provided by the ccm-cms module it makes to sense to make them site aware.
+ * provided by the ccm-cms module it makes no sense to make them site aware.
  * This applications are used to manage objects which are shared by all sites.
  * Other applications like the Pages application provided by ccm-cms module are
  * of course site aware. The Pages application for example manages the page tree

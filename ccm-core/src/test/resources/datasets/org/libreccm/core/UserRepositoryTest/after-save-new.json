@@ -2,16 +2,16 @@
     "ccm_core.subjects":
             [
                 {
-                    "subject_id": -10
+                    "subject_id": 10
                 },
                 {
-                    "subject_id": -20
+                    "subject_id": 20
                 },
                 {
-                    "subject_id": -30
+                    "subject_id": 30
                 },
                 {
-                    "subject_id": -40
+                    "subject_id": 40
                 }
             ],
     "ccm_core.ccm_users":
@@ -25,7 +25,7 @@
                     "password_reset_required": false,
                     "salt": "axg8ira8fa",
                     "screen_name": "jdoe",
-                    "subject_id": -10
+                    "subject_id": 10
                 },
                 {
                     "banned": false,
@@ -36,7 +36,7 @@
                     "password_reset_required": false,
                     "salt": "fjiajhigafgapoa",
                     "screen_name": "mmuster",
-                    "subject_id": -20
+                    "subject_id": 20
                 },
                 {
                     "banned": false,
@@ -47,7 +47,7 @@
                     "password_reset_required": false,
                     "salt": "axg8ira8fa",
                     "screen_name": "joe",
-                    "subject_id": -30
+                    "subject_id": 30
                 },
                 {
                     "banned": false,
@@ -60,37 +60,37 @@
                     "password_reset_required": false,
                     "salt": "maifgaoapafga9",
                     "screen_name": "jane",
-                    "subject_id": -40
+                    "subject_id": 40
                 }
             ],
     "ccm_core.user_email_addresses":
             [
                 {
-                    "user_id": -10,
+                    "user_id": 10,
                     "email_address": "john.doe@example.com",
                     "bouncing": false,
                     "verified": true
                 },
                 {
-                    "user_id": -20,
+                    "user_id": 20,
                     "email_address": "max.mustermann@example.org",
                     "bouncing": false,
                     "verified": true
                 },
                 {
-                    "user_id": -20,
+                    "user_id": 20,
                     "email_address": "mm@example.com",
                     "bouncing": false,
                     "verified": true
                 },
                 {
-                    "user_id": -30,
+                    "user_id": 30,
                     "email_address": "joe.public@example.com",
                     "bouncing": true,
                     "verified": false
                 },
                 {
-                    "user_id": -40,
+                    "user_id": 40,
                     "email_address": "jane.doe@example.org",
                     "bouncing": false,
                     "verified": false
