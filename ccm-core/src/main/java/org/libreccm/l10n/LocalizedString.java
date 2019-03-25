@@ -63,7 +63,7 @@ public class LocalizedString implements Serializable {
     /**
      * The localised values of the string.
      */
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @MapKeyColumn(name = "LOCALE")
     @Column(name = "LOCALIZED_VALUE")
     @Basic

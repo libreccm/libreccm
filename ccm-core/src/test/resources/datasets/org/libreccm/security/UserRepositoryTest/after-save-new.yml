@@ -1,23 +1,23 @@
 ccm_core.parties:
     # John Doe
-    - party_id: -10
+    - party_id: 10
       uuid: 631be113-7e86-453d-9f8b-8cb6cb6df268
       name: jdoe
     # Max Muster
-    - party_id: -20
+    - party_id: 20
       uuid: 3a61d302-97a5-4e46-bbc9-8d716f7c54c4
       name: mmuster
     # Joe Public
-    - party_id: -30
+    - party_id: 30
       uuid: 7d5ad4a7-c2bd-4e49-8716-0bfb40413c75
       name: joe
     # Jane Doe
-    - party_id: -40
+    - party_id: 40
       uuid: 0fc446b7-a242-4407-9d04-b8ccaaa9dee5
       name: jane
 ccm_core.users:
     # John Doe
-    - party_id: -10
+    - party_id: 10
       banned: false
       bouncing: false
       email_address: john.doe@example.com
@@ -28,7 +28,7 @@ ccm_core.users:
       password_reset_required: false
       verified: true
     # Max Mustermann
-    - party_id: -20
+    - party_id: 20
       banned: false
       bouncing: false
       email_address: max.mustermann@example.org
@@ -39,7 +39,7 @@ ccm_core.users:
       password_reset_required: false
       verified: true
     # Joe Public
-    - party_id: -30
+    - party_id: 30
       banned: false
       bouncing: false
       email_address: joe.public@example.com
@@ -49,7 +49,7 @@ ccm_core.users:
       password_reset_required: false
       verified: true
     # Jane Doe
-    - party_id: -40
+    - party_id: 40
       banned: false
       bouncing: false
       email_address: jane.doe@example.org

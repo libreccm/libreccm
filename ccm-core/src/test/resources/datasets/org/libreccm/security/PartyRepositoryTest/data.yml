@@ -1,13 +1,13 @@
 ccm_core.parties:
     # John Doe
-    - party_id: -10
+    - party_id: 10
       uuid: 631be113-7e86-453d-9f8b-8cb6cb6df268
       name: jdoe
-    - party_id: -20
+    - party_id: 20
       uuid: 3a61d302-97a5-4e46-bbc9-8d716f7c54c4
       name: admins
 ccm_core.groups:
-    - party_id: -20
+    - party_id: 20
 ccm_core.users:
     # John Doe
     - banned: false
@@ -15,7 +15,7 @@ ccm_core.users:
       email_address: john.doe@example.com
       family_name: Doe
       given_name: John
-      party_id: -10
+      party_id: 10
       # foo123
       password: $shiro1$SHA-512$500000$7xkDcZUN0/whJInHIvGsDw==$WhelBVmJU/cLV7lAkMOrE5B/mqCW0bUuid1WX+xBwzzAaekC5bYn9eeOFGJWhiDgmaC50ZCUmM96/iGsRoc4uA==
       password_reset_required: false

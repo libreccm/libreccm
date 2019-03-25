@@ -1,10 +1,10 @@
 ccm_core.ccm_roles:
-    - role_id: -10
+    - role_id: 10
       uuid: 42038ba3-35b9-4894-843f-cb39ae1be763
       name: administrator
-    - role_id: -20
+    - role_id: 20
       uuid: c821a93d-78aa-4b87-ac1b-3e3229e0fdd9
       name: writer
-    - role_id: -30
+    - role_id: 30
       uuid: 0e73623c-8d6a-4544-88a4-e4b104e7c0b6
       name: reader

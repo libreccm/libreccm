@@ -1,21 +1,21 @@
 ccm_core.parties:
     # Group 1
-    - party_id: -10
+    - party_id: 10
       uuid: 7200c286-5045-4305-8f40-86cc078b5943
       name: group-1
     # Group 2
-    - party_id: -20
+    - party_id: 20
       uuid: ebdc9a12-8f4e-48e8-92ec-900c65189895
       name: group-2
     # Imported group
-    - party_id: -100
+    - party_id: 100
       uuid: 696592cd-db19-4aca-bb14-06490cfde243
       name: department-23
 ccm_core.groups:
     # Group 1
-    - party_id: -10
+    - party_id: 10
     # Group 2
-    - party_id: -20
+    - party_id: 20
     # Imported group
-    - party_id: -100
+    - party_id: 100
 

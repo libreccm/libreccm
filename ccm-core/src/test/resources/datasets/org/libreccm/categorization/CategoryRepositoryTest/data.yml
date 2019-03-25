@@ -1,62 +1,62 @@
 ccm_core.ccm_objects:
-        - object_id: -1000
+        - object_id: 1000
           display_name: test
           uuid: d76c9183-5558-4ca6-bd56-3cdd8bdadad6
-        - object_id: -2000
+        - object_id: 2000
           display_name: test_root
           uuid: 1d533dba-08f2-4d65-948a-3bba953dabab
-        - object_id: -2100
+        - object_id: 2100
           display_name: foo
           uuid: a83d238a-1df7-4b54-a886-a93f4e816888
-        - object_id: -2200
+        - object_id: 2200
           display_name: bar
           uuid: 7fd42bcd-c49f-4d8a-be1c-fd88f2e9a7c0
 
 ccm_core.categories:
-        - object_id: -2000
+        - object_id: 2000
           unique_id: test0001
           name: test-root
           enabled: true
           visible: true
           abstract_category: false
           category_order: 0
-        - object_id: -2100
+        - object_id: 2100
           unique_id: test0002
           name: foo
-          parent_category_id: -2000
+          parent_category_id: 2000
           enabled: true
           visible: true
           abstract_category: false
           category_order: 0
-        - object_id: -2200
+        - object_id: 2200
           unique_id: test0003
           name: bar
-          parent_category_id: -2100
+          parent_category_id: 2100
           enabled: true
           visible: true
           abstract_category: false
           category_order: 0
 
 ccm_core.category_domains:
-        - object_id: -1000
+        - object_id: 1000
           domain_key: test
-          root_category_id: -2000
+          root_category_id: 2000
           uri: http://libreccm.org/test
           version: 1.0
           
 ccm_core.parties:
-    - party_id: -100
+    - party_id: 100
       uuid: 631be113-7e86-453d-9f8b-8cb6cb6df268
       name: public-user
-    - party_id: -200
+    - party_id: 200
       uuid: 3a61d302-97a5-4e46-bbc9-8d716f7c54c4
       name: jdoe
-    - party_id: -300
+    - party_id: 300
       uuid: 7d5ad4a7-c2bd-4e49-8716-0bfb40413c75
       name: mmuster
       
 ccm_core.users:
-    - party_id: -100
+    - party_id: 100
       given_name: public
       family_name: user
       email_address: public-user@localhost
@@ -64,7 +64,7 @@ ccm_core.users:
       bouncing: false
       verified: true
       password_reset_required: false
-    - party_id: -200
+    - party_id: 200
       given_name: John
       family_name: Doe
       email_address: john.doe@example.org
@@ -73,7 +73,7 @@ ccm_core.users:
       bouncing: false
       verified: true
       password_reset_required: false
-    - party_id: -300
+    - party_id: 300
       given_name: Max
       family_name: Mustermann
       email_address: max.mustermann@example.org
@@ -84,32 +84,32 @@ ccm_core.users:
       password_reset_required: false
 
 ccm_core.ccm_roles:
-    - role_id: -500
+    - role_id: 500
       uuid: 420f5f60-18a6-4dbe-9160-c730bbe18f45
       name: category_manager
-    - role_id: -510
+    - role_id: 510
       uuid: 0aeea94d-3d8e-4a50-807b-e3c857038e22
       name: category_manager_domain_test
       
 ccm_core.role_memberships:
-    - membership_id: -600
+    - membership_id: 600
       uuid: 59bfad40-2bd1-4ddd-91cf-60c51724e29c
-      role_id: -500
-      member_id: -200
-    - membership_id: -610
+      role_id: 500
+      member_id: 200
+    - membership_id: 610
       uuid: 192024a9-0489-44a0-940f-725b5579a52d
-      role_id: -510
-      member_id: -300
+      role_id: 510
+      member_id: 300
       
 ccm_core.permissions:
-    - permission_id: -700
+    - permission_id: 700
       uuid: 70e8b64c-505d-48bd-b196-36c10ed2321a
       granted_privilege: manage_category
-      grantee_id: -500
+      grantee_id: 500
       inherited: false
-    - permission_id: -710
+    - permission_id: 710
       uuid: 1a798119-a4a4-477b-8092-4423d7185e1b
       granted_privilege: manage_category
-      grantee_id: -510
-      object_id: -1000
+      grantee_id: 510
+      object_id: 1000
       inherited: false

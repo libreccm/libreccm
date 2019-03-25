@@ -830,7 +830,7 @@ drop sequence if exists HIBERNATE_SEQUENCE;
 
     alter table CCM_CORE.WORKFLOWS 
         add constraint UK_o113id7d1cxql0edsrohlnn9x unique (UUID);
-create sequence hibernate_sequence start with 1 increment by 1;
+create sequence hibernate_sequence start with 100000 increment by 1;
 
     alter table CCM_CORE.APPLICATIONS 
         add constraint FKatcp9ij6mbkx0nfeig1o6n3lm 

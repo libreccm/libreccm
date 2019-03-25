@@ -1,14 +1,14 @@
 ccm_core.parties:
     # John Doe
-    - party_id: -10
+    - party_id: 10
       uuid: 631be113-7e86-453d-9f8b-8cb6cb6df268
       name: jdoe
     # Max Muster
-    - party_id: -20
+    - party_id: 20
       uuid: 3a61d302-97a5-4e46-bbc9-8d716f7c54c4
       name: mmuster
     # Joe Public
-    - party_id: -30
+    - party_id: 30
       uuid: 7d5ad4a7-c2bd-4e49-8716-0bfb40413c75
       name: joe
 ccm_core.users:
@@ -18,7 +18,7 @@ ccm_core.users:
       email_address: jd@example.com
       family_name: Doe
       given_name: John
-      party_id: -10
+      party_id: 10
       # foo1456
       password: $shiro1$SHA-512$500000$AH1llRaMHE8W31Q7VG6jsA==$XXgKeyDCsrN23NvszQ5wt+uViQUlVqTAM+05LrE7Bd9sc0eaJT8HlAGvSdY+rqTLbiGm9YS4pohzoUt1x3kmKg==
       password_reset_required: false
@@ -29,7 +29,7 @@ ccm_core.users:
       email_address: joe.public@example.com
       family_name: Public
       given_name: Joe
-      party_id: -30
+      party_id: 30
       password: $shiro1$SHA-512$500000$RUCYXAQt+XzUmj3x8oG5gw==$qU+lX160Jc6sNUOI9X85wlf2lzn4/hLJNURtjmw9LOYJ7vAqUFFmhyNCMxpzuHIpzeMELr+A0XReoSmtcZnOOw==
       password_reset_required: false
       verified: true
@@ -39,7 +39,7 @@ ccm_core.users:
       email_address: max.mustermann@example.org
       family_name: Mustermann
       given_name: Max
-      party_id: -20
+      party_id: 20
       # foo123
       password: $shiro1$SHA-512$500000$Y7CnccN1h25sR7KCElMOXg==$CVLWBhetodaEzzhDfGjRcCFZtSW02xOnjH7xhBx0lbxO66grKIt6LWmXoUhLEydce1JZ7cbzNLYOxIwwTeqi5Q==
       password_reset_required: false
