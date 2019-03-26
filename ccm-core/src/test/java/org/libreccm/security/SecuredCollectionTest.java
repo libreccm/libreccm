@@ -147,6 +147,7 @@ public class SecuredCollectionTest {
             .addPackage(com.arsdigita.kernel.KernelConfig.class.getPackage())
             .addPackage(com.arsdigita.kernel.security.SecurityConfig.class
                 .getPackage())
+            .addClass(org.libreccm.imexport.Exportable.class)
             .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")

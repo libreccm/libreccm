@@ -130,6 +130,7 @@ public class AuthorizationInterceptorTest {
                 .getPackage())
             .addClass(com.arsdigita.kernel.KernelConfig.class)
             .addClass(com.arsdigita.util.UncheckedWrapperException.class)
+            .addClass(org.libreccm.imexport.Exportable.class)
             .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
