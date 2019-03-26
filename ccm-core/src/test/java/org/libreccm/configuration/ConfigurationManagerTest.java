@@ -120,6 +120,7 @@ public class ConfigurationManagerTest {
             .addClass(com.example.TestConfiguration.class)
             .addClass(com.arsdigita.kernel.KernelConfig.class)
             .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
+            .addClass(org.libreccm.imexport.Exportable.class)
             .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
             .addAsLibraries(getModuleDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")

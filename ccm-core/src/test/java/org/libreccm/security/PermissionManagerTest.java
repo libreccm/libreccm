@@ -128,10 +128,11 @@ public class PermissionManagerTest {
                 .getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(com.arsdigita.kernel.KernelConfig.class.getPackage()).
-            addPackage(com.arsdigita.kernel.security.SecurityConfig.class
+            .addPackage(com.arsdigita.kernel.KernelConfig.class.getPackage())
+            .addPackage(com.arsdigita.kernel.security.SecurityConfig.class
                 .getPackage())
             .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
+            .addClass(org.libreccm.imexport.Exportable.class)
             .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
@@ -610,7 +611,7 @@ public class PermissionManagerTest {
      */
     @Test(expected = IllegalArgumentException.class)
     @UsingDataSet("datasets/org/libreccm/security/PermissionManagerTest/"
-        + "data.yml")
+                      + "data.yml")
     @ShouldThrowException(IllegalArgumentException.class)
     @InSequence(340)
     public void revokePermissionFromRoleNull() throws Throwable {
