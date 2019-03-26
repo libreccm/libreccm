@@ -188,21 +188,21 @@ public class CcmObjectRepositoryTest {
     @UsingDataSet("datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @InSequence(5)
     public void entityManagerFindCcmObjectByLongPrimitive() {
-        final CcmObject obj1 = entityManager.find(CcmObject.class, -10L);
-        final CcmObject obj2 = entityManager.find(CcmObject.class, -20L);
-        final CcmObject obj3 = entityManager.find(CcmObject.class, -30L);
-        final CcmObject none = entityManager.find(CcmObject.class, -999L);
+        final CcmObject obj1 = entityManager.find(CcmObject.class, 10L);
+        final CcmObject obj2 = entityManager.find(CcmObject.class, 20L);
+        final CcmObject obj3 = entityManager.find(CcmObject.class, 30L);
+        final CcmObject none = entityManager.find(CcmObject.class, 999L);
 
         assertThat(obj1, is(not(nullValue())));
-        assertThat(obj1.getObjectId(), is(-10L));
+        assertThat(obj1.getObjectId(), is(10L));
         assertThat(obj1.getDisplayName(), is(equalTo("Test Object 1")));
 
         assertThat(obj2, is(not(nullValue())));
-        assertThat(obj2.getObjectId(), is(-20L));
+        assertThat(obj2.getObjectId(), is(20L));
         assertThat(obj2.getDisplayName(), is(equalTo("Test Object 2")));
 
         assertThat(obj3, is(not(nullValue())));
-        assertThat(obj3.getObjectId(), is(-30L));
+        assertThat(obj3.getObjectId(), is(30L));
         assertThat(obj3.getDisplayName(), is(equalTo("Test Object 3")));
 
         assertThat(none, is(nullValue()));
@@ -217,10 +217,10 @@ public class CcmObjectRepositoryTest {
     @UsingDataSet("datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @InSequence(6)
     public void entityManagerFindCcmObjectByLongClass() {
-        final Long id1 = -10L;
-        final Long id2 = -20L;
-        final Long id3 = -30L;
-        final Long id4 = -999L;
+        final Long id1 = 10L;
+        final Long id2 = 20L;
+        final Long id3 = 30L;
+        final Long id4 = 999L;
 
         final CcmObject obj1 = entityManager.find(CcmObject.class, id1);
         final CcmObject obj2 = entityManager.find(CcmObject.class, id2);
@@ -228,15 +228,15 @@ public class CcmObjectRepositoryTest {
         final CcmObject none = entityManager.find(CcmObject.class, id4);
 
         assertThat(obj1, is(not(nullValue())));
-        assertThat(obj1.getObjectId(), is(-10L));
+        assertThat(obj1.getObjectId(), is(10L));
         assertThat(obj1.getDisplayName(), is(equalTo("Test Object 1")));
 
         assertThat(obj2, is(not(nullValue())));
-        assertThat(obj2.getObjectId(), is(-20L));
+        assertThat(obj2.getObjectId(), is(20L));
         assertThat(obj2.getDisplayName(), is(equalTo("Test Object 2")));
 
         assertThat(obj3, is(not(nullValue())));
-        assertThat(obj3.getObjectId(), is(-30L));
+        assertThat(obj3.getObjectId(), is(30L));
         assertThat(obj3.getDisplayName(), is(equalTo("Test Object 3")));
 
         assertThat(none, is(nullValue()));
@@ -246,21 +246,21 @@ public class CcmObjectRepositoryTest {
     @UsingDataSet("datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @InSequence(10)
     public void findCcmObjectById() {
-        final Optional<CcmObject> obj1 = ccmObjectRepository.findById(-10L);
-        final Optional<CcmObject> obj2 = ccmObjectRepository.findById(-20L);
-        final Optional<CcmObject> obj3 = ccmObjectRepository.findById(-30L);
-        final Optional<CcmObject> none = ccmObjectRepository.findById(-999L);
+        final Optional<CcmObject> obj1 = ccmObjectRepository.findById(10L);
+        final Optional<CcmObject> obj2 = ccmObjectRepository.findById(20L);
+        final Optional<CcmObject> obj3 = ccmObjectRepository.findById(30L);
+        final Optional<CcmObject> none = ccmObjectRepository.findById(999L);
 
         assertThat(obj1.isPresent(), is(true));
-        assertThat(obj1.get().getObjectId(), is(-10L));
+        assertThat(obj1.get().getObjectId(), is(10L));
         assertThat(obj1.get().getDisplayName(), is(equalTo("Test Object 1")));
 
         assertThat(obj2.isPresent(), is(true));
-        assertThat(obj2.get().getObjectId(), is(-20L));
+        assertThat(obj2.get().getObjectId(), is(20L));
         assertThat(obj2.get().getDisplayName(), is(equalTo("Test Object 2")));
 
         assertThat(obj3.isPresent(), is(true));
-        assertThat(obj3.get().getObjectId(), is(-30L));
+        assertThat(obj3.get().getObjectId(), is(30L));
         assertThat(obj3.get().getDisplayName(), is(equalTo("Test Object 3")));
 
         assertThat(none.isPresent(), is(false));
@@ -312,7 +312,7 @@ public class CcmObjectRepositoryTest {
         excludeColumns = {"object_id"})
     @InSequence(400)
     public void saveChangedCcmObject() {
-        final CcmObject obj = ccmObjectRepository.findById(-20L).get();
+        final CcmObject obj = ccmObjectRepository.findById(20L).get();
         obj.setDisplayName("Second Test Object");
 
         ccmObjectRepository.save(obj);
@@ -343,7 +343,7 @@ public class CcmObjectRepositoryTest {
         excludeColumns = {"object_id"})
     @InSequence(600)
     public void deleteCcmObject() {
-        final CcmObject obj = ccmObjectRepository.findById(-20L).get();
+        final CcmObject obj = ccmObjectRepository.findById(20L).get();
 
         ccmObjectRepository.delete(obj);
     }
