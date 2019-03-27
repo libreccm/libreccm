@@ -153,8 +153,10 @@ public class GroupManagerTest {
     @Test
     @UsingDataSet("datasets/org/libreccm/security/GroupManagerTest/data.yml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/security/GroupManagerTest/after-add.yml",
-        excludeColumns = {"membership_id"})
+        excludeColumns = {"membership_id", "uuid"},
+        orderBy = {"group_memberships.membership_id"},
+        value = "datasets/org/libreccm/security/GroupManagerTest/after-add.yml"
+    )
     @InSequence(200)
     public void addUserToGroup() {
         final Group admins = groupRepository.findByName("admins").get();

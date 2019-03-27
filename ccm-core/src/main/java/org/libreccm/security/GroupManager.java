@@ -62,6 +62,7 @@ public class GroupManager implements Serializable {
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public void addMemberToGroup(final User user, final Group group) {
+        
         if (user == null) {
             throw new IllegalArgumentException(
                 "Can't add null as user to a group.");
