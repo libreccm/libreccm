@@ -24,8 +24,10 @@ import org.libreccm.core.CoreConstants;
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Repository for groups.
@@ -131,6 +133,12 @@ public class GroupRepository extends AbstractEntityRepository<Long, Group> {
     @Override
     public void save(final Group group) {
         super.save(group);
+    }
+    
+    @Override
+    public void initNewEntity(final Group group) {
+        
+        group.setUuid(UUID.randomUUID().toString());
     }
 
     @AuthorizationRequired

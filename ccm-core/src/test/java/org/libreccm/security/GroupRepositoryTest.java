@@ -149,15 +149,15 @@ public class GroupRepositoryTest {
                              final Optional<Group> editors,
                              final Optional<Group> none) {
         assertThat(admins.isPresent(), is(true));
-        assertThat(admins.get().getPartyId(), is(-10L));
+        assertThat(admins.get().getPartyId(), is(10L));
         assertThat(admins.get().getName(), is(equalTo(ADMINS)));
 
         assertThat(users.isPresent(), is(true));
-        assertThat(users.get().getPartyId(), is(-20L));
+        assertThat(users.get().getPartyId(), is(20L));
         assertThat(users.get().getName(), is(equalTo(USERS)));
 
         assertThat(editors.isPresent(), is(true));
-        assertThat(editors.get().getPartyId(), is(-30L));
+        assertThat(editors.get().getPartyId(), is(30L));
         assertThat(editors.get().getName(), is(equalTo(EDITORS)));
 
         assertThat(none.isPresent(), is(false));
@@ -167,10 +167,10 @@ public class GroupRepositoryTest {
     @UsingDataSet("datasets/org/libreccm/security/GroupRepositoryTest/data.yml")
     @InSequence(100)
     public void findGroupById() {
-        final Optional<Group> admins = groupRepository.findById(-10L);
-        final Optional<Group> users = groupRepository.findById(-20L);
-        final Optional<Group> editors = groupRepository.findById(-30L);
-        final Optional<Group> none = groupRepository.findById(-999L);
+        final Optional<Group> admins = groupRepository.findById(10L);
+        final Optional<Group> users = groupRepository.findById(20L);
+        final Optional<Group> editors = groupRepository.findById(30L);
+        final Optional<Group> none = groupRepository.findById(999L);
 
         checkGroups(admins, users, editors, none);
     }
@@ -198,9 +198,11 @@ public class GroupRepositoryTest {
 
     @Test
     @UsingDataSet("datasets/org/libreccm/security/GroupRepositoryTest/data.yml")
-    @ShouldMatchDataSet(value = "datasets/org/libreccm/security/"
-                                    + "GroupRepositoryTest/after-save-new.yml",
-                        excludeColumns = {"party_id"})
+    @ShouldMatchDataSet(
+        excludeColumns = {"party_id", "uuid"},
+        value = "datasets/org/libreccm/security/"
+                    + "GroupRepositoryTest/after-save-new.yml"
+    )
     @InSequence(400)
     public void saveNewGroup() {
         final Group authors = new Group();
@@ -216,7 +218,7 @@ public class GroupRepositoryTest {
                         excludeColumns = {"party_id"})
     @InSequence(500)
     public void saveChangedGroup() {
-        final Group group = groupRepository.findById(-30L).get();
+        final Group group = groupRepository.findById(30L).get();
         group.setName("authors");
 
         groupRepository.save(group);
