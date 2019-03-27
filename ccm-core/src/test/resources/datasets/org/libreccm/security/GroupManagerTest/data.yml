@@ -1,26 +1,26 @@
 ccm_core.parties:
     # John Doe
-    - party_id": 10
+    - party_id: 10
       uuid: 631be113-7e86-453d-9f8b-8cb6cb6df268
       name: jdoe
     # Max Muster
-    - party_id": 20
+    - party_id: 20
       uuid: 3a61d302-97a5-4e46-bbc9-8d716f7c54c4
       name: mmuster
     # Joe Public
-    - party_id": 30
+    - party_id: 30
       uuid: 7d5ad4a7-c2bd-4e49-8716-0bfb40413c75
       name: joe
     # admins
-    - party_id": 40
+    - party_id: 40
       uuid: 0fc446b7-a242-4407-9d04-b8ccaaa9dee5
       name: admins
     # users
-    - party_id": 50
+    - party_id: 50
       uuid: 2082d7fc-8268-4195-8cbe-eb826b1afaeb
       name: users
     # editors
-    - party_id": 60
+    - party_id: 60
       uuid: 176bfecc-c0fa-4e76-8935-5d6d0ec60e8c
       name: editors
 ccm_core.users:
@@ -30,7 +30,7 @@ ccm_core.users:
       email_address: john.doe@example.com
       family_name: Doe
       given_name: John
-      party_id": 10
+      party_id: 10
       # foo123
       password: $shiro1$SHA-512$500000$7xkDcZUN0/whJInHIvGsDw==$WhelBVmJU/cLV7lAkMOrE5B/mqCW0bUuid1WX+xBwzzAaekC5bYn9eeOFGJWhiDgmaC50ZCUmM96/iGsRoc4uA==
       password_reset_required: false
@@ -41,7 +41,7 @@ ccm_core.users:
       email_address: max.mustermann@example.org
       family_name: Mustermann
       given_name: Max
-      party_id": 20
+      party_id: 20
       # foo123
       password: $shiro1$SHA-512$500000$Y7CnccN1h25sR7KCElMOXg==$CVLWBhetodaEzzhDfGjRcCFZtSW02xOnjH7xhBx0lbxO66grKIt6LWmXoUhLEydce1JZ7cbzNLYOxIwwTeqi5Q==
       password_reset_required: false
@@ -52,35 +52,35 @@ ccm_core.users:
       email_address: joe.public@example.com
       family_name: Public
       given_name: Joe
-      party_id": 30
+      party_id: 30
       password: $shiro1$SHA-512$500000$RUCYXAQt+XzUmj3x8oG5gw==$qU+lX160Jc6sNUOI9X85wlf2lzn4/hLJNURtjmw9LOYJ7vAqUFFmhyNCMxpzuHIpzeMELr+A0XReoSmtcZnOOw==
       password_reset_required: false
       verified: true
 ccm_core.groups:
     # admins
-    - party_id": 40
+    - party_id: 40
     # users
-    - party_id": 50
+    - party_id: 50
     # editors
-    - party_id": 60
+    - party_id: 60
 ccm_core.group_memberships:
     # admins <-> jdoe
-    - membership_id": 100
+    - membership_id: 100
       uuid: 1f9dad0a-c51a-49e7-8720-c3c669cde67e
-      group_id": 40
-      member_id": 10
+      group_id: 40
+      member_id: 10
     # users <-> mmuster
-    - membership_id": 200
+    - membership_id: 200
       uuid: 3837b1c2-b4e4-44b9-a92f-2330d76b51df
-      group_id": 50
-      member_id": 20
+      group_id: 50
+      member_id: 20
     # users <-> joe
-    - membership_id": 300
+    - membership_id: 300
       uuid: cf8ffbc6-96d3-4e23-9503-4b396ea112aa
-      group_id": 50
-      member_id": 30
+      group_id: 50
+      member_id: 30
     # editors <-> joe
-    - membership_id": 400
+    - membership_id: 400
       uuid: 610ad227-cc55-4a8f-b532-3a5204f9d2dd
-      group_id": 60
-      member_id": 30
+      group_id: 60
+      member_id: 30
