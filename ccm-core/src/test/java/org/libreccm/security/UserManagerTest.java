@@ -162,7 +162,7 @@ public class UserManagerTest {
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/security/UserManagerTest/"
                     + "after-create-user.yml",
-        excludeColumns = {"party_id", "password"})
+        excludeColumns = {"party_id", "password", "uuid"})
     @InSequence(300)
     public void createUser() {
         shiro.getSystemUser().execute(

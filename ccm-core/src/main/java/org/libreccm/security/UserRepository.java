@@ -25,8 +25,10 @@ import javax.enterprise.context.RequestScoped;
 import javax.persistence.EntityGraph;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Repository for user objects.
@@ -202,6 +204,14 @@ public class UserRepository extends AbstractEntityRepository<Long, User> {
         super.save(entity);
     }
 
+    @Override
+    protected void initNewEntity(final User entity) {
+        
+        entity.setUuid(UUID.randomUUID().toString());
+    }
+
+    
+    
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)

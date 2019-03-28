@@ -152,7 +152,7 @@ public class UserRepositoryTest {
                             final Optional<User> joe,
                             final Optional<User> nobody) {
         assertThat(jdoe.isPresent(), is(true));
-        assertThat(jdoe.get().getPartyId(), is(-10L));
+        assertThat(jdoe.get().getPartyId(), is(10L));
         assertThat(jdoe.get().getName(), is(equalTo(JDOE)));
         assertThat(jdoe.get().getFamilyName(), is(equalTo("Doe")));
         assertThat(jdoe.get().getGivenName(), is(equalTo("John")));
@@ -161,7 +161,7 @@ public class UserRepositoryTest {
                        "$shiro1$SHA-512$500000$7xkDcZUN0/whJInHIvGsDw==$WhelBVmJU/cLV7lAkMOrE5B/mqCW0bUuid1WX+xBwzzAaekC5bYn9eeOFGJWhiDgmaC50ZCUmM96/iGsRoc4uA==")));
 
         assertThat(mmuster.isPresent(), is(true));
-        assertThat(mmuster.get().getPartyId(), is(-20L));
+        assertThat(mmuster.get().getPartyId(), is(20L));
         assertThat(mmuster.get().getName(), is(equalTo(MMUSTER)));
         assertThat(mmuster.get().getFamilyName(), is(equalTo("Mustermann")));
         assertThat(mmuster.get().getGivenName(), is(equalTo("Max")));
@@ -170,7 +170,7 @@ public class UserRepositoryTest {
                        "$shiro1$SHA-512$500000$Y7CnccN1h25sR7KCElMOXg==$CVLWBhetodaEzzhDfGjRcCFZtSW02xOnjH7xhBx0lbxO66grKIt6LWmXoUhLEydce1JZ7cbzNLYOxIwwTeqi5Q==")));
 
         assertThat(joe.isPresent(), is(true));
-        assertThat(joe.get().getPartyId(), is(-30L));
+        assertThat(joe.get().getPartyId(), is(30L));
         assertThat(joe.get().getName(), is(equalTo(JOE)));
         assertThat(joe.get().getFamilyName(), is(equalTo("Public")));
         assertThat(joe.get().getGivenName(), is(equalTo("Joe")));
@@ -185,10 +185,10 @@ public class UserRepositoryTest {
     @UsingDataSet("datasets/org/libreccm/security/UserRepositoryTest/data.yml")
     @InSequence(100)
     public void findUserById() {
-        final Optional<User> jdoe = userRepository.findById(-10L);
-        final Optional<User> mmuster = userRepository.findById(-20L);
-        final Optional<User> joe = userRepository.findById(-30L);
-        final Optional<User> nobody = userRepository.findById(-999L);
+        final Optional<User> jdoe = userRepository.findById(10L);
+        final Optional<User> mmuster = userRepository.findById(20L);
+        final Optional<User> joe = userRepository.findById(30L);
+        final Optional<User> nobody = userRepository.findById(999L);
 
         checkUsers(jdoe, mmuster, joe, nobody);
     }
@@ -229,7 +229,7 @@ public class UserRepositoryTest {
         final User user = userRepository.findByEmailAddress(
             "max.mustermann@example.org").get();
 
-        assertThat(user.getPartyId(), is(-30L));
+        assertThat(user.getPartyId(), is(30L));
     }
 
     @Test
@@ -245,7 +245,7 @@ public class UserRepositoryTest {
     @UsingDataSet("datasets/org/libreccm/security/UserRepositoryTest/data.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/security/"
                                     + "UserRepositoryTest/after-save-new.yml",
-                        excludeColumns = {"party_id"}
+                        excludeColumns = {"party_id", "uuid"}
     )
     @InSequence(500)
     public void saveNewUser() {
@@ -274,7 +274,7 @@ public class UserRepositoryTest {
                         excludeColumns = {"party_id"})
     @InSequence(600)
     public void saveChangedUser() {
-        final User user = userRepository.findById(-10L).get();
+        final User user = userRepository.findById(10L).get();
 
         //foo456
         user.setPassword(

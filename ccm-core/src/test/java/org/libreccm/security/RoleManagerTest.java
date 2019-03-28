@@ -138,8 +138,9 @@ public class RoleManagerTest {
     @Test
     @UsingDataSet("datasets/org/libreccm/security/RoleManagerTest/data.yml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/security/RoleManagerTest/after-add.yml",
-        excludeColumns = {"membership_id"})
+        excludeColumns = {"membership_id", "uuid"},
+        value = "datasets/org/libreccm/security/RoleManagerTest/after-add.yml"
+    )
     @InSequence(200)
     public void assignRoleToParty() {
         final Role role1 = roleRepository.findByName("role1").get();
