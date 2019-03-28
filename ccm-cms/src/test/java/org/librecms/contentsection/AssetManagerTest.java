@@ -155,10 +155,11 @@ public class AssetManagerTest {
             .addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
             .addPackage(org.librecms.contentsection.ContentSection.class
                 .getPackage())
-            .addPackage(org.librecms.contenttypes.Article.class.getPackage()).
-            addClass(com.arsdigita.kernel.security.SecurityConfig.class)
+            .addPackage(org.librecms.contenttypes.Article.class.getPackage())
+            .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
+            .addClass(org.libreccm.imexport.Exportable.class)
             //            .addAsLibraries(getModuleDependencies())
             .addAsLibraries(getCcmCoreDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")

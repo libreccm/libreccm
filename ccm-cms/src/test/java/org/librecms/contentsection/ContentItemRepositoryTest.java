@@ -153,6 +153,7 @@ public class ContentItemRepositoryTest {
             .addPackage(org.librecms.contenttypes.Article.class.getPackage())
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
+            .addClass(org.libreccm.imexport.Exportable.class)
             //            .addAsLibraries(getModuleDependencies())
             .addAsLibraries(getCcmCoreDependencies())
             .addAsResource("test-persistence.xml",
