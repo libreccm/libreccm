@@ -31,6 +31,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -38,6 +39,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -47,6 +49,7 @@ import java.util.stream.Collectors;
  */
 @RequestScoped
 public class PermissionManager implements Serializable {
+
     private static final long serialVersionUID = -6068575941173342106L;
 
     private static final Logger LOGGER = LogManager
@@ -64,6 +67,9 @@ public class PermissionManager implements Serializable {
 
     @Inject
     private CcmObjectRepository ccmObjectRepo;
+
+    @Inject
+    private PermissionRepository permissionRepository;
 
     /**
      * Retrieves a permission by its ID. Useful for UI classes.
@@ -172,6 +178,7 @@ public class PermissionManager implements Serializable {
             permission.setGrantedPrivilege(privilege);
             permission.setObject(object);
             permission.setInherited(false);
+            permission.setUuid(UUID.randomUUID().toString());
 
             entityManager.persist(permission);
 
@@ -432,7 +439,7 @@ public class PermissionManager implements Serializable {
             throw new IllegalArgumentException(
                 "Can't revoke a permission from object NULL.");
         }
-        
+
         LOGGER.debug("Revoking permission granting privilege \"{}\" "
                          + "on object \"{}\" to role \"{}\"...",
                      privilege,
@@ -440,7 +447,7 @@ public class PermissionManager implements Serializable {
                      object.getUuid());
 
         if (existsPermission(privilege, grantee, object)
-            || existsInheritedPermission(privilege, grantee, object)) {
+                || existsInheritedPermission(privilege, grantee, object)) {
 
             LOGGER.debug("There is a permission for the provided parameters, "
                              + "revoking it...");
@@ -465,7 +472,7 @@ public class PermissionManager implements Serializable {
             deleteInheritedQuery.setParameter(QUERY_PARAM_PRIVILEGE, privilege);
             deleteInheritedQuery.setParameter(QUERY_PARAM_GRANTEE, grantee);
             deleteInheritedQuery.setParameter("object", object);
-            final int deletedInherited =  deleteInheritedQuery.executeUpdate();
+            final int deletedInherited = deleteInheritedQuery.executeUpdate();
             LOGGER.debug("{} inherited permissions deleted.", deletedInherited);
         } else {
             LOGGER.warn("No permission granting privilege \"{}\" "

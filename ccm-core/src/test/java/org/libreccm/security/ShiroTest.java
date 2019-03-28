@@ -186,8 +186,8 @@ public class ShiroTest {
         assertThat(subject.hasRole("role2"), is(true));
 
         assertThat(subject.isPermitted("privilege1"), is(false));
-        assertThat(subject.isPermitted("privilege2:-20001"), is(false));
-        assertThat(subject.isPermitted("privilege2:-20002"), is(true));
+        assertThat(subject.isPermitted("privilege2:20001"), is(false));
+        assertThat(subject.isPermitted("privilege2:20002"), is(true));
 
         assertThat(subject.isPermitted("privilege2"), is(false));
         assertThat(subject.isPermitted("privilege1:999"), is(false));
@@ -209,8 +209,8 @@ public class ShiroTest {
         assertThat(subject.hasRole("role2"), is(false));
 
         assertThat(subject.isPermitted("privilege1"), is(true));
-        assertThat(subject.isPermitted("privilege2:-20001"), is(true));
-        assertThat(subject.isPermitted("privilege2:-20002"), is(false));
+        assertThat(subject.isPermitted("privilege2:20001"), is(true));
+        assertThat(subject.isPermitted("privilege2:20002"), is(false));
 
         assertThat(subject.isPermitted("privilege2"), is(false));
         assertThat(subject.isPermitted("privilege1"), is(true));
@@ -321,9 +321,9 @@ public class ShiroTest {
         assertThat(publicUser.hasRole("public-role"), is(true));
 
         assertThat(publicUser.isPermitted("privilege1"), is(false));
-        assertThat(publicUser.isPermitted("privilege2:-20001"), is(false));
-        assertThat(publicUser.isPermitted("privilege2:-20002"), is(false));
-        assertThat(publicUser.isPermitted("privilege3:-20001"), is(true));
+        assertThat(publicUser.isPermitted("privilege2:20001"), is(false));
+        assertThat(publicUser.isPermitted("privilege2:20002"), is(false));
+        assertThat(publicUser.isPermitted("privilege3:20001"), is(true));
     }
 
     @Test
@@ -342,9 +342,9 @@ public class ShiroTest {
         assertThat(publicUser.hasRole("public-role"), is(true));
 
         assertThat(publicUser.isPermitted("privilege1"), is(true));
-        assertThat(publicUser.isPermitted("privilege2:-20001"), is(true));
-        assertThat(publicUser.isPermitted("privilege2:-20002"), is(true));
-        assertThat(publicUser.isPermitted("privilege3:-20001"), is(true));
+        assertThat(publicUser.isPermitted("privilege2:20001"), is(true));
+        assertThat(publicUser.isPermitted("privilege2:20002"), is(true));
+        assertThat(publicUser.isPermitted("privilege3:20001"), is(true));
 
     }
 

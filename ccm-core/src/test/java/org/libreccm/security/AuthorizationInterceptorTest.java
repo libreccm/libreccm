@@ -207,7 +207,7 @@ public class AuthorizationInterceptorTest {
         token.setRememberMe(true);
         subject.login(token);
 
-        final CcmObject object1 = objectRepository.findById(-20001L).get();
+        final CcmObject object1 = objectRepository.findById(20001L).get();
 
         labBean.doSomethingWhichRequiresPermissionOnObject(object1);
     }
@@ -222,7 +222,7 @@ public class AuthorizationInterceptorTest {
         token.setRememberMe(true);
         subject.login(token);
 
-        final CcmObject object1 = objectRepository.findById(-20001L).get();
+        final CcmObject object1 = objectRepository.findById(20001L).get();
 
         labBean.doSomethingWhichRequiresPermissionOnObject(object1);
     }

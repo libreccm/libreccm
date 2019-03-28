@@ -98,9 +98,9 @@ public class SecuredCollectionTest {
 
     @Before
     public void setUp() {
-        final CcmObject object1 = objectRepository.findById(-20001L).get();
-        final CcmObject object2 = objectRepository.findById(-20002L).get();
-        final CcmObject object3 = objectRepository.findById(-20003L).get();
+        final CcmObject object1 = objectRepository.findById(20001L).get();
+        final CcmObject object2 = objectRepository.findById(20002L).get();
+        final CcmObject object3 = objectRepository.findById(20003L).get();
 
         final List<CcmObject> list = new ArrayList<>();
         list.add(object1);
