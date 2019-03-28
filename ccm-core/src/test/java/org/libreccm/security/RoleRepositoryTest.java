@@ -167,15 +167,15 @@ public class RoleRepositoryTest {
                             final Optional<Role> user,
                             final Optional<Role> reader) {
         assertThat(administrator.isPresent(), is(true));
-        assertThat(administrator.get().getRoleId(), is(-10L));
+        assertThat(administrator.get().getRoleId(), is(10L));
         assertThat(administrator.get().getName(), is(equalTo(ADMINISTRATOR)));
 
         assertThat(user.isPresent(), is(true));
-        assertThat(user.get().getRoleId(), is(-20L));
+        assertThat(user.get().getRoleId(), is(20L));
         assertThat(user.get().getName(), is(equalTo(USER)));
 
         assertThat(reader.isPresent(), is(true));
-        assertThat(reader.get().getRoleId(), is(-30L));
+        assertThat(reader.get().getRoleId(), is(30L));
         assertThat(reader.get().getName(), is(equalTo(READER)));
     }
 
@@ -187,9 +187,9 @@ public class RoleRepositoryTest {
     @UsingDataSet("datasets/org/libreccm/security/RoleRepositoryTest/data.yml")
     @InSequence(100)
     public void findRoleById() {
-        final Optional<Role> administrator = roleRepository.findById(-10L);
-        final Optional<Role> user = roleRepository.findById(-20L);
-        final Optional<Role> reader = roleRepository.findById(-30L);
+        final Optional<Role> administrator = roleRepository.findById(10L);
+        final Optional<Role> user = roleRepository.findById(20L);
+        final Optional<Role> reader = roleRepository.findById(30L);
 
         checkRoles(administrator, user, reader);
     }
@@ -259,9 +259,9 @@ public class RoleRepositoryTest {
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @InSequence(310)
     public void findByPrivilegeAndObject() {
-        final CcmObject object1 = ccmObjRepo.findById(-20001L).get();
-        final CcmObject object2 = ccmObjRepo.findById(-20002L).get();
-        final CcmObject object3 = ccmObjRepo.findById(-20003L).get();
+        final CcmObject object1 = ccmObjRepo.findById(20001L).get();
+        final CcmObject object2 = ccmObjRepo.findById(20002L).get();
+        final CcmObject object3 = ccmObjRepo.findById(20003L).get();
 
         final List<Role> rolesWithPrivilege1 = roleRepository.findByPrivilege(
             "privilege1", object1);
@@ -289,7 +289,7 @@ public class RoleRepositoryTest {
     @UsingDataSet("datasets/org/libreccm/security/RoleRepositoryTest/data.yml")
     @ShouldMatchDataSet(value = "datasets/org/libreccm/security/"
                                     + "RoleRepositoryTest/after-save-new.yml",
-                        excludeColumns = {"role_id"})
+                        excludeColumns = {"role_id", "uuid"})
     @InSequence(400)
     public void saveNewRole() {
         final Role role = new Role();
@@ -309,7 +309,7 @@ public class RoleRepositoryTest {
                         excludeColumns = {"role_id"})
     @InSequence(500)
     public void saveChangedRole() {
-        final Role role = roleRepository.findById(-20L).get();
+        final Role role = roleRepository.findById(20L).get();
         role.setName("writer");
 
         roleRepository.save(role);
