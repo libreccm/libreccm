@@ -27,6 +27,7 @@ import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 /**
@@ -35,8 +36,11 @@ import javax.transaction.Transactional;
  */
 @RequestScoped
 @Processes(Group.class)
-public class GroupImExporter extends AbstractEntityImExporter<Group>{
-
+public class GroupImExporter extends AbstractEntityImExporter<Group> {
+    
+    @Inject
+    private EntityManager entityManager;
+    
     @Inject
     private GroupRepository groupRepository;
     
@@ -44,15 +48,16 @@ public class GroupImExporter extends AbstractEntityImExporter<Group>{
     protected Class<Group> getEntityClass() {
         return Group.class;
     }
-
+    
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     protected void saveImportedEntity(final Group entity) {
         
         entity.setPartyId(0);
-        groupRepository.save(entity);
+//        groupRepository.save(entity);
+        entityManager.persist(entity);
     }
-
+    
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
         

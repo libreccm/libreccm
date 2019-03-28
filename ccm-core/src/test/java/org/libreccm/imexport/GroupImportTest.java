@@ -81,9 +81,9 @@ public class GroupImportTest {
                                                              + "/org.libreccm.imexport.GroupImportTest"
                                                          + "/ccm-export.json";
     private static final String IMPORT_GROUPS_TOC_SOURCE = "/imports"
-                                                              + "/org.libreccm.imexport.GroupImportTest"
-                                                          + "/org.libreccm.security.Group"
-                                                          + "/org.libreccm.security.Group.json";
+                                                               + "/org.libreccm.imexport.GroupImportTest"
+                                                           + "/org.libreccm.security.Group"
+                                                           + "/org.libreccm.security.Group.json";
     private static final String IMPORT_DATA_SOURCE = "/imports"
                                                          + "/org.libreccm.imexport.GroupImportTest"
                                                      + "/org.libreccm.security.Group"
@@ -93,7 +93,7 @@ public class GroupImportTest {
     private static final String CCM_TESTS_DIR = TMP_DIR + "/ccm-tests";
     private static final String IMPORTS_DIR = CCM_TESTS_DIR + "/imports";
     private static final String GROUP_IMPORT_TEST_DIR = IMPORTS_DIR
-                                                           + "/org.libreccm.imexport.GroupImportTest";
+                                                            + "/org.libreccm.imexport.GroupImportTest";
     private static final String IMPORT_DATA_DIR = GROUP_IMPORT_TEST_DIR
                                                       + "/org.libreccm.security.Group";
 
@@ -281,9 +281,11 @@ public class GroupImportTest {
 
     @Test
     @UsingDataSet("datasets/org/libreccm/imexport/GroupImportTest/data.yml")
-    @ShouldMatchDataSet(value = "datasets/org/libreccm/imexport/GroupImportTest"
-                                    + "/after-import-single-group.yml",
-                        excludeColumns = {"party_id"}
+    @ShouldMatchDataSet(
+        excludeColumns = {"party_id"},
+        orderBy = {"groups.group_id", "parties.party_id"},
+        value = "datasets/org/libreccm/imexport/GroupImportTest"
+                    + "/after-import-single-group.yml"
     )
     @InSequence(200)
     public void importSingleGroup() {

@@ -27,6 +27,7 @@ import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 /**
@@ -37,6 +38,9 @@ import javax.transaction.Transactional;
 @Processes(User.class)
 public class UserImExporter extends AbstractEntityImExporter<User> {
 
+    @Inject
+    private EntityManager entityManager;
+    
     @Inject
     private UserRepository userRepository;
 
@@ -51,7 +55,8 @@ public class UserImExporter extends AbstractEntityImExporter<User> {
 
         // Reset partyId.
         entity.setPartyId(0);
-        userRepository.save(entity);
+//        userRepository.save(entity);
+        entityManager.persist(entity);
     }
 
     @Override

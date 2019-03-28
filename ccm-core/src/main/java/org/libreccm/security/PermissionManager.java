@@ -367,6 +367,7 @@ public class PermissionManager implements Serializable {
             permission.setObject(object);
             permission.setInherited(true);
             permission.setInheritedFrom(inheritedFrom);
+            permission.setUuid(UUID.randomUUID().toString());
 
             entityManager.persist(permission);
 
@@ -405,6 +406,7 @@ public class PermissionManager implements Serializable {
             permission.setGrantee(grantee);
             permission.setGrantedPrivilege(privilege);
             permission.setObject(null);
+            permission.setUuid(UUID.randomUUID().toString());
 
             entityManager.persist(permission);
         }
