@@ -102,7 +102,7 @@ public class UserImportTest {
 
     @Inject
     private ImportExport importExport;
-    
+
     @Inject
     private Shiro shiro;
 
@@ -280,15 +280,18 @@ public class UserImportTest {
 
     @Test
     @UsingDataSet("datasets/org/libreccm/imexport/UserImportTest/data.yml")
-    @ShouldMatchDataSet(value = "datasets/org/libreccm/imexport/UserImportTest"
-                                    + "/after-import-single-user.yml",
-                        excludeColumns = {"party_id"}
+    @ShouldMatchDataSet(
+        excludeColumns = {"party_id"},
+        orderBy = {"users.user_id", "parties.party_id"},
+        value = "datasets/org/libreccm/imexport/UserImportTest"
+                    + "/after-import-single-user.yml"
     )
     @InSequence(200)
     public void importSingleUser() {
 
-        shiro.getSystemUser().execute(() -> 
-            importExport.importEntities("org.libreccm.imexport.UserImportTest")
+        shiro.getSystemUser().execute(()
+            -> importExport.importEntities(
+                "org.libreccm.imexport.UserImportTest")
         );
     }
 

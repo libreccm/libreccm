@@ -179,9 +179,11 @@ public class PermissionManagerTest {
     @UsingDataSet(
         "datasets/org/libreccm/security/PermissionManagerTest/data.yml")
     @ShouldMatchDataSet(
+        excludeColumns = {"permission_id", "uuid"},
+        orderBy = {"permissions.permission_id"},
         value = "datasets/org/libreccm/security/PermissionManagerTest/"
-                    + "after-grant.yml",
-        excludeColumns = {"permission_id"})
+                    + "after-grant.yml"
+    )
     @InSequence(200)
     public void grantPermission() {
         final Role role2 = roleRepository.findByName("role2").get();
@@ -226,9 +228,11 @@ public class PermissionManagerTest {
     @UsingDataSet("datasets/org/libreccm/security/PermissionManagerTest/"
                       + "data-recursivly.yml")
     @ShouldMatchDataSet(
+        excludeColumns = {"permission_id", "uuid"},
+        orderBy = {"permissions.permission_id"},
         value = "datasets/org/libreccm/security/PermissionManagerTest/"
-                    + "after-grant-recursivly.yml",
-        excludeColumns = {"permission_id"})
+                    + "after-grant-recursivly.yml"
+        )
     @InSequence(211)
     public void grantPermissionRecursively() {
         final Role role1 = roleRepository.findByName("role1").get();
@@ -688,7 +692,7 @@ public class PermissionManagerTest {
     @ShouldMatchDataSet(
         value = "datasets/org/libreccm/security/PermissionManagerTest/"
                     + "after-copy.yml",
-        excludeColumns = {"permission_id"})
+        excludeColumns = {"permission_id", "uuid"})
     @InSequence(400)
     public void copyPermissions() throws Throwable {
         final CcmObject object2 = ccmObjectRepository.findById(20002L).get();
