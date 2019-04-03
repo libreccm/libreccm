@@ -57,8 +57,6 @@ import org.jboss.arquillian.persistence.CleanupUsingScript;
 
 import org.librecms.assets.FileAsset;
 
-import java.util.concurrent.Callable;
-
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
@@ -71,8 +69,18 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
-@CreateSchema({"create_ccm_cms_schema.sql"})
-@CleanupUsingScript({"cleanup.sql"})
+@CreateSchema(
+    {
+        "001_create_schema.sql",
+        "002_create_ccm_cms_tables.sql",
+        "003_init_hibernate_sequence.sql"
+    }
+)
+@CleanupUsingScript(
+    {
+        "999_cleanup.sql"
+    }
+)
 public class AssetManagerTest {
 
     @Inject
