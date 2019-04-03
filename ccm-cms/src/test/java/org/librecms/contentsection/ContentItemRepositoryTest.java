@@ -188,23 +188,23 @@ public class ContentItemRepositoryTest {
 
         final Optional<Article> article1 = shiro
             .getSystemUser()
-            .execute(() -> itemRepo.findById(-10100L, Article.class));
+            .execute(() -> itemRepo.findById(10100L, Article.class));
         final Optional<Article> article2 = shiro
             .getSystemUser()
-            .execute(() -> itemRepo.findById(-10200L, Article.class));
+            .execute(() -> itemRepo.findById(10200L, Article.class));
         final Optional<Article> article3 = shiro
             .getSystemUser()
-            .execute(() -> itemRepo.findById(-10300L, Article.class));
+            .execute(() -> itemRepo.findById(10300L, Article.class));
         final Optional<News> news1 = shiro
             .getSystemUser()
-            .execute(() -> itemRepo.findById(-10400L, News.class));
+            .execute(() -> itemRepo.findById(10400L, News.class));
 
         final Optional<Article> newsAsArticle = shiro
             .getSystemUser()
-            .execute(() -> itemRepo.findById(-10400, Article.class));
+            .execute(() -> itemRepo.findById(10400, Article.class));
         final Optional<News> articleAsNews = shiro
             .getSystemUser()
-            .execute(() -> itemRepo.findById(-10200L, News.class));
+            .execute(() -> itemRepo.findById(10200L, News.class));
 
         assertThat(article1.isPresent(), is(true));
         assertThat(article1.get().getDisplayName(), is(equalTo("article1")));
@@ -302,7 +302,7 @@ public class ContentItemRepositoryTest {
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemRepositoryTest/data.xml")
     public void findByFolder() {
-        final Category folder = categoryRepo.findById(-2100L).get();
+        final Category folder = categoryRepo.findById(2100L).get();
 
         assertThat(folder.getObjects().size(), is(4));
 
@@ -320,7 +320,7 @@ public class ContentItemRepositoryTest {
                       + "ContentItemRepositoryTest/data.xml")
     public void countItemsInFolder() {
 
-        final Category folder = categoryRepo.findById(-2100L).get();
+        final Category folder = categoryRepo.findById(2100L).get();
 
         assertThat(
             shiro.getSystemUser().execute(() -> {
@@ -335,7 +335,7 @@ public class ContentItemRepositoryTest {
                       + "ContentItemRepositoryTest/data.xml")
     public void countByNameInFolder() {
 
-        final Category folder = categoryRepo.findById(-2100L).get();
+        final Category folder = categoryRepo.findById(2100L).get();
 
         final Subject systemUser = shiro.getSystemUser();
 
@@ -370,7 +370,7 @@ public class ContentItemRepositoryTest {
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemRepositoryTest/data.xml")
     public void filterByFolderAndName() {
-        final Category folder = categoryRepo.findById(-2100L).get();
+        final Category folder = categoryRepo.findById(2100L).get();
 
         final List<ContentItem> articles = shiro
             .getSystemUser()
@@ -394,7 +394,7 @@ public class ContentItemRepositoryTest {
     @UsingDataSet("datasets/org/librecms/contentsection/"
                       + "ContentItemRepositoryTest/data.xml")
     public void countFilterByFolderAndName() {
-        final Category folder = categoryRepo.findById(-2100L).get();
+        final Category folder = categoryRepo.findById(2100L).get();
 
         final Subject systemUser = shiro.getSystemUser();
 
@@ -448,7 +448,7 @@ public class ContentItemRepositoryTest {
 
         final Optional<ContentItem> item = shiro
             .getSystemUser()
-            .execute(() -> itemRepo.findById(-10100L));
+            .execute(() -> itemRepo.findById(10100L));
 
         assertThat(item.isPresent(), is(true));
 
