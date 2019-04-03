@@ -62,9 +62,19 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
-@CreateSchema({"create_ccm_cms_schema.sql"})
-@CleanupUsingScript(value = {"cleanup.sql"},
-                    phase = TestExecutionPhase.BEFORE)
+@CreateSchema(
+    {
+        "001_create_schema.sql",
+        "002_create_ccm_cms_tables.sql",
+        "003_init_hibernate_sequence.sql"
+    }
+)
+@CleanupUsingScript(
+    value = {
+        "999_cleanup.sql"
+    },
+    phase = TestExecutionPhase.BEFORE
+)
 public class AttachmentListManagerTest {
 
     @Inject
