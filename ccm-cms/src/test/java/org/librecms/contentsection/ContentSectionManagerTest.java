@@ -1,5 +1,4 @@
-/*
- * Copyright (C) 2016 LibreCCM Foundation.
+/* Copyright (C) 2016 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -75,9 +74,19 @@ import org.librecms.lifecycle.LifecycleDefinitionRepository;
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
-@CreateSchema({"create_ccm_cms_schema.sql"})
-@CleanupUsingScript(value = {"cleanup.sql"},
-                    phase = TestExecutionPhase.BEFORE)
+@CreateSchema(
+    {
+        "001_create_schema.sql",
+        "002_create_ccm_cms_tables.sql",
+        "003_init_hibernate_sequence.sql"
+    }
+)
+@CleanupUsingScript(
+    value = {
+        "999_cleanup.sql"
+    },
+    phase = TestExecutionPhase.BEFORE
+)
 public class ContentSectionManagerTest {
 
     @Inject
