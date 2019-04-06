@@ -491,6 +491,7 @@
         revtype="0" />
     
     <ccm_core.categorizations categorization_id="30100" 
+                              uuid="0fe99c16-1bc1-4ae2-be40-e1a5075e7e43"
                               category_id="200" 
                               object_id="600" 
                               category_order="1" 
@@ -498,6 +499,7 @@
                               category_index="false"
                               type="folder" />
     <ccm_core.categorizations categorization_id="30200" 
+                              uuid="fd809254-a43b-4876-b4b4-a709b05fa22c"
                               category_id="410" 
                               object_id="700" 
                               category_order="1" 
@@ -505,6 +507,7 @@
                               category_index="false"
                               type="folder" />
     <ccm_core.categorizations categorization_id="30300" 
+                              uuid="19314b13-a23f-4286-a50f-1c39e118130c"
                               category_id="410" 
                               object_id="800" 
                               category_order="1" 
@@ -512,6 +515,7 @@
                               category_index="false"
                               type="folder" />
     <ccm_core.categorizations categorization_id="30400" 
+                              uuid="3b7bbc6a-251d-49ba-8b6e-27a6f5881e11"
                               category_id="400" 
                               object_id="900" 
                               category_order="1" 
@@ -519,6 +523,7 @@
                               category_index="false"
                               type="folder" />
     <ccm_core.categorizations categorization_id="30600" 
+                              uuid="6b62f000-9ecd-4862-89c1-c3d274dff364"
                               category_id="420" 
                               object_id="1100" 
                               category_order="1" 
