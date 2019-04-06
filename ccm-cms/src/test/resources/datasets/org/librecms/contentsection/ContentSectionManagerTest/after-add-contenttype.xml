@@ -220,6 +220,7 @@
         revtype="0" />
         
     <ccm_core.categorizations categorization_id="12001" 
+                              uuid="25e54ad7-a803-4b96-b835-8b9fe12a9a75"
                               category_id="2100" 
                               object_id="11001" 
                               category_order="1" 
