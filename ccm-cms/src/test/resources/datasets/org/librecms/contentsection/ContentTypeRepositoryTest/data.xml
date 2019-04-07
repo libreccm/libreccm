@@ -139,6 +139,7 @@
         revtype="0" />
         
     <ccm_core.categorizations categorization_id="5001" 
+                              uuid="c3e4ca4a-4272-4276-b6b5-0bfa911dc113"
                               category_id="2001" 
                               object_id="3001" 
                               category_order="1" 

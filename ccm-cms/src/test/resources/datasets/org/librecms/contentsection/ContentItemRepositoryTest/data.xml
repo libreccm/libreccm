@@ -269,6 +269,7 @@
         localized_value="Curabitur vel sapien eu eros gravida bibendum vitae." />
     
     <ccm_core.categorizations categorization_id="30100" 
+                              uuid="1068360c-451c-44a5-8482-6d6eb7733e98"
                               category_id="2100" 
                               object_id="10100" 
                               category_order="1" 
@@ -276,6 +277,7 @@
                               category_index="false"
                               type="folder" />
     <ccm_core.categorizations categorization_id="30200" 
+                              uuid="eb3b4a47-6322-4635-b200-d6cd23217102"
                               category_id="2100" 
                               object_id="10200" 
                               category_order="1"
@@ -283,6 +285,7 @@
                               category_index="false" 
                               type="folder" />
     <ccm_core.categorizations categorization_id="30300" 
+                              uuid="9a5a4791-fc85-4978-a404-169d42368824"
                               category_id="2100" 
                               object_id="10300" 
                               category_order="1" 
@@ -290,6 +293,7 @@
                               category_index="false" 
                               type="folder" />
     <ccm_core.categorizations categorization_id="30400" 
+                              uuid="c40e0f6a-03b3-46b0-8026-e51adaf1a328"
                               category_id="2100" 
                               object_id="10400" 
                               category_order="1" 
