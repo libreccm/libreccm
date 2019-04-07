@@ -395,6 +395,7 @@
         localized_value="Etiam euismod lacus laoreet sodales ultricies. Pellentesque non elit vitae purus sagittis." />
 
     <ccm_core.categorizations categorization_id="30001" 
+                              uuid="ff0988d6-a1e3-44d6-85f7-605cde367cac"
                               category_id="2008" 
                               object_id="3001" 
                               category_order="1" 
@@ -402,6 +403,7 @@
                               category_index="false"
                               type="folder" />
     <ccm_core.categorizations categorization_id="30002" 
+                              uuid="056ccdb5-c73d-4a07-be38-7f62cbc581e9"
                               category_id="2008" 
                               object_id="3002" 
                               category_order="1" 
@@ -409,6 +411,7 @@
                               category_index="false"
                               type="folder" />
     <ccm_core.categorizations categorization_id="30003" 
+                              uuid="9dc06154-baed-4cb4-b449-f7ea8ae54bda"
                               category_id="2011" 
                               object_id="3003" 
                               category_order="1" 
@@ -416,6 +419,7 @@
                               category_index="false"
                               type="folder" />
     <ccm_core.categorizations categorization_id="30004" 
+                              uuid="a60109bb-ab88-4f69-a908-f7076eb689e4"
                               category_id="2011" 
                               object_id="3004" 
                               category_order="1" 
