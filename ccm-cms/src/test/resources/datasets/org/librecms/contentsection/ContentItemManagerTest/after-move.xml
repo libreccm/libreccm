@@ -564,6 +564,7 @@
                        rev="0" />
     
     <ccm_core.categorizations categorization_id="30100" 
+       uuid="04c1ad3b-3e76-4dbe-a939-2b6ed96e0420"
                               category_id="2120" 
                               object_id="10100" 
                               category_order="1" 
@@ -571,6 +572,7 @@
                               category_index="false"
                               type="folder" />
     <ccm_core.categorizations categorization_id="30200" 
+                              uuid="a0ba9ea7-3c49-4759-822d-a6b5af30641d"
                               category_id="2100" 
                               object_id="10200" 
                               category_order="1" 
@@ -578,6 +580,7 @@
                               category_index="false" 
                               type="folder" />
     <ccm_core.categorizations categorization_id="30300" 
+                              uuid="7f271548-8f66-4622-bd46-58a221a54045"
                               category_id="2100" 
                               object_id="10300" 
                               category_order="1" 
@@ -585,6 +588,7 @@
                               category_index="false" 
                               type="folder" />
     <ccm_core.categorizations categorization_id="30400" 
+                              uuid="736577ca-70ad-4666-b794-1c8ddd2baabe"
                               category_id="2100" 
                               object_id="10400" 
                               category_order="1" 
@@ -592,6 +596,7 @@
                               category_index="false" 
                               type="folder" />
     <ccm_core.categorizations categorization_id="98200" 
+                              uuid="1858721b-a9e3-482a-ac8b-a04b1d53a11c"
                               category_id="2100" 
                               object_id="99200" 
                               category_order="1" 
@@ -599,6 +604,7 @@
                               category_index="false" 
                               type="folder" />
     <ccm_core.categorizations categorization_id="98300" 
+                              uuid="82ba24bb-5162-428d-8347-aaceefe67653"
                               category_id="2200" 
                               object_id="11100" 
                               category_order="1" 

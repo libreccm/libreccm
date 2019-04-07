@@ -128,7 +128,7 @@
                            content_item_class="org.librecms.contenttypes.Article" 
                            content_section_id="1100"
                            default_lifecycle_id="13001"
-                           default_workflow="-14001" />
+                           default_workflow="14001" />
 
     <ccm_cms.content_type_labels object_id="10001"
                                  locale="en" 
@@ -211,16 +211,22 @@
                               type="folder" />
 
     <ccm_core.ccm_roles role_id="3100"
+                        uuid="2ee4d42b-0254-4edf-819d-1ad90eed6274"
                         name="info_alert_recipient" />
     <ccm_core.ccm_roles role_id="3200"
+                        uuid="85b09afd-363d-454d-a68c-d6d8e80d934f"
                         name="info_author" />
     <ccm_core.ccm_roles role_id="3300"
+                        uuid="3d0674db-64c7-4559-b2bb-151de2a8adbf"
                         name="info_editor" />
     <ccm_core.ccm_roles role_id="3400"
+                        uuid="e86f6e46-7fe8-41e9-bb41-efd28f5e7d9a"
                         name="info_manager" />
     <ccm_core.ccm_roles role_id="3500"
+                        uuid="0e131584-d097-4078-8f7c-09d0dbac2181"
                         name="info_publisher" />
     <ccm_core.ccm_roles role_id="3600"
+                        uuid="0f1bab87-6b48-4c68-9844-bb93325befdc"
                         name="info_content_reader" />
     
     <ccm_cms.content_section_roles role_id="3100" 
