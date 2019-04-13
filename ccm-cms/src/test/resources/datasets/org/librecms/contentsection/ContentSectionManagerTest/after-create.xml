@@ -609,7 +609,7 @@
                           creation_date="2016-07-15"
                           inherited="false" />
     <ccm_core.permissions permission_id="4550" 
-                          uuid="f626540a-e774-4f13-941a-b433abd43c53"
+                          uuid="ea874ff3-e05e-4df7-86d5-bf00438a8e8e"
                           granted_privilege="publish_items" 
                           object_id="1100" 
                           grantee_id="3500" 
@@ -1087,7 +1087,7 @@
                           creation_date="2016-07-15"
                           inherited="false" />
     <ccm_core.permissions permission_id="512000" 
-                          uuid="434b869c-9fee-4f89-b494-240b8b7da901"
+                          uuid="08dd743a-a66f-4f72-b71c-f6ab76004069"
                           granted_privilege="create_new_items" 
                           object_id="1200" 
                           grantee_id="32000" 
@@ -1129,7 +1129,7 @@
                           creation_date="2016-07-15"
                           inherited="false" />
     <ccm_core.permissions permission_id="518000"
-                          uuid="ac847eaa-109d-4bc7-a3bb-1baca47d1f78"
+                          uuid="c8e3d9bb-b8cd-420c-ad52-8c77a1d908db"
                           granted_privilege="edit_asset"
                           object_id="1200"
                           grantee_id="32000"
@@ -1444,7 +1444,7 @@
                           creation_date="2016-07-15"
                           inherited="false" />
     <ccm_core.permissions permission_id="559500" 
-                          uuid="716dcf79-a72a-4b03-b3b7-a9f38289d24a"
+                          uuid="38981ac6-32e4-41a9-b068-dc39a723e0fc"
                           granted_privilege="delete_assets" 
                           object_id="1200" 
                           grantee_id="35000" 
@@ -1472,7 +1472,8 @@
                           creation_date="2016-07-15"
                           inherited="true" 
                           inherited_from_id="1200" />
-    <ccm_core.permissions permission_id="5120000" 
+    <ccm_core.permissions permission_id="5120000"
+                          uuid="2d16effc-d1a2-47e0-8a6f-61154e754734"
                           granted_privilege="create_new_items" 
                           object_id="2300" 
                           grantee_id="32000" 
@@ -1568,7 +1569,7 @@
                           inherited="true" 
                           inherited_from_id="1200" />
     <ccm_core.permissions permission_id="5370000" 
-                          uuid="1710d481-6691-4b7f-9882-ef99384954e4"
+                          uuid="a8afe198-18b0-461d-83ff-c480357672ab"
                           granted_privilege="create_new_items" 
                           object_id="2300" 
                           grantee_id="34000" 
