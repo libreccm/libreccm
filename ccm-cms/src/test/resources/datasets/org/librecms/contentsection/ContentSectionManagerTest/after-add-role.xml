@@ -532,7 +532,7 @@
                           creation_date="2016-07-15"
                           inherited="false" />
     <ccm_core.permissions permission_id="4550" 
-                          uuid="f626540a-e774-4f13-941a-b433abd43c53"
+                          uuid="ea874ff3-e05e-4df7-86d5-bf00438a8e8e"
                           granted_privilege="publish_items" 
                           object_id="1100" 
                           grantee_id="3500" 
