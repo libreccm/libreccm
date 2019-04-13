@@ -302,16 +302,22 @@
                               type="folder" />
     
     <ccm_core.ccm_roles role_id="3100"
+                        uuid="05306ce9-c4bd-4a03-9737-b836d0db94bf"
                         name="info_alert_recipient" />
     <ccm_core.ccm_roles role_id="3200"
+                        uuid="43e8d5d3-1509-4dbe-99d7-6c8a213e4705"
                         name="info_author" />
     <ccm_core.ccm_roles role_id="3300"
+                        uuid="b5b48475-4d58-4646-be95-44b1fafb0136"
                         name="info_editor" />
     <ccm_core.ccm_roles role_id="3400"
+                        uuid="7a818326-0f1b-4aba-9a2e-9cbe9db7618a"
                         name="info_manager" />
     <ccm_core.ccm_roles role_id="3500"
+                        uuid="e7c2a956-1474-40cb-8e98-1507276a3c35"
                         name="info_publisher" />
     <ccm_core.ccm_roles role_id="3600"
+                        uuid="e7c2a956-1474-40cb-8e98-1507276a3c35"
                         name="info_content_reader" />
     
     <ccm_cms.content_section_roles role_id="3100" 
@@ -328,116 +334,139 @@
                                    section_id="1100" />
     
     <ccm_core.permissions permission_id="4110" 
+                          uuid="8c80497c-06bf-425e-b36d-c40c3665aa42"
                           granted_privilege="categorize_items" 
                           object_id="2100" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="41101" 
+                          uuid="8c80497c-06bf-425e-b36d-c40c3665aa42"
                           granted_privilege="categorize_items" 
                           object_id="10100" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="41102" 
+                          uuid="298c84b1-64b8-449e-99d0-b4332ed3da26"
                           granted_privilege="categorize_items" 
                           object_id="10200" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="41103" 
+                          uuid="582e5e87-2407-4367-85f9-c7b38624b465"
                           granted_privilege="categorize_items" 
                           object_id="10300" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="41104" 
+                          uuid="4d8e8ad6-3b38-4ab1-8c46-8cdf0e326676"
                           granted_privilege="categorize_items" 
                           object_id="10400" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="4120" 
+                          uuid="f91b1f8e-1c60-43a8-9606-493f79f96bc9"
                           granted_privilege="create_new_items" 
                           object_id="2100" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="41201" 
+                          uuid="bd562b41-b07c-4033-9229-0169cf53ab91"
                           granted_privilege="create_new_items" 
                           object_id="10100" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="41202" 
+                          uuid="0c2808ab-b80b-4529-9391-13e7426f8ff8"
                           granted_privilege="create_new_items" 
                           object_id="10200" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="41203" 
+                          uuid="8f42b266-7fbe-43e7-abbe-fafba229c8a4"
                           granted_privilege="create_new_items" 
                           object_id="10300" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="41204" 
+                          uuid="6c2a3ef2-395c-4322-b1b3-674566586b77"
                           granted_privilege="create_new_items" 
                           object_id="10400" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="4130" 
+                          uuid="cbbebcc5-520e-435e-b164-98d9cc4130e3"
                           granted_privilege="edit_items" 
                           object_id="2100" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="41301" 
+                          uuid="43b07edb-c824-4eb1-9989-c45211f03735"
                           granted_privilege="edit_items" 
                           object_id="10100" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="41302" 
+                          uuid="827822b8-c127-475d-a87e-cf1a9f21a1ce"
                           granted_privilege="edit_items" 
                           object_id="10200" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="41303" 
+                          uuid="b3961e11-28fb-4f32-92e4-a4c74abaac2c"
                           granted_privilege="edit_items" 
                           object_id="10300" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="41304" 
+    
                           granted_privilege="edit_items" 
                           object_id="10400" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="4140" 
+    
                           granted_privilege="view_published_items" 
                           object_id="2100" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="41401" 
+
                           granted_privilege="view_published_items" 
                           object_id="10100" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="41402" 
+
                           granted_privilege="view_published_items" 
                           object_id="10200" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="41403" 
+
                           granted_privilege="view_published_items" 
                           object_id="10300" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="41404" 
+
                           granted_privilege="view_published_items" 
                           object_id="10400" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="4150" 
+
                           granted_privilege="preview_items" 
                           object_id="2100" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="4151" 
+
                           granted_privilege="preview_items" 
                           object_id="10100" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="41502" 
+
                           granted_privilege="preview_items" 
                           object_id="10200" 
                           grantee_id="3200" 
@@ -448,21 +477,25 @@
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="41504" 
+
                           granted_privilege="preview_items" 
                           object_id="10400" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="4210" 
+
                           granted_privilege="categorize_items" 
                           object_id="2100" 
                           grantee_id="3300" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="42101" 
+
                           granted_privilege="categorize_items" 
                           object_id="10100" 
                           grantee_id="3300" 
                           creation_date="2016-07-15"/>
     <ccm_core.permissions permission_id="42102" 
+
                           granted_privilege="categorize_items" 
                           object_id="10200" 
                           grantee_id="3300" 
