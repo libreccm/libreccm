@@ -121,6 +121,7 @@ public class ShortcutManagerTest {
             .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
             .addClass(com.arsdigita.kernel.KernelConfig.class)
+            .addClass(org.libreccm.imexport.Exportable.class)
             .addClass(org.libreccm.shortcuts.Shortcut.class)
             .addClass(org.libreccm.shortcuts.ShortcutManager.class)
             .addClass(org.libreccm.shortcuts.ShortcutRepository.class)
