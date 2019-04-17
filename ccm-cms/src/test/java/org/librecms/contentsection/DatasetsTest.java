@@ -127,10 +127,10 @@ public class DatasetsTest extends DatasetsVerifier {
     @Override
     public String[] getDdlFiles() {
         return new String[]{
-            "/sql/ddl/auto/h2.sql"
-//            "/datasets/h2/001_create_schema.sql",
-//            "/datasets/h2/002_create_ccm_cms_tables.sql",
-//            "/datasets/h2/003_init_hibernate_sequence.sql",
+//            "/sql/ddl/auto/h2.sql"
+            "/scripts/datasets-test/001_create_schema.sql",
+            "/scripts/datasets-test/002_create_ccm_cms_tables.sql",
+            "/scripts/datasets-test/003_init_hibernate_sequence.sql",
         };
     }
 
