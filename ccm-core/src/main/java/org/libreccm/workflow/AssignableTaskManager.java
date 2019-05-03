@@ -26,10 +26,12 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -78,6 +80,7 @@ public class AssignableTaskManager implements Serializable {
         final TaskAssignment assignment = new TaskAssignment();
         assignment.setTask(task);
         assignment.setRole(role);
+        assignment.setUuid(UUID.randomUUID().toString());
 
         task.addAssignment(assignment);
         role.addAssignedTask(assignment);
