@@ -147,6 +147,7 @@ public class ContentItemL10NManagerTest {
             .addClass(
                 com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class)
             .addClass(org.librecms.dispatcher.ItemResolver.class)
+            .addClass(org.libreccm.imexport.Exportable.class)
             .addPackage(com.arsdigita.util.Lockable.class.getPackage())
             .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
             .addPackage(org.librecms.Cms.class.getPackage())
@@ -191,7 +192,7 @@ public class ContentItemL10NManagerTest {
                       + "ContentItemL10NManagerTest/data.xml")
     public void verifyHasLanguage() {
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            final Optional<ContentItem> item = itemRepo.findById(10100L);
             assertThat(item.isPresent(), is(true));
 
             assertThat(l10nManager.hasLanguage(item.get(), Locale.ENGLISH),
@@ -235,7 +236,7 @@ public class ContentItemL10NManagerTest {
     public void hasLanguageLanguageIsNull() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            final Optional<ContentItem> item = itemRepo.findById(10100L);
             assertThat(item.isPresent(), is(true));
 
             assertThat(l10nManager.hasLanguage(item.get(), null),
@@ -259,7 +260,7 @@ public class ContentItemL10NManagerTest {
     public void addLanguage() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            final Optional<ContentItem> item = itemRepo.findById(10100L);
             assertThat(item.isPresent(), is(true));
 
             l10nManager.addLanguage(item.get(), Locale.GERMAN);
@@ -281,7 +282,7 @@ public class ContentItemL10NManagerTest {
     public void addLanguageAlreadyPresent() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            final Optional<ContentItem> item = itemRepo.findById(10100L);
             assertThat(item.isPresent(), is(true));
 
             l10nManager.addLanguage(item.get(), Locale.FRENCH);
@@ -327,7 +328,7 @@ public class ContentItemL10NManagerTest {
     public void addLanguageLanguageIsNull() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            final Optional<ContentItem> item = itemRepo.findById(10100L);
             assertThat(item.isPresent(), is(true));
 
             l10nManager.addLanguage(item.get(), null);
@@ -349,7 +350,7 @@ public class ContentItemL10NManagerTest {
     public void removeLanguage() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            final Optional<ContentItem> item = itemRepo.findById(10100L);
             assertThat(item.isPresent(), is(true));
 
             l10nManager.removeLanguage(item.get(), Locale.FRENCH);
@@ -371,7 +372,7 @@ public class ContentItemL10NManagerTest {
     public void removeNotPresentLanguage() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            final Optional<ContentItem> item = itemRepo.findById(10100L);
             assertThat(item.isPresent(), is(true));
 
             l10nManager.removeLanguage(item.get(), Locale.GERMAN);
@@ -418,7 +419,7 @@ public class ContentItemL10NManagerTest {
     public void removeLanguageLanguageIsNull() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            final Optional<ContentItem> item = itemRepo.findById(10100L);
             assertThat(item.isPresent(), is(true));
 
             l10nManager.removeLanguage(item.get(), null);
@@ -441,7 +442,7 @@ public class ContentItemL10NManagerTest {
     public void normalizeItem() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10200L);
+            final Optional<ContentItem> item = itemRepo.findById(10200L);
             assertThat(item.isPresent(), is(true));
 
             l10nManager.normalizeLanguages(item.get());
@@ -463,7 +464,7 @@ public class ContentItemL10NManagerTest {
     public void normalizeItemAlreadyNormalized() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            final Optional<ContentItem> item = itemRepo.findById(10100L);
             assertThat(item.isPresent(), is(true));
 
             l10nManager.normalizeLanguages(item.get());
