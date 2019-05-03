@@ -226,7 +226,7 @@ public class AssetManagerTest {
     public void shareAsset() throws MimeTypeParseException {
 
         shiro.getSystemUser().execute(() -> {
-            final Folder folder = folderRepo.findById(-420L).get();
+            final Folder folder = folderRepo.findById(420L).get();
             assertThat(folder, is(not(nullValue())));
 
             final FileAsset file = new FileAsset();
@@ -260,7 +260,7 @@ public class AssetManagerTest {
     public void shareAssetNull() {
 
         shiro.getSystemUser().execute(() -> {
-            final Folder folder = folderRepo.findById(-420L).get();
+            final Folder folder = folderRepo.findById(420L).get();
 
             assetManager.shareAsset(null, folder);
         });
@@ -315,9 +315,9 @@ public class AssetManagerTest {
     public void shareAlreadySharedAsset() {
 
         shiro.getSystemUser().execute(() -> {
-            final Folder folder = folderRepo.findById(-420L).get();
+            final Folder folder = folderRepo.findById(420L).get();
 
-            final Asset asset = assetRepo.findById(-700L).get();
+            final Asset asset = assetRepo.findById(700L).get();
 
             assetManager.shareAsset(asset, folder);
         });
@@ -360,10 +360,10 @@ public class AssetManagerTest {
     public void moveAssetToOtherFolder() {
 
         shiro.getSystemUser().execute(() -> {
-            final Asset asset = assetRepo.findById(-900L).get();
+            final Asset asset = assetRepo.findById(900L).get();
 
             shiro.getSystemUser().execute(() -> {
-                final Folder folder = folderRepo.findById(-410L).get();
+                final Folder folder = folderRepo.findById(410L).get();
 
                 assetManager.move(asset, folder);
             });
@@ -390,9 +390,9 @@ public class AssetManagerTest {
     public void moveAssetToFolderInOtherContentSection() {
 
         shiro.getSystemUser().execute(() -> {
-            final Asset asset = assetRepo.findById(-900L).get();
+            final Asset asset = assetRepo.findById(900L).get();
 
-            final Folder folder = folderRepo.findById(-1600L).get();
+            final Folder folder = folderRepo.findById(1600L).get();
 
             assetManager.move(asset, folder);
         });
@@ -415,7 +415,7 @@ public class AssetManagerTest {
         final Asset asset = null;
 
         shiro.getSystemUser().execute(() -> {
-            final Folder folder = folderRepo.findById(-410L).get();
+            final Folder folder = folderRepo.findById(410L).get();
 
             assetManager.move(asset, folder);
         });
@@ -437,7 +437,7 @@ public class AssetManagerTest {
     public void moveAssetTargetFolderIsNull() {
 
         shiro.getSystemUser().execute(() -> {
-            final Asset asset = assetRepo.findById(-900L).get();
+            final Asset asset = assetRepo.findById(900L).get();
 
             final Folder targetFolder = null;
 
@@ -461,9 +461,9 @@ public class AssetManagerTest {
     public void moveAssetTargetFolderIsNotAssetFolder() {
 
         shiro.getSystemUser().execute(() -> {
-            final Asset asset = assetRepo.findById(-900L).get();
+            final Asset asset = assetRepo.findById(900L).get();
 
-            final Folder folder = folderRepo.findById(-200L).get();
+            final Folder folder = folderRepo.findById(200L).get();
 
             assetManager.move(asset, folder);
         });
@@ -491,9 +491,9 @@ public class AssetManagerTest {
     public void copyAssetToOtherFolder() {
 
         shiro.getSystemUser().execute(() -> {
-            final Asset asset = assetRepo.findById(-1100L).get();
+            final Asset asset = assetRepo.findById(1100L).get();
 
-            final Folder targetFolder = folderRepo.findById(-400L).get();
+            final Folder targetFolder = folderRepo.findById(400L).get();
 
             assetManager.copy(asset, targetFolder);
         });
@@ -521,9 +521,9 @@ public class AssetManagerTest {
     public void copyAssetToSameFolder() {
 
         shiro.getSystemUser().execute(() -> {
-            final Asset asset = assetRepo.findById(-1100L).get();
+            final Asset asset = assetRepo.findById(1100L).get();
 
-            final Folder targetFolder = folderRepo.findById(-420L).get();
+            final Folder targetFolder = folderRepo.findById(420L).get();
 
             assetManager.copy(asset, targetFolder);
         });
@@ -552,9 +552,9 @@ public class AssetManagerTest {
     public void copyAssetToOtherContentSection() {
 
         shiro.getSystemUser().execute(() -> {
-            final Asset asset = assetRepo.findById(-1100L).get();
+            final Asset asset = assetRepo.findById(1100L).get();
 
-            final Folder targetFolder = folderRepo.findById(-1600L).get();
+            final Folder targetFolder = folderRepo.findById(1600L).get();
 
             assetManager.copy(asset, targetFolder);
         });
@@ -578,7 +578,7 @@ public class AssetManagerTest {
         shiro.getSystemUser().execute(() -> {
             final Asset asset = null;
 
-            final Folder targetFolder = folderRepo.findById(-420L).get();
+            final Folder targetFolder = folderRepo.findById(420L).get();
 
             assetManager.copy(asset, targetFolder);
         });
@@ -600,7 +600,7 @@ public class AssetManagerTest {
     public void copyAssetTargetFolderIsNull() {
 
         shiro.getSystemUser().execute(() -> {
-            final Asset asset = assetRepo.findById(-1100L).get();
+            final Asset asset = assetRepo.findById(1100L).get();
 
             final Folder targetFolder = null;
 
@@ -624,9 +624,9 @@ public class AssetManagerTest {
     public void copyAssetTargetFolderIsNotAssetFolder() {
 
         shiro.getSystemUser().execute(() -> {
-            final Asset asset = assetRepo.findById(-1100L).get();
+            final Asset asset = assetRepo.findById(1100L).get();
 
-            final Folder targetFolder = folderRepo.findById(-200L).get();
+            final Folder targetFolder = folderRepo.findById(200L).get();
 
             assetManager.copy(asset, targetFolder);
         });
@@ -646,11 +646,11 @@ public class AssetManagerTest {
     public void verifyIsAssetInUse() {
 
         shiro.getSystemUser().execute(() -> {
-            final Asset header = assetRepo.findById(-700L).get();
-            final Asset phb = assetRepo.findById(-800L).get();
-            final Asset servicesHeader = assetRepo.findById(-900L).get();
-            final Asset product1Datasheet = assetRepo.findById(-1000L).get();
-            final Asset catalog = assetRepo.findById(-1100L).get();
+            final Asset header = assetRepo.findById(700L).get();
+            final Asset phb = assetRepo.findById(800L).get();
+            final Asset servicesHeader = assetRepo.findById(900L).get();
+            final Asset product1Datasheet = assetRepo.findById(1000L).get();
+            final Asset catalog = assetRepo.findById(1100L).get();
 
             assertThat(assetManager.isAssetInUse(header), is(true));
             assertThat(assetManager.isAssetInUse(phb), is(false));
@@ -676,11 +676,11 @@ public class AssetManagerTest {
     public void verifyGetAssetPathWithoutContentSection() {
 
         shiro.getSystemUser().execute(() -> {
-            final Asset header = assetRepo.findById(-700L).get();
-            final Asset phb = assetRepo.findById(-800L).get();
-            final Asset servicesHeader = assetRepo.findById(-900L).get();
-            final Asset product1Datasheet = assetRepo.findById(-1000L).get();
-            final Asset catalog = assetRepo.findById(-1100L).get();
+            final Asset header = assetRepo.findById(700L).get();
+            final Asset phb = assetRepo.findById(800L).get();
+            final Asset servicesHeader = assetRepo.findById(900L).get();
+            final Asset product1Datasheet = assetRepo.findById(1000L).get();
+            final Asset catalog = assetRepo.findById(1100L).get();
 
             assertThat(assetManager.getAssetPath(header),
                        is(equalTo("/media/images/header.png")));
@@ -709,11 +709,11 @@ public class AssetManagerTest {
     public void verifyGetAssetPathWithContentSection() {
 
         shiro.getSystemUser().execute(() -> {
-            final Asset header = assetRepo.findById(-700L).get();
-            final Asset phb = assetRepo.findById(-800L).get();
-            final Asset servicesHeader = assetRepo.findById(-900L).get();
-            final Asset product1Datasheet = assetRepo.findById(-1000L).get();
-            final Asset catalog = assetRepo.findById(-1100L).get();
+            final Asset header = assetRepo.findById(700L).get();
+            final Asset phb = assetRepo.findById(800L).get();
+            final Asset servicesHeader = assetRepo.findById(900L).get();
+            final Asset product1Datasheet = assetRepo.findById(1000L).get();
+            final Asset catalog = assetRepo.findById(1100L).get();
 
             assertThat(assetManager.getAssetPath(header, true),
                        is(equalTo("info:/media/images/header.png")));
@@ -742,15 +742,15 @@ public class AssetManagerTest {
     public void verifyGetAssetFolder() {
 
         shiro.getSystemUser().execute(() -> {
-            final Asset header = assetRepo.findById(-700L).get();
-            final Asset phb = assetRepo.findById(-800L).get();
-            final Asset servicesHeader = assetRepo.findById(-900L).get();
-            final Asset product1Datasheet = assetRepo.findById(-1000L).get();
-            final Asset catalog = assetRepo.findById(-1100L).get();
+            final Asset header = assetRepo.findById(700L).get();
+            final Asset phb = assetRepo.findById(800L).get();
+            final Asset servicesHeader = assetRepo.findById(900L).get();
+            final Asset product1Datasheet = assetRepo.findById(1000L).get();
+            final Asset catalog = assetRepo.findById(1100L).get();
 
-            final Folder media = folderRepo.findById(-400L).get();
-            final Folder images = folderRepo.findById(-410L).get();
-            final Folder downloads = folderRepo.findById(-420L).get();
+            final Folder media = folderRepo.findById(400L).get();
+            final Folder images = folderRepo.findById(410L).get();
+            final Folder downloads = folderRepo.findById(420L).get();
 
             final Optional<Folder> headerFolder = assetManager
                 .getAssetFolder(header);
@@ -790,16 +790,16 @@ public class AssetManagerTest {
     public void verifyGetAssetFolders() {
 
         shiro.getSystemUser().execute(() -> {
-            final Asset header = assetRepo.findById(-700L).get();
-            final Asset phb = assetRepo.findById(-800L).get();
-            final Asset servicesHeader = assetRepo.findById(-900L).get();
-            final Asset product1Datasheet = assetRepo.findById(-1000L).get();
-            final Asset catalog = assetRepo.findById(-1100L).get();
+            final Asset header = assetRepo.findById(700L).get();
+            final Asset phb = assetRepo.findById(800L).get();
+            final Asset servicesHeader = assetRepo.findById(900L).get();
+            final Asset product1Datasheet = assetRepo.findById(1000L).get();
+            final Asset catalog = assetRepo.findById(1100L).get();
 
-            final Folder infoAssets = folderRepo.findById(-300L).get();
-            final Folder media = folderRepo.findById(-400L).get();
-            final Folder images = folderRepo.findById(-410L).get();
-            final Folder downloads = folderRepo.findById(-420L).get();
+            final Folder infoAssets = folderRepo.findById(300L).get();
+            final Folder media = folderRepo.findById(400L).get();
+            final Folder images = folderRepo.findById(410L).get();
+            final Folder downloads = folderRepo.findById(420L).get();
 
             final List<Folder> headerFolders = assetManager.getAssetFolders(
                 header);
