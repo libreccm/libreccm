@@ -302,10 +302,13 @@
                               type="folder" />
     
     <ccm_core.parties party_id="6100" 
+                      uuid="7e052b7f-cf83-4c20-8af6-57e2ee6cfe09"
                       name="user1" />
-    <ccm_core.parties party_id="6200" 
+    <ccm_core.parties party_id="6200"
+                      uuid="360e9abb-ba79-4af4-a4fa-5f9fa89101b2" 
                       name="user2" />
     <ccm_core.parties party_id="6300" 
+                      uuid="8ef38deb-1e41-4313-b1a3-1d567a5461b9"
                       name="user3" />
     
     <ccm_core.users party_id="6100" 
@@ -331,55 +334,67 @@
                     password_reset_required="false" />
     
     <ccm_core.ccm_roles role_id="3100"
+                        uuid="0f2ffebe-14da-4cf7-9bec-5b98d3042f7d"
                         name="role1" />
     <ccm_core.ccm_roles role_id="3200"
+                        uuid="549500c7-f480-416c-84d7-e44085be673a"
                         name="role2" />
     <ccm_core.ccm_roles role_id="3300"
+                        uuid="e96bb3e6-8f9e-4808-9b88-649d0e03f9cd"
                         name="role3" />
     
     <ccm_core.role_memberships membership_id="7100" 
+                               uuid="7b3341f4-efa1-4308-9073-189feac36604"
                                role_id="3100"
                                member_id="6100" />
 
     <ccm_core.role_memberships membership_id="7200" 
+                               uuid="b0b9626d-2a1e-44d4-bc82-4162b1295776"
                                role_id="3200"
                                member_id="6200" />
     
     <ccm_core.role_memberships membership_id="7300" 
+                               uuid="d4a44af8-3120-48eb-9250-c32dc9437f76"
                                role_id="3300"
                                member_id="6300" />
             
     <ccm_core.permissions permission_id="4100" 
+                          uuid="eece720a-3c17-4dc9-97ba-33a494a09811"
                           granted_privilege="view_draft_items" 
                           object_id="10100" 
                           grantee_id="3100" 
                           creation_date="2016-07-15"
                           inherited="false" />
     <ccm_core.permissions permission_id="4200" 
+                          uuid="75cd2fb9-ff4f-423e-8aa1-03773e449e5f"
                           granted_privilege="view_draft_items" 
                           object_id="10400" 
                           grantee_id="3100" 
                           creation_date="2016-07-15"
                           inherited="false" />
     <ccm_core.permissions permission_id="4300" 
+                          uuid="0b42e0cb-9033-43ff-ab6d-d23d8f4af462"
                           granted_privilege="view_draft_items" 
                           object_id="10200" 
                           grantee_id="3200" 
                           creation_date="2016-07-15"
                           inherited="false" />
     <ccm_core.permissions permission_id="4400" 
+                          uuid="2c46f05a-14c6-4fe1-a2f9-7f8ad879b2b8"
                           granted_privilege="view_draft_items" 
                           object_id="10100" 
                           grantee_id="3300" 
                           creation_date="2016-07-15"
                           inherited="false" />
     <ccm_core.permissions permission_id="4500" 
+                          uuid="11653539-8473-4630-8dc9-642483bc5629"
                           granted_privilege="view_draft_items" 
                           object_id="10200" 
                           grantee_id="3300" 
                           creation_date="2016-07-15"
                           inherited="false" />
     <ccm_core.permissions permission_id="4600" 
+                          uuid="6eb424d0-b155-4481-bbca-233abe411872"
                           granted_privilege="view_draft_items" 
                           object_id="10300" 
                           grantee_id="3300" 
