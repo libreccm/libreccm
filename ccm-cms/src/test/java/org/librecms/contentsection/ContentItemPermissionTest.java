@@ -210,6 +210,7 @@ public class ContentItemPermissionTest {
             .addClass(com.arsdigita.kernel.KernelConfig.class)
             .addClass(org.libreccm.security.GroupRepository.class)
             .addClass(org.libreccm.security.PermissionManager.class)
+            .addClass(org.libreccm.security.PermissionRepository.class)
             .addClass(org.libreccm.security.RoleRepository.class)
             .addClass(org.libreccm.security.UserRepository.class)
             .addClass(org.libreccm.security.Shiro.class)
@@ -244,6 +245,7 @@ public class ContentItemPermissionTest {
             .addClass(org.libreccm.core.CcmObjectRepository.class)
             //Required by org.libreccm.core.CcmObjectRepository
             .addClass(org.libreccm.core.CoreConstants.class)
+            .addClass(org.libreccm.imexport.Exportable.class)
             //Dependencies from other modules and resources
             .addAsLibraries(getCcmCoreDependencies())
             .addAsResource("test-persistence.xml",
