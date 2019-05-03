@@ -168,6 +168,7 @@ public class ContentItemManagerTest {
             .addClass(
                 com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class)
             .addClass(org.librecms.dispatcher.ItemResolver.class)
+            .addClass(org.libreccm.imexport.Exportable.class)
             .addPackage(com.arsdigita.util.Lockable.class.getPackage())
             .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
             .addPackage(org.librecms.Cms.class.getPackage())
@@ -430,7 +431,7 @@ public class ContentItemManagerTest {
             final Folder folder = section.getRootDocumentsFolder();
 
             final Workflow workflowTemplate = workflowRepo
-                .findById(-110L)
+                .findById(110L)
                 .get();
 
             final Article article = itemManager.createContentItem(
@@ -479,7 +480,7 @@ public class ContentItemManagerTest {
             final Folder folder = section.getRootDocumentsFolder();
 
             final Workflow workflowTemplate = workflowRepo
-                .findById(-110L)
+                .findById(110L)
                 .get();
 
             itemManager.createContentItem("Test",
@@ -513,7 +514,7 @@ public class ContentItemManagerTest {
             final Folder folder = section.getRootDocumentsFolder();
 
             final Workflow workflowTemplate = workflowRepo
-                .findById(-110L)
+                .findById(110L)
                 .get();
 
             itemManager.createContentItem(null,
@@ -576,7 +577,7 @@ public class ContentItemManagerTest {
                 .get();
 
             final Workflow workflowTemplate = workflowRepo
-                .findById(-110L)
+                .findById(110L)
                 .get();
 
             itemManager.createContentItem("Test",
@@ -611,10 +612,10 @@ public class ContentItemManagerTest {
     public void moveItem() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            final Optional<ContentItem> item = itemRepo.findById(10100L);
             assertThat(item.isPresent(), is(true));
 
-            final Folder targetFolder = folderRepo.findById(-2120L).get();
+            final Folder targetFolder = folderRepo.findById(2120L).get();
             assertThat(targetFolder, is(not(nullValue())));
 
             itemManager.move(item.get(), targetFolder);
@@ -644,8 +645,8 @@ public class ContentItemManagerTest {
     public void moveItemToOtherContentSection() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10100L);
-            final Folder targetFolder = folderRepo.findById(-2300L).get();
+            final Optional<ContentItem> item = itemRepo.findById(10100L);
+            final Folder targetFolder = folderRepo.findById(2300L).get();
 
             assertThat(item.isPresent(), is(true));
             assertThat(targetFolder, is(not(nullValue())));
@@ -671,8 +672,8 @@ public class ContentItemManagerTest {
     public void moveToOtherContentSectionTypeNotPresent() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10400L);
-            final Folder targetFolder = folderRepo.findById(-2300L).get();
+            final Optional<ContentItem> item = itemRepo.findById(10400L);
+            final Folder targetFolder = folderRepo.findById(2300L).get();
 
             assertThat(item.isPresent(), is(true));
             assertThat(targetFolder, is(not(nullValue())));
@@ -697,7 +698,7 @@ public class ContentItemManagerTest {
     public void moveItemNull() {
 
         shiro.getSystemUser().execute(() -> {
-            final Folder targetFolder = folderRepo.findById(-2120L).get();
+            final Folder targetFolder = folderRepo.findById(2120L).get();
             assertThat(targetFolder, is(not(nullValue())));
 
             itemManager.move(null, targetFolder);
@@ -720,7 +721,7 @@ public class ContentItemManagerTest {
     public void moveItemTargetFolderIsNull() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            final Optional<ContentItem> item = itemRepo.findById(10100L);
             assertThat(item.isPresent(), is(true));
 
             itemManager.move(item.get(), null);
@@ -758,10 +759,10 @@ public class ContentItemManagerTest {
     public void copyToOtherFolder() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            final Optional<ContentItem> item = itemRepo.findById(10100L);
             assertThat(item.isPresent(), is(true));
 
-            final Folder targetFolder = folderRepo.findById(-2120L).get();
+            final Folder targetFolder = folderRepo.findById(2120L).get();
             assertThat(targetFolder, is(not(nullValue())));
 
             itemManager.copy(item.get(), targetFolder);
@@ -799,8 +800,8 @@ public class ContentItemManagerTest {
     public void copyToFolderInOtherSection() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> source = itemRepo.findById(-10100L);
-            final Folder targetFolder = folderRepo.findById(-2300L).get();
+            final Optional<ContentItem> source = itemRepo.findById(10100L);
+            final Folder targetFolder = folderRepo.findById(2300L).get();
 
             assertThat(source.isPresent(), is(true));
             assertThat(targetFolder, is(not(nullValue())));
@@ -831,8 +832,8 @@ public class ContentItemManagerTest {
     public void copyToFolderInOtherSectionTypeNotPresent() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> source = itemRepo.findById(-10400L);
-            final Folder targetFolder = folderRepo.findById(-2300L).get();
+            final Optional<ContentItem> source = itemRepo.findById(10400L);
+            final Folder targetFolder = folderRepo.findById(2300L).get();
 
             assertThat(source.isPresent(), is(true));
             assertThat(targetFolder, is(not(nullValue())));
@@ -874,10 +875,10 @@ public class ContentItemManagerTest {
     public void copyToSameFolder() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            final Optional<ContentItem> item = itemRepo.findById(10100L);
             assertThat(item.isPresent(), is(true));
 
-            final Folder targetFolder = folderRepo.findById(-2110L).get();
+            final Folder targetFolder = folderRepo.findById(2110L).get();
             assertThat(targetFolder, is(not(nullValue())));
 
             itemManager.copy(item.get(), targetFolder);
@@ -901,7 +902,7 @@ public class ContentItemManagerTest {
     public void copyItemNull() {
 
         shiro.getSystemUser().execute(() -> {
-            final Folder targetFolder = folderRepo.findById(-2120L).get();
+            final Folder targetFolder = folderRepo.findById(2120L).get();
             assertThat(targetFolder, is(not(nullValue())));
 
             itemManager.copy(null, targetFolder);
@@ -925,7 +926,7 @@ public class ContentItemManagerTest {
     public void copyItemToFolderNull() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            final Optional<ContentItem> item = itemRepo.findById(10100L);
             assertThat(item.isPresent(), is(true));
 
             itemManager.copy(item.get(), null);
@@ -966,7 +967,7 @@ public class ContentItemManagerTest {
     public void publishItem() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            final Optional<ContentItem> item = itemRepo.findById(10100L);
             assertThat(item.isPresent(), is(true));
 
             final ContentItem live = itemManager.publish(item.get());
@@ -1009,9 +1010,9 @@ public class ContentItemManagerTest {
     public void publishItemWithLifecycle() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10100L);
+            final Optional<ContentItem> item = itemRepo.findById(10100L);
             final LifecycleDefinition lifecycleDef = lifecycleDefinitionRepo
-                .findById(-200L).get();
+                .findById(200L).get();
             assertThat(item.isPresent(), is(true));
             assertThat(lifecycleDef, is(not(nullValue())));
 
@@ -1047,7 +1048,7 @@ public class ContentItemManagerTest {
     public void republishItem() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10200L);
+            final Optional<ContentItem> item = itemRepo.findById(10200L);
             assertThat(item.isPresent(), is(true));
 
             item.get().getName().addValue(Locale.ENGLISH, "article2-edited");
@@ -1055,7 +1056,7 @@ public class ContentItemManagerTest {
                 .addValue(Locale.ENGLISH, "Article has been edited");
             itemRepo.save(item.get());
 
-            final Optional<ContentItem> draft = itemRepo.findById(-10200L);
+            final Optional<ContentItem> draft = itemRepo.findById(10200L);
             assertThat(draft.get().getName().getValue(Locale.ENGLISH),
                        is(equalTo("article2-edited")));
             itemManager.publish(draft.get());
@@ -1100,7 +1101,7 @@ public class ContentItemManagerTest {
     public void publishItemLifecycleIsNull() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> draft = itemRepo.findById(-10200L);
+            final Optional<ContentItem> draft = itemRepo.findById(10200L);
 
             itemManager.publish(draft.get(), null);
         });
@@ -1132,7 +1133,7 @@ public class ContentItemManagerTest {
     public void unpublishItem() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10200L);
+            final Optional<ContentItem> item = itemRepo.findById(10200L);
             assertThat(item.isPresent(), is(true));
 
             itemManager.unpublish(item.get());
@@ -1153,7 +1154,7 @@ public class ContentItemManagerTest {
     public void unpublishNonLiveItem() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-10300L);
+            final Optional<ContentItem> item = itemRepo.findById(10300L);
             assertThat(item.isPresent(), is(true));
 
             itemManager.unpublish(item.get());
@@ -1195,10 +1196,10 @@ public class ContentItemManagerTest {
     public void isLive() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item1 = itemRepo.findById(-10100L);
-            final Optional<ContentItem> item2 = itemRepo.findById(-10200L);
-            final Optional<ContentItem> item3 = itemRepo.findById(-10300L);
-            final Optional<ContentItem> item4 = itemRepo.findById(-10400L);
+            final Optional<ContentItem> item1 = itemRepo.findById(10100L);
+            final Optional<ContentItem> item2 = itemRepo.findById(10200L);
+            final Optional<ContentItem> item3 = itemRepo.findById(10300L);
+            final Optional<ContentItem> item4 = itemRepo.findById(10400L);
 
             assertThat(item1.isPresent(), is(true));
             assertThat(item2.isPresent(), is(true));
@@ -1228,12 +1229,12 @@ public class ContentItemManagerTest {
     public void getLiveVersion() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> draft1 = itemRepo.findById(-10100L);
-            final Optional<ContentItem> draft2 = itemRepo.findById(-10200L);
-            final Optional<ContentItem> draft3 = itemRepo.findById(-10300L);
-            final Optional<ContentItem> draft4 = itemRepo.findById(-10400L);
+            final Optional<ContentItem> draft1 = itemRepo.findById(10100L);
+            final Optional<ContentItem> draft2 = itemRepo.findById(10200L);
+            final Optional<ContentItem> draft3 = itemRepo.findById(10300L);
+            final Optional<ContentItem> draft4 = itemRepo.findById(10400L);
 
-            final Optional<ContentItem> live2 = itemRepo.findById(-99200L);
+            final Optional<ContentItem> live2 = itemRepo.findById(99200L);
 
             assertThat(itemManager.getLiveVersion(draft1.get(),
                                                   ContentItem.class).isPresent(),
@@ -1243,7 +1244,7 @@ public class ContentItemManagerTest {
             assertThat(liveVersion.isPresent(),
                        is(true));
             assertThat(liveVersion.get().getObjectId(),
-                       is(-99200L));
+                       is(99200L));
             assertThat(liveVersion.get().getItemUuid(),
                        is(equalTo("acae860f-2ffa-450d-b486-054292f0dae6")));
             assertThat(liveVersion.get().getVersion(),
@@ -1260,7 +1261,7 @@ public class ContentItemManagerTest {
             assertThat(fromLive.isPresent(),
                        is(true));
             assertThat(fromLive.get().getObjectId(),
-                       is(-99200L));
+                       is(99200L));
             assertThat(fromLive.get().getItemUuid(),
                        is(equalTo("acae860f-2ffa-450d-b486-054292f0dae6")));
             assertThat(fromLive.get().getVersion(),
@@ -1283,35 +1284,35 @@ public class ContentItemManagerTest {
     public void getDraftVersion() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> draft1 = itemRepo.findById(-10100L);
-            final Optional<ContentItem> draft2 = itemRepo.findById(-10200L);
-            final Optional<ContentItem> draft3 = itemRepo.findById(-10300L);
-            final Optional<ContentItem> draft4 = itemRepo.findById(-10400L);
+            final Optional<ContentItem> draft1 = itemRepo.findById(10100L);
+            final Optional<ContentItem> draft2 = itemRepo.findById(10200L);
+            final Optional<ContentItem> draft3 = itemRepo.findById(10300L);
+            final Optional<ContentItem> draft4 = itemRepo.findById(10400L);
 
             assertThat(itemManager.getDraftVersion(draft1.get(),
                                                    ContentItem.class)
                 .getObjectId(),
-                       is(-10100L));
+                       is(10100L));
             assertThat(itemManager.getDraftVersion(draft2.get(),
                                                    ContentItem.class)
                 .getObjectId(),
-                       is(-10200L));
+                       is(10200L));
             assertThat(itemManager.getDraftVersion(draft3.get(),
                                                    ContentItem.class)
                 .getObjectId(),
-                       is(-10300L));
+                       is(10300L));
             assertThat(itemManager.getDraftVersion(draft4.get(),
                                                    ContentItem.class)
                 .getObjectId(),
-                       is(-10400L));
+                       is(10400L));
 
-            final Optional<ContentItem> live2 = itemRepo.findById(-99200L);
+            final Optional<ContentItem> live2 = itemRepo.findById(99200L);
 
             final ContentItem draftVersion = itemManager.getDraftVersion(
                 live2.get(), ContentItem.class);
 
             assertThat(draftVersion, is(not(nullValue())));
-            assertThat(draftVersion.getObjectId(), is(-10200L));
+            assertThat(draftVersion.getObjectId(), is(10200L));
             assertThat(draftVersion.getItemUuid(),
                        is(equalTo("acae860f-2ffa-450d-b486-054292f0dae6")));
             assertThat(draftVersion.getVersion(),
