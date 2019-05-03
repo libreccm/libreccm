@@ -144,6 +144,7 @@ public class AttachmentListManagerTest {
             .addClass(
                 com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class)
             .addClass(org.librecms.dispatcher.ItemResolver.class)
+            .addClass(org.libreccm.imexport.Exportable.class)
             .addPackage(com.arsdigita.util.Lockable.class.getPackage())
             .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
             .addPackage(org.librecms.Cms.class.getPackage())
@@ -202,8 +203,8 @@ public class AttachmentListManagerTest {
             + "data.xml")
     public void getAttachmentListNames() {
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> article1 = itemRepo.findById(-510);
-            final Optional<ContentItem> article2 = itemRepo.findById(-520);
+            final Optional<ContentItem> article1 = itemRepo.findById(510);
+            final Optional<ContentItem> article2 = itemRepo.findById(520);
 
             assertThat(article1.isPresent(), is(true));
             assertThat(article2.isPresent(), is(true));
@@ -260,9 +261,9 @@ public class AttachmentListManagerTest {
         final Subject systemUser = shiro.getSystemUser();
 
         final Optional<ContentItem> article1 = systemUser
-            .execute(() -> itemRepo.findById(-510));
+            .execute(() -> itemRepo.findById(510));
         final Optional<ContentItem> article2 = systemUser
-            .execute(() -> itemRepo.findById(-520));
+            .execute(() -> itemRepo.findById(520));
 
         assertThat(article1.isPresent(), is(true));
         assertThat(article2.isPresent(), is(true));
@@ -329,7 +330,7 @@ public class AttachmentListManagerTest {
         final Subject systemUser = shiro.getSystemUser();
 
         final Optional<ContentItem> item = systemUser
-            .execute(() -> itemRepo.findById(-510));
+            .execute(() -> itemRepo.findById(510));
 
         assertThat(item.isPresent(), is(true));
 
@@ -352,7 +353,7 @@ public class AttachmentListManagerTest {
         final Subject systemUser = shiro.getSystemUser();
 
         final Optional<ContentItem> item = systemUser
-            .execute(() -> itemRepo.findById(-510));
+            .execute(() -> itemRepo.findById(510));
 
         assertThat(item.isPresent(), is(true));
 
@@ -381,7 +382,7 @@ public class AttachmentListManagerTest {
     public void createAttachmentList() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-520);
+            final Optional<ContentItem> item = itemRepo.findById(520);
             assertThat(item.isPresent(), is(true));
 
             listManager.createAttachmentList(item.get(), "newList");
@@ -429,7 +430,7 @@ public class AttachmentListManagerTest {
     public void createAttachmentListNameIsNull() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-520);
+            final Optional<ContentItem> item = itemRepo.findById(520);
             assertThat(item.isPresent(), is(true));
 
             listManager.createAttachmentList(item.get(), null);
@@ -453,7 +454,7 @@ public class AttachmentListManagerTest {
     public void createAttachmentListNameIsEmpty() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-520);
+            final Optional<ContentItem> item = itemRepo.findById(520);
             assertThat(item.isPresent(), is(true));
 
             listManager.createAttachmentList(item.get(), "  ");
@@ -480,7 +481,7 @@ public class AttachmentListManagerTest {
     public void createAttachmentListWithPosition() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-510);
+            final Optional<ContentItem> item = itemRepo.findById(510);
             assertThat(item.isPresent(), is(true));
 
             listManager.createAttachmentList(item.get(), "newList", 1);
@@ -510,7 +511,7 @@ public class AttachmentListManagerTest {
     public void createAttachmentListWithNegativePosition() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-510);
+            final Optional<ContentItem> item = itemRepo.findById(510);
             assertThat(item.isPresent(), is(true));
 
             listManager.createAttachmentList(item.get(), "newList", -3);
@@ -541,7 +542,7 @@ public class AttachmentListManagerTest {
     public void createAttachmentListWithPositionAfterLast() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-510);
+            final Optional<ContentItem> item = itemRepo.findById(510);
             assertThat(item.isPresent(), is(true));
 
             listManager.createAttachmentList(item.get(), "newList", 10);
@@ -590,7 +591,7 @@ public class AttachmentListManagerTest {
     public void createAttachmentListWithPositionNameIsNull() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-510);
+            final Optional<ContentItem> item = itemRepo.findById(510);
             assertThat(item.isPresent(), is(true));
 
             listManager.createAttachmentList(item.get(), null, 10);
@@ -615,7 +616,7 @@ public class AttachmentListManagerTest {
     public void createAttachmentListWithPositionNameIsEmpty() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-510);
+            final Optional<ContentItem> item = itemRepo.findById(510);
             assertThat(item.isPresent(), is(true));
 
             listManager.createAttachmentList(item.get(), "   ", 10);
@@ -640,7 +641,7 @@ public class AttachmentListManagerTest {
     public void removeAttachmentList() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-510);
+            final Optional<ContentItem> item = itemRepo.findById(510);
             assertThat(item.isPresent(), is(true));
             final AttachmentList list = item.get().getAttachments().get(0);
 
@@ -685,7 +686,7 @@ public class AttachmentListManagerTest {
     public void moveUp() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-510);
+            final Optional<ContentItem> item = itemRepo.findById(510);
             assertThat(item.isPresent(), is(true));
             final AttachmentList list = item.get().getAttachments().get(0);
 
@@ -708,7 +709,7 @@ public class AttachmentListManagerTest {
     public void moveUpLast() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-510);
+            final Optional<ContentItem> item = itemRepo.findById(510);
             assertThat(item.isPresent(), is(true));
             final AttachmentList list = item.get().getAttachments().get(2);
 
@@ -755,7 +756,7 @@ public class AttachmentListManagerTest {
     public void moveDown() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-510);
+            final Optional<ContentItem> item = itemRepo.findById(510);
             assertThat(item.isPresent(), is(true));
             final AttachmentList list = item.get().getAttachments().get(2);
 
@@ -778,7 +779,7 @@ public class AttachmentListManagerTest {
     public void moveDownFirst() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-510);
+            final Optional<ContentItem> item = itemRepo.findById(510);
             assertThat(item.isPresent(), is(true));
             final AttachmentList list = item.get().getAttachments().get(0);
 
