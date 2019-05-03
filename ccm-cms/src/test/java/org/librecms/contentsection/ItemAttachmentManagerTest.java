@@ -151,6 +151,7 @@ public class ItemAttachmentManagerTest {
             .addClass(
                 com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class)
             .addClass(org.librecms.dispatcher.ItemResolver.class)
+            .addClass(org.libreccm.imexport.Exportable.class)
             .addPackage(com.arsdigita.util.Lockable.class.getPackage())
             .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
             .addPackage(org.librecms.Cms.class.getPackage())
@@ -217,10 +218,10 @@ public class ItemAttachmentManagerTest {
     public void attachNonSharedAsset() throws MimeTypeParseException {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            final Optional<ContentItem> item = itemRepo.findById(510L);
             assertThat(item.isPresent(), is(true));
 
-            final Asset file = assetRepo.findById(-720L).get();
+            final Asset file = assetRepo.findById(720L).get();
 
             attachmentManager.attachAsset(file, item.get().getAttachments().get(
                                           1));
@@ -246,10 +247,10 @@ public class ItemAttachmentManagerTest {
     public void attachSharedAsset() throws MimeTypeParseException {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            final Optional<ContentItem> item = itemRepo.findById(510L);
             assertThat(item.isPresent(), is(true));
 
-            final Asset shared = assetRepo.findById(-610L).get();
+            final Asset shared = assetRepo.findById(610L).get();
 
             attachmentManager.attachAsset(shared,
                                           item.get().getAttachments().get(1));
@@ -271,10 +272,10 @@ public class ItemAttachmentManagerTest {
     public void attachAssetAlreadyAttached() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            final Optional<ContentItem> item = itemRepo.findById(510L);
             assertThat(item.isPresent(), is(true));
 
-            final Asset shared = assetRepo.findById(-620L).get();
+            final Asset shared = assetRepo.findById(620L).get();
 
             attachmentManager.attachAsset(shared,
                                           item.get().getAttachments().get(1));
@@ -297,7 +298,7 @@ public class ItemAttachmentManagerTest {
     public void attachAssetNull() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            final Optional<ContentItem> item = itemRepo.findById(510L);
             assertThat(item.isPresent(), is(true));
 
             final Asset asset = null;
@@ -324,7 +325,7 @@ public class ItemAttachmentManagerTest {
 
         shiro.getSystemUser().execute(() -> {
             final AttachmentList list = null;
-            final Asset shared = assetRepo.findById(-610L).get();
+            final Asset shared = assetRepo.findById(610L).get();
 
             attachmentManager.attachAsset(shared, list);
         });
@@ -346,8 +347,8 @@ public class ItemAttachmentManagerTest {
     public void unattachSharedAsset() {
 
         shiro.getSystemUser().execute(() -> {
-            final Asset asset = assetRepo.findById(-610L).get();
-            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            final Asset asset = assetRepo.findById(610L).get();
+            final Optional<ContentItem> item = itemRepo.findById(510L);
 
             assertThat(asset, is(not(nullValue())));
             assertThat(item.isPresent(), is(true));
@@ -376,8 +377,8 @@ public class ItemAttachmentManagerTest {
     public void unattachNonSharedAsset() {
 
         shiro.getSystemUser().execute(() -> {
-            final Asset asset = assetRepo.findById(-720L).get();
-            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            final Asset asset = assetRepo.findById(720L).get();
+            final Optional<ContentItem> item = itemRepo.findById(510L);
 
             assertThat(asset, is(not(nullValue())));
             assertThat(item.isPresent(), is(true));
@@ -403,8 +404,8 @@ public class ItemAttachmentManagerTest {
     public void unattachAssetNotAttached() {
 
         shiro.getSystemUser().execute(() -> {
-            final Asset asset = assetRepo.findById(-720L).get();
-            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            final Asset asset = assetRepo.findById(720L).get();
+            final Optional<ContentItem> item = itemRepo.findById(510L);
 
             assertThat(asset, is(not(nullValue())));
             assertThat(item.isPresent(), is(true));
@@ -433,7 +434,7 @@ public class ItemAttachmentManagerTest {
         shiro.getSystemUser().execute(() -> {
             final Asset asset = null;
 
-            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            final Optional<ContentItem> item = itemRepo.findById(510L);
             assertThat(item.isPresent(), is(true));
 
             final AttachmentList list = item.get().getAttachments().get(0);
@@ -458,7 +459,7 @@ public class ItemAttachmentManagerTest {
     public void unattachAssetFromListNull() {
 
         shiro.getSystemUser().execute(() -> {
-            final Asset asset = assetRepo.findById(-720L).get();
+            final Asset asset = assetRepo.findById(720L).get();
             assertThat(asset, is(not(nullValue())));
 
             final AttachmentList list = null;
@@ -483,7 +484,7 @@ public class ItemAttachmentManagerTest {
     public void moveUp() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            final Optional<ContentItem> item = itemRepo.findById(510L);
             assertThat(item.isPresent(), is(true));
 
             final AttachmentList list = item.get().getAttachments().get(0);
@@ -507,7 +508,7 @@ public class ItemAttachmentManagerTest {
     public void moveUpLast() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            final Optional<ContentItem> item = itemRepo.findById(510L);
             assertThat(item.isPresent(), is(true));
 
             final AttachmentList list = item.get().getAttachments().get(0);
@@ -533,7 +534,7 @@ public class ItemAttachmentManagerTest {
     public void moveUpNull() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            final Optional<ContentItem> item = itemRepo.findById(510L);
             assertThat(item.isPresent(), is(true));
 
             final AttachmentList list = item.get().getAttachments().get(0);
@@ -558,7 +559,7 @@ public class ItemAttachmentManagerTest {
     public void moveUpInListNull() {
 
         shiro.getSystemUser().execute(() -> {
-            final Asset asset = assetRepo.findById(-720L).get();
+            final Asset asset = assetRepo.findById(720L).get();
             assertThat(asset, is(not(nullValue())));
 
             final AttachmentList list = null;
@@ -583,7 +584,7 @@ public class ItemAttachmentManagerTest {
     public void moveDown() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            final Optional<ContentItem> item = itemRepo.findById(510L);
             assertThat(item.isPresent(), is(true));
 
             final AttachmentList list = item.get().getAttachments().get(0);
@@ -607,7 +608,7 @@ public class ItemAttachmentManagerTest {
     public void moveDownFirst() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            final Optional<ContentItem> item = itemRepo.findById(510L);
             assertThat(item.isPresent(), is(true));
 
             final AttachmentList list = item.get().getAttachments().get(0);
@@ -633,7 +634,7 @@ public class ItemAttachmentManagerTest {
     public void moveDownNull() {
 
         shiro.getSystemUser().execute(() -> {
-            final Optional<ContentItem> item = itemRepo.findById(-510L);
+            final Optional<ContentItem> item = itemRepo.findById(510L);
             assertThat(item.isPresent(), is(true));
 
             final AttachmentList list = item.get().getAttachments().get(0);
@@ -658,7 +659,7 @@ public class ItemAttachmentManagerTest {
     public void moveDownInListNull() {
 
         shiro.getSystemUser().execute(() -> {
-            final Asset asset = assetRepo.findById(-720L).get();
+            final Asset asset = assetRepo.findById(720L).get();
             assertThat(asset, is(not(nullValue())));
 
             final AttachmentList list = null;
