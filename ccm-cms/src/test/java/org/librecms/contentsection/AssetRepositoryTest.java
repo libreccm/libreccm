@@ -71,8 +71,18 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
-@CreateSchema({"create_ccm_cms_schema.sql"})
-@CleanupUsingScript({"cleanup.sql"})
+@CreateSchema(
+    {
+        "001_create_schema.sql",
+        "002_create_ccm_cms_tables.sql",
+        "003_init_hibernate_sequence.sql"
+    }
+)
+@CleanupUsingScript(
+    {
+        "999_cleanup.sql"
+    }
+)
 public class AssetRepositoryTest {
 
     @Inject
@@ -142,6 +152,7 @@ public class AssetRepositoryTest {
             .addClass(
                 com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class)
             .addClass(org.librecms.dispatcher.ItemResolver.class)
+            .addClass(org.libreccm.imexport.Exportable.class)
             .addPackage(com.arsdigita.util.Lockable.class.getPackage())
             .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
             .addPackage(org.librecms.Cms.class.getPackage())
@@ -206,7 +217,7 @@ public class AssetRepositoryTest {
     public void deleteUnusedAsset() {
 
         shiro.getSystemUser().execute(() -> {
-            final Asset asset = assetRepo.findById(-800L).get();
+            final Asset asset = assetRepo.findById(800L).get();
 
             assetRepo.delete(asset);
         });
@@ -216,6 +227,7 @@ public class AssetRepositoryTest {
      * Verifies that an {@link Asset} which is associated to at least one
      * {@link ContentItem} can't be deleted by using
      * {@link AssetRepository#delete(org.librecms.assets.Asset)}.
+     *
      * @throws java.lang.Throwable
      */
     @Test(expected = AssetInUseException.class)
@@ -230,7 +242,7 @@ public class AssetRepositoryTest {
 
         try {
             shiro.getSystemUser().execute(() -> {
-                final Asset asset = assetRepo.findById(-700L).get();
+                final Asset asset = assetRepo.findById(700L).get();
                 assetRepo.delete(asset);
 
                 return null;
@@ -372,8 +384,8 @@ public class AssetRepositoryTest {
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void findAssetsByFolder() {
 
-        final Folder media = folderRepo.findById(-400L).get();
-        final Folder data = folderRepo.findById(-500L).get();
+        final Folder media = folderRepo.findById(400L).get();
+        final Folder data = folderRepo.findById(500L).get();
 
         final List<Asset> mediaAssets = shiro
             .getSystemUser()
@@ -397,8 +409,8 @@ public class AssetRepositoryTest {
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void countAssetsInFolder() {
 
-        final Folder media = folderRepo.findById(-400L).get();
-        final Folder data = folderRepo.findById(-500L).get();
+        final Folder media = folderRepo.findById(400L).get();
+        final Folder data = folderRepo.findById(500L).get();
 
         final Subject systemUser = shiro.getSystemUser();
 
@@ -422,7 +434,7 @@ public class AssetRepositoryTest {
 
         final Folder media = shiro
             .getSystemUser()
-            .execute(() -> folderRepo.findById(-400L).get());
+            .execute(() -> folderRepo.findById(400L).get());
 
         final List<Asset> result1 = shiro
             .getSystemUser()
@@ -448,7 +460,7 @@ public class AssetRepositoryTest {
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void countFilterAssetByFolderAndTitle() {
 
-        final Folder media = folderRepo.findById(-400L).get();
+        final Folder media = folderRepo.findById(400L).get();
 
         final Subject systemUser = shiro.getSystemUser();
 
@@ -475,7 +487,7 @@ public class AssetRepositoryTest {
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void filterAssetsByFolderAndType() {
 
-        final Folder media = folderRepo.findById(-400L).get();
+        final Folder media = folderRepo.findById(400L).get();
 
         final Subject systemUser = shiro.getSystemUser();
 
@@ -514,7 +526,7 @@ public class AssetRepositoryTest {
     @UsingDataSet(
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void countFilterAssetsByFolderAndType() {
-        final Folder media = folderRepo.findById(-400L).get();
+        final Folder media = folderRepo.findById(400L).get();
 
         final Subject systemUser = shiro.getSystemUser();
 
@@ -547,7 +559,7 @@ public class AssetRepositoryTest {
     @UsingDataSet(
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void filterAssetsByFolderAndTypeAndTitle() {
-        final Folder media = folderRepo.findById(-400L).get();
+        final Folder media = folderRepo.findById(400L).get();
 
         final List<Asset> result1 = shiro
             .getSystemUser()
@@ -575,7 +587,7 @@ public class AssetRepositoryTest {
     @UsingDataSet(
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void countFilterAssetsByFolderAndTypeAndTitle() {
-        final Folder media = folderRepo.findById(-400L).get();
+        final Folder media = folderRepo.findById(400L).get();
 
         final Subject systemUser = shiro.getSystemUser();
 
