@@ -2,7 +2,7 @@
 
 # Provides shortcuts for working with LibreCCM
 
-wildfly_version="12.0.0.Final"
+wildfly_version="16.0.0.Final"
 wildfly_pid_file="./WILDFLY_PID"
 wildfly_home=""
 
