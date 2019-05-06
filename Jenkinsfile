@@ -10,6 +10,11 @@ pipeline {
                     sh 'mvn clean package test -Pwildfly-remote-h2-mem' 
                 }
             }
+            post {
+                always {
+                    sh 'sudo systemctl restart wildfly'
+                }
+            }
         }
         stage("Analyse") {
             steps {
