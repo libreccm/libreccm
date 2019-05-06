@@ -22,12 +22,12 @@ pipeline {
     post {
         success {
             mail to: 'developers@scientificcms.org',
-                 subject: "${currentBuild.fullDisplayName} was successful"
+                 subject: "${currentBuild.fullDisplayName} was successful",
                  body: "Build ${env.BUILD_URL} was successful."
         }
         failure {
             mail to: 'developers@scientificcms.org',
-                 subject: "${currentBuild.fullDisplayName} FAILED!!!"
+                 subject: "${currentBuild.fullDisplayName} FAILED!!!",
                  body: "Build ${env.BUILD_URL} failed."
         }
         always {
