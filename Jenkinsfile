@@ -17,13 +17,13 @@ pipeline {
             //     }
             // }
         }
-        // stage("Analyse") {
-        //     steps {
-        //         dir('') {
-        //             sh 'mvn package pmd:pmd pmd:cpd spotbugs:spotbugs'
-        //         }
-        //     }           
-        // }
+        stage("Analyse") {
+            steps {
+                dir('') {
+                    sh 'mvn package pmd:pmd pmd:cpd spotbugs:spotbugs'
+                }
+            }           
+        }
     }
     post {
         success {
@@ -36,13 +36,13 @@ pipeline {
                  subject: "${currentBuild.fullDisplayName} FAILED!!!",
                  body: "Build ${env.BUILD_URL} failed."
         }
-        // always {
-            // junit testResults: '**/target/surefire-reports/*.xml'
+        always {
+            junit testResults: '**/target/surefire-reports/*.xml'
 
-            // recordIssues enabledForFailure: true, tools: [java(), javaDoc()]
-            // recordIssues enabledForFailure: false, tool: spotBugs()
-            // recordIssues enabledForFailure: false, tool: cpd(pattern: '**/target/cpd.xml')
-            // recordIssues enabledForFailure: false, tool: pmdParser(pattern: '**/target/pmd.xml')
-        // }
+            recordIssues enabledForFailure: true, tools: [java(), javaDoc()]
+            recordIssues enabledForFailure: false, tool: spotBugs()
+            recordIssues enabledForFailure: false, tool: cpd(pattern: '**/target/cpd.xml')
+            recordIssues enabledForFailure: false, tool: pmdParser(pattern: '**/target/pmd.xml')
+        }
     }
 }
