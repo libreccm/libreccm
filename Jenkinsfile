@@ -36,13 +36,13 @@ pipeline {
                  subject: "${currentBuild.fullDisplayName} FAILED!!!",
                  body: "Build ${env.BUILD_URL} failed."
         }
-        always {
+        // always {
             // junit testResults: '**/target/surefire-reports/*.xml'
 
             // recordIssues enabledForFailure: true, tools: [java(), javaDoc()]
             // recordIssues enabledForFailure: false, tool: spotBugs()
             // recordIssues enabledForFailure: false, tool: cpd(pattern: '**/target/cpd.xml')
             // recordIssues enabledForFailure: false, tool: pmdParser(pattern: '**/target/pmd.xml')
-        }
+        // }
     }
 }
