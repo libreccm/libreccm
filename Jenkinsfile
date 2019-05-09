@@ -8,14 +8,14 @@ pipeline {
             steps {
                 dir('') {
                     // sh 'mvn clean package test -Pwildfly-remote-h2-mem' 
-                    sh 'mvn clean package'
+                    sh 'mvn clean package -Pwildfly-remote-h2-mem'
                 }
             }
-            // post {
-            //     always {
-            //         sh 'sudo systemctl restart wildfly'
-            //     }
-            // }
+            post {
+                always {
+                    sh 'sudo systemctl restart wildfly'
+                }
+            }
         }
         stage("Analyse") {
             steps {
