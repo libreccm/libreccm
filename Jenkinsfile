@@ -8,7 +8,7 @@ pipeline {
             steps {
                 dir('') {
                     // sh 'mvn clean package test -Pwildfly-remote-h2-mem' 
-                    sh 'mvn clean package test'
+                    sh 'mvn clean package'
                 }
             }
             // post {
