@@ -7,22 +7,23 @@ pipeline {
         stage('Build and Test')  {
             steps {
                 dir('') {
-                    sh 'mvn clean package test -Pwildfly-remote-h2-mem' 
+                    // sh 'mvn clean package test -Pwildfly-remote-h2-mem' 
+                    sh 'mvn clean package -DskipTests'                     
                 }
             }
-            post {
-                always {
-                    sh 'sudo systemctl restart wildfly'
-                }
-            }
+            // post {
+            //     always {
+            //         sh 'sudo systemctl restart wildfly'
+            //     }
+            // }
         }
-        stage("Analyse") {
-            steps {
-                dir('') {
-                    sh 'mvn package pmd:pmd pmd:cpd spotbugs:spotbugs'
-                }
-            }           
-        }
+        // stage("Analyse") {
+        //     steps {
+        //         dir('') {
+        //             sh 'mvn package pmd:pmd pmd:cpd spotbugs:spotbugs'
+        //         }
+        //     }           
+        // }
     }
     post {
         success {
@@ -36,12 +37,12 @@ pipeline {
                  body: "Build ${env.BUILD_URL} failed."
         }
         always {
-            junit testResults: '**/target/surefire-reports/*.xml'
+            // junit testResults: '**/target/surefire-reports/*.xml'
 
-            recordIssues enabledForFailure: true, tools: [java(), javaDoc()]
-            recordIssues enabledForFailure: false, tool: spotBugs()
-            recordIssues enabledForFailure: false, tool: cpd(pattern: '**/target/cpd.xml')
-            recordIssues enabledForFailure: false, tool: pmdParser(pattern: '**/target/pmd.xml')
+            // recordIssues enabledForFailure: true, tools: [java(), javaDoc()]
+            // recordIssues enabledForFailure: false, tool: spotBugs()
+            // recordIssues enabledForFailure: false, tool: cpd(pattern: '**/target/cpd.xml')
+            // recordIssues enabledForFailure: false, tool: pmdParser(pattern: '**/target/pmd.xml')
         }
     }
 }
