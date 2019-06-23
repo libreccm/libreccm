@@ -221,6 +221,21 @@
         primary key (COMPONENT_MODEL_ID)
     );
 
+    create table CCM_CMS.CONTACT_ENTRIES (
+       CONTACT_ENTRY_ID bigint not null,
+        ENTRY_KEY varchar(255) not null,
+        ENTRY_ORDER bigint,
+        ENTRY_VALUE varchar(4096),
+        CONTACTABLE_ID bigint,
+        primary key (CONTACT_ENTRY_ID)
+    );
+
+    create table CCM_CMS.CONTACTABLE_ENTITIES (
+       OBJECT_ID bigint not null,
+        POSTAL_ADDRESS_ID bigint,
+        primary key (OBJECT_ID)
+    );
+
     create table CCM_CMS.CONTENT_ITEM_COMPONENTS (
        MODE varchar(255),
         COMPONENT_MODEL_ID bigint not null,
@@ -805,6 +820,12 @@
         primary key (REV, OBJECT_ID, LOCALIZED_VALUE, LOCALE)
     );
 
+    create table CCM_CMS.ORGANIZATIONS (
+       NAME varchar(1024),
+        OBJECT_ID bigint not null,
+        primary key (OBJECT_ID)
+    );
+
     create table CCM_CMS.PAGE_THEME_CONFIGURATIONS (
        PAGE_ID bigint not null,
         INDEX_PAGE_TEMPLATE varchar(255),
@@ -824,6 +845,26 @@
     create table CCM_CMS.PAGES_APP (
        OBJECT_ID bigint not null,
         CATEGORY_DOMAIN_ID bigint,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CMS.PERSONS (
+       BIRTHDATA date,
+        GIVEN_NAME varchar(255),
+        NAME_PREFIX varchar(255),
+        SUFFIX varchar(255),
+        SURNAME varchar(255),
+        OBJECT_ID bigint not null,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CMS.POSTAL_ADDRESSES (
+       ADDRESS varchar(2048),
+        CITY varchar(512),
+        ISO_COUNTRY_CODE varchar(10),
+        POSTAL_CODE varchar(255),
+        ADDRESS_STATE varchar(255),
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
@@ -1444,10 +1485,10 @@
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
         SETTING_VALUE_BIG_DECIMAL decimal(19,2),
+        SETTING_VALUE_STRING varchar(1024),
+        SETTING_VALUE_LONG bigint,
         SETTING_VALUE_DOUBLE double,
         SETTING_VALUE_BOOLEAN boolean,
-        SETTING_VALUE_LONG bigint,
-        SETTING_VALUE_STRING varchar(1024),
         primary key (SETTING_ID)
     );
 
@@ -1916,6 +1957,21 @@ create sequence hibernate_sequence start with 1 increment by 1;
        add constraint FKfhc51tkdf705o0sy8sndqpkqa 
        foreign key (COMPONENT_MODEL_ID) 
        references CCM_CORE.PAGE_MODEL_COMPONENT_MODELS;
+
+    alter table CCM_CMS.CONTACT_ENTRIES 
+       add constraint FKljrrfco44damal9eaqrnfam0m 
+       foreign key (CONTACTABLE_ID) 
+       references CCM_CMS.CONTACTABLE_ENTITIES;
+
+    alter table CCM_CMS.CONTACTABLE_ENTITIES 
+       add constraint FKqefwowr9adclj3xvpfje9rddr 
+       foreign key (POSTAL_ADDRESS_ID) 
+       references CCM_CMS.POSTAL_ADDRESSES;
+
+    alter table CCM_CMS.CONTACTABLE_ENTITIES 
+       add constraint FKhdwlhf3jp8wf5wxjkoynrcspj 
+       foreign key (OBJECT_ID) 
+       references CCM_CMS.ASSETS;
 
     alter table CCM_CMS.CONTENT_ITEM_COMPONENTS 
        add constraint FKp83o82kxo2ipa0xo03wxp4dcr 
@@ -2447,6 +2503,11 @@ create sequence hibernate_sequence start with 1 increment by 1;
        foreign key (REVEND) 
        references CCM_CORE.CCM_REVISIONS;
 
+    alter table CCM_CMS.ORGANIZATIONS 
+       add constraint FK77ig0to48xrlfx8qsc0vlfsp6 
+       foreign key (OBJECT_ID) 
+       references CCM_CMS.CONTACTABLE_ENTITIES;
+
     alter table CCM_CMS.PAGE_THEME_CONFIGURATIONS 
        add constraint FK6l6xp6ex6sh2uuxfmeekf6ckn 
        foreign key (PAGE_ID) 
@@ -2476,6 +2537,16 @@ create sequence hibernate_sequence start with 1 increment by 1;
        add constraint FKk4jb5fylibg2pbbaypyt6f8lb 
        foreign key (OBJECT_ID) 
        references CCM_CORE.SITE_AWARE_APPLICATIONS;
+
+    alter table CCM_CMS.PERSONS 
+       add constraint FKiv4ydysjekfx64pkb5v4vd9yj 
+       foreign key (OBJECT_ID) 
+       references CCM_CMS.CONTACTABLE_ENTITIES;
+
+    alter table CCM_CMS.POSTAL_ADDRESSES 
+       add constraint FK4vajjjjo8ro0wns58t8f3i782 
+       foreign key (OBJECT_ID) 
+       references CCM_CMS.ASSETS;
 
     alter table CCM_CMS.RELATED_LINKS 
        add constraint FKb517dnfj56oby2s34jp1omuim 
