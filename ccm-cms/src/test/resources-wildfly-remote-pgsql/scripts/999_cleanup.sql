@@ -18,6 +18,16 @@ DELETE FROM ccm_cms.binary_assets_aud;
 
 DELETE FROM ccm_cms.binary_assets;
 
+DELETE FROM ccm_cms.contact_entries;
+
+DELETE FROM ccm_cms.organizations;
+
+DELETE FROM ccm_cms.persons;
+
+DELETE FROM ccm_cms.contactable_entities;
+
+DELETE FROM ccm_cms.postal_addresses;
+
 DELETE FROM ccm_cms.asset_titles_aud;
 
 DELETE FROM ccm_cms.asset_titles;
