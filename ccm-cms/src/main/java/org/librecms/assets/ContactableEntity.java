@@ -37,7 +37,7 @@ import javax.persistence.Table;
 import static org.librecms.CmsConstants.*;
 
 /**
- * Base class for contactable entities.
+ * Base class for contactable entities. Not for public use
  * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
