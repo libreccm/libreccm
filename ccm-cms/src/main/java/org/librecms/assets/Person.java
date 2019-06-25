@@ -18,6 +18,8 @@
  */
 package org.librecms.assets;
 
+import org.hibernate.envers.Audited;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -26,6 +28,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import static org.librecms.CmsConstants.*;
+import static org.librecms.assets.AssetConstants.*;
 
 /**
  * An  asset representing a person.
@@ -34,6 +37,12 @@ import static org.librecms.CmsConstants.*;
  */
 @Entity
 @Table(name = "PERSONS", schema = DB_SCHEMA)
+@Audited
+//@AssetType(assetForm = PersonForm.class,
+//           labelBundle = ASSETS_BUNDLE,
+//           labelKey = "person.label",
+//           descriptionBundle = ASSETS_BUNDLE,
+//           descriptionKey = "person.description")
 public class Person extends ContactableEntity {
 
     private static final long serialVersionUID = 1L;

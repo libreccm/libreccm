@@ -33,6 +33,9 @@ import org.librecms.assets.ExternalVideoAsset;
 import org.librecms.assets.FileAsset;
 import org.librecms.assets.Image;
 import org.librecms.assets.LegalMetadata;
+import org.librecms.assets.Organization;
+import org.librecms.assets.Person;
+import org.librecms.assets.PostalAddress;
 import org.librecms.assets.SideNote;
 import org.librecms.assets.VideoAsset;
 
@@ -69,8 +72,7 @@ import java.util.Properties;
             descBundle = CmsConstants.CONTENT_CENTER_DESC_BUNDLE,
             creator = ContentCenterAppCreator.class,
             servlet = ContentCenterServlet.class
-        )
-        ,
+        ),
         @ApplicationType(
             name = CmsConstants.CONTENT_SECTION_APP_TYPE,
             applicationClass = ContentSection.class,
@@ -79,8 +81,7 @@ import java.util.Properties;
             descBundle = CmsConstants.CONTENT_SECTION_DESC_BUNDLE,
             creator = ContentSectionCreator.class,
             servletPath = "/templates/servlet/content-section"
-        )
-        ,
+        ),
         @ApplicationType(
             name = "org.librecms.pages.Pages",
             applicationClass = Pages.class,
@@ -100,16 +101,14 @@ import java.util.Properties;
             titleKey
                 = "cms.ui.pagemodel.components.categorized_item_component.title",
             descKey
-                = "cms.ui.pagemodel.components.categorized_item_component.desc")
-        ,
+                = "cms.ui.pagemodel.components.categorized_item_component.desc"),
         @PageModelComponentModel(
             modelClass = CategoryTreeComponent.class,
             editor = CategoryTreeComponentForm.class,
             descBundle = CmsConstants.CMS_BUNDLE,
             titleKey
                 = "cms.ui.pagemodel.components.category_tree_component.title",
-            descKey = "cms.ui.pagemodel.components.category_tree_component.desc")
-        ,
+            descKey = "cms.ui.pagemodel.components.category_tree_component.desc"),
         @PageModelComponentModel(
             modelClass = FixedContentItemComponent.class,
             editor = FixedContentItemComponentForm.class,
@@ -117,16 +116,14 @@ import java.util.Properties;
             titleKey
                 = "cms.ui.pagemodel.components.fixed_contentitem_component.title",
             descKey
-                = "cms.ui.pagemodel.components.fixed_contentitem_component.desc")
-        ,
+                = "cms.ui.pagemodel.components.fixed_contentitem_component.desc"),
         @PageModelComponentModel(
             modelClass = GreetingItemComponent.class,
             editor = GreetingItemComponentForm.class,
             descBundle = CmsConstants.CMS_BUNDLE,
             titleKey
                 = "cms.ui.pagemodel.components.greetingitem_component.title",
-            descKey = "cms.ui.pagemodel.components.greetingitem_component.desc")
-        ,
+            descKey = "cms.ui.pagemodel.components.greetingitem_component.desc"),
         @PageModelComponentModel(
             modelClass = ItemListComponent.class,
             editor = ItemListComponentForm.class,
@@ -138,7 +135,8 @@ import java.util.Properties;
 @ContentTypes({Article.class,
                Event.class,
                MultiPartArticle.class,
-               News.class})
+               News.class
+})
 @AssetTypes({AudioAsset.class,
              VideoAsset.class,
              Bookmark.class,
@@ -147,7 +145,11 @@ import java.util.Properties;
              FileAsset.class,
              Image.class,
              LegalMetadata.class,
-             SideNote.class})
+             Organization.class,
+             Person.class,
+             PostalAddress.class,
+             SideNote.class
+})
 public class Cms implements CcmModule {
 
     private static final Logger LOGGER = LogManager.getLogger(Cms.class);
