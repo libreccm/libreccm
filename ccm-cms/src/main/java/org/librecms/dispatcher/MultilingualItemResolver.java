@@ -151,8 +151,7 @@ public class MultilingualItemResolver implements ItemResolver {
             // nothing to do, if root folder is null
             LOGGER.debug("The root folder is null; returning no item");
         } else {
-            LOGGER.debug("Using root folder {}...",
-                         Objects.toString(rootFolder));
+            LOGGER.debug("Using root folder {}...", rootFolder.getName());
 
             if (ContentItemVersion.LIVE.toString().equals(context)) {
                 LOGGER.debug("The use context is 'live'");

@@ -18,16 +18,21 @@
  */
 package com.arsdigita.cms.ui.assets.forms;
 
+import com.arsdigita.bebop.ActionLink;
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.ControlLink;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.Table;
+import com.arsdigita.bebop.event.PrintEvent;
+import com.arsdigita.bebop.event.PrintListener;
 import com.arsdigita.bebop.event.TableActionEvent;
 import com.arsdigita.bebop.event.TableActionListener;
+import com.arsdigita.bebop.form.Option;
 import com.arsdigita.bebop.form.SingleSelect;
 import com.arsdigita.bebop.form.TextField;
+import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.table.TableCellRenderer;
 import com.arsdigita.bebop.table.TableColumn;
 import com.arsdigita.bebop.table.TableColumnModel;
@@ -40,6 +45,7 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.LockableImpl;
 
 import org.libreccm.cdi.utils.CdiUtil;
+import org.libreccm.configuration.ConfigurationManager;
 import org.librecms.CmsConstants;
 import org.librecms.assets.ContactEntry;
 import org.librecms.assets.ContactableEntity;
@@ -47,6 +53,8 @@ import org.librecms.assets.ContactableEntity;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+
+import static org.librecms.CmsConstants.*;
 
 /**
  *
@@ -62,28 +70,51 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
 
     private static final int COL_CONTACT_ENTRIES_REMOVE = 2;
 
+    private final AssetPane assetPane;
+
     private Table contactEntriesTable;
 
     private SingleSelect contactEntryKeySelect;
 
     private TextField contactEntryValueField;
 
+    private ActionLink addContactEntryLink;
+
     private AssetSearchWidget postalAddressSearchWidget;
 
     public AbstractContactableEntityForm(final AssetPane assetPane) {
+
         super(assetPane);
+
+        this.assetPane = assetPane;
     }
 
     @Override
     protected void addWidgets() {
 
-        contactEntriesTable = buildContactEntriesTable();
+        addPropertyWidgets();
 
+        contactEntriesTable = buildContactEntriesTable();
+        add(contactEntriesTable);
+
+        contactEntryKeySelect = new SingleSelect(new StringParameter(
+            "contactentry-key"));
+        add(contactEntryKeySelect);
     }
+
+    protected abstract void addPropertyWidgets();
 
     private Table buildContactEntriesTable() {
 
-        final Table table = new Table();
+        final Table table = new Table() {
+
+            @Override
+            public boolean isVisible(final PageState state) {
+                return getSelectedAsset(state).isPresent();
+            }
+
+        };
+
         final TableColumnModel columnModel = table.getColumnModel();
         columnModel.add(new TableColumn(
             COL_CONTACT_ENTRIES_KEY,
@@ -160,19 +191,15 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
     private class ContactEntriesTableModelBuilder
         extends LockableImpl implements TableModelBuilder {
 
-        private final ContactableEntity contactableEntity;
-
-        public ContactEntriesTableModelBuilder(
-            final ContactableEntity contactableEntity) {
-
-            this.contactableEntity = contactableEntity;
-        }
-
         @Override
         public TableModel makeModel(final Table table,
                                     final PageState state) {
 
-            final List<ContactEntry> contactEntries = contactableEntity
+            final ContactableEntity selected = getSelectedAsset(state)
+                .orElseThrow(
+                    () -> new IllegalStateException("No asset selected")
+                );
+            final List<ContactEntry> contactEntries = selected
                 .getContactEntries();
             return new ContactEntriesTableModel(contactEntries);
         }
@@ -249,6 +276,28 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
                                       final int column) {
 
             return new ControlLink((Component) value);
+        }
+
+    }
+
+    private class ContactEntryKeySelectPrintListener implements PrintListener {
+
+        @Override
+        public void prepare(final PrintEvent event) {
+
+            final SingleSelect target = (SingleSelect) event.getTarget();
+            target.clearOptions();
+
+            target.addOption(
+                new Option("",
+                           new Label(new GlobalizedMessage("cms.ui.select_one"),
+                                     CMS_BUNDLE))
+            );
+            
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            
+
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
     }

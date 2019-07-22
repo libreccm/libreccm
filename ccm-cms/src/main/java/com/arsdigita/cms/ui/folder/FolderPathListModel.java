@@ -38,19 +38,24 @@ import java.util.Locale;
 class FolderPathListModel implements ListModel {
 
     private final Locale defaultLocale;
+
     private final Iterator<Folder> pathFolders;
+
     private Folder currentFolder;
 
     public FolderPathListModel(final Folder folder) {
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final FolderManager folderManager = cdiUtil.findBean(FolderManager.class);
-        final List<Folder> parentFolders = folderManager.getParentFolders(folder);
+        final FolderManager folderManager = cdiUtil
+            .findBean(FolderManager.class);
+        final List<Folder> parentFolders = folderManager
+            .getParentFolders(folder);
         final List<Folder> path = new ArrayList<>();
         path.addAll(parentFolders);
         path.add(folder);
         pathFolders = path.iterator();
-        
-        final ConfigurationManager confManager = cdiUtil.findBean(ConfigurationManager.class);
+
+        final ConfigurationManager confManager = cdiUtil.findBean(
+            ConfigurationManager.class);
         final KernelConfig kernelConfig = confManager.findConfiguration(
             KernelConfig.class);
         defaultLocale = kernelConfig.getDefaultLocale();
@@ -68,7 +73,12 @@ class FolderPathListModel implements ListModel {
 
     @Override
     public Object getElement() {
-      return currentFolder.getTitle().getValue(defaultLocale);
+
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final FolderPathListModelController controller = cdiUtil
+            .findBean(FolderPathListModelController.class);
+
+        return controller.getElement(currentFolder, defaultLocale);
     }
 
     @Override

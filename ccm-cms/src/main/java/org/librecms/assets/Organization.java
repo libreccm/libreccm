@@ -18,6 +18,10 @@
  */
 package org.librecms.assets;
 
+import com.arsdigita.cms.ui.assets.forms.OrganizationForm;
+
+import org.hibernate.envers.Audited;
+
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -25,13 +29,20 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import static org.librecms.CmsConstants.*;
+import static org.librecms.assets.AssetConstants.*;
 
 /**
  * A reusable piece of information about an organization.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+@AssetType(assetForm = OrganizationForm.class,
+           labelBundle = ASSETS_BUNDLE,
+           labelKey = "organization.label",
+           descriptionBundle = ASSETS_BUNDLE,
+           descriptionKey = "organization.description")
 @Entity
+@Audited
 @Table(name = "ORGANIZATIONS", schema = DB_SCHEMA)
 public class Organization extends ContactableEntity {
 

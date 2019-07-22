@@ -18,8 +18,6 @@
  */
 package com.arsdigita.cms.ui.assets.forms;
 
-import com.arsdigita.bebop.form.TextArea;
-import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.cms.ui.assets.AssetPane;
 
 import org.librecms.assets.Bookmark;

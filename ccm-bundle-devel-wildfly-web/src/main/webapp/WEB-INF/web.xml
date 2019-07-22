@@ -66,7 +66,7 @@
         <param-value>true</param-value>
     </context-param>
     
-    <servlet>
+<!--    <servlet>
         <servlet-name>vaadin-servlet</servlet-name>
         <servlet-class>com.vaadin.cdi.server.VaadinCDIServlet</servlet-class>
     </servlet>
@@ -78,6 +78,6 @@
     <servlet-mapping>
         <servlet-name>vaadin-servlet</servlet-name>
         <url-pattern>/VAADIN/*</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>-->
     
 </web-app>

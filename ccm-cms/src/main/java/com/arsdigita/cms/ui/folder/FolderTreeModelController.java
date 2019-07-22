@@ -27,6 +27,7 @@ import org.librecms.contentsection.FolderRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -64,6 +65,32 @@ public class FolderTreeModelController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
+    public boolean hasTitleValue(final Folder ofFolder, 
+                                 final Locale forLocale) {
+
+        final Folder folder = folderRepo
+        .findById(ofFolder.getObjectId())
+        .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No folder with Id %d found.",
+            ofFolder.getObjectId())));
+        
+        return folder.getTitle().hasValue(forLocale);
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String getTitleValue(final Folder ofFolder, 
+                                final Locale forLocale) {
+        
+        final Folder folder = folderRepo
+        .findById(ofFolder.getObjectId())
+        .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No folder with Id %d found.",
+            ofFolder.getObjectId())));
+        
+        return folder.getTitle().getValue(forLocale);
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
     public boolean hasChildren(final TreeNode node) {
         return !getCurrentFolder(node).getSubCategories().isEmpty();
     }
@@ -87,11 +114,11 @@ public class FolderTreeModelController {
         }
         final List<Long> ancestorIds = new ArrayList<>();
         Category current = theFolder.get();
-        while(current != null) {
+        while (current != null) {
             ancestorIds.add(current.getObjectId());
             current = current.getParentCategory();
         }
-        
+
         return ancestorIds;
     }
 
