@@ -20,11 +20,16 @@ package org.libreccm.configuration;
 
 import org.libreccm.l10n.LocalizedString;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import javax.persistence.AssociationOverride;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 
 /**
  * A setting which stores a {@link LocalizedString} . This can be used for

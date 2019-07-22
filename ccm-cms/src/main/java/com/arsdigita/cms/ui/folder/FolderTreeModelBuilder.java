@@ -51,7 +51,7 @@ import org.libreccm.configuration.ConfigurationManager;
  * @author <a href="mailto:lutter@arsdigita.com">David Lutterkort</a>
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public abstract class FolderTreeModelBuilder 
+public abstract class FolderTreeModelBuilder
     extends LockableImpl
     implements TreeModelBuilder {
 
@@ -138,7 +138,6 @@ public abstract class FolderTreeModelBuilder
 //        final ContentSection section = CMS.getContext().getContentSection();
 //        return section.getRootDocumentsFolder();
 //    }
-    
     /**
      * Return the root folder for the tree model in the current request.
      *
@@ -167,16 +166,19 @@ public abstract class FolderTreeModelBuilder
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
             final GlobalizationHelper globalizationHelper = cdiUtil.findBean(
                 GlobalizationHelper.class);
+            final FolderTreeModelController controller = cdiUtil
+                .findBean(FolderTreeModelController.class);
             final Locale locale = globalizationHelper.getNegotiatedLocale();
-            if (folder.getTitle().hasValue(locale)) {
-                return folder.getTitle().getValue(locale);
+            if (controller.hasTitleValue(folder, locale)) {
+                return controller.getTitleValue(folder, locale);
             } else {
                 final ConfigurationManager confManager = cdiUtil.findBean(
                     ConfigurationManager.class);
                 final KernelConfig kernelConfig = confManager.findConfiguration(
                     KernelConfig.class);
-                final String value = folder.getTitle().getValue(kernelConfig.
-                    getDefaultLocale());
+                final String value = controller
+                    .getTitleValue(folder,
+                                   kernelConfig.getDefaultLocale());
                 if (value == null) {
                     return folder.getName();
                 } else {

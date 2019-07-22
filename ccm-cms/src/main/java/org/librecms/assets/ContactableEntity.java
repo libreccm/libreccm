@@ -20,6 +20,7 @@ package org.librecms.assets;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.envers.Audited;
 import org.librecms.contentsection.Asset;
 
 import java.util.ArrayList;
@@ -37,11 +38,13 @@ import javax.persistence.Table;
 import static org.librecms.CmsConstants.*;
 
 /**
- * Base class for contactable entities. Not for public use
+ * Base class for contactable entities. Not for public use, but needs to be 
+ * public to give UI classes in the {@code com.arsdigita} packages access.
  * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
+@Audited
 @Table(name = "CONTACTABLE_ENTITIES", schema = DB_SCHEMA)
 public class ContactableEntity extends Asset {
 
@@ -99,8 +102,8 @@ public class ContactableEntity extends Asset {
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 59 * hash + Objects.hashCode(this.contactEntries);
-        hash = 59 * hash + Objects.hashCode(this.postalAddress);
+        hash = 59 * hash + Objects.hashCode(contactEntries);
+        hash = 59 * hash + Objects.hashCode(postalAddress);
         return hash;
     }
 
@@ -124,10 +127,10 @@ public class ContactableEntity extends Asset {
         if (!other.canEqual(this)) {
             return false;
         }
-        if (!Objects.equals(this.contactEntries, other.getContactEntries())) {
+        if (!Objects.equals(contactEntries, other.getContactEntries())) {
             return false;
         }
-        return Objects.equals(this.postalAddress, other.getPostalAddress());
+        return Objects.equals(postalAddress, other.getPostalAddress());
     }
 
     @Override

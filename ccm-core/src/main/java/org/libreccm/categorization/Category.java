@@ -402,8 +402,8 @@ public class Category extends CcmObject implements Serializable, Exportable {
         int hash = super.hashCode();
         hash = 23 * hash + Objects.hashCode(uniqueId);
         hash = 23 * hash + Objects.hashCode(name);
-        hash = 23 * hash + Objects.hashCode(title);
-        hash = 23 * hash + Objects.hashCode(description);
+//        hash = 23 * hash + Objects.hashCode(title);
+//        hash = 23 * hash + Objects.hashCode(description);
         hash = 23 * hash + (enabled ? 1 : 0);
         hash = 23 * hash + (visible ? 1 : 0);
         hash = 23 * hash + (abstractCategory ? 1 : 0);
@@ -439,12 +439,12 @@ public class Category extends CcmObject implements Serializable, Exportable {
         if (!Objects.equals(name, other.getName())) {
             return false;
         }
-        if (!Objects.equals(title, other.getTitle())) {
-            return false;
-        }
-        if (!Objects.equals(description, other.getDescription())) {
-            return false;
-        }
+//        if (!Objects.equals(title, other.getTitle())) {
+//            return false;
+//        }
+//        if (!Objects.equals(description, other.getDescription())) {
+//            return false;
+//        }
         if (enabled != other.isEnabled()) {
             return false;
         }
@@ -469,14 +469,14 @@ public class Category extends CcmObject implements Serializable, Exportable {
     public String toString(final String data) {
         return super.toString(String.format(", uniqueId = %s, "
                                                 + "name = \"%s\", "
-                                                + "title = %s, "
+//                                                + "title = %s, "
                                                 + "enabled = %b, "
                                                 + "visible = %b, "
                                                 + "abstractCategory = %s, "
                                                 + "categoryOrder = %d%s",
                                             uniqueId,
                                             name,
-                                            Objects.toString(title),
+//                                            Objects.toString(title),
                                             enabled,
                                             visible,
                                             abstractCategory,
