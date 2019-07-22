@@ -18,6 +18,7 @@
  */
 package org.librecms.assets;
 
+import org.hibernate.envers.Audited;
 import org.librecms.contentsection.Asset;
 
 import java.util.Objects;
@@ -34,6 +35,7 @@ import static org.librecms.CmsConstants.*;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
+@Audited
 @Table(name = "POSTAL_ADDRESSES", schema = DB_SCHEMA)
 public class PostalAddress extends Asset {
 
