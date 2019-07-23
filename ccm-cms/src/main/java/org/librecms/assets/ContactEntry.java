@@ -28,6 +28,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import static org.librecms.CmsConstants.*;
@@ -58,8 +60,10 @@ public class ContactEntry implements Serializable {
     /**
      * Key used to identify the entry.
      */
-    @Column(name = "ENTRY_KEY", length = 255, nullable = false)
-    private String key;
+//    @Column(name = "ENTRY_KEY", length = 255, nullable = false)
+    @OneToOne
+    @JoinColumn(name = "CONTACT_ENTRY_KEY_ID")
+    private ContactEntryKey key;
 
     /**
      * The value of the entry.
@@ -89,11 +93,21 @@ public class ContactEntry implements Serializable {
         this.order = order;
     }
 
-    public String getKey() {
+//    public String getKey() {
+//        return key;
+//    }
+//
+//    public void setKey(final String key) {
+//        this.key = key;
+//    }
+    
+    public ContactEntryKey getKey() {
+        
         return key;
     }
-
-    public void setKey(final String key) {
+    
+    public void setKey(final ContactEntryKey key) {
+        
         this.key = key;
     }
 
@@ -105,6 +119,8 @@ public class ContactEntry implements Serializable {
         this.value = value;
     }
 
+    
+    
     @Override
     public int hashCode() {
         int hash = 7;
@@ -158,13 +174,13 @@ public class ContactEntry implements Serializable {
         return String.format("%s{ "
                                  + "contactEntryId = %d, "
                                  + "order = %d"
-                                 + "key = \"%s\", "
+                                 + "key = %s, "
                                  + "value = \"%s\"%s"
                                  + " }",
                              super.toString(),
                              contactEntryId,
                              order,
-                             key,
+                             Objects.toString(key),
                              value,
                              data);
     }

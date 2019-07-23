@@ -31,6 +31,7 @@ import org.librecms.assets.Organization;
 import org.librecms.contentsection.Asset;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  *
@@ -45,6 +46,21 @@ public class OrganizationForm extends AbstractContactableEntityForm<Organization
         super(assetPane);
     }
 
+    @Override
+    public void init(final FormSectionEvent event) throws FormProcessException {
+        
+        super.init(event);
+        
+        final PageState state = event.getPageState();
+        
+        final Optional<Organization> selected = getSelectedAsset(state);
+        
+        if (selected.isPresent()) {
+            
+            organizationName.setValue(state, selected.get().getName());
+        }
+    }
+    
     @Override
     protected void addPropertyWidgets() {
 

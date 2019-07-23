@@ -21,6 +21,11 @@ package com.arsdigita.cms.ui.assets.forms;
 import org.librecms.assets.ContactEntry;
 import org.librecms.assets.ContactableEntity;
 import org.librecms.assets.ContactableEntityManager;
+import org.librecms.assets.ContactableEntityRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -31,11 +36,36 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class ContactableEntityFormController {
+public class AbstractContactableEntityFormController {
 
+    @Inject
+    private ContactableEntityRepository contactableEntityRepository;
+    
     @Inject
     private ContactableEntityManager contactableEntityManager;
 
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<ContactEntry> getContactEntries(
+        final ContactableEntity contactable) {
+        
+        Objects.requireNonNull(contactable,
+                               "Can't get contact entries from null.");
+        
+        final ContactableEntity entity = contactableEntityRepository
+        .findById(contactable.getObjectId())
+        .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No ContactEntity with ID %d found.",
+           contactable.getObjectId())));
+        
+        final List<ContactEntry> entries = new ArrayList<>();
+        for(final ContactEntry entry : entity.getContactEntries()) {
+            
+            entries.add(entry);
+        }
+        
+        return entries;
+    }
+    
     @Transactional(Transactional.TxType.REQUIRED)
     public void addContactEntry(final ContactEntry contactEntry,
                                 final ContactableEntity toContactableEntity) {

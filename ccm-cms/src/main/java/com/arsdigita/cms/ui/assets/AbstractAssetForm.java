@@ -69,21 +69,29 @@ public abstract class AbstractAssetForm<T extends Asset>
                             FormSubmissionListener {
 
     private static final String ASSET_TITLE = "asset-name";
+
     private static final String ASSET_NAME = "asset-title";
 
     private final AssetPane assetPane;
+
     private final SingleSelectionModel<Long> selectionModel;
 
     private BoxPanel showLocalePanel;
+
     private SingleSelect showLocaleSelect;
+
     private Submit showLocaleSubmit;
 
     private BoxPanel addLocalePanel;
+
     private SingleSelect addLocaleSelect;
+
     private Submit addLocaleSubmit;
 
     private TextField name;
+
     private TextField title;
+
     private SaveCancelSection saveCancelSection;
 
     public AbstractAssetForm(final AssetPane assetPane) {
@@ -130,13 +138,13 @@ public abstract class AbstractAssetForm<T extends Asset>
                         final SingleSelect target = (SingleSelect) event
                             .getTarget();
 
-                        target.clearOptions();;
+                        target.clearOptions();
 
                         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                        final AssetL10NManager l10nManager = cdiUtil
-                            .findBean(AssetL10NManager.class);
-                        final List<Locale> availableLocales = new ArrayList<>(
-                            l10nManager.availableLocales(selectedAsset.get()));
+                        final AbstractAssetFormController controller = cdiUtil
+                            .findBean(AbstractAssetFormController.class);
+                        final List<Locale> availableLocales = controller
+                            .availableLocales(selectedAsset.get());
                         availableLocales.sort((locale1, locale2) -> {
                             return locale1.toString().compareTo(locale2
                                 .toString());
@@ -206,10 +214,11 @@ public abstract class AbstractAssetForm<T extends Asset>
                         target.clearOptions();
 
                         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                        final AssetL10NManager l10nManager = cdiUtil
-                            .findBean(AssetL10NManager.class);
-                        final List<Locale> creatableLocales = new ArrayList<>(
-                            l10nManager.creatableLocales(selectedAsset.get()));
+                        final AbstractAssetFormController controller = cdiUtil
+                            .findBean(AbstractAssetFormController.class);
+
+                        final List<Locale> creatableLocales = controller
+                            .creatableLocales(selectedAsset.get());
                         creatableLocales.sort((locale1, locale2) -> {
                             return locale1
                                 .toString()
@@ -298,14 +307,15 @@ public abstract class AbstractAssetForm<T extends Asset>
 
         if (selectedAsset.isPresent()) {
 
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final AbstractAssetFormController controller = cdiUtil
+                .findBean(AbstractAssetFormController.class);
             showLocaleSelect.setValue(state,
                                       getSelectedLocale(state));
 
             title.setValue(state,
-                           selectedAsset
-                               .get()
-                               .getTitle()
-                               .getValue(getSelectedLocale(state)));
+                           controller.getTitle(selectedAsset.get(),
+                                               getSelectedLocale(state)));
         } else {
             showLocaleSelect.setValue(state,
                                       KernelConfig
@@ -318,13 +328,13 @@ public abstract class AbstractAssetForm<T extends Asset>
     }
 
     protected Locale getSelectedLocale(final PageState state) {
-        
+
         final Object selected = showLocaleSelect.getValue(state);
         if (selected == null) {
             return KernelConfig.getConfig().getDefaultLocale();
-        } else if(selected instanceof Locale) {
+        } else if (selected instanceof Locale) {
             return (Locale) selected;
-        } else if(selected instanceof String) {
+        } else if (selected instanceof String) {
             return new Locale((String) selected);
         } else {
             return new Locale(selected.toString());
@@ -345,11 +355,13 @@ public abstract class AbstractAssetForm<T extends Asset>
                               .get()
                               .getDisplayName());
 
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final AbstractAssetFormController controller = cdiUtil
+                .findBean(AbstractAssetFormController.class);
+
             title.setValue(state,
-                           selectedAsset
-                               .get()
-                               .getTitle()
-                               .getValue(getSelectedLocale(state)));
+                           controller.getTitle(selectedAsset.get(),
+                                               getSelectedLocale(state)));
             showLocale(state);
         }
     }
