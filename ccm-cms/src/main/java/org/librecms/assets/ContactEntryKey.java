@@ -18,6 +18,7 @@
  */
 package org.librecms.assets;
 
+import org.hibernate.envers.Audited;
 import org.libreccm.l10n.LocalizedString;
 
 import java.io.Serializable;
@@ -39,8 +40,10 @@ import static org.librecms.CmsConstants.*;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
-@Table(name = "CONTACT_ENTRY_KEYS")
-public class ContactEntryKey implements Serializable {
+@Audited
+@Table(name = "CONTACT_ENTRY_KEYS", schema = DB_SCHEMA)
+public class ContactEntryKey
+    implements Comparable<ContactEntryKey>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -92,6 +95,12 @@ public class ContactEntryKey implements Serializable {
     public void setLabel(final LocalizedString label) {
 
         this.label = Objects.requireNonNull(label);
+    }
+    
+    @Override
+    public int compareTo(final ContactEntryKey other) {
+        
+        return entryKey.compareTo(other.getEntryKey());
     }
 
     @Override
