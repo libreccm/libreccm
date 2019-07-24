@@ -51,7 +51,11 @@ public class ContactEntryKeyByLabelComparator
         final String localized1 = getLocalizedValue(label1);
         final String localized2 = getLocalizedValue(label2);
 
-        return localized1.compareTo(localized2);
+        if (localized1 == null) {
+            return -1;
+        } else {
+            return localized1.compareTo(localized2);
+        }
     }
 
     private String getLocalizedValue(final LocalizedString source) {

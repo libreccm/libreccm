@@ -19,6 +19,7 @@
 package com.arsdigita.cms.ui.assets.forms;
 
 import com.arsdigita.bebop.ActionLink;
+import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.ControlLink;
 import com.arsdigita.bebop.FormProcessException;
@@ -37,6 +38,7 @@ import com.arsdigita.bebop.event.TableActionEvent;
 import com.arsdigita.bebop.event.TableActionListener;
 import com.arsdigita.bebop.form.Option;
 import com.arsdigita.bebop.form.SingleSelect;
+import com.arsdigita.bebop.form.Submit;
 import com.arsdigita.bebop.form.TextField;
 import com.arsdigita.bebop.parameters.StringParameter;
 import com.arsdigita.bebop.table.TableCellRenderer;
@@ -58,6 +60,7 @@ import org.librecms.assets.ContactEntryKeyByLabelComparator;
 import org.librecms.assets.ContactEntryKey;
 import org.librecms.assets.ContactEntryKeyRepository;
 import org.librecms.assets.ContactableEntity;
+import org.librecms.assets.ContactableEntityManager;
 import org.librecms.assets.PostalAddress;
 
 import java.util.Iterator;
@@ -92,7 +95,7 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
 
     private TextField contactEntryValueField;
 
-    private ActionLink addContactEntryLink;
+    private Submit addContactEntryLink;
 
     private AssetSearchWidget postalAddressSearchWidget;
 
@@ -108,7 +111,7 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
 
         addPropertyWidgets();
 
-        contactEntriesContainer = new SimpleContainer() {
+        contactEntriesContainer = new BoxPanel(BoxPanel.VERTICAL) {
 
             @Override
             public boolean isVisible(final PageState state) {
@@ -144,13 +147,11 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
         );
         contactEntriesContainer.add(contactEntryValueField);
 
-        addContactEntryLink = new ActionLink(
+        addContactEntryLink = new Submit(
             new GlobalizedMessage(
                 "cms.ui.authoring.assets.contactable.contactentries.add",
                 CMS_BUNDLE)
         );
-        addContactEntryLink
-            .addActionListener(new AddContactEntryActionListener());
         contactEntriesContainer.add(addContactEntryLink);
 
         contactEntriesContainer.add(new Label(
@@ -176,6 +177,50 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
 
         if (selected.isPresent()) {
             // ToDo
+        }
+    }
+
+    @Override
+    public void process(final FormSectionEvent event)
+        throws FormProcessException {
+
+        if (addContactEntryLink.equals(event.getSource())) {
+
+            final PageState state = event.getPageState();
+
+            final ContactableEntity selected = getSelectedAsset(state)
+                .orElseThrow(() -> new FormProcessException(
+                new GlobalizedMessage(
+                    "cms.ui.assets.none_selected", CMS_BUNDLE)));
+
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final ContactableEntityManager contactableEntityManager = cdiUtil
+                .findBean(ContactableEntityManager.class);
+            final ContactEntryKeyRepository keyRepository = cdiUtil
+                .findBean(ContactEntryKeyRepository.class);
+
+            final String key = (String) contactEntryKeySelect
+                .getValue(state);
+            final String value = (String) contactEntryValueField.getValue(state);
+
+            final ContactEntryKey entryKey = keyRepository
+                .findByEntryKey(key)
+                .orElseThrow(() -> new FormProcessException(
+                new GlobalizedMessage(
+                    "cms.ui.assets.contactable.illegal_entry_key", CMS_BUNDLE)));
+
+            final ContactEntry entry = new ContactEntry();
+            entry.setKey(entryKey);
+            entry.setValue(value);
+            entry.setOrder(selected.getContactEntries().size());
+
+            contactableEntityManager
+                .addContactEntryToContactableEntity(entry, selected);
+
+            contactEntryKeySelect.setValue(state, null);
+            contactEntryValueField.setValue(state, "");
+        } else {
+            super.process(event);
         }
     }
 
@@ -378,21 +423,17 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
 
             target.addOption(
                 new Option("",
-                           new Label(new GlobalizedMessage("cms.ui.select_one"),
-                                     CMS_BUNDLE))
+                           new Label(new GlobalizedMessage("cms.ui.select_one",
+                                                           CMS_BUNDLE)))
             );
 
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final ContactEntryKeyRepository keyRepo = cdiUtil
-                .findBean(ContactEntryKeyRepository.class);
+            final AbstractContactableEntityFormController controller = cdiUtil
+                .findBean(AbstractContactableEntityFormController.class);
             final GlobalizationHelper globalizationHelper = cdiUtil
                 .findBean(GlobalizationHelper.class);
-            final List<ContactEntryKey> keys = keyRepo
-                .findAll()
-                .stream()
-                .sorted(new ContactEntryKeyByLabelComparator(globalizationHelper
-                    .getNegotiatedLocale()))
-                .collect(Collectors.toList());
+            final List<ContactEntryKey> keys = controller
+                .findAvailableContactEntryKeys();
 
             for (final ContactEntryKey key : keys) {
 
@@ -402,15 +443,6 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
 
                 target.addOption(new Option(key.getEntryKey(), label));
             }
-        }
-
-    }
-
-    private class AddContactEntryActionListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
     }

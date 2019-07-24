@@ -20,40 +20,64 @@ package org.librecms.assets;
 
 import org.libreccm.core.AbstractEntityRepository;
 
+import java.util.Objects;
+import java.util.Optional;
+
 import javax.enterprise.context.RequestScoped;
+import javax.persistence.NoResultException;
+import javax.transaction.Transactional;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class ContactEntryKeyRepository 
-    extends AbstractEntityRepository<Long, ContactEntryKey>{ 
+public class ContactEntryKeyRepository
+    extends AbstractEntityRepository<Long, ContactEntryKey> {
 
     private static final long serialVersionUID = 1L;
 
     @Override
     public Class<ContactEntryKey> getEntityClass() {
-        
+
         return ContactEntryKey.class;
     }
 
     @Override
     public String getIdAttributeName() {
-        
+
         return "keyId";
     }
 
     @Override
     public Long getIdOfEntity(final ContactEntryKey entity) {
-        
+
         return entity.getKeyId();
     }
 
     @Override
     public boolean isNew(final ContactEntryKey entity) {
-        
+
         return entity.getKeyId() == 0;
     }
-    
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public Optional<ContactEntryKey> findByEntryKey(final String entryKey) {
+
+        try {
+            return Optional.of(
+                getEntityManager()
+                    .createNamedQuery("ContactEntryKey.findByEntryKey",
+                                      ContactEntryKey.class)
+                    .setParameter("entryKey",
+                                  Objects.requireNonNull(
+                                      entryKey,
+                                      "Can't find a ContactEntry for key null."
+                                  ))
+                    .getSingleResult());
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
+    }
+
 }
