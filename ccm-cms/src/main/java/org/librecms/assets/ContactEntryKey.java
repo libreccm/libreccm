@@ -31,6 +31,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import static org.librecms.CmsConstants.*;
@@ -42,6 +44,12 @@ import static org.librecms.CmsConstants.*;
 @Entity
 @Audited
 @Table(name = "CONTACT_ENTRY_KEYS", schema = DB_SCHEMA)
+@NamedQueries({
+    @NamedQuery(
+        name = "ContactEntryKey.findByEntryKey",
+        query = "SELECT k FROM ContactEntryKey k WHERE k.entryKey = :entryKey"
+    )
+})
 public class ContactEntryKey
     implements Comparable<ContactEntryKey>, Serializable {
 

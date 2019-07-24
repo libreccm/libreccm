@@ -99,4 +99,19 @@ public class AbstractAssetFormController {
         return new ArrayList<>(l10nManager.creatableLocales(result));
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void updateAsset(final Asset asset, 
+                            final String displayName,
+                            final String title,
+                            final Locale selectedLocale) {
+        
+        Objects.requireNonNull(asset, "Can't update null");
+        
+        final Asset selected = assetRepository
+        .findById(asset.getObjectId())
+        .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No Asset with ID %d found.", asset.getObjectId())));
+        
+    }
+    
 }

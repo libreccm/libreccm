@@ -18,14 +18,20 @@
  */
 package com.arsdigita.cms.ui.assets.forms;
 
+import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.assets.ContactEntry;
+import org.librecms.assets.ContactEntryKey;
+import org.librecms.assets.ContactEntryKeyByLabelComparator;
+import org.librecms.assets.ContactEntryKeyRepository;
 import org.librecms.assets.ContactableEntity;
 import org.librecms.assets.ContactableEntityManager;
 import org.librecms.assets.ContactableEntityRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -40,32 +46,38 @@ public class AbstractContactableEntityFormController {
 
     @Inject
     private ContactableEntityRepository contactableEntityRepository;
-    
+
     @Inject
     private ContactableEntityManager contactableEntityManager;
+
+    @Inject
+    private ContactEntryKeyRepository keyRepository;
+
+    @Inject
+    private GlobalizationHelper globalizationHelper;
 
     @Transactional(Transactional.TxType.REQUIRED)
     public List<ContactEntry> getContactEntries(
         final ContactableEntity contactable) {
-        
+
         Objects.requireNonNull(contactable,
                                "Can't get contact entries from null.");
-        
+
         final ContactableEntity entity = contactableEntityRepository
-        .findById(contactable.getObjectId())
-        .orElseThrow(() -> new IllegalArgumentException(String.format(
+            .findById(contactable.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
             "No ContactEntity with ID %d found.",
-           contactable.getObjectId())));
-        
+            contactable.getObjectId())));
+
         final List<ContactEntry> entries = new ArrayList<>();
-        for(final ContactEntry entry : entity.getContactEntries()) {
-            
+        for (final ContactEntry entry : entity.getContactEntries()) {
+
             entries.add(entry);
         }
-        
+
         return entries;
     }
-    
+
     @Transactional(Transactional.TxType.REQUIRED)
     public void addContactEntry(final ContactEntry contactEntry,
                                 final ContactableEntity toContactableEntity) {
@@ -81,14 +93,25 @@ public class AbstractContactableEntityFormController {
                                    final int index) {
 
         if (contactableEntity.getContactEntries().size() > index) {
-            
+
             final ContactEntry contactEntry = contactableEntity
                 .getContactEntries()
                 .get(index);
             contactableEntityManager.removeContactEntryFromContactableEntity(
                 contactEntry, contactableEntity);
         }
+    }
 
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<ContactEntryKey> findAvailableContactEntryKeys() {
+
+        final Locale locale = globalizationHelper.getNegotiatedLocale();
+        
+        return keyRepository
+            .findAll()
+            .stream()
+            .sorted(new ContactEntryKeyByLabelComparator(locale))
+            .collect(Collectors.toList());
     }
 
 }
