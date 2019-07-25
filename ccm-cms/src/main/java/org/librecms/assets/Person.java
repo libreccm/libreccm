@@ -18,6 +18,10 @@
  */
 package org.librecms.assets;
 
+import com.arsdigita.cms.ui.assets.forms.PersonForm;
+
+import static org.libreccm.core.CoreConstants.*;
+
 import org.hibernate.envers.Audited;
 
 import java.time.LocalDate;
@@ -26,15 +30,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-import static org.librecms.CmsConstants.*;
+import static org.librecms.assets.AssetConstants.*;
 
 /**
  * An asset representing a person.
@@ -44,11 +49,11 @@ import static org.librecms.CmsConstants.*;
 @Entity
 @Table(name = "PERSONS", schema = DB_SCHEMA)
 @Audited
-//@AssetType(assetForm = PersonForm.class,
-//           labelBundle = ASSETS_BUNDLE,
-//           labelKey = "person.label",
-//           descriptionBundle = ASSETS_BUNDLE,
-//           descriptionKey = "person.description")
+@AssetType(assetForm = PersonForm.class,
+           labelBundle = ASSETS_BUNDLE,
+           labelKey = "person.label",
+           descriptionBundle = ASSETS_BUNDLE,
+           descriptionKey = "person.description")
 public class Person extends ContactableEntity {
 
     private static final long serialVersionUID = 1L;
@@ -234,8 +239,8 @@ public class Person extends ContactableEntity {
     public String toString(final String data) {
 
         return super.toString(String.format(
-            "surname = \"%s\", "
-                + "personNames = \"%s\", "
+            //            "surname = \"%s\", +"
+            "personNames = \"%s\", "
                 //                + "givenName = \"%s\", "
                 //                + "prefix = \"%s\", "
                 //                + "suffix = \"%s\", "
