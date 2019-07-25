@@ -18,20 +18,15 @@
  */
 package com.arsdigita.cms.ui.assets.forms;
 
-import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
-import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.cms.ui.assets.AssetPane;
 import com.arsdigita.cms.ui.assets.AssetSearchWidget;
 import com.arsdigita.globalization.GlobalizedMessage;
 
-import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
 import org.librecms.assets.AudioAsset;
 import org.librecms.assets.LegalMetadata;
-import org.librecms.contentsection.Asset;
-import org.librecms.contentsection.AssetRepository;
 
 import java.util.Map;
 

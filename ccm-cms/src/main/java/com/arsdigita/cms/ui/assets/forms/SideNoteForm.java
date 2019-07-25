@@ -27,12 +27,11 @@ import com.arsdigita.cms.ui.assets.AbstractAssetForm;
 import com.arsdigita.cms.ui.assets.AssetPane;
 import com.arsdigita.globalization.GlobalizedMessage;
 
-import java.util.Objects;
-import java.util.Optional;
-
 import org.librecms.CmsConstants;
 import org.librecms.assets.SideNote;
-import org.librecms.contentsection.Asset;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -57,23 +56,11 @@ public class SideNoteForm extends AbstractAssetForm<SideNote> {
 
     @Override
     protected void initForm(final PageState state,
-                            final Optional<SideNote> selectedAsset) {
+                            final Map<String, Object> data) {
 
-        if (selectedAsset.isPresent()) {
-            if (!(selectedAsset.get() instanceof SideNote)) {
-                throw new IllegalArgumentException(String.format(
-                        "The provided asset must be an instance of '%s' or"
-                                + "an subclass but is an instance of '%s'",
-                        SideNote.class.getName(),
-                        selectedAsset.get().getClass().getName()));
-            }
+        if (getSelectedAssetId(state) != null) {
 
-            final SideNote sideNote = selectedAsset.get();
-            
-            text.setValue(state,
-                          sideNote
-                                  .getText()
-                                  .getValue(getSelectedLocale(state)));
+            text.setValue(state, data.get(SideNoteFormController.TEXT));
         }
 
     }
@@ -81,23 +68,15 @@ public class SideNoteForm extends AbstractAssetForm<SideNote> {
     @Override
     protected void showLocale(final PageState state) {
 
-        final Optional<SideNote> selectedAsset = getSelectedAsset(state);
+        if (getSelectedAssetId(state) != null) {
 
-        if (selectedAsset.isPresent()) {
-            if (!(selectedAsset.get() instanceof SideNote)) {
-                throw new IllegalArgumentException(String.format(
-                        "The provided asset must be an instance of '%s' or"
-                                + "an subclass but is an instance of '%s'",
-                        SideNote.class.getName(),
-                        selectedAsset.get().getClass().getName()));
-            }
+            final Long selectedAssetId = getSelectedAssetId(state);
+            final Map<String, Object> data = getController()
+                .getAssetData(selectedAssetId,
+                              SideNote.class,
+                              getSelectedLocale(state));
 
-            final SideNote sideNote =selectedAsset.get();
-
-            text.setValue(state,
-                          sideNote
-                                  .getText()
-                                  .getValue(getSelectedLocale(state)));
+            text.setValue(state, data.get(SideNoteFormController.TEXT));
         }
     }
 
@@ -106,50 +85,16 @@ public class SideNoteForm extends AbstractAssetForm<SideNote> {
         return SideNote.class;
     }
 
-    
-    
-//    @Override
-//    protected Asset createAsset(final FormSectionEvent event) throws
-//            FormProcessException {
-//
-//        Objects.requireNonNull(event);
-//
-//        final PageState state = event.getPageState();
-//        
-//        final SideNote sideNote = new SideNote();
-//
-//        sideNote
-//                .getText()
-//                .addValue(getSelectedLocale(state),
-//                          (String) text.getValue(state));
-//
-//        return sideNote;
-//    }
-
     @Override
-    protected void updateAsset(final Asset asset, 
-                               final FormSectionEvent event)
-            throws FormProcessException {
+    protected Map<String, Object> collectData(final FormSectionEvent event)
+        throws FormProcessException {
 
-        Objects.requireNonNull(asset);
-        Objects.requireNonNull(event);
-        
+        final Map<String, Object> data = new HashMap<>();
         final PageState state = event.getPageState();
 
-        if (!(asset instanceof SideNote)) {
-            throw new IllegalArgumentException(String.format(
-                    "The provided asset must be an instance of '%s' or"
-                            + "an subclass but is an instance of '%s'",
-                    SideNote.class.getName(),
-                    asset.getClass().getName()));
-        }
+        data.put(SideNoteFormController.TEXT, text.getValue(state));
 
-        final SideNote sideNote = (SideNote) asset;
-
-        sideNote
-                .getText()
-                .addValue(getSelectedLocale(state),
-                          (String) text.getValue(state));
+        return data;
     }
 
 }
