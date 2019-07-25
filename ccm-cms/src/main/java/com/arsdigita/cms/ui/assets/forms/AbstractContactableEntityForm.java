@@ -65,6 +65,7 @@ import org.librecms.assets.PostalAddress;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.TooManyListenersException;
 import java.util.stream.Collectors;
@@ -115,7 +116,7 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
 
             @Override
             public boolean isVisible(final PageState state) {
-                return getSelectedAsset(state) != null;
+                return getSelectedAssetId(state) != null;
             }
 
         };
@@ -173,9 +174,9 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
 
         final PageState state = event.getPageState();
 
-        final Optional<T> selected = getSelectedAsset(state);
+        final Long selectedAssetId = getSelectedAssetId(state);
 
-        if (selected.isPresent()) {
+        if (selectedAssetId != null) {
             // ToDo
         }
     }
@@ -184,52 +185,33 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
     public void process(final FormSectionEvent event)
         throws FormProcessException {
 
+        final PageState state = event.getPageState();
+
         if (addContactEntryLink.equals(event.getSource())) {
 
-            final PageState state = event.getPageState();
+            final Long selectedAssetId = getSelectedAssetId(state);
+            if (selectedAssetId == null) {
+                throw new FormProcessException(
+                    new GlobalizedMessage(
+                        "cms.ui.assets.none_selected", CMS_BUNDLE)
+                );
+            }
 
-            final ContactableEntity selected = getSelectedAsset(state)
-                .orElseThrow(() -> new FormProcessException(
-                new GlobalizedMessage(
-                    "cms.ui.assets.none_selected", CMS_BUNDLE)));
-
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final ContactableEntityManager contactableEntityManager = cdiUtil
-                .findBean(ContactableEntityManager.class);
-            final ContactEntryKeyRepository keyRepository = cdiUtil
-                .findBean(ContactEntryKeyRepository.class);
+            @SuppressWarnings("unchecked")
+            final AbstractContactableEntityFormController<ContactableEntity> controller
+                                                                             = (AbstractContactableEntityFormController<ContactableEntity>) getController();
 
             final String key = (String) contactEntryKeySelect
                 .getValue(state);
             final String value = (String) contactEntryValueField.getValue(state);
 
-            final ContactEntryKey entryKey = keyRepository
-                .findByEntryKey(key)
-                .orElseThrow(() -> new FormProcessException(
-                new GlobalizedMessage(
-                    "cms.ui.assets.contactable.illegal_entry_key", CMS_BUNDLE)));
-
-            final ContactEntry entry = new ContactEntry();
-            entry.setKey(entryKey);
-            entry.setValue(value);
-            entry.setOrder(selected.getContactEntries().size());
-
-            contactableEntityManager
-                .addContactEntryToContactableEntity(entry, selected);
-
-            contactEntryKeySelect.setValue(state, null);
-            contactEntryValueField.setValue(state, "");
+            controller.addContactEntry(key, value, selectedAssetId);
         } else {
             super.process(event);
+
+            final Object selectedPostal = postalAddressSearchWidget
+                .getValue(state);
         }
-    }
-
-    @Override
-    public void register(final Page page) {
-
-        super.register(page);
-
-//        page.addComponent(addContactEntryLink);
     }
 
     protected abstract void addPropertyWidgets();
@@ -296,14 +278,13 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
 
                 final Integer rowKey = (Integer) event.getRowKey();
 
-                final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final AbstractContactableEntityFormController controller
-                                                                  = cdiUtil
-                        .findBean(AbstractContactableEntityFormController.class);
-                final Optional<T> selected = getSelectedAsset(event
-                    .getPageState());
-                if (selected.isPresent()) {
-                    controller.removeContactEntry(selected.get(), rowKey);
+                @SuppressWarnings("unchecked")
+                final AbstractContactableEntityFormController<ContactableEntity> controller
+                                                                                 = (AbstractContactableEntityFormController<ContactableEntity>) getController();
+                final PageState state = event.getPageState();
+                final Long selectedId = getSelectedAssetId(state);
+                if (selectedId != null) {
+                    controller.removeContactEntry(rowKey, selectedId);
                 }
             }
 
@@ -325,15 +306,17 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
         public TableModel makeModel(final Table table,
                                     final PageState state) {
 
-            final ContactableEntity selected = getSelectedAsset(state)
-                .orElseThrow(
-                    () -> new IllegalStateException("No asset selected")
-                );
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final AbstractContactableEntityFormController controller = cdiUtil
-                .findBean(AbstractContactableEntityFormController.class);
-            final List<ContactEntry> contactEntries = controller
-                .getContactEntries(selected);
+            final Long selectedId = getSelectedAssetId(state);
+            if (selectedId == null) {
+                throw new RuntimeException("No asset selected.");
+            }
+
+            @SuppressWarnings("unchecked")
+            final AbstractContactableEntityFormController<ContactableEntity> controller
+                                                                             = (AbstractContactableEntityFormController<ContactableEntity>) getController();
+            final List<String[]> contactEntries = controller
+                .getContactEntries(selectedId, getSelectedLocale(state));
+
             return new ContactEntriesTableModel(contactEntries);
         }
 
@@ -341,12 +324,12 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
 
     private class ContactEntriesTableModel implements TableModel {
 
-        private final Iterator<ContactEntry> contactEntries;
+        private final Iterator<String[]> contactEntries;
 
-        private ContactEntry currentContactEntry;
+        private String[] currentContactEntry;
 
         public ContactEntriesTableModel(
-            final List<ContactEntry> contactEntries) {
+            final List<String[]> contactEntries) {
 
             this.contactEntries = contactEntries.iterator();
         }
@@ -372,9 +355,9 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
 
             switch (columnIndex) {
                 case COL_CONTACT_ENTRIES_KEY:
-                    return currentContactEntry.getKey();
+                    return currentContactEntry[1];
                 case COL_CONTACT_ENTRIES_VALUE:
-                    return currentContactEntry.getValue();
+                    return currentContactEntry[2];
                 case COL_CONTACT_ENTRIES_REMOVE:
                     return new Label(
                         new GlobalizedMessage(
@@ -392,7 +375,7 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
 
         @Override
         public Object getKeyAt(int columnIndex) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return currentContactEntry[0];
         }
 
     }
@@ -410,7 +393,6 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
 
             return new ControlLink((Component) value);
         }
-
     }
 
     private class ContactEntryKeySelectPrintListener implements PrintListener {

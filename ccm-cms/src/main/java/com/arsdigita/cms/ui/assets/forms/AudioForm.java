@@ -29,12 +29,11 @@ import com.arsdigita.globalization.GlobalizedMessage;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
 import org.librecms.assets.AudioAsset;
-import org.librecms.assets.BinaryAsset;
 import org.librecms.assets.LegalMetadata;
 import org.librecms.contentsection.Asset;
 import org.librecms.contentsection.AssetRepository;
 
-import java.util.Optional;
+import java.util.Map;
 
 /**
  *
@@ -52,29 +51,28 @@ public class AudioForm extends AbstractBinaryAssetForm<AudioAsset> {
     @Override
     protected void addWidgets() {
 
-        assetSearchWidget = new AssetSearchWidget("legal-metadata", LegalMetadata.class);
+        assetSearchWidget = new AssetSearchWidget("legal-metadata",
+                                                  LegalMetadata.class);
 
         add(new Label(new GlobalizedMessage(
-                "cms.ui.assets.audio.legal_metadata.label",
-                CmsConstants.CMS_BUNDLE
+            "cms.ui.assets.audio.legal_metadata.label",
+            CmsConstants.CMS_BUNDLE
         )));
         add(assetSearchWidget);
     }
 
     @Override
-    protected void initForm(final PageState state, 
-                            final Optional<AudioAsset> selectedAsset) {
+    protected void initForm(final PageState state,
+                            final Map<String, Object> data) {
 
-        super.initForm(state, selectedAsset);
+        super.initForm(state, data);
 
-        if (selectedAsset.isPresent()) {
+        if (data.containsKey(AudioFormController.LEGAL_METADATA_ID)) {
 
-            final AudioAsset audioAsset = selectedAsset.get();
-
-            final LegalMetadata legalMetadata = audioAsset
-                    .getLegalMetadata();
-            if (legalMetadata != null) {
-                assetSearchWidget.setValue(state, legalMetadata.getObjectId());
+            final Long legalMetadataId = (Long) data
+                .get(AudioFormController.LEGAL_METADATA_ID);
+            if (legalMetadataId != null) {
+                assetSearchWidget.setValue(state, legalMetadataId);
             }
         }
     }
@@ -83,7 +81,7 @@ public class AudioForm extends AbstractBinaryAssetForm<AudioAsset> {
     protected Class<AudioAsset> getAssetClass() {
         return AudioAsset.class;
     }
-    
+
 //    @Override
 //    protected Asset createAsset(final FormSectionEvent event)
 //            throws FormProcessException {
@@ -96,38 +94,37 @@ public class AudioForm extends AbstractBinaryAssetForm<AudioAsset> {
 //
 //        return audioAsset;
 //    }
+//    @Override
+//    protected void updateAsset(final Asset asset,
+//                               final FormSectionEvent event)
+//        throws FormProcessException {
+//
+//        super.updateAsset(asset, event);
+//
+//        final PageState state = event.getPageState();
+//
+//        final AudioAsset audioAsset = (AudioAsset) asset;
+//
+//        updateData(audioAsset, state);
+//    }
 
-    @Override
-    protected void updateAsset(final Asset asset,
-                               final FormSectionEvent event)
-            throws FormProcessException {
-
-        super.updateAsset(asset, event);
-
-        final PageState state = event.getPageState();
-
-        final AudioAsset audioAsset = (AudioAsset) asset;
-
-        updateData(audioAsset, state);
-    }
-
-    protected void updateData(final AudioAsset audioAsset,
-                              final PageState state) {
-
-        final Long legalMetadataId = (Long) assetSearchWidget.getValue(state);
-        if (legalMetadataId != null) {
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final AssetRepository assetRepo = cdiUtil.findBean(
-                    AssetRepository.class);
-            final LegalMetadata legalMetadata = (LegalMetadata) assetRepo
-                    .findById(legalMetadataId)
-                    .orElseThrow(() -> new IllegalArgumentException(String.format(
-                            "No LegalMetadata asset with ID %d in the database.",
-                            legalMetadataId)));
-
-            audioAsset.setLegalMetadata(legalMetadata);
-        }
-    }
+//    protected void updateData(final AudioAsset audioAsset,
+//                              final PageState state) {
+//
+//        final Long legalMetadataId = (Long) assetSearchWidget.getValue(state);
+//        if (legalMetadataId != null) {
+//            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+//            final AssetRepository assetRepo = cdiUtil.findBean(
+//                AssetRepository.class);
+//            final LegalMetadata legalMetadata = (LegalMetadata) assetRepo
+//                .findById(legalMetadataId)
+//                .orElseThrow(() -> new IllegalArgumentException(String.format(
+//                "No LegalMetadata asset with ID %d in the database.",
+//                legalMetadataId)));
+//
+//            audioAsset.setLegalMetadata(legalMetadata);
+//        }
+//    }
 
 //    @Override
 //    protected BinaryAsset createBinaryAsset(final PageState state) {

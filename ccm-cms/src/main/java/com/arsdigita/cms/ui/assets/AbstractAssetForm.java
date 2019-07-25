@@ -43,18 +43,15 @@ import com.arsdigita.kernel.KernelConfig;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.Asset;
-import org.librecms.contentsection.AssetRepository;
-
-import java.util.Optional;
 
 import org.libreccm.core.UnexpectedErrorException;
-import org.librecms.assets.AssetL10NManager;
-import org.librecms.contentsection.AssetManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
+import java.util.Map;
 import java.util.TooManyListenersException;
 
 /**
@@ -111,15 +108,15 @@ public abstract class AbstractAssetForm<T extends Asset>
             @Override
             public void prepare(final PrintEvent event) {
                 final PageState state = event.getPageState();
-                final Optional<T> selectedAsset = getSelectedAsset(state);
+                final Long selectedAssetId = getSelectedAssetId(state);
                 final Label target = (Label) event.getTarget();
-                if (selectedAsset.isPresent()) {
+                if (selectedAssetId == null) {
                     target.setLabel(new GlobalizedMessage(
-                        "cms.ui.asset.show_locale",
+                        "cms.ui.asset.initial_locale",
                         CmsConstants.CMS_BUNDLE));
                 } else {
                     target.setLabel(new GlobalizedMessage(
-                        "cms.ui.asset.initial_locale",
+                        "cms.ui.asset.show_locale",
                         CmsConstants.CMS_BUNDLE));
                 }
             }
@@ -133,26 +130,8 @@ public abstract class AbstractAssetForm<T extends Asset>
                 public void prepare(final PrintEvent event) {
                     final PageState state = event.getPageState();
 
-                    final Optional<T> selectedAsset = getSelectedAsset(state);
-                    if (selectedAsset.isPresent()) {
-                        final SingleSelect target = (SingleSelect) event
-                            .getTarget();
-
-                        target.clearOptions();
-
-                        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                        final AbstractAssetFormController controller = cdiUtil
-                            .findBean(AbstractAssetFormController.class);
-                        final List<Locale> availableLocales = controller
-                            .availableLocales(selectedAsset.get());
-                        availableLocales.sort((locale1, locale2) -> {
-                            return locale1.toString().compareTo(locale2
-                                .toString());
-                        });
-                        availableLocales.forEach(locale -> target.addOption(
-                            new Option(locale.toString(),
-                                       new Text(locale.toString()))));
-                    } else {
+                    final Long selectedAssetId = getSelectedAssetId(state);
+                    if (selectedAssetId == null) {
                         final SingleSelect target = (SingleSelect) event
                             .getTarget();
 
@@ -165,6 +144,27 @@ public abstract class AbstractAssetForm<T extends Asset>
                         langs.forEach(lang -> {
                             target.addOption(new Option(lang, new Text(lang)));
                         });
+                    } else {
+                        final SingleSelect target = (SingleSelect) event
+                            .getTarget();
+
+                        target.clearOptions();
+
+                        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+                        @SuppressWarnings("unchecked")
+                        final AbstractAssetFormController<T> controller
+                                                                 = cdiUtil
+                                .findBean(AbstractAssetFormController.class);
+                        final List<Locale> availableLocales = controller
+                            .availableLocales(selectedAssetId,
+                                              getAssetClass());
+                        availableLocales.sort((locale1, locale2) -> {
+                            return locale1.toString().compareTo(locale2
+                                .toString());
+                        });
+                        availableLocales.forEach(locale -> target.addOption(
+                            new Option(locale.toString(),
+                                       new Text(locale.toString()))));
                     }
                 }
 
@@ -178,7 +178,7 @@ public abstract class AbstractAssetForm<T extends Asset>
 
             @Override
             public boolean isVisible(final PageState state) {
-                return getSelectedAsset(state).isPresent();
+                return getSelectedAssetId(state) != null;
             }
 
         };
@@ -191,7 +191,7 @@ public abstract class AbstractAssetForm<T extends Asset>
 
             @Override
             public boolean isVisible(final PageState state) {
-                return getSelectedAsset(state).isPresent();
+                return getSelectedAssetId(state) != null;
             }
 
         };
@@ -206,19 +206,22 @@ public abstract class AbstractAssetForm<T extends Asset>
                 public void prepare(final PrintEvent event) {
                     final PageState state = event.getPageState();
 
-                    final Optional<T> selectedAsset = getSelectedAsset(state);
-                    if (selectedAsset.isPresent()) {
+                    final Long selectedAssetId = getSelectedAssetId(state);
+                    if (selectedAssetId != null) {
                         final SingleSelect target = (SingleSelect) event
                             .getTarget();
 
                         target.clearOptions();
 
                         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                        final AbstractAssetFormController controller = cdiUtil
-                            .findBean(AbstractAssetFormController.class);
+                        @SuppressWarnings("unchecked")
+                        final AbstractAssetFormController<T> controller
+                                                                 = cdiUtil
+                                .findBean(AbstractAssetFormController.class);
 
                         final List<Locale> creatableLocales = controller
-                            .creatableLocales(selectedAsset.get());
+                            .creatableLocales(selectedAssetId,
+                                              getAssetClass());
                         creatableLocales.sort((locale1, locale2) -> {
                             return locale1
                                 .toString()
@@ -270,31 +273,13 @@ public abstract class AbstractAssetForm<T extends Asset>
         return (String) title.getValue(state);
     }
 
-    @SuppressWarnings("unchecked")
-    protected Optional<T> getSelectedAsset(final PageState state) {
+    protected Long getSelectedAssetId(final PageState state) {
 
-        if (selectionModel.getSelectedKey(state) == null) {
-            return Optional.empty();
+        final Object key = selectionModel.getSelectedKey(state);
+        if (key == null) {
+            return null;
         } else {
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final AssetRepository assetRepo = cdiUtil
-                .findBean(AssetRepository.class);
-            final Asset asset = assetRepo
-                .findById((long) selectionModel.getSelectedKey(state))
-                .orElseThrow(() -> new IllegalArgumentException(String.
-                format("No asset with ID %d in the database.",
-                       selectionModel.getSelectedKey(state))));
-            if (getAssetClass().isAssignableFrom(asset.getClass())) {
-                return Optional.of((T) asset);
-            } else {
-                throw new UnexpectedErrorException(String
-                    .format(
-                        "The requested asset is not of the type expected by "
-                            + "this form. Expected type is \"%s\". "
-                            + "Type of asset: \"%s\".",
-                        getAssetClass().getName(),
-                        asset.getClass().getName()));
-            }
+            return (Long) key;
         }
     }
 
@@ -303,28 +288,36 @@ public abstract class AbstractAssetForm<T extends Asset>
 
         final PageState state = event.getPageState();
 
-        final Optional<T> selectedAsset = getSelectedAsset(state);
+        final Long selectedAssetId = getSelectedAssetId(state);
 
-        if (selectedAsset.isPresent()) {
-
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final AbstractAssetFormController controller = cdiUtil
-                .findBean(AbstractAssetFormController.class);
-            showLocaleSelect.setValue(state,
-                                      getSelectedLocale(state));
-
-            title.setValue(state,
-                           controller.getTitle(selectedAsset.get(),
-                                               getSelectedLocale(state)));
-        } else {
+        final Map<String, Object> data;
+        if (selectedAssetId == null) {
             showLocaleSelect.setValue(state,
                                       KernelConfig
                                           .getConfig()
                                           .getDefaultLocale()
                                           .toString());
+
+            data = Collections.emptyMap();
+
+        } else {
+
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            @SuppressWarnings("unchecked")
+            final AbstractAssetFormController<T> controller = cdiUtil
+                .findBean(AbstractAssetFormController.class);
+            showLocaleSelect.setValue(state,
+                                      getSelectedLocale(state));
+
+            data = controller.getAssetData(selectedAssetId,
+                                           getAssetClass(),
+                                           getSelectedLocale(state));
+
+            title.setValue(state,
+                           data.get(AbstractAssetFormController.TITLE));
         }
 
-        initForm(state, selectedAsset);
+        initForm(state, data);
     }
 
     protected Locale getSelectedLocale(final PageState state) {
@@ -346,22 +339,20 @@ public abstract class AbstractAssetForm<T extends Asset>
     }
 
     protected void initForm(final PageState state,
-                            final Optional<T> selectedAsset) {
+                            final Map<String, Object> data) {
 
-        if (selectedAsset.isPresent()) {
+        if (!data.isEmpty()) {
 
-            name.setValue(state,
-                          selectedAsset
-                              .get()
-                              .getDisplayName());
+            name.setValue(state, 
+                          data.get(AbstractAssetFormController.DISPLAY_NAME));
 
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final AbstractAssetFormController controller = cdiUtil
-                .findBean(AbstractAssetFormController.class);
+//            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+//            @SuppressWarnings("unchecked")
+//            final AbstractAssetFormController<T> controller = cdiUtil
+//                .findBean(AbstractAssetFormController.class);
 
             title.setValue(state,
-                           controller.getTitle(selectedAsset.get(),
-                                               getSelectedLocale(state)));
+                           data.get(AbstractAssetFormController.TITLE));
             showLocale(state);
         }
     }
@@ -372,66 +363,41 @@ public abstract class AbstractAssetForm<T extends Asset>
 
         final PageState state = event.getPageState();
 
-        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-
+//        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
         if (showLocaleSubmit.isSelected(state)) {
 
-            final Optional<T> selectedAsset = getSelectedAsset(state);
-            initForm(state, selectedAsset);
+            final Long selectedAssetId = getSelectedAssetId(state);
+
+            initForm(state,
+                     getController().getAssetData(selectedAssetId,
+                                                  getAssetClass(),
+                                                  getSelectedLocale(state)));
 
             return;
         }
 
         if (addLocaleSubmit.isSelected(state)) {
-            final AssetL10NManager l10nManager = cdiUtil
-                .findBean(AssetL10NManager.class);
             final Locale add = new Locale((String) addLocaleSelect
                 .getValue(state));
-            final Optional<T> selectedAsset = getSelectedAsset(state);
-            l10nManager.addLanguage(selectedAsset.get(), add);
+            final Long selectedAssetId = getSelectedAssetId(state);
+            getController().addLocale(selectedAssetId, add, getAssetClass());
         }
 
         if (saveCancelSection.getSaveButton().isSelected(state)) {
-            final Optional<T> selectedAsset = getSelectedAsset(state);
-            final Asset asset;
-            if (selectedAsset.isPresent()) {
-                asset = selectedAsset.get();
-//                updateAsset(asset, event);
 
-                asset.setDisplayName((String) name.getValue(state));
-                asset.getTitle().addValue(getSelectedLocale(state),
-                                          (String) title.getValue(state));
+            final Long selectedAssetId = getSelectedAssetId(state);
+            final Map<String, Object> data = new HashMap<>();
+            data.put(AbstractAssetFormController.DISPLAY_NAME,
+                     name.getValue(state));
+            data.put(AbstractAssetFormController.TITLE,
+                     title.getValue(state));
+            data.putAll(collectData(event));
 
-//                final AssetRepository assetRepo = cdiUtil
-//                    .findBean(AssetRepository.class);
-//                assetRepo.save(asset);
-            } else {
-                asset = createAsset(event);
-                updateAsset(asset, event);
-            }
+            getController().updateAsset(selectedAssetId,
+                                        getSelectedLocale(state),
+                                        getAssetClass(),
+                                        data);
 
-            updateAsset(asset, event);
-
-            final AssetRepository assetRepo = cdiUtil
-                .findBean(AssetRepository.class);
-            assetRepo.save(asset);
-
-//            if (!selectedAsset.isPresent()) {
-//                //Set display name
-//                asset.setDisplayName((String) title.getValue(state));
-//                assetRepo.save(asset);
-//
-//                //Add new asset to currently selected folder
-//                final Folder selectedFolder = assetPane
-//                    .getFolderSelectionModel()
-//                    .getSelectedObject(state);
-//                final CategoryManager categoryManager = cdiUtil
-//                    .findBean(CategoryManager.class);
-//                categoryManager.addObjectToCategory(
-//                    asset,
-//                    selectedFolder,
-//                    CmsConstants.CATEGORIZATION_TYPE_FOLDER);
-//            }
             assetPane.browseMode(state);
         }
     }
@@ -440,27 +406,8 @@ public abstract class AbstractAssetForm<T extends Asset>
 
     protected abstract void showLocale(final PageState state);
 
-    protected final T createAsset(final FormSectionEvent event)
-        throws FormProcessException {
-
-        Objects.requireNonNull(event);
-
-        final PageState state = event.getPageState();
-
-        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final AssetManager assetManager = cdiUtil.findBean(AssetManager.class);
-
-        return assetManager.createAsset((String) name.getValue(state),
-                                        (String) title.getValue(state),
-                                        getSelectedLocale(state),
-                                        assetPane
-                                            .getFolderSelectionModel()
-                                            .getSelectedObject(state),
-                                        getAssetClass());
-    }
-
-    protected abstract void updateAsset(final Asset asset,
-                                        final FormSectionEvent event)
+    protected abstract Map<String, Object> collectData(
+        final FormSectionEvent event)
         throws FormProcessException;
 
     @Override
@@ -473,6 +420,15 @@ public abstract class AbstractAssetForm<T extends Asset>
             selectionModel.clearSelection(state);
             assetPane.browseMode(state);
         }
+    }
+
+    protected AssetFormController<T> getController() {
+
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final AssetFormControllers controllers = cdiUtil
+            .findBean(AssetFormControllers.class);
+
+        return controllers.findController(getAssetClass());
     }
 
 }

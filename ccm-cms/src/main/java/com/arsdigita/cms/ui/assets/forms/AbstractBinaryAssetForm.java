@@ -34,12 +34,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
-import java.util.Optional;
 
 import org.librecms.CmsConstants;
 import org.librecms.assets.BinaryAsset;
-import org.librecms.contentsection.Asset;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Base form for assets which extend {@link BinaryAsset}.
@@ -47,13 +48,17 @@ import org.librecms.contentsection.Asset;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @param <T> Type of binary asset
  */
-public abstract class AbstractBinaryAssetForm<T extends BinaryAsset> 
+public abstract class AbstractBinaryAssetForm<T extends BinaryAsset>
     extends AbstractAssetForm<T> {
 
     private TextArea description;
+
     private Text fileName;
+
     private Text mimeType;
+
     private Text size;
+
     private FileUploadSection fileUpload;
 
     public AbstractBinaryAssetForm(final AssetPane assetPane) {
@@ -103,119 +108,70 @@ public abstract class AbstractBinaryAssetForm<T extends BinaryAsset>
 
     @Override
     protected void initForm(final PageState state,
-                            final Optional<T> selectedAsset) {
+                            final Map<String, Object> data) {
 
-        super.initForm(state, selectedAsset);
+        super.initForm(state, data);
 
-        if (selectedAsset.isPresent()) {
-
-            if (!(selectedAsset.get() instanceof BinaryAsset)) {
-                throw new IllegalArgumentException(String.format(
-                    "The provided asset must be an instanceof of class '%s' or "
-                        + "an subclass but is na instanceof class '%s'.",
-                    BinaryAsset.class.getName(),
-                    selectedAsset.get().getClass().getName()));
-            }
-
-            final BinaryAsset binaryAsset = (BinaryAsset) selectedAsset.get();
+        if (!data.isEmpty()) {
 
             description.setValue(state,
-                                 binaryAsset
-                                     .getDescription()
-                                     .getValue(getSelectedLocale(state)));
+                                 data.get("description"));
 
-            if (binaryAsset.getData() == null
-                    || binaryAsset.getData().length == 0) {
+            if (data.containsKey("data")) {
+
+                final byte[] binaryData = (byte[]) data.get("data");
+                if (binaryData.length == 0) {
+                    fileName.setText("-");
+                    mimeType.setText("-");
+                    size.setText("-");
+                } else {
+                    fileName.setText((String) data.get("fileName"));
+                    mimeType.setText((String) data.get("mimeType"));
+                    size.setText(Long.toString((long) data.get("size")));
+                }
+
+            } else {
                 fileName.setText("-");
                 mimeType.setText("-");
                 size.setText("-");
-            } else {
-
-                fileName.setText(binaryAsset.getFileName());
-                mimeType.setText(binaryAsset.getMimeType().toString());
-                size.setText(Long.toString(binaryAsset.getSize()));
             }
         }
-
     }
 
     @Override
     protected void showLocale(final PageState state) {
 
-        final Optional<T> selectedAsset = getSelectedAsset(state);
+        final Long selectedAssetId = getSelectedAssetId(state);
 
-        if (selectedAsset.isPresent()) {
-            if (!(getSelectedAsset(state).get() instanceof BinaryAsset)) {
-                throw new IllegalArgumentException(
-                    "Selected asset is not a binary asset.");
-            }
+        if (selectedAssetId != null) {
 
-            final BinaryAsset binaryAsset = (BinaryAsset) selectedAsset.get();
+            final Map<String, Object> data = getController()
+                .getAssetData(selectedAssetId,
+                              getAssetClass(),
+                              getSelectedLocale(state));
 
-            description.setValue(state,
-                                 binaryAsset
-                                     .getDescription()
-                                     .getValue(getSelectedLocale(state)));
+            description
+                .setValue(
+                    state,
+                    data
+                        .get(AbstractBinaryAssetFormController.DESCRIPTION));
         }
-
     }
-
-//    @Override
-//    protected Asset createAsset(final FormSectionEvent event)
-//        throws FormProcessException {
-//
-//        Objects.requireNonNull(event);
-//
-//        final PageState state = event.getPageState();
-//
-//        final BinaryAsset binaryAsset = createBinaryAsset(state);
-//
-//        binaryAsset
-//            .getDescription()
-//            .addValue(getSelectedLocale(state),
-//                      (String) description.getValue(state));
-//
-//        setFileData(event, binaryAsset);
-//
-//        return binaryAsset;
-//    }
-
-//    protected abstract BinaryAsset createBinaryAsset(final PageState state);
 
     @Override
-    protected void updateAsset(final Asset asset,
-                               final FormSectionEvent event)
+    protected Map<String, Object> collectData(final FormSectionEvent event)
         throws FormProcessException {
 
-        Objects.requireNonNull(asset);
-        Objects.requireNonNull(event);
-
-        final PageState state = event.getPageState();
-
-        if (!(asset instanceof BinaryAsset)) {
-            throw new IllegalArgumentException(String.format(
-                "Provided asset is not an instance of '%s' (or a sub class) "
-                    + "but is an instance of class '%s'.",
-                BinaryAsset.class.getName(),
-                asset.getClass().getName()));
-        }
-
-        final BinaryAsset binaryAsset = (BinaryAsset) asset;
-
-        binaryAsset
-            .getDescription()
-            .addValue(getSelectedLocale(state),
-                      (String) description.getValue(state));
-
-        setFileData(event, binaryAsset);
+        return getFileData(event);
     }
 
-    private void setFileData(final FormSectionEvent event,
-                             final BinaryAsset binaryAsset)
+    private Map<String, Object> getFileData(final FormSectionEvent event)
         throws FormProcessException {
 
         final File file = fileUpload.getFile(event);
-        if (file != null) {
+        if (file == null) {
+            return Collections.emptyMap();
+        } else {
             final Path path = file.toPath();
             final byte[] data;
             try {
@@ -223,11 +179,19 @@ public abstract class AbstractBinaryAssetForm<T extends BinaryAsset>
             } catch (IOException ex) {
                 throw new FormProcessException(ex);
             }
-            binaryAsset.setData(data);
-            binaryAsset.setFileName(fileUpload.getFileName(event));
-            binaryAsset.setSize(data.length);
 
-            binaryAsset.setMimeType(fileUpload.getMimeType(event));
+            final Map<String, Object> assetData = new HashMap<>();
+
+            assetData.put(AbstractBinaryAssetFormController.DATA,
+                          data);
+            assetData.put(AbstractBinaryAssetFormController.FILE_NAME,
+                          fileUpload.getFileName(event));
+            assetData.put(AbstractBinaryAssetFormController.SIZE,
+                          data.length);
+            assetData.put(AbstractBinaryAssetFormController.MIME_TYPE,
+                          fileUpload.getMimeType(event));
+
+            return assetData;
         }
     }
 

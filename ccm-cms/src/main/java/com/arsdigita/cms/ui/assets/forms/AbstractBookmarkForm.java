@@ -36,6 +36,7 @@ import org.librecms.contentsection.Asset;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -49,6 +50,7 @@ public abstract class AbstractBookmarkForm<T extends Bookmark>
     extends AbstractAssetForm<T> {
 
     private TextArea description;
+
     private TextField url;
 
     public AbstractBookmarkForm(final AssetPane assetPane) {
@@ -93,45 +95,34 @@ public abstract class AbstractBookmarkForm<T extends Bookmark>
 
     @Override
     protected void initForm(final PageState state,
-                            final Optional<T> selectedAsset) {
+                            final Map<String, Object> data) {
 
-        if (selectedAsset.isPresent()) {
+        if (!data.isEmpty()) {
 
-            if (!(selectedAsset.get() instanceof Bookmark)) {
-                throw new IllegalArgumentException(String.format(
-                    "The provided asset must be an instanceof of class '%s' or "
-                        + "an subclass but is an instanceof of class '%s'.",
-                    Bookmark.class.getName(),
-                    selectedAsset.get().getClass().getName()));
-            }
-
-            final Bookmark bookmark = selectedAsset.get();
-
-            description.setValue(state,
-                                 bookmark
-                                     .getDescription()
-                                     .getValue(getSelectedLocale(state)));
-            url.setValue(state, bookmark.getUrl());
+            description
+                .setValue(
+                    state,
+                    data.get(AbstractBookmarkFormController.DESCRIPTION));
+            url.setValue(state, data.get(AbstractBookmarkFormController.URL));
 
         }
     }
 
     @Override
     protected void showLocale(final PageState state) {
-        final Optional<T> selectedAsset = getSelectedAsset(state);
 
-        if (selectedAsset.isPresent()) {
-            if (!(getSelectedAsset(state).get() instanceof Bookmark)) {
-                throw new IllegalArgumentException(
-                    "Selected asset is not a bookmark");
-            }
+        final Long selectedAssetId = getSelectedAssetId(state);
 
-            final Bookmark bookmark = selectedAsset.get();
+        if (selectedAssetId != null) {
 
-            description.setValue(state,
-                                 bookmark
-                                     .getDescription()
-                                     .getValue(getSelectedLocale(state)));
+            final Map<String, Object> data = getController()
+                .getAssetData(selectedAssetId,
+                              getAssetClass(),
+                              getSelectedLocale(state));
+
+            description.setValue(
+                state,
+                data.get(AbstractBinaryAssetFormController.DESCRIPTION));
         }
     }
 
@@ -143,29 +134,6 @@ public abstract class AbstractBookmarkForm<T extends Bookmark>
                       (String) description.getValue(state));
 
         bookmark.setUrl((String) url.getValue(state));
-    }
-
-    @Override
-    protected void updateAsset(final Asset asset,
-                               final FormSectionEvent event)
-        throws FormProcessException {
-
-        Objects.requireNonNull(asset);
-        Objects.requireNonNull(event);
-
-        final PageState state = event.getPageState();
-
-        if (!(asset instanceof Bookmark)) {
-            throw new IllegalArgumentException(String.format(
-                "Provided asset is not an instance of class (or sub class of) "
-                    + "'%s' but is an instance of class '%s'",
-                Bookmark.class.getName(),
-                asset.getClass().getName()));
-        }
-
-        final Bookmark bookmark = (Bookmark) asset;
-
-        updateData(bookmark, state);
     }
 
 }
