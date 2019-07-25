@@ -28,10 +28,9 @@ import com.arsdigita.globalization.GlobalizedMessage;
 
 import org.librecms.CmsConstants;
 import org.librecms.assets.Organization;
-import org.librecms.contentsection.Asset;
 
-import java.util.Objects;
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -47,20 +46,19 @@ public class OrganizationForm extends AbstractContactableEntityForm<Organization
     }
 
     @Override
-    public void init(final FormSectionEvent event) throws FormProcessException {
-        
-        super.init(event);
-        
-        final PageState state = event.getPageState();
-        
-        final Optional<Organization> selected = getSelectedAsset(state);
-        
-        if (selected.isPresent()) {
-            
-            organizationName.setValue(state, selected.get().getName());
+    public void initForm(final PageState state,
+                         final Map<String, Object> data) {
+
+        super.initForm(state, data);
+
+        if (getSelectedAssetId(state) != null) {
+
+            organizationName.setValue(
+                state,
+                data.get(OrganizationFormController.ORGANIZATION_NAME));
         }
     }
-    
+
     @Override
     protected void addPropertyWidgets() {
 
@@ -84,26 +82,16 @@ public class OrganizationForm extends AbstractContactableEntityForm<Organization
     }
 
     @Override
-    protected void updateAsset(final Asset asset,
-                               final FormSectionEvent event)
+    protected Map<String, Object> collectData(final FormSectionEvent event)
         throws FormProcessException {
-
-        Objects.requireNonNull(asset);
-        Objects.requireNonNull(event);
 
         final PageState state = event.getPageState();
 
-        if (!(asset instanceof Organization)) {
-            throw new IllegalArgumentException(String.format(
-                "The provided asset is not an instance of \"%s\" "
-                    + "or a subclass,but of %s.",
-                Organization.class.getName(),
-                asset.getClass().getName()));
-        }
+        final Map<String, Object> data = new HashMap<>();
+        data.put(OrganizationFormController.ORGANIZATION_NAME,
+                 organizationName.getValue(state));
 
-        final Organization organization = (Organization) asset;
-
-        organization.setName((String) organizationName.getValue(state));
+        return data;
     }
 
 }

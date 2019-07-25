@@ -32,6 +32,8 @@ import org.librecms.CmsConstants;
 import org.librecms.assets.LegalMetadata;
 import org.librecms.contentsection.Asset;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -84,47 +86,36 @@ public class LegalMetadataForm extends AbstractAssetForm<LegalMetadata> {
 
     @Override
     protected void initForm(final PageState state,
-                            final Optional<LegalMetadata> selectedAsset) {
+                            final Map<String, Object> data) {
 
-        if (selectedAsset.isPresent()) {
+        if (getSelectedAssetId(state) != null) {
 
-            if (!(selectedAsset.get() instanceof LegalMetadata)) {
-                throw new IllegalArgumentException(String.format(
-                    "The provided asset must be an instanceof of class '%s' or "
-                        + "an subclass but is an instanceof of class '%s'.",
-                    LegalMetadata.class.getName(),
-                    selectedAsset.get().getClass().getName()));
-            }
-
-            final LegalMetadata legalMetadata = selectedAsset.get();
-
-            rightsHolder.setValue(state, legalMetadata.getRightsHolder());
+            rightsHolder.setValue(
+                state,
+                data.get(LegalMetadataFormController.RIGHTS_HOLDER));
             rights.setValue(state,
-                            legalMetadata
-                                .getRights()
-                                .getValue(getSelectedLocale(state)));
-            publisher.setValue(state, legalMetadata.getPublisher());
-            creator.setValue(state, legalMetadata.getCreator());
+                            data.get(LegalMetadataFormController.RIGHTS));
+            publisher.setValue(state,
+                               data.get(LegalMetadataFormController.PUBLISHER));
+            creator.setValue(state,
+                             data.get(LegalMetadataFormController.CREATOR));
         }
     }
 
     @Override
     protected void showLocale(final PageState state) {
 
-        final Optional<LegalMetadata> selectedAsset = getSelectedAsset(state);
+        final Long selectedAssetId = getSelectedAssetId(state);
 
-        if (selectedAsset.isPresent()) {
-            if (!(getSelectedAsset(state).get() instanceof LegalMetadata)) {
-                throw new IllegalArgumentException(
-                    "Selected asset is not a legal metadata");
-            }
+        if (selectedAssetId != null) {
 
-            final LegalMetadata legalMetadata = selectedAsset.get();
+            final Map<String, Object> data = getController()
+                .getAssetData(selectedAssetId,
+                              LegalMetadata.class,
+                              getSelectedLocale(state));
 
             rights.setValue(state,
-                            legalMetadata
-                                .getRights()
-                                .getValue(getSelectedLocale(state)));
+                            data.get(LegalMetadataFormController.RIGHTS));
         }
     }
 
@@ -133,51 +124,21 @@ public class LegalMetadataForm extends AbstractAssetForm<LegalMetadata> {
         return LegalMetadata.class;
     }
 
-//    @Override
-//    protected Asset createAsset(final FormSectionEvent event)
-//        throws FormProcessException {
-//
-//        Objects.requireNonNull(event);
-//
-//        final PageState state = event.getPageState();
-//
-//        final LegalMetadata legalMetadata = new LegalMetadata();
-//
-//        legalMetadata.setRightsHolder((String) rightsHolder.getValue(state));
-//        legalMetadata.getRights().addValue(getSelectedLocale(state),
-//                                           (String) rights.getValue(state));
-//
-//        legalMetadata.setPublisher((String) publisher.getValue(state));
-//        legalMetadata.setCreator((String) creator.getValue(state));
-//
-//        return legalMetadata;
-//    }
     @Override
-    protected void updateAsset(final Asset asset,
-                               final FormSectionEvent event)
+    protected Map<String, Object> collectData(final FormSectionEvent event)
         throws FormProcessException {
 
-        Objects.requireNonNull(asset);
-        Objects.requireNonNull(event);
-
         final PageState state = event.getPageState();
+        final Map<String, Object> data = new HashMap<>();
 
-        if (!(asset instanceof LegalMetadata)) {
-            throw new IllegalArgumentException(String.format(
-                "Provided asset is not an instance of '%s' (or a sub class) "
-                    + "but is an instance of class '%s'.",
-                LegalMetadata.class.getName(),
-                asset.getClass().getName()));
-        }
+        data.put(LegalMetadataFormController.CREATOR, creator.getValue(state));
+        data.put(LegalMetadataFormController.PUBLISHER,
+                 publisher.getValue(state));
+        data.put(LegalMetadataFormController.RIGHTS,
+                 rights.getValue(state));
+        data.put(LegalMetadataFormController.RIGHTS_HOLDER,
+                 rightsHolder.getValue(state));
 
-        final LegalMetadata legalMetadata = (LegalMetadata) asset;
-
-        legalMetadata.setRightsHolder((String) rightsHolder.getValue(state));
-        legalMetadata.getRights().addValue(getSelectedLocale(state),
-                                           (String) rights.getValue(state));
-
-        legalMetadata.setPublisher((String) publisher.getValue(state));
-        legalMetadata.setCreator((String) creator.getValue(state));
+        return data;
     }
-
 }

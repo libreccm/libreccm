@@ -34,13 +34,13 @@ import org.librecms.assets.LegalMetadata;
 import org.librecms.contentsection.Asset;
 import org.librecms.contentsection.AssetRepository;
 
-import java.util.Optional;
+import java.util.Map;
 
 /**
  *
  * @author <a href="mailto:yannick.buelter@yabue.de">Yannick Bülter</a>
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- * 
+ *
  */
 public class VideoForm extends AbstractBinaryAssetForm<VideoAsset> {
 
@@ -57,45 +57,49 @@ public class VideoForm extends AbstractBinaryAssetForm<VideoAsset> {
 
         width = new TextField("width-text");
         height = new TextField("height-text");
-        assetSearchWidget = new AssetSearchWidget("legal-metadata", LegalMetadata.class);
+        assetSearchWidget = new AssetSearchWidget("legal-metadata",
+                                                  LegalMetadata.class);
 
         add(new Label(new GlobalizedMessage(
-                "cms.ui.assets.video.width.label",
-                CmsConstants.CMS_BUNDLE
+            "cms.ui.assets.video.width.label",
+            CmsConstants.CMS_BUNDLE
         )));
         add(width);
 
         add(new Label(new GlobalizedMessage(
-                "cms.ui.assets.video.height.label",
-                CmsConstants.CMS_BUNDLE
+            "cms.ui.assets.video.height.label",
+            CmsConstants.CMS_BUNDLE
         )));
         add(height);
 
         add(new Label(new GlobalizedMessage(
-                "cms.ui.assets.video.legal_metadata.label",
-                CmsConstants.CMS_BUNDLE
+            "cms.ui.assets.video.legal_metadata.label",
+            CmsConstants.CMS_BUNDLE
         )));
         add(assetSearchWidget);
     }
 
     @Override
-    protected void initForm(final PageState state, 
-                            final Optional<VideoAsset> selectedAsset) {
+    protected void initForm(final PageState state,
+                            final Map<String, Object> data) {
 
-        super.initForm(state, selectedAsset);
+        super.initForm(state, data);
 
-        if (selectedAsset.isPresent()) {
+        if (getSelectedAssetId(state) != null) {
 
-            final VideoAsset video = selectedAsset.get();
+            final long widthValue = (long) data.get(VideoFormController.WIDTH);
+            final long heightValue = (long) data
+                .get(VideoFormController.HEIGHT);
 
-            width.setValue(state,
-                    Long.toString(video.getWidth()));
-            height.setValue(state,
-                    Long.toString(video.getHeight()));
-            final LegalMetadata legalMetadata = video
-                    .getLegalMetadata();
-            if (legalMetadata != null) {
-                assetSearchWidget.setValue(state, legalMetadata.getObjectId());
+            width.setValue(state, Long.toString(widthValue));
+            height.setValue(state, Long.toString(heightValue));
+
+            if (data.containsKey(VideoFormController.LEGAL_METADATA_ID)) {
+
+                assetSearchWidget.setValue(
+                    state,
+                    data.containsKey(VideoFormController.LEGAL_METADATA_ID));
+
             }
         }
     }
@@ -105,60 +109,25 @@ public class VideoForm extends AbstractBinaryAssetForm<VideoAsset> {
         return VideoAsset.class;
     }
 
-    
-    
-//    @Override
-//    protected Asset createAsset(final FormSectionEvent event)
-//            throws FormProcessException {
-//
-//        final VideoAsset video = (VideoAsset) super.createAsset(event);
-//
-//        final PageState state = event.getPageState();
-//
-//        video.setHeight(Long.parseLong((String) height.getValue(state)));
-//        video.setWidth(Long.parseLong((String) width.getValue(state)));
-//        updateData(video, state);
-//
-//        return video;
-//    }
-
     @Override
-    protected void updateAsset(final Asset asset,
-                               final FormSectionEvent event)
-            throws FormProcessException {
-
-        super.updateAsset(asset, event);
+    protected Map<String, Object> collectData(final FormSectionEvent event)
+        throws FormProcessException {
 
         final PageState state = event.getPageState();
 
-        final VideoAsset video = (VideoAsset) asset;
+        final Map<String, Object> data = super.collectData(event);
 
-        video.setHeight(Long.parseLong((String) height.getValue(state)));
-        video.setWidth(Long.parseLong((String) width.getValue(state)));
+        data.put(VideoFormController.WIDTH, width.getValue(state));
+        data.put(VideoFormController.HEIGHT, height.getValue(state));
 
-        updateData(video, state);
-    }
+        if (assetSearchWidget.getValue(state) != null) {
 
-    protected void updateData(final VideoAsset video,
-                              final PageState state) {
+            data.put(VideoFormController.LEGAL_METADATA_ID,
+                     assetSearchWidget.getValue(state));
 
-        final Long legalMetadataId = (Long) assetSearchWidget.getValue(state);
-        if (legalMetadataId != null) {
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final AssetRepository assetRepo = cdiUtil.findBean(
-                    AssetRepository.class);
-            final LegalMetadata legalMetadata = (LegalMetadata) assetRepo
-                    .findById(legalMetadataId)
-                    .orElseThrow(() -> new IllegalArgumentException(String.format(
-                            "No LegalMetadata asset with ID %d in the database.",
-                            legalMetadataId)));
-
-            video.setLegalMetadata(legalMetadata);
         }
+
+        return data;
     }
 
-//    @Override
-//    protected BinaryAsset createBinaryAsset(final PageState state) {
-//        return new VideoAsset();
-//    }
 }

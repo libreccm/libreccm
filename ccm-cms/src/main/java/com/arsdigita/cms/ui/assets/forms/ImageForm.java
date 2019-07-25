@@ -29,13 +29,12 @@ import com.arsdigita.globalization.GlobalizedMessage;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
-import org.librecms.assets.BinaryAsset;
 import org.librecms.assets.Image;
 import org.librecms.assets.LegalMetadata;
 import org.librecms.contentsection.Asset;
 import org.librecms.contentsection.AssetRepository;
 
-import java.util.Optional;
+import java.util.Map;
 
 /**
  *
@@ -83,24 +82,27 @@ public class ImageForm extends AbstractBinaryAssetForm<Image> {
 
     @Override
     protected void initForm(final PageState state,
-                            final Optional<Image> selectedAsset) {
+                            final Map<String, Object> data) {
 
-        super.initForm(state, selectedAsset);
+        super.initForm(state, data);
 
-        if (selectedAsset.isPresent()) {
+        if (getSelectedAssetId(state) != null) {
 
-            final Image image = selectedAsset.get();
+            if (data.containsKey(ImageFormController.WIDTH)) {
+                final long widthValue = (long) data
+                    .get(ImageFormController.WIDTH);
+                width.setValue(state, Long.toString(widthValue));
+            }
+            if (data.containsKey(ImageFormController.HEIGHT)) {
+                final long heightValue = (long) data
+                    .get(ImageFormController.HEIGHT);
+                height.setValue(state, Long.toString(heightValue));
+            }
 
-            width.setValue(state,
-                           Long.toString(image.getWidth()));
-            height.setValue(state,
-                            Long.toString(image.getHeight()));
-            final LegalMetadata legalMetadata = image
-                .getLegalMetadata();
-            if (legalMetadata == null) {
-                assetSearchWidget.setValue(state, null);
-            } else {
-                assetSearchWidget.setValue(state, legalMetadata.getObjectId());
+            if (data.containsKey(ImageFormController.LEGAL_METADATA_ID)) {
+                assetSearchWidget
+                    .setValue(state,
+                              data.get(ImageFormController.LEGAL_METADATA_ID));
             }
         }
     }
@@ -110,75 +112,22 @@ public class ImageForm extends AbstractBinaryAssetForm<Image> {
         return Image.class;
     }
 
-//    @Override
-//    protected Asset createAsset(final FormSectionEvent event)
-//        throws FormProcessException {
-//
-//        final Image image = (Image) super.createAsset(event);
-//
-//        final PageState state = event.getPageState();
-//
-//        image.setDisplayName(getTitleValue(state)
-//            .toLowerCase()
-//            .replace(" ", "-"));
-//
-//        if (height.getValue(state) != null) {
-//            image.setHeight(Long.parseLong((String) height.getValue(state)));
-//        }
-//        if (width.getValue(state) != null) {
-//            image.setWidth(Long.parseLong((String) width.getValue(state)));
-//        }
-//        updateData(image, state);
-//
-//        return image;
-//    }
     @Override
-    protected void updateAsset(final Asset asset,
-                               final FormSectionEvent event)
+    protected Map<String, Object> collectData(final FormSectionEvent event)
         throws FormProcessException {
 
-        super.updateAsset(asset, event);
-
+        final Map<String, Object> data = super.collectData(event);
         final PageState state = event.getPageState();
 
-        final Image image = (Image) asset;
+        data.put(ImageFormController.WIDTH, width.getValue(state));
+        data.put(ImageFormController.HEIGHT, height.getValue(state));
 
-        if (height.getValue(state) == null
-                || ((String) height.getValue(state)).trim().isEmpty()) {
-            image.setHeight(-1);
-        } else {
-            image.setHeight(Long.parseLong((String) height.getValue(state)));
-        }
-        if (width.getValue(state) == null
-                || ((String) width.getValue(state)).trim().isEmpty()) {
-            image.setWidth(-1);
-        } else {
-            image.setWidth(Long.parseLong((String) width.getValue(state)));
+        if (assetSearchWidget.getValue(state) != null) {
+            data.put(ImageFormController.LEGAL_METADATA_ID,
+                     assetSearchWidget.getValue(state));
         }
 
-        updateData(image, state);
+        return data;
     }
 
-    protected void updateData(final Image image,
-                              final PageState state) {
-
-        final Long legalMetadataId = (Long) assetSearchWidget.getValue(state);
-        if (legalMetadataId != null) {
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final AssetRepository assetRepo = cdiUtil.findBean(
-                AssetRepository.class);
-            final LegalMetadata legalMetadata = (LegalMetadata) assetRepo
-                .findById(legalMetadataId)
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                "No LegalMetadata asset with ID %d in the database.",
-                legalMetadataId)));
-
-            image.setLegalMetadata(legalMetadata);
-        }
-    }
-
-//    @Override
-//    protected BinaryAsset createBinaryAsset(final PageState state) {
-//        return new Image();
-//    }
 }
