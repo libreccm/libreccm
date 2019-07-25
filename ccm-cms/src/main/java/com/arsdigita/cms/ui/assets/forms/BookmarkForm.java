@@ -18,9 +18,14 @@
  */
 package com.arsdigita.cms.ui.assets.forms;
 
+import com.arsdigita.bebop.FormProcessException;
+import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.cms.ui.assets.AssetPane;
 
 import org.librecms.assets.Bookmark;
+
+import java.util.Collections;
+import java.util.Map;
 
 /**
  *
@@ -30,7 +35,6 @@ public class BookmarkForm extends AbstractBookmarkForm<Bookmark> {
 
 //    private TextArea description;
 //    private TextField url;
-
     public BookmarkForm(final AssetPane assetPane) {
         super(assetPane);
     }
@@ -115,13 +119,12 @@ public class BookmarkForm extends AbstractBookmarkForm<Bookmark> {
 //                                     .getValue(getSelectedLocale(state)));
 //        }
 //    }
-
     @Override
     @SuppressWarnings("unchecked")
     protected Class<Bookmark> getAssetClass() {
         return Bookmark.class;
     }
-    
+
 //    @Override
 //    protected Asset createAsset(final FormSectionEvent event)
 //        throws FormProcessException {
@@ -136,7 +139,6 @@ public class BookmarkForm extends AbstractBookmarkForm<Bookmark> {
 //
 //        return bookmark;
 //    }
-
 //    protected void updateData(final Bookmark bookmark,
 //                              final PageState state) {
 //        bookmark
@@ -170,5 +172,11 @@ public class BookmarkForm extends AbstractBookmarkForm<Bookmark> {
 //
 //        updateData(bookmark, state);
 //    }
+    @Override
+    protected Map<String, Object> collectData(final FormSectionEvent event)
+        throws FormProcessException {
+        
+        return Collections.emptyMap();
+    }
 
 }

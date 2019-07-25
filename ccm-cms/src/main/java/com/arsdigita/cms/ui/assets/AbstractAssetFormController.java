@@ -23,95 +23,213 @@ import org.librecms.contentsection.Asset;
 import org.librecms.contentsection.AssetRepository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 /**
+ * An base class for implementations of {@link AssetFormController}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * @param <T>
  */
-@RequestScoped
-public class AbstractAssetFormController {
+public abstract class AbstractAssetFormController<T extends Asset> implements
+    AssetFormController<T> {
+
+    protected static final String DISPLAY_NAME = "displayName";
+    protected static final String TITLE = "title";
 
     @Inject
     private AssetRepository assetRepository;
-    
+
     @Inject
     private AssetL10NManager l10nManager;
 
+    /**
+     * Retrieves the basic data of the provided asset. Subclasses should not
+     * overrride this method. Instead they should provided an implementation of
+     * {@link #getAssetData(org.librecms.contentsection.Asset, java.util.Locale)}.
+     *
+     * @param assetType      The {@link Asset} from which the data is read.
+     * @param selectedLocale The locale for which the data is read.
+     *
+     * @return A map with the data of the basic properties of the provided
+     *         asset.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
-    public String getTitle(final Asset asset, final Locale locale) {
+    @Override
+    public Map<String, Object> getAssetData(final Long assetId,
+                                            final Class<T> assetType,
+                                            final Locale selectedLocale) {
 
-        Objects.requireNonNull(asset, "Can't get title from asset null.");
-        Objects.requireNonNull(locale,
-                               "Can't title from asset for locale null");
+        Objects.requireNonNull(assetId, "Can't get data from asset null.");
+        Objects.requireNonNull(selectedLocale,
+                               "Can't get data from asset for locale null.");
 
-        final Asset result = assetRepository
-            .findById(asset.getObjectId())
-            .orElseThrow(
-                () -> new IllegalArgumentException(
-                    String.format("No asset with ID %d found.",
-                                  asset.getObjectId())
-                )
-            );
+        final T asset = loadAsset(assetId, assetType);
 
-        return result.getTitle().getValue(locale);
-    }
-    
-    @Transactional(Transactional.TxType.REQUIRED)
-    public List<Locale> availableLocales(final Asset asset) {
+        final Map<String, Object> data = new HashMap<>();
+
+        data.put(DISPLAY_NAME, asset.getDisplayName());
+        data.put(TITLE, asset.getTitle().getValue(selectedLocale));
+
+        data.putAll(getAssetData(asset, selectedLocale));
         
-        Objects.requireNonNull(asset, 
-                               "Can't get available locales from asset null.");
-        
-        final Asset result = assetRepository
-            .findById(asset.getObjectId())
-            .orElseThrow(
-                () -> new IllegalArgumentException(
-                    String.format("No asset with ID %d found.",
-                                  asset.getObjectId())
-                )
-            );
-        
-        return new ArrayList<>(l10nManager.availableLocales(result));
-    }
-    
-    @Transactional(Transactional.TxType.REQUIRED)
-    public List<Locale> creatableLocales(final Asset asset) {
-        
-        Objects.requireNonNull(asset, 
-                               "Can't get creatable locales from asset null.");
-        
-        final Asset result = assetRepository
-            .findById(asset.getObjectId())
-            .orElseThrow(
-                () -> new IllegalArgumentException(
-                    String.format("No asset with ID %d found.",
-                                  asset.getObjectId())
-                )
-            );
-        
-        return new ArrayList<>(l10nManager.creatableLocales(result));
+        return data;
     }
 
+    protected abstract Map<String, Object> getAssetData(
+        final T asset, final Locale selectedLocale);
+
+    /**
+     * Updates the provided asset with the provided data.
+     *
+     * This method is not intended to be overridden, but can't be {@code final}
+     * because of limitations of CDI. To update type specific properties
+     * implement
+     * {@link #updateAssetProperties(org.librecms.contentsection.Asset, java.util.Locale, java.util.Map)}.
+     *
+     * This method calls
+     * {@link AssetRepository#save(org.librecms.contentsection.Asset)} after the
+     * properties are set to save the changes to the database.
+     *
+     * @param assetId        The ID of the asset to update.
+     * @param selectedLocale The locale for which the asset is updated.
+     * @param data           The data used to update the asset.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
-    public void updateAsset(final Asset asset, 
-                            final String displayName,
-                            final String title,
-                            final Locale selectedLocale) {
-        
-        Objects.requireNonNull(asset, "Can't update null");
-        
-        final Asset selected = assetRepository
-        .findById(asset.getObjectId())
-        .orElseThrow(() -> new IllegalArgumentException(String.format(
-            "No Asset with ID %d found.", asset.getObjectId())));
-        
+    @Override
+    public void updateAsset(final Long assetId,
+                            final Locale selectedLocale,
+                            final Class<T> assetType,
+                            final Map<String, Object> data) {
+
+        Objects.requireNonNull(assetId, "Can't update asset null.");
+        Objects.requireNonNull(selectedLocale,
+                               "Can't get update asset for locale null.");
+        Objects.requireNonNull(data, "Can't update asset without data.");
+
+        final T asset;
+        if (assetId == null) {
+            asset = createAsset();
+        } else {
+            asset = loadAsset(assetId, assetType);
+        }
+
+        if (data.containsKey(DISPLAY_NAME)) {
+            asset.setDisplayName((String) data.get(DISPLAY_NAME));
+        }
+
+        if (data.containsKey(TITLE)) {
+
+            final String title = (String) data.get(TITLE);
+            asset.getTitle().addValue(selectedLocale, title);
+        }
+
+        updateAssetProperties(asset, selectedLocale, data);
+
+        assetRepository.save(asset);
     }
-    
+
+    /**
+     * Override this method to process data for type specific properties.
+     *
+     * This method is called by
+     * {@link #updateAsset(org.librecms.contentsection.Asset, java.util.Locale, java.util.Map)}.
+     * Implementations should <strong>not</strong> call
+     * {@link AssetRepository#save}. Saving the update asset is done by
+     * {@link #updateAsset(org.librecms.contentsection.Asset, java.util.Locale, java.util.Map)}.
+     *
+     * An implementation should not assume that a value for each property is
+     * present in the provided map. Instead the overriding method should check
+     * if a value for a property is available by using
+     * {@link Map#containsKey(java.lang.Object)} first.
+     *
+     * @param asset          The asset to update.
+     * @param selectedLocale The locale for which the asset is updated.
+     * @param data           The data used to update the asset.
+     */
+    public abstract void updateAssetProperties(final T asset,
+                                               final Locale selectedLocale,
+                                               final Map<String, Object> data);
+
+    /**
+     * Determines for which locales the provided asset has data.
+     *
+     * @param assetId The asset.
+     *
+     * @return A list of all locales for which the asset has data.
+     */
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public List<Locale> availableLocales(final Long assetId,
+                                         final Class<T> assetType) {
+
+        Objects.requireNonNull(
+            assetId,
+            "Can't get available locales for asset with ID null.");
+
+        final T selectedAsset = loadAsset(assetId, assetType);
+
+        return new ArrayList<>(l10nManager.availableLocales(selectedAsset));
+    }
+
+    /**
+     * Determines for locales the asset has no data yet.
+     *
+     * @param assetId The asset.
+     *
+     * @return A list of all locales for which the provided asset has no data
+     *         yet.
+     */
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public List<Locale> creatableLocales(final Long assetId,
+                                         final Class<T> assetType) {
+
+        Objects.requireNonNull(
+            assetId,
+            "Can't get creatable locales for asset with ID null.");
+
+        final T selectedAsset = loadAsset(assetId, assetType);
+
+        return new ArrayList<>(l10nManager.creatableLocales(selectedAsset));
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public void addLocale(final Long assetId,
+                          final Locale locale,
+                          final Class<T> assetType) {
+
+        Objects.requireNonNull(assetId, "Can't add a locale to asset null.");
+        Objects.requireNonNull(locale, "Can't add locale null to an asset.");
+
+        final T selectedAsset = loadAsset(assetId, assetType);
+
+        l10nManager.addLanguage(selectedAsset, locale);
+    }
+
+    /**
+     *
+     * @param assetId
+     * @param assetType
+     *
+     * @return
+     */
+    protected T loadAsset(final Long assetId, final Class<T> assetType) {
+
+        Objects.requireNonNull(assetId, "null is not a valid assetId");
+
+        return assetRepository
+            .findById(assetId, assetType)
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No asset with ID %d found.", assetId)));
+    }
+
 }
