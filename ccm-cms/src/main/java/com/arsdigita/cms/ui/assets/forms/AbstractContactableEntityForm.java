@@ -18,19 +18,16 @@
  */
 package com.arsdigita.cms.ui.assets.forms;
 
-import com.arsdigita.bebop.ActionLink;
+
 import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.ControlLink;
 import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
-import com.arsdigita.bebop.Page;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.SimpleContainer;
 import com.arsdigita.bebop.Table;
 import com.arsdigita.bebop.Text;
-import com.arsdigita.bebop.event.ActionEvent;
-import com.arsdigita.bebop.event.ActionListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.bebop.event.PrintEvent;
 import com.arsdigita.bebop.event.PrintListener;
@@ -55,20 +52,13 @@ import com.arsdigita.util.LockableImpl;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.CmsConstants;
-import org.librecms.assets.ContactEntry;
-import org.librecms.assets.ContactEntryKeyByLabelComparator;
 import org.librecms.assets.ContactEntryKey;
-import org.librecms.assets.ContactEntryKeyRepository;
 import org.librecms.assets.ContactableEntity;
-import org.librecms.assets.ContactableEntityManager;
 import org.librecms.assets.PostalAddress;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
 import java.util.TooManyListenersException;
-import java.util.stream.Collectors;
 
 import static org.librecms.CmsConstants.*;
 
@@ -178,6 +168,7 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
 
         if (selectedAssetId != null) {
             // ToDo
+            throw new UnsupportedOperationException();
         }
     }
 
