@@ -33,9 +33,9 @@ import java.util.Map;
  * approbriate implementation of this interface. To minimize the efford to
  * create an implementation the {@link AbstractAssetFormController} class should
  * be used. This class provides basic implementations for most methods.
- * 
- * Implementations of the methods defined by this interface should annotated with
- * {@code @Transactional(Transactional.TxType.REQUIRED)}.
+ *
+ * Implementations of the methods defined by this interface should annotated
+ * with {@code @Transactional(Transactional.TxType.REQUIRED)}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  *
@@ -46,37 +46,56 @@ public interface AssetFormController<T extends Asset> {
     /**
      * Gets the data for the forms from the asset.
      *
-     * @param asset          The asset.
+     * @param assetId        The ID of the asset.
+     * @param assetType
      * @param selectedLocale The selected locale
      *
      * @return The values of the properties of the asset for the the selected
      *         locale.
      */
-    Map<String, Object> getData(T asset, Locale selectedLocale);
+    Map<String, Object> getAssetData(Long assetId,
+                                     Class<T> assetType,
+                                     Locale selectedLocale);
 
     /**
      * Updates the asset with the provided data and saves the changes.
-     * 
-     * @param asset
+     *
+     * @param assetId
      * @param selectedLocale
-     * @param data 
+     * @param assetType
+     * @param data
      */
-    void setData(T asset, Locale selectedLocale, Map<String, Object> data);
-    
+    void updateAsset(Long assetId,
+                     Locale selectedLocale,
+                     Class<T> assetType,
+                     Map<String, Object> data);
+
+    T createAsset();
+
     /**
      * Determines in which locales the provided asset is available.
-     * 
-     * @param asset The asset.
+     *
+     *
+     * @param assetId
+     * @param assetType
+     *
      * @return A list of the locales for which the asset has data.
      */
-    List<Locale> availableLocales(T asset);
-    
+    List<Locale> availableLocales(Long assetId, Class<T> assetType);
+
     /**
-     * Determines for which the provided asset has no data. 
-     * 
-     * @param asset The asset.
+     * Determines for which the provided asset has no data.
+     *
+     *
+     * @param assetId
+     * @param assetType
+     *
      * @return A list of the locales for which the asset has data yet.
      */
-    List<Locale> creatableLocales(T asset);
+    List<Locale> creatableLocales(Long assetId, Class<T> assetType);
+
+    void addLocale(final Long assetId, 
+                   final Locale locale, 
+                   final Class<T> assetType);
 
 }
