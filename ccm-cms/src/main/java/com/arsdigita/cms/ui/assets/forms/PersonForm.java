@@ -36,8 +36,13 @@ import com.arsdigita.util.LockableImpl;
 
 import org.librecms.assets.Person;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -50,8 +55,11 @@ import static org.librecms.CmsConstants.*;
 public class PersonForm extends AbstractContactableEntityForm<Person> {
 
     private TextField surnameField;
+
     private TextField givenNameField;
+
     private TextField prefixField;
+
     private TextField suffixField;
 
     private Submit addPersonNameButton;
@@ -77,7 +85,7 @@ public class PersonForm extends AbstractContactableEntityForm<Person> {
             CMS_BUNDLE));
         givenNameField = new TextField("givenName");
         add(givenNameLabel);
-        add(surnameLabel);
+        add(givenNameField);
 
         final Label prefixLabel = new Label(new GlobalizedMessage(
             "cms.ui.authoring.assets.person.prefix",
@@ -107,22 +115,38 @@ public class PersonForm extends AbstractContactableEntityForm<Person> {
             CMS_BUNDLE));
         add(birthdateLabel);
         birthdateField = new Date("birthdate");
+        add(birthdateField);
     }
 
     @Override
     protected Class<Person> getAssetClass() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Person.class;
     }
 
     @Override
-    protected void showLocale(PageState state) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    protected void showLocale(final PageState state) {
+
+        // Nothing
     }
 
     @Override
-    protected Map<String, Object> collectData(FormSectionEvent event) throws
-        FormProcessException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    protected Map<String, Object> collectData(
+        final FormSectionEvent event) throws FormProcessException {
+
+        final PageState state = event.getPageState();
+
+        final Map<String, Object> data = new HashMap<>();
+
+        data.put(PersonFormController.SURNAME, surnameField.getValue(state));
+        data.put(PersonFormController.GIVENNAME,
+                 givenNameField.getValue(state));
+        data.put(PersonFormController.PREFIX, prefixField.getValue(state));
+        data.put(PersonFormController.SUFFIX, suffixField.getValue(state));
+
+        data.put(PersonFormController.BIRTHDATE,
+                 birthdateField.getValue(state));
+
+        return data;
     }
 
     @Override
@@ -130,15 +154,50 @@ public class PersonForm extends AbstractContactableEntityForm<Person> {
 
         super.init(event);
 
-        // ToDo
-        throw new UnsupportedOperationException();
+        final PageState state = event.getPageState();
+
+        final Map<String, Object> data = getController()
+            .getAssetData(getSelectedAssetId(state),
+                          getAssetClass(),
+                          getSelectedLocale(state));
+
+        if (data.containsKey(PersonFormController.SURNAME)) {
+            surnameField.setValue(state,
+                                  data.get(PersonFormController.SURNAME));
+        }
+
+        if (data.containsKey(PersonFormController.GIVENNAME)) {
+            givenNameField.setValue(state,
+                                    data.get(PersonFormController.GIVENNAME));
+        }
+
+        if (data.containsKey(PersonFormController.PREFIX)) {
+            prefixField.setValue(state, data.get(PersonFormController.PREFIX));
+        }
+
+        if (data.containsKey(PersonFormController.SUFFIX)) {
+            suffixField.setValue(state, data.get(PersonFormController.SUFFIX));
+        }
+
+        if (data.containsKey(PersonFormController.BIRTHDATE)) {
+            birthdateField.setValue(state,
+                                    data.get(PersonFormController.BIRTHDATE));
+        }
     }
 
     @Override
     public void process(final FormSectionEvent event) throws
         FormProcessException {
-        // ToDo
-        throw new UnsupportedOperationException();
+
+        if (addPersonNameButton.equals(event.getSource())) {
+
+            final PersonFormController controller
+                                       = (PersonFormController) getController();
+            controller.addPersonName(getSelectedAssetId(event.getPageState()));
+            
+        } else {
+            super.process(event);
+        }
     }
 
     private Table buildPersonNamesTable() {
@@ -218,6 +277,7 @@ public class PersonForm extends AbstractContactableEntityForm<Person> {
         private final Iterator<String[]> personNames;
 
         private String[] currentPersonName;
+
         private int row;
 
         public PersonNamesTableModel(final List<String[]> personNames) {
