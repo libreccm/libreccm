@@ -150,12 +150,7 @@ public abstract class AbstractAssetForm<T extends Asset>
 
                         target.clearOptions();
 
-                        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                        @SuppressWarnings("unchecked")
-                        final AbstractAssetFormController<T> controller
-                                                                 = cdiUtil
-                                .findBean(AbstractAssetFormController.class);
-                        final List<Locale> availableLocales = controller
+                        final List<Locale> availableLocales = getController()
                             .availableLocales(selectedAssetId,
                                               getAssetClass());
                         availableLocales.sort((locale1, locale2) -> {
@@ -213,13 +208,7 @@ public abstract class AbstractAssetForm<T extends Asset>
 
                         target.clearOptions();
 
-                        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                        @SuppressWarnings("unchecked")
-                        final AbstractAssetFormController<T> controller
-                                                                 = cdiUtil
-                                .findBean(AbstractAssetFormController.class);
-
-                        final List<Locale> creatableLocales = controller
+                        final List<Locale> creatableLocales = getController()
                             .creatableLocales(selectedAssetId,
                                               getAssetClass());
                         creatableLocales.sort((locale1, locale2) -> {
@@ -302,17 +291,15 @@ public abstract class AbstractAssetForm<T extends Asset>
 
         } else {
 
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            @SuppressWarnings("unchecked")
-            final AbstractAssetFormController<T> controller = cdiUtil
-                .findBean(AbstractAssetFormController.class);
             showLocaleSelect.setValue(state,
                                       getSelectedLocale(state));
 
-            data = controller.getAssetData(selectedAssetId,
-                                           getAssetClass(),
-                                           getSelectedLocale(state));
+            data = getController().getAssetData(selectedAssetId,
+                                                getAssetClass(),
+                                                getSelectedLocale(state));
 
+            name.setValue(state,
+                          data.get(AbstractAssetFormController.DISPLAY_NAME));
             title.setValue(state,
                            data.get(AbstractAssetFormController.TITLE));
         }
@@ -343,14 +330,13 @@ public abstract class AbstractAssetForm<T extends Asset>
 
         if (!data.isEmpty()) {
 
-            name.setValue(state, 
+            name.setValue(state,
                           data.get(AbstractAssetFormController.DISPLAY_NAME));
 
 //            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
 //            @SuppressWarnings("unchecked")
 //            final AbstractAssetFormController<T> controller = cdiUtil
 //                .findBean(AbstractAssetFormController.class);
-
             title.setValue(state,
                            data.get(AbstractAssetFormController.TITLE));
             showLocale(state);
@@ -385,13 +371,26 @@ public abstract class AbstractAssetForm<T extends Asset>
 
         if (saveCancelSection.getSaveButton().isSelected(state)) {
 
-            final Long selectedAssetId = getSelectedAssetId(state);
             final Map<String, Object> data = new HashMap<>();
             data.put(AbstractAssetFormController.DISPLAY_NAME,
                      name.getValue(state));
             data.put(AbstractAssetFormController.TITLE,
                      title.getValue(state));
             data.putAll(collectData(event));
+
+            final Long selectedAssetId;
+            if (getSelectedAssetId(state) == null) {
+
+                selectedAssetId = getController()
+                    .createAsset(assetPane
+                        .getFolderSelectionModel()
+                        .getSelectedObject(state),
+                                 getSelectedLocale(state),
+                                 getAssetClass(),
+                                 data);
+            } else {
+                selectedAssetId = getSelectedAssetId(state);
+            }
 
             getController().updateAsset(selectedAssetId,
                                         getSelectedLocale(state),

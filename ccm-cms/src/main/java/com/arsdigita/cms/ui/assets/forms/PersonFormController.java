@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 /**
  *
@@ -73,6 +74,7 @@ public class PersonFormController
     @Inject
     private PersonManager personManager;
 
+    @Transactional
     @Override
     protected Map<String, Object> getAssetData(final Person asset,
                                                final Locale selectedLocale) {
@@ -96,14 +98,18 @@ public class PersonFormController
 
         final LocalDate birthdate = asset.getBirthdate();
         if (birthdate != null) {
-            final Instant instant = Instant.from(birthdate);
+            final Instant instant = birthdate
+                .atStartOfDay()
+                .atZone(ZoneId.systemDefault())
+                .toInstant();
             final Date birthdateValue = Date.from(instant);
             data.put(BIRTHDATE, birthdateValue);
         }
 
         return data;
     }
-
+    
+    @Transactional(Transactional.TxType.REQUIRED)
     protected List<String[]> getPersonNames(final Long personId) {
 
         final Person person = personRepository
@@ -154,12 +160,18 @@ public class PersonFormController
         final String prefix = (String) data.get(PREFIX);
         final String suffix = (String) data.get(SUFFIX);
 
+        if (asset.getPersonName() == null) {
+            personManager.addPersonName(asset);
+        }
+
         asset.getPersonName().setSurname(surname);
         asset.getPersonName().setGivenName(givenName);
         asset.getPersonName().setPrefix(prefix);
         asset.getPersonName().setSuffix(suffix);
+
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
     public void addPersonName(final long personId) {
 
         final Person person = personRepository
@@ -168,11 +180,6 @@ public class PersonFormController
             "No Person with ID %d found.", personId)));
 
         personManager.addPersonName(person);
-    }
-
-    @Override
-    public Person createAsset() {
-        return new Person();
     }
 
 }

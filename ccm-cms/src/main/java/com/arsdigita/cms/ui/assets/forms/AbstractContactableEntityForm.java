@@ -18,7 +18,6 @@
  */
 package com.arsdigita.cms.ui.assets.forms;
 
-
 import com.arsdigita.bebop.BoxPanel;
 import com.arsdigita.bebop.Component;
 import com.arsdigita.bebop.ControlLink;
@@ -56,8 +55,10 @@ import org.librecms.assets.ContactEntryKey;
 import org.librecms.assets.ContactableEntity;
 import org.librecms.assets.PostalAddress;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TooManyListenersException;
 
 import static org.librecms.CmsConstants.*;
@@ -76,8 +77,6 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
 
     private static final int COL_CONTACT_ENTRIES_REMOVE = 2;
 
-    private final AssetPane assetPane;
-
     private SimpleContainer contactEntriesContainer;
 
     private Table contactEntriesTable;
@@ -93,8 +92,6 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
     public AbstractContactableEntityForm(final AssetPane assetPane) {
 
         super(assetPane);
-
-        this.assetPane = assetPane;
     }
 
     @Override
@@ -158,18 +155,37 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
     }
 
     @Override
-    public void init(final FormSectionEvent event) throws FormProcessException {
+    public void initForm(final PageState state,
+                         final Map<String, Object> data) {
 
-        super.init(event);
-
-        final PageState state = event.getPageState();
+        super.initForm(state, data);
 
         final Long selectedAssetId = getSelectedAssetId(state);
 
         if (selectedAssetId != null) {
-            // ToDo
-            throw new UnsupportedOperationException();
+
+            postalAddressSearchWidget.setValue(
+                state,
+                data.get(AbstractContactableEntityFormController.POSTAL_ADDRESS)
+            );
         }
+    }
+
+    @Override
+    protected Map<String, Object> collectData(
+        final FormSectionEvent event) {
+        
+        final PageState state = event.getPageState();
+        
+        final Map<String, Object> data = new HashMap<>();
+        
+        if (postalAddressSearchWidget.getValue(state) != null) {
+            
+            data.put(AbstractContactableEntityFormController.POSTAL_ADDRESS,
+                     postalAddressSearchWidget.getValue(state));
+        }
+        
+        return data;
     }
 
     @Override
@@ -178,7 +194,7 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
 
         final PageState state = event.getPageState();
 
-        if (addContactEntryLink.equals(event.getSource())) {
+        if (addContactEntryLink.isSelected(state)) {
 
             final Long selectedAssetId = getSelectedAssetId(state);
             if (selectedAssetId == null) {
@@ -197,11 +213,11 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
             final String value = (String) contactEntryValueField.getValue(state);
 
             controller.addContactEntry(key, value, selectedAssetId);
+            
+            contactEntryKeySelect.setValue(state, null);
+            contactEntryValueField.setValue(state, null);
         } else {
             super.process(event);
-
-            final Object selectedPostal = postalAddressSearchWidget
-                .getValue(state);
         }
     }
 
@@ -384,6 +400,7 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
 
             return new ControlLink((Component) value);
         }
+
     }
 
     private class ContactEntryKeySelectPrintListener implements PrintListener {
@@ -400,21 +417,15 @@ public abstract class AbstractContactableEntityForm<T extends ContactableEntity>
                                                            CMS_BUNDLE)))
             );
 
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final AbstractContactableEntityFormController controller = cdiUtil
-                .findBean(AbstractContactableEntityFormController.class);
-            final GlobalizationHelper globalizationHelper = cdiUtil
-                .findBean(GlobalizationHelper.class);
-            final List<ContactEntryKey> keys = controller
-                .findAvailableContactEntryKeys();
+            final AbstractContactableEntityFormController<?> controller = (AbstractContactableEntityFormController<?>) getController();
+           
+            final PageState state = event.getPageState();
+            
+            final List<String[]> keys = controller
+                .findAvailableContactEntryKeys(getSelectedLocale(state));
 
-            for (final ContactEntryKey key : keys) {
-
-                final Text label = new Text(
-                    globalizationHelper
-                        .getValueFromLocalizedString(key.getLabel()));
-
-                target.addOption(new Option(key.getEntryKey(), label));
+            for (final String[] key : keys) {
+                target.addOption(new Option(key[0], new Text(key[1])));
             }
         }
 

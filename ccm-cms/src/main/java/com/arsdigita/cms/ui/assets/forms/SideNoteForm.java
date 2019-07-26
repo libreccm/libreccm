@@ -57,6 +57,8 @@ public class SideNoteForm extends AbstractAssetForm<SideNote> {
     @Override
     protected void initForm(final PageState state,
                             final Map<String, Object> data) {
+        
+        super.initForm(state, data);
 
         if (getSelectedAssetId(state) != null) {
 

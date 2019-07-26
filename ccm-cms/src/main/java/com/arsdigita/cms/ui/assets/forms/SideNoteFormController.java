@@ -57,16 +57,11 @@ public class SideNoteFormController
                                       final Map<String, Object> data) {
 
         if (data.containsKey(TEXT)) {
-            
+
             final String value = (String) data.get(TEXT);
             asset.getText().addValue(selectedLocale, value);
         }
 
-    }
-
-    @Override
-    public SideNote createAsset() {
-        return new SideNote();
     }
 
 }

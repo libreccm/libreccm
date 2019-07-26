@@ -18,10 +18,12 @@
  */
 package com.arsdigita.cms.ui.assets.forms;
 
+import com.arsdigita.cms.ui.assets.AbstractAssetFormController;
 import com.arsdigita.cms.ui.assets.IsControllerForAssetType;
 
-import org.librecms.assets.Organization;
+import org.librecms.assets.PostalAddress;
 
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -32,33 +34,48 @@ import javax.enterprise.context.RequestScoped;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@IsControllerForAssetType(Organization.class)
-public class OrganizationFormController
-    extends AbstractContactableEntityFormController<Organization> {
+@IsControllerForAssetType(PostalAddress.class)
+public class PostalAddressFormController
+    extends AbstractAssetFormController<PostalAddress> {
 
-    protected static final String ORGANIZATION_NAME = "organizationName";
+    protected static final String STATE = "state";
+    protected static final String CITY = "city";
+    protected static final String POSTAL_CODE = "postalCode";
+    protected static final String ADDRESS = "address";
 
     @Override
-    protected Map<String, Object> getAssetData(final Organization asset,
+    protected Map<String, Object> getAssetData(final PostalAddress asset,
                                                final Locale selectedLocale) {
 
-        final Map<String, Object> data = super.getAssetData(asset,
-                                                            selectedLocale);
-        data.put(ORGANIZATION_NAME, asset.getName());
+        final Map<String, Object> data = new HashMap<>();
+
+        data.put(ADDRESS, asset.getAddress());
+        data.put(POSTAL_CODE, asset.getPostalCode());
+        data.put(CITY, asset.getCity());
+        data.put(STATE, asset.getState());
 
         return data;
     }
 
     @Override
-    public void updateAssetProperties(final Organization asset,
+    public void updateAssetProperties(final PostalAddress asset,
                                       final Locale selectedLocale,
                                       final Map<String, Object> data) {
 
-        super.updateAssetProperties(asset, selectedLocale, data);
+        if (data.containsKey(ADDRESS)) {
+            asset.setAddress((String) data.get(ADDRESS));
+        }
 
-        if (data.containsKey(ORGANIZATION_NAME)) {
-            final String organizationName = (String) data.get(ORGANIZATION_NAME);
-            asset.setName(organizationName);
+        if (data.containsKey(POSTAL_CODE)) {
+            asset.setPostalCode((String) data.get(POSTAL_CODE));
+        }
+
+        if (data.containsKey(CITY)) {
+            asset.setCity((String) data.get(CITY));
+        }
+
+        if (data.containsKey(STATE)) {
+            asset.setState((String) data.get(STATE));
         }
     }
 

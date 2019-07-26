@@ -16,11 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.arsdigita.cms.ui.assets.forms;
+package org.librecms.assets;
 
-import com.arsdigita.cms.ui.assets.IsControllerForAssetType;
-
-import org.librecms.assets.FileAsset;
+import org.libreccm.core.AbstractEntityRepository;
 
 import javax.enterprise.context.RequestScoped;
 
@@ -29,7 +27,31 @@ import javax.enterprise.context.RequestScoped;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@IsControllerForAssetType(FileAsset.class)
-public class FileAssetFormController extends AbstractBinaryAssetFormController<FileAsset> {
+public class ContactEntryRepository
+    extends AbstractEntityRepository<Long, ContactEntry> {
+
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public Class<ContactEntry> getEntityClass() {
+        return ContactEntry.class;
+    }
+
+    @Override
+    public String getIdAttributeName() {
+        return "contactEntryId";
+    }
+
+    @Override
+    public Long getIdOfEntity(final ContactEntry entity) {
+
+        return entity.getContactEntryId();
+    }
+
+    @Override
+    public boolean isNew(final ContactEntry entity) {
+
+        return entity.getContactEntryId() == 0;
+    }
 
 }

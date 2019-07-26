@@ -19,7 +19,6 @@
 package com.arsdigita.cms.ui.assets.forms;
 
 import com.arsdigita.cms.ui.assets.IsControllerForAssetType;
-import com.arsdigita.cms.ui.assets.forms.AbstractBinaryAssetFormController;
 
 import org.librecms.contentsection.AssetRepository;
 
@@ -94,11 +93,6 @@ public class VideoFormController
             )));
             asset.setLegalMetadata(legalMetadata);
         }
-    }
-
-    @Override
-    public VideoAsset createAsset() {
-        return new VideoAsset();
     }
 
 }

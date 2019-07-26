@@ -30,12 +30,9 @@ import com.arsdigita.globalization.GlobalizedMessage;
 
 import org.librecms.CmsConstants;
 import org.librecms.assets.LegalMetadata;
-import org.librecms.contentsection.Asset;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  *
@@ -87,6 +84,8 @@ public class LegalMetadataForm extends AbstractAssetForm<LegalMetadata> {
     @Override
     protected void initForm(final PageState state,
                             final Map<String, Object> data) {
+        
+        super.initForm(state, data);
 
         if (getSelectedAssetId(state) != null) {
 

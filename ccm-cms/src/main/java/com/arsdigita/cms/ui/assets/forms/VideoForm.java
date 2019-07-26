@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright (C) 2017 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
@@ -27,12 +27,9 @@ import com.arsdigita.cms.ui.assets.AssetPane;
 import com.arsdigita.cms.ui.assets.AssetSearchWidget;
 import com.arsdigita.globalization.GlobalizedMessage;
 
-import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
 import org.librecms.assets.VideoAsset;
 import org.librecms.assets.LegalMetadata;
-import org.librecms.contentsection.Asset;
-import org.librecms.contentsection.AssetRepository;
 
 import java.util.Map;
 
