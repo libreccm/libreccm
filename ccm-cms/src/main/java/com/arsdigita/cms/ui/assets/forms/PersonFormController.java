@@ -25,7 +25,11 @@ import org.librecms.assets.PersonManager;
 import org.librecms.assets.PersonName;
 import org.librecms.assets.PersonRepository;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -44,15 +48,23 @@ public class PersonFormController
     extends AbstractContactableEntityFormController<Person> {
 
     protected static final String SUFFIX = "suffix";
+
     protected static final String PREFIX = "prefix";
+
     protected static final String GIVENNAME = "givenName";
+
     protected static final String SURNAME = "surname";
+
     protected static final String BIRTHDATE = "birthdate";
+
     protected static final String PERSON_NAMES = "personNames";
 
     protected static final int SURNAME_INDEX = 0;
+
     protected static final int GIVENNAME_INDEX = 1;
+
     protected static final int PREFIX_INDEX = 2;
+
     protected static final int SUFFIX_INDEX = 3;
 
     @Inject
@@ -82,7 +94,12 @@ public class PersonFormController
             .collect(Collectors.toList());
         data.put(PERSON_NAMES, names);
 
-        data.put(BIRTHDATE, asset.getBirthdate());
+        final LocalDate birthdate = asset.getBirthdate();
+        if (birthdate != null) {
+            final Instant instant = Instant.from(birthdate);
+            final Date birthdateValue = Date.from(instant);
+            data.put(BIRTHDATE, birthdateValue);
+        }
 
         return data;
     }
@@ -123,7 +140,13 @@ public class PersonFormController
 
         if (data.containsKey(BIRTHDATE)) {
 
-            asset.setBirthdate((LocalDate) data.get(BIRTHDATE));
+            final Date birthdateValue = (Date) data.get(BIRTHDATE);
+            final Instant instant = birthdateValue.toInstant();
+            final LocalDate birthdate = LocalDateTime
+                .ofInstant(instant, ZoneId.systemDefault())
+                .toLocalDate();
+
+            asset.setBirthdate(birthdate);
         }
 
         final String surname = (String) data.get(SURNAME);
