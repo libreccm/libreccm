@@ -45,7 +45,7 @@
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
 
-    <dependencyManagement>
+<!--    <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>io.thorntail</groupId>
@@ -55,7 +55,7 @@
                 <type>pom</type>
             </dependency>
         </dependencies>
-    </dependencyManagement>
+    </dependencyManagement>-->
     
     <dependencies>
         
