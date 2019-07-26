@@ -184,7 +184,7 @@
                         <linkXref>true</linkXref>
                         <sourceEncoding>utf-8</sourceEncoding>
                         <targetJdk>1.8</targetJdk>
-<!--                        <rulesets>
+                        <!--                        <rulesets>
                             <ruleset>/rulesets/basic.xml</ruleset>
                             <ruleset>/rulesets/braces.xml</ruleset>
                             <ruleset>/rulesets/codesize.xml</ruleset>
@@ -381,6 +381,14 @@
                 <groupId>javax</groupId>
                 <artifactId>javaee-api</artifactId>
                 <version>8.0.1</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.thorntail</groupId>
+                <artifactId>bom</artifactId>
+                <version>2.4.0.Final</version>
+                <scope>import</scope>
+                <type>pom</type>
             </dependency>
 
             <!--
@@ -589,6 +597,12 @@
                 <artifactId>javax.json</artifactId>
                 <version>1.1.2</version>
             </dependency>-->
+            
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>0.9.11</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.freemarker</groupId>
@@ -779,6 +793,27 @@
                 <version>1.4.199</version>
             </dependency>
 
+            <!-- WebJars -->
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>font-awesome</artifactId>
+                <version>4.7.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>requirejs</artifactId>
+                <version>2.3.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>requirejs-domready</artifactId>
+                <version>2.0.1-2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.webjars.npm</groupId>
+                <artifactId>tinymce</artifactId>
+                <version>4.8.2</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
