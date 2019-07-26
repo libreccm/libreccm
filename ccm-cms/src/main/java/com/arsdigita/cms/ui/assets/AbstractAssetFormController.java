@@ -20,7 +20,9 @@ package com.arsdigita.cms.ui.assets;
 
 import org.librecms.assets.AssetL10NManager;
 import org.librecms.contentsection.Asset;
+import org.librecms.contentsection.AssetManager;
 import org.librecms.contentsection.AssetRepository;
+import org.librecms.contentsection.Folder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +45,9 @@ public abstract class AbstractAssetFormController<T extends Asset> implements
 
     protected static final String DISPLAY_NAME = "displayName";
     protected static final String TITLE = "title";
+
+    @Inject
+    private AssetManager assetManager;
 
     @Inject
     private AssetRepository assetRepository;
@@ -79,12 +84,42 @@ public abstract class AbstractAssetFormController<T extends Asset> implements
         data.put(TITLE, asset.getTitle().getValue(selectedLocale));
 
         data.putAll(getAssetData(asset, selectedLocale));
-        
+
         return data;
     }
 
     protected abstract Map<String, Object> getAssetData(
         final T asset, final Locale selectedLocale);
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public long createAsset(final Folder infolder,
+                         final Locale selectedLocale,
+                         final Class<T> assetType,
+                         final Map<String, Object> data) {
+
+        if (!data.containsKey(DISPLAY_NAME)) {
+            throw new IllegalArgumentException(
+                "data does not contain a value for displayName.");
+        }
+
+        if (!data.containsKey(TITLE)) {
+            throw new IllegalArgumentException(
+                "data does not contain a value for title.");
+        }
+
+        final String name = (String) data.get(DISPLAY_NAME);
+        final String title = (String) data.get(TITLE);
+
+        final T asset = assetManager
+            .createAsset(name, 
+                         title,
+                         selectedLocale,
+                         infolder,
+                         assetType);
+        
+        return asset.getObjectId();
+    }
 
     /**
      * Updates the provided asset with the provided data.
@@ -109,18 +144,11 @@ public abstract class AbstractAssetFormController<T extends Asset> implements
                             final Class<T> assetType,
                             final Map<String, Object> data) {
 
-        Objects.requireNonNull(assetId, "Can't update asset null.");
         Objects.requireNonNull(selectedLocale,
                                "Can't get update asset for locale null.");
         Objects.requireNonNull(data, "Can't update asset without data.");
 
-        final T asset;
-        if (assetId == null) {
-            asset = createAsset();
-        } else {
-            asset = loadAsset(assetId, assetType);
-        }
-
+        final T asset = loadAsset(assetId, assetType);
         if (data.containsKey(DISPLAY_NAME)) {
             asset.setDisplayName((String) data.get(DISPLAY_NAME));
         }

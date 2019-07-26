@@ -121,16 +121,12 @@ public abstract class AbstractContactableEntityFormController<T extends Contacta
             .orElseThrow(() -> new IllegalArgumentException(String.format(
             "No ContactEntity with ID %d found.", contactableId)));
 
-        entity
+        return entity
             .getContactEntries()
             .stream()
             .map(contactEntry -> toContactEntryArray(contactEntry,
                                                      selectedLocale))
             .collect(Collectors.toList());
-
-        final List<String[]> entries = new ArrayList<>();
-
-        return entries;
     }
 
     private String[] toContactEntryArray(final ContactEntry entry,
@@ -189,15 +185,26 @@ public abstract class AbstractContactableEntityFormController<T extends Contacta
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<ContactEntryKey> findAvailableContactEntryKeys() {
-
-        final Locale locale = globalizationHelper.getNegotiatedLocale();
+    public List<String[]> findAvailableContactEntryKeys(
+        final Locale selectedLocale) {
 
         return keyRepository
             .findAll()
             .stream()
-            .sorted(new ContactEntryKeyByLabelComparator(locale))
+            .sorted(new ContactEntryKeyByLabelComparator(selectedLocale))
+            .map(key -> buildContactEntryKeyArray(key,
+                                                  selectedLocale))
             .collect(Collectors.toList());
+    }
+
+    private String[] buildContactEntryKeyArray(
+        final ContactEntryKey contactEntryKey, final Locale selectedLocale) {
+
+        final String key = contactEntryKey.getEntryKey();
+        final String label = contactEntryKey.getLabel().getValue(selectedLocale);
+
+        return new String[]{key, label};
+
     }
 
 }

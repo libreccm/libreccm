@@ -1,0 +1,1 @@
+alter table contact_entries drop column entry_key;

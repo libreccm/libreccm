@@ -23,6 +23,7 @@ import com.arsdigita.cms.ui.assets.IsControllerForAssetType;
 import org.librecms.assets.AudioAsset;
 import org.librecms.assets.LegalMetadata;
 import org.librecms.contentsection.AssetRepository;
+import org.librecms.contentsection.Folder;
 
 import java.util.Locale;
 import java.util.Map;
@@ -42,11 +43,6 @@ public class AudioFormController extends AbstractBinaryAssetFormController<Audio
 
     @Inject
     private AssetRepository assetRepository;
-
-    @Override
-    public AudioAsset createAsset() {
-        return new AudioAsset();
-    }
 
     @Override
     protected Map<String, Object> getAssetData(final AudioAsset asset,

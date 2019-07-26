@@ -26,7 +26,7 @@ import javax.inject.Inject;
 /**
  * Manager class providing methods for adding and removing {@link ContactEntry}
  * and {@link PostalAddress} to and from a {@link ContactableEntity}.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -34,7 +34,10 @@ public class ContactableEntityManager {
 
     @Inject
     private AssetRepository assetRepository;
-    
+
+    @Inject
+    private ContactEntryRepository entryRepository;
+
     public void addContactEntryToContactableEntity(
         final ContactEntry contactEntry,
         final ContactableEntity contactableEntity) {
@@ -44,29 +47,30 @@ public class ContactableEntityManager {
                 .setOrder(contactableEntity.getContactEntries().size());
         }
         contactableEntity.addContactEntry(contactEntry);
+        entryRepository.save(contactEntry);
         assetRepository.save(contactableEntity);
     }
-    
+
     public void removeContactEntryFromContactableEntity(
-    final ContactEntry contactEntry,
-    final ContactableEntity contactableEntity) {
-        
+        final ContactEntry contactEntry,
+        final ContactableEntity contactableEntity) {
+
         contactableEntity.removeContactEntry(contactEntry);
         assetRepository.save(contactableEntity);
     }
-    
+
     public void addPostalAddressToContactableEntity(
-    final PostalAddress postalAddress,
-    final ContactableEntity contactableEntity) {
-        
+        final PostalAddress postalAddress,
+        final ContactableEntity contactableEntity) {
+
         contactableEntity.setPostalAddress(postalAddress);
         assetRepository.save(postalAddress);
     }
-    
+
     public void removePostalAddressFromContactableEntity(
-    final PostalAddress postalAddress,
-    final ContactableEntity contactableEntity) {
-        
+        final PostalAddress postalAddress,
+        final ContactableEntity contactableEntity) {
+
         contactableEntity.setPostalAddress(null);
         assetRepository.save(postalAddress);
     }

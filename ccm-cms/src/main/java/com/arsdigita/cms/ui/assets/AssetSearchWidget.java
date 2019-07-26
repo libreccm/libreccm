@@ -32,6 +32,7 @@ import org.librecms.contentsection.Asset;
 import org.librecms.contentsection.AssetRepository;
 import org.librecms.contentsection.ContentSection;
 
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -91,33 +92,20 @@ public class AssetSearchWidget extends Widget {
         final Long value = (Long) getValue(state);
         if (value != null) {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final AssetRepository assetRepo = cdiUtil
-                .findBean(AssetRepository.class);
-            final AssetTypesManager typesManager = cdiUtil
-                .findBean(AssetTypesManager.class);
-            final GlobalizationHelper globalizationHelper = cdiUtil
-                .findBean(GlobalizationHelper.class);
+            final AssetSearchWidgetController controller = cdiUtil
+                .findBean(AssetSearchWidgetController.class);
 
-            final Asset asset = assetRepo
-                .findById(value)
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                "No Asset with ID %d in the database.", value)));
+            final Map<String, String> data = controller.getData(value);
 
             final Element selected = widget
                 .newChildElement("cms:selected-asset", CMS.CMS_XML_NS);
-            selected.addAttribute("assetId",
-                                  Long.toString(asset.getObjectId()));
             selected.addAttribute(
-                "title",
-                globalizationHelper
-                    .getValueFromLocalizedString(asset.getTitle()));
-            final AssetTypeInfo typeInfo = typesManager
-                .getAssetTypeInfo(asset.getClass().getName());
-            final ResourceBundle bundle = ResourceBundle
-                .getBundle(typeInfo.getLabelBundle(),
-                           globalizationHelper.getNegotiatedLocale());
-            final String typeLabel = bundle.getString(typeInfo.getLabelKey());
-            selected.addAttribute("type", typeLabel);
+                "assetId", data.get(AssetSearchWidgetController.OBJECT_ID)
+            );
+            selected.addAttribute("title",
+                                  data.get(AssetSearchWidgetController.TITLE));
+            selected.addAttribute("type",
+                                  data.get(AssetSearchWidgetController.TYPE));
 
             exportAttributes(widget);
         }

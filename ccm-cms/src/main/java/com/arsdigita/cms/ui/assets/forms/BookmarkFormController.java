@@ -30,12 +30,7 @@ import javax.enterprise.context.RequestScoped;
  */
 @RequestScoped
 @IsControllerForAssetType(Bookmark.class)
-public class BookmarkFormController 
+public class BookmarkFormController
     extends AbstractBookmarkFormController<Bookmark> {
-
-    @Override
-    public Bookmark createAsset() {
-        return new Bookmark();
-    }
 
 }

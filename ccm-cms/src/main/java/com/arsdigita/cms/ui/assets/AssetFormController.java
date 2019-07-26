@@ -19,6 +19,7 @@
 package com.arsdigita.cms.ui.assets;
 
 import org.librecms.contentsection.Asset;
+import org.librecms.contentsection.Folder;
 
 import java.util.List;
 import java.util.Locale;
@@ -70,7 +71,12 @@ public interface AssetFormController<T extends Asset> {
                      Class<T> assetType,
                      Map<String, Object> data);
 
-    T createAsset();
+    long createAsset(Folder inFolder,
+                  Locale selectedLocale,
+                  Class<T> assetType,
+                  Map<String, Object> data);
+    
+   
 
     /**
      * Determines in which locales the provided asset is available.

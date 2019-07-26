@@ -73,11 +73,11 @@ public class LegalMetadataFormController
             asset.getRights().addValue(selectedLocale,
                                        (String) data.get(RIGHTS));
         }
-        
+
         if (data.containsKey(PUBLISHER)) {
             asset.setPublisher((String) data.get(PUBLISHER));
         }
-        
+
         if (data.containsKey(CREATOR)) {
             asset.setCreator((String) data.get(CREATOR));
         }
@@ -90,10 +90,4 @@ public class LegalMetadataFormController
         }
     }
 
-    @Override
-    public LegalMetadata createAsset() {
-        return new LegalMetadata();
-    }
-
 }
- 
