@@ -36,13 +36,11 @@ import com.arsdigita.util.LockableImpl;
 
 import org.librecms.assets.Person;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -115,6 +113,8 @@ public class PersonForm extends AbstractContactableEntityForm<Person> {
             CMS_BUNDLE));
         add(birthdateLabel);
         birthdateField = new Date("birthdate");
+        final LocalDate today = LocalDate.now(ZoneId.systemDefault());
+        birthdateField.setYearRange(1930, today.getYear());
         add(birthdateField);
     }
 
@@ -130,8 +130,7 @@ public class PersonForm extends AbstractContactableEntityForm<Person> {
     }
 
     @Override
-    protected Map<String, Object> collectData(
-        final FormSectionEvent event) throws FormProcessException {
+    protected Map<String, Object> collectData(final FormSectionEvent event) {
 
         final PageState state = event.getPageState();
 
@@ -150,16 +149,10 @@ public class PersonForm extends AbstractContactableEntityForm<Person> {
     }
 
     @Override
-    public void init(final FormSectionEvent event) throws FormProcessException {
+    public void initForm(final PageState state,
+                         final Map<String, Object> data) {
 
-        super.init(event);
-
-        final PageState state = event.getPageState();
-
-        final Map<String, Object> data = getController()
-            .getAssetData(getSelectedAssetId(state),
-                          getAssetClass(),
-                          getSelectedLocale(state));
+        super.initForm(state, data);
 
         if (data.containsKey(PersonFormController.SURNAME)) {
             surnameField.setValue(state,
@@ -192,9 +185,9 @@ public class PersonForm extends AbstractContactableEntityForm<Person> {
         if (addPersonNameButton.equals(event.getSource())) {
 
             final PersonFormController controller
-                                       = (PersonFormController) getController();
+                                           = (PersonFormController) getController();
             controller.addPersonName(getSelectedAssetId(event.getPageState()));
-            
+
         } else {
             super.process(event);
         }
@@ -202,7 +195,13 @@ public class PersonForm extends AbstractContactableEntityForm<Person> {
 
     private Table buildPersonNamesTable() {
 
-        final Table table = new Table();
+        final Table table = new Table() {
+
+            @Override
+            public boolean isVisible(final PageState state) {
+                return getSelectedAssetId(state) != null;
+            }
+        };
 
         final TableColumnModel columnModel = table.getColumnModel();
         columnModel.add(new TableColumn(

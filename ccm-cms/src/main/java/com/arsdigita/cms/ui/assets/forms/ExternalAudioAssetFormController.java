@@ -45,11 +45,6 @@ public class ExternalAudioAssetFormController
     private AssetRepository assetRepository;
 
     @Override
-    public ExternalAudioAsset createAsset() {
-        return new ExternalAudioAsset();
-    }
-
-    @Override
     protected Map<String, Object> getAssetData(final ExternalAudioAsset asset,
                                                final Locale selectedLocale) {
 

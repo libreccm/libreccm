@@ -45,11 +45,6 @@ public class ExternalVideoAssetFormController
     @Inject
     private AssetRepository assetRepository;
 
-    @Override
-    public ExternalVideoAsset createAsset() {
-        return new ExternalVideoAsset();
-    }
-
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
     protected Map<String, Object> getAssetData(final ExternalVideoAsset asset,

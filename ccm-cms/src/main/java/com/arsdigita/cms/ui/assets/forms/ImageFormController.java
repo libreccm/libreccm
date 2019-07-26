@@ -43,14 +43,9 @@ public class ImageFormController
     protected static final String LEGAL_METADATA_ID = "legalMetadataId";
     protected static final String HEIGHT = "height";
     protected static final String WIDTH = "width";
-    
+
     @Inject
     private AssetRepository assetRepository;
-
-    @Override
-    public Image createAsset() {
-        return new Image();
-    }
 
     @Override
     protected Map<String, Object> getAssetData(final Image asset,
@@ -71,20 +66,20 @@ public class ImageFormController
     }
 
     @Override
-    public void updateAssetProperties(final Image asset, 
+    public void updateAssetProperties(final Image asset,
                                       final Locale selectedLocale,
                                       final Map<String, Object> data) {
-        
+
         super.updateAssetProperties(asset, selectedLocale, data);
-        
+
         if (data.containsKey(WIDTH)) {
             asset.setWidth((long) data.get(WIDTH));
         }
-        
+
         if (data.containsKey(HEIGHT)) {
             asset.setHeight((long) data.get(HEIGHT));
         }
-        
+
         if (data.containsKey(LEGAL_METADATA_ID)) {
             final long legalMetadataId = (long) data.get(LEGAL_METADATA_ID);
 

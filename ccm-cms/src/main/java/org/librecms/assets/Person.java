@@ -20,8 +20,6 @@ package org.librecms.assets;
 
 import com.arsdigita.cms.ui.assets.forms.PersonForm;
 
-import static org.libreccm.core.CoreConstants.*;
-
 import org.hibernate.envers.Audited;
 
 import java.time.LocalDate;
@@ -35,10 +33,9 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import static org.librecms.CmsConstants.*;
 import static org.librecms.assets.AssetConstants.*;
 
 /**

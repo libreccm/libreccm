@@ -18,7 +18,6 @@
  */
 package com.arsdigita.cms.ui.assets.forms;
 
-import com.arsdigita.bebop.FormProcessException;
 import com.arsdigita.bebop.Label;
 import com.arsdigita.bebop.PageState;
 import com.arsdigita.bebop.event.FormSectionEvent;
@@ -82,12 +81,11 @@ public class OrganizationForm extends AbstractContactableEntityForm<Organization
     }
 
     @Override
-    protected Map<String, Object> collectData(final FormSectionEvent event)
-        throws FormProcessException {
+    protected Map<String, Object> collectData(final FormSectionEvent event) {
 
         final PageState state = event.getPageState();
 
-        final Map<String, Object> data = new HashMap<>();
+        final Map<String, Object> data = super.collectData(event);
         data.put(OrganizationFormController.ORGANIZATION_NAME,
                  organizationName.getValue(state));
 
