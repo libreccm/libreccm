@@ -51,7 +51,6 @@ import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
 import org.libreccm.workflow.Task;
 import org.libreccm.workflow.TaskManager;
-import org.libreccm.workflow.TaskRepository;
 import org.libreccm.workflow.Workflow;
 import org.libreccm.workflow.WorkflowRepository;
 
