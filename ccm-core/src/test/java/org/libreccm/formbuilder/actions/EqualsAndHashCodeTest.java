@@ -18,6 +18,7 @@
  */
 package org.libreccm.formbuilder.actions;
 
+import nl.jqno.equalsverifier.EqualsVerifierApi;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.formbuilder.Component;
@@ -59,8 +60,7 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
     }
 
     @Override
-    protected void addPrefabValues(
-        final nl.jqno.equalsverifier.EqualsVerifier<?> verifier) {
+    protected void addPrefabValues(final EqualsVerifierApi<?> verifier) {
 
         final Component component1 = new Component();
         component1.setAdminName("Component One");

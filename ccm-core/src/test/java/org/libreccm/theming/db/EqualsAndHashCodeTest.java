@@ -18,6 +18,7 @@
  */
 package org.libreccm.theming.db;
 
+import nl.jqno.equalsverifier.EqualsVerifierApi;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.tests.categories.UnitTest;
@@ -50,8 +51,7 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
     }
 
     @Override
-    protected void addPrefabValues(
-        final nl.jqno.equalsverifier.EqualsVerifier<?> verifier) {
+    protected void addPrefabValues(final EqualsVerifierApi<?> verifier) {
 
         Objects.requireNonNull(verifier);
         

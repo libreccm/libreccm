@@ -18,6 +18,7 @@
  */
 package org.libreccm.testutils;
 
+import nl.jqno.equalsverifier.EqualsVerifierApi;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -88,8 +89,7 @@ public class EqualsVerifier {
      *
      * @param verifier The verifier to which the suppression are added.
      */
-    protected void addSuppressWarnings(
-        final nl.jqno.equalsverifier.EqualsVerifier<?> verifier) {
+    protected void addSuppressWarnings(final EqualsVerifierApi<?> verifier) {
 
         verifier
             .suppress(Warning.STRICT_INHERITANCE)
@@ -102,30 +102,22 @@ public class EqualsVerifier {
      *
      * @param verifier The verifier to which the prefab values are added.
      */
-    protected void addPrefabValues(
-        final nl.jqno.equalsverifier.EqualsVerifier<?> verifier) {
+    protected void addPrefabValues(final EqualsVerifierApi<?> verifier) {
         //Nothing here
     }
 
     @Test
     public void verifyEqualsAndHashCode() {
-        final nl.jqno.equalsverifier.EqualsVerifier<?> verifier
-                                                           = nl.jqno.equalsverifier.EqualsVerifier
-            .forClass(entityClass)
-            .withRedefinedSuperclass();
+
+        final EqualsVerifierApi<?> verifier
+                                       = nl.jqno.equalsverifier.EqualsVerifier
+                .forClass(entityClass)
+                .withRedefinedSuperclass();
 
         addSuppressWarnings(verifier);
         addPrefabValues(verifier);
 
         verifier.verify();
-
-//        nl.jqno.equalsverifier.EqualsVerifier
-//            .forClass(entityClass)
-//            .suppress(Warning.STRICT_INHERITANCE)
-//            .suppress(Warning.NONFINAL_FIELDS)
-//            .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
-//            .withRedefinedSuperclass()
-//            .verify();
     }
 
 }
