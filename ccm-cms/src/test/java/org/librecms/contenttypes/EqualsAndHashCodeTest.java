@@ -18,8 +18,11 @@
  */
 package org.librecms.contenttypes;
 
+import nl.jqno.equalsverifier.EqualsVerifierApi;
+
 import java.util.Arrays;
 import java.util.Collection;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.tests.categories.UnitTest;
@@ -47,8 +50,7 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
     }
 
     @Override
-    protected void addPrefabValues(
-            final nl.jqno.equalsverifier.EqualsVerifier<?> verifier) {
+    protected void addPrefabValues(final EqualsVerifierApi<?> verifier) {
     }
 
 }

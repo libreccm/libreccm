@@ -18,6 +18,7 @@
  */
 package org.librecms.contentsection;
 
+import nl.jqno.equalsverifier.EqualsVerifierApi;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.core.CcmObject;
@@ -54,8 +55,7 @@ public class AttachmentsEqualsAndHashCodeTest extends EqualsVerifier {
     }
 
     @Override
-    protected void addPrefabValues(
-        final nl.jqno.equalsverifier.EqualsVerifier<?> verifier) {
+    protected void addPrefabValues(final EqualsVerifierApi<?> verifier) {
 
         final ContentSection section1 = new ContentSection();
         section1.setDisplayName("section1");

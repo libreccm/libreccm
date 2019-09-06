@@ -18,6 +18,7 @@
  */
 package org.libreccm.security;
 
+import nl.jqno.equalsverifier.EqualsVerifierApi;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.core.CcmObject;
@@ -55,8 +56,8 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
     }
 
     @Override
-    protected void addPrefabValues(
-        final nl.jqno.equalsverifier.EqualsVerifier<?> verifier) {
+    protected void addPrefabValues(EqualsVerifierApi<?> verifier) {
+        
         final Group group1 = new Group();
         group1.setName("group1");
 
