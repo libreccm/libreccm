@@ -18,8 +18,7 @@
  */
 package org.libreccm.messaging;
 
-import nl.jqno.equalsverifier.Warning;
-import org.junit.Test;
+import nl.jqno.equalsverifier.EqualsVerifierApi;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.categorization.Category;
@@ -55,8 +54,7 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
     }
 
     @Override
-    protected void addPrefabValues(
-        final nl.jqno.equalsverifier.EqualsVerifier<?> verifier) {
+    protected void addPrefabValues(final EqualsVerifierApi<?> verifier) {
 
         final Message message1 = new Message();
         message1.setSubject("Message One");
