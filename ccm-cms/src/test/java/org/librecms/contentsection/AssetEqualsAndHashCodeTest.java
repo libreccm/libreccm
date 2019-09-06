@@ -18,6 +18,7 @@
  */
 package org.librecms.contentsection;
 
+import nl.jqno.equalsverifier.EqualsVerifierApi;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.categorization.Category;
@@ -54,8 +55,7 @@ public class AssetEqualsAndHashCodeTest extends EqualsVerifier {
     }
 
     @Override
-    protected void addPrefabValues(
-        final nl.jqno.equalsverifier.EqualsVerifier<?> verifier) {
+    protected void addPrefabValues(final EqualsVerifierApi<?> verifier) {
 
         final CcmObject object1 = new CcmObject();
         object1.setDisplayName("Object 1");

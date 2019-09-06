@@ -18,6 +18,7 @@
  */
 package org.libreccm.core;
 
+import nl.jqno.equalsverifier.EqualsVerifierApi;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.categorization.Category;
@@ -56,8 +57,7 @@ public class ResourceEntityTest extends EqualsVerifier {
     }
 
     @Override
-    protected void addPrefabValues(
-        final nl.jqno.equalsverifier.EqualsVerifier<?> verifier) {
+    protected void addPrefabValues(final EqualsVerifierApi<?> verifier) {
 
         final Resource resource1 = new Resource();
         final LocalizedString title1 = new LocalizedString();
