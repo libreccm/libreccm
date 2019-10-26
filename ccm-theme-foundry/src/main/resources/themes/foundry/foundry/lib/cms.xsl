@@ -27,7 +27,11 @@
     <xsl:import href="cms/image.xsl" />
     <xsl:import href="cms/item-search-widget.xsl" />
     <xsl:import href="cms/item-summary.xsl" />
+    <xsl:import href="cms/journal-search-widget.xsl" />
     <xsl:import href="cms/notes.xsl" />
+    <xsl:import href="cms/publication-search-widget.xsl" />
+    <xsl:import href="cms/publisher-search-widget.xsl" />
+    <xsl:import href="cms/series-search-widget.xsl" />
     <xsl:import href="cms/tasks-panel.xsl" />
     
 </xsl:stylesheet>
