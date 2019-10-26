@@ -282,6 +282,10 @@ public class PageCreateForm
         return item -> {
         };
     }
+    
+    protected StringParameter getSelectedLanguageParam() {
+        return selectedLanguageParam;
+    }
 
     private class ContentTypePrintListener implements PrintListener {
 
