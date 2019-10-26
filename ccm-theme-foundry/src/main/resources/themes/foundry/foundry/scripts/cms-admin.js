@@ -24,7 +24,13 @@ function getAssetsForSelectAssetDialog(dialogId) {
     var dispatcherPrefix = dialog.getAttribute('data-dispatcherPrefix');
 
     var request = new XMLHttpRequest();
-    var url = dispatcherPrefix.substring(0, dispatcherPrefix.length - "/ccm".length) + "/content-sections/" + contentSection + "/assets/";
+    var url = dispatcherPrefix.substring(
+        0,
+        dispatcherPrefix.length - "/ccm".length
+        )
+        + "/content-sections/"
+        + contentSection
+        + "/assets/";
     if (type !== null && type.length > 0) {
         url = url + "?type=" + type;
     }
@@ -102,7 +108,8 @@ function getItemsForSelectItemDialog(dialogId) {
     var dispatcherPrefix = dialog.getAttribute('data-dispatcherPrefix');
 
     var request = new XMLHttpRequest();
-    var url = dispatcherPrefix.substring(0, dispatcherPrefix.length - "/ccm".length) + "/content-sections/" + contentSection + "/items/?version=DRAFT";
+    var url = dispatcherPrefix.substring(0,
+        dispatcherPrefix.length - "/ccm".length) + "/content-sections/" + contentSection + "/items/?version=DRAFT";
     if (type !== null && type.length > 0) {
         url = url + "?type=" + type;
     }
@@ -148,23 +155,63 @@ function getItemsForSelectItemDialog(dialogId) {
 function setSelectedItem(itemId, itemTitle, targetId, dialogId) {
     var target = document.querySelector('#' + targetId);
     var targetText = document.querySelector("#" + targetId + "-selected");
-    
+
     target.value = itemId;
     targetText.textContent = itemTitle;
-    
+
     toggleSelectItemDialog('hide', dialogId);
 }
 
 function toggleSelectItemDialog(mode, dialogId) {
-    
+
     var dialog = document.querySelector('#' + dialogId);
-    
+
     if ('show' === mode) {
         dialog.setAttribute('open', 'open');
         getItemsForSelectItemDialog(dialogId);
     } else {
         dialog.setAttribute('open', 'false');
     }
+}
+
+function getJournalsForSelectAssetDialog(dialogId) {
+
+    var dialog = document.querySelector("#" + dialogId);
+    var type = dialog.getAttribute("data-assettype");
+    var targetId = dialog.getAttribute('data-targetId');
+    var filter = document.querySelector('#' + dialogId + '-journals-filter');
+    var query = filter.value;
+    var dispatcherPrefix = dialog.getAttribute('data-dispatcherPrefix');
+
+    var request = new XMLHttpRequest();
+    var url = dispatcherPrefix.substring(
+        0,
+        dispatcherPrefix.length - "/ccm".length
+        )
+        + "/sci-publications/journals";
+
+    request.open("GET", url);
+    request.addEventListener("load", function (event) {
+        if (request.status >= 200 && request.status < 300) {
+            var journals = JSON.parse(request.responseText);
+            var tableRows = "";
+            var i;
+            for (i = 0; i < journals.length; ++i) {
+                var journal = journals[i];
+                tableRows = tableRows
+                    + "<tr>"
+                    + "<td>"
+                    + "<a href=\"#\" onclick=\"setSelectedJournal(" + journal["journalId"] + ", \'" + journal["title"] + "\', \'" + targetId + "\', \'" + dialogId + "\')\">"
+                    + journal["title"]
+                    + "</td>"
+                    + "</tr>";
+            }
+            document
+                .querySelector("#" + dialogId + " tbody")
+                .innerHTML = tableRows;
+        }
+    });
+    request.send();
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -185,7 +232,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    var closeButtons = document.querySelectorAll('.asset-search-widget-dialog .close-button');
+    var closeButtons = document.querySelectorAll(
+        '.asset-search-widget-dialog .close-button');
     for (i = 0; i < closeButtons.length; ++i) {
 
         closeButtons[i].addEventListener('click', function (event) {
@@ -201,7 +249,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     }
 
-    var applyButtons = document.querySelectorAll('.asset-search-widget-dialog .apply-filter');
+    var applyButtons = document.querySelectorAll(
+        '.asset-search-widget-dialog .apply-filter');
     for (i = 0; i < applyButtons.length; ++i) {
 
         applyButtons[i].addEventListener('click', function (event) {
@@ -217,29 +266,30 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    
+document.addEventListener('DOMContentLoaded', function () {
+
     var i;
-    
+
     var buttons = document.querySelectorAll('.select-item-button');
     for (i = 0; i < buttons.length; ++i) {
-        
-        buttons[i].addEventListener('click', function(event) {
-            
+
+        buttons[i].addEventListener('click', function (event) {
+
             var button = event.currentTarget;
             var dialogId = button.getAttribute('data-dialogId');
-            
+
             toggleSelectItemDialog('show', dialogId);
             event.stopPropagation();
             return false;
         });
     }
-    
-    var closeButtons = document.querySelectorAll('.item-search-widget-dialog .close-button');
-    for(i = 0; i < closeButtons.length; ++i) {
-        
-        closeButtons[i].addEventListener('click', function(event) {
-            
+
+    var closeButtons = document.querySelectorAll(
+        '.item-search-widget-dialog .close-button');
+    for (i = 0; i < closeButtons.length; ++i) {
+
+        closeButtons[i].addEventListener('click', function (event) {
+
             var button = event.currentTarget;
             var dialogId = button.getAttribute('data-dialogId');
 
@@ -249,8 +299,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         });
     }
-    
-    var applyButtons = document.querySelectorAll('.item-search-widget-dialog .apply-filter');
+
+    var applyButtons = document.querySelectorAll(
+        '.item-search-widget-dialog .apply-filter');
     for (i = 0; i < applyButtons.length; ++i) {
 
         applyButtons[i].addEventListener('click', function (event) {
