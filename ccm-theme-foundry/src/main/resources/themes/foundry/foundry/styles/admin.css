@@ -1441,7 +1441,12 @@ img.cmsImageDisplay {
 }
 
 div.asset-search-widget dialog,
-div.item-search-widget dialog {
+div.item-search-widget dialog,
+div.journal-search-widget dialog,
+div.publication-search-widget dialog,
+div.publisher-search-widget dialog,
+div.series-search-widget dialog {
+    
     background-color: #e6e4f2;
 
     border: 0px solid transparent;
@@ -1464,22 +1469,38 @@ div.item-search-widget dialog {
 }
 
 div.asset-search-widget dialog[open="open"],
-div.item-search-widget dialog[open="open"] {
+div.item-search-widget dialog[open="open"],
+div.journal-search-widget dialog[open="open"], 
+div.publication-search-widget dialog[open="open"],
+div.publisher-search-widget dialog[open="open"], 
+div.series-search-widget dialog[open="open"] {
     display: block;
 }
 
 div.asset-search-widget dialog .controls,
-div.item-search-widget dialog .controls {
+div.item-search-widget dialog .controls,
+div.journal-search-widget .controls,
+div.publication-search-widget .controls,
+div.publisher-search-widget .controls,
+div.series-search-widget .controls {
     padding: 0.5em;
 }
 
 div.asset-search-widget dialog .controls .apply-filter,
-div.item-search-widget dialog .controls .apply-filter{
+div.item-search-widget dialog .controls .apply-filter,
+div.journal-search-widget .controls .apply-filter,
+div.publication-search-widget .controls .apply-filter,
+div.publisher-search-widget .controls .apply-filter,
+div.series-search-widget .controls .apply-filter {
     margin-left: 0.5em;
 }
 
 div.asset-search-widget dialog .controls label,
-div.item-search-widget dialog .controls label {
+div.item-search-widget dialog .controls label,
+div.journal-search-widget .controls .label ,
+div.publication-search-widget .controls .label,
+div.publisher-search-widget .controls .label,
+div.series-search-widget .controls .label {
 
     font-weight: bold;
 
@@ -1487,14 +1508,22 @@ div.item-search-widget dialog .controls label {
 }
 
 div.asset-search-widget dialog .dialogarea controls button,
-div.item-search-widget dialog .dialogarea controls button{
+div.item-search-widget dialog .dialogarea controls button,
+div.journal-search-widget .dialogarea controls button,
+div.publication-search-widget .dialogarea controls button,
+div.publisher-search-widget .dialogarea controls button,
+div.series-search-widget {
 
     margin-left: 0.5em;
 
 }
 
 div.asset-search-widget dialog .dialogarea table,
-div.item-search-widget dialog .dialogarea table {
+div.item-search-widget dialog .dialogarea table,
+div.journal-search-widget .dialogarea table ,
+div.publication-search-widget .dialogarea table,
+div.publisher-search-widget .dialogarea table,
+div.series-search-widget .dialogarea table {
 
     margin-top: 1em;
     margin-left: 0.5em;
@@ -1502,7 +1531,11 @@ div.item-search-widget dialog .dialogarea table {
 }
 
 div.asset-search-widget dialog .titlebar,
-div.item-search-widget dialog .titlebar {
+div.item-search-widget dialog .titlebar,
+.div.journal-search-widget dialog .titlebar,
+div.publication-search-widget dialog .titlebar,
+div.publisher-search-widget dialog .titlebar,
+div.series-search-widget dialog .titlebar {
     margin-top: 0;
 
     padding: 0.5em 1em;
@@ -1520,7 +1553,11 @@ div.item-search-widget dialog .titlebar {
 }
 
 div.asset-search-widget dialog .titlebar .close-button,
-div.item-search-widget dialog .titlebar .close-button {
+div.item-search-widget dialog .titlebar .close-button,
+div.journal-search-widget.titlebar .close-button,
+div.publication-search-widget .titlebar .close-button,
+div.publisher-search-widget .titlebar .close-button,
+div.series-search-widget.titlebar .close-button {
 
     background-color: transparent;
 
@@ -1537,12 +1574,20 @@ div.item-search-widget dialog .titlebar .close-button {
 }
 
 div.asset-search-widget dialog .titlebar .close-button:after,
-div.item-search-widget dialog .titlebar .close-button:after {
+div.item-search-widget dialog .titlebar .close-button:after,
+div.journal-search-widget .titlebar .close-button:after ,
+div.publication-search-widget .titlebar .close-button:after ,
+div.publisher-search-widget .titlebar .close-button:after ,
+div.series-search-widget .titlebar .close-button:after {
     content: '\2715';
 }
 
 div.asset-search-widget dialog .titlebar .close-button span,
-div.item-search-widget dialog .titlebar .close-button span {
+div.item-search-widget dialog .titlebar .close-button span,
+div.journal-search-widget .titlebar .close-button span ,
+div.publication-search-widget .titlebar .close-button span ,
+div.publisher-search-widget .titlebar .close-button span ,
+div.series-search-widget .titlebar .close-button span {
 
     position: absolute;
     top: -999px;
@@ -1553,24 +1598,40 @@ div.item-search-widget dialog .titlebar .close-button span {
 }
 
 div.asset-search-widget dialog .titlebar .close-button:hover,
-div.item-search-widget dialog .titlebar .close-button:hover {
+div.item-search-widget dialog .titlebar .close-button:hover, 
+div.journal-search-widget dialog .titlebar .close-button:hover ,
+div.publication-search-widget dialog .titlebar .close-button:hover ,
+div.publisher-search-widget dialog .titlebar .close-button:hover ,
+div.series-search-widget dialog .titlebar .close-button:hover {
     cursor: pointer;
 }
 
 div.asset-search-widget dialog .selectable-assets table,
-div.item-search-widget dialog .selectable-items table{
+div.item-search-widget dialog .selectable-items table,
+div.journal-search-widget dialog .selectable-items table ,
+div.publication-search-widget dialog .selectable-items table ,
+div.publisher-search-widget dialog .selectable-items table ,
+div.series-search-widget dialog .selectable-items table {
     width: 100%;
     padding: 0.35em;
     table-layout: fixed;
 }
 
 div.asset-search-widget dialog .selectable-assets table tbody tr td,
-div.item-search-widget dialog .selectable-items table tbody tr td{
+div.item-search-widget dialog .selectable-items table tbody tr td, 
+div.journal-search-widget dialog .selectable-items table tbody tr td ,
+div.publication-search-widget dialog .selectable-items table tbody tr td ,
+div.publisher-search-widget dialog .selectable-items table tbody tr td ,
+div.series-search-widget dialog .selectable-items table tbody tr td {
     overflow: hidden;
 }
 
 div.asset-search-widget dialog .selectable-assets table thead th,
-div.item-search-widget dialog .selectable-items table thead th{
+div.item-search-widget dialog .selectable-items table thead th, 
+div.journal-search-widget dialog .selectable-items table thead th ,
+div.publication-search-widget dialog .selectable-items table thead th ,
+div.publisher-search-widget dialog .selectable-items table thead th ,
+div.series-search-widget dialog .selectable-items table thead th {
     text-align: center;
 }
 

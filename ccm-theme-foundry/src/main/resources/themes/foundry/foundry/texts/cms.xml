@@ -53,8 +53,7 @@
         <translation lang="de">Ohne Auswahl schließen</translation>
         <translation lang="en">Close without selecting an asset</translation>
     </text>
-    
-    
+        
     <text id="category-step/header">
         <translation lang="de">Zugewiesene Kategorien bearbeiten</translation>
         <translation lang="en">Edit assigned categories</translation>
@@ -121,6 +120,51 @@
     <text id="item-search-widget/titlebar/close">
         <translation lang="de">Schließen</translation>
         <translation lang="en">Close</translation>
+    </text>
+    
+    <text id="publisher-search-widget/filter-list">
+        <translation lang="de">Filtern nach</translation>
+        <translation lang="en">Filter using</translation>
+    </text>
+    <text id="publisher-search-widget/filter-list/apply">
+        <translation lang="de">Anwenden</translation>
+        <translation lang="en">Apply</translation>
+    </text>
+    <text id="publisher-search-widget/no-publisher-selected">
+        <translation lang="de">Kein Verlag ausgewählt</translation>
+        <translation lang="en">No publisher selected</translation>
+    </text>
+    <text id="publisher-search-widget/selected-publisher">
+        <translation lang="de">Ausgewählter Verlag</translation>
+        <translation lang="en">Selected publisher</translation>
+    </text>
+    <text id="publisher-search-widget/selected-publisher-name">
+        <translation lang="de">Name</translation>
+        <translation lang="en">Name</translation>
+    </text>
+    <text id="publisher-search-widget/selected-publisher-type">
+        <translation lang="de">Type</translation>
+        <translation lang="en">Typ</translation>
+    </text>
+    <text id="publisher-search-widget/select-publisher-button">
+        <translation lang="de">Verlag auswählen</translation>
+        <translation lang="en">Select publisher</translation>
+    </text>
+    <text id="publisher-search-widget/table/header/name">
+        <translation lang="de">Name</translation>
+        <translation lang="en">Name</translation>
+    </text>
+    <text id="publisher-search-widget/table/header/place">
+        <translation lang="de">Name</translation>
+        <translation lang="en">Name</translation>
+    </text>
+    <text id="publisher-search-widget/titlebar">
+        <translation lang="de">Wählen Sie den zu verwendenden Verlag aus</translation>
+        <translation lang="en">Select the publisher to use</translation>
+    </text>
+    <text id="publisher-search-widget/titlebar/close">
+        <translation lang="de">Ohne Auswahl schließen</translation>
+        <translation lang="en">Close without selecting an publisher</translation>
     </text>
     
     <text id="summary/itemSummary/header">
