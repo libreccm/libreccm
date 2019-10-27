@@ -174,10 +174,9 @@ function toggleSelectItemDialog(mode, dialogId) {
     }
 }
 
-function getJournalsForSelectAssetDialog(dialogId) {
+function getJournalsForSelectJournalDialog(dialogId) {
 
     var dialog = document.querySelector("#" + dialogId);
-    var type = dialog.getAttribute("data-assettype");
     var targetId = dialog.getAttribute('data-targetId');
     var filter = document.querySelector('#' + dialogId + '-journals-filter');
     var query = filter.value;
@@ -188,7 +187,11 @@ function getJournalsForSelectAssetDialog(dialogId) {
         0,
         dispatcherPrefix.length - "/ccm".length
         )
-        + "/sci-publications/journals";
+        + "/scipublications/journals";
+
+    if (query !== null && query.length > 0) {
+        url = `${url}?query=${query}`;
+    }
 
     request.open("GET", url);
     request.addEventListener("load", function (event) {
@@ -199,19 +202,260 @@ function getJournalsForSelectAssetDialog(dialogId) {
             for (i = 0; i < journals.length; ++i) {
                 var journal = journals[i];
                 tableRows = tableRows
-                    + "<tr>"
-                    + "<td>"
-                    + "<a href=\"#\" onclick=\"setSelectedJournal(" + journal["journalId"] + ", \'" + journal["title"] + "\', \'" + targetId + "\', \'" + dialogId + "\')\">"
-                    + journal["title"]
-                    + "</td>"
-                    + "</tr>";
+                    + `<tr>
+    <td>
+        <a href="#" 
+           onclick="setSelectedJournal('${journal["journalId"]}', '${journal["title"]}', '${targetId}', '${dialogId}')">
+            ${journal["title"]}
+        </a>
+    </td>
+</tr>`;
             }
             document
                 .querySelector("#" + dialogId + " tbody")
                 .innerHTML = tableRows;
+        } else {
+            alert("Error while retrieving journals. "
+                + `Response code: ${request.status} `
+                + `Message: ${request.statusText}`);
         }
     });
     request.send();
+}
+
+function setSelectedJournal(journalId, journalTitle, targetId, dialogId) {
+    var target = document.querySelector(`#${targetId}`);
+    var targetText = document.querySelector(`#${targetId}-selected`);
+
+    target.value = journalId;
+    targetText.textContent = journalTitle;
+
+    toggleSelectJournalDialog('hide', dialogId);
+}
+
+function toggleSelectJournalDialog(mode, dialogId) {
+    var dialog = document.querySelector("#" + dialogId);
+
+    if ('show' === mode) {
+        dialog.setAttribute('open', 'open');
+        getAssetsForSelectAssetDialog(dialogId);
+    } else {
+        dialog.setAttribute('open', 'false');
+    }
+}
+
+function getItemsForSelectPublicationDialog(dialogId) {
+    var dialog = document.querySelector('#' + dialogId);
+    var type = dialog.getAttribute("data-publicationtype");
+    var targetId = dialog.getAttribute('data-targetId');
+    var filter = document.querySelector(`#${dialogId}-publication-filter`);
+    var query = filter.value;
+    var dispatcherPrefix = dialog.getAttribute('data-dispatcherPrefix');
+
+    var request = new XMLHttpRequest();
+    var url = `${dispatcherPrefix.substring(0,
+        dispatcherPrefix.length - "/ccm".length)}/scipublications/publications`;
+    if (filter !== null && type.length > 0) {
+        url = `${url}?type=${type}`;
+    }
+
+    if ((type !== null && type.length > 0)
+        && (query !== null && query.length > 0)) {
+        url = `${url}&query=${query}`;
+    } else if (query !== null && query.length > 0) {
+        url = `${url}?query=${query}`;
+    }
+
+    request.open("GET", url);
+    request.addEventListener("load", function (event) {
+        if (request.status >= 200 && request.status < 300) {
+            var publications = JSON.parse(request.responseText);
+            var tableRows = "";
+            var i;
+            for (i = 0; i < publications.length; ++i) {
+                var publication = publications[i];
+                var publicationStr = `${publication.authors} (${publication.year}): ${publication.title}`;
+
+                if (publications.publisher) {
+                    publicationStr = `${publicationStr}: ${publication.place}: ${publication.publisher}`;
+                }
+
+                tableRows = tableRows
+                    + `<tr>
+    <td>
+        <a href="#"
+           onclick="setSelectedPublication('${publication.publicationId}', '${publicationStr}', '${targetId}', '${dialogId}')">
+            ${publicationStr}
+        </a>
+    </td>
+</tr>`;
+            }
+            document
+                .querySelector(`#${dialogId} tbody`)
+                .innerHTML = tableRows;
+        } else {
+            alert("Error while retrieving publications. "
+                + "Response code: " + request.status + " "
+                + "Message: " + request.statusText);
+        }
+    });
+    request.send();
+}
+
+function setSelectedPublication(publicationId, publicationStr, targetId,
+    dialogId) {
+    var target = document.querySelector(`#${targetId}`);
+    var targetText = document.querySelector(`#${targetId}-selected`);
+
+    target.value = publicationId;
+    targetText.textContent = publicationStr;
+
+    toggleSelectPublicationDialog('hide', dialogId);
+}
+
+function toggleSelectPublicationDialog(mode, dialogId) {
+    var dialog = document.querySelector("#" + dialogId);
+
+    if ('show' === mode) {
+        dialog.setAttribute('open', 'open');
+        getAssetsForSelectAssetDialog(dialogId);
+    } else {
+        dialog.setAttribute('open', 'false');
+    }
+}
+
+function getPublishersForSelectPublisherDialog(dialogId) {
+    var dialog = document.querySelector("#" + dialogId);
+    var targetId = dialog.getAttribute('data-targetId');
+    var filter = document.querySelector('#' + dialogId + '-publisher-filter');
+    var query = filter.value;
+    var dispatcherPrefix = dialog.getAttribute('data-dispatcherPrefix');
+
+    var request = new XMLHttpRequest();
+    var url = `${dispatcherPrefix.substring(0,
+        dispatcherPrefix.length - "/ccm".length)}/scipublications/publishers}`;
+    if (query !== null && query.length > 0) {
+        url = `${url}?query=${query}`;
+    }
+
+    request.open("GET", url);
+    request.addEventListener("load", function (event) {
+        if (request.status >= 200 && request.status < 300) {
+            var publishers = JSON.parse(request.responseText);
+            var tableRows = "";
+            var i;
+            for (i = 0; i < publishers.length; ++i) {
+                var publisher = publishers[i];
+                tableRows = tableRows
+                    + `<tr>
+<td>
+    <a href="#"
+       onclick="setSelectedPublisher('${publisher.publisherId}', '${publisher.name}, ${publisher.place}', '${targetId}', '${dialogId}')">
+        ${publisher.name}, ${publisher.place}
+    </a>
+</td>
+</tr>`;
+            }
+            document
+                .querySelector("#" + dialogId + " tbody")
+                .innerHTML = tableRows;
+        } else {
+            alert("Error while retrieving publishers. "
+                + `Response code: ${request.status} `
+                + `Message: ${request.statusText}`);
+        }
+    });
+    request.send();
+}
+
+function setSelectedPublisher(publisherId, publisherStr, targetId, dialogId) {
+    var target = document.querySelector(`#${targetId}`);
+    var targetText = document.querySelector(`#${targetId}-selected`);
+
+    target.value = publisherId;
+    targetText.textContent = publisherStr;
+
+    toggleSelectPublisherDialog("hide", dialogId);
+}
+
+function toggleSelectPublisherDialog(mode, dialogId) {
+    var dialog = document.querySelector("#" + dialogId);
+
+    if ('show' === mode) {
+        dialog.setAttribute('open', 'open');
+        getAssetsForSelectAssetDialog(dialogId);
+    } else {
+        dialog.setAttribute('open', 'false');
+    }
+}
+
+function getSeriesForSelectSeriesDialog(dialogId) {
+    var dialog = document.querySelector("#" + dialogId);
+    var targetId = dialog.getAttribute('data-targetId');
+    var filter = document.querySelector('#' + dialogId + '-series-filter');
+    var query = filter.value;
+    var dispatcherPrefix = dialog.getAttribute('data-dispatcherPrefix');
+    
+    var request = new XMLHttpRequest();
+    var url = dispatcherPrefix.substring(
+        0,
+        dispatcherPrefix.length - "/ccm".length
+        )
+        + "/scipublications/series";
+
+    if (query !== null && query.length > 0) {
+        url = `${url}?query=${query}`;
+    }
+
+    request.open("GET", url);
+    request.addEventListener("load", function (event) {
+        if (request.status >= 200 && request.status < 300) {
+            var seriesList = JSON.parse(request.responseText);
+            var tableRows = "";
+            var i;
+            for (i = 0; i < seriesList.length; ++i) {
+                var series = seriesList[i];
+                tableRows = tableRows 
+                    + `<tr>
+    <td>
+        <a href="#"
+           onclick="setSelectedSeries('${series.seriesId}', '${series.name}', '${targetId}', '${dialogId}')">
+            ${series.name}
+        </a>
+    </td>
+</tr>`;
+            }
+            document
+                .querySelector("#" + dialogId + " tbody")
+                .innerHTML = tableRows;
+        } else {
+            alert("Error while retrieving series. "
+                + `Response code: ${request.status} `
+                + `Message: ${request.statusText}`);
+        }
+    });
+    request.send();
+}
+
+function setSelectedSeries(seriesId, seriesName, targetId, dialogId) {
+    var target = document.querySelector(`#${targetId}`);
+    var targetText = document.querySelector(`#${targetId}-selected`);
+
+    target.value = seriesId;
+    targetText.textContent = seriesName;
+
+    toggleSelectSeriesDialog('hide', dialogId);
+}
+
+function toggleSelectSeriesDialog(dialogId) {
+    var dialog = document.querySelector("#" + dialogId);
+
+    if ('show' === mode) {
+        dialog.setAttribute('open', 'open');
+        getAssetsForSelectAssetDialog(dialogId);
+    } else {
+        dialog.setAttribute('open', 'false');
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function () {
