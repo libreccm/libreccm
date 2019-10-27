@@ -204,6 +204,97 @@
         <translation lang="en">Close without selecting an publisher</translation>
     </text>
     
+    <text id="publication-search-widget/filter-list">
+        <translation lang="de">Filtern nach</translation>
+        <translation lang="en">Filter using</translation>
+    </text>
+    <text id="publication-search-widget/filter-list/apply">
+        <translation lang="de">Anwenden</translation>
+        <translation lang="en">Apply</translation>
+    </text>
+    <text id="publication-search-widget/no-publication-selected">
+        <translation lang="de">Keine Publikation ausgewählt</translation>
+        <translation lang="en">No publication selected</translation>
+    </text>
+    <text id="publication-search-widget/selected-publication">
+        <translation lang="de">Ausgewählte Publikation</translation>
+        <translation lang="en">Selected publication</translation>
+    </text>
+    <text id="publication-search-widget/selected-publication-name">
+        <translation lang="de">Publikation</translation>
+        <translation lang="en">Publication</translation>
+    </text>
+    <text id="publication-search-widget/selected-publication-type">
+        <translation lang="de">Type</translation>
+        <translation lang="en">Typ</translation>
+    </text>
+    <text id="publication-search-widget/select-publication-button">
+        <translation lang="de">Publikation auswählen</translation>
+        <translation lang="en">Select publication</translation>
+    </text>
+    <text id="publication-search-widget/table/header/name">
+        <translation lang="de">Name</translation>
+        <translation lang="en">Name</translation>
+    </text>
+    <text id="publication-search-widget/table/header/place">
+        <translation lang="de">Name</translation>
+        <translation lang="en">Name</translation>
+    </text>
+    <text id="publication-search-widget/titlebar">
+        <translation lang="de">Wählen Sie den zu verwendende Publikation aus</translation>
+        <translation lang="en">Select the publication to use</translation>
+    </text>
+    <text id="publication-search-widget/titlebar/close">
+        <translation lang="de">Ohne Auswahl schließen</translation>
+        <translation lang="en">Close without selecting an </translation>
+    </text>
+
+    
+    <text id="series-search-widget/filter-list">
+        <translation lang="de">Filtern nach</translation>
+        <translation lang="en">Filter using</translation>
+    </text>
+    <text id="series-search-widget/filter-list/apply">
+        <translation lang="de">Anwenden</translation>
+        <translation lang="en">Apply</translation>
+    </text>
+    <text id="series-search-widget/no-series-selected">
+        <translation lang="de">Keine Reihe ausgewählt</translation>
+        <translation lang="en">No series selected</translation>
+    </text>
+    <text id="series-search-widget/selected-series">
+        <translation lang="de">Ausgewählte Reihe</translation>
+        <translation lang="en">Selected series</translation>
+    </text>
+    <text id="series-search-widget/selected-series-name">
+        <translation lang="de">Name</translation>
+        <translation lang="en">Name</translation>
+    </text>
+    <text id="series-search-widget/selected-series-type">
+        <translation lang="de">Type</translation>
+        <translation lang="en">Typ</translation>
+    </text>
+    <text id="series-search-widget/select-series-button">
+        <translation lang="de">Reihe auswählen</translation>
+        <translation lang="en">Select series</translation>
+    </text>
+    <text id="series-search-widget/table/header/name">
+        <translation lang="de">Name</translation>
+        <translation lang="en">Name</translation>
+    </text>
+    <text id="series-search-widget/table/header/place">
+        <translation lang="de">Name</translation>
+        <translation lang="en">Name</translation>
+    </text>
+    <text id="series-search-widget/titlebar">
+        <translation lang="de">Wählen Sie den zu verwendende Reihe aus</translation>
+        <translation lang="en">Select the series to use</translation>
+    </text>
+    <text id="series-search-widget/titlebar/close">
+        <translation lang="de">Ohne Auswahl schließen</translation>
+        <translation lang="en">Close without selecting an </translation>
+    </text>
+    
     <text id="summary/itemSummary/header">
         <translation lang="en">Item Summary</translation>
         <translation lang="de">Zusammenfassung</translation>
