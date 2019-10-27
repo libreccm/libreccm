@@ -447,7 +447,7 @@ function setSelectedSeries(seriesId, seriesName, targetId, dialogId) {
     toggleSelectSeriesDialog('hide', dialogId);
 }
 
-function toggleSelectSeriesDialog(dialogId) {
+function toggleSelectSeriesDialog(mode, dialogId) {
     var dialog = document.querySelector("#" + dialogId);
 
     if ('show' === mode) {

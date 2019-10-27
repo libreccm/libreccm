@@ -122,6 +122,43 @@
         <translation lang="en">Close</translation>
     </text>
     
+    <text id="journal-search-widget/filter-list">
+        <translation lang="de">Filtern nach</translation>
+        <translation lang="en">Filter using</translation>
+    </text>
+    <text id="journal-search-widget/filter-list/apply">
+        <translation lang="de">Anwenden</translation>
+        <translation lang="en">Apply</translation>
+    </text>
+    <text id="journal-search-widget/no-journal-selected">
+        <translation lang="de">Keine Zeitschrift ausgewählt</translation>
+        <translation lang="en">No journal selected</translation>
+    </text>
+    <text id="journal-search-widget/selected-journal">
+        <translation lang="de">Ausgewählte Zeitschrift</translation>
+        <translation lang="en">Selected journal</translation>
+    </text>
+    <text id="journal-search-widget/selected-journal-name">
+        <translation lang="de">Name</translation>
+        <translation lang="en">Name</translation>
+    </text>
+    <text id="journal-search-widget/select-journal-button">
+        <translation lang="de">Zeitschrift auswählen</translation>
+        <translation lang="en">Select journal</translation>
+    </text>
+    <text id="journal-search-widget/table/header/name">
+        <translation lang="de">Name</translation>
+        <translation lang="en">Name</translation>
+    </text>
+    <text id="journal-search-widget/titlebar">
+        <translation lang="de">Wählen Sie die zu verwendende Zeitschrift aus</translation>
+        <translation lang="en">Select the journal to use</translation>
+    </text>
+    <text id="journal-search-widget/titlebar/close">
+        <translation lang="de">Ohne Auswahl schließen</translation>
+        <translation lang="en">Close without selecting an journal</translation>
+    </text>
+    
     <text id="publisher-search-widget/filter-list">
         <translation lang="de">Filtern nach</translation>
         <translation lang="en">Filter using</translation>
