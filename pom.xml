@@ -70,6 +70,8 @@
         <module>ccm-cms-types-faqitem</module>
         <module>ccm-cms-types-glossaryitem</module>
         <module>ccm-cms-types-minutes</module>
+        
+        <module>ccm-cms-profile</module>
 
         <!-- Miscellaneous modules  -->
         <module>ccm-docrepo</module>
