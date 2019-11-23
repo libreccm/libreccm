@@ -66,8 +66,8 @@ import static org.librecms.CmsConstants.*;
             descriptionBundle = CmsConstants.CMS_BUNDLE,
             descriptionKey = "cms.contenttypes.shared.basic_properties"
                                  + ".description",
-            order = 1)
-        ,
+            order = 1
+        ),
         @AuthoringStep(
             component = EventTextBody.class,
             labelBundle = CmsConstants.CMS_BUNDLE,
@@ -177,7 +177,7 @@ public class Event extends ContentItem implements Serializable {
         eventType = new LocalizedString();
         cost = new LocalizedString();
     }
-    
+
     public LocalizedString getText() {
         return text;
     }
