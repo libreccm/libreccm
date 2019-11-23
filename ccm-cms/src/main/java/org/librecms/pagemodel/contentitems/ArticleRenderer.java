@@ -41,12 +41,11 @@ public class ArticleRenderer extends AbstractContentItemRenderer {
 
     @Inject
     private AssetRenderers assetRenderers;
-    
+
 //    @Inject
 //    public ArticleRenderer(final AssetRenderers assetRenderers) {
 //        super(assetRenderers);
 //    }
-
     /**
      * Render the provided {@link Article}. The following values are put into
      * the map:
@@ -62,10 +61,11 @@ public class ArticleRenderer extends AbstractContentItemRenderer {
      * @param result   The map into which the result is placed.
      */
     @Override
-    protected void renderItem(final ContentItem item,
-                           final Locale language,
-                           final Map<String, Object> result) {
-
+    protected void renderItem(
+        final ContentItem item,
+        final Locale language,
+        final Map<String, Object> result
+    ) {
         final Article article;
         if (item instanceof Article) {
             article = (Article) item;
@@ -75,7 +75,7 @@ public class ArticleRenderer extends AbstractContentItemRenderer {
 
         result.put("text", article.getText().getValue(language));
     }
-    
+
     @Override
     public AssetRenderers getAssetRenderers() {
         return assetRenderers;
