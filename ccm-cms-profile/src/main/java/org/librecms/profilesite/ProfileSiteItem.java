@@ -5,17 +5,26 @@
  */
 package org.librecms.profilesite;
 
-import org.hibernate.annotations.Type;
+import com.arsdigita.cms.contenttypes.ui.ProfileSiteItemCreate;
+import com.arsdigita.cms.contenttypes.ui.ProfileSiteItemInterestsStep;
+import com.arsdigita.cms.contenttypes.ui.ProfileSiteItemMiscStep;
+import com.arsdigita.cms.contenttypes.ui.ProfileSiteItemPositionStep;
+import com.arsdigita.cms.contenttypes.ui.ProfileSiteItemPropertiesStep;
+
+import org.libreccm.l10n.LocalizedString;
 import org.librecms.assets.Person;
 import org.librecms.contentsection.ContentItem;
+import org.librecms.contenttypes.AuthoringKit;
+import org.librecms.contenttypes.AuthoringStep;
+import org.librecms.contenttypes.ContentTypeDescription;
 
 import java.util.Objects;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
+import javax.persistence.AssociationOverride;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -27,6 +36,47 @@ import static org.librecms.profilesite.ProfileSiteConstants.*;
  */
 @Entity
 @Table(name = "PROFILE_SITES", schema = DB_SCHEMA)
+@ContentTypeDescription(
+    labelBundle = "org.librecms.profilesite.ProfileSiteItem",
+    descriptionBundle = "org.librecms.profilesite.ProfileSiteItem"
+)
+@AuthoringKit(
+    createComponent = ProfileSiteItemCreate.class,
+    steps = {
+        @AuthoringStep(
+            component = ProfileSiteItemPropertiesStep.class,
+            labelBundle = ProfileSiteConstants.BUNDLE,
+            labelKey = "profile_site_item.basic_properties.label",
+            descriptionBundle = ProfileSiteConstants.BUNDLE,
+            descriptionKey = "profile_site_item.basic_properties.description",
+            order = 1
+        ),
+        @AuthoringStep(
+            component = ProfileSiteItemPositionStep.class,
+            labelBundle = ProfileSiteConstants.BUNDLE,
+            labelKey = "profile_site_item.position.label",
+            descriptionBundle = ProfileSiteConstants.BUNDLE,
+            descriptionKey = "profile_site_item.position.description",
+            order = 2
+        ),
+        @AuthoringStep(
+            component = ProfileSiteItemInterestsStep.class,
+            labelBundle = ProfileSiteConstants.BUNDLE,
+            labelKey = "profile_site_item.interests.label",
+            descriptionBundle = ProfileSiteConstants.BUNDLE,
+            descriptionKey = "profile_site_item.interests.description",
+            order = 3
+        ),
+        @AuthoringStep(
+            component = ProfileSiteItemMiscStep.class,
+            labelBundle = ProfileSiteConstants.BUNDLE,
+            labelKey = "profile_site_item.misc.label",
+            descriptionBundle = ProfileSiteConstants.BUNDLE,
+            descriptionKey = "profile_site_item.misc.description",
+            order = 4
+        )
+    }
+)
 public class ProfileSiteItem extends ContentItem {
 
     private static final long serialVersionUID = 1L;
@@ -35,23 +85,50 @@ public class ProfileSiteItem extends ContentItem {
     @JoinColumn(name = "OWNER_ID")
     private Person owner;
 
-    @Column(name = "POSITION")
-    @Basic
-    @Lob
-    @Type(type = "org.hibernate.type.TextType")
-    private String position;
+    @Embedded
+    @AssociationOverride(
+        name = "values",
+        joinTable = @JoinTable(
+            name = "PROFILE_SITE_ITEMS_POSITION",
+            schema = DB_SCHEMA,
+            joinColumns = {
+                @JoinColumn(name = "PROFILE_SITE_ITEM_ID")
+            }
+        )
+    )
+    private LocalizedString position;
 
-    @Column(name = "INTERESTS")
-    @Basic
-    @Lob
-    @Type(type = "org.hibernate.type.TextType")
-    private String interests;
+    @Embedded
+    @AssociationOverride(
+        name = "values",
+        joinTable = @JoinTable(
+            name = "PROFILE_SITE_ITEMS_INTERESTS",
+            schema = DB_SCHEMA,
+            joinColumns = {
+                @JoinColumn(name = "PROFILE_SITE_ITEM_ID")
+            }
+        )
+    )
+    private LocalizedString interests;
 
-    @Column(name = "MISC")
-    @Basic
-    @Lob
-    @Type(type = "org.hibernate.type.TextType")
-    private String misc;
+    @Embedded
+    @AssociationOverride(
+        name = "values",
+        joinTable = @JoinTable(
+            name = "PROFILE_SITE_ITEMS_MISC",
+            schema = DB_SCHEMA,
+            joinColumns = {
+                @JoinColumn(name = "PROFILE_SITE_ITEM_ID")
+            }
+        )
+    )
+    private LocalizedString misc;
+
+    public ProfileSiteItem() {
+        position = new LocalizedString();
+        interests = new LocalizedString();
+        misc = new LocalizedString();
+    }
 
     public Person getOwner() {
         return owner;
@@ -61,27 +138,27 @@ public class ProfileSiteItem extends ContentItem {
         this.owner = owner;
     }
 
-    public String getPosition() {
+    public LocalizedString getPosition() {
         return position;
     }
 
-    public void setPosition(final String position) {
+    protected void setPosition(final LocalizedString position) {
         this.position = position;
     }
 
-    public String getInterests() {
+    public LocalizedString getInterests() {
         return interests;
     }
 
-    public void setInterests(final String interests) {
+    protected void setInterests(final LocalizedString interests) {
         this.interests = interests;
     }
 
-    public String getMisc() {
+    public LocalizedString getMisc() {
         return misc;
     }
 
-    public void setMisc(final String misc) {
+    protected void setMisc(final LocalizedString misc) {
         this.misc = misc;
     }
 
@@ -146,9 +223,9 @@ public class ProfileSiteItem extends ContentItem {
                     + "interests = \"%s\", "
                     + "misc = \"%s\"%s",
                 Objects.toString(owner),
-                position,
-                interests,
-                misc,
+                Objects.toString(position),
+                Objects.toString(interests),
+                Objects.toString(misc),
                 data
             )
         );

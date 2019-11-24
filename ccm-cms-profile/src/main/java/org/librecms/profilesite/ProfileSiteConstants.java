@@ -11,6 +11,8 @@ package org.librecms.profilesite;
  */
 public class ProfileSiteConstants {
     
+    public static final String BUNDLE = "org.librecms.profilesite.ProfileSiteResources";
+    
     public static final String DB_SCHEMA = "cms_profile";
     
     private ProfileSiteConstants() {
