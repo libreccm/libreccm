@@ -56,6 +56,7 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 import javax.persistence.FetchType;
 
 import org.hibernate.envers.NotAudited;
+import org.libreccm.imexport.Exportable;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import javax.persistence.OrderBy;
@@ -594,7 +595,7 @@ import javax.persistence.OrderBy;
                     + "     )"
     )
 })
-public class ContentItem extends CcmObject implements Serializable {
+public class ContentItem extends CcmObject implements Serializable, Exportable {
 
     private static final long serialVersionUID = 5897287630227129653L;
 

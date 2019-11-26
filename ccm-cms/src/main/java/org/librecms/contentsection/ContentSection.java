@@ -18,6 +18,7 @@
  */
 package org.librecms.contentsection;
 
+import org.libreccm.imexport.Exportable;
 import org.libreccm.security.RecursivePermissions;
 import org.libreccm.security.Role;
 import org.libreccm.web.CcmApplication;
@@ -116,7 +117,9 @@ import static org.librecms.CmsConstants.*;
 //    creator = ContentSectionCreator.class,
 //    servlet = ContentSectionServlet.class,
 //    instanceForm = ApplicationInstanceForm.class)
-public class ContentSection extends CcmApplication implements Serializable {
+public class ContentSection 
+    extends CcmApplication 
+    implements Serializable, Exportable {
 
     private static final long serialVersionUID = -671718122153931727L;
 
