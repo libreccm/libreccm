@@ -25,6 +25,8 @@ import org.libreccm.imexport.Processes;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -33,12 +35,16 @@ import javax.transaction.Transactional;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+@RequestScoped
 @Processes(Categorization.class)
 public class CategorizationImExporter
     extends AbstractEntityImExporter<Categorization> {
 
     @Inject
     private EntityManager entityManager;
+
+    @Inject
+    private Instance<CategorizationImExporterDependenciesProvider> dependenciesProviders;
 
     @Override
     protected Class<Categorization> getEntityClass() {
@@ -48,10 +54,14 @@ public class CategorizationImExporter
 
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
-        
+
         final Set<Class<? extends Exportable>> entities = new HashSet<>();
         entities.add(Category.class);
         
+        dependenciesProviders.forEach(
+            provider -> entities.addAll(provider.getCategorizableEntities())
+        );
+
         return entities;
     }
 
