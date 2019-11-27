@@ -18,6 +18,8 @@
  */
 package org.librecms.contentsection;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import static org.librecms.CmsConstants.*;
 
 import org.hibernate.envers.Audited;
@@ -60,6 +62,8 @@ import org.libreccm.imexport.Exportable;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import javax.persistence.OrderBy;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 
 
 /**
@@ -601,6 +605,7 @@ public class ContentItem extends CcmObject implements Serializable, Exportable {
 
     @Column(name = "ITEM_UUID", nullable = false)
     @Field
+    @XmlElement(name = "item-uuid", namespace = CMS_XML_NS)
     private String itemUuid;
 
     /**
@@ -620,6 +625,7 @@ public class ContentItem extends CcmObject implements Serializable, Exportable {
         )
     )
 //    @Field
+    @XmlElement(name = "name", namespace = CMS_XML_NS)
     private LocalizedString name;
 
     /**
@@ -629,6 +635,7 @@ public class ContentItem extends CcmObject implements Serializable, Exportable {
     @JoinColumn(name = "CONTENT_TYPE_ID")
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 //    @Field
+    @XmlElement(name = "content-type", namespace = CMS_XML_NS)
     private ContentType contentType;
 
     /**
@@ -645,6 +652,7 @@ public class ContentItem extends CcmObject implements Serializable, Exportable {
         )
     )
     @IndexedEmbedded
+    @XmlElement(name = "title", namespace = CMS_XML_NS)
     private LocalizedString title;
 
     /**
@@ -659,6 +667,7 @@ public class ContentItem extends CcmObject implements Serializable, Exportable {
                                    @JoinColumn(name = "OBJECT_ID")}
         ))
     @IndexedEmbedded
+    @XmlElement(name = "description", namespace = CMS_XML_NS)
     private LocalizedString description;
 
     /**
@@ -667,6 +676,7 @@ public class ContentItem extends CcmObject implements Serializable, Exportable {
     @Column(name = "VERSION")
     @Enumerated(EnumType.STRING)
     @Field
+    @XmlElement(name = "version", namespace = CMS_XML_NS)
     private ContentItemVersion version;
 
     /**
@@ -674,6 +684,7 @@ public class ContentItem extends CcmObject implements Serializable, Exportable {
      */
     @Column(name = "LAUNCH_DATE")
     @Temporal(TemporalType.DATE)
+    @XmlElement(name = "launch-date", namespace = CMS_XML_NS)
     private Date launchDate;
 
     /**
@@ -685,16 +696,20 @@ public class ContentItem extends CcmObject implements Serializable, Exportable {
 
     @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
     @OrderBy("order ASC")
+    @XmlElementWrapper(name = "attachments", namespace = CMS_XML_NS)
+    @JsonIgnore
     private List<AttachmentList> attachments;
 
     @OneToOne()
     @JoinColumn(name = "LIFECYCLE_ID")
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @XmlElement(name = "lifecycle", namespace = CMS_XML_NS)
     private Lifecycle lifecycle;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WORKFLOW_ID")
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @XmlElement(name = "workflow", namespace = CMS_XML_NS)
     private Workflow workflow;
 
     /**
@@ -707,6 +722,7 @@ public class ContentItem extends CcmObject implements Serializable, Exportable {
     @Column(name = "CREATION_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     @NotAudited
+    @XmlElement(name = "creation-date", namespace = CMS_XML_NS)
     private Date creationDate;
 
     /**
@@ -719,6 +735,7 @@ public class ContentItem extends CcmObject implements Serializable, Exportable {
     @Column(name = "LAST_MODIFIED")
     @Temporal(TemporalType.TIMESTAMP)
     @NotAudited
+    @XmlElement(name = "last-modified", namespace = CMS_XML_NS)
     private Date lastModified;
 
     /**
@@ -733,6 +750,7 @@ public class ContentItem extends CcmObject implements Serializable, Exportable {
      */
     @Column(name = "CREATION_USER_NAME")
     @NotAudited
+    @XmlElement(name = "creation-username", namespace = CMS_XML_NS)
     private String creationUserName;
 
     /**
@@ -747,6 +765,7 @@ public class ContentItem extends CcmObject implements Serializable, Exportable {
      */
     @Column(name = "LAST_MODIFYING_USER_NAME")
     @NotAudited
+    @XmlElement(name = "last-modifying-username", namespace = CMS_XML_NS)
     private String lastModifyingUserName;
 
     public ContentItem() {
