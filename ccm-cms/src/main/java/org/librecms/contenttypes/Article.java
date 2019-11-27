@@ -40,6 +40,8 @@ import static org.librecms.CmsConstants.*;
 
 import org.librecms.contentsection.ContentItem;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * @author <a href="mailto:konerman@tzi.de">Alexander Konermann</a>
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -69,6 +71,7 @@ import org.librecms.contentsection.ContentItem;
             order = 2
         )
     })
+@XmlRootElement(name = "article", namespace = CMS_XML_NS)
 public class Article extends ContentItem implements Serializable {
 
     private static final long serialVersionUID = 3832010184748095822L;
