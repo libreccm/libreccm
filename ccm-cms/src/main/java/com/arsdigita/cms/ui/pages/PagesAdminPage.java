@@ -50,7 +50,6 @@ import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.core.UnexpectedErrorException;
-import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.pagemodel.PageModel;
 import org.libreccm.pagemodel.PageModelRepository;
 import org.librecms.CmsConstants;
@@ -58,7 +57,7 @@ import org.librecms.pages.PageManager;
 import org.librecms.pages.PageRepository;
 import org.librecms.pages.Pages;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.TooManyListenersException;
 
@@ -163,7 +162,7 @@ public class PagesAdminPage extends CMSApplicationPage {
 
         pagesContextBar = new PagesContextBar();
         super.add(pagesContextBar);
-        
+
         final TabbedPane tabbedPane = new TabbedPane();
         tabbedPane.addTab(new Label(new GlobalizedMessage(
             "cms.ui.pages.tab.pages", CmsConstants.CMS_BUNDLE)),
@@ -261,22 +260,31 @@ public class PagesAdminPage extends CMSApplicationPage {
                                         "cms.ui.pages.assigned_page_model.inherit",
                                         CmsConstants.CMS_BUNDLE))));
 
-        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final PageModelRepository pageModelRepo = cdiUtil
-            .findBean(PageModelRepository.class);
-        final List<PageModel> pageModels = pageModelRepo
-            .findDraftByApplication(pagesInstance);
-        final GlobalizationHelper globalizationHelper = cdiUtil
-            .findBean(GlobalizationHelper.class);
-
-        for (final PageModel pageModel : pageModels) {
-            target.addOption(new Option(
-                Long.toString(pageModel.getPageModelId()),
-                new Text(globalizationHelper.getValueFromLocalizedString(
-                    pageModel
-                        .getTitle()))));
-        }
-
+//        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+//        final PageModelRepository pageModelRepo = cdiUtil.findBean(
+//            PageModelRepository.class
+//        );
+//        final List<PageModel> pageModels = pageModelRepo
+//            .findDraftByApplication(pagesInstance);
+//        final GlobalizationHelper globalizationHelper = cdiUtil
+//            .findBean(GlobalizationHelper.class);
+//        for (final PageModel pageModel : pageModels) {
+//            target.addOption(
+//                new Option(
+//                    Long.toString(pageModel.getPageModelId()),
+//                    new Text(
+//                        globalizationHelper.getValueFromLocalizedString(
+//                            pageModel.getTitle()
+//                        )
+//                    )
+//                )
+//            );
+//        }
+        final PageModelAdminPageController controller = CdiUtil.createCdiUtil()
+            .findBean(PageModelAdminPageController.class);
+        final Map<String, Object> options = controller
+            .findDraftPageModelsByApplication(pagesInstance);
+        for (final Map.Entry<St)
     }
 
     private void categoryTreeStateChanged(final ChangeEvent event) {

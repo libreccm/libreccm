@@ -20,6 +20,7 @@ package org.libreccm.pagemodel;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -76,7 +77,9 @@ public abstract class AbstractPageRenderer implements PageRenderer {
         final Map<String, Object> container = new HashMap<>();
 
         container.put("key", containerModel.getKey());
-        container.put("styles", containerModel.getStyles().toCss());
+        if (containerModel.getStyles() != null) {
+            container.put("styles", containerModel.getStyles().toCss());
+        }
 
         for (final ComponentModel componentModel : containerModel
             .getComponents()) {
