@@ -45,7 +45,7 @@
                            value="{./selected-series/@seriesId}" />
                 </xsl:when>
                 <xsl:otherwise>
-                    <p id="{concat(./@name, '-selected')">
+                    <p id="{concat(./@name, '-selected')}">
                         <strong>
                             <xsl:value-of select="foundry:get-internal-static-text('cms', 'series-search-widget/no-series-selected')" />
                         </strong>

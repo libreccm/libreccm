@@ -45,7 +45,7 @@
                            value="{./selected-journal/@journalId}" />
                 </xsl:when>
                 <xsl:otherwise>
-                    <p id="{concat(./@name, '-selected')">
+                    <p id="{concat(./@name, '-selected')}">
                         <strong>
                             <xsl:value-of select="foundry:get-internal-static-text('cms', 'journal-search-widget/no-journal-selected')" />
                         </strong>
