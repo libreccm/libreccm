@@ -13,6 +13,7 @@ import org.librecms.pages.Pages;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -23,7 +24,7 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class PageModelAdminPageController {
+class PageModelAdminPageController {
 
     @Inject
     private GlobalizationHelper globalizationHelper;
@@ -32,19 +33,21 @@ public class PageModelAdminPageController {
     private PageModelRepository pageModelRepository;
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public Map<String, Object> findDraftPageModelsByApplication(
+    protected List<PageModelData> findDraftPageModelsByApplication(
         final Pages pages
     ) {
         final List<PageModel> pageModels = pageModelRepository
             .findDraftByApplication(pages);
-        final Map<String, Object> result = new HashMap<>();
-        for (final PageModel pageModel : pageModels) {
-            result.put("pageModelId", pageModel.getPageModelId());
-            final String title = globalizationHelper
-                .getValueFromLocalizedString(pageModel.getTitle());
-            result.put("title", title);
-        }
-        
+        return pageModels.stream().map(this::buildPageModelData).collect(
+            Collectors.toList()
+        );
+    }
+
+    private PageModelData buildPageModelData(final PageModel fromPageModel) {
+        final PageModelData result = new PageModelData();
+        result.setPageModelId(fromPageModel.getPageModelId());
+        result.setTitle(globalizationHelper.getValueFromLocalizedString(
+            fromPageModel.getTitle()));
         return result;
     }
 

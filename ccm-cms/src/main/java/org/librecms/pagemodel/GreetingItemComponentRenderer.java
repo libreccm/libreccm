@@ -80,12 +80,24 @@ public class GreetingItemComponentRenderer
                         parameters.get(PARAMETER_CATEGORY).getClass().getName()));
         }
 
-        final Category category = categoryRepo
-            .findById(((CcmObject) parameters.get(PARAMETER_CATEGORY))
-                .getObjectId())
-            .orElseThrow(() -> new IllegalArgumentException(String.format(
-            "No category with ID %d in the database.",
-            ((CcmObject) parameters.get(PARAMETER_CATEGORY)).getObjectId())));
+        final Optional<Category> catResult = categoryRepo.findById(
+            ((CcmObject) parameters.get(PARAMETER_CATEGORY)).getObjectId()
+        );
+        final Category category = catResult.orElseThrow(
+            () -> new IllegalArgumentException(
+                String.format(
+                    "No category with ID %d in the database.",
+                    ((CcmObject) parameters.get(PARAMETER_CATEGORY))
+                        .getObjectId()
+                )
+            )
+        );
+//        final Category category = categoryRepo
+//            .findById(((CcmObject) parameters.get(PARAMETER_CATEGORY))
+//                .getObjectId())
+//            .orElseThrow(() -> new IllegalArgumentException(String.format(
+//            "No category with ID %d in the database.",
+//            ((CcmObject) parameters.get(PARAMETER_CATEGORY)).getObjectId())));
 
         final Optional<CcmObject> indexObj = categoryManager
             .getIndexObject(category)

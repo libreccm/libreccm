@@ -57,9 +57,10 @@ import org.librecms.pages.PageManager;
 import org.librecms.pages.PageRepository;
 import org.librecms.pages.Pages;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 import java.util.TooManyListenersException;
+
 
 /**
  *
@@ -68,19 +69,27 @@ import java.util.TooManyListenersException;
 public class PagesAdminPage extends CMSApplicationPage {
 
     private static final String INDEX_PAGE_MODEL_SELECT = "indexPageModelSelect";
+
     private static final String ITEM_PAGE_MODEL_SELECT = "itemPageModelSelect";
+
     private static final String INHERIT_PAGEMODEL = "--inherit--";
 
     private final ParameterSingleSelectionModel<String> selectedCategory;
 
     private final Tree categoryTree;
+
     private final Label nothingSelectedLabel;
+
     private final Form pageModelForm;
+
     private final SingleSelect indexPageModelSelect;
+
     private final SingleSelect itemPageModelSelect;
+
     private final SaveCancelSection saveCancelSection;
 
     private Pages pagesInstance;
+
     private PagesContextBar pagesContextBar;
 
     public PagesAdminPage() {
@@ -282,9 +291,16 @@ public class PagesAdminPage extends CMSApplicationPage {
 //        }
         final PageModelAdminPageController controller = CdiUtil.createCdiUtil()
             .findBean(PageModelAdminPageController.class);
-        final Map<String, Object> options = controller
+        final List<PageModelData> pageModels = controller
             .findDraftPageModelsByApplication(pagesInstance);
-        for (final Map.Entry<St)
+        for (final PageModelData pageModel : pageModels) {
+            target.addOption(
+                new Option(
+                    Long.toString(pageModel.getPageModelId()),
+                    new Text(pageModel.getTitle())
+                )
+            );
+        }
     }
 
     private void categoryTreeStateChanged(final ChangeEvent event) {
