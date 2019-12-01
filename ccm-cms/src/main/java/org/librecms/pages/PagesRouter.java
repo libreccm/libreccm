@@ -47,6 +47,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
@@ -82,6 +83,8 @@ public class PagesRouter {
     protected static final String SITE_INFO_DOMAIN = "domain";
 
     protected static final String SITE_INFO_HOST = "host";
+
+    protected static final String SITE_INFO_LANGS = "supportedLanguages";
 
     @Inject
     private CategoryRepository categoryRepo;
@@ -642,12 +645,21 @@ public class PagesRouter {
         Objects.requireNonNull(pagePath);
         Objects.requireNonNull(parameters);
 
+        final KernelConfig kernelConfig = confManager
+            .findConfiguration(KernelConfig.class);
+
         final String domain = uriInfo.getBaseUri().getHost();
         final Pages pages = getPages(domain);
         final Map<String, Object> siteInfo = new HashMap<>();
         siteInfo.put(SITE_INFO_HOST, uriInfo.getBaseUri().getHost());
         siteInfo.put(SITE_INFO_DOMAIN, pages.getSite().getDomainOfSite());
         siteInfo.put(SITE_INFO_NAME, pages.getSite().getDisplayName());
+        siteInfo.put(
+            SITE_INFO_LANGS,
+            kernelConfig.getSupportedLanguages().stream().sorted().collect(
+                Collectors.toList()
+            )
+        );
         parameters.put(SITE_INFO, siteInfo);
         final Category category = getCategory(domain, pages, pagePath);
 
@@ -807,10 +819,12 @@ public class PagesRouter {
          * Version of content to use
          */
         private ContentItemVersion contentVersion;
+
         /**
          * Version of {@link PageModel} to use.
          */
         private PageModelVersion pageModelVersion;
+
         /**
          * Version of theme to use.
          */
