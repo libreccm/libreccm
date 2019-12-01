@@ -38,7 +38,12 @@ public class CmsPageRenderer extends AbstractPageRenderer {
     public Map<String, Object> renderPage(final Map<String, Object> parameters) {
         
         final Map<String, Object> result = new HashMap<>();
-        
+        result.put("application", Pages.class.getName());
+        if (parameters.containsKey(PagesRouter.SITE_INFO)) {
+            result.put(
+                PagesRouter.SITE_INFO, parameters.get(PagesRouter.SITE_INFO)
+            );
+        }
         return result;
         
     }
