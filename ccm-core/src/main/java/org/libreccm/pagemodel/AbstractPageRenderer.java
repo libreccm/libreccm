@@ -18,13 +18,23 @@
  */
 package org.libreccm.pagemodel;
 
+import com.arsdigita.ui.UI;
+import com.arsdigita.ui.login.LoginConstants;
+import com.arsdigita.ui.login.LoginServlet;
+import com.arsdigita.web.URL;
+
+import org.apache.shiro.subject.Subject;
+import org.libreccm.security.Shiro;
+import org.libreccm.security.User;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.inject.Inject;
 
 import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * An abstract base class for implementations of the {@link PageRenderer}
@@ -38,6 +48,12 @@ public abstract class AbstractPageRenderer implements PageRenderer {
 
     @Inject
     private ComponentRendererManager componentRendererManager;
+
+    @Inject
+    private HttpServletRequest request;
+
+    @Inject
+    private Shiro shiro;
 
     /**
      * Renders a {@code Page} based on a {@link PageModel}. This implementation
@@ -59,6 +75,46 @@ public abstract class AbstractPageRenderer implements PageRenderer {
                                           final Map<String, Object> parameters) {
 
         final Map<String, Object> page = renderPage(parameters);
+
+        final Map<String, Object> currentUserData = new HashMap<>();
+        if (shiro.getUser().isPresent()) {
+            final User currentUser = shiro.getUser().get();
+            final Subject currentSubject = shiro.getSubject();
+            currentUserData.put(
+                "authenticated", currentSubject.isAuthenticated()
+            );
+            currentUserData.put("username", currentUser.getName());
+            currentUserData.put(
+                "email", currentUser.getPrimaryEmailAddress().toString()
+            );
+            currentUserData.put("familyName", currentUser.getFamilyName());
+            currentUserData.put("givenName", currentUser.getGivenName());
+
+            currentUserData.put(
+                "workspaceUrl",
+                URL.there(request, UI.getWorkspaceURL()).toString()
+            );
+            currentUserData.put(
+                "loginUrl",
+                URL.there(request, LoginConstants.LOGIN_PAGE_URL).toString()
+            );
+            currentUserData.put(
+                "logoutUrl",
+                URL.there(
+                    request,
+                    LoginServlet.getLogoutPageURL()).toString()
+            );
+            currentUserData.put(
+                "changePasswordUrl",
+                URL.there(
+                    request,
+                    LoginServlet.getLogoutPageURL()).toString()
+            );
+
+        } else {
+            currentUserData.put("authenticated", false);
+        }
+        page.put("currentUser", currentUserData);
 
         for (final ContainerModel containerModel : pageModel.getContainers()) {
 
