@@ -886,7 +886,7 @@ public class CategoryManager implements Serializable {
             "No category with ID %d in the database. Where did that ID come from?",
             category.getObjectId())));
         while (current.getParentCategory() != null) {
-            tokens.add(current.getDisplayName());
+            tokens.add(current.getName());
             current = current.getParentCategory();
         }
 

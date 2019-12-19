@@ -18,6 +18,7 @@
  */
 package org.librecms.pages;
 
+import org.libreccm.categorization.CategoryManager;
 import org.libreccm.pagemodel.AbstractPageRenderer;
 import org.libreccm.pagemodel.PageRenderer;
 
@@ -25,10 +26,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 
 /**
  * Implementation of {@link PageRenderer} for CMS pages.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -36,7 +38,7 @@ public class CmsPageRenderer extends AbstractPageRenderer {
 
     @Override
     public Map<String, Object> renderPage(final Map<String, Object> parameters) {
-        
+
         final Map<String, Object> result = new HashMap<>();
         result.put("application", Pages.class.getName());
         if (parameters.containsKey(PagesRouter.SITE_INFO)) {
@@ -44,10 +46,8 @@ public class CmsPageRenderer extends AbstractPageRenderer {
                 PagesRouter.SITE_INFO, parameters.get(PagesRouter.SITE_INFO)
             );
         }
+
         return result;
-        
     }
-    
-    
-    
+
 }
