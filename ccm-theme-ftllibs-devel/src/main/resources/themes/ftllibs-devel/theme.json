@@ -1,0 +1,6 @@
+{
+    "name": "ftllibs-devel",
+    "type": "freemarker",
+
+    "default-template": "page.html.ftl"
+}
