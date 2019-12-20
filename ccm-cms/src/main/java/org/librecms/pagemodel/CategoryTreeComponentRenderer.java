@@ -72,13 +72,13 @@ public class CategoryTreeComponentRenderer
 
         if (!parameters.containsKey(PARAMETER_CATEGORY)) {
             throw new IllegalArgumentException(
-                "The parameters map passed to this GreetingItem component does "
+                "The parameters map passed to this CategoryTree component does "
                     + "not include the parameter \"category\"");
         }
 
         if (!(parameters.get(PARAMETER_CATEGORY) instanceof Category)) {
             throw new IllegalArgumentException(String
-                .format("The parameters map passed to this GreetingItem "
+                .format("The parameters map passed to this CategoryTree "
                             + "component contains the parameter \"category\", but the "
                         + "parameter is not of type \"%s\" but of type \"%s\".",
                         Category.class.getName(),

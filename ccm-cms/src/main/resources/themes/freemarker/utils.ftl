@@ -31,7 +31,7 @@
     @return The host name of the site.
 -->
 <#function getSiteHostName>
-    <#return siteInfo.hostName>
+    <#return siteInfo.host>
 </#function>
 
 <#--doc
@@ -40,7 +40,16 @@
     @return The name of the site.
 -->
 <#function getSiteName>
-    <#return siteInfo.siteName>
+    <#return siteInfo.name>
+</#function>
+
+<#--doc
+    Get the domain of the site.
+
+    @return The name of the site.
+-->
+<#function getSiteDomain>
+    <#return siteInfo.domain>
 </#function>
 
 <#--doc

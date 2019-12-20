@@ -54,6 +54,7 @@ import java.util.UUID;
  */
 @RequestScoped
 public class CategoryManager implements Serializable {
+
     private static final long serialVersionUID = -3354487547729008811L;
 
     private static final Logger LOGGER = LogManager.getLogger(
@@ -863,6 +864,37 @@ public class CategoryManager implements Serializable {
             categoryRepo.save(subCategory);
             categoryRepo.save(prevCategory);
         });
+    }
+
+    /**
+     * Returns a list of all categories in the path to the provided category.
+     *
+     * The first entry in the list is the root category, the last entry is the
+     * provided category.
+     *
+     * @param ofCategory The category for whic the tree is generated.
+     *
+     * @return A list of a categories in the path of the provided category.
+     */
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<Category> getCategoriesInPath(final Category ofCategory) {
+        
+        Objects.requireNonNull(ofCategory);
+        
+        List<Category> categories = new ArrayList<>();
+        
+        Category current = categoryRepo.findById(ofCategory.getObjectId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format(
+            "No category with ID %d in the database. Where did that ID come from?",
+            ofCategory.getObjectId())));
+        
+        while(current.getParentCategory() != null) {
+            categories.add(current);
+            current = current.getParentCategory();
+        }
+        Collections.reverse(categories);
+        
+        return categories;
     }
 
     /**

@@ -18,7 +18,7 @@
  */
 package org.librecms.pages;
 
-import org.libreccm.categorization.CategoryManager;
+import org.libreccm.categorization.Category;
 import org.libreccm.pagemodel.AbstractPageRenderer;
 import org.libreccm.pagemodel.PageRenderer;
 
@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 
 /**
  * Implementation of {@link PageRenderer} for CMS pages.
@@ -44,6 +43,12 @@ public class CmsPageRenderer extends AbstractPageRenderer {
         if (parameters.containsKey(PagesRouter.SITE_INFO)) {
             result.put(
                 PagesRouter.SITE_INFO, parameters.get(PagesRouter.SITE_INFO)
+            );
+        }
+        
+        if (parameters.containsKey(PagesRouter.PAGE_PATH)) {
+            result.put(
+                PagesRouter.PAGE_PATH, parameters.get(PagesRouter.PAGE_PATH)
             );
         }
 
