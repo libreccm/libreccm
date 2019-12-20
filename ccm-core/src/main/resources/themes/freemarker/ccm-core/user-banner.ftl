@@ -72,21 +72,46 @@
     Retrieves the link to the login form. Only available if the current user
     is not logged in.
 
+    @depcrecated Use getLoginUrl() instead
+
     @return The link to the login form.
 -->
 <#function getLoginLink>
-    <#return currentUser.loginLink>
+    <#return getLoginUrl()>
+</#function>
+
+<#--doc
+    Retrieves the URL of the login form. Only available if the current user
+    is not logged in.
+
+    @return The link to the login form.
+-->
+<#function getLoginUrl>
+    <#return currentUser.loginUrl>
 </#function>
 
 <#--doc
     Retrieves the link for logging out. Only available if the current user
     is logged in.
 
+    @depcreated Use getLogoutUrl instead
+
     @return The link for logging out.
 -->
 <#function getLogoutLink>
+    <#return getLogoutUrl()>
+</#function>
+
+<#--doc
+    Retrieves the URL for logging out. Only available if the current user
+    is logged in.
+
+    @return The link for logging out.
+-->
+<#function getLogoutUrl>
     <#return currentUser.logoutUrl>
 </#function>
+
 
 <#--doc
     Retrieves the screen name (user name) of the current user. Only available

@@ -18,8 +18,10 @@
  */
 package org.libreccm.theming.freemarker;
 
+import freemarker.cache.ClassTemplateLoader;
+import freemarker.cache.MultiTemplateLoader;
 import freemarker.cache.TemplateLoader;
-import freemarker.cache.TemplateLookupStrategy;
+import freemarker.cache.WebappTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;
 import org.libreccm.core.UnexpectedErrorException;
@@ -32,9 +34,11 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
 
 /**
  *
@@ -43,6 +47,9 @@ import javax.inject.Inject;
 @ApplicationScoped
 class FreemarkerConfigurationProvider {
 
+    @Inject
+    private ServletContext servletContext;
+    
     @Inject
     private Themes themes;
 
@@ -64,7 +71,18 @@ class FreemarkerConfigurationProvider {
             configuration.setLogTemplateExceptions(false);
             configuration.setWrapUncheckedExceptions(false);
             configuration.setLocalizedLookup(false);
-            configuration.setTemplateLoader(new CcmTemplateLoader(forTheme));
+            
+            configuration.setTemplateLoader(
+                new MultiTemplateLoader(new TemplateLoader[]{
+                    // For for files from themes
+                    new CcmTemplateLoader(forTheme), 
+                    // Loader for MacroLibs provided by CCM modules
+                    new WebappTemplateLoader(
+                        servletContext, "/themes/freemarker" 
+                    ),
+                    new ClassTemplateLoader(getClass(), "/themes/freemarker")
+                })
+            );
 
             configurations.put(forTheme, configuration);
 
@@ -83,13 +101,12 @@ class FreemarkerConfigurationProvider {
         @Override
         public Object findTemplateSource(final String name) throws IOException {
 
-            return themes
-                .getFileFromTheme(fromTheme, name)
-                .orElseThrow(() -> new UnexpectedErrorException(String
-                .format("Failed to open Freemarker Template \"%s\" from "
-                            + "theme \"%s\".",
-                        name,
-                        fromTheme.getName())));
+            final Optional<InputStream> source = themes.getFileFromTheme(fromTheme, name);
+            if (source.isPresent()) {
+                return source.get();
+            } else {
+                return null;
+            }
         }
 
         @Override

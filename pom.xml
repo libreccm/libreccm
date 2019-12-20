@@ -79,6 +79,7 @@
 
         <!-- Modules providing themes -->
         <module>ccm-theme-foundry</module>
+        <module>ccm-theme-ftllibs-devel</module>
 
         <!-- Bundle modules -->
         <module>ccm-bundle-devel</module>

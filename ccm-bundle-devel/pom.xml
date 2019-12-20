@@ -38,6 +38,11 @@
             <artifactId>ccm-theme-foundry</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+         <dependency>
+            <groupId>org.librecms</groupId>
+            <artifactId>ccm-theme-ftllibs-devel</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
         
         <dependency>
             <groupId>net.sf.saxon</groupId>
