@@ -1,4 +1,8 @@
 <#import "/ccm-core/user-banner.ftl" as UserBanner>
+<#import "/language.ftl" as Language>
+<#import "/utils.ftl" as Utils>
+<#import "/ccm-cms/pages.ftl" as Pages>
+<#import "/ccm-navigation/navigation.ftl" as Navigation>
 
 <!DOCTYPE html>
 <html>
@@ -7,7 +11,7 @@
     </head>
     <body>
         <h1>FTL Libs Test</h1>
-        <h2>user-banner.ftl</h2>
+        <h2>ccm-core/user-banner.ftl as UserBanner</h2>
         <dl>
             <div>
                 <dt>UserBanner.getGreeting</dt>
@@ -52,6 +56,127 @@
             <div>
                 <dt>UserBanner.getUserFamilyName</dt>
                 <dd>${UserBanner.getUserFamilyName()}</dd>
+            </div>
+        </dl>
+        <h2>language.ftl as Language</h2>
+        <dl>
+            <div>
+                <dt>Language.getSupportedLanguages</dt>
+                <dd>
+                    <#list Language.getSupportedLanguages()>
+                        <ul>
+                            <#items as lang>
+                                <li>${lang}</li>
+                            </#items>
+                        </ul>
+                    <#else>
+                        No supported languages
+                    </#list>
+                </dd>
+            </div>
+            <div>
+                <dt>Language.getSupportedLanguages</dt>
+                <dd>
+                    <#list Language.getAvailableLanguages()>
+                        <ul>
+                            <#items as lang>
+                                <li>${lang}</li>
+                            </#items>
+                        </ul>
+                    <#else>
+                        No languages available
+                    </#list>
+                </dd>
+            </div>
+        </dt>
+        <h2>utils.ftl as Utils</h2>
+        <dl>
+            <div>
+                <dt>Utils.getPageApplication()</dt>
+                <dd>${Utils.getPageApplication()}</dd>
+            </div>
+            <div>
+                <dt>Utils.getPageTitle()</dt>
+                <dd>${Utils.getPageTitle()}</dd>
+            </div>
+            <div>
+                <dt>Utils.getSiteHostName()</dt>
+                <dd>${Utils.getSiteHostName()}</dd>
+            </div>
+            <div>
+                <dt>Utils.getSiteHDomain()</dt>
+                <dd>${Utils.getSiteDomain()}</dd>
+            </div>
+            <div>
+                <dt>Utils.getSiteName()</dt>
+                <dd>${Utils.getSiteName()!""}</dd>
+            </div>
+        </dl>
+        <h2>ccm-cms/pages.ftl as Pages</h2>
+        <dl>
+            <div>
+                <dt>Pages.getCategoryPath()</dt>
+                <dd>
+                    Path length: ${Pages.getCategoryPath()?size}
+                    <#list Pages.getCategoryPath()>
+                    <ul>
+                        <#items as cat>
+                        <li>
+                            <dl>
+                                <dt>Name</dt>
+                                <dd>${cat.categoryName}</dd>
+                                <dt>Title</dt>
+                                <dd>${cat.categoryTitle}</dd>
+                            </dl>
+                        </li>
+                        </#items>
+                    </ul>
+                    </#list>
+                </dd>
+            </div>
+            <div>
+                <dt>Pages.getPagePath()</dt>
+                <dd>
+                    Path length: ${Pages.getPagePath()?size}
+                    <#list Pages.getPagePath()>
+                    <ul>
+                        <#items as cat>
+                        <li>
+                            <dl>
+                                <dt>Name</dt>
+                                <dd>${cat.categoryName}</dd>
+                                <dt>Title</dt>
+                                <dd>${cat.categoryTitle}</dd>
+                            </dl>
+                        </li>
+                        </#items>
+                    </ul>
+                    </#list>
+                </dd>
+            </div>
+            <div>
+                <dt>Pages.isRootPage()</dt>
+                <dd>${Pages.isRootPage()?c}</dd>
+            </div>
+            <div>
+                <dt>Pages.getSelectedCategory()</dt>
+                <dd>
+                    <#if Pages.getSelectedCategory()??>
+                        ${Pages.getSelectedCategory()}
+                    <#else>
+                        No category selected.
+                    </#if>
+                </dd>
+            </div>
+        </dl>
+        <h2>ccm-navigation/navigation.ftl as Navigation</h2>
+        <p>
+            Note: Deprecated, replaced by ccm-cms/pages.ftl
+        </p>
+        <dl>
+            <div>
+                <dt>Navigation.getCategoryPath</dt>
+                <dd>${Navigation.getCategoryPath()}</dd>
             </div>
         </dl>
     </body>

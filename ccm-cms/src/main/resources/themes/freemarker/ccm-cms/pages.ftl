@@ -12,7 +12,7 @@
 <#--
     Gets the path of the current page.
 
-    @return A list of names (URL stubs/slugs) of all categories in the
+    @return A list of categories of all categories in the
     path of the current page.
 -->
 <#function getPagePath>
@@ -34,7 +34,13 @@
     @return The currently selected category.
 -->
 <#function getSelectedCategory>
-    <#return getPathPath()?last>
+    <#if isRootPage()>
+        <#return null>
+    <#elseif getPagePath()??>
+        <#return getPathPath()?last>
+    <#else>
+        <#return null>
+    </#if>
 </#function>
 
 <#--doc
@@ -91,7 +97,7 @@
     @return The URL of the root category of the navigation system with the 
     provided ID.
 -->
-<#function getNavigationRootUrl navigationId="categoryMenu" containerId="container">
+<#function getNavigationRootUrl navigationId="categoryTree" containerId="container">
     <#return [container][navigationId].url>
 </#function>
 
@@ -151,5 +157,5 @@
     @return The model of the index item.
 -->
 <#function getGreetingItem containerId="container">    
-    <#return [container].greetingItem>
+    <#return eval(containerId).greetingItem>
 </#function>

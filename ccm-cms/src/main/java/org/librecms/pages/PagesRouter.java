@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.libreccm.categorization.Category;
+import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.l10n.GlobalizationHelper;
@@ -43,6 +44,7 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -65,6 +67,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import static org.apache.logging.log4j.ThreadContext.*;
 import static org.librecms.pages.PagesConstants.*;
 
 /**
@@ -76,6 +79,12 @@ import static org.librecms.pages.PagesConstants.*;
 @Path("/")
 public class PagesRouter {
 
+    protected static final String PAGE_PATH = "pagePath";
+
+    protected static final String PAGE_PATH_CATEGORY_NAME = "categoryName";
+
+    protected static final String PAGE_PATH_CATEGORY_TITLE = "categoryTitle";
+
     protected static final String SITE_INFO = "siteInfo";
 
     protected static final String SITE_INFO_NAME = "name";
@@ -85,6 +94,9 @@ public class PagesRouter {
     protected static final String SITE_INFO_HOST = "host";
 
     protected static final String SITE_INFO_LANGS = "supportedLanguages";
+
+    @Inject
+    private CategoryManager categoryManager;
 
     @Inject
     private CategoryRepository categoryRepo;
@@ -673,6 +685,7 @@ public class PagesRouter {
 
         globalizationHelper.setSelectedLocale(locale);
 
+        parameters.put(PAGE_PATH, buildPageCategoriesPath(category, locale));
         parameters.put(PARAMETER_CATEGORY, category);
         return pageManager.findPageForCategory(category);
     }
@@ -752,6 +765,30 @@ public class PagesRouter {
         parameters.put(PARAMETER_LANGUAGE, language);
 
         return buildPage(pageModel, parameters);
+    }
+
+    private List<Map<String, Object>> buildPageCategoriesPath(
+        final Category category, Locale language
+    ) {
+        final List<Category> categoriesInPath = categoryManager
+            .getCategoriesInPath(category);
+        return categoriesInPath
+            .stream()
+            .map(cat -> buildPathCategoriesPathEntry(category, language))
+            .collect(Collectors.toList());
+    }
+
+    private Map<String, Object> buildPathCategoriesPathEntry(
+        final Category category, Locale language
+    ) {
+
+        final Map<String, Object> result = new HashMap<>();
+        result.put(PAGE_PATH_CATEGORY_NAME, category.getName());
+        result.put(
+            PAGE_PATH_CATEGORY_TITLE, category.getTitle().getValue(language)
+        );
+
+        return result;
     }
 
     /**
