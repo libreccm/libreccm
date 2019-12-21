@@ -37,7 +37,7 @@
     <#if isRootPage()>
         <#return null>
     <#elseif getPagePath()??>
-        <#return getPathPath()?last>
+        <#return getPagePath()?last>
     <#else>
         <#return null>
     </#if>
@@ -49,7 +49,11 @@
     @return The ID of the currently selected category.
 -->
 <#function getSelectedCategoryId>
-    <#return getSelectedCategory().categoryId>
+    <#if getSelectedCategory()??>
+        <#return getSelectedCategory().categoryId>
+    <#else>
+        <#return "">
+    </#if>
 </#function>
 
 <#--doc
@@ -58,10 +62,12 @@
     @param The model of a category as returned by several functions in this 
     library.
 
+    @depcrecated Use the title property directly
+
     @return The title of the category.
 -->
 <#function getCategoryTitle category>
-    <#return category.title>
+    <#return category.categoryTitle>
 </#function>
 
 <#--
@@ -69,6 +75,8 @@
 
     @param The model of a category as returned by several functions in this 
     library.
+
+    @depcrecated Use the categoryId of uuid property directly
 
     @return The ID of the provided category.
 -->
@@ -82,10 +90,12 @@
     @param The model of a category as returned by several functions in this 
     library.
 
+    @depcrecated Use the selected property directly
+
     @return `true` if the category is selected, `false` if not.
 -->
 <#function isCategorySelected category>
-    <#return category.isSelected>
+    <#return category.selected>
 </#function>
 
 <#--doc
@@ -98,7 +108,7 @@
     provided ID.
 -->
 <#function getNavigationRootUrl navigationId="categoryTree" containerId="container">
-    <#return [container][navigationId].url>
+    <#return containerId?eval[navigationId].categoryPath>
 </#function>
 
 <#--doc
@@ -107,23 +117,25 @@
     @param navigationId The ID of the navigation system to use.
     @param containerId Container of the category menu
 
+    @depcrecated Without replacement
+
     @return The title of the navigation.
 -->
 <#function getNavigationTitle navigationId="categoryMenu" containerId="container">
-    <#return [containerId][navigationId].categoryTitle>
+    <#return containerId?eval[navigationId].categoryTitle>
 </#function>
 
 <#--doc
     Retrieves the first level of categories from the category hierachy with the 
-    provided ID. If no id is provided 'categoryNav' is used.
+    provided ID. If no id is provided 'categoryTree' is used.
 
-    @param hierarchyId The ID of the category hierachy to use.
+    @param hierarchyId The ID of the category hierarchy to use.
     @param containerId Container of the category hierarchy
 
     @return The first level of categories in the hierarchy.
 -->
-<#function getCategoryHierarchy hierarchyId="categoryNav" containerId="container">
-    <#return [containerId][hierarchyId].subCategories>
+<#function getCategoryHierarchy hierarchyId="categoryTree" containerId="container">
+    <#return containerId?eval[hierarchyId].subCategories>
 </#function>
 
 <#--doc
@@ -131,16 +143,20 @@
 
     @param ofCategory The model of the category.
 
+    @depcrected Use the subCategories property directly
+
     @return The sub categories of the provided category.
 -->
 <#function getSubCategories ofCategory>
-    <#return ofCategory.subcategories>
+    <#return ofCategory.subCategories>
 </#function>
 
 <#--doc
     Not longer supported
 
     @param categoryId The ID of the category to use.
+
+    @depcrecated Without replacement
 
     @return Nothing
 -->
@@ -156,6 +172,20 @@
 
     @return The model of the index item.
 -->
+<#function getIndexItem containerId="container">    
+    <#return containerId?eval.greetingItem>
+</#function>
+
+<#--doc
+    Gets the greeting/index item of the current navigation page. The returned
+    model can be processed with usual functions for processing content items.
+
+    @param containerId Container of the index item.
+
+    @depcrecated Use getIndexItem
+
+    @return The model of the index item.
+-->
 <#function getGreetingItem containerId="container">    
-    <#return eval(containerId).greetingItem>
+    <#return getIndexItem(containerId)>
 </#function>

@@ -67,7 +67,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import static org.apache.logging.log4j.ThreadContext.*;
 import static org.librecms.pages.PagesConstants.*;
 
 /**
@@ -81,9 +80,13 @@ public class PagesRouter {
 
     protected static final String PAGE_PATH = "pagePath";
 
+    protected static final String PAGE_PATH_CATEGORY_ID = "categoryId";
+    
     protected static final String PAGE_PATH_CATEGORY_NAME = "categoryName";
 
     protected static final String PAGE_PATH_CATEGORY_TITLE = "categoryTitle";
+    
+    protected static final String PAGE_PATH_CATEGORY_UUID = "uuid";
 
     protected static final String SITE_INFO = "siteInfo";
 
@@ -329,7 +332,7 @@ public class PagesRouter {
      * @return
      */
     @GET
-    @Path("/{page:[\\w/]+}/{name:[\\w\\-]+}")
+    @Path("/{page:[\\w\\-/]+}/{name:[\\w\\-]+}")
     @Transactional(Transactional.TxType.REQUIRED)
     public Response getPage(
         @Context final UriInfo uriInfo,
@@ -369,7 +372,7 @@ public class PagesRouter {
      * @return
      */
     @GET
-    @Path("/{page:[\\w/]+}/{name:[\\w\\-]+}.html")
+    @Path("/{page:[\\w\\-/]+}/{name:[\\w\\-]+}.html")
     @Transactional(Transactional.TxType.REQUIRED)
     public Response getPageAsHtml(
         @Context final UriInfo uriInfo,
@@ -411,7 +414,7 @@ public class PagesRouter {
      * @return
      */
     @GET
-    @Path("/{page:[\\w/]+}/{name:[\\w\\-]+}.{lang:\\w+}.html")
+    @Path("/{page:[\\w\\-/]+}/{name:[\\w\\-]+}.{lang:\\w+}.html")
     @Produces("text/html")
     @Transactional(Transactional.TxType.REQUIRED)
     public String getPageAsHtml(
@@ -466,7 +469,7 @@ public class PagesRouter {
      * @return
      */
     @GET
-    @Path("/{page:[\\w/]+}/{name:[\\w\\-]+}.{lang:\\w+}.json")
+    @Path("/{page:[\\w\\-/]+}/{name:[\\w\\-]+}.{lang:\\w+}.json")
     @Produces("application/json")
     @Transactional(Transactional.TxType.REQUIRED)
     public String getPageAsJson(
@@ -521,7 +524,7 @@ public class PagesRouter {
      * @return
      */
     @GET
-    @Path("/{page:[\\w/]+}/{name:[\\w\\-]+}.{lang:\\w+}.xml")
+    @Path("/{page:[\\w\\-/]+}/{name:[\\w\\-]+}.{lang:\\w+}.xml")
     @Produces("text/xml")
     @Transactional(Transactional.TxType.REQUIRED)
     public String getPageAsXml(
@@ -718,7 +721,7 @@ public class PagesRouter {
                                   pagePath,
                                   language,
                                   parameters);
-
+        
         final PageModel pageModel;
         if (pageModelVersion == PageModelVersion.DRAFT) {
             pageModel = pageModelManager
@@ -783,6 +786,8 @@ public class PagesRouter {
     ) {
 
         final Map<String, Object> result = new HashMap<>();
+        result.put(PAGE_PATH_CATEGORY_ID, Long.toString(category.getObjectId()));
+        result.put(PAGE_PATH_CATEGORY_UUID, category.getUuid());
         result.put(PAGE_PATH_CATEGORY_NAME, category.getName());
         result.put(
             PAGE_PATH_CATEGORY_TITLE, category.getTitle().getValue(language)

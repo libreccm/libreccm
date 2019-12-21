@@ -126,7 +126,7 @@
                                 <dt>Name</dt>
                                 <dd>${cat.categoryName}</dd>
                                 <dt>Title</dt>
-                                <dd>${cat.categoryTitle}</dd>
+                                <dd>${cat.categoryTitle!""}</dd>
                             </dl>
                         </li>
                         </#items>
@@ -146,7 +146,7 @@
                                 <dt>Name</dt>
                                 <dd>${cat.categoryName}</dd>
                                 <dt>Title</dt>
-                                <dd>${cat.categoryTitle}</dd>
+                                <dd>${cat.categoryTitle!""}</dd>
                             </dl>
                         </li>
                         </#items>
@@ -162,12 +162,50 @@
                 <dt>Pages.getSelectedCategory()</dt>
                 <dd>
                     <#if Pages.getSelectedCategory()??>
-                        ${Pages.getSelectedCategory()}
+                        ${Pages.getSelectedCategory().categoryName}
                     <#else>
                         No category selected.
                     </#if>
                 </dd>
             </div>
+            <div>
+                <dt>Pages.getSelectedCategoryId()</dt>
+                <dd>
+                    ${Pages.getSelectedCategoryId()}
+                </dd>
+            </div>
+            <div>
+                <dt>Pages.getNavigationRootUrl()</dt>
+                </dd>${Pages.getNavigationRootUrl()}</dd>
+            </div>
+            <div>
+                <dt>Pages.getCategoryHierarchy()</dt>
+                <dd>
+                    <#list Pages.getCategoryHierarchy()>
+                        <ul>
+                            <#items as cat>
+                                <li>
+                                    ${cat.categoryId}:${cat.categoryName}
+                                </li>
+                            </#items>
+                        </ul>
+                    <#else>
+                        No categories in hierarchy.
+                    </#list>
+                </dd>
+            </div>
+            <div>
+                <dt>Pages.getIndexItem()</dt>
+                <dd>
+                    <#assign indexItem = Pages.getIndexItem()>
+                    <#if (indexItem?keys?size > 0)>
+                        ${indexItem.uuid}:${indexItem.name}:${indexItem.title}
+                    <#else>
+                        No index item
+                    </#if>
+                </dd>
+            </div>            
+
         </dl>
         <h2>ccm-navigation/navigation.ftl as Navigation</h2>
         <p>
@@ -176,7 +214,23 @@
         <dl>
             <div>
                 <dt>Navigation.getCategoryPath</dt>
-                <dd>${Navigation.getCategoryPath()}</dd>
+                <dd>
+                    Path length: ${Navigation.getCategoryPath()?size}
+                    <#list Navigation.getCategoryPath()>
+                        <ul>
+                            <#items as cat>
+                            <li>
+                                <dl>
+                                    <dt>Name</dt>
+                                    <dd>${cat.categoryName}</dd>
+                                    <dt>Title</dt>
+                                    <dd>${cat.categoryTitle!""}</dd>
+                                </dl>
+                            </li>
+                            </#items>
+                        </ul>
+                    </#list>
+                </dd>
             </div>
         </dl>
     </body>

@@ -44,7 +44,7 @@ import org.libreccm.pagemodel.RendersComponent;
 
 /**
  * Renderer for the {@link CategoryTreeComponent}.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -106,6 +106,8 @@ public class CategoryTreeComponentRenderer
 
             final Category rootCategory = findRootCategory(category);
 
+            result.put("categoryId", Long.toString(rootCategory.getObjectId()));
+            result.put("uuid", rootCategory.getUuid());
             result.put("categoryName", rootCategory.getName());
             result.put("categoryPath",
                        categoryManager.getCategoryPath(rootCategory));
@@ -141,6 +143,8 @@ public class CategoryTreeComponentRenderer
                                                    final Locale language) {
 
         final Map<String, Object> result = new HashMap<>();
+        result.put("categoryId", Long.toString(category.getObjectId()));
+        result.put("uuid", category.getUuid());
         result.put("categoryName", category.getName());
         result.put("categoryPath", categoryManager.getCategoryPath(category));
         result.put("categoryTitle", category.getTitle().getValue(language));
@@ -153,6 +157,8 @@ public class CategoryTreeComponentRenderer
         final Locale language) {
 
         final Map<String, Object> result = new HashMap<>();
+        result.put("categoryId", Long.toString(category.getObjectId()));
+        result.put("uuid", category.getUuid());
         result.put("categoryName", category.getName());
         result.put("categoryPath", categoryManager.getCategoryPath(category));
         result.put("categoryTitle", category.getTitle().getValue(language));
