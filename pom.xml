@@ -25,6 +25,14 @@
             <name>LibreCCM</name>
             <url>http://www.libreccm.org/project-sites/</url>
         </site>
+        <snapshotRepository>
+            <id>libreccm-snapshots</id>
+            <url>https://packages.libreccm.org/repository/maven-snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>libreccm-releases</id>
+            <url>https://packages.libreccm.org/repository/maven-releases/</url>
+        </repository>
     </distributionManagement>
 
     <organization>
@@ -158,6 +166,11 @@
                         <debug>true</debug>
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.0.0-M1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -367,6 +380,14 @@
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <tagBase>https://svn.libreccm.org/ccm/ccm_ng-releases</tagBase>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    
                 </configuration>
             </plugin>
         </plugins>

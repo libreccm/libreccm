@@ -24,6 +24,13 @@ pipeline {
                 }
             }           
         }
+        stage("Deploy") {
+            steps {
+                dir('') {
+                    sh 'mvn deploy'
+                }
+            }
+        }
     }
     post {
         success {
