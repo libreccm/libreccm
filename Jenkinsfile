@@ -27,7 +27,9 @@ pipeline {
         stage("Deploy") {
             steps {
                 dir('') {
-                    sh 'mvn deploy'
+                    configFileProvider([configFile(fileId: 'libreccm-packages-deploy', variable: 'MAVEN_SETTINGS')]) {
+                        sh 'mvn -U -s $MAVEN_SETTINGS deploy'
+                    }
                 }
             }
         }
