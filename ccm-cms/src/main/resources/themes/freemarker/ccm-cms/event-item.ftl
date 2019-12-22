@@ -34,8 +34,8 @@
 
     @return The date of the event item.
 -->
-<#function getEndDate item>
-    <#return item.endDate>
+<#function getEndDate item format="yyyy-MM-dd hh:mm">
+    <#return item.endDate?string(format)>
 </#function>
 
 <#--doc
@@ -46,7 +46,7 @@
     @return The year of the end date of the event.
 -->
 <#function getEndDateYear item>
-    <#return item.endDate.year>
+    <#return item.endDate?("YYYY")>
 </#function>
 
 <#--doc
@@ -57,7 +57,7 @@
     @return The month of the end date of the event.
 -->
 <#function getEndDateMonth item>
-    <#return item.endDate.month>
+    <#return item.endDate?string("MM")>
 </#function>
 
 <#--doc
@@ -68,7 +68,7 @@
     @return The day of the end date of the event.
 -->
 <#function getEndDateDay item>
-    <#return item.endDate.day>
+    <#return item.endDate?string("dd")>
 </#function>
 
 <#--doc
@@ -79,7 +79,7 @@
     @return The short name of the day of the end date of the event.
 -->
 <#function getEndDateDayNameShort item>
-    <#return item.endDate.day>
+    <#return item.endDate?string("E")>
 </#function>
 
 <#--doc
@@ -89,8 +89,8 @@
 
     @return The end time of the event.
 -->
-<#function getEndTime item>
-    <#return item.endTime>
+<#function getEndTime item format="hh:mm">
+    <#return item.endDate?string(format)>
 </#function>
 
 <#--doc
@@ -101,7 +101,7 @@
     @return The hour of the end time of the event.
 -->
 <#function getEndTimeHour item>
-    <#return item.endTime.hour>
+    <#return item.endDate?string("hh")>
 </#function>
 
 <#--doc
@@ -112,7 +112,7 @@
     @return The minute of the end time of the event.
 -->
 <#function getEndTimeMinute item>
-    <#return item.endTime.minute>
+    <#return item.endDate?string("mm")>
 </#function>
 
 <#--doc
@@ -123,7 +123,7 @@
     @return The second of the end time of the event.
 -->
 <#function getEndTimeSecond item>
-    <#return item.endTime.second>
+    <#return item.endDate?string("ss")>
 </#function>
 
 <#--doc
@@ -133,8 +133,8 @@
 
     @return The start of the event item.
 -->
-<#function getStartDate item>
-    <#return item.startDate>
+<#function getStartDate item format="yyyy-MM-dd hh:mm:ss">
+    <#return item.startDate?string(format)>
 </#function>
 
 <#--doc
@@ -145,7 +145,7 @@
     @return The year of the start date of the event.
 -->
 <#function getStartDateYear item>
-    <#return item.startDate.year>
+    <#return item.startDate?string("yyyy")>
 </#function>
 
 <#--doc
@@ -156,7 +156,7 @@
     @return The month of the start date of the event.
 -->
 <#function getStartDateMonth item>
-    <#return item.startDate.minute>
+    <#return item.startDate?string("MM")>
 </#function>
 
 <#--doc
@@ -167,7 +167,7 @@
     @return The day of the start date of the event.
 -->
 <#function getStartDateDay item>
-    <#return item.startDate.day>
+    <#return item.startDate?string("dd")>
 </#function>
 
 <#--doc
@@ -178,7 +178,7 @@
     @return The short name of the day of the start date of the event.
 -->
 <#function getStartDateDayNameShort item>
-    <#return item.startDate.day>
+    <#return item.startDate?string("E")>
 </#function>
 
 <#--doc
@@ -188,8 +188,8 @@
 
     @return The start time of the event.
 -->
-<#function getStartTime item>
-    <#return item.startTime>
+<#function getStartTime item format="hh:mm">
+    <#return item.startDate?string(format)>
 </#function>
 
 <#--doc
@@ -200,7 +200,7 @@
     @return `true` if the provided event item has a start time, `false` otherwise.
 -->
 <#function hasStartTime item>
-    <#return item.startTime??>
+    <#return item.startDate??>
 </#function>
 
 <#--doc
@@ -211,7 +211,7 @@
     @return `true` if the provided event item has a end time, `false` otherwise.
 -->
 <#function hasEndTime item>
-    <#return item.endTime??>
+    <#return item.endDate??>
 </#function>
 
 <#--doc
@@ -243,8 +243,8 @@
 
     @return The hour of the start time of the event.
 -->
-<#function getstartTimeHour item>
-    <#return item.startTime.hour>
+<#function getStartTimeHour item>
+    <#return item.startDate?string("hh")>
 </#function>
 
 <#--doc
@@ -255,7 +255,7 @@
     @return The minute of the start time of the event.
 -->
 <#function getstartTimeMinute item>
-    <#return item.startTime.minute>
+    <#return item.startDate?string("mm")>
 </#function>
 
 <#--doc
@@ -266,7 +266,7 @@
     @return The second of the start time of the event.
 -->
 <#function getstartTimeSecond item>
-    <#return item.startTime.second>
+    <#return item.startTime?string("ss")>
 </#function>
 
 <#--doc
