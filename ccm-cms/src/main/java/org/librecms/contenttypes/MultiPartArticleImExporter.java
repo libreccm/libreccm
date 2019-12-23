@@ -12,12 +12,15 @@ import org.librecms.contentsection.AbstractContentItemImExporter;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Processes(Event.class)
-public class EventImExporter extends AbstractContentItemImExporter<Event> {
+@Processes(MultiPartArticle.class)
+public class MultiPartArticleImExporter 
+    extends AbstractContentItemImExporter<MultiPartArticle> {
 
     @Override
-    protected Class<Event> getEntityClass() {
-        return Event.class;
+    protected Class<MultiPartArticle> getEntityClass() {
+        return MultiPartArticle.class;
     }
-
+    
+    
+    
 }

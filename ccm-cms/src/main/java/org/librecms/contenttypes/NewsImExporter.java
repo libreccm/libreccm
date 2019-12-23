@@ -5,12 +5,14 @@
  */
 package org.librecms.contenttypes;
 
+import org.libreccm.imexport.Processes;
 import org.librecms.contentsection.AbstractContentItemImExporter;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+@Processes(News.class)
 public class NewsImExporter extends AbstractContentItemImExporter<News> {
 
     @Override
