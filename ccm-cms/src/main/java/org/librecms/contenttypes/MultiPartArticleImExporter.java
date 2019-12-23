@@ -8,10 +8,13 @@ package org.librecms.contenttypes;
 import org.libreccm.imexport.Processes;
 import org.librecms.contentsection.AbstractContentItemImExporter;
 
+import javax.enterprise.context.RequestScoped;
+
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+@RequestScoped
 @Processes(MultiPartArticle.class)
 public class MultiPartArticleImExporter 
     extends AbstractContentItemImExporter<MultiPartArticle> {
