@@ -1,5 +1,5 @@
 {
-    "name": "ccm-cms-js",
+    "name": "@librecms/ccm-cms-js",
     "version": "7.0.0",
     "description": "JavaScript for the ccm-cms-module",
     "repository": {
@@ -15,7 +15,7 @@
         "tslint": "tslint --project ."
     },
     "dependencies": {
-        "ccm-pagemodelseditor": "7.0.0",
+        "@libreccm/ccm-pagemodelseditor": "7.0.0",
         "react": "^16.4.2",
         "react-dom": "^16.4.2",
         "react-redux": "^5.0.7",

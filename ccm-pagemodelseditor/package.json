@@ -1,5 +1,5 @@
 {
-    "name": "ccm-pagemodelseditor",
+    "name": "@libreccm/ccm-pagemodelseditor",
     "version": "7.0.0",
     "main": "target/dist/PageModelsEditor.js",
     "types": "target/dist/PageModelsEditor.d.ts",
