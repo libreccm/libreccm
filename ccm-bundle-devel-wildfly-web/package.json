@@ -5,7 +5,7 @@
         "build": "webpack"
     },
     "dependencies": {
-        "ccm-cms-pagemodelseditor": "7.0.0",
+        "@librecms/ccm-cms-pagemodelseditor": "7.0.0",
         "tinymce": "^4.8.2"
     },
     "devDependencies": {

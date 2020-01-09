@@ -1,5 +1,5 @@
 {
-    "name": "ccm-editor",
+    "name": "@libreccm/ccm-editor",
     "version": "7.0.0",
     "description": "Simple HTML editor for LibreCCM",
     "repository": {

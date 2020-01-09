@@ -104,39 +104,39 @@
                         </configuration>
                     </execution>
                     <!-- <execution>
-                        <id>npm link ccm-pagemodelseditor</id>
+                        <id>npm link @libreccm/ccm-pagemodelseditor</id>
                         <goals>
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>link ccm-pagemodelseditor</arguments>
+                            <arguments>link @libreccm/ccm-pagemodelseditor</arguments>
                         </configuration>
                     </execution> -->
                     <execution>
-                        <id>npm link ccm-cms-pagemodelseditor</id>
+                        <id>npm link @librecms/ccm-cms-pagemodelseditor</id>
                         <goals>
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>link ccm-cms-pagemodelseditor</arguments>
+                            <arguments>link @librecms/ccm-cms-pagemodelseditor</arguments>
                         </configuration>
                     </execution>
 <!--                    <execution>
-                        <id>npm link ccm-cms-tinymce</id>
+                        <id>npm link @librecms/ccm-cms-tinymce</id>
                         <goals>
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>link ccm-cms-tinymce</arguments>
+                            <arguments>link @librecms/ccm-cms-tinymce</arguments>
                         </configuration>
                     </execution>-->
                     <!--<execution>
-                        <id>npm link ccm-cms-js</id>
+                        <id>npm link @librecms/ccm-cms-js</id>
                         <goals>
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>link ccm-cms-js</arguments>
+                            <arguments>link @librecms/ccm-cms-js</arguments>
                         </configuration>
                     </execution>-->
                     <execution>

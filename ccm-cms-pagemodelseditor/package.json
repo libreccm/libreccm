@@ -1,5 +1,5 @@
 {
-    "name": "ccm-cms-pagemodelseditor",
+    "name": "@librecms/ccm-cms-pagemodelseditor",
     "version": "7.0.0",
     "description": "Adds editor components for PageModels components provided by ccm-cms",
     "repository": {
@@ -15,7 +15,7 @@
         "tslint": "tslint --project ."
     },
     "dependencies": {
-        "ccm-pagemodelseditor": "7.0.0",
+        "@libreccm/ccm-pagemodelseditor": "7.0.0",
         "react": "^16.4.2",
         "react-dom": "^16.4.2"
     },

@@ -1,5 +1,5 @@
 {
-    "name": "ccm-cms-tinymce",
+    "name": "@librecms/ccm-cms-tinymce",
     "version": "7.0.0",
     "description": "Extensions for TinyMCE specific for ccm-cms",
     "repository": {
