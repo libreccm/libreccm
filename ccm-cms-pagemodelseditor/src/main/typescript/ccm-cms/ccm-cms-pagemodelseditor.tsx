@@ -14,7 +14,7 @@ import {
         ComponentModelEditorProps,
         EditorComponents,
         PageModelEditor,
-} from "ccm-pagemodelseditor";
+} from "@libreccm/ccm-pagemodelseditor";
 
 class CategoryTreeComponentPropertiesList
     extends React.Component<
