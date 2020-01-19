@@ -1,1 +1,1 @@
-import "ccm-cms-pagemodelseditor";
+import "@librecms/ccm-cms-pagemodelseditor";
