@@ -173,6 +173,19 @@
                             <arguments>link</arguments>
                         </configuration>
                     </execution>
+                    
+                    <execution>
+                        <id>npm publish</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        
+                        <phase>deploy</phase>
+                        
+                        <configuration>
+                            <arguments>publish --userconfig ../libreccm.npmrc</arguments>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 
