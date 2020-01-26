@@ -18,15 +18,17 @@
  */
 package org.libreccm.auditing;
 
-import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+
 import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import org.hibernate.envers.DefaultRevisionEntity;
 
 /**
  * Revision entity for Hibernate Envers containing the editing user. We are not
@@ -39,6 +41,7 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 @Entity
 @Table(name = "CCM_REVISIONS", schema = DB_SCHEMA)
 @RevisionEntity(CcmRevisionListener.class)
+//public class CcmRevision extends DefaultRevisionEntity {
 public class CcmRevision extends DefaultRevisionEntity {
 
     private static final long serialVersionUID = -3458682765535922544L;

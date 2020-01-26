@@ -39,7 +39,6 @@ alter table CCM_CMS.PAGES
     add constraint FKmgmth087tmxwieujn2vs5opbo 
     foreign key (OBJECT_ID) 
     references CCM_CORE.CCM_OBJECTS;
-);
 
 alter table CCM_CMS.PAGES_APP 
     add constraint FK5swx0e8pj0mm5t1es0lj4nwlx 
