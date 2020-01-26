@@ -424,7 +424,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>5.3.9.Final</version>
+                <version>5.3.15.Final</version>
             </dependency>
 
             <!--
@@ -434,7 +434,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-envers</artifactId>
-                <version>5.3.9.Final</version>
+                <version>5.3.15.Final</version>
             </dependency>
 
             <!--
@@ -443,12 +443,12 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>6.0.15.Final</version>
+                <version>6.0.18.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator-cdi</artifactId>
-                <version>6.0.15.Final</version>
+                <version>6.0.18.Final</version>
             </dependency>
             <dependency>
                 <groupId>javax.el</groupId>
@@ -468,7 +468,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-search-orm</artifactId>
-                <version>5.10.5.Final</version>
+                <version>5.10.7.Final</version>
             </dependency>
 
             <!--
