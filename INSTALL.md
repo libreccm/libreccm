@@ -24,7 +24,7 @@ wildfly please refer to the WildFly documentation
    following content:
 
     ```
-    ?xml version="1.0" encoding="UTF-8"?>
+    <?xml version="1.0" encoding="UTF-8"?>
         <module xmlns="urn:jboss:module:1.1" name="org.postgresql">
             <resources>
                 <resource-root path="postgresql-42.2.10.jar"/>
@@ -64,7 +64,7 @@ wildfly please refer to the WildFly documentation
 1. Start the JBOSS CLI tool: `bin/jboss-cli.sh` or `bin/jboss-cli.bat`.
 2. Add new datasource: 
    ```
-   [standalone@localhost:9990 /] data-source add --name=scicms-devel --driver-name=postgresql --jndi-name=java:/comp/env/jdbc/scientificcms/db --connection-url=jdbc:postgresql://localhost:5432/scicms-devel --user-name=libreccm --password=libreccm
+   [standalone@localhost:9990 /] data-source add --name=librecms --driver-name=postgresql --jndi-name=java:/comp/env/jdbc/scientificcms/db --connection-url=jdbc:postgresql://localhost:5432/librecm --user-name=libreccm --password=libreccm
    ```
 
    Replace the name of the datasource, the connection URL,
