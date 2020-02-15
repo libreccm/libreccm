@@ -121,12 +121,15 @@ public class CcmIntegrator implements Integrator {
 
             //Migrate tables and sequences which don't belong to a module 
             //for instance the hibernate_sequence
-            final Flyway flyway = new Flyway();
-            flyway.setDataSource(dataSource);
             final StringBuffer buffer = new StringBuffer(
                 "db/migrations/org/libreccm/base");
             appendDbLocation(buffer, connection);
-            flyway.setLocations(buffer.toString());
+            final Flyway flyway = Flyway
+            .configure()
+            .dataSource(dataSource)
+            .locations(buffer.toString())
+            .load();
+            
             flyway.migrate();
 
             //Migrate the modules
@@ -267,18 +270,19 @@ public class CcmIntegrator implements Integrator {
             moduleInfo.load(module);
 
             //Create a Flyway instance for the the module.
-            final Flyway flyway = new Flyway();
-            flyway.setDataSource(dataSource);
-            //Set schema correctly for the different databases. Necessary because
-            //different RDBMS handle case different.
+            final String schema;
             if ("H2".equals(connection.getMetaData().getDatabaseProductName())) {
-                flyway.setSchemas(getSchemaName(moduleInfo).toUpperCase(
-                    Locale.ROOT));
+                schema = getSchemaName(moduleInfo).toUpperCase(Locale.ROOT);
             } else {
-                flyway.setSchemas(getSchemaName(moduleInfo));
+                schema = getSchemaName(moduleInfo);
             }
-            flyway.setLocations(getLocation(moduleInfo, connection));
-
+            final Flyway flyway = Flyway
+            .configure()
+            .dataSource(dataSource)
+            .schemas(schema)
+            .locations(getLocation(moduleInfo, connection))
+            .load();
+            
             //Get current migrations info
             final MigrationInfo current = flyway.info().current();
             boolean newModule;
@@ -394,10 +398,12 @@ public class CcmIntegrator implements Integrator {
         throws SQLException {
         LOGGER.info("Removing schema for module %s...",
                     module.getClass().getName());
-        final Flyway flyway = new Flyway();
-        flyway.setDataSource(dataSource);
-        flyway.setSchemas(getSchemaName(moduleInfo));
-        flyway.setLocations(getLocation(moduleInfo, connection));
+        final Flyway flyway = Flyway
+        .configure()
+        .dataSource(dataSource)
+        .schemas(getSchemaName(moduleInfo))
+        .locations(getLocation(moduleInfo, connection))
+        .load();
         LOGGER.warn("Deleting schema for module {}...",
                     moduleInfo.getModuleName());
         flyway.clean();
