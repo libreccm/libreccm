@@ -21,6 +21,8 @@ package org.libreccm.security;
 import org.libreccm.core.CcmObject;
 import org.libreccm.web.AbstractCcmApplicationSetup;
 
+import java.util.UUID;
+
 import javax.persistence.EntityManager;
 
 /**
@@ -50,6 +52,7 @@ public class ApplicationRoleSetup {
     
     private Permission createPermission(final Role role, final String privilege) {
         final Permission permission = new Permission();
+        permission.setUuid(UUID.randomUUID().toString());
         permission.setGrantedPrivilege(privilege);
         permission.setGrantee(role);
         role.addPermission(permission);

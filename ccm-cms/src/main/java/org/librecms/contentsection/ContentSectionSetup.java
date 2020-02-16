@@ -18,7 +18,6 @@
  */
 package org.librecms.contentsection;
 
-import com.arsdigita.kernel.KernelConfig;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,7 +43,6 @@ import org.librecms.dispatcher.MultilingualItemResolver;
 import java.util.Arrays;
 
 import org.librecms.contentsection.privileges.TypePrivileges;
-import org.librecms.contenttypes.ContentTypeDescription;
 
 import java.util.Locale;
 
@@ -345,7 +343,7 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
         }
 
         if (ContentItem.class.isAssignableFrom(clazz)) {
-            LOGGER.warn("'{}' is not is assignable from '{}'!",
+            LOGGER.warn("'{}' is assignable from '{}'!",
                         ContentItem.class.getName(),
                         clazz.getName());
             final ContentType type = new ContentType();
