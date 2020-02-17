@@ -43,6 +43,7 @@ public class ApplicationRoleSetup {
 
     public Role createRole(final String name) {
         final Role role = new Role();
+        role.setUuid(UUID.randomUUID().toString());
         role.setName(name);
 
         entityManager.persist(role);
