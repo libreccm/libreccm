@@ -26,9 +26,11 @@ import org.libreccm.core.EmailAddress;
 import org.libreccm.modules.InstallEvent;
 
 import javax.persistence.EntityManager;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.UUID;
 
 /**
  * Class used by {@link CcmCore#install(org.libreccm.modules.InstallEvent)} to
@@ -79,6 +81,7 @@ public class SystemUsersSetup {
             ADMIN_PASSWORD, DEFAULT_ADMIN_PW);;
 
         final User admin = new User();
+        admin.setUuid(UUID.randomUUID().toString());
         admin.setName(adminName);
         admin.setFamilyName(adminFamilyName);
         admin.setGivenName(adminGivenName);
@@ -88,13 +91,16 @@ public class SystemUsersSetup {
         admin.setPassword(adminPassword);
 
         final Role adminRole = new Role();
+        adminRole.setUuid(UUID.randomUUID().toString());
         adminRole.setName(CoreConstants.SYS_ADMIN_ROLE);
 
         final RoleMembership membership = new RoleMembership();
+        membership.setUuid(UUID.randomUUID().toString());
         membership.setRole(adminRole);
         membership.setMember(admin);
 
         final Permission adminPermission = new Permission();
+        adminPermission.setUuid(UUID.randomUUID().toString());
         adminPermission.setGrantee(adminRole);
         adminPermission.setGrantedPrivilege("*");
 
@@ -109,6 +115,7 @@ public class SystemUsersSetup {
 
     private void createPublicUser() {
         final User user = new User();
+        user.setUuid(UUID.randomUUID().toString());
         user.setName("public-user");
         user.setFamilyName("LibreCCM");
         user.setGivenName("Public User");

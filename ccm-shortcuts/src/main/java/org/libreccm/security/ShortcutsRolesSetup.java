@@ -19,7 +19,10 @@
 package org.libreccm.security;
 
 import javax.persistence.EntityManager;
+
 import org.libreccm.shortcuts.ShortcutsConstants;
+
+import java.util.UUID;
 
 /**
  * Setups the {@code shortcuts-manager} role. The
@@ -38,10 +41,12 @@ public class ShortcutsRolesSetup {
 
     public void setupShortcutsRoles() {
         final Role shortcutsManager = new Role();
+        shortcutsManager.setUuid(UUID.randomUUID().toString());
         shortcutsManager.setName("shortcuts-manager");
         entityManager.persist(shortcutsManager);
 
         final Permission permission = new Permission();
+        permission.setUuid(UUID.randomUUID().toString());
         permission.setGrantee(shortcutsManager);
         permission.setGrantedPrivilege(
             ShortcutsConstants.SHORTSCUT_MANAGE_PRIVILEGE);
