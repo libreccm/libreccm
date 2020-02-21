@@ -127,7 +127,7 @@ public class SelectType extends CMSForm implements PrintListener,
 //            .collect(Collectors.toList());
 
         final List<ContentTypeInfo> notAssignedTypes = availableTypes.stream()
-            .filter(type -> assignedTypes.contains(type.getContentItemClass()
+            .filter(type -> !assignedTypes.contains(type.getContentItemClass()
             .getName()))
             .collect(Collectors.toList());
 
