@@ -101,6 +101,7 @@ public class SelectType extends CMSForm implements PrintListener,
     /**
      * Generate a checkbox list of all content type not associated with the
      * current content section
+     * @param event
      */
     @Override
     public void prepare(final PrintEvent event) {
@@ -111,15 +112,19 @@ public class SelectType extends CMSForm implements PrintListener,
         final ContentSection section = CMS.getContext().getContentSection();
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+        final ContentTypeAdminPaneController controller = cdiUtil
+            .findBean(ContentTypeAdminPaneController.class);
         final ContentTypesManager typesManager = cdiUtil.findBean(
             ContentTypesManager.class);
 
         final List<ContentTypeInfo> availableTypes = typesManager
             .getAvailableContentTypes();
-        final List<String> assignedTypes = section.getContentTypes()
-            .stream()
-            .map(contentType -> contentType.getContentItemClass())
-            .collect(Collectors.toList());
+        final List<String> assignedTypes = controller
+            .getContentItemClassesList(section);
+//        = section.getContentTypes()
+//            .stream()
+//            .map(contentType -> contentType.getContentItemClass())
+//            .collect(Collectors.toList());
 
         final List<ContentTypeInfo> notAssignedTypes = availableTypes.stream()
             .filter(type -> assignedTypes.contains(type.getContentItemClass()

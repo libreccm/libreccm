@@ -18,6 +18,7 @@
  */
 package com.arsdigita.cms.ui.type;
 
+import com.ibm.icu.impl.IllegalIcuArgumentException;
 import org.libreccm.workflow.Workflow;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
@@ -78,6 +79,27 @@ class ContentTypeAdminPaneController {
             .collect(Collectors.toList());
     }
 
+    @Transactional
+    protected List<String> getContentItemClassesList(
+        final ContentSection ofSection
+    ) {
+        final ContentSection section = sectionRepo.findById(
+            ofSection.getObjectId()
+        )
+            .orElseThrow(
+                () -> new IllegalIcuArgumentException(
+                    String.format(
+                        "No ContentSection with ID %d found.",
+                        ofSection.getObjectId()
+                    )
+                )
+            );
+        return section.getContentTypes()
+            .stream()
+            .map(type -> type.getContentItemClass())
+            .collect(Collectors.toList());
+    }
+
     private String[] generateListEntry(final ContentType type) {
         final String[] entry = new String[2];
 
@@ -126,8 +148,9 @@ class ContentTypeAdminPaneController {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    protected Optional<String> getLifecycleDefinitionLabel(final ContentType type,
-                                                        final Locale locale) {
+    protected Optional<String> getLifecycleDefinitionLabel(
+        final ContentType type,
+        final Locale locale) {
 
         final LifecycleDefinition lifecycleDefinition = getLifecycleDefinition(
             type);
@@ -154,7 +177,7 @@ class ContentTypeAdminPaneController {
 
     @Transactional(Transactional.TxType.REQUIRED)
     protected Optional<String> getWorkflowTemplateName(final ContentType type,
-                                                    final Locale locale) {
+                                                       final Locale locale) {
 
         final Workflow workflowTemplate = getWorkflowTemplate(type);
 
