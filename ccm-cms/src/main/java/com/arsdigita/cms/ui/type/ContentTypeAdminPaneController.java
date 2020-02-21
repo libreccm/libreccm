@@ -21,8 +21,10 @@ package com.arsdigita.cms.ui.type;
 import com.ibm.icu.impl.IllegalIcuArgumentException;
 import org.libreccm.workflow.Workflow;
 import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.ContentSectionManager;
 import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.ContentType;
+import org.librecms.contentsection.ContentTypeManager;
 import org.librecms.contentsection.ContentTypeRepository;
 import org.librecms.contenttypes.ContentTypeInfo;
 import org.librecms.contenttypes.ContentTypesManager;
@@ -40,11 +42,6 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 /**
@@ -65,7 +62,13 @@ class ContentTypeAdminPaneController {
     private ContentSectionRepository sectionRepo;
 
     @Inject
+    private ContentSectionManager sectionManager;
+
+    @Inject
     private ContentTypeRepository typeRepo;
+
+    @Inject
+    private ContentTypeManager typeManager;
 
     @Inject
     private ContentTypesManager typesManager;
@@ -214,6 +217,32 @@ class ContentTypeAdminPaneController {
             section.getObjectId())));
 
         return new ArrayList<>(contentSection.getWorkflowTemplates());
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void addContentTypeToContentSection(
+        final String type, final ContentSection toSection
+    ) {
+        Objects.requireNonNull(type);
+        Objects.requireNonNull(toSection);
+
+        final ContentSection section = sectionRepo
+            .findById(toSection.getObjectId())
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "No ContentSection identified by ID %d found.",
+                        toSection.getObjectId()
+                    )
+                )
+            );
+
+        sectionManager.addContentTypeToSection(
+            typeManager.classNameToClass(type),
+            section,
+            section.getLifecycleDefinitions().get(0),
+            section.getWorkflowTemplates().get(0)
+        );
     }
 
 }
