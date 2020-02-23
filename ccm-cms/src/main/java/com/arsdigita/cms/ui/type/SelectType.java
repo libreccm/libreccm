@@ -189,18 +189,21 @@ public class SelectType extends CMSForm implements PrintListener,
         final String[] types = (String[]) data.get(TYPES);
 
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final ContentTypeManager typeManager = cdiUtil.findBean(
-            ContentTypeManager.class);
-        final ContentSectionManager sectionManager = cdiUtil.findBean(
-            ContentSectionManager.class);
+//        final ContentTypeManager typeManager = cdiUtil.findBean(
+//            ContentTypeManager.class);
+//        final ContentSectionManager sectionManager = cdiUtil.findBean(
+//            ContentSectionManager.class); 
+        final ContentTypeAdminPaneController controller = cdiUtil
+        .findBean(ContentTypeAdminPaneController.class);
 
         if (types != null) {
             for (String type : types) {
-                sectionManager.addContentTypeToSection(
-                    typeManager.classNameToClass(type),
-                    section,
-                    section.getLifecycleDefinitions().get(0),
-                    section.getWorkflowTemplates().get(0));
+//                sectionManager.addContentTypeToSection(
+//                    typeManager.classNameToClass(type),
+//                    section,
+//                    section.getLifecycleDefinitions().get(0),
+//                    section.getWorkflowTemplates().get(0));
+                    controller.addContentTypeToContentSection(type, section);
             }
         }
     }
