@@ -25,6 +25,7 @@ import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.modules.InstallEvent;
 import org.libreccm.security.Role;
 import org.libreccm.web.AbstractCcmApplicationSetup;
+import org.libreccm.workflow.Workflow;
 import org.librecms.CmsConstants;
 
 import java.util.UUID;
@@ -43,6 +44,7 @@ import org.librecms.dispatcher.MultilingualItemResolver;
 import java.util.Arrays;
 
 import org.librecms.contentsection.privileges.TypePrivileges;
+import org.librecms.lifecycle.LifecycleDefinition;
 
 import java.util.Locale;
 
@@ -264,6 +266,20 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
         section.addRole(manager);
         section.addRole(publisher);
         section.addRole(contentReader);
+        
+        final LifecycleDefinition lifecycleDefinition = new LifecycleDefinition();
+        lifecycleDefinition.getLabel().addValue(Locale.ENGLISH, "Standard");
+        
+        final Workflow workflow = new Workflow();
+        workflow.setAbstractWorkflow(true);
+        workflow.getName().addValue(Locale.ENGLISH, "Standard");
+        
+        section.addLifecycleDefinition(lifecycleDefinition);
+        
+        section.addWorkflowTemplate(workflow);
+        
+        getEntityManager().persist(lifecycleDefinition);
+        getEntityManager().persist(workflow);
 
         LOGGER.debug("Setting ItemResolver for content section '{}'...",
                      sectionName);
