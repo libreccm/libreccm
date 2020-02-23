@@ -30,9 +30,12 @@ import org.librecms.lifecycle.PhaseDefinition;
 import org.librecms.lifecycle.PhaseDefinititionRepository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -72,7 +75,32 @@ class LifecycleAdminPaneController {
             section.getObjectId())));
 
         return new ArrayList<>(contentSection.getLifecycleDefinitions());
+    }
 
+    @Transactional
+    public List<Map<String, String>> listLifecyclesForContentSection(
+        final ContentSection section
+    ) {
+        return getLifecyclesForContentSection(section)
+            .stream()
+            .map(this::buildLifecycleListItem)
+            .collect(Collectors.toList());
+    }
+
+    private Map<String, String> buildLifecycleListItem(
+        final LifecycleDefinition lifecycleDefinition) {
+        final Map<String, String> item = new HashMap<>();
+        item.put(
+            LifecycleListModelBuilder.LIFECYCLE_DEF_ID,
+            Long.toString(lifecycleDefinition.getDefinitionId())
+        );
+        item.put(
+            LifecycleListModelBuilder.LIFECYCLE_DEF_LABEL,
+            lifecycleDefinition
+            .getLabel()
+            .getValue(KernelConfig.getConfig().getDefaultLocale())
+        );
+        return item;
     }
 
     /**
@@ -178,7 +206,7 @@ class LifecycleAdminPaneController {
             .orElseThrow(() -> new IllegalArgumentException(String.format(
             "No ContentSection with ID %d in the database. "
                 + "Where did that ID come from?",
-           section.getObjectId())));
+            section.getObjectId())));
 
         sectionManager.removeLifecycleDefinitionFromContentSection(
             lifecycleDefinition,

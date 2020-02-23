@@ -38,6 +38,7 @@ import org.librecms.lifecycle.LifecycleDefinition;
 
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Loads all the current lifecycles from the database so that they may be
@@ -50,6 +51,10 @@ import java.util.Locale;
 public final class LifecycleListModelBuilder extends LockableImpl
     implements ListModelBuilder {
 
+    protected static final String LIFECYCLE_DEF_ID = "lifecycleDefId";
+
+    protected static final String LIFECYCLE_DEF_LABEL = "lifecycleDefLabel";
+
     @Override
     public final ListModel makeModel(final com.arsdigita.bebop.List list,
                                      final PageState state) {
@@ -57,20 +62,20 @@ public final class LifecycleListModelBuilder extends LockableImpl
         final LifecycleAdminPaneController controller = cdiUtil
             .findBean(LifecycleAdminPaneController.class);
         final ContentSection section = CMS.getContext().getContentSection();
-        return new Model(controller.getLifecyclesForContentSection(section));
+        return new Model(controller.listLifecyclesForContentSection(section));
     }
 
     private class Model implements ListModel {
 
-        private final Iterator<LifecycleDefinition> iterator;
-        private LifecycleDefinition currentLifecycleDef;
-        private final Locale defaultLocale;
+        private final Iterator<Map<String, String>> iterator;
 
-        public Model(final List<LifecycleDefinition> lifecycles) {
+        private Map<String, String> currentLifecycleDef;
+
+        public Model(final List<Map<String, String>> lifecycles) {
             iterator = lifecycles.iterator();
-            defaultLocale = KernelConfig.getConfig().getDefaultLocale();
         }
-   @Override
+
+        @Override
         public boolean next() throws NoSuchElementException {
             if (iterator.hasNext()) {
                 currentLifecycleDef = iterator.next();
@@ -82,12 +87,12 @@ public final class LifecycleListModelBuilder extends LockableImpl
 
         @Override
         public Object getElement() {
-            return currentLifecycleDef.getLabel().getValue(defaultLocale);
+            return currentLifecycleDef.get(LIFECYCLE_DEF_LABEL);
         }
 
         @Override
         public String getKey() {
-            return Long.toString(currentLifecycleDef.getDefinitionId());
+            return currentLifecycleDef.get(LIFECYCLE_DEF_ID);
         }
 
     }

@@ -30,6 +30,7 @@ import org.libreccm.workflow.Workflow;
 
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Builds a list of workflow templates registered to the current content
@@ -41,6 +42,11 @@ import java.util.Locale;
  */
 class WorkflowListModelBuilder extends AbstractListModelBuilder {
 
+    protected static final String WORKFLOW_TEMPLATE_ID = "workflowTemplateId";
+
+    protected static final String WORKFLOW_TEMPLATE_NAME
+                                  = "workflowTemplateName";
+
     @Override
     public final ListModel makeModel(final List list, final PageState state) {
         return new Model();
@@ -48,8 +54,9 @@ class WorkflowListModelBuilder extends AbstractListModelBuilder {
 
     private class Model implements ListModel {
 
-        private final Iterator<Workflow> templates;
-        private Workflow currentTemplate;
+        private final Iterator<Map<String, String>> templates;
+
+        private Map<String, String> currentTemplate;
 
         public Model() {
             final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
@@ -57,7 +64,7 @@ class WorkflowListModelBuilder extends AbstractListModelBuilder {
                 WorkflowAdminPaneController.class);
 
             templates = controller
-                .retrieveWorkflows(CMS.getContext().getContentSection())
+                .listWorkflowTemplates(CMS.getContext().getContentSection())
                 .iterator();
         }
 
@@ -73,14 +80,12 @@ class WorkflowListModelBuilder extends AbstractListModelBuilder {
 
         @Override
         public Object getElement() {
-            final KernelConfig kernelConfig = KernelConfig.getConfig();
-            final Locale defaultLocale = kernelConfig.getDefaultLocale();
-            return currentTemplate.getName().getValue(defaultLocale);
+            return currentTemplate.get(WORKFLOW_TEMPLATE_NAME);
         }
 
         @Override
         public String getKey() {
-            return Long.toString(currentTemplate.getWorkflowId());
+            return currentTemplate.get(WORKFLOW_TEMPLATE_ID);
         }
 
     }

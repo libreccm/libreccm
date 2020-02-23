@@ -47,7 +47,7 @@ import org.librecms.lifecycle.LifecycleDefinitionRepository;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class LifecycleAdminPane extends BaseAdminPane {
-
+    
     private final SingleSelectionModel selectionModel;
     private final LifecycleDefinitionRequestLocal selectionLifecycleDefinition;
 

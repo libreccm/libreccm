@@ -102,6 +102,35 @@ public class WorkflowAdminPaneController {
         return new ArrayList<>(contentSection.getWorkflowTemplates());
     }
 
+    @Transactional
+    public List<Map<String, String>> listWorkflowTemplates(
+        final ContentSection section
+    ) {
+        final List<Workflow> templates = retrieveWorkflows(section);
+        return templates
+            .stream()
+            .map(this::buildWorkflowTemplateListItem)
+            .collect(Collectors.toList());
+    }
+
+    private Map<String, String> buildWorkflowTemplateListItem(
+        final Workflow workflow
+    ) {
+        final Map<String, String> item = new HashMap<>();
+        item.put(
+            WorkflowListModelBuilder.WORKFLOW_TEMPLATE_ID,
+            Long.toString(workflow.getWorkflowId())
+        );
+        item.put(
+            WorkflowListModelBuilder.WORKFLOW_TEMPLATE_NAME,
+            workflow
+                .getName()
+                .getValue(KernelConfig.getConfig().getDefaultLocale()
+                )
+        );
+        return item;
+    }
+
     @Transactional(Transactional.TxType.REQUIRED)
     public Workflow createWorkflow(final ContentSection section,
                                    final String name,
