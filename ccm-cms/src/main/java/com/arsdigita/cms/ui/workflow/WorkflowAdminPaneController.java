@@ -18,7 +18,9 @@
  */
 package com.arsdigita.cms.ui.workflow;
 
+import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.toolbox.ui.Property;
 import com.arsdigita.util.GraphSet;
 import com.arsdigita.util.Graphs;
 import com.arsdigita.util.UncheckedWrapperException;
@@ -36,6 +38,7 @@ import org.libreccm.workflow.TaskManager;
 import org.libreccm.workflow.TaskRepository;
 import org.libreccm.workflow.Workflow;
 import org.libreccm.workflow.WorkflowRepository;
+import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionManager;
 import org.librecms.contentsection.ContentSectionRepository;
@@ -129,6 +132,68 @@ public class WorkflowAdminPaneController {
                 )
         );
         return item;
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<Property> getWorkflowProperties(final Workflow ofWorkflow) {
+        final Workflow workflow = workflowRepo
+            .findById(ofWorkflow.getWorkflowId())
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "No Workflow with ID %d available.",
+                        ofWorkflow.getWorkflowId()
+                    )
+                )
+            );
+
+        final KernelConfig kernelConfig = confManager
+            .findConfiguration(KernelConfig.class);
+        final Locale defaultLocale = kernelConfig.getDefaultLocale();
+
+        final List<Property> properties = new ArrayList<>();
+        properties.add(
+            new Property(
+                new GlobalizedMessage(
+                    "cms.ui.workflow.name", CmsConstants.CMS_BUNDLE
+                ),
+                workflow.getName().getValue(defaultLocale)
+            )
+        );
+        properties.add(
+            new Property(
+                new GlobalizedMessage(
+                    "cms.ui.workflow.description",
+                    CmsConstants.CMS_BUNDLE
+                ),
+                workflow.getDescription().getValue(defaultLocale)
+            )
+        );
+        if (workflow.getState() == null) {
+            properties.add(
+                new Property(
+                    new GlobalizedMessage(
+                        "cms.ui.workflow.current_state",
+                        CmsConstants.CMS_BUNDLE
+                    ),
+                    new GlobalizedMessage(
+                        "cms.ui.workflow.current_state.none",
+                        CmsConstants.CMS_BUNDLE
+                    )
+                )
+            );
+        } else {
+            properties.add(
+                new Property(
+                    new GlobalizedMessage(
+                        "cms.ui.workflow.current_state",
+                        CmsConstants.CMS_BUNDLE
+                    ),
+                    workflow.getState().toString()
+                )
+            );
+        }
+        return properties;
     }
 
     @Transactional(Transactional.TxType.REQUIRED)

@@ -18,9 +18,12 @@
  */
 package com.arsdigita.cms.ui.lifecycle;
 
+import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
+import com.arsdigita.toolbox.ui.Property;
 
 import org.libreccm.configuration.ConfigurationManager;
+import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionManager;
 import org.librecms.contentsection.ContentSectionRepository;
@@ -101,6 +104,47 @@ class LifecycleAdminPaneController {
             .getValue(KernelConfig.getConfig().getDefaultLocale())
         );
         return item;
+    }
+    
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<Property> getLifecycleProperties(
+        final LifecycleDefinition ofLifecycleDefinition
+    ) {
+        final LifecycleDefinition definition = lifecycleDefRepo
+        .findById(ofLifecycleDefinition.getDefinitionId())
+        .orElseThrow(
+            () -> new IllegalArgumentException(
+                String.format(
+                    "No LifecycleDefinition with ID %d found.",
+                    ofLifecycleDefinition.getDefinitionId()
+                )
+            )
+        );
+        
+        final KernelConfig kernelConfig = confManager
+        .findConfiguration(KernelConfig.class);
+        final Locale defaultLocale = kernelConfig.getDefaultLocale();
+        
+        final List<Property> properties = new ArrayList<>();
+        properties.add(
+            new Property(
+                new GlobalizedMessage(
+                    "cms.ui.lifecycle.name", 
+                    CmsConstants.CMS_BUNDLE
+                ),
+                definition.getLabel().getValue(defaultLocale)
+            )
+        );
+       properties.add(
+            new Property(
+                new GlobalizedMessage(
+                    "cms.ui.lifecycle.description", 
+                    CmsConstants.CMS_BUNDLE
+                ),
+                definition.getDescription().getValue(defaultLocale)
+            )
+        );
+       return properties;
     }
 
     /**

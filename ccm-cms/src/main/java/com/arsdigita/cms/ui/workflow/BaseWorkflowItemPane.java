@@ -255,22 +255,28 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
                                    = ((Optional<Workflow>) workflowRequestLocal
                                       .get(state)).get();
 
-                final KernelConfig kernelConfig = KernelConfig.getConfig();
-                final Locale defaultLocale = kernelConfig.getDefaultLocale();
+//                final KernelConfig kernelConfig = KernelConfig.getConfig();
+//                final Locale defaultLocale = kernelConfig.getDefaultLocale();
 
-                props.add(new Property(gz("cms.ui.workflow.name"),
-                                       workflow.getName()
-                                           .getValue(defaultLocale)));
-                props.add(new Property(
-                    gz("cms.ui.workflow.description"),
-                    workflow.getDescription().getValue(defaultLocale)));
-                if (workflow.getState() == null) {
-                    props.add(new Property(gz("cms.ui.workflow.current_state"),
-                                           gz("cms.ui.workflow.current_state.none")));
-                } else {
-                    props.add(new Property(gz("cms.ui.workflow.current_state"),
-                                           workflow.getState().toString()));
-                }
+                final WorkflowAdminPaneController controller = CdiUtil
+                .createCdiUtil()
+                .findBean(WorkflowAdminPaneController.class);
+                
+                props.addAll(controller.getWorkflowProperties(workflow));
+//                props.add(new Property(gz("cms.ui.workflow.name"),
+//                                       workflow.getName()
+//                                           .getValue(defaultLocale)));
+//                props.add(new Property(
+//                    gz("cms.ui.workflow.description"),
+//                    workflow.getDescription().getValue(defaultLocale)));
+//                if (workflow.getState() == null) {
+//                    props.add(new Property(gz("cms.ui.workflow.current_state"),
+//                                           gz("cms.ui.workflow.current_state.none")));
+//                } else {
+//                    props.add(new Property(gz("cms.ui.workflow.current_state"),
+//                                           workflow.getState().toString()));
+//                }
+                
                 return props;
             }
 
