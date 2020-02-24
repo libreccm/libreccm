@@ -61,9 +61,11 @@ import java.util.Locale;
 class LifecycleItemPane extends BaseItemPane {
 
     private final LifecycleDefinitionRequestLocal selectedLifecycle;
+
     private final PhaseRequestLocal selectedPhase;
 
     private final Container detailPane;
+
     private final Table phasesTable;
 
     public LifecycleItemPane(
@@ -144,23 +146,27 @@ class LifecycleItemPane extends BaseItemPane {
                 final PageState state) {
 
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final ConfigurationManager confManager = cdiUtil.findBean(
-                    ConfigurationManager.class);
-                final KernelConfig kernelConfig = confManager.findConfiguration(
-                    KernelConfig.class);
-                final Locale defaultLocale = kernelConfig.getDefaultLocale();
+//                final ConfigurationManager confManager = cdiUtil.findBean(
+//                    ConfigurationManager.class);
+//                final KernelConfig kernelConfig = confManager.findConfiguration(
+//                    KernelConfig.class);
+//                final Locale defaultLocale = kernelConfig.getDefaultLocale();
+
+                final LifecycleAdminPaneController controller = cdiUtil
+                    .findBean(LifecycleAdminPaneController.class);
 
                 final java.util.List<Property> props = super.properties(state);
                 final LifecycleDefinition cycle = selectedLifecycle
                     .getLifecycleDefinition(state);
 
-                props.add(new Property(
-                    gz("cms.ui.lifecycle.name"),
-                    cycle.getLabel().getValue(defaultLocale)));
-                props.add(new Property(
-                    gz("cms.ui.lifecycle.description"),
-                    cycle.getDescription().getValue(defaultLocale)));
+                props.addAll(controller.getLifecycleProperties(cycle));
 
+//                props.add(new Property(
+//                    gz("cms.ui.lifecycle.name"),
+//                    cycle.getLabel().getValue(defaultLocale)));
+//                props.add(new Property(
+//                    gz("cms.ui.lifecycle.description"),
+//                    cycle.getDescription().getValue(defaultLocale)));
                 return props;
             }
 
