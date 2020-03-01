@@ -29,7 +29,6 @@ import org.libreccm.l10n.GlobalizationHelper;
 
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Implements the {@link com.arsdigita.bebop.tree.TreeModel} interface for
@@ -77,8 +76,7 @@ public class CategoryTreeModelLite implements TreeModel {
     }
 
     @Override
-    public boolean hasChildren(final TreeNode node,
-                               final PageState state) {
+    public boolean hasChildren(final TreeNode node, final PageState state) {
 
         Objects.requireNonNull(node);
         if (node.getKey() == null
@@ -95,9 +93,9 @@ public class CategoryTreeModelLite implements TreeModel {
     }
 
     @Override
-    public Iterator<TreeNode> getChildren(final TreeNode node,
-                                          final PageState state) {
-
+    public Iterator<TreeNode> getChildren(
+        final TreeNode node, final PageState state
+    ) {
         Objects.requireNonNull(node);
         if (node.getKey() == null
                 || !(node.getKey() instanceof Long)) {

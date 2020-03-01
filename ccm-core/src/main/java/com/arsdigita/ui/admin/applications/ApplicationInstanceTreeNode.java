@@ -51,28 +51,31 @@ public class ApplicationInstanceTreeNode implements TreeNode {
 
     @Override
     public Object getElement() {
-        final GlobalizationHelper globalizationHelper = CdiUtil.createCdiUtil()
-            .findBean(GlobalizationHelper.class);
-        final ConfigurationManager confManager = CdiUtil.createCdiUtil()
+        final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+//        final GlobalizationHelper globalizationHelper = cdiUtil
+//            .findBean(GlobalizationHelper.class);
+        final ConfigurationManager confManager = cdiUtil
             .findBean(ConfigurationManager.class);
-        final KernelConfig kernelConfig = confManager.findConfiguration(
-            KernelConfig.class);
-        final Locale defaultLocale = kernelConfig.getDefaultLocale();
+//        final KernelConfig kernelConfig = confManager.findConfiguration(
+//            KernelConfig.class);
+//        final Locale defaultLocale = kernelConfig.getDefaultLocale();
+        final ApplicationInstanceTreeCdiUtil util = cdiUtil
+            .findBean(ApplicationInstanceTreeCdiUtil.class);
 
-        final String title;
-        if (application.getTitle().hasValue(globalizationHelper
-            .getNegotiatedLocale())) {
-            title = application.getTitle().getValue(globalizationHelper
-                .getNegotiatedLocale());
-        } else if (application.getTitle().hasValue(defaultLocale)) {
-            title = application.getTitle().getValue(defaultLocale);
-        } else if (application.getTitle().hasValue(Locale.getDefault())) {
-            title = application.getTitle().getValue(Locale.getDefault());
-        } else {
-            title = application.getPrimaryUrl();
-        }
-
-        return title;
+//        final String title;
+//        if (application.getTitle().hasValue(globalizationHelper
+//            .getNegotiatedLocale())) {
+//            title = application.getTitle().getValue(globalizationHelper
+//                .getNegotiatedLocale());
+//        } else if (application.getTitle().hasValue(defaultLocale)) {
+//            title = application.getTitle().getValue(defaultLocale);
+//        } else if (application.getTitle().hasValue(Locale.getDefault())) {
+//            title = application.getTitle().getValue(Locale.getDefault());
+//        } else {
+//            title = application.getPrimaryUrl();
+//        }
+//        return title;
+        return util.getTitle(application);
     }
 
     public CcmApplication getApplication() {
