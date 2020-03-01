@@ -66,7 +66,7 @@ class RoleAdminPaneController {
 
     @Inject
     private RoleManager roleManager;
-    
+
     @Inject
     private RoleRepository roleRepo;
 
@@ -86,6 +86,22 @@ class RoleAdminPaneController {
             section.getObjectId())));
 
         return new ArrayList<>(contentSection.getRoles());
+    }
+
+    @Transactional
+    public String getRoleDescription(final Role ofRole) {
+        final Role role = roleRepo
+            .findById(ofRole.getRoleId())
+        .orElseThrow(
+            () -> new IllegalArgumentException(
+                String.format(
+                    "No role with ID %d found.", ofRole.getRoleId()
+                )
+            )
+        );
+        final KernelConfig config = confManager
+            .findConfiguration(KernelConfig.class);
+        return role.getDescription().getValue(config.getDefaultLocale());
     }
 
     public String[] getGrantedPrivileges(final Role role,
@@ -217,10 +233,10 @@ class RoleAdminPaneController {
             KernelConfig.class);
         final Locale defaultLocale = kernelConfig.getDefaultLocale();
 
-        role.setName(roleName);
-        role.getDescription().addValue(defaultLocale, roleDescription);
+        roleToSave.setName(roleName);
+        roleToSave.getDescription().addValue(defaultLocale, roleDescription);
 
-        roleRepo.save(role);
+        roleRepo.save(roleToSave);
 
         final ContentSection contentSection = sectionRepo.findById(
             CMS.getContext().getContentSection().getObjectId())
@@ -241,28 +257,28 @@ class RoleAdminPaneController {
         final Folder rootAssetsFolder = contentSection.getRootAssetsFolder();
 
         final List<Permission> currentPermissionsSection = permissionManager
-            .findPermissionsForRoleAndObject(role, contentSection);
+            .findPermissionsForRoleAndObject(roleToSave, contentSection);
         final List<Permission> currentPermissionsDocuments = permissionManager
-            .findPermissionsForRoleAndObject(role, rootDocumentsFolder);
+            .findPermissionsForRoleAndObject(roleToSave, rootDocumentsFolder);
         final List<Permission> currentPermissionsAssets = permissionManager
-            .findPermissionsForRoleAndObject(role, rootAssetsFolder);
+            .findPermissionsForRoleAndObject(roleToSave, rootAssetsFolder);
 
         //Revoke permissions not in selectedPermissions
         revokeNotSelectedPrivileges(selectedPermissions,
-                                    role,
+                                    roleToSave,
                                     currentPermissionsSection);
         revokeNotSelectedPrivileges(selectedPermissions,
-                                    role,
+                                    roleToSave,
                                     currentPermissionsDocuments);
         revokeNotSelectedPrivileges(selectedPermissions,
-                                    role,
+                                    roleToSave,
                                     currentPermissionsAssets);
 
         // Grant selected privileges
         for (final String privilege : adminPrivileges) {
             if (isPrivilegeSelected(selectedPermissions, privilege)) {
                 permissionManager.grantPrivilege(privilege,
-                                                 role,
+                                                 roleToSave,
                                                  contentSection);
             }
         }
@@ -270,7 +286,7 @@ class RoleAdminPaneController {
         for (final String privilege : itemPrivileges) {
             if (isPrivilegeSelected(selectedPermissions, privilege)) {
                 permissionManager.grantPrivilege(privilege,
-                                                 role,
+                                                 roleToSave,
                                                  rootDocumentsFolder);
             }
         }
@@ -278,7 +294,7 @@ class RoleAdminPaneController {
         for (final String privilege : assetPrivileges) {
             if (isPrivilegeSelected(selectedPermissions, privilege)) {
                 permissionManager.grantPrivilege(privilege,
-                                                 role,
+                                                 roleToSave,
                                                  rootAssetsFolder);
             }
         }
