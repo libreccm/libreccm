@@ -24,20 +24,10 @@ import com.arsdigita.bebop.event.FormInitListener;
 import com.arsdigita.bebop.event.FormProcessListener;
 import com.arsdigita.bebop.event.FormSectionEvent;
 import com.arsdigita.cms.CMS;
-import com.arsdigita.kernel.KernelConfig;
 
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.configuration.ConfigurationManager;
-import org.libreccm.l10n.LocalizedString;
-import org.libreccm.security.Permission;
 import org.libreccm.security.PermissionManager;
 import org.libreccm.security.Role;
-import org.libreccm.security.RoleRepository;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * Represents a {@link com.arsdigita.bebop.Form Form} to edit
@@ -76,17 +66,15 @@ final class RoleEditForm extends BaseRoleForm {
             final PageState state = event.getPageState();
             final Role role = roleRequestLocal.getRole(state);
 
-            final KernelConfig kernelConfig = KernelConfig.getConfig();
-            final Locale defaultLocale = kernelConfig.getDefaultLocale();
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final RoleAdminPaneController controller = cdiUtil.findBean(
+                RoleAdminPaneController.class);
 
             getRoleName().setValue(state, role.getName());
             getRoleDescription().setValue(
                 state,
-                role.getDescription().getValue(defaultLocale));
-
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final RoleAdminPaneController controller = cdiUtil.findBean(
-                RoleAdminPaneController.class);
+                controller.getRoleDescription(role)
+            );
 
             final String[] permissions = controller.getGrantedPrivileges(
                 role, CMS.getContext().getContentSection());

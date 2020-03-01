@@ -35,16 +35,12 @@ import com.arsdigita.cms.ui.BaseItemPane;
 import com.arsdigita.cms.ui.PartySearchForm;
 import com.arsdigita.cms.ui.VisibilityComponent;
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.kernel.KernelConfig;
 import com.arsdigita.toolbox.ui.ActionGroup;
 import com.arsdigita.toolbox.ui.Property;
 import com.arsdigita.toolbox.ui.PropertyList;
 import com.arsdigita.toolbox.ui.Section;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.security.Party;
 import org.libreccm.security.PartyRepository;
 import org.libreccm.security.PermissionChecker;
@@ -129,40 +125,53 @@ class BaseRoleItemPane extends BaseItemPane {
 
             @Override
             protected final java.util.List<Property> properties(
-                final PageState state) {
+                final PageState state
+            ) {
 
                 final java.util.List<Property> properties = super.properties(
-                    state);
+                    state
+                );
 
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final ConfigurationManager manager = cdiUtil.findBean(
-                    ConfigurationManager.class);
-                final KernelConfig config = manager.findConfiguration(
-                    KernelConfig.class);
+                final RoleAdminPaneController controller = cdiUtil
+                    .findBean(RoleAdminPaneController.class);
 
                 final Role role = roleRequestLocal.getRole(state);
 
-                properties.add(new Property(lz("cms.ui.role.name"),
-                                            role.getName()));
-                // Right now just loads the default locale description.
-                properties.add(new Property(
-                    lz("cms.ui.role.description"),
-                    role.getDescription().getValue(config.getDefaultLocale())));
+                properties.add(
+                    new Property(lz("cms.ui.role.name"), role.getName())
+                );
 
-                // Since Permissions don't seem to have a "pretty" form, the granted privilege is used.
-                final RoleAdminPaneController controller = cdiUtil.findBean(
-                    RoleAdminPaneController.class);
+                // Right now just loads the default locale description.
+                properties.add(
+                    new Property(
+                        lz("cms.ui.role.description"),
+                        controller.getRoleDescription(role)
+                    )
+                );
+
+                // Since Permissions don't seem to have a "pretty" form, the
+                // granted privilege is used.
                 final String permissions = controller
                     .generateGrantedPermissionsString(
                         role,
-                        CMS.getContext().getContentSection());
+                        CMS.getContext().getContentSection()
+                    );
 
                 if (permissions.length() > 0) {
-                    properties.add(new Property(lz("cms.ui.role.privileges"),
-                                                permissions));
+                    properties.add(
+                        new Property(
+                            lz("cms.ui.role.privileges"),
+                            permissions
+                        )
+                    );
                 } else {
-                    properties.add(new Property(lz("cms.ui.role.privileges"),
-                                                lz("cms.ui.role.privilege.none")));
+                    properties.add(
+                        new Property(
+                            lz("cms.ui.role.privileges"),
+                            lz("cms.ui.role.privilege.none")
+                        )
+                    );
                 }
 
                 return properties;
@@ -192,7 +201,9 @@ class BaseRoleItemPane extends BaseItemPane {
     private class MemberTable extends Table {
 
         private static final int COL_NAME = 0;
+
         private static final int COL_EMAIL = 1;
+
         private static final int COL_REMOVE = 2;
 
         MemberTable() {
