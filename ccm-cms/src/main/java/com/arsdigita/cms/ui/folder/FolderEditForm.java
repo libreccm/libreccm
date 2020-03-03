@@ -35,12 +35,12 @@ class FolderEditForm extends FolderBaseForm {
 
     private static Logger LOGGER = LogManager.getLogger(FolderEditForm.class);
 
-    private final FolderRequestLocal m_folder;
+    private final FolderRequestLocal folderRequestLocal;
 
     public FolderEditForm(final FolderRequestLocal folder) {
         super("folder-edit");
 
-        m_folder = folder;
+        folderRequestLocal = folder;
 
         // XXX need to do name uniqueness valdation on m_fragment here
         // as well.
@@ -68,7 +68,7 @@ class FolderEditForm extends FolderBaseForm {
         public final void init(final FormSectionEvent e) {
             final PageState state = e.getPageState();
 
-            final Category folder = m_folder.getFolder(state);
+            final Category folder = folderRequestLocal.getFolder(state);
 
             m_title.setValue(state, folder.getDisplayName());
             m_fragment.setValue(state, folder.getName());
@@ -80,7 +80,7 @@ class FolderEditForm extends FolderBaseForm {
                 throws FormProcessException {
             final PageState state = e.getPageState();
 
-            final Category folder = m_folder.getFolder(state);
+            final Category folder = folderRequestLocal.getFolder(state);
 
             folder.setDisplayName((String) m_title.getValue(state));
             folder.setName((String) m_fragment.getValue(state));

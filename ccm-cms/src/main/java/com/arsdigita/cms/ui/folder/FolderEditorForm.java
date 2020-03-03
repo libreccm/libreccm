@@ -63,12 +63,10 @@ public class FolderEditorForm extends FolderForm {
         final Folder folder = getCurrentFolder(state);
         data.put(NAME, folder.getName());
         final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-        final ConfigurationManager confManager = cdiUtil.findBean(
-            ConfigurationManager.class);
-        final KernelConfig kernelConfig = confManager.findConfiguration(
-            KernelConfig.class);
-        data.put(TITLE,
-                 folder.getTitle().getValue(kernelConfig.getDefaultLocale()));
+        final FolderEditorFormController controller = cdiUtil.findBean(
+            FolderEditorFormController.class
+        );
+        data.put(TITLE, controller.getFolderTitle(folder));
     }
 
     /**
