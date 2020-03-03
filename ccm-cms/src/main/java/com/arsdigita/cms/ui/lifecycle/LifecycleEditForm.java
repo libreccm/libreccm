@@ -59,8 +59,17 @@ class LifecycleEditForm extends BaseLifecycleForm {
             final LifecycleDefinition cycle = selectedDefinition
                 .getLifecycleDefinition(state);
 
-            getLifecycleName().setValue(state, cycle.getLabel());
-            getLifecycleDescription().setValue(state, cycle.getDescription());
+            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
+            final LifecycleAdminPaneController controller = cdiUtil.findBean(
+                LifecycleAdminPaneController.class
+            );
+            
+            getLifecycleName().setValue(
+                state, controller.getLifecycleDefinitionName(cycle)
+            );
+            getLifecycleDescription().setValue(
+                state, controller.getLifecycleDefinitionDescription(cycle)
+            );
         }
 
     }

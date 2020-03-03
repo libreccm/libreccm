@@ -100,51 +100,51 @@ class LifecycleAdminPaneController {
         item.put(
             LifecycleListModelBuilder.LIFECYCLE_DEF_LABEL,
             lifecycleDefinition
-            .getLabel()
-            .getValue(KernelConfig.getConfig().getDefaultLocale())
+                .getLabel()
+                .getValue(KernelConfig.getConfig().getDefaultLocale())
         );
         return item;
     }
-    
+
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Property> getLifecycleProperties(
         final LifecycleDefinition ofLifecycleDefinition
     ) {
         final LifecycleDefinition definition = lifecycleDefRepo
-        .findById(ofLifecycleDefinition.getDefinitionId())
-        .orElseThrow(
-            () -> new IllegalArgumentException(
-                String.format(
-                    "No LifecycleDefinition with ID %d found.",
-                    ofLifecycleDefinition.getDefinitionId()
+            .findById(ofLifecycleDefinition.getDefinitionId())
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "No LifecycleDefinition with ID %d found.",
+                        ofLifecycleDefinition.getDefinitionId()
+                    )
                 )
-            )
-        );
-        
+            );
+
         final KernelConfig kernelConfig = confManager
-        .findConfiguration(KernelConfig.class);
+            .findConfiguration(KernelConfig.class);
         final Locale defaultLocale = kernelConfig.getDefaultLocale();
-        
+
         final List<Property> properties = new ArrayList<>();
         properties.add(
             new Property(
                 new GlobalizedMessage(
-                    "cms.ui.lifecycle.name", 
+                    "cms.ui.lifecycle.name",
                     CmsConstants.CMS_BUNDLE
                 ),
                 definition.getLabel().getValue(defaultLocale)
             )
         );
-       properties.add(
+        properties.add(
             new Property(
                 new GlobalizedMessage(
-                    "cms.ui.lifecycle.description", 
+                    "cms.ui.lifecycle.description",
                     CmsConstants.CMS_BUNDLE
                 ),
                 definition.getDescription().getValue(defaultLocale)
             )
         );
-       return properties;
+        return properties;
     }
 
     /**
@@ -362,7 +362,46 @@ class LifecycleAdminPaneController {
         phaseDefinition.setDefaultDuration(duration);
 
         phaseDefRepo.save(phaseDefinition);
+    }
 
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String getLifecycleDefinitionName(
+        final LifecycleDefinition ofCycle
+    ) {
+        final LifecycleDefinition cycle = lifecycleDefRepo.findById(
+            Objects.requireNonNull(ofCycle).getDefinitionId()
+        ).orElseThrow(
+            () -> new IllegalArgumentException(
+                String.format(
+                    "No LifecycleDefinition with ID %d available",
+                    ofCycle.getDefinitionId()
+                )
+            )
+        );
+        final KernelConfig kernelConfig = confManager.findConfiguration(
+            KernelConfig.class
+        );
+        return cycle.getLabel().getValue(kernelConfig.getDefaultLocale());
+    }
+    
+     @Transactional(Transactional.TxType.REQUIRED)
+    public String getLifecycleDefinitionDescription(
+        final LifecycleDefinition ofCycle
+    ) {
+        final LifecycleDefinition cycle = lifecycleDefRepo.findById(
+            Objects.requireNonNull(ofCycle).getDefinitionId()
+        ).orElseThrow(
+            () -> new IllegalArgumentException(
+                String.format(
+                    "No LifecycleDefinition with ID %d available",
+                    ofCycle.getDefinitionId()
+                )
+            )
+        );
+        final KernelConfig kernelConfig = confManager.findConfiguration(
+            KernelConfig.class
+        );
+        return cycle.getDescription().getValue(kernelConfig.getDefaultLocale());
     }
 
 }
