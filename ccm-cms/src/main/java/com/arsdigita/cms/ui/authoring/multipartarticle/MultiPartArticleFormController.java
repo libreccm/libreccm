@@ -24,6 +24,8 @@ import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.Folder;
 import org.librecms.contenttypes.MultiPartArticle;
 
+import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
@@ -46,14 +48,73 @@ public class MultiPartArticleFormController {
     @Transactional(Transactional.TxType.REQUIRED)
     protected Optional<Folder> getArticleFolder(final MultiPartArticle article) {
 
-        final Optional<ContentItem> mpa = itemRepo
-            .findById(article.getObjectId());
+        final Optional<ContentItem> mpa = itemRepo.findById(
+            article.getObjectId()
+        );
 
         if (mpa.isPresent()) {
             return itemManager.getItemFolder(mpa.get());
         } else {
             return Optional.empty();
         }
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String getName(
+        final MultiPartArticle fromMpa, final Locale forLocale
+    ) {
+        Objects.requireNonNull(fromMpa);
+        Objects.requireNonNull(forLocale);
+        final MultiPartArticle mpa = itemRepo
+            .findById(fromMpa.getObjectId(), MultiPartArticle.class)
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "No MultiPartArticle with ID %d available",
+                        fromMpa.getObjectId()
+                    )
+                )
+            );
+        return mpa.getName().getValue(forLocale);
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String getTitle(
+        final MultiPartArticle fromMpa, final Locale forLocale
+    ) {
+        Objects.requireNonNull(fromMpa);
+        Objects.requireNonNull(forLocale);
+        final MultiPartArticle mpa = itemRepo
+            .findById(fromMpa.getObjectId(), MultiPartArticle.class)
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "No MultiPartArticle with ID %d available",
+                        fromMpa.getObjectId()
+                    )
+                )
+            );
+
+        return mpa.getTitle().getValue(forLocale);
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String getSummary(
+        final MultiPartArticle fromMpa, final Locale forLocale
+    ) {
+        Objects.requireNonNull(fromMpa);
+        Objects.requireNonNull(forLocale);
+        final MultiPartArticle mpa = itemRepo
+            .findById(fromMpa.getObjectId(), MultiPartArticle.class)
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "No MultiPartArticle with ID %d available",
+                        fromMpa.getObjectId()
+                    )
+                )
+            );
+        return mpa.getSummary().getValue(forLocale);
     }
 
 }

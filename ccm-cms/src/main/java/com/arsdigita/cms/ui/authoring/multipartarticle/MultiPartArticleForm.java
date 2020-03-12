@@ -233,14 +233,17 @@ public abstract class MultiPartArticleForm
 
         final Locale selectedLocale = SelectedLanguageUtil
             .selectedLocale(state, selectedLanguageParam);
+        final MultiPartArticleFormController controller = CdiUtil
+        .createCdiUtil()
+        .findBean(MultiPartArticleFormController.class);
 
         if (article != null) {
-            data.put(NAME, article.getName().getValue(selectedLocale));
-            data.put(TITLE, article.getTitle().getValue(selectedLocale));
+            data.put(NAME, controller.getName(article, selectedLocale));
+            data.put(TITLE, controller.getTitle(article, selectedLocale));
             if (!CMSConfig.getConfig().isHideLaunchDate()) {
                 data.put(LAUNCH_DATE, article.getLaunchDate());
             }
-            data.put(SUMMARY, article.getSummary().getValue(selectedLocale));
+            data.put(SUMMARY, controller.getSummary(article, selectedLocale));
         }
 
         return article;
