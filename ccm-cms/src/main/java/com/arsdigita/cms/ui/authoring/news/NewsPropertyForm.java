@@ -36,7 +36,6 @@ import org.librecms.contenttypes.News;
 import com.arsdigita.cms.ui.authoring.BasicPageForm;
 import com.arsdigita.cms.ui.authoring.SelectedLanguageUtil;
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.kernel.KernelConfig;
 
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.configuration.ConfigurationManager;
@@ -45,6 +44,7 @@ import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contenttypes.NewsConfig;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Objects;
@@ -181,7 +181,10 @@ public class NewsPropertyForm extends BasicPageForm
 
         releaseDateSelector.addYear(releaseDate);
         data.put(NEWS_DATE, releaseDate);
-        data.put(LEAD, item.getDescription().getValue(selectedLocale));
+        final NewsController controller = CdiUtil
+            .createCdiUtil()
+            .findBean(NewsController.class);
+        data.put(LEAD, controller.getDescription(item, selectedLocale));
     }
 
     /**
@@ -218,21 +221,15 @@ public class NewsPropertyForm extends BasicPageForm
                 .getSaveButton()
                 .isSelected(event.getPageState())) {
 
+            final NewsController controller = CdiUtil
+            .createCdiUtil()
+            .findBean(NewsController.class);
+            
+            final Date releaseDate = (java.util.Date) data.get(NEWS_DATE);
+            final String description = (String) data.get(LEAD);
             final Locale selectedLocale = SelectedLanguageUtil
                 .selectedLocale(state, selectedLanguageParam);
-
-            item.setReleaseDate((java.util.Date) data.get(NEWS_DATE));
-            item
-                .getDescription()
-                .addValue(
-                    selectedLocale,
-                    (String) data.get(LEAD));
-
-            final ContentItemRepository itemRepo = CdiUtil
-                .createCdiUtil()
-                .findBean(ContentItemRepository.class);
-
-            itemRepo.save(item);
+            controller.update(item, releaseDate, selectedLocale, description);
         }
         if (propertiesStep != null) {
             propertiesStep.maybeForwardToNextStep(event.getPageState());

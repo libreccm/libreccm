@@ -18,8 +18,11 @@
  */
 package com.arsdigita.cms.ui.authoring.news;
 
+import org.libreccm.l10n.GlobalizationHelper;
+
 import java.util.Collections;
 import java.util.List;
+
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
 
@@ -32,13 +35,18 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
 import org.libreccm.security.Shiro;
 import org.libreccm.security.User;
+import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentType;
 import org.librecms.contentsection.ContentTypeRepository;
+import org.librecms.contenttypes.News;
+
+import java.util.Locale;
 
 /**
  * Controller class for the {@link NewItemForm}.
@@ -53,7 +61,7 @@ class NewItemFormController {
 
     @Inject
     private Shiro shiro;
-    
+
     @Inject
     private PermissionChecker permissionChecker;
 
@@ -62,7 +70,7 @@ class NewItemFormController {
 
     @Inject
     private ContentSectionRepository sectionRepo;
-    
+
     @Inject
     private ContentTypeRepository typeRepo;
 
@@ -76,39 +84,41 @@ class NewItemFormController {
         }
 
         final List<Role> roles = user.get().getRoleMemberships().stream()
-                .map(membership -> membership.getRole())
-                .collect(Collectors.toList());
+            .map(membership -> membership.getRole())
+            .collect(Collectors.toList());
 
         final TypedQuery<Boolean> query = entityManager.createNamedQuery(
-                "ContentSection.hasUsableContentTypes", Boolean.class);
+            "ContentSection.hasUsableContentTypes", Boolean.class);
         query.setParameter("section", section);
         query.setParameter("roles", roles);
         query.setParameter("isSysAdmin", permissionChecker.isPermitted("*"));
-        
+
         return query.getSingleResult();
     }
-    
+
     @Transactional(Transactional.TxType.REQUIRED)
     protected List<ContentType> getContentTypes(final ContentSection section) {
         Objects.requireNonNull(section);
-        
+
         final Optional<User> user = shiro.getUser();
         if (!user.isPresent()) {
             return Collections.EMPTY_LIST;
         }
-        
+
         final List<Role> roles = user.get().getRoleMemberships().stream()
-        .map(membership -> membership.getRole())
-        .collect(Collectors.toList());
-        
+            .map(membership -> membership.getRole())
+            .collect(Collectors.toList());
+
         final TypedQuery<ContentType> query = entityManager.createNamedQuery(
-                "ContentSection.findUsableContentTypes",
-                ContentType.class);
+            "ContentSection.findUsableContentTypes",
+            ContentType.class);
         query.setParameter("section", section);
         query.setParameter("roles", roles);
         query.setParameter("isSysAdmin", permissionChecker.isPermitted("*"));
-        
+
         return query.getResultList();
     }
+
+   
 
 }
