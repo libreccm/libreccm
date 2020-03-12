@@ -83,10 +83,13 @@ public class NewsTextBody extends TextBody {
 
         final News news = getSelectedNews(state);
 
-        return news
-            .getText()
-            .getValue(SelectedLanguageUtil
-                .selectedLocale(state, selectedLanguageParam));
+        final NewsController controller = CdiUtil
+            .createCdiUtil()
+            .findBean(NewsController.class);
+        return controller.getText(
+            news, 
+            SelectedLanguageUtil.selectedLocale(state, selectedLanguageParam)
+        );
     }
 
     @Override
@@ -97,11 +100,10 @@ public class NewsTextBody extends TextBody {
         final Locale selectedLocale = SelectedLanguageUtil
             .selectedLocale(state, selectedLanguageParam);
 
-        news.getText().addValue(selectedLocale, text);
-        final ContentItemRepository itemRepo = CdiUtil
+        final NewsController controller = CdiUtil
             .createCdiUtil()
-            .findBean(ContentItemRepository.class);
-        itemRepo.save(news);
+            .findBean(NewsController.class);
+        controller.updateText(news, selectedLocale, text);
     }
 
 }
