@@ -129,15 +129,15 @@ public class MultiPartArticleEditForm extends MultiPartArticleForm
             .selectedLocale(state, selectedLanguageParam);
 
         final String newName = (String) data.get(MultiPartArticleForm.NAME);
-        final String oldName = article.getName().getValue(selectedLocale);
+        final MultiPartArticleFormController controller = CdiUtil
+            .createCdiUtil()
+            .findBean(MultiPartArticleFormController.class);
+        final String oldName = controller.getName(article, selectedLocale);
 
         final boolean valid;
         if (newName.equalsIgnoreCase(oldName)) {
             valid = true;
         } else {
-            final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-            final MultiPartArticleFormController controller = cdiUtil
-                .findBean(MultiPartArticleFormController.class);
             final Optional<Folder> folder = controller.getArticleFolder(article);
             if (folder.isPresent()) {
                 valid = validateNameUniqueness(folder.get(), event);

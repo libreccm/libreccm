@@ -25,6 +25,8 @@ import org.librecms.contenttypes.MultiPartArticleSectionManager;
 import org.librecms.contenttypes.MultiPartArticleSectionRepository;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -127,15 +129,81 @@ class MultiPartArticleSectionStepController {
     protected void moveAfter(final MultiPartArticle article,
                              final MultiPartArticleSection section,
                              final MultiPartArticleSection after) {
-        
+
         final MultiPartArticle theArticle = itemRepo
             .findById(article.getObjectId(),
                       MultiPartArticle.class)
             .orElseThrow(() -> new IllegalArgumentException(String.format(
             "No MultiPartArticle with ID %d in the database.",
             article.getObjectId())));
-        
+
         sectionManager.moveSectionAfter(theArticle, section, after);
     }
-    
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String getSectionTitle(
+        final MultiPartArticleSection ofSection, final Locale forLocale
+    ) {
+        Objects.requireNonNull(ofSection);
+        Objects.requireNonNull(forLocale);
+
+        final MultiPartArticleSection section = sectionRepo
+            .findById(ofSection.getSectionId())
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "No section with ID %d available.", ofSection
+                            .getSectionId()
+                    )
+                )
+            );
+        return section.getTitle().getValue(forLocale);
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String getSectionText(
+        final MultiPartArticleSection ofSection, final Locale forLocale
+    ) {
+        Objects.requireNonNull(ofSection);
+        Objects.requireNonNull(forLocale);
+
+        final MultiPartArticleSection section = sectionRepo
+            .findById(ofSection.getSectionId())
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "No section with ID %d available.", ofSection
+                            .getSectionId()
+                    )
+                )
+            );
+        return section.getText().getValue(forLocale);
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void updateSection(
+        final MultiPartArticleSection section,
+        final String title,
+        final String text,
+        final boolean pageBreak,
+        final Locale locale
+    ) {
+        Objects.requireNonNull(section);
+        Objects.requireNonNull(locale);
+
+        final MultiPartArticleSection update = sectionRepo
+            .findById(section.getSectionId())
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "No section with ID %d available.",
+                        section.getSectionId()
+                    )
+                )
+            );
+        update.getTitle().addValue(locale, title);
+        update.getText().addValue(locale, title);
+        update.setPageBreak(pageBreak);
+    }
+
 }

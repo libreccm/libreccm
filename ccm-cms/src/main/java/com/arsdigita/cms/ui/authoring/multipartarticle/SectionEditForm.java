@@ -198,12 +198,19 @@ public class SectionEditForm extends Form {
 
                 final Locale selectedLocale = SelectedLanguageUtil
                     .selectedLocale(state, selectedLanguageParam);
+                final MultiPartArticleSectionStepController controller = CdiUtil
+                    .createCdiUtil()
+                    .findBean(MultiPartArticleSectionStepController.class);
 
                 final MultiPartArticleSection section = selectedSectionModel
                     .getSelectedSection(state);
 
-                data.put(TITLE, section.getTitle().getValue(selectedLocale));
-                data.put(TEXT, section.getText().getValue(selectedLocale));
+                data.put(
+                    TITLE, controller.getSectionTitle(section, selectedLocale)
+                );
+                data.put(
+                    TEXT, controller.getSectionText(section, selectedLocale)
+                );
 
                 if (section.isPageBreak()) {
                     data.put(PAGE_BREAK, new Object[]{"true"});
@@ -281,9 +288,8 @@ public class SectionEditForm extends Form {
                 section = selectedSectionModel.getSelectedSection(state);
             }
 
-            section.getTitle().addValue(selectedLocale,
-                                        (String) data.get(TITLE));
-
+//            section.getTitle().addValue(selectedLocale,
+//                                        (String) data.get(TITLE));
             final Object[] pageBreakVal = (Object[]) data.get(PAGE_BREAK);
             final boolean pageBreak;
             if (pageBreakVal == null
@@ -293,7 +299,7 @@ public class SectionEditForm extends Form {
             } else {
                 pageBreak = true;
             }
-            section.setPageBreak(pageBreak);
+//            section.setPageBreak(pageBreak);
 
             final String text;
             if (data.get(TEXT) == null) {
@@ -301,12 +307,24 @@ public class SectionEditForm extends Form {
             } else {
                 text = (String) data.get(TEXT);
             }
-            section.getText().addValue(selectedLocale, text);
+//            section.getText().addValue(selectedLocale, text);
 
-            sectionRepo.save(section);
-
+//            sectionRepo.save(section);
             if (selectedSectionModel.getSelectedKey(state) == null) {
+                section.getTitle().addValue(selectedLocale,
+                                            (String) data.get(TITLE));
+                section.setPageBreak(pageBreak);
+                section.getText().addValue(selectedLocale, text);
+
                 controller.addSection(article, section);
+            } else {
+                controller.updateSection(
+                    section,
+                    (String) data.get(TITLE),
+                    text,
+                    pageBreak,
+                    selectedLocale
+                );
             }
 
             if (sectionsStep != null) {

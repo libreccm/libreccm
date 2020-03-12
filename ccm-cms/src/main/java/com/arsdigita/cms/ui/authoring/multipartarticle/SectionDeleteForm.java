@@ -35,7 +35,6 @@ import com.arsdigita.globalization.GlobalizedMessage;
 
 import org.librecms.contenttypes.MultiPartArticle;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
@@ -110,9 +109,14 @@ public class SectionDeleteForm extends Form
             final Locale selectedLocale = SelectedLanguageUtil
                 .selectedLocale(state, selectedLanguageParam);
 
+            final MultiPartArticleSectionStepController controller = CdiUtil
+                .createCdiUtil()
+                .findBean(MultiPartArticleSectionStepController.class);
+
             sectionNameLabel.setLabel(
-                section.getTitle().getValue(selectedLocale),
-                state);
+                controller.getSectionTitle(section, selectedLocale),
+                state
+            );
         }
     }
 

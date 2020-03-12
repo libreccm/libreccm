@@ -158,11 +158,16 @@ public class MultiPartArticleSectionsStep extends ResettableContainer {
                 final Locale selectedLocale = SelectedLanguageUtil
                     .selectedLocale(state, selectedLanguageParam);
 
+                final MultiPartArticleSectionStepController controller = CdiUtil
+                    .createCdiUtil()
+                    .findBean(MultiPartArticleSectionStepController.class);
+
                 final Object[] parameterObj = {
+                    controller.getSectionTitle(
                     moveSectionModel
-                    .getSelectedSection(state)
-                    .getTitle()
-                    .getValue(selectedLocale)
+                    .getSelectedSection(state),
+                    selectedLocale
+                    )
                 };
 
                 target.setLabel(new GlobalizedMessage(

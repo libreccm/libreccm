@@ -34,6 +34,7 @@ import org.librecms.contenttypes.MultiPartArticleSection;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 class SectionTableModel implements TableModel {
 
@@ -109,13 +110,20 @@ class SectionTableModel implements TableModel {
         if (columnModel == null) {
             return null;
         }
+        
+        final MultiPartArticleSectionStepController controller = CdiUtil
+        .createCdiUtil()
+        .findBean(MultiPartArticleSectionStepController.class);
 
         switch (columnIndex) {
             case SectionTable.COL_INDEX_TITLE:
-                return currentSection
-                    .getTitle()
-                    .getValue(SelectedLanguageUtil
-                        .selectedLocale(pageState, selectedLanguageParam));
+                return controller.getSectionTitle(
+                    currentSection, 
+                    SelectedLanguageUtil.selectedLocale(
+                        pageState, selectedLanguageParam
+                    )
+                )
+                    ;
             case SectionTable.COL_PAGE_BREAK:
                 if (currentSection.isPageBreak()) {
                     return new Label(
