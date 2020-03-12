@@ -18,8 +18,11 @@
  */
 package org.libreccm.categorization;
 
+import org.libreccm.l10n.GlobalizationHelper;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -38,6 +41,9 @@ class CategoryTreeModelLiteController {
     @Inject
     private CategoryRepository categoryRepo;
 
+    @Inject
+    private GlobalizationHelper globalizationHelper;
+
     @Transactional(Transactional.TxType.REQUIRED)
     protected boolean hasSubCategories(final long categoryId) {
 
@@ -50,7 +56,7 @@ class CategoryTreeModelLiteController {
         return categoryManager.hasSubCategories(category);
     }
 
-    @Transactional
+    @Transactional(Transactional.TxType.REQUIRED)
     protected List<Category> findSubCategories(final long categoryId) {
 
         final Category category = categoryRepo
@@ -58,8 +64,27 @@ class CategoryTreeModelLiteController {
             .orElseThrow(() -> new IllegalArgumentException(String
             .format("No Category with ID %d in the database.",
                     categoryId)));
-        
+
         return new ArrayList<>(category.getSubCategories());
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected String getTitle(final Category ofCategory) {
+        Objects.requireNonNull(ofCategory);
+
+        final Category category = categoryRepo
+            .findById(ofCategory.getObjectId())
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "No Category with ID %d available.",
+                        ofCategory.getObjectId()
+                    )
+                )
+            );
+        return globalizationHelper.getValueFromLocalizedString(
+            category.getTitle()
+        );
     }
 
 }

@@ -142,10 +142,9 @@ public class CategoryTreeModelLite implements TreeModel {
                 return category.getName();
             } else {
                 final CdiUtil cdiUtil = CdiUtil.createCdiUtil();
-                final GlobalizationHelper globalizationHelper = cdiUtil
-                    .findBean(GlobalizationHelper.class);
-                return globalizationHelper
-                    .getValueFromLocalizedString(category.getTitle());
+                final CategoryTreeModelLiteController controller = cdiUtil
+                .findBean(CategoryTreeModelLiteController.class);
+                return controller.getTitle(category);
             }
         }
 
