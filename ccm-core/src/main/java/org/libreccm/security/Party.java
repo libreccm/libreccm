@@ -23,6 +23,7 @@ import static org.libreccm.core.CoreConstants.*;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.libreccm.core.api.JsonArrayCollector;
 
 import javax.persistence.FetchType;
 import javax.validation.constraints.NotNull;
@@ -35,6 +36,9 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObjectBuilder;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -67,14 +71,12 @@ import javax.persistence.Table;
     ),
     @NamedQuery(
         name = "Party.findByName",
-        query = "SELECT p FROM Party p WHERE p.name = :name")
-    ,
+        query = "SELECT p FROM Party p WHERE p.name = :name"),
     @NamedQuery(
         name = "Party.searchByName",
         query = "SELECT p FROM Party p "
                     + "WHERE LOWER(p.name) LIKE CONCAT(LOWER(:term), '%') "
-                    + "ORDER BY p.name")
-    ,
+                    + "ORDER BY p.name"),
     @NamedQuery(
         name = "Party.findByRole",
         query = "SELECT p FROM Party p "
@@ -99,7 +101,7 @@ public class Party implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @XmlElement(name = "party-id", namespace = CORE_XML_NS)
     private long partyId;
-    
+
     @Column(name = "UUID", unique = true, nullable = false)
     @XmlElement(name = "uuid", namespace = CORE_XML_NS)
     private String uuid;
@@ -134,11 +136,11 @@ public class Party implements Serializable {
     protected void setPartyId(final long partyId) {
         this.partyId = partyId;
     }
-    
+
     public String getUuid() {
         return uuid;
     }
-    
+
     protected void setUuid(final String uuid) {
         this.uuid = uuid;
     }
@@ -201,6 +203,29 @@ public class Party implements Serializable {
 
     public boolean canEqual(final Object obj) {
         return obj instanceof Party;
+    }
+
+    public JsonObjectBuilder buildJson() {
+        final JsonArray array = roleMemberships
+            .stream()
+            .map(RoleMembership::buildJson)
+            .map(JsonObjectBuilder::build)
+            .collect(new JsonArrayCollector());
+
+        return Json
+            .createObjectBuilder()
+            .add("partyId", partyId)
+            .add("uuid", uuid)
+            .add("name", name)
+            .add(
+                "roleMemberships",
+                roleMemberships
+                    .stream()
+                    .map(RoleMembership::buildJson)
+                    .map(JsonObjectBuilder::build)
+                    .collect(new JsonArrayCollector())
+            );
+
     }
 
     @Override
