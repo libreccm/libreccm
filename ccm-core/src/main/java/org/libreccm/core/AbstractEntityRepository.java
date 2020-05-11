@@ -135,12 +135,13 @@ public abstract class AbstractEntityRepository<K, E> implements Serializable {
 
     /**
      * Get the primary key/id of a entity.
-     * 
+     *
      * @param entity The entity
+     *
      * @return The ID of the provided {@code entity}.
      */
     public abstract K getIdOfEntity(E entity);
-    
+
     /**
      * Finds an entity by it ID.
      *
@@ -223,15 +224,15 @@ public abstract class AbstractEntityRepository<K, E> implements Serializable {
             return Optional.empty();
         }
     }
-    
+
     @Transactional(Transactional.TxType.REQUIRED)
     public E reload(final E entity, final String... fetchJoins) {
-        
+
         return findById(getIdOfEntity(entity), fetchJoins)
             .orElseThrow(() -> new IllegalArgumentException(String
-                .format("No Entity of type \"%s\" with ID %s in the database.",
-                        getEntityClass().getName(),
-                        Objects.toString(getIdOfEntity(entity)))));
+            .format("No Entity of type \"%s\" with ID %s in the database.",
+                    getEntityClass().getName(),
+                    Objects.toString(getIdOfEntity(entity)))));
     }
 
     /**
@@ -246,6 +247,10 @@ public abstract class AbstractEntityRepository<K, E> implements Serializable {
         // We are using the Critiera API here because otherwise we can't 
         // pass the type of the entity dynmacially.
         return executeCriteriaQuery(createCriteriaQuery());
+    }
+
+    public List<E> findAll(final int limit, final int offset) {
+        return executeCriteriaQuery(createCriteriaQuery(), limit, offset);
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -280,6 +285,18 @@ public abstract class AbstractEntityRepository<K, E> implements Serializable {
     public List<E> executeCriteriaQuery(final CriteriaQuery<E> criteriaQuery) {
         final TypedQuery<E> query = entityManager.createQuery(criteriaQuery);
         return query.getResultList();
+    }
+
+    public List<E> executeCriteriaQuery(
+        final CriteriaQuery<E> criteriaQuery,
+        final int limit,
+        final int offset
+    ) {
+        return entityManager
+            .createQuery(criteriaQuery)
+            .setFirstResult(offset)
+            .setMaxResults(limit)
+            .getResultList();
     }
 
     public List<E> executeCriteriaQuery(final CriteriaQuery<E> criteriaQuery,

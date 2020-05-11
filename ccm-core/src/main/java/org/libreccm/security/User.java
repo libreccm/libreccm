@@ -30,6 +30,7 @@ import java.io.Serializable;
 import static org.libreccm.core.CoreConstants.CORE_XML_NS;
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
+import org.libreccm.core.api.JsonArrayCollector;
 import org.libreccm.imexport.Exportable;
 
 import java.util.ArrayList;
@@ -39,6 +40,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
 import javax.persistence.AssociationOverride;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -73,30 +77,25 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "USERS", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(name = "User.findByUuid",
-                query = "SELECT u FROM User u WHERE u.uuid = :uuid")
-    ,
+                query = "SELECT u FROM User u WHERE u.uuid = :uuid"),
     @NamedQuery(name = "User.findByName",
                 query = "SELECT u FROM User u WHERE u.name = :name "
                             + "ORDER BY u.name, "
                             + "         u.familyName, "
                             + "         u.givenName, "
-                            + "         u.primaryEmailAddress.address")
-    ,
+                            + "         u.primaryEmailAddress.address"),
     @NamedQuery(name = "User.countByName",
-                query = "SELECT COUNT(u) FROM User u WHERE u.name = :name")
-    ,
+                query = "SELECT COUNT(u) FROM User u WHERE u.name = :name"),
     @NamedQuery(name = "User.findByEmailAddress",
                 query = "SELECT u FROM User u WHERE "
                             + "u.primaryEmailAddress.address = :emailAddress "
                             + "ORDER BY u.name, "
                             + " u.familyName, "
                             + " u.givenName, "
-                            + " u.primaryEmailAddress.address")
-    ,
+                            + " u.primaryEmailAddress.address"),
     @NamedQuery(name = "User.countByPrimaryEmailAddress",
                 query = "SELECT COUNT(u) FROM User u "
-                            + "WHERE u.primaryEmailAddress.address = :emailAddress")
-    ,
+                            + "WHERE u.primaryEmailAddress.address = :emailAddress"),
     @NamedQuery(
         name = "User.filterByNameAndEmail",
         query = "SELECT u FROM User u WHERE "
@@ -107,15 +106,13 @@ import javax.xml.bind.annotation.XmlTransient;
                 + "ORDER BY u.name,"
                     + "u.familyName, "
                     + "u.givenName, "
-                    + "u.primaryEmailAddress.address")
-    ,
+                    + "u.primaryEmailAddress.address"),
     @NamedQuery(
         name = "User.findAllOrderedByUsername",
         query = "SELECT u FROM User u ORDER BY u.name, "
                     + "                    u.familyName, "
                     + "                    u.givenName, "
-                    + "                    u.primaryEmailAddress.address")
-    ,
+                    + "                    u.primaryEmailAddress.address"),
     @NamedQuery(name = "User.findByGroup",
                 query = "SELECT u FROM User u "
                             + "JOIN u.groupMemberships m "
@@ -126,8 +123,7 @@ import javax.xml.bind.annotation.XmlTransient;
         name = "User.withGroupAndRoleMemberships",
         attributeNodes = {
             @NamedAttributeNode(
-                value = "groupMemberships")
-            ,
+                value = "groupMemberships"),
             @NamedAttributeNode(
                 value = "roleMemberships",
                 subgraph = "role")},
@@ -137,8 +133,7 @@ import javax.xml.bind.annotation.XmlTransient;
                 attributeNodes = {
                     @NamedAttributeNode(value = "role",
                                         subgraph = "permissions")
-                })
-            ,
+                }),
             @NamedSubgraph(
                 name = "permissions",
                 attributeNodes = {
@@ -364,6 +359,40 @@ public class User extends Party implements Serializable, Exportable {
     @Override
     public boolean canEqual(final Object obj) {
         return obj instanceof User;
+    }
+
+    @Override
+    public JsonObjectBuilder buildJson() {
+        final JsonArrayBuilder emailAddressesArrayBuilder = Json.createArrayBuilder();
+        
+        emailAddresses
+            .stream()
+            .map(EmailAddress::buildJson)
+            .forEach(emailAddressesArrayBuilder::add);
+        
+        return super
+            .buildJson()
+            .add("givenName", givenName)
+            .add("familyName", familyName)
+            .add("primaryEmailAddress", primaryEmailAddress.buildJson())
+        .add(
+            "emailAddresses", 
+            emailAddresses
+            .stream()
+            .map(EmailAddress::buildJson)
+            .map(JsonObjectBuilder::build)
+            .collect(new JsonArrayCollector())
+        )
+        .add("banned", banned)
+        .add("passwordResetRequired", passwordResetRequired)
+        .add(
+            "groupMemberships",
+            groupMemberships
+            .stream()
+            .map(GroupMembership::buildJson)
+            .map(JsonObjectBuilder::build)
+            .collect(new JsonArrayCollector())
+        );
     }
 
     @Override
