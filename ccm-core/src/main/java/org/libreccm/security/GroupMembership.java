@@ -34,6 +34,9 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.libreccm.imexport.Exportable;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -55,8 +58,7 @@ import javax.persistence.Table;
 @Table(name = "GROUP_MEMBERSHIPS", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(name = "GroupMembership.findByUuid",
-                query = "SELECT m FROM GroupMembership m WHERE m.uuid = :uuid")
-    ,
+                query = "SELECT m FROM GroupMembership m WHERE m.uuid = :uuid"),
     @NamedQuery(name = "GroupMembership.findByGroupAndUser",
                 query = "SELECT m FROM GroupMembership m "
                             + "WHERE m.member = :member AND m.group = :group")})
@@ -156,6 +158,30 @@ public class GroupMembership implements Serializable, Exportable {
 
     public boolean canEqual(final Object obj) {
         return obj instanceof GroupMembership;
+    }
+
+    public JsonObjectBuilder buildJson() {
+
+        return Json
+            .createObjectBuilder()
+            .add("membershipId", membershipId)
+            .add("uuid", uuid)
+            .add(
+                "group",
+                Json
+                    .createObjectBuilder()
+                    .add("partyId", group.getPartyId())
+                    .add("uuid", group.getUuid())
+                    .add("name", group.getName())
+            )
+            .add(
+                "member",
+                Json
+                    .createObjectBuilder()
+                    .add("partyId", member.getPartyId())
+                    .add("uuid", member.getUuid())
+                    .add("name", member.getName())
+            );
     }
 
     @Override

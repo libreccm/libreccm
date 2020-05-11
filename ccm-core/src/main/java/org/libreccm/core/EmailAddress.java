@@ -25,10 +25,14 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.CORE_XML_NS;
+
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
 
 /**
  * An embeddable entity for storing email addresses.
@@ -122,6 +126,14 @@ public class EmailAddress implements Serializable {
         return obj instanceof EmailAddress;
     }
 
+    public JsonObjectBuilder buildJson() {
+        return Json
+            .createObjectBuilder()
+            .add("address", address)
+            .add("bouncing", bouncing)
+            .add("verified", verified);
+    }
+    
     @Override
     public String toString() {
         return String.format("%s{ "
