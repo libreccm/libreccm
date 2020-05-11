@@ -34,6 +34,8 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.libreccm.imexport.Exportable;
 
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -55,8 +57,7 @@ import javax.persistence.Table;
 @Table(name = "ROLE_MEMBERSHIPS", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(name = "RoleMembership.findByUuid",
-                query = "SELECT m FROM RoleMembership m WHERE m.uuid = :uuid")
-    ,
+                query = "SELECT m FROM RoleMembership m WHERE m.uuid = :uuid"),
     @NamedQuery(name = "RoleMembership.findByRoleAndMember",
                 query = "SELECT m FROM RoleMembership m "
                             + "WHERE m.member = :member AND m.role = :role")
@@ -158,6 +159,29 @@ public class RoleMembership implements Serializable, Exportable {
 
     public boolean canEqual(final Object obj) {
         return obj instanceof RoleMembership;
+    }
+
+    public JsonObjectBuilder buildJson() {
+        return Json
+            .createObjectBuilder()
+            .add("membershipId", membershipId)
+            .add("uuid", uuid)
+            .add(
+                "role",
+                Json
+                    .createObjectBuilder()
+                    .add("roleId", role.getRoleId())
+                    .add("uuid", role.getUuid())
+                    .add("name", role.getName())
+            )
+            .add(
+                "member",
+                Json
+                    .createObjectBuilder()
+                    .add("partyId", member.getPartyId())
+                    .add("uuid", member.getUuid())
+                    .add("name", member.getName())
+            );
     }
 
     @Override
