@@ -268,9 +268,11 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
         section.addRole(contentReader);
         
         final LifecycleDefinition lifecycleDefinition = new LifecycleDefinition();
+        lifecycleDefinition.setUuid(UUID.randomUUID().toString());
         lifecycleDefinition.getLabel().addValue(Locale.ENGLISH, "Standard");
         
         final Workflow workflow = new Workflow();
+        workflow.setUuid(UUID.randomUUID().toString());
         workflow.setAbstractWorkflow(true);
         workflow.getName().addValue(Locale.ENGLISH, "Standard");
         
