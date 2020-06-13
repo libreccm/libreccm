@@ -1,4 +1,4 @@
-package db.migrations.org.libreccm.ccm_cms;
+package db.migrations.org.librecms.ccm_cms;
 
 import org.flywaydb.core.api.migration.BaseJavaMigration;
 import org.flywaydb.core.api.migration.Context;
@@ -84,7 +84,7 @@ public class V7_0_0_24__add_lifecycle_uuid extends BaseJavaMigration {
     private void addDefinitionLifecycleCol(final Connection connection)
         throws Exception {
         try (PreparedStatement stmt = connection.prepareStatement(
-            "alter table LIFECYCLE_DEFINITIONS "
+            "alter table lifecyle_definitions "
                 + "add column UUID varchar(255)"
         )) {
             stmt.execute();
@@ -110,7 +110,7 @@ public class V7_0_0_24__add_lifecycle_uuid extends BaseJavaMigration {
         final Connection connection, final List<Long> definitionIds
     ) throws Exception {
         try (PreparedStatement stmt = connection.prepareStatement(
-            "update LIFECYCLE_DEFINITIONS set UUID = ? "
+            "update LIFECYLE_DEFINITIONS set UUID = ? "
                 + "where LIFECYCLE_DEFINITION_ID = ?"
         )) {
             for (final Long lifecycleId : definitionIds) {
@@ -139,7 +139,7 @@ public class V7_0_0_24__add_lifecycle_uuid extends BaseJavaMigration {
         final Connection connection
     ) throws Exception {
 try (PreparedStatement stmt = connection.prepareStatement(
-            "alter table LIFECYCLE_DEFINITIONS "
+            "alter table LIFECYLE_DEFINITIONS "
                 + "add constraint UK_n6ki3s5im2k2nccpocuctqqe3 "
                 + "unique (UUID)"
         )) {
