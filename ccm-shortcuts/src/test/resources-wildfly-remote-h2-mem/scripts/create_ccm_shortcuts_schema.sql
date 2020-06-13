@@ -1,5 +1,5 @@
-DROP SCHEMA IF EXISTS ccm_shortcuts;
-DROP SCHEMA IF EXISTS ccm_core;
+DROP SCHEMA IF EXISTS ccm_shortcuts CASCADE;
+DROP SCHEMA IF EXISTS ccm_core CASCADE;
 
 DROP SEQUENCE IF EXISTS hibernate_sequence;
 
