@@ -221,6 +221,80 @@
         primary key (COMPONENT_MODEL_ID)
     );
 
+    create table CCM_CMS.CONTACT_ENTRIES (
+       CONTACT_ENTRY_ID bigint not null,
+        ENTRY_ORDER bigint,
+        ENTRY_VALUE varchar(4096),
+        CONTACT_ENTRY_KEY_ID bigint,
+        CONTACTABLE_ID bigint,
+        primary key (CONTACT_ENTRY_ID)
+    );
+
+    create table CCM_CMS.CONTACT_ENTRIES_AUD (
+       CONTACT_ENTRY_ID bigint not null,
+        REV integer not null,
+        REVTYPE tinyint,
+        REVEND integer,
+        ENTRY_ORDER bigint,
+        ENTRY_VALUE varchar(4096),
+        CONTACT_ENTRY_KEY_ID bigint,
+        primary key (CONTACT_ENTRY_ID, REV)
+    );
+
+    create table CCM_CMS.CONTACT_ENTRY_KEY_LABELS (
+       KEY_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
+        LOCALE varchar(255) not null,
+        primary key (KEY_ID, LOCALE)
+    );
+
+    create table CCM_CMS.CONTACT_ENTRY_KEY_LABELS_AUD (
+       REV integer not null,
+        KEY_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647) not null,
+        LOCALE varchar(255) not null,
+        REVTYPE tinyint,
+        REVEND integer,
+        primary key (REV, KEY_ID, LOCALIZED_VALUE, LOCALE)
+    );
+
+    create table CCM_CMS.CONTACT_ENTRY_KEYS (
+       KEY_ID bigint not null,
+        ENTRY_KEY varchar(255),
+        primary key (KEY_ID)
+    );
+
+    create table CCM_CMS.CONTACT_ENTRY_KEYS_AUD (
+       KEY_ID bigint not null,
+        REV integer not null,
+        REVTYPE tinyint,
+        REVEND integer,
+        ENTRY_KEY varchar(255),
+        primary key (KEY_ID, REV)
+    );
+
+    create table CCM_CMS.CONTACTABLE_ENTITIES (
+       OBJECT_ID bigint not null,
+        POSTAL_ADDRESS_ID bigint,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CMS.CONTACTABLE_ENTITIES_AUD (
+       OBJECT_ID bigint not null,
+        REV integer not null,
+        POSTAL_ADDRESS_ID bigint,
+        primary key (OBJECT_ID, REV)
+    );
+
+    create table CCM_CMS.ContactableEntity_ContactEntry_AUD (
+       REV integer not null,
+        CONTACTABLE_ID bigint not null,
+        CONTACT_ENTRY_ID bigint not null,
+        REVTYPE tinyint,
+        REVEND integer,
+        primary key (REV, CONTACTABLE_ID, CONTACT_ENTRY_ID)
+    );
+
     create table CCM_CMS.CONTENT_ITEM_COMPONENTS (
        MODE varchar(255),
         COMPONENT_MODEL_ID bigint not null,
@@ -662,6 +736,7 @@
         LISTENER varchar(1024),
         START_DATE_TIME date,
         STARTED boolean,
+        UUID varchar(255),
         DEFINITION_ID bigint,
         primary key (LIFECYCLE_ID)
     );
@@ -669,6 +744,7 @@
     create table CCM_CMS.LIFECYLE_DEFINITIONS (
        LIFECYCLE_DEFINITION_ID bigint not null,
         DEFAULT_LISTENER varchar(1024),
+        UUID varchar(255),
         primary key (LIFECYCLE_DEFINITION_ID)
     );
 
@@ -805,6 +881,19 @@
         primary key (REV, OBJECT_ID, LOCALIZED_VALUE, LOCALE)
     );
 
+    create table CCM_CMS.ORGANIZATIONS (
+       NAME varchar(1024),
+        OBJECT_ID bigint not null,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CMS.ORGANIZATIONS_AUD (
+       OBJECT_ID bigint not null,
+        REV integer not null,
+        NAME varchar(1024),
+        primary key (OBJECT_ID, REV)
+    );
+
     create table CCM_CMS.PAGE_THEME_CONFIGURATIONS (
        PAGE_ID bigint not null,
         INDEX_PAGE_TEMPLATE varchar(255),
@@ -825,6 +914,60 @@
        OBJECT_ID bigint not null,
         CATEGORY_DOMAIN_ID bigint,
         primary key (OBJECT_ID)
+    );
+
+    create table CCM_CMS.PERSON_NAMES (
+       PERSON_ID bigint not null,
+        GIVEN_NAME varchar(255),
+        NAME_PREFIX varchar(255),
+        SUFFIX varchar(255),
+        SURNAME varchar(255)
+    );
+
+    create table CCM_CMS.PERSON_NAMES_AUD (
+       REV integer not null,
+        REVTYPE tinyint not null,
+        PERSON_ID bigint not null,
+        REVEND integer,
+        SURNAME varchar(255),
+        NAME_PREFIX varchar(255),
+        GIVEN_NAME varchar(255),
+        SUFFIX varchar(255),
+        primary key (REV, REVTYPE, PERSON_ID)
+    );
+
+    create table CCM_CMS.PERSONS (
+       BIRTHDATE date,
+        OBJECT_ID bigint not null,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CMS.PERSONS_AUD (
+       OBJECT_ID bigint not null,
+        REV integer not null,
+        BIRTHDATE date,
+        primary key (OBJECT_ID, REV)
+    );
+
+    create table CCM_CMS.POSTAL_ADDRESSES (
+       ADDRESS varchar(2048),
+        CITY varchar(512),
+        ISO_COUNTRY_CODE varchar(10),
+        POSTAL_CODE varchar(255),
+        ADDRESS_STATE varchar(255),
+        OBJECT_ID bigint not null,
+        primary key (OBJECT_ID)
+    );
+
+    create table CCM_CMS.POSTAL_ADDRESSES_AUD (
+       OBJECT_ID bigint not null,
+        REV integer not null,
+        ADDRESS varchar(2048),
+        CITY varchar(512),
+        ISO_COUNTRY_CODE varchar(10),
+        POSTAL_CODE varchar(255),
+        ADDRESS_STATE varchar(255),
+        primary key (OBJECT_ID, REV)
     );
 
     create table CCM_CMS.RELATED_LINKS (
@@ -898,6 +1041,12 @@
 
     alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
        add constraint UK_goj42ghwu4tf1akfb2r6ensns unique (WORKFLOW_TEMPLATE_ID);
+
+    alter table CCM_CMS.LIFECYCLES 
+       add constraint UK_40o4njo54m8c4xlwq6ctnsimd unique (UUID);
+
+    alter table CCM_CMS.LIFECYLE_DEFINITIONS 
+       add constraint UK_n6ki3s5im2k2nccpocuctqqe3 unique (UUID);
 
     create table CCM_CORE.APPLICATIONS (
        APPLICATION_TYPE varchar(1024) not null,
@@ -1444,10 +1593,10 @@
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
         SETTING_VALUE_BIG_DECIMAL decimal(19,2),
-        SETTING_VALUE_DOUBLE double,
         SETTING_VALUE_BOOLEAN boolean,
         SETTING_VALUE_LONG bigint,
         SETTING_VALUE_STRING varchar(1024),
+        SETTING_VALUE_DOUBLE double,
         primary key (SETTING_ID)
     );
 
@@ -1916,6 +2065,76 @@ create sequence hibernate_sequence start with 1 increment by 1;
        add constraint FKfhc51tkdf705o0sy8sndqpkqa 
        foreign key (COMPONENT_MODEL_ID) 
        references CCM_CORE.PAGE_MODEL_COMPONENT_MODELS;
+
+    alter table CCM_CMS.CONTACT_ENTRIES 
+       add constraint FKirtfj8sm4y5myworl5hvs1l78 
+       foreign key (CONTACT_ENTRY_KEY_ID) 
+       references CCM_CMS.CONTACT_ENTRY_KEYS;
+
+    alter table CCM_CMS.CONTACT_ENTRIES 
+       add constraint FKljrrfco44damal9eaqrnfam0m 
+       foreign key (CONTACTABLE_ID) 
+       references CCM_CMS.CONTACTABLE_ENTITIES;
+
+    alter table CCM_CMS.CONTACT_ENTRIES_AUD 
+       add constraint FKib8xp3ab8kdkc0six36f99e2g 
+       foreign key (REV) 
+       references CCM_CORE.CCM_REVISIONS;
+
+    alter table CCM_CMS.CONTACT_ENTRIES_AUD 
+       add constraint FKrse7ibjqsfnny5t1b2tqqs3pt 
+       foreign key (REVEND) 
+       references CCM_CORE.CCM_REVISIONS;
+
+    alter table CCM_CMS.CONTACT_ENTRY_KEY_LABELS 
+       add constraint FK243nk3buqm0pskkr5ifjqfxn5 
+       foreign key (KEY_ID) 
+       references CCM_CMS.CONTACT_ENTRY_KEYS;
+
+    alter table CCM_CMS.CONTACT_ENTRY_KEY_LABELS_AUD 
+       add constraint FK6n995k5gao6v63gfcga3yaxcw 
+       foreign key (REV) 
+       references CCM_CORE.CCM_REVISIONS;
+
+    alter table CCM_CMS.CONTACT_ENTRY_KEY_LABELS_AUD 
+       add constraint FKdr8ujdpn1ej8l6omlxq8bsxbd 
+       foreign key (REVEND) 
+       references CCM_CORE.CCM_REVISIONS;
+
+    alter table CCM_CMS.CONTACT_ENTRY_KEYS_AUD 
+       add constraint FKcvn2b1h1d4uvvmtbf4qf81l0y 
+       foreign key (REV) 
+       references CCM_CORE.CCM_REVISIONS;
+
+    alter table CCM_CMS.CONTACT_ENTRY_KEYS_AUD 
+       add constraint FKkyy4v3tax8w5htnpkmmt8aec1 
+       foreign key (REVEND) 
+       references CCM_CORE.CCM_REVISIONS;
+
+    alter table CCM_CMS.CONTACTABLE_ENTITIES 
+       add constraint FKqefwowr9adclj3xvpfje9rddr 
+       foreign key (POSTAL_ADDRESS_ID) 
+       references CCM_CMS.POSTAL_ADDRESSES;
+
+    alter table CCM_CMS.CONTACTABLE_ENTITIES 
+       add constraint FKhdwlhf3jp8wf5wxjkoynrcspj 
+       foreign key (OBJECT_ID) 
+       references CCM_CMS.ASSETS;
+
+    alter table CCM_CMS.CONTACTABLE_ENTITIES_AUD 
+       add constraint FKjx8trfvt96fkdn6bafnh839id 
+       foreign key (OBJECT_ID, REV) 
+       references CCM_CMS.ASSETS_AUD;
+
+    alter table CCM_CMS.ContactableEntity_ContactEntry_AUD 
+       add constraint FKs5tfdp1auj9ocgvfa9ivec517 
+       foreign key (REV) 
+       references CCM_CORE.CCM_REVISIONS;
+
+    alter table CCM_CMS.ContactableEntity_ContactEntry_AUD 
+       add constraint FKskn2ovg24tnnnwd2o8y0biyje 
+       foreign key (REVEND) 
+       references CCM_CORE.CCM_REVISIONS;
 
     alter table CCM_CMS.CONTENT_ITEM_COMPONENTS 
        add constraint FKp83o82kxo2ipa0xo03wxp4dcr 
@@ -2447,6 +2666,16 @@ create sequence hibernate_sequence start with 1 increment by 1;
        foreign key (REVEND) 
        references CCM_CORE.CCM_REVISIONS;
 
+    alter table CCM_CMS.ORGANIZATIONS 
+       add constraint FK77ig0to48xrlfx8qsc0vlfsp6 
+       foreign key (OBJECT_ID) 
+       references CCM_CMS.CONTACTABLE_ENTITIES;
+
+    alter table CCM_CMS.ORGANIZATIONS_AUD 
+       add constraint FKp0k3bf008pih96sguio80siql 
+       foreign key (OBJECT_ID, REV) 
+       references CCM_CMS.CONTACTABLE_ENTITIES_AUD;
+
     alter table CCM_CMS.PAGE_THEME_CONFIGURATIONS 
        add constraint FK6l6xp6ex6sh2uuxfmeekf6ckn 
        foreign key (PAGE_ID) 
@@ -2476,6 +2705,41 @@ create sequence hibernate_sequence start with 1 increment by 1;
        add constraint FKk4jb5fylibg2pbbaypyt6f8lb 
        foreign key (OBJECT_ID) 
        references CCM_CORE.SITE_AWARE_APPLICATIONS;
+
+    alter table CCM_CMS.PERSON_NAMES 
+       add constraint FK2yluyhmpuhwxafcbna6u8txrt 
+       foreign key (PERSON_ID) 
+       references CCM_CMS.PERSONS;
+
+    alter table CCM_CMS.PERSON_NAMES_AUD 
+       add constraint FKtqtlwx8pa9ydh009sudtpfxie 
+       foreign key (REV) 
+       references CCM_CORE.CCM_REVISIONS;
+
+    alter table CCM_CMS.PERSON_NAMES_AUD 
+       add constraint FKs6m8tgbp8agrd5q3klwbtcujg 
+       foreign key (REVEND) 
+       references CCM_CORE.CCM_REVISIONS;
+
+    alter table CCM_CMS.PERSONS 
+       add constraint FKiv4ydysjekfx64pkb5v4vd9yj 
+       foreign key (OBJECT_ID) 
+       references CCM_CMS.CONTACTABLE_ENTITIES;
+
+    alter table CCM_CMS.PERSONS_AUD 
+       add constraint FKpup1q3295qkuovaptq8aj5lxp 
+       foreign key (OBJECT_ID, REV) 
+       references CCM_CMS.CONTACTABLE_ENTITIES_AUD;
+
+    alter table CCM_CMS.POSTAL_ADDRESSES 
+       add constraint FK4vajjjjo8ro0wns58t8f3i782 
+       foreign key (OBJECT_ID) 
+       references CCM_CMS.ASSETS;
+
+    alter table CCM_CMS.POSTAL_ADDRESSES_AUD 
+       add constraint FKcrxgaot6kcp9rbxlg8gpp4grg 
+       foreign key (OBJECT_ID, REV) 
+       references CCM_CMS.ASSETS_AUD;
 
     alter table CCM_CMS.RELATED_LINKS 
        add constraint FKb517dnfj56oby2s34jp1omuim 
