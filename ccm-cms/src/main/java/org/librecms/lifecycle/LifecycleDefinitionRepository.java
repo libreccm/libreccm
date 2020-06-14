@@ -20,6 +20,8 @@ package org.librecms.lifecycle;
 
 import org.libreccm.core.AbstractEntityRepository;
 
+import java.util.UUID;
+
 import javax.enterprise.context.RequestScoped;
 
 /**
@@ -51,5 +53,13 @@ public class LifecycleDefinitionRepository
     public boolean isNew(final LifecycleDefinition lifecycleDefinition) {
         return lifecycleDefinition.getDefinitionId() == 0;
     }
+
+    @Override
+    protected void initNewEntity(final LifecycleDefinition entity) {
+        super.initNewEntity(entity);
+        entity.setUuid(UUID.randomUUID().toString());
+    }
+    
+    
 
 }

@@ -240,7 +240,7 @@ public class Task implements Identifiable, Serializable {
         return uuid;
     }
 
-    protected void setUuid(final String uuid) {
+    public void setUuid(final String uuid) {
         this.uuid = uuid;
     }
 

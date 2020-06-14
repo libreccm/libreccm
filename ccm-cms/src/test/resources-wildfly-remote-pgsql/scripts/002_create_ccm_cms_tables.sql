@@ -736,6 +736,7 @@
         LISTENER varchar(1024),
         START_DATE_TIME date,
         STARTED boolean,
+        UUID varchar(255),
         DEFINITION_ID int8,
         primary key (LIFECYCLE_ID)
     );
@@ -743,6 +744,7 @@
     create table CCM_CMS.LIFECYLE_DEFINITIONS (
        LIFECYCLE_DEFINITION_ID int8 not null,
         DEFAULT_LISTENER varchar(1024),
+        UUID varchar(255),
         primary key (LIFECYCLE_DEFINITION_ID)
     );
 
@@ -1039,6 +1041,12 @@
 
     alter table CCM_CMS.CONTENT_SECTION_WORKFLOW_TEMPLATES 
        add constraint UK_goj42ghwu4tf1akfb2r6ensns unique (WORKFLOW_TEMPLATE_ID);
+
+    alter table CCM_CMS.LIFECYCLES 
+       add constraint UK_40o4njo54m8c4xlwq6ctnsimd unique (UUID);
+
+    alter table CCM_CMS.LIFECYLE_DEFINITIONS 
+       add constraint UK_n6ki3s5im2k2nccpocuctqqe3 unique (UUID);
 
     create table CCM_CORE.APPLICATIONS (
        APPLICATION_TYPE varchar(1024) not null,
@@ -1584,11 +1592,11 @@
         SETTING_ID int8 not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
-        SETTING_VALUE_LONG int8,
         SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
-        SETTING_VALUE_DOUBLE float8,
-        SETTING_VALUE_STRING varchar(1024),
         SETTING_VALUE_BOOLEAN boolean,
+        SETTING_VALUE_LONG int8,
+        SETTING_VALUE_STRING varchar(1024),
+        SETTING_VALUE_DOUBLE float8,
         primary key (SETTING_ID)
     );
 
