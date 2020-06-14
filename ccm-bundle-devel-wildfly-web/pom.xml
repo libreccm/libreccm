@@ -222,7 +222,9 @@
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
                 <configuration>
-                    <skip>true</skip>
+                    <commands>
+                        <command>/subsystem=datasources/data-source=ccm-devel:add(driver-name=postgresql,jndi-name="java:/comp/env/jdbc/libreccm/db",connection-url="${wildfly.datasource.connectionUrl}",user-name="${wildfly.datasource.username}",password="${wildfly.datasource.password}",use-ccm="false")</command>
+                    </commands>
                 </configuration>
             </plugin>-->
         </plugins>
@@ -243,7 +245,7 @@
                         <groupId>org.wildfly.plugins</groupId>
                         <artifactId>wildfly-maven-plugin</artifactId>
                         <executions>
-                            <execution>
+                            <!--                            <execution>
                                 <id>undeploy</id>
                                 <phase>clean</phase>
                                 <goals>
@@ -252,13 +254,16 @@
                                 <configuration>
                                     <ignoreMissingDeployment>true</ignoreMissingDeployment>
                                 </configuration>
-                            </execution>
+                            </execution>-->
                             <execution>
                                 <id>start</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>start</goal>
                                 </goals>
+                                <configuration>
+                                    <stdout>System.out</stdout>
+                                </configuration>
                             </execution>
                             <execution>
                                 <id>deploy-jdbc-driver</id>
@@ -274,22 +279,41 @@
                             </execution>
                             <execution>
                                 <id>add-datasource</id>
-                                <phase>install</phase>
+                                <phase>package</phase>
                                 <configuration>
                                     <address>subsystem=datasources,data-source=ccm-devel</address>
-                                    <properties>
-                                        <connection-url>${wildfly.datasource.connectionUrl}</connection-url>
-                                        <jndi-name>java:/comp/env/jdbc/libreccm/db</jndi-name>
-                                        <enabled>true</enabled>
-                                        <username>${wildfly.datasource.username}</username>
-                                        <password>${wildfly.datasource.password}</password>
-                                        <use-ccm>false</use-ccm>
-                                    </properties>
+                                    <resources>
+                                        <resource>
+                                            <!--<enableResource>true</enableResource>-->
+                                            <properties>
+                                                <connection-url>${wildfly.datasource.connectionUrl}</connection-url>
+                                                <jndi-name>java:/comp/env/jdbc/libreccm/db</jndi-name>
+                                                <enabled>true</enabled>
+                                                <user-name>${wildfly.datasource.username}</user-name>
+                                                <password>${wildfly.datasource.password}</password>
+                                                <use-ccm>false</use-ccm>
+                                                <driver-name>postgresql.jar</driver-name>
+                                            </properties>
+                                        </resource>
+                                    </resources>
+                                   
                                 </configuration>
                                 <goals>
                                     <goal>add-resource</goal>
                                 </goals>
                             </execution>
+                            <!--                                                        <execution>
+                                <id>run</id>
+                                <phase>package</phase>
+                                <configuration>
+                                    <commands>
+                                        <command>/subsystem=datasources/data-source=ccm-devel:add(driver-name=postgresql,jndi-name="java:/comp/env/jdbc/libreccm/db",connection-url="${wildfly.datasource.connectionUrl}",user-name="${wildfly.datasource.username}",password="${wildfly.datasource.password}",use-ccm="false")</command>
+                                    </commands>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>-->
                             <!--                            <execution>
                                 <id>run</id>
                                 <phase>package</phase>
@@ -297,14 +321,14 @@
                                     <goal>run</goal>
                                 </goals>
                             </execution>-->
-                            <!--                            <execution>
+                            <execution>
                                 <id>deploy</id>
                                 <phase>package</phase>
                                 <goals>
-                                    <goal>deploy</goal>
+                                    <goal>deploy-only</goal>
                                 </goals>
                             </execution>
-                            <execution>
+                            <!--<execution>
                                 <id>start</id>
                                 <phase>package</phase>
                                 <goals>
