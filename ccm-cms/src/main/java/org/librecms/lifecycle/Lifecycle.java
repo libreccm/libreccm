@@ -18,6 +18,9 @@
  */
 package org.librecms.lifecycle;
 
+import org.hibernate.search.annotations.Field;
+import org.libreccm.core.Identifiable;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +39,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlElement;
 
 import static org.librecms.CmsConstants.*;
 
@@ -45,49 +50,67 @@ import static org.librecms.CmsConstants.*;
  */
 @Entity
 @Table(name = "LIFECYCLES", schema = DB_SCHEMA)
-public class Lifecycle implements Serializable {
+public class Lifecycle implements Identifiable, Serializable {
 
     private static final long serialVersionUID = 184357562249530038L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "LIFECYCLE_ID")
     private long lifecycleId;
-    
+
+    /**
+     *
+     */
+    @Column(name = "UUID", unique = true)
+    @NotNull
+    @Field
+    @XmlElement(name = "uuid")
+    private String uuid;
+
     @Column(name = "START_DATE_TIME")
     @Temporal(TemporalType.DATE)
     private Date startDateTime;
-    
+
     @Column(name = "END_DATE_TIME")
     @Temporal(TemporalType.DATE)
     private Date endDateTime;
-    
+
     @Column(name = "LISTENER", length = 1024)
     private String listener;
-    
+
     @Column(name = "STARTED")
     private boolean started;
-    
+
     @Column(name = "FINISHED")
     private boolean finished;
-    
+
     @OneToOne
     @JoinColumn(name = "DEFINITION_ID")
     private LifecycleDefinition definition;
-    
+
     @OneToMany(mappedBy = "lifecycle")
     private List<Phase> phases;
 
     public Lifecycle() {
         phases = new ArrayList<>();
     }
-    
+
     public long getLifecycleId() {
         return lifecycleId;
     }
 
     public void setLifecycleId(final long lifecycleId) {
         this.lifecycleId = lifecycleId;
+    }
+
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(final String uuid) {
+        this.uuid = uuid;
     }
 
     public Date getStartDateTime() {
@@ -145,11 +168,11 @@ public class Lifecycle implements Serializable {
     protected void setPhases(final List<Phase> phases) {
         this.phases = new ArrayList<>(phases);
     }
-    
+
     public void addPhase(final Phase phase) {
         phases.add(phase);
     }
-    
+
     public void removePhase(final Phase phase) {
         phases.remove(phase);
     }
@@ -202,26 +225,26 @@ public class Lifecycle implements Serializable {
         }
         return Objects.equals(definition, other.getDefinition());
     }
-    
+
     public boolean canEqual(final Object obj) {
         return obj instanceof Lifecycle;
     }
-    
+
     @Override
     public final String toString() {
         return toString("");
     }
-    
+
     public String toString(final String data) {
         return String.format("%s{ "
-            + "lifecycleId = %d, "
-            + "startDateTime = %tF %<tT, "
-            + "endDateTime = %tF %<tT, "
-            + "listener = \"%s\", "
-            + "started = %b, "
-            + "finished = %b, "
-            + "definition = %s%s"
-            + " }",
+                                 + "lifecycleId = %d, "
+                                 + "startDateTime = %tF %<tT, "
+                                 + "endDateTime = %tF %<tT, "
+                                 + "listener = \"%s\", "
+                                 + "started = %b, "
+                                 + "finished = %b, "
+                                 + "definition = %s%s"
+                                 + " }",
                              super.toString(),
                              lifecycleId,
                              startDateTime,
@@ -232,4 +255,5 @@ public class Lifecycle implements Serializable {
                              Objects.toString(definition),
                              data);
     }
+
 }

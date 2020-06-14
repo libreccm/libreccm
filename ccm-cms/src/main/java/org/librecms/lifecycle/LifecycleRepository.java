@@ -20,6 +20,8 @@ package org.librecms.lifecycle;
 
 import org.libreccm.core.AbstractEntityRepository;
 
+import java.util.UUID;
+
 import javax.enterprise.context.RequestScoped;
 
 /**
@@ -29,6 +31,8 @@ import javax.enterprise.context.RequestScoped;
 @RequestScoped
 public class LifecycleRepository
     extends AbstractEntityRepository<Long, Lifecycle> {
+
+    private static final long serialVersionUID = 1L;
 
     @Override
     public Class<Lifecycle> getEntityClass() {
@@ -48,6 +52,12 @@ public class LifecycleRepository
     @Override
     public boolean isNew(final Lifecycle lifecycle) {
         return lifecycle.getLifecycleId() == 0;
+    }
+
+    @Override
+    protected void initNewEntity(final Lifecycle entity) {
+        super.initNewEntity(entity);
+        entity.setUuid(UUID.randomUUID().toString());
     }
 
 }

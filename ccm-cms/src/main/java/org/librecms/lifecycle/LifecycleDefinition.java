@@ -18,6 +18,8 @@
  */
 package org.librecms.lifecycle;
 
+import org.hibernate.search.annotations.Field;
+import org.libreccm.core.Identifiable;
 import org.libreccm.l10n.LocalizedString;
 
 import java.io.Serializable;
@@ -37,6 +39,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlElement;
 
 import static org.librecms.CmsConstants.*;
 
@@ -46,7 +50,7 @@ import static org.librecms.CmsConstants.*;
  */
 @Entity
 @Table(name = "LIFECYLE_DEFINITIONS", schema = DB_SCHEMA)
-public class LifecycleDefinition implements Serializable {
+public class LifecycleDefinition implements Identifiable, Serializable {
 
     private static final long serialVersionUID = 1291162870555527717L;
 
@@ -54,6 +58,12 @@ public class LifecycleDefinition implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "LIFECYCLE_DEFINITION_ID")
     private long definitionId;
+
+    @Column(name = "UUID", unique = true)
+    @NotNull
+    @Field
+    @XmlElement(name = "uuid")
+    private String uuid;
 
     @Embedded
     @AssociationOverride(
@@ -94,6 +104,15 @@ public class LifecycleDefinition implements Serializable {
 
     public void setDefinitionId(final long definitionId) {
         this.definitionId = definitionId;
+    }
+
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(final String uuid) {
+        this.uuid = uuid;
     }
 
     public LocalizedString getLabel() {
@@ -191,7 +210,7 @@ public class LifecycleDefinition implements Serializable {
     public final String toString() {
         return toString("");
     }
-    
+
     public String toString(final String data) {
         return String.format("%s{ "
                                  + "definitionId = %d, "
