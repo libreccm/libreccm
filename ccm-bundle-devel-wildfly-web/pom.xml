@@ -3,6 +3,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <wildfly.datasource.connectionUrl>jdbc:postgresql://localhost:5432/ccm-devel</wildfly.datasource.connectionUrl>
+        <wildfly.datasource.username>ccm</wildfly.datasource.username>
+        <wildfly.datasource.password>ccm</wildfly.datasource.password>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
@@ -21,7 +24,7 @@
 
     <name>LibreCCM Devel Bundle Web for Wildfly</name>
     <url>http://www.libreccm.org/modules/web/wildfly</url>
-
+    
     <dependencies>
         <dependency>
             <groupId>org.webjars</groupId>
@@ -121,7 +124,7 @@
                             <arguments>link @librecms/ccm-cms-pagemodelseditor</arguments>
                         </configuration>
                     </execution>
-<!--                    <execution>
+                    <!--                    <execution>
                         <id>npm link @librecms/ccm-cms-tinymce</id>
                         <goals>
                             <goal>npm</goal>
@@ -215,13 +218,103 @@
                 </configuration>
             </plugin>
 
-            <plugin>
+            <!--            <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
                 <configuration>
                     <skip>true</skip>
                 </configuration>
-            </plugin>
+            </plugin>-->
         </plugins>
     </build>
+    
+    <profiles>
+        <profile>
+            <id>run-with-wildfly</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>undeploy</id>
+                                <phase>clean</phase>
+                                <goals>
+                                    <goal>undeploy</goal>
+                                </goals>
+                                <configuration>
+                                    <ignoreMissingDeployment>true</ignoreMissingDeployment>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>start</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>deploy-jdbc-driver</id>
+                                <phase>package</phase>
+                                <configuration>
+                                    <groupId>org.postgresql</groupId>
+                                    <artifactId>postgresql</artifactId>
+                                    <name>postgresql.jar</name>
+                                </configuration>
+                                <goals>
+                                    <goal>deploy-artifact</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>add-datasource</id>
+                                <phase>install</phase>
+                                <configuration>
+                                    <address>subsystem=datasources,data-source=ccm-devel</address>
+                                    <properties>
+                                        <connection-url>${wildfly.datasource.connectionUrl}</connection-url>
+                                        <jndi-name>java:/comp/env/jdbc/libreccm/db</jndi-name>
+                                        <enabled>true</enabled>
+                                        <username>${wildfly.datasource.username}</username>
+                                        <password>${wildfly.datasource.password}</password>
+                                        <use-ccm>false</use-ccm>
+                                    </properties>
+                                </configuration>
+                                <goals>
+                                    <goal>add-resource</goal>
+                                </goals>
+                            </execution>
+                            <!--                            <execution>
+                                <id>run</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>-->
+                            <!--                            <execution>
+                                <id>deploy</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>start</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>-->
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
