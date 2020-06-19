@@ -20,7 +20,7 @@
     <!--<version>7.0.0-SNAPSHOT</version>-->
     <packaging>war</packaging>
 
-    <name>LibreCCM Devel Bundle Web for Wildfly</name>
+    <name>LibreCCM Devel Bundle for Wildfly</name>
     <url>http://www.libreccm.org/modules/web/wildfly</url>
     
     <dependencies>
