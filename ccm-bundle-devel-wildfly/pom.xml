@@ -16,7 +16,7 @@
     </parent>
 
     <groupId>org.libreccm</groupId>
-    <artifactId>ccm-bundle-devel-wildfly-web</artifactId>
+    <artifactId>ccm-bundle-devel-wildfly</artifactId>
     <!--<version>7.0.0-SNAPSHOT</version>-->
     <packaging>war</packaging>
 
