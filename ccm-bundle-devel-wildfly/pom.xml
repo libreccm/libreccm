@@ -237,13 +237,23 @@
                     </filesets>
                 </configuration>
             </plugin>
+            
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                    <propertiesFile>${project.basedir}/wildfly.properties</propertiesFile>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
     
     <profiles>
         <profile>
             <id>setup-runtime</id>
-<!--            <properties>
+            <!--            <properties>
                 <libreccm.datasource.connectionUrl>jdbc:postgresql://localhost:5432/ccm-devel</libreccm.datasource.connectionUrl>
                 <libreccm.datasource.username>ccm</libreccm.datasource.username>
                 <libreccm.datasource.password>ccm</libreccm.datasource.password>
@@ -353,27 +363,6 @@
                 </plugins>
             </build>
         </profile>
-        
-        <profile>
-            <id>enable-runtime</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.wildfly.plugins</groupId>
-                        <artifactId>wildfly-maven-plugin</artifactId>
-                        <configuration>
-                            <skip>false</skip>
-                            <propertiesFile>${project.basedir}/wildfly.properties</propertiesFile>
-                            <!--                            <serverArgs>
-                                <serverArg>-Djboss.http.port=${runtime.http.port}</serverArg> 
-                                <serverArg>-Djboss.https.port=${runtime.https.port}</serverArg>
-                            </serverArgs>-->
-                            <!--                            <hostname>${runtime.hostname}</hostname>
-                            <port>${runtime.port}</port>-->
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
+       
     </profiles>
 </project>
