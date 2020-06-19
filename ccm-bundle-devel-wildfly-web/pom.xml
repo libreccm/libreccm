@@ -3,9 +3,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <wildfly.datasource.connectionUrl>jdbc:postgresql://localhost:5432/ccm-devel</wildfly.datasource.connectionUrl>
-        <wildfly.datasource.username>ccm</wildfly.datasource.username>
-        <wildfly.datasource.password>ccm</wildfly.datasource.password>
+        
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
@@ -62,11 +60,11 @@
             <version>${project.parent.version}</version>
         </dependency>
         
-        <dependency>
+        <!--        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>provided</scope>
-        </dependency>
+        </dependency>-->
     </dependencies>
 
     <build>
@@ -232,158 +230,95 @@
                     <filesets>
                         <fileset>
                             <directory>${project.build.directory}</directory>
-                            <includes>
-                                <include>classes/</include>
-                                <include>generated-resources/</include>
-                                <include>libreccm-web-wildfly/</include>
-                                <include>libreccm-web-wildfly.war</include>
-                                <include>maven-archiver/</include>
-                                <include>test-classes/</include>
-                                <include>war/</include>
-                            </includes>
                             <excludes>
-                                <execlude>wildfly*</execlude>
+                                <exclude>wildfly*/**</exclude>
                             </excludes>
                         </fileset>
                     </filesets>
                 </configuration>
-            </plugin>
-            <!--            <plugin>
-                <groupId>org.wildfly.plugins</groupId>
-                <artifactId>wildfly-maven-plugin</artifactId>
-                <configuration>
-                    <commands>
-                        <command>/subsystem=datasources/data-source=ccm-devel:add(driver-name=postgresql,jndi-name="java:/comp/env/jdbc/libreccm/db",connection-url="${wildfly.datasource.connectionUrl}",user-name="${wildfly.datasource.username}",password="${wildfly.datasource.password}",use-ccm="false")</command>
-                    </commands>
-                </configuration>
-            </plugin>-->
-            
-            <plugin>
-                <groupId>org.wildfly.plugins</groupId>
-                <artifactId>wildfly-maven-plugin</artifactId>
-                <configuration>
-                    <skip>false</skip>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>start</id>
-                        <goals>
-                            <goal>start</goal>
-                        </goals>
-                        <configuration>
-                            <stdout>System.out</stdout>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>deploy-jdbc-driver</id>
-                        <configuration>
-                            <groupId>org.postgresql</groupId>
-                            <artifactId>postgresql</artifactId>
-                            <name>postgresql.jar</name>
-                        </configuration>
-                        <goals>
-                            <goal>deploy-artifact</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>add-datasource</id>
-                        <configuration>
-                            <address>subsystem=datasources,data-source=ccm-devel</address>
-                            <resources>
-                                <resource>
-                                    <!--<enableResource>true</enableResource>-->
-                                    <properties>
-                                        <connection-url>${wildfly.datasource.connectionUrl}</connection-url>
-                                        <jndi-name>java:/comp/env/jdbc/libreccm/db</jndi-name>
-                                        <enabled>true</enabled>
-                                        <user-name>${wildfly.datasource.username}</user-name>
-                                        <password>${wildfly.datasource.password}</password>
-                                        <use-ccm>false</use-ccm>
-                                        <driver-name>postgresql.jar</driver-name>
-                                    </properties>
-                                </resource>
-                            </resources>
-                                   
-                        </configuration>
-                        <goals>
-                            <goal>add-resource</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>shutdown</id>
-                        <goals>
-                            <goal>shutdown</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
     
     <profiles>
         <profile>
-            <id>prepare-wildfly</id>
+            <id>setup-runtime</id>
+<!--            <properties>
+                <libreccm.datasource.connectionUrl>jdbc:postgresql://localhost:5432/ccm-devel</libreccm.datasource.connectionUrl>
+                <libreccm.datasource.username>ccm</libreccm.datasource.username>
+                <libreccm.datasource.password>ccm</libreccm.datasource.password>
+            </properties>-->
             <dependencies>
                 <dependency>
                     <groupId>org.postgresql</groupId>
                     <artifactId>postgresql</artifactId>
+                    <scope>provided</scope>
                 </dependency>
             </dependencies>
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>properties-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>read-datasource-properties</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>read-project-properties</goal>
+                                </goals>
+                                <configuration>
+                                    <files>
+                                        <file>${project.basedir}/datasource.properties</file>
+                                    </files>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>org.wildfly.plugins</groupId>
                         <artifactId>wildfly-maven-plugin</artifactId>
                         <configuration>
                             <skip>false</skip>
+                            <propertiesFile>${project.basedir}/wildfly.properties</propertiesFile>
                         </configuration>
                         <executions>
-                            <!--                            <execution>
-                                <id>undeploy</id>
-                                <phase>clean</phase>
-                                <goals>
-                                    <goal>undeploy</goal>
-                                </goals>
-                                <configuration>
-                                    <ignoreMissingDeployment>true</ignoreMissingDeployment>
-                                </configuration>
-                            </execution>-->
                             <execution>
-                                <id>start</id>
-                                <phase>package</phase>
+                                <id>start-for-prepare</id>
                                 <goals>
                                     <goal>start</goal>
                                 </goals>
+                                <phase>package</phase>
                                 <configuration>
                                     <stdout>System.out</stdout>
                                 </configuration>
                             </execution>
                             <execution>
                                 <id>deploy-jdbc-driver</id>
-                                <phase>package</phase>
                                 <configuration>
                                     <groupId>org.postgresql</groupId>
                                     <artifactId>postgresql</artifactId>
                                     <name>postgresql.jar</name>
+                                    <force>true</force>
                                 </configuration>
+                                <phase>package</phase>
                                 <goals>
                                     <goal>deploy-artifact</goal>
                                 </goals>
                             </execution>
                             <execution>
                                 <id>add-datasource</id>
-                                <phase>package</phase>
                                 <configuration>
                                     <address>subsystem=datasources,data-source=ccm-devel</address>
+                                    <force>true</force>
                                     <resources>
                                         <resource>
-                                            <!--<enableResource>true</enableResource>-->
                                             <properties>
-                                                <connection-url>${wildfly.datasource.connectionUrl}</connection-url>
+                                                <connection-url>${libreccm.datasource.connectionUrl}</connection-url>
                                                 <jndi-name>java:/comp/env/jdbc/libreccm/db</jndi-name>
                                                 <enabled>true</enabled>
-                                                <user-name>${wildfly.datasource.username}</user-name>
-                                                <password>${wildfly.datasource.password}</password>
+                                                <user-name>${libreccm.datasource.username}</user-name>
+                                                <password>${libreccm.datasource.password}</password>
                                                 <use-ccm>false</use-ccm>
                                                 <driver-name>postgresql.jar</driver-name>
                                             </properties>
@@ -391,44 +326,57 @@
                                     </resources>
                                    
                                 </configuration>
+                                <phase>package</phase>
                                 <goals>
                                     <goal>add-resource</goal>
                                 </goals>
                             </execution>
-                            <!--                                                        <execution>
-                                <id>run</id>
-                                <phase>package</phase>
+                            <execution>
+                                <id>deploy-libreccm-bundle-devel</id>
                                 <configuration>
-                                    <commands>
-                                        <command>/subsystem=datasources/data-source=ccm-devel:add(driver-name=postgresql,jndi-name="java:/comp/env/jdbc/libreccm/db",connection-url="${wildfly.datasource.connectionUrl}",user-name="${wildfly.datasource.username}",password="${wildfly.datasource.password}",use-ccm="false")</command>
-                                    </commands>
+                                    <force>true</force>
                                 </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>-->
-                            <!--                            <execution>
-                                <id>run</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>-->
-                            <!--                            <execution>
-                                <id>deploy</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>deploy-only</goal>
                                 </goals>
-                            </execution>-->
+                            </execution>
                             <execution>
-                                <id>shutdown</id>
+                                <id>shutdown-after-deploy</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>shutdown</goal>
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        <profile>
+            <id>enable-runtime</id>
+            <properties>
+                <runtime.hostname>localhost</runtime.hostname>
+                <runtime.bind>127.0.0.1</runtime.bind>
+                <runtime.http.port>8180</runtime.http.port>
+                <runtime.https.port>8543</runtime.https.port>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
+                        <configuration>
+                            <skip>false</skip>
+                            <propertiesFile>${project.basedir}/wildfly.properties</propertiesFile>
+                            <!--                            <serverArgs>
+                                <serverArg>-Djboss.http.port=${runtime.http.port}</serverArg> 
+                                <serverArg>-Djboss.https.port=${runtime.https.port}</serverArg>
+                            </serverArgs>-->
+                            <!--                            <hostname>${runtime.hostname}</hostname>
+                            <port>${runtime.port}</port>-->
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
