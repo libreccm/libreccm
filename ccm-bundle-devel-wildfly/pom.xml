@@ -356,12 +356,6 @@
         
         <profile>
             <id>enable-runtime</id>
-            <properties>
-                <runtime.hostname>localhost</runtime.hostname>
-                <runtime.bind>127.0.0.1</runtime.bind>
-                <runtime.http.port>8180</runtime.http.port>
-                <runtime.https.port>8543</runtime.https.port>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
