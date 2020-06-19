@@ -33,10 +33,10 @@ To use these runtime some prepration steps are necessary.
 To run LibreCCM in this environment, use the `enable-runtime` profile and the `wildfly:start`
 goal:
 
-    mvn -Penable-runtime -pl ccm-bundle-devel-wildfly wildfly:start
+    mvn -pl ccm-bundle-devel-wildfly wildfly:start
 
 To shutdown the server:
 
-    mvn -Penable-runtime -pl ccm-bundle-devel-wildfly wildfly:shutdown
+    mvn -pl ccm-bundle-devel-wildfly wildfly:shutdown
 
 
