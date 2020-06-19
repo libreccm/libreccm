@@ -91,7 +91,6 @@
 
         <!-- Bundle modules -->
         <module>ccm-bundle-devel</module>
-        <module>ccm-bundle-devel-wildfly-web</module>
         <module>ccm-bundle-devel-wildfly</module>
         <module>ccm-bundle-devel-thorntail</module>
 
