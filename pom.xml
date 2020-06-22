@@ -728,6 +728,13 @@
                 <artifactId>woodstox-core-asl</artifactId>
                 <version>4.4.1</version>
             </dependency>
+            
+            <!-- PostgreSQL JDBC Driver -->
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>42.2.14</version>
+            </dependency>
 
             <!--
                 **********************
@@ -779,6 +786,47 @@
                 <version>2.2.0.Final</version>
                 <scope>test</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.apache.openejb</groupId>
+                <artifactId>arquillian-tomee-embedded</artifactId>
+                <version>1.7.3</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.apache.openejb</groupId>
+                <artifactId>tomee-embedded</artifactId>
+                <version>1.7.3</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.jboss.logmanager</groupId>
+                <artifactId>jboss-logmanager</artifactId>
+                <version>2.0.3.Final</version>
+                <scope>test</scope>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.apache.openejb</groupId>
+                <artifactId>tomee-webservices</artifactId>
+                <version>4.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.openejb</groupId>
+                <artifactId>tomee-jaxrs</artifactId>
+                <version>1.7.3</version>
+            </dependency>
+            
+            <dependency>
+                    <groupId>org.apache.openejb</groupId>
+                    <artifactId>arquillian-tomee-remote</artifactId>
+                    <version>1.7.3</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.openejb</groupId>
+                    <artifactId>apache-tomee</artifactId>
+                    <version>1.7.3</version>
+                </dependency>
 
             <!--
                 JaCoCo is used to measure the test coverage
