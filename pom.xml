@@ -477,7 +477,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-search-orm</artifactId>
-                <version>5.10.7.Final</version>
+                <version>5.11.5.Final</version>
             </dependency>
 
             <!--
