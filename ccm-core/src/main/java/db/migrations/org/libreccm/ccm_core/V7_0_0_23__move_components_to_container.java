@@ -18,7 +18,8 @@
  */
 package db.migrations.org.libreccm.ccm_core;
 
-import org.flywaydb.core.api.migration.jdbc.JdbcMigration;
+import org.flywaydb.core.api.migration.BaseJavaMigration;
+import org.flywaydb.core.api.migration.Context;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,10 +30,12 @@ import java.util.UUID;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class V7_0_0_23__move_components_to_container implements JdbcMigration {
+public class V7_0_0_23__move_components_to_container extends BaseJavaMigration {
 
     @Override
-    public void migrate(final Connection connection) throws Exception {
+    public void migrate(final Context context) throws Exception {
+
+        final Connection connection = context.getConnection();
 
         // Get all draft PageModels from ccm_core.page_models
         final PreparedStatement retrievePageModels = connection
@@ -41,14 +44,12 @@ public class V7_0_0_23__move_components_to_container implements JdbcMigration {
                                   + "where VERSION = 'DRAFT'");
 
 
-        /* 
-        For each PageModel:
-            * Create a single container (by inserting the data into 
-             ccm_core.page_model_container_models)
-            * set container_id of each component_model of the page_model
-              to the ID of the new container
-            * if the PageModel has a public version do the same but reuse the 
-              containerUuid
+        /*
+         * For each PageModel: Create a single container (by inserting the data
+         * into ccm_core.page_model_container_models) set container_id of each
+         * component_model of the page_model to the ID of the new container if
+         * the PageModel has a public version do the same but reuse the
+         * containerUuid
          */
         final PreparedStatement createContainerId = connection
             .prepareStatement("select nextval('hibernate_sequence')");
@@ -87,8 +88,8 @@ public class V7_0_0_23__move_components_to_container implements JdbcMigration {
                                   + "    where PAGE_MODEL_ID = ?"
                                   + ")");
         try (final ResultSet pageModelsResultSet
-                                 = retrievePageModels.executeQuery()) {
-            
+            = retrievePageModels.executeQuery()) {
+
             while (pageModelsResultSet.next()) {
 
                 final long pageModelId = pageModelsResultSet
@@ -101,7 +102,7 @@ public class V7_0_0_23__move_components_to_container implements JdbcMigration {
 
                 final long containerId;
                 try (final ResultSet containerIdResultSet
-                                         = createContainerId.executeQuery()) {
+                    = createContainerId.executeQuery()) {
 
                     containerIdResultSet.next();
                     containerId = containerIdResultSet.getLong("nextval");
@@ -121,8 +122,8 @@ public class V7_0_0_23__move_components_to_container implements JdbcMigration {
                 checkForLivePageModel.setString(1, modelUuid);
                 final long liveCount;
                 try (final ResultSet liveCountResultSet
-                                         = checkForLivePageModel.executeQuery()) {
-                    
+                    = checkForLivePageModel.executeQuery()) {
+
                     liveCountResultSet.next();
                     liveCount = liveCountResultSet.getLong("COUNT");
                 }
@@ -131,14 +132,14 @@ public class V7_0_0_23__move_components_to_container implements JdbcMigration {
                     retrieveLivePage.setString(1, modelUuid);
                     final long livePageModelId;
                     try (final ResultSet liveResultSet
-                                             = retrieveLivePage.executeQuery()) {
+                        = retrieveLivePage.executeQuery()) {
                         liveResultSet.next();
                         livePageModelId = liveResultSet.getLong("PAGE_MODEL_ID");
                     }
 
                     final long liveContainerId;
                     try (final ResultSet liveContainerIdResultSet
-                                             = createContainerId.executeQuery()) {
+                        = createContainerId.executeQuery()) {
                         liveContainerIdResultSet.next();
                         liveContainerId = liveContainerIdResultSet
                             .getLong("nextval");

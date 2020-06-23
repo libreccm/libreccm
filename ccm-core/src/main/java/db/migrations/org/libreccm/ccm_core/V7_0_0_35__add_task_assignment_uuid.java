@@ -18,7 +18,8 @@
  */
 package db.migrations.org.libreccm.ccm_core;
 
-import org.flywaydb.core.api.migration.jdbc.JdbcMigration;
+import org.flywaydb.core.api.migration.BaseJavaMigration;
+import org.flywaydb.core.api.migration.Context;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,12 +30,13 @@ import java.util.UUID;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class V7_0_0_35__add_task_assignment_uuid
-    implements JdbcMigration {
+public class V7_0_0_35__add_task_assignment_uuid extends BaseJavaMigration {
 
     @Override
-    public void migrate(final Connection connection) throws Exception {
+    public void migrate(final Context context) throws Exception {
 
+        final Connection connection = context.getConnection();
+        
         final PreparedStatement retrieveAssignments = connection
             .prepareStatement("select TASK_ASSIGNMENT_ID "
                                   + "from CCM_CORE.WORKFLOW_TASK_ASSIGNMENTS");
