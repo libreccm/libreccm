@@ -18,7 +18,7 @@
  */
 package org.libreccm.search.lucene;
 
-import nl.jqno.equalsverifier.EqualsVerifierApi;
+import nl.jqno.equalsverifier.api.SingleTypeEqualsVerifierApi;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.security.Group;
@@ -50,7 +50,7 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
     }
 
     @Override
-    protected void addPrefabValues(final EqualsVerifierApi<?> verifier) {
+    protected void addPrefabValues(final SingleTypeEqualsVerifierApi<?> verifier) {
         final Document document1 = new Document();
         document1.setTitle("document1");
 

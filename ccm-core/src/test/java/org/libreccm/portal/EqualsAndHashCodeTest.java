@@ -18,7 +18,7 @@
  */
 package org.libreccm.portal;
 
-import nl.jqno.equalsverifier.EqualsVerifierApi;
+import nl.jqno.equalsverifier.api.SingleTypeEqualsVerifierApi;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.categorization.Category;
@@ -53,7 +53,7 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
     }
 
     @Override
-    protected void addPrefabValues(final EqualsVerifierApi<?> verifier) {
+    protected void addPrefabValues(final SingleTypeEqualsVerifierApi<?> verifier) {
 
         final Portal portal1 = new Portal();
         portal1.setDisplayName("Portal One");

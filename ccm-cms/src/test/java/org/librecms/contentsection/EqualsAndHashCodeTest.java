@@ -18,7 +18,7 @@
  */
 package org.librecms.contentsection;
 
-import nl.jqno.equalsverifier.EqualsVerifierApi;
+import nl.jqno.equalsverifier.api.SingleTypeEqualsVerifierApi;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.categorization.Category;
@@ -59,7 +59,7 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
     }
 
     @Override
-    protected void addPrefabValues(final EqualsVerifierApi<?> verifier) {
+    protected void addPrefabValues(final SingleTypeEqualsVerifierApi<?> verifier) {
 
         final ContentItem item1 = new ContentItem();
         item1.setObjectId(-1100);
