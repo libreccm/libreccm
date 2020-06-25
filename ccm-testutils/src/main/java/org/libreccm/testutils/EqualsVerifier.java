@@ -18,8 +18,8 @@
  */
 package org.libreccm.testutils;
 
-import nl.jqno.equalsverifier.EqualsVerifierApi;
 import nl.jqno.equalsverifier.Warning;
+import nl.jqno.equalsverifier.api.SingleTypeEqualsVerifierApi;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -89,7 +89,9 @@ public class EqualsVerifier {
      *
      * @param verifier The verifier to which the suppression are added.
      */
-    protected void addSuppressWarnings(final EqualsVerifierApi<?> verifier) {
+    protected void addSuppressWarnings(
+        final SingleTypeEqualsVerifierApi<?> verifier
+    ) {
 
         verifier
             .suppress(Warning.STRICT_INHERITANCE)
@@ -102,14 +104,14 @@ public class EqualsVerifier {
      *
      * @param verifier The verifier to which the prefab values are added.
      */
-    protected void addPrefabValues(final EqualsVerifierApi<?> verifier) {
+    protected void addPrefabValues(final SingleTypeEqualsVerifierApi<?> verifier) {
         //Nothing here
     }
 
     @Test
     public void verifyEqualsAndHashCode() {
 
-        final EqualsVerifierApi<?> verifier
+        final SingleTypeEqualsVerifierApi<?> verifier
                                        = nl.jqno.equalsverifier.EqualsVerifier
                 .forClass(entityClass)
                 .withRedefinedSuperclass();
