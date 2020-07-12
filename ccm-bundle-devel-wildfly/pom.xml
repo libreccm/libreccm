@@ -253,11 +253,6 @@
     <profiles>
         <profile>
             <id>setup-runtime</id>
-            <!--            <properties>
-                <libreccm.datasource.connectionUrl>jdbc:postgresql://localhost:5432/ccm-devel</libreccm.datasource.connectionUrl>
-                <libreccm.datasource.username>ccm</libreccm.datasource.username>
-                <libreccm.datasource.password>ccm</libreccm.datasource.password>
-            </properties>-->
             <dependencies>
                 <dependency>
                     <groupId>org.postgresql</groupId>
