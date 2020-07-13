@@ -990,7 +990,15 @@
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                         <configuration>
                             <forkMode>always</forkMode>
                             <forkCount>999</forkCount>
@@ -999,10 +1007,6 @@
                                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
-                            <groups>
-                                org.libreccm.tests.categories.UnitTest,
-                                org.libreccm.tests.categories.IntegrationTest
-                            </groups>
                             <trimStackTrace>false</trimStackTrace>
                         </configuration>
                     </plugin>
@@ -1033,11 +1037,10 @@
                                     <address>subsystem=datasources,data-source=ccm-core-testdb-h2-mem</address>
                                     <force>true</force>
                                 <resources>
-                                    
                                     <resource>
                                         <properties>
                                             <connection-url>jdbc:h2:mem:ccm-core-testdb</connection-url>
-                                            <jndi-name>jndi-name="java:/comp/env/jdbc/org/libreccm/ccm-core/h2-mem</jndi-name>
+                                            <jndi-name>java:/comp/env/jdbc/org/libreccm/ccm-core/h2-mem</jndi-name>
                                             <enabled>true</enabled>
                                             <user-name>sa</user-name>
                                             <password>sa</password>
@@ -1047,6 +1050,13 @@
                                     </resource>
                                 </resources>
                                 </configuration>
+                            </execution>
+                            <execution>
+                                <id>shutdown-test-env</id>
+                                <goals>
+                                    <goal>shutdown</goal>
+                                </goals>
+                                <phase>post-integration-test</phase>
                             </execution>
                         </executions>
                     </plugin>

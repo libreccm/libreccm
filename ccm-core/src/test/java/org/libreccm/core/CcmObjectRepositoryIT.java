@@ -38,9 +38,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.libreccm.tests.categories.IntegrationTest;
 
 import java.util.List;
 
@@ -55,6 +53,7 @@ import static org.libreccm.testutils.DependenciesHelpers.*;
 import org.jboss.arquillian.persistence.CleanupUsingScript;
 
 import java.util.Optional;
+
 import org.jboss.arquillian.persistence.TestExecutionPhase;
 
 /**
@@ -63,7 +62,6 @@ import org.jboss.arquillian.persistence.TestExecutionPhase;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
@@ -72,7 +70,7 @@ import org.jboss.arquillian.persistence.TestExecutionPhase;
                "003_init_hibernate_sequence.sql"})
 @CleanupUsingScript(value = {"999_cleanup.sql"},
                     phase = TestExecutionPhase.BEFORE)
-public class CcmObjectRepositoryTest {
+public class CcmObjectRepositoryIT {
 
     @Inject
     private CcmObjectRepository ccmObjectRepository;
@@ -80,7 +78,7 @@ public class CcmObjectRepositoryTest {
     @PersistenceContext(name = "LibreCCM")
     private EntityManager entityManager;
 
-    public CcmObjectRepositoryTest() {
+    public CcmObjectRepositoryIT() {
     }
 
     @BeforeClass
@@ -127,8 +125,6 @@ public class CcmObjectRepositoryTest {
             .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
             .addPackage(org.libreccm.testutils.EqualsVerifier.class.
                 getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
             .addPackage(com.arsdigita.kernel.security.SecurityConfig.class

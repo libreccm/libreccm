@@ -44,7 +44,6 @@ import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.files.CcmFilesConfiguration;
 import org.libreccm.security.Shiro;
-import org.libreccm.tests.categories.IntegrationTest;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -61,14 +60,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
@@ -77,27 +75,28 @@ import static org.junit.Assert.*;
                "003_init_hibernate_sequence.sql"})
 @CleanupUsingScript(value = {"999_cleanup.sql"},
                     phase = TestExecutionPhase.BEFORE)
-public class UserImportTest {
+public class GroupMembershipImportIT {
 
     private static final String IMPORT_MANIFEST_SOURCE = "/imports"
-                                                             + "/org.libreccm.imexport.UserImportTest"
+                                                             + "/org.libreccm.imexport.GroupMembershipImportTest"
                                                          + "/ccm-export.json";
-    private static final String IMPORT_USERS_TOC_SOURCE = "/imports"
-                                                              + "/org.libreccm.imexport.UserImportTest"
-                                                          + "/org.libreccm.security.User"
-                                                          + "/org.libreccm.security.User.json";
-    private static final String IMPORT_DATA_SOURCE = "/imports"
-                                                         + "/org.libreccm.imexport.UserImportTest"
-                                                     + "/org.libreccm.security.User"
-                                                     + "/7cb9aba4-8071-4f27-af19-096e1473d050.json";
+    private static final String IMPORT_GROUPMEMBERSHIP_TOC_SOURCE = "/imports"
+                                                                        + "/org.libreccm.imexport.GroupMembershipImportTest"
+                                                                    + "/org.libreccm.security.GroupMembership"
+                                                                    + "/org.libreccm.security.GroupMembership.json";
+    private static final String IMPORT_GROUPMEMBERSHIP_DATA_SOURCE = "/imports"
+                                                                         + "/org.libreccm.imexport.GroupMembershipImportTest"
+                                                                     + "/org.libreccm.security.GroupMembership"
+                                                                     + "/f8ac4073-447e-4bd6-ac96-3bf92bdc8ce7.json";
 
     private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
     private static final String CCM_TESTS_DIR = TMP_DIR + "/ccm-tests";
     private static final String IMPORTS_DIR = CCM_TESTS_DIR + "/imports";
-    private static final String USER_IMPORT_TEST_DIR = IMPORTS_DIR
-                                                           + "/org.libreccm.imexport.UserImportTest";
-    private static final String IMPORT_DATA_DIR = USER_IMPORT_TEST_DIR
-                                                      + "/org.libreccm.security.User";
+    private static final String GROUPMEMBERSHIP_IMPORT_TEST_DIR = IMPORTS_DIR
+                                                                      + "/org.libreccm.imexport.GroupMembershipImportTest";
+    private static final String IMPORT_GROUPMEMBERSHIP_DATA_DIR
+                                    = GROUPMEMBERSHIP_IMPORT_TEST_DIR
+                                          + "/org.libreccm.security.GroupMembership";
 
     @Inject
     private ConfigurationManager confManager;
@@ -108,7 +107,7 @@ public class UserImportTest {
     @Inject
     private Shiro shiro;
 
-    public UserImportTest() {
+    public GroupMembershipImportIT() {
 
     }
 
@@ -127,38 +126,42 @@ public class UserImportTest {
             .findConfiguration(CcmFilesConfiguration.class);
         filesConf.setDataPath(CCM_TESTS_DIR);
 
-//        final Path tmpDirPath = Paths.get(TMP_DIR);
         final Path ccmTestsDirPath = Paths.get(CCM_TESTS_DIR);
         final Path importsPath = Paths.get(IMPORTS_DIR);
-        final Path userImportsTestDirPath = Paths.get(USER_IMPORT_TEST_DIR);
-        final Path importDataPath = Paths.get(IMPORT_DATA_DIR);
+        final Path groupMembershipsImportsTestDirPath = Paths.get(
+            GROUPMEMBERSHIP_IMPORT_TEST_DIR);
+        final Path importGroupMembershipDataPath = Paths.get(
+            IMPORT_GROUPMEMBERSHIP_DATA_DIR);
 
         if (Files.exists(ccmTestsDirPath)) {
-            Files.walkFileTree(ccmTestsDirPath, new DeleteDirectoryVisitor());
+            Files.walkFileTree(ccmTestsDirPath,
+                               new DeleteDirectoryVisitor());
         }
 
         Files.createDirectory(ccmTestsDirPath);
         Files.createDirectory(importsPath);
-        Files.createDirectory(userImportsTestDirPath);
-        Files.createDirectory(importDataPath);
+        Files.createDirectory(groupMembershipsImportsTestDirPath);
+        Files.createDirectory(importGroupMembershipDataPath);
 
         final InputStream manifestInputStream = getClass()
             .getResourceAsStream(IMPORT_MANIFEST_SOURCE);
-        final InputStream usersTocInputStream = getClass()
-            .getResourceAsStream(IMPORT_USERS_TOC_SOURCE);
-        final InputStream user1DataInputStream = getClass()
-            .getResourceAsStream(IMPORT_DATA_SOURCE);
+        final InputStream groupMembershipsTocInputStream = getClass()
+            .getResourceAsStream(IMPORT_GROUPMEMBERSHIP_TOC_SOURCE);
+        final InputStream groupMembership1DataInputStream = getClass()
+            .getResourceAsStream(IMPORT_GROUPMEMBERSHIP_DATA_SOURCE);
 
-        final Path manifestTargetPath = userImportsTestDirPath
+        final Path manifestTargetPath = groupMembershipsImportsTestDirPath
             .resolve("ccm-export.json");
-        final Path usersTocTargetPath = importDataPath
-            .resolve("org.libreccm.security.User.json");
-        final Path user1DataTargetPath = importDataPath
-            .resolve("7cb9aba4-8071-4f27-af19-096e1473d050.json");
+        final Path groupMembershipsTocTargetPath = importGroupMembershipDataPath
+            .resolve("org.libreccm.security.GroupMembership.json");
+        final Path groupMembership1DataTargetPath
+                       = importGroupMembershipDataPath
+                .resolve("f8ac4073-447e-4bd6-ac96-3bf92bdc8ce7.json");
 
         copy(manifestInputStream, manifestTargetPath);
-        copy(usersTocInputStream, usersTocTargetPath);
-        copy(user1DataInputStream, user1DataTargetPath);
+        copy(groupMembershipsTocInputStream, groupMembershipsTocTargetPath);
+        copy(groupMembership1DataInputStream, groupMembership1DataTargetPath);
+
     }
 
     private void copy(final InputStream source, final Path destination) {
@@ -179,8 +182,8 @@ public class UserImportTest {
     @After
     public void tearDown() throws IOException {
 
-        final Path ccmTestsDirPath = Paths.get(CCM_TESTS_DIR);
-        Files.walkFileTree(ccmTestsDirPath, new DeleteDirectoryVisitor());
+//        final Path ccmTestsDirPath = Paths.get(CCM_TESTS_DIR);
+//        Files.walkFileTree(ccmTestsDirPath, new DeleteDirectoryVisitor());
     }
 
     private class DeleteDirectoryVisitor extends SimpleFileVisitor<Path> {
@@ -209,7 +212,7 @@ public class UserImportTest {
     public static WebArchive createDeployment() {
         return ShrinkWrap
             .create(WebArchive.class,
-                    "LibreCCM-org.libreccm.imexport.UserImportTest.war")
+                    "LibreCCM-org.libreccm.imexport.GroupImportTest.war")
             .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
             .addPackage(org.libreccm.core.CcmObject.class.getPackage())
             .addPackage(org.libreccm.categorization.Categorization.class
@@ -223,12 +226,10 @@ public class UserImportTest {
                 .getPackage())
             .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
                 .getPackage())
-            .addPackage(org.libreccm.security.User.class.getPackage())
+            .addPackage(org.libreccm.security.Group.class.getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
             .addPackage(org.libreccm.testutils.EqualsVerifier.class
-                .getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
             .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
             .addClass(com.arsdigita.kernel.KernelConfig.class)
@@ -249,24 +250,26 @@ public class UserImportTest {
             TMP_DIR,
             "ccm-tests",
             "imports",
-            "org.libreccm.imexport.UserImportTest");
+            "org.libreccm.imexport.GroupMembershipImportTest");
         final Path manifestPath = importDataPath.resolve("ccm-export.json");
-        final Path typeDirPath = importDataPath
-            .resolve("org.libreccm.security.User");
-        final Path dataFile1Path = typeDirPath
-            .resolve("7cb9aba4-8071-4f27-af19-096e1473d050.json");
+
+        final Path groupMembershipTypeDirPath = importDataPath
+            .resolve("org.libreccm.security.GroupMembership");
+
+        final Path groupMembershipDataFile1Path = groupMembershipTypeDirPath
+            .resolve("f8ac4073-447e-4bd6-ac96-3bf92bdc8ce7.json");
 
         assertThat(String.format("Path %s does not exist.",
                                  manifestPath.toString()),
                    Files.exists(manifestPath),
                    is(true));
         assertThat(String.format("Path %s does not exist.",
-                                 typeDirPath.toString()),
-                   Files.exists(typeDirPath),
+                                 groupMembershipTypeDirPath.toString()),
+                   Files.exists(groupMembershipTypeDirPath),
                    is(true));
         assertThat(String.format("Path %s does not exist.",
-                                 dataFile1Path.toString()),
-                   Files.exists(dataFile1Path),
+                                 groupMembershipDataFile1Path.toString()),
+                   Files.exists(groupMembershipDataFile1Path),
                    is(true));
     }
 
@@ -281,19 +284,18 @@ public class UserImportTest {
     }
 
     @Test
-    @UsingDataSet("datasets/org/libreccm/imexport/UserImportTest/data.yml")
-    @ShouldMatchDataSet(
-        excludeColumns = {"party_id"},
-        orderBy = {"users.user_id", "parties.party_id"},
-        value = "datasets/org/libreccm/imexport/UserImportTest"
-                    + "/after-import-single-user.yml"
-    )
+    @UsingDataSet(
+        "datasets/org/libreccm/imexport/GroupMembershipImportTest/data.yml")
+    @ShouldMatchDataSet(value = "datasets/org/libreccm/imexport/"
+                                    + "GroupMembershipImportTest"
+                                    + "/after-import-single-membership.yml",
+                        excludeColumns = {"party_id", "membership_id"})
     @InSequence(200)
-    public void importSingleUser() {
+    public void importSingleGroupMembership() {
 
         shiro.getSystemUser().execute(()
             -> importExport.importEntities(
-                "org.libreccm.imexport.UserImportTest")
+                "org.libreccm.imexport.GroupMembershipImportTest")
         );
     }
 

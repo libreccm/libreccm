@@ -42,7 +42,6 @@ import org.junit.runner.RunWith;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.security.Shiro;
-import org.libreccm.tests.categories.IntegrationTest;
 
 import java.util.List;
 import java.util.Map;
@@ -66,7 +65,6 @@ import org.jboss.arquillian.persistence.TestExecutionPhase;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@org.junit.experimental.categories.Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
@@ -75,7 +73,7 @@ import org.jboss.arquillian.persistence.TestExecutionPhase;
                "003_init_hibernate_sequence.sql"})
 @CleanupUsingScript(value = {"999_cleanup.sql"},
                     phase = TestExecutionPhase.BEFORE)
-public class CategoryManagerTest {
+public class CategoryManagerIT {
 
     @Inject
     private CategoryRepository categoryRepo;
@@ -101,7 +99,7 @@ public class CategoryManagerTest {
     @PersistenceContext(name = "LibreCCM")
     private EntityManager entityManager;
 
-    public CategoryManagerTest() {
+    public CategoryManagerIT() {
     }
 
     @BeforeClass
@@ -138,8 +136,6 @@ public class CategoryManagerTest {
             .addPackage(org.libreccm.security.PermissionChecker.class
                 .getPackage())
             .addPackage(org.libreccm.testutils.EqualsVerifier.class
-                .getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
                 .getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
