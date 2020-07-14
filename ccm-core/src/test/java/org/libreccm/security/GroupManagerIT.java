@@ -39,9 +39,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.libreccm.tests.categories.IntegrationTest;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -55,7 +53,6 @@ import org.jboss.arquillian.persistence.TestExecutionPhase;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
@@ -64,7 +61,7 @@ import org.jboss.arquillian.persistence.TestExecutionPhase;
                "003_init_hibernate_sequence.sql"})
 @CleanupUsingScript(value = {"999_cleanup.sql"},
                     phase = TestExecutionPhase.BEFORE)
-public class GroupManagerTest {
+public class GroupManagerIT {
 
     @Inject
     private GroupManager groupManager;
@@ -78,7 +75,7 @@ public class GroupManagerTest {
     @Inject
     private Shiro shiro;
 
-    public GroupManagerTest() {
+    public GroupManagerIT() {
     }
 
     @BeforeClass
@@ -102,30 +99,7 @@ public class GroupManagerTest {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.security.GroupManagerTest.war")
-            .addPackage(org.libreccm.categorization.Categorization.class
-                .getPackage())
-            .addPackage(
-                org.libreccm.configuration.ConfigurationManager.class
-                    .getPackage())
-            .addPackage(org.libreccm.core.CcmObject.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage()).
-            addPackage(org.libreccm.security.User.class.getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class
-                .getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(com.arsdigita.kernel.security.SecurityConfig.class
-                .getPackage())
-            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addClass(com.arsdigita.kernel.KernelConfig.class)
-            .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
-            .addClass(org.libreccm.imexport.Exportable.class)
+            .addPackages(true, "com.arsdigita", "org.libreccm")
             .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")

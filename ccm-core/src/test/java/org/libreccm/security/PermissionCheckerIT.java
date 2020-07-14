@@ -44,11 +44,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
-import org.libreccm.tests.categories.IntegrationTest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,74 +63,53 @@ import org.jboss.arquillian.persistence.TestExecutionPhase;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
-@CreateSchema({"001_create_schema.sql", 
-               "002_create_ccm_core_tables.sql", 
+@CreateSchema({"001_create_schema.sql",
+               "002_create_ccm_core_tables.sql",
                "003_init_hibernate_sequence.sql"})
 @CleanupUsingScript(value = {"999_cleanup.sql"},
                     phase = TestExecutionPhase.BEFORE)
-public class PermissionCheckerTest {
-    
+public class PermissionCheckerIT {
+
     @Inject
     private Subject subject;
-    
+
     @Inject
     private Shiro shiro;
-    
+
     @Inject
     private PermissionChecker permissionChecker;
-    
+
     @Inject
     private CcmObjectRepository objectRepository;
-    
-    public PermissionCheckerTest() {
+
+    public PermissionCheckerIT() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
-    
+
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.security.PermissionCheckerTest.war")
-            .addPackage(org.libreccm.categorization.Categorization.class
-                .getPackage())
-            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addPackage(org.libreccm.configuration.ConfigurationManager.class
-                .getPackage())
-            .addPackage(org.libreccm.core.CcmObject.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
-            .addPackage(org.libreccm.security.User.class.getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class.getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(com.arsdigita.kernel.KernelConfig.class
-                .getPackage())
-            .addPackage(com.arsdigita.kernel.security.SecurityConfig.class
-                .getPackage())
+            .addPackages(true, "com.arsdigita", "org.libreccm")
             .addClass(org.libreccm.imexport.Exportable.class)
             .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",
@@ -144,7 +121,7 @@ public class PermissionCheckerTest {
             .addAsWebInfResource("test-web.xml", "web.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
-    
+
     @Test
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(1100)
@@ -153,12 +130,12 @@ public class PermissionCheckerTest {
                                                                       "foo123");
         token.setRememberMe(true);
         subject.login(token);
-        
+
         assertThat(permissionChecker.isPermitted("privilege1"), is(false));
         assertThat(permissionChecker.isPermitted("privilege2"), is(false));
         assertThat(permissionChecker.isPermitted("privilege3"), is(false));
     }
-    
+
     @Test
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(1200)
@@ -167,7 +144,7 @@ public class PermissionCheckerTest {
         assertThat(permissionChecker.isPermitted("privilege2"), is(false));
         assertThat(permissionChecker.isPermitted("privilege3"), is(false));
     }
-    
+
     @Test
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(1300)
@@ -175,9 +152,9 @@ public class PermissionCheckerTest {
         final CcmObject object1 = objectRepository.findById(20001L).get();
         final CcmObject object2 = objectRepository.findById(20002L).get();
         final CcmObject object3 = objectRepository.findById(20003L).get();
-        
+
         shiro.getSystemUser().execute(new Callable<Boolean>() {
-            
+
             @Override
             public Boolean call() {
                 assertThat(permissionChecker.isPermitted("privilege1"),
@@ -186,7 +163,7 @@ public class PermissionCheckerTest {
                            is(true));
                 assertThat(permissionChecker.isPermitted("privilege3"),
                            is(true));
-                
+
                 assertThat(permissionChecker.isPermitted("privilege1",
                                                          object2),
                            is(true));
@@ -196,42 +173,42 @@ public class PermissionCheckerTest {
                 assertThat(permissionChecker.isPermitted("privilege3",
                                                          object3),
                            is(true));
-                
+
                 return false;
             }
-            
+
         });
-        
+
     }
-    
+
     @Test
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(1400)
     public void isPermittedObjectAuthenticatedUser() {
         final CcmObject object1 = objectRepository.findById(20001L).get();
         final CcmObject object2 = objectRepository.findById(20002L).get();
-        
+
         final UsernamePasswordToken token = new UsernamePasswordToken("jdoe",
                                                                       "foo123");
         token.setRememberMe(true);
         subject.login(token);
-        
+
         assertThat(permissionChecker.isPermitted("privilege1", object1),
                    is(false));
         assertThat(permissionChecker.isPermitted("privilege2", object1),
                    is(false));
         assertThat(permissionChecker.isPermitted("privilege2", object2),
                    is(true));
-        
+
     }
-    
+
     @Test
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(1500)
     public void isPermittedObjectUnAuthenticatedUser() {
         final CcmObject object1 = objectRepository.findById(20001L).get();
         final CcmObject object2 = objectRepository.findById(20002L).get();
-        
+
         assertThat(permissionChecker.isPermitted("privilege1", object1),
                    is(false));
         assertThat(permissionChecker.isPermitted("privilege2", object1),
@@ -241,7 +218,7 @@ public class PermissionCheckerTest {
         assertThat(permissionChecker.isPermitted("privilege3", object1),
                    is(true));
     }
-    
+
     @Test
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(2100)
@@ -250,10 +227,10 @@ public class PermissionCheckerTest {
                                                                       "foo123");
         token.setRememberMe(true);
         subject.login(token);
-        
+
         permissionChecker.checkPermission("privilege1");
     }
-    
+
     @Test(expected = AuthorizationException.class)
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @ShouldThrowException(AuthorizationException.class)
@@ -261,40 +238,40 @@ public class PermissionCheckerTest {
     public void checkPermissionUnAuthenticatedUser() {
         permissionChecker.checkPermission("privilege1");
     }
-    
+
     @Test
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(2300)
     public void checkPermissionObjectAuthenticatedUser() {
         final CcmObject object2 = objectRepository.findById(20002L).get();
-        
+
         final UsernamePasswordToken token = new UsernamePasswordToken("jdoe",
                                                                       "foo123");
         token.setRememberMe(true);
         subject.login(token);
-        
+
         permissionChecker.checkPermission("privilege2", object2);
     }
-    
+
     @Test(expected = AuthorizationException.class)
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @ShouldThrowException(AuthorizationException.class)
     @InSequence(2400)
     public void checkPermissionObjectUnAuthenticatedUser() {
         final CcmObject object2 = objectRepository.findById(20002L).get();
-        
+
         permissionChecker.checkPermission("privilege2", object2);
     }
-    
+
     @Test
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(2500)
     public void checkPermissionObjectPublicUser() {
         final CcmObject object1 = objectRepository.findById(20001L).get();
-        
+
         permissionChecker.checkPermission("privilege3", object1);
     }
-    
+
     @Test
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(2600)
@@ -302,69 +279,69 @@ public class PermissionCheckerTest {
         final CcmObject object1 = objectRepository.findById(20001L).get();
         final CcmObject object2 = objectRepository.findById(20002L).get();
         final CcmObject object3 = objectRepository.findById(20003L).get();
-        
+
         shiro.getSystemUser().execute(new Callable<Boolean>() {
-            
+
             @Override
             public Boolean call() {
                 permissionChecker.checkPermission("privilege1");
                 permissionChecker.checkPermission("privilege2");
                 permissionChecker.checkPermission("privilege3");
-                
+
                 permissionChecker.checkPermission("privilege1", object3);
                 permissionChecker.checkPermission("privilege2", object1);
                 permissionChecker.checkPermission("privilege3", object2);
-                
+
                 return false;
             }
-            
+
         });
     }
-    
+
     @Test
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(3100)
     public void checkPermissionReturnObjectAuthenticatedUser() {
         final CcmObject object2 = objectRepository.findById(20002L).get();
-        
+
         final UsernamePasswordToken token = new UsernamePasswordToken("jdoe",
                                                                       "foo123");
         token.setRememberMe(true);
         subject.login(token);
-        
+
         final CcmObject result = permissionChecker.checkPermission(
             "privilege2", object2, CcmObject.class);
         assertThat(result.getDisplayName(), is(equalTo("object2")));
         assertThat(permissionChecker.isAccessDeniedObject(result), is(false));
         assertThat(result, is(equalTo(object2)));
     }
-    
+
     @Test
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(3200)
     public void checkPermissionReturnObjectUnAuthenticatedUser() {
         final CcmObject object2 = objectRepository.findById(20002L).get();
-        
+
         final CcmObject result = permissionChecker.checkPermission(
             "privilege2", object2, CcmObject.class);
         assertThat(result.getDisplayName(), is(equalTo(ACCESS_DENIED)));
         assertThat(permissionChecker.isAccessDeniedObject(result), is(true));
         assertThat(result, is(not(equalTo(object2))));
     }
-    
+
     @Test
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(600)
     public void checkPermissionReturnObjectPublicUser() {
         final CcmObject object1 = objectRepository.findById(20001L).get();
-        
+
         final CcmObject result = permissionChecker.checkPermission(
             "privilege3", object1, CcmObject.class);
         assertThat(result.getDisplayName(), is(equalTo("object1")));
         assertThat(permissionChecker.isAccessDeniedObject(result), is(false));
         assertThat(result, is(equalTo(object1)));
     }
-    
+
     @Test
     @UsingDataSet("datasets/org/libreccm/security/ShiroTest/data.yml")
     @InSequence(3200)
@@ -372,48 +349,48 @@ public class PermissionCheckerTest {
         final CcmObject object1 = objectRepository.findById(20001L).get();
         final CcmObject object2 = objectRepository.findById(20002L).get();
         final CcmObject object3 = objectRepository.findById(20003L).get();
-        
+
         final List<CcmObject> results = shiro.getSystemUser().execute(
             new Callable<List<CcmObject>>() {
-            
+
             @Override
             public List<CcmObject> call() {
                 permissionChecker.checkPermission("privilege1");
                 permissionChecker.checkPermission("privilege2");
                 permissionChecker.checkPermission("privilege3");
-                
+
                 final CcmObject result3 = permissionChecker.checkPermission(
                     "privilege1", object3, CcmObject.class);
                 final CcmObject result1 = permissionChecker.checkPermission(
                     "privilege2", object1, CcmObject.class);
                 final CcmObject result2 = permissionChecker.checkPermission(
                     "privilege3", object2, CcmObject.class);
-                
+
                 final List<CcmObject> results = new ArrayList<>();
                 results.add(result1);
                 results.add(result2);
                 results.add(result3);
-                
+
                 return results;
             }
-            
+
         });
-        
+
         final CcmObject result1 = results.get(0);
         final CcmObject result2 = results.get(1);
         final CcmObject result3 = results.get(2);
-        
+
         assertThat(result1.getDisplayName(), is(equalTo("object1")));
         assertThat(permissionChecker.isAccessDeniedObject(result1), is(false));
         assertThat(result1, is(equalTo(object1)));
-        
+
         assertThat(result2.getDisplayName(), is(equalTo("object2")));
         assertThat(permissionChecker.isAccessDeniedObject(result2), is(false));
         assertThat(result2, is(equalTo(object2)));
-        
+
         assertThat(result3.getDisplayName(), is(equalTo("object3")));
         assertThat(permissionChecker.isAccessDeniedObject(result3), is(false));
         assertThat(result3, is(equalTo(object3)));
     }
-    
+
 }

@@ -38,9 +38,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.libreccm.tests.categories.IntegrationTest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,13 +49,12 @@ import static org.libreccm.testutils.DependenciesHelpers.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
-public class DependencyTreeManagerTest {
+public class DependencyTreeManagerIT {
 
     private Iterable<CcmModule> modules;
 
-    public DependencyTreeManagerTest() {
+    public DependencyTreeManagerIT() {
     }
 
     @BeforeClass
@@ -100,33 +97,7 @@ public class DependencyTreeManagerTest {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.modules.dependencytree.DependencyTreeManagerTest.war")
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
-            .addClass(org.libreccm.modules.DependencyTreeManager.class)
-            .addClass(org.libreccm.modules.DependencyException.class)
-            .addClass(org.libreccm.modules.IntegrationException.class)
-            .addClass(org.libreccm.modules.TreeNode.class)
-            .addClass(org.libreccm.modules.CcmModule.class)
-            .addClass(org.libreccm.modules.ModuleEvent.class)
-            .addClass(org.libreccm.modules.ModuleInfo.class)
-            .addClass(org.libreccm.modules.ModuleStatus.class)
-            .addClass(org.libreccm.modules.Module.class)
-            .addClass(org.libreccm.modules.RequiredModule.class)
-            .addClass(org.libreccm.modules.InitEvent.class)
-            .addClass(org.libreccm.modules.InstallEvent.class)
-            .addClass(org.libreccm.modules.ShutdownEvent.class)
-            .addClass(org.libreccm.modules.UnInstallEvent.class)
-            .addClass(
-                org.libreccm.modules.dependencytree.test.valid.TestModuleRoot.class)
-            .addClass(
-                org.libreccm.modules.dependencytree.test.valid.TestModuleA.class)
-            .addClass(
-                org.libreccm.modules.dependencytree.test.valid.TestModuleB.class)
-            .addClass(
-                org.libreccm.modules.dependencytree.test.valid.TestModuleC.class)
-//            .addClass(org.libreccm.portation.Portable.class)
-            .addPackage(org.libreccm.pagemodel.PageModel.class.getPackage())
-            .addClass(org.libreccm.web.ApplicationType.class)
+            .addPackages(true, "com.arsdigita", "org.libreccm")
             .addAsLibraries(getModuleDependencies())
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
             .addAsResource(

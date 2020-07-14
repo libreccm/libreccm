@@ -36,11 +36,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.CcmObjectRepository;
-import org.libreccm.tests.categories.IntegrationTest;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -55,6 +53,7 @@ import org.libreccm.categorization.CategorizationConstants;
 import org.libreccm.core.CoreConstants;
 
 import java.util.List;
+
 import org.jboss.arquillian.persistence.TestExecutionPhase;
 
 /**
@@ -63,7 +62,6 @@ import org.jboss.arquillian.persistence.TestExecutionPhase;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
@@ -72,7 +70,7 @@ import org.jboss.arquillian.persistence.TestExecutionPhase;
                "003_init_hibernate_sequence.sql"})
 @CleanupUsingScript(value = {"999_cleanup.sql"},
                     phase = TestExecutionPhase.BEFORE)
-public class PermissionManagerTest {
+public class PermissionManagerIT {
 
     @Inject
     private PermissionManager permissionManager;
@@ -89,7 +87,7 @@ public class PermissionManagerTest {
     @Inject
     private Shiro shiro;
 
-    public PermissionManagerTest() {
+    public PermissionManagerIT() {
     }
 
     @BeforeClass
@@ -112,29 +110,8 @@ public class PermissionManagerTest {
     public static WebArchive createDeployment() {
         return ShrinkWrap
             .create(WebArchive.class,
-                    "LibreCCM-org.libreccm.security.PermissionManagerTest.war").
-            addPackage(org.libreccm.categorization.Categorization.class
-                .getPackage())
-            .addPackage(org.libreccm.configuration.Configuration.class
-                .getPackage())
-            .addPackage(org.libreccm.core.CcmObject.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage()).
-            addPackage(org.libreccm.security.User.class.getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class
-                .getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(com.arsdigita.kernel.KernelConfig.class.getPackage())
-            .addPackage(com.arsdigita.kernel.security.SecurityConfig.class
-                .getPackage())
-            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addClass(org.libreccm.imexport.Exportable.class)
+                    "LibreCCM-org.libreccm.security.PermissionManagerTest.war")
+            .addPackages(true, "com.arsdigita", "org.libreccm")
             .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")

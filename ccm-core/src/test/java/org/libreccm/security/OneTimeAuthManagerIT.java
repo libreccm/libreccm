@@ -44,9 +44,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.libreccm.tests.categories.IntegrationTest;
 
 import java.util.List;
 
@@ -62,16 +60,15 @@ import org.jboss.arquillian.persistence.TestExecutionPhase;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
-@CreateSchema({"001_create_schema.sql", 
-               "002_create_ccm_core_tables.sql", 
+@CreateSchema({"001_create_schema.sql",
+               "002_create_ccm_core_tables.sql",
                "003_init_hibernate_sequence.sql"})
 @CleanupUsingScript(value = {"999_cleanup.sql"},
                     phase = TestExecutionPhase.BEFORE)
-public class OneTimeAuthManagerTest {
+public class OneTimeAuthManagerIT {
 
     @Inject
     private OneTimeAuthManager oneTimeAuthManager;
@@ -82,7 +79,7 @@ public class OneTimeAuthManagerTest {
     @Inject
     private Shiro shiro;
 
-    public OneTimeAuthManagerTest() {
+    public OneTimeAuthManagerIT() {
 
     }
 
@@ -107,29 +104,7 @@ public class OneTimeAuthManagerTest {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.security.OneTimeAuthManagerTest.war")
-            .addPackage(org.libreccm.security.OneTimeAuthManager.class
-                .getPackage())
-            .addPackage(org.libreccm.core.CcmObject.class.getPackage())
-            .addPackage(org.libreccm.categorization.Categorization.class
-                .getPackage())
-            .addPackage(org.libreccm.configuration.ConfigurationManager.class
-                .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                .getPackage())
-            .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class
-                .getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
-            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addClass(com.arsdigita.kernel.KernelConfig.class)
-            .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
-            .addClass(org.libreccm.imexport.Exportable.class)
+            .addPackages(true, "com.arsdigita", "org.libreccm")
             .addAsLibraries(getModuleDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("test-persistence.xml",
@@ -214,9 +189,9 @@ public class OneTimeAuthManagerTest {
 
         final List<OneTimeAuthToken> result = shiro.getSystemUser().execute(
             () -> {
-                return oneTimeAuthManager.retrieveForUser(
-                    jdoe, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
-            });
+            return oneTimeAuthManager.retrieveForUser(
+                jdoe, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
+        });
 
         assertThat(result, is(not(nullValue())));
         assertThat(result, is(not(empty())));
@@ -237,9 +212,9 @@ public class OneTimeAuthManagerTest {
 
         final List<OneTimeAuthToken> result = shiro.getSystemUser().execute(
             () -> {
-                return oneTimeAuthManager.retrieveForUser(
-                    mmuster, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
-            });
+            return oneTimeAuthManager.retrieveForUser(
+                mmuster, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
+        });
 
         assertThat(result, is(empty()));
     }
@@ -284,11 +259,11 @@ public class OneTimeAuthManagerTest {
 
         shiro.getSystemUser().execute(
             () -> {
-                assertThat(
-                    oneTimeAuthManager.validTokenExistsForUser(
-                        user, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION),
-                    is(true));
-            });
+            assertThat(
+                oneTimeAuthManager.validTokenExistsForUser(
+                    user, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION),
+                is(true));
+        });
     }
 
     @Test
@@ -300,11 +275,11 @@ public class OneTimeAuthManagerTest {
 
         shiro.getSystemUser().execute(
             () -> {
-                assertThat(
-                    oneTimeAuthManager.validTokenExistsForUser(
-                        user, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION),
-                    is(false));
-            });
+            assertThat(
+                oneTimeAuthManager.validTokenExistsForUser(
+                    user, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION),
+                is(false));
+        });
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -346,15 +321,15 @@ public class OneTimeAuthManagerTest {
 
         final List<OneTimeAuthToken> result = shiro.getSystemUser().execute(
             () -> {
-                return oneTimeAuthManager.retrieveForUser(
-                    jdoe, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
-            });
+            return oneTimeAuthManager.retrieveForUser(
+                jdoe, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
+        });
         assertThat(result, is(not(empty())));
         shiro.getSystemUser().execute(
             () -> {
-                assertThat(oneTimeAuthManager.isValid(result.get(0)),
-                           is(true));
-            });
+            assertThat(oneTimeAuthManager.isValid(result.get(0)),
+                       is(true));
+        });
     }
 
     @Test
@@ -366,9 +341,9 @@ public class OneTimeAuthManagerTest {
 
         final List<OneTimeAuthToken> result = shiro.getSystemUser().execute(
             () -> {
-                return oneTimeAuthManager.retrieveForUser(
-                    jdoe, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
-            });
+            return oneTimeAuthManager.retrieveForUser(
+                jdoe, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
+        });
 
         assertThat(result, is(not(empty())));
         final OneTimeAuthToken token = result.get(0);
@@ -379,8 +354,8 @@ public class OneTimeAuthManagerTest {
 
         shiro.getSystemUser().execute(
             () -> {
-                assertThat(oneTimeAuthManager.isValid(token), is(false));
-            });
+            assertThat(oneTimeAuthManager.isValid(token), is(false));
+        });
 
     }
 
@@ -410,9 +385,9 @@ public class OneTimeAuthManagerTest {
 
         final List<OneTimeAuthToken> result = shiro.getSystemUser().execute(
             () -> {
-                return oneTimeAuthManager.retrieveForUser(
-                    jdoe, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
-            });
+            return oneTimeAuthManager.retrieveForUser(
+                jdoe, OneTimeAuthTokenPurpose.EMAIL_VERIFICATION);
+        });
 
         assertThat(result, is(not(empty())));
         shiro.getSystemUser().execute(
