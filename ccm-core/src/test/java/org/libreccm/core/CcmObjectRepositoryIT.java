@@ -65,8 +65,8 @@ import org.jboss.arquillian.persistence.TestExecutionPhase;
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
-@CreateSchema({"001_create_schema.sql", 
-               "002_create_ccm_core_tables.sql", 
+@CreateSchema({"001_create_schema.sql",
+               "002_create_ccm_core_tables.sql",
                "003_init_hibernate_sequence.sql"})
 @CleanupUsingScript(value = {"999_cleanup.sql"},
                     phase = TestExecutionPhase.BEFORE)
@@ -100,38 +100,15 @@ public class CcmObjectRepositoryIT {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap
-            .create(WebArchive.class,
-                    "LibreCCM-org.libreccm.core.CcmObjectRepositoryTest.war")
-            .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
-            .addPackage(org.libreccm.categorization.Categorization.class
-                .getPackage())
-            .addPackage(org.libreccm.configuration.Configuration.class.
-                getPackage())
-            .addPackage(org.libreccm.core.CcmObject.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
-            .addClass(org.libreccm.modules.CcmModule.class)
-            .addClass(org.libreccm.modules.ModuleEvent.class)
-            .addClass(org.libreccm.modules.InitEvent.class)
-            .addClass(org.libreccm.modules.InstallEvent.class)
-            .addClass(org.libreccm.modules.UnInstallEvent.class)
-            .addClass(org.libreccm.modules.ShutdownEvent.class)
-            .addClass(org.libreccm.imexport.Exportable.class)
-            .addPackage(org.libreccm.security.PermissionChecker.class
-                .getPackage())
-            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class.
-                getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(com.arsdigita.kernel.security.SecurityConfig.class
-                .getPackage())
+            .create(
+                WebArchive.class,
+                "LibreCCM-org.libreccm.core.CcmObjectRepositoryTest.war"
+            )
+            .addPackages(true, "com.arsdigita", "org.libreccm")
             .addAsLibraries(getModuleDependencies())
-            .addAsResource("test-persistence.xml",
-                           "META-INF/persistence.xml")
+            .addAsResource(
+                "test-persistence.xml", "META-INF/persistence.xml"
+            )
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsWebInfResource("test-web.xml", "web.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
@@ -354,7 +331,8 @@ public class CcmObjectRepositoryIT {
     @Test(expected = NullPointerException.class)
     @ShouldThrowException(NullPointerException.class)
     @UsingDataSet("datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
-    @ShouldMatchDataSet("datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
+    @ShouldMatchDataSet(
+        "datasets/org/libreccm/core/CcmObjectRepositoryTest/data.yml")
     @InSequence(700)
     public void deleteNullValue() {
         ccmObjectRepository.delete(null);

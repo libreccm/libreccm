@@ -38,7 +38,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.UnexpectedErrorException;
@@ -213,26 +212,7 @@ public class GroupMembershipImportIT {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.imexport.GroupImportTest.war")
-            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addPackage(org.libreccm.core.CcmObject.class.getPackage())
-            .addPackage(org.libreccm.categorization.Categorization.class
-                .getPackage())
-            .addPackage(org.libreccm.configuration.Configuration.class
-                .getPackage())
-            .addPackage(org.libreccm.files.CcmFiles.class.getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
-            .addPackage(org.libreccm.imexport.Exportable.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                .getPackage())
-            .addPackage(org.libreccm.security.Group.class.getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class
-                .getPackage())
-            .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
-            .addClass(com.arsdigita.kernel.KernelConfig.class)
+            .addPackages(true, "com.arsdigita", "org.libreccm")
             .addAsLibraries(getModuleDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("imports", "imports")

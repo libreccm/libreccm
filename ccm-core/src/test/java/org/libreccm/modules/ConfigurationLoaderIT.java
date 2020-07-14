@@ -33,10 +33,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.configuration.ExampleConfiguration;
-import org.libreccm.tests.categories.IntegrationTest;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -51,7 +49,6 @@ import org.jboss.arquillian.persistence.TestExecutionPhase;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
@@ -60,12 +57,12 @@ import org.jboss.arquillian.persistence.TestExecutionPhase;
                "003_init_hibernate_sequence.sql"})
 @CleanupUsingScript(value = {"999_cleanup.sql"},
                     phase = TestExecutionPhase.BEFORE)
-public class ConfigurationLoaderTest {
+public class ConfigurationLoaderIT {
 
     @Inject
     private EntityManager entityManager;
 
-    public ConfigurationLoaderTest() {
+    public ConfigurationLoaderIT() {
     }
 
     @BeforeClass
@@ -89,19 +86,7 @@ public class ConfigurationLoaderTest {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.modules.ConfigurationLoaderTest.war")
-            .addPackage(org.libreccm.configuration.Configuration.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
-            .addClass(org.libreccm.modules.ConfigurationLoader.class)
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class.
-                getPackage())
-            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
+            .addPackages(true, "com.arsdigita", "org.libreccm")
             .addAsLibraries(getModuleDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")

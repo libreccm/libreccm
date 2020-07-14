@@ -68,8 +68,8 @@ import org.jboss.arquillian.persistence.TestExecutionPhase;
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
-@CreateSchema({"001_create_schema.sql", 
-               "002_create_ccm_core_tables.sql", 
+@CreateSchema({"001_create_schema.sql",
+               "002_create_ccm_core_tables.sql",
                "003_init_hibernate_sequence.sql"})
 @CleanupUsingScript(value = {"999_cleanup.sql"},
                     phase = TestExecutionPhase.BEFORE)
@@ -122,27 +122,9 @@ public class CategoryManagerIT {
     public static WebArchive createDeployment() {
         return ShrinkWrap
             .create(WebArchive.class,
-                    "LibreCCM-org.libreccm.categorization.CategoryManagerTest.war")
-            .addPackage(org.libreccm.categorization.Categorization.class
-                .getPackage())
-            .addPackage(org.libreccm.configuration.Configuration.class
-                .getPackage())
-            .addPackage(org.libreccm.core.CcmObject.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
-            .addPackage(org.libreccm.security.PermissionChecker.class
-                .getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class
-                .getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addClass(org.libreccm.imexport.Exportable.class)
-            .addClass(com.arsdigita.kernel.KernelConfig.class)
-            .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
+                    "LibreCCM-org.libreccm.categorization.CategoryManagerTest.war"
+            )
+            .addPackages(true, "com.arsdigita", "org.libreccm")
             .addAsLibraries(getModuleDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("test-persistence.xml",
@@ -393,8 +375,7 @@ public class CategoryManagerIT {
     @UsingDataSet("datasets/org/libreccm/categorization/CategoryManagerTest"
                       + "/data.yml")
     @ShouldMatchDataSet(
-        excludeColumns = {
-        },
+        excludeColumns = {},
         value = "datasets/org/libreccm/categorization/CategoryManagerTest"
                     + "/after-remove-obj-from-category.yml"
     )
@@ -747,7 +728,7 @@ public class CategoryManagerIT {
     /**
      * Tries to retrieve the index object from several categories and verifies
      * that the expected object is returned by null null null null null null
-     * null null     {@link CategoryManager#getIndexObject(org.libreccm.categorization.Category).
+     * null null null null null     {@link CategoryManager#getIndexObject(org.libreccm.categorization.Category).
      */
     @Test
     @UsingDataSet(

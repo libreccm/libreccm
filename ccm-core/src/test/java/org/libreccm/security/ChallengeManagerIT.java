@@ -36,9 +36,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.libreccm.tests.categories.IntegrationTest;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
@@ -56,7 +54,6 @@ import org.jboss.arquillian.persistence.TestExecutionPhase;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
@@ -65,7 +62,7 @@ import org.jboss.arquillian.persistence.TestExecutionPhase;
                "003_init_hibernate_sequence.sql"})
 @CleanupUsingScript(value = {"999_cleanup.sql"},
                     phase = TestExecutionPhase.BEFORE)
-public class ChallengeManagerTest {
+public class ChallengeManagerIT {
 
     @Inject
     private ChallengeManager challengeManager;
@@ -82,7 +79,7 @@ public class ChallengeManagerTest {
     @Inject
     private Shiro shiro;
 
-    public ChallengeManagerTest() {
+    public ChallengeManagerIT() {
     }
 
     @BeforeClass
@@ -106,36 +103,7 @@ public class ChallengeManagerTest {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.security.ChallengeManagerTest.war")
-            .addClass(com.arsdigita.runtime.CCMResourceManager.class)
-            .addPackage(com.arsdigita.util.Assert.class.getPackage())
-            .addClass(com.arsdigita.util.servlet.HttpHost.class)
-            .addPackage(com.arsdigita.web.URL.class.getPackage())
-            .addPackage(org.libreccm.security.OneTimeAuthManager.class
-                .getPackage())
-            .addPackage(org.libreccm.core.CcmObject.class.getPackage())
-            .addPackage(org.libreccm.categorization.Categorization.class
-                .getPackage())
-            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addPackage(
-                org.libreccm.configuration.ConfigurationManager.class
-                .getPackage())
-            .addClass(com.arsdigita.kernel.KernelConfig.class)
-            .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
-            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                .getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class
-                .getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
-            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addClass(com.arsdigita.kernel.KernelConfig.class)
-            .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
-            .addClass(org.libreccm.imexport.Exportable.class)
+            .addPackages(true, "com.arsdigita", "org.libreccm")
             .addAsLibraries(getModuleDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("test-persistence.xml",

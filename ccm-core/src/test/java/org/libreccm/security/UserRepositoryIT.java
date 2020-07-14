@@ -20,8 +20,6 @@ package org.libreccm.security;
 
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.*;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.junit.Arquillian;
@@ -44,10 +42,8 @@ import static org.libreccm.testutils.DependenciesHelpers.*;
 import org.jboss.arquillian.persistence.CleanupUsingScript;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.core.EmailAddress;
-import org.libreccm.tests.categories.IntegrationTest;
 
 import java.util.List;
 import java.util.Optional;
@@ -55,26 +51,34 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import org.jboss.arquillian.persistence.TestExecutionPhase;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
-@CreateSchema({"001_create_schema.sql", 
-               "002_create_ccm_core_tables.sql", 
+@CreateSchema({"001_create_schema.sql",
+               "002_create_ccm_core_tables.sql",
                "003_init_hibernate_sequence.sql"})
 @CleanupUsingScript(value = {"999_cleanup.sql"},
                     phase = TestExecutionPhase.BEFORE)
-public class UserRepositoryTest {
+public class UserRepositoryIT {
 
     private static final String NOBODY = "nobody";
+
     private static final String JOE = "joe";
+
     private static final String MMUSTER = "mmuster";
+
     private static final String JDOE = "jdoe";
 
     @Inject
@@ -86,7 +90,7 @@ public class UserRepositoryTest {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public UserRepositoryTest() {
+    public UserRepositoryIT() {
     }
 
     @BeforeClass
@@ -110,27 +114,7 @@ public class UserRepositoryTest {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.security.UserRepositoryTest.war")
-            .addPackage(org.libreccm.security.User.class.getPackage())
-            .addPackage(org.libreccm.core.CcmObject.class.getPackage())
-            .addPackage(org.libreccm.categorization.Categorization.class
-                .getPackage())
-            .addPackage(org.libreccm.configuration.Configuration.class
-                .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                .getPackage())
-            .addPackage(org.libreccm.testutils.EqualsVerifier.class
-                .getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
-            .addClass(com.arsdigita.kernel.security.SecurityConfig.class)
-            .addClass(com.arsdigita.kernel.KernelConfig.class)
-            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addClass(org.libreccm.imexport.Exportable.class)
+            .addPackages(true, "com.arsdigita", "org.libreccm")
             .addAsLibraries(getModuleDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource("test-persistence.xml",

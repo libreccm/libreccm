@@ -20,7 +20,7 @@ package org.libreccm.security.authorization;
 
 import org.apache.shiro.subject.Subject;
 import org.libreccm.core.CcmObject;
-import org.libreccm.security.AuthorizationInterceptorTest;
+import org.libreccm.security.AuthorizationInterceptorIT;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.security.RequiresRole;
@@ -32,7 +32,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 /**
- * A simple bean used by the {@link AuthorizationInterceptorTest}.
+ * A simple bean used by the {@link AuthorizationInterceptorIT}.
  * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
