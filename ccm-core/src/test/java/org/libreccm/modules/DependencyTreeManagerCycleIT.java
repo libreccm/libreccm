@@ -86,6 +86,7 @@ public class DependencyTreeManagerCycleIT {
                     "LibreCCM-org.libreccm.modules.dependencytree.DependencyTreeManagerCycleTest.war")
             .addPackages(true, "com.arsdigita", "org.libreccm")
             .addAsLibraries(getModuleDependencies())
+            .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
             .addAsResource(
                 "module-info/dependency-tree-manager-cycle-test/module-root.properties",
