@@ -413,6 +413,14 @@
                 <configuration>
                     <trimStackTrace>false</trimStackTrace>
                 </configuration>
+                <reportSets>
+                    <reportSet>
+                        <id>unit-tests</id>
+                        <reports>
+                            <report>report-only</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
             
             <plugin>
@@ -1062,6 +1070,23 @@
                     </plugin>
                 </plugins>
             </build>
+            
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-report-plugin</artifactId>
+                        <reportSets>
+                            <reportSet>
+                                <id>integration-tests</id>
+                                <reports>
+                                    <report>failsafe-report-only</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>
+                    </plugin>
+                </plugins>
+            </reporting>
             
         </profile>
                 
