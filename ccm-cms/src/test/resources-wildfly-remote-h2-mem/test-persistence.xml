@@ -27,6 +27,10 @@
             <property name="hibernate.id.new_generator_mappings" value="true"/>
             <property name="hibernate.connection.autocommit" value="false" />
             
+            <property name="wildfly.jpa.hibernate.search.module" 
+                      value="org.hibernate.search.orm:main" />
+
+
             <!-- 
                 Properties for Hibernate Envers 
                 We are using the ValidityAuditStrategy here because it is faster

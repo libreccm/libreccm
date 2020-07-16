@@ -21,22 +21,18 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.libreccm.tests.categories.IntegrationTest;
 
 import java.io.File;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-
-@Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema({"create_ccm-cms_schema.sql"})
-public class CmsTest {
+public class CmsIT {
 
     @PersistenceContext(name = "LibreCCM")
     private EntityManager entityManager;

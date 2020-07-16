@@ -18,7 +18,7 @@
  */
 package org.librecms.contentsection;
 
-import static org.libreccm.testutils.DependenciesHelpers.*;
+import static org.libreccm.testutils.DependenciesHelpers.getCcmCoreDependencies;
 
 import org.apache.shiro.subject.Subject;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -41,24 +41,25 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.libreccm.security.Shiro;
-import org.libreccm.tests.categories.IntegrationTest;
 
 import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
+
 import org.jboss.arquillian.persistence.CleanupUsingScript;
 import org.jboss.arquillian.persistence.TestExecutionPhase;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
 
 /**
  * Tests for the {@link AttachmentListManager}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@org.junit.experimental.categories.Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
@@ -75,7 +76,7 @@ import static org.junit.Assert.*;
     },
     phase = TestExecutionPhase.BEFORE
 )
-public class AttachmentListManagerTest {
+public class AttachmentListManagerIT {
 
     @Inject
     private ContentItemRepository itemRepo;
@@ -86,7 +87,7 @@ public class AttachmentListManagerTest {
     @Inject
     private Shiro shiro;
 
-    public AttachmentListManagerTest() {
+    public AttachmentListManagerIT() {
     }
 
     @BeforeClass
@@ -110,54 +111,7 @@ public class AttachmentListManagerTest {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.librecms.assets.AssetManagerTest.war")
-            .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
-            .addPackage(org.libreccm.categorization.Categorization.class
-                .getPackage())
-            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addPackage(org.libreccm.configuration.Configuration.class
-                .getPackage())
-            .addPackage(org.libreccm.core.CcmCore.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class
-                .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class
-                .getPackage())
-            .addPackage(org.libreccm.security.Permission.class.getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(com.arsdigita.bebop.Component.class.getPackage())
-            .addPackage(com.arsdigita.bebop.util.BebopConstants.class
-                .getPackage())
-            .addClass(com.arsdigita.kernel.KernelConfig.class)
-            .addClass(com.arsdigita.runtime.CCMResourceManager.class)
-            .addClass(com.arsdigita.dispatcher.RequestContext.class)
-            .addClass(com.arsdigita.dispatcher.AccessDeniedException.class)
-            .addClass(com.arsdigita.cms.dispatcher.ContentItemDispatcher.class)
-            .addClass(com.arsdigita.dispatcher.Dispatcher.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.AbstractAppInstanceForm.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.AbstractAppSettingsPane.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class)
-            .addClass(org.librecms.dispatcher.ItemResolver.class)
-            .addClass(org.libreccm.imexport.Exportable.class)
-            .addPackage(com.arsdigita.util.Lockable.class.getPackage())
-            .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
-            .addPackage(org.librecms.Cms.class.getPackage())
-            .addPackage(org.librecms.assets.BinaryAsset.class.getPackage())
-            .addPackage(org.librecms.contentsection.Asset.class.getPackage())
-            .addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
-            .addPackage(org.librecms.contentsection.ContentSection.class
-                .getPackage())
-            .addPackage(org.librecms.contenttypes.Article.class.getPackage()).
-            addClass(com.arsdigita.kernel.security.SecurityConfig.class)
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
-            //            .addAsLibraries(getModuleDependencies())
+            .addPackages(true, "com.arsdigita", "org.libreccm", "org.librecms")
             .addAsLibraries(getCcmCoreDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource(
@@ -373,8 +327,8 @@ public class AttachmentListManagerTest {
             + "data.xml")
     @ShouldMatchDataSet(
         value
-            = "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
-                  + "after-create.xml",
+        = "datasets/org/librecms/contentsection/AttachmentListManagerTest/"
+              + "after-create.xml",
         excludeColumns = {"timestamp",
                           "object_id",
                           "list_id",

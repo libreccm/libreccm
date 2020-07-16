@@ -19,6 +19,8 @@ package org.librecms.contentsection;
 
 import com.arsdigita.kernel.KernelConfig;
 
+import static org.libreccm.testutils.DependenciesHelpers.getCcmCoreDependencies;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -36,22 +38,15 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
-import org.libreccm.tests.categories.IntegrationTest;
 
 import java.util.Locale;
 
 import javax.inject.Inject;
-
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-
-import static org.libreccm.testutils.DependenciesHelpers.*;
 
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
 import org.jboss.arquillian.persistence.CleanupUsingScript;
@@ -65,12 +60,16 @@ import org.librecms.contenttypes.News;
 import org.librecms.lifecycle.LifecycleDefinition;
 import org.librecms.lifecycle.LifecycleDefinitionRepository;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
+
 /**
  * Tests for the {@link ContentSectionManager}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
@@ -87,7 +86,7 @@ import org.librecms.lifecycle.LifecycleDefinitionRepository;
     },
     phase = TestExecutionPhase.BEFORE
 )
-public class ContentSectionManagerTest {
+public class ContentSectionManagerIT {
 
     @Inject
     private ContentSectionRepository repository;
@@ -113,7 +112,7 @@ public class ContentSectionManagerTest {
     @Inject
     private WorkflowRepository workflowRepo;
 
-    public ContentSectionManagerTest() {
+    public ContentSectionManagerIT() {
     }
 
     @BeforeClass
@@ -137,55 +136,7 @@ public class ContentSectionManagerTest {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.libreccm.cms.contentsection.ContentSectionManagerTest.war")
-            .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
-            .addPackage(org.libreccm.categorization.Categorization.class
-                .getPackage())
-            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addPackage(org.libreccm.configuration.Configuration.class
-                .getPackage())
-            .addPackage(org.libreccm.core.CcmCore.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class
-                .getPackage())
-            .addPackage(org.libreccm.jpa.utils.MimeTypeConverter.class.
-                getPackage())
-            .addPackage(org.libreccm.security.Permission.class.getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(com.arsdigita.bebop.Component.class.getPackage())
-            .addPackage(com.arsdigita.bebop.util.BebopConstants.class
-                .getPackage())
-            .addClass(com.arsdigita.kernel.KernelConfig.class)
-            .addClass(com.arsdigita.runtime.CCMResourceManager.class)
-            .addClass(com.arsdigita.dispatcher.RequestContext.class)
-            .addClass(com.arsdigita.dispatcher.AccessDeniedException.class)
-            .addClass(com.arsdigita.cms.dispatcher.ContentItemDispatcher.class)
-            .addClass(com.arsdigita.dispatcher.Dispatcher.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.AbstractAppInstanceForm.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.AbstractAppSettingsPane.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm.class)
-            .addClass(
-                com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane.class)
-            .addClass(org.libreccm.modules.Module.class)
-            .addClass(org.libreccm.modules.RequiredModule.class)
-            .addClass(org.libreccm.imexport.Exportable.class)
-            .addPackage(org.librecms.dispatcher.ItemResolver.class.getPackage())
-            .addPackage(com.arsdigita.util.Lockable.class.getPackage())
-            .addPackage(com.arsdigita.web.BaseServlet.class.getPackage())
-            .addPackage(org.librecms.Cms.class.getPackage())
-            .addPackage(org.librecms.contentsection.Asset.class.getPackage())
-            .addPackage(org.librecms.contentsection.AttachmentList.class
-                .getPackage())
-            .addPackage(org.librecms.lifecycle.Lifecycle.class.getPackage())
-            .addPackage(ContentSection.class.getPackage())
-            .addPackage(org.librecms.contenttypes.Article.class.getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
-            //.addAsLibraries(getModuleDependencies())
+            .addPackages(true, "com.arsdigita", "org.libreccm", "org.librecms")
             .addAsLibraries(getCcmCoreDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
