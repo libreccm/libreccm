@@ -946,7 +946,7 @@
         </profile>
         
         <profile>
-            <id>test-with-wildfly-h2mem</id>
+            <id>run-its-with-wildfly-h2mem</id>
             <dependencies>
                 <dependency>
                     <groupId>org.wildfly.arquillian</groupId>
@@ -1090,7 +1090,7 @@
         </profile>
         
         <profile>
-            <id>test-with-wildfly-pgsql</id>
+            <id>run-its-with-wildfly-pgsql</id>
             <dependencies>
                 <dependency>
                     <groupId>org.wildfly.arquillian</groupId>
@@ -1119,7 +1119,6 @@
                     <testResource>
                         <directory>${project.build.directory}/generated-resources</directory>
                     </testResource>
-                    
                 </testResources>
                 
                 <plugins>
