@@ -53,13 +53,21 @@ public class DatasetsTest extends DatasetsVerifier {
     }
 
     @Override
+    public DatasetType getDatasetType() {
+        return DatasetType.FLAT_XML;
+    }
+
+    @Override
     public String[] getSchemas() {
         return new String[]{"ccm_core", "ccm_shortcuts"};
     }
 
     @Override
-    public DatasetType getDatasetType() {
-        return DatasetType.FLAT_XML;
+    public String[] getDdlFiles() {
+        return new String[]{
+            "/scripts/datasets-test/001_create_schema.sql",
+            "/scripts/datasets-test/002_create_ccm_shortcuts_tables.sql",
+            "/scripts/datasets-test/003_init_hibernate_sequence.sql",};
     }
 
     @BeforeClass

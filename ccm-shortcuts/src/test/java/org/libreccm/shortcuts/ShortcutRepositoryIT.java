@@ -18,7 +18,7 @@
  */
 package org.libreccm.shortcuts;
 
-import static org.libreccm.testutils.DependenciesHelpers.*;
+import static org.libreccm.testutils.DependenciesHelpers.getCcmCoreDependencies;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -26,6 +26,7 @@ import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.persistence.CleanupUsingScript;
 import org.jboss.arquillian.persistence.CreateSchema;
 import org.jboss.arquillian.persistence.PersistenceTest;
+import org.jboss.arquillian.persistence.TestExecutionPhase;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
@@ -38,7 +39,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.libreccm.tests.categories.IntegrationTest;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,31 +46,40 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import org.jboss.arquillian.persistence.TestExecutionPhase;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@org.junit.experimental.categories.Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
-@CreateSchema({"create_ccm_shortcuts_schema.sql"})
-@CleanupUsingScript(value = {"cleanup.sql"},
-                    phase = TestExecutionPhase.BEFORE)
-public class ShortcutRepositoryTest {
+@CreateSchema(
+    {
+        "001_create_schema.sql",
+        "002_create_ccm_shortcuts_tables.sql",
+        "003_init_hibernate_sequence.sql"
+    }
+)
+@CleanupUsingScript(
+    value = {"999_cleanup.sql"},
+    phase = TestExecutionPhase.BEFORE
+)
+public class ShortcutRepositoryIT {
 
     @Inject
     private ShortcutRepository shortcutRepository;
 
-    @PersistenceContext
+    @PersistenceContext(name = "LibreCCM")
     private EntityManager entityManager;
 
-    public ShortcutRepositoryTest() {
+    public ShortcutRepositoryIT() {
     }
 
     @BeforeClass
@@ -91,31 +100,17 @@ public class ShortcutRepositoryTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        return ShrinkWrap.create(
-            WebArchive.class,
-            "LibreCCM-org.libreccm.shortcuts.ShortcutRepositoryTest-web.war")
-            .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
-            .addPackage(org.libreccm.categorization.Categorization.class
-                .getPackage())
-            .addPackage(org.libreccm.configuration.Configuration.class
-                .getPackage())
-            .addPackage(org.libreccm.core.CcmCore.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class
-                .getPackage())
-            .addPackage(org.libreccm.security.Permission.class.getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
-            .addClass(org.libreccm.imexport.Exportable.class)
-            .addClass(org.libreccm.shortcuts.Shortcut.class)
-            .addClass(org.libreccm.shortcuts.ShortcutRepository.class)
-            .addAsLibraries(getModuleDependencies())
+        return ShrinkWrap
+            .create(
+                WebArchive.class,
+                "LibreCCM-org.libreccm.shortcuts.ShortcutRepositoryTest-web.war"
+            )
+            .addPackages(true, "com.arsdigita", "org.libreccm")
+            //.addAsLibraries(getModuleDependencies())
             .addAsLibraries(getCcmCoreDependencies())
-            .addAsResource("test-persistence.xml",
-                           "META-INF/persistence.xml")
+            .addAsResource(
+                "test-persistence.xml", "META-INF/persistence.xml"
+            )
             .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }

@@ -60,7 +60,6 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -117,7 +116,7 @@ public class ContentItemRepositoryIT {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.librecms.contentsection.ContentItemRepositoryTest.war")
-     .addPackages(true, "com.arsdigita", "org.libreccm", "org.librecms")
+            .addPackages(true, "com.arsdigita", "org.libreccm", "org.librecms")
             .addAsLibraries(getCcmCoreDependencies())
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")

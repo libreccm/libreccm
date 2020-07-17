@@ -1,58 +1,48 @@
-DROP SCHEMA IF EXISTS ccm_shortcuts CASCADE;
-DROP SCHEMA IF EXISTS ccm_core CASCADE;
-
-DROP SEQUENCE IF EXISTS hibernate_sequence;
-
-
-    create schema CCM_CORE;
-
-    create schema CCM_SHORTCUTS;
-
 
     create table CCM_CORE.APPLICATIONS (
        APPLICATION_TYPE varchar(1024) not null,
         PRIMARY_URL varchar(1024) not null,
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.ATTACHMENTS (
-       ATTACHMENT_ID int8 not null,
-        ATTACHMENT_DATA oid,
+       ATTACHMENT_ID bigint not null,
+        ATTACHMENT_DATA blob,
         DESCRIPTION varchar(255),
         MIME_TYPE varchar(255),
         TITLE varchar(255),
-        MESSAGE_ID int8,
+        MESSAGE_ID bigint,
         primary key (ATTACHMENT_ID)
     );
 
     create table CCM_CORE.CATEGORIES (
        ABSTRACT_CATEGORY boolean,
-        CATEGORY_ORDER int8,
+        CATEGORY_ORDER bigint,
         ENABLED boolean,
         NAME varchar(255) not null,
         UNIQUE_ID varchar(255),
         VISIBLE boolean,
-        OBJECT_ID int8 not null,
-        PARENT_CATEGORY_ID int8,
+        OBJECT_ID bigint not null,
+        PARENT_CATEGORY_ID bigint,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.CATEGORIZATIONS (
-       CATEGORIZATION_ID int8 not null,
-        CATEGORY_ORDER int8,
+       CATEGORIZATION_ID bigint not null,
+        CATEGORY_ORDER bigint,
         CATEGORY_INDEX boolean,
-        OBJECT_ORDER int8,
+        OBJECT_ORDER bigint,
         TYPE varchar(255),
         UUID varchar(255) not null,
-        OBJECT_ID int8,
-        CATEGORY_ID int8,
+        OBJECT_ID bigint,
+        CATEGORY_ID bigint,
         primary key (CATEGORIZATION_ID)
     );
 
     create table CCM_CORE.CATEGORY_DESCRIPTIONS (
-       OBJECT_ID int8 not null,
-        LOCALIZED_VALUE text,
+       OBJECT_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
@@ -62,87 +52,87 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
         RELEASED timestamp,
         URI varchar(1024),
         VERSION varchar(255),
-        OBJECT_ID int8 not null,
-        ROOT_CATEGORY_ID int8,
+        OBJECT_ID bigint not null,
+        ROOT_CATEGORY_ID bigint,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.CATEGORY_TITLES (
-       OBJECT_ID int8 not null,
-        LOCALIZED_VALUE text,
+       OBJECT_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CORE.CCM_OBJECTS (
-       OBJECT_ID int8 not null,
+       OBJECT_ID bigint not null,
         DISPLAY_NAME varchar(255),
         UUID varchar(255),
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.CCM_OBJECTS_AUD (
-       OBJECT_ID int8 not null,
-        REV int4 not null,
-        REVTYPE int2,
+       OBJECT_ID bigint not null,
+        REV integer not null,
+        REVTYPE tinyint,
         DISPLAY_NAME varchar(255),
         primary key (OBJECT_ID, REV)
     );
 
     create table CCM_CORE.CCM_REVISIONS (
-       id int4 not null,
-        timestamp int8 not null,
+       id integer not null,
+        timestamp bigint not null,
         USER_NAME varchar(255),
         primary key (id)
     );
 
     create table CCM_CORE.CCM_ROLES (
-       ROLE_ID int8 not null,
+       ROLE_ID bigint not null,
         NAME varchar(512) not null,
         UUID varchar(255) not null,
         primary key (ROLE_ID)
     );
 
     create table CCM_CORE.DIGESTS (
-       FREQUENCY int4,
+       FREQUENCY integer,
         HEADER varchar(4096) not null,
         NEXT_RUN timestamp,
         DIGEST_SEPARATOR varchar(128) not null,
         SIGNATURE varchar(4096) not null,
         SUBJECT varchar(255) not null,
-        OBJECT_ID int8 not null,
-        FROM_PARTY_ID int8,
+        OBJECT_ID bigint not null,
+        FROM_PARTY_ID bigint,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.DOMAIN_DESCRIPTIONS (
-       OBJECT_ID int8 not null,
-        LOCALIZED_VALUE text,
+       OBJECT_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CORE.DOMAIN_OWNERSHIPS (
-       OWNERSHIP_ID int8 not null,
+       OWNERSHIP_ID bigint not null,
         CONTEXT varchar(255),
-        DOMAIN_ORDER int8,
-        OWNER_ORDER int8,
+        DOMAIN_ORDER bigint,
+        OWNER_ORDER bigint,
         UUID varchar(255) not null,
-        domain_OBJECT_ID int8 not null,
-        owner_OBJECT_ID int8 not null,
+        domain_OBJECT_ID bigint not null,
+        owner_OBJECT_ID bigint not null,
         primary key (OWNERSHIP_ID)
     );
 
     create table CCM_CORE.DOMAIN_TITLES (
-       OBJECT_ID int8 not null,
-        LOCALIZED_VALUE text,
+       OBJECT_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_COMPONENT_DESCRIPTIONS (
-       COMPONENT_ID int8 not null,
-        LOCALIZED_VALUE text,
+       COMPONENT_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (COMPONENT_ID, LOCALE)
     );
@@ -151,65 +141,65 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
        ACTIVE boolean,
         ADMIN_NAME varchar(255),
         ATTRIBUTE_STRING varchar(255),
-        COMPONENT_ORDER int8,
+        COMPONENT_ORDER bigint,
         SELECTED boolean,
-        OBJECT_ID int8 not null,
-        parentComponent_OBJECT_ID int8,
+        OBJECT_ID bigint not null,
+        parentComponent_OBJECT_ID bigint,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_CONFIRM_EMAIL_LISTENER (
-       BODY text,
+       BODY clob,
         FROM_EMAIL varchar(255),
         SUBJECT varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_CONFIRM_REDIRECT_LISTENERS (
        URL varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_DATA_DRIVEN_SELECTS (
        MULTIPLE boolean,
         QUERY varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_DATA_QUERIES (
        QUERY_ID varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_DATA_QUERY_DESCRIPTIONS (
-       DATA_QUERY_ID int8 not null,
-        LOCALIZED_VALUE text,
+       DATA_QUERY_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (DATA_QUERY_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_DATA_QUERY_NAMES (
-       DATA_QUERY_ID int8 not null,
-        LOCALIZED_VALUE text,
+       DATA_QUERY_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (DATA_QUERY_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_FORMSECTIONS (
        FORMSECTION_ACTION varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_LISTENERS (
        ATTRIBUTE_STRING varchar(255),
         CLASS_NAME varchar(255),
-        OBJECT_ID int8 not null,
-        widget_OBJECT_ID int8,
+        OBJECT_ID bigint not null,
+        widget_OBJECT_ID bigint,
         primary key (OBJECT_ID)
     );
 
@@ -218,70 +208,70 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
         PRETTY_NAME varchar(255),
         PRETTY_PLURAL varchar(255),
         PROPERTIES_FORM varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_OBJECT_TYPES (
        APP_NAME varchar(255),
         CLASS_NAME varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_OPTION_LABELS (
-       OPTION_ID int8 not null,
-        LOCALIZED_VALUE text,
+       OPTION_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (OPTION_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_OPTIONS (
        PARAMETER_VALUE varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_PROCESS_LISTENER_DESCRIPTIONS (
-       PROCESS_LISTENER_ID int8 not null,
-        LOCALIZED_VALUE text,
+       PROCESS_LISTENER_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (PROCESS_LISTENER_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_PROCESS_LISTENER_NAMES (
-       PROCESS_LISTENER_ID int8 not null,
-        LOCALIZED_VALUE text,
+       PROCESS_LISTENER_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (PROCESS_LISTENER_ID, LOCALE)
     );
 
     create table CCM_CORE.FORMBUILDER_PROCESS_LISTENERS (
        LISTENER_CLASS varchar(255),
-        PROCESS_LISTENER_ORDER int8,
-        OBJECT_ID int8 not null,
-        formSection_OBJECT_ID int8,
+        PROCESS_LISTENER_ORDER bigint,
+        OBJECT_ID bigint not null,
+        formSection_OBJECT_ID bigint,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_REMOTE_SERVER_POST_LISTENER (
        REMOTE_URL varchar(2048),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_SIMPLE_EMAIL_LISTENERS (
        RECIPIENT varchar(255),
         SUBJECT varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_TEMPLATE_EMAIL_LISTENERS (
-       BODY text,
+       BODY clob,
         RECIPIENT varchar(255),
         SUBJECT varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
@@ -289,58 +279,58 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
        DEFAULT_VALUE varchar(255),
         PARAMETER_MODEL varchar(255),
         PARAMETER_NAME varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.FORMBUILDER_XML_EMAIL_LISTENERS (
        RECIPIENT varchar(255),
         SUBJECT varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.GROUP_MEMBERSHIPS (
-       MEMBERSHIP_ID int8 not null,
+       MEMBERSHIP_ID bigint not null,
         UUID varchar(255) not null,
-        GROUP_ID int8,
-        MEMBER_ID int8,
+        GROUP_ID bigint,
+        MEMBER_ID bigint,
         primary key (MEMBERSHIP_ID)
     );
 
     create table CCM_CORE.GROUPS (
-       PARTY_ID int8 not null,
+       PARTY_ID bigint not null,
         primary key (PARTY_ID)
     );
 
     create table CCM_CORE.HOSTS (
-       HOST_ID int8 not null,
+       HOST_ID bigint not null,
         SERVER_NAME varchar(512),
-        SERVER_PORT int8,
+        SERVER_PORT bigint,
         primary key (HOST_ID)
     );
 
     create table CCM_CORE.INITS (
-       INITIALIZER_ID int8 not null,
+       INITIALIZER_ID bigint not null,
         CLASS_NAME varchar(255),
-        REQUIRED_BY_ID int8,
+        REQUIRED_BY_ID bigint,
         primary key (INITIALIZER_ID)
     );
 
     create table CCM_CORE.INSTALLED_MODULES (
-       MODULE_ID int4 not null,
+       MODULE_ID integer not null,
         MODULE_CLASS_NAME varchar(2048),
         STATUS varchar(255),
         primary key (MODULE_ID)
     );
 
     create table CCM_CORE.LUCENE_DOCUMENTS (
-       DOCUMENT_ID int8 not null,
-        CONTENT text,
+       DOCUMENT_ID bigint not null,
+        CONTENT clob,
         CONTENT_SECTION varchar(512),
         COUNTRY varchar(8),
         CREATED timestamp,
-        DIRTY int8,
+        DIRTY bigint,
         DOCUMENT_LANGUAGE varchar(8),
         LAST_MODIFIED timestamp,
         SUMMARY varchar(4096),
@@ -348,15 +338,15 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
         TITLE varchar(4096),
         TYPE varchar(255),
         TYPE_SPECIFIC_INFO varchar(512),
-        CREATED_BY_PARTY_ID int8,
-        LAST_MODIFIED_BY int8,
+        CREATED_BY_PARTY_ID bigint,
+        LAST_MODIFIED_BY bigint,
         primary key (DOCUMENT_ID)
     );
 
     create table CCM_CORE.LUCENE_INDEXES (
-       INDEX_ID int8 not null,
-        LUCENE_INDEX_ID int8,
-        HOST_ID int8,
+       INDEX_ID bigint not null,
+        LUCENE_INDEX_ID bigint,
+        HOST_ID bigint,
         primary key (INDEX_ID)
     );
 
@@ -365,9 +355,9 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
         BODY_MIME_TYPE varchar(255),
         SENT timestamp,
         SUBJECT varchar(255),
-        OBJECT_ID int8 not null,
-        IN_REPLY_TO_ID int8,
-        SENDER_ID int8,
+        OBJECT_ID bigint not null,
+        IN_REPLY_TO_ID bigint,
+        SENDER_ID bigint,
         primary key (OBJECT_ID)
     );
 
@@ -377,144 +367,144 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
         EXPUNGE_MESSAGE boolean,
         FULFILL_DATE timestamp,
         HEADER varchar(4096),
-        MAX_RETRIES int8,
+        MAX_RETRIES bigint,
         REQUEST_DATE timestamp,
         SIGNATURE varchar(4096),
         STATUS varchar(32),
-        OBJECT_ID int8 not null,
-        DIGEST_ID int8,
-        MESSAGE_ID int8,
-        RECEIVER_ID int8,
+        OBJECT_ID bigint not null,
+        DIGEST_ID bigint,
+        MESSAGE_ID bigint,
+        RECEIVER_ID bigint,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.ONE_TIME_AUTH_TOKENS (
-       TOKEN_ID int8 not null,
+       TOKEN_ID bigint not null,
         PURPOSE varchar(255),
         TOKEN varchar(255),
         VALID_UNTIL timestamp,
-        USER_ID int8,
+        USER_ID bigint,
         primary key (TOKEN_ID)
     );
 
     create table CCM_CORE.PAGE_MODEL_COMPONENT_MODELS (
-       COMPONENT_MODEL_ID int8 not null,
+       COMPONENT_MODEL_ID bigint not null,
         CLASS_ATTRIBUTE varchar(512),
         ID_ATTRIBUTE varchar(255),
         COMPONENT_KEY varchar(255),
         MODEL_UUID varchar(255) not null,
         STYLE_ATTRIBUTE varchar(1024),
         UUID varchar(255) not null,
-        CONTAINER_ID int8,
+        CONTAINER_ID bigint,
         primary key (COMPONENT_MODEL_ID)
     );
 
     create table CCM_CORE.PAGE_MODEL_CONTAINER_MODELS (
-       CONTAINER_ID int8 not null,
+       CONTAINER_ID bigint not null,
         CONTAINER_UUID varchar(255) not null,
         CONTAINER_KEY varchar(255),
         UUID varchar(255) not null,
-        PAGE_MODEL_ID int8,
-        STYLE_ID int8,
+        PAGE_MODEL_ID bigint,
+        STYLE_ID bigint,
         primary key (CONTAINER_ID)
     );
 
     create table CCM_CORE.PAGE_MODEL_DESCRIPTIONS (
-       PAGE_MODEL_ID int8 not null,
-        LOCALIZED_VALUE text,
+       PAGE_MODEL_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (PAGE_MODEL_ID, LOCALE)
     );
 
     create table CCM_CORE.PAGE_MODEL_TITLES (
-       PAGE_MODEL_ID int8 not null,
-        LOCALIZED_VALUE text,
+       PAGE_MODEL_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (PAGE_MODEL_ID, LOCALE)
     );
 
     create table CCM_CORE.PAGE_MODELS (
-       PAGE_MODEL_ID int8 not null,
+       PAGE_MODEL_ID bigint not null,
         LAST_MODIFIED timestamp,
         MODEL_UUID varchar(255) not null,
         NAME varchar(255),
         TYPE varchar(255) not null,
         UUID varchar(255) not null,
         VERSION varchar(255) not null,
-        APPLICATION_ID int8,
+        APPLICATION_ID bigint,
         primary key (PAGE_MODEL_ID)
     );
 
     create table CCM_CORE.PARTIES (
-       PARTY_ID int8 not null,
+       PARTY_ID bigint not null,
         NAME varchar(256) not null,
         UUID varchar(255) not null,
         primary key (PARTY_ID)
     );
 
     create table CCM_CORE.PERMISSIONS (
-       PERMISSION_ID int8 not null,
+       PERMISSION_ID bigint not null,
         CREATION_DATE timestamp,
         CREATION_IP varchar(255),
         GRANTED_PRIVILEGE varchar(255),
         INHERITED boolean,
         UUID varchar(255) not null,
-        CREATION_USER_ID int8,
-        GRANTEE_ID int8,
-        INHERITED_FROM_ID int8,
-        OBJECT_ID int8,
+        CREATION_USER_ID bigint,
+        GRANTEE_ID bigint,
+        INHERITED_FROM_ID bigint,
+        OBJECT_ID bigint,
         primary key (PERMISSION_ID)
     );
 
     create table CCM_CORE.PORTALS (
        TEMPLATE boolean,
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.PORTLETS (
-       CELL_NUMBER int8,
-        SORT_KEY int8,
-        OBJECT_ID int8 not null,
-        PORTAL_ID int8,
+       CELL_NUMBER bigint,
+        SORT_KEY bigint,
+        OBJECT_ID bigint not null,
+        PORTAL_ID bigint,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.QUEUE_ITEMS (
-       QUEUE_ITEM_ID int8 not null,
+       QUEUE_ITEM_ID bigint not null,
         HEADER varchar(4096),
         RECEIVER_ADDRESS varchar(512),
-        RETRY_COUNT int8,
+        RETRY_COUNT bigint,
         SIGNATURE varchar(4096),
         SUCCESSFUL_SENDED boolean,
-        MESSAGE_ID int8,
-        RECEIVER_ID int8,
+        MESSAGE_ID bigint,
+        RECEIVER_ID bigint,
         primary key (QUEUE_ITEM_ID)
     );
 
     create table CCM_CORE.RESOURCE_DESCRIPTIONS (
-       OBJECT_ID int8 not null,
-        LOCALIZED_VALUE text,
+       OBJECT_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CORE.RESOURCE_TITLES (
-       OBJECT_ID int8 not null,
-        LOCALIZED_VALUE text,
+       OBJECT_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (OBJECT_ID, LOCALE)
     );
 
     create table CCM_CORE.RESOURCE_TYPE_DESCRIPTIONS (
-       RESOURCE_TYPE_ID int8 not null,
-        LOCALIZED_VALUE text,
+       RESOURCE_TYPE_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (RESOURCE_TYPE_ID, LOCALE)
     );
 
     create table CCM_CORE.RESOURCE_TYPES (
-       RESOURCE_TYPE_ID int8 not null,
+       RESOURCE_TYPE_ID bigint not null,
         SINGLETON boolean,
         TITLE varchar(254) not null,
         UUID varchar(255) not null,
@@ -526,60 +516,60 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
 
     create table CCM_CORE.RESOURCES (
        CREATED timestamp,
-        OBJECT_ID int8 not null,
-        parent_OBJECT_ID int8,
-        resourceType_RESOURCE_TYPE_ID int8,
+        OBJECT_ID bigint not null,
+        parent_OBJECT_ID bigint,
+        resourceType_RESOURCE_TYPE_ID bigint,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.ROLE_DESCRIPTIONS (
-       ROLE_ID int8 not null,
-        LOCALIZED_VALUE text,
+       ROLE_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (ROLE_ID, LOCALE)
     );
 
     create table CCM_CORE.ROLE_MEMBERSHIPS (
-       MEMBERSHIP_ID int8 not null,
+       MEMBERSHIP_ID bigint not null,
         UUID varchar(255) not null,
-        MEMBER_ID int8,
-        ROLE_ID int8,
+        MEMBER_ID bigint,
+        ROLE_ID bigint,
         primary key (MEMBERSHIP_ID)
     );
 
     create table CCM_CORE.SETTINGS (
        DTYPE varchar(31) not null,
-        SETTING_ID int8 not null,
+        SETTING_ID bigint not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
-        SETTING_VALUE_DOUBLE float8,
-        SETTING_VALUE_LONG int8,
-        SETTING_VALUE_BIG_DECIMAL numeric(19, 2),
-        SETTING_VALUE_STRING varchar(1024),
         SETTING_VALUE_BOOLEAN boolean,
+        SETTING_VALUE_STRING varchar(1024),
+        SETTING_VALUE_DOUBLE double,
+        SETTING_VALUE_LONG bigint,
+        SETTING_VALUE_BIG_DECIMAL decimal(19,2),
         primary key (SETTING_ID)
     );
 
     create table CCM_CORE.SETTINGS_ENUM_VALUES (
-       ENUM_ID int8 not null,
+       ENUM_ID bigint not null,
         value varchar(255)
     );
 
     create table CCM_CORE.SETTINGS_L10N_STR_VALUES (
-       ENTRY_ID int8 not null,
-        LOCALIZED_VALUE text,
+       ENTRY_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (ENTRY_ID, LOCALE)
     );
 
     create table CCM_CORE.SETTINGS_STRING_LIST (
-       LIST_ID int8 not null,
+       LIST_ID bigint not null,
         value varchar(255)
     );
 
     create table CCM_CORE.SITE_AWARE_APPLICATIONS (
-       OBJECT_ID int8 not null,
-        SITE_ID int8,
+       OBJECT_ID bigint not null,
+        SITE_ID bigint,
         primary key (OBJECT_ID)
     );
 
@@ -587,91 +577,91 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
        DEFAULT_SITE boolean,
         DEFAULT_THEME varchar(255),
         DOMAIN_OF_SITE varchar(255),
-        OBJECT_ID int8 not null,
+        OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.STYLE_MEDIA_QUERIES (
-       MEDIA_QUERY_ID int8 not null,
+       MEDIA_QUERY_ID bigint not null,
         MAX_WIDTH_UNIT varchar(255),
-        MAX_WIDTH_VALUE float8,
+        MAX_WIDTH_VALUE double,
         MEDIA_TYPE varchar(255),
         MIN_WIDTH_UNIT varchar(255),
-        MIN_WIDTH_VALUE float8,
+        MIN_WIDTH_VALUE double,
         primary key (MEDIA_QUERY_ID)
     );
 
     create table CCM_CORE.STYLE_MEDIA_RULES (
-       MEDIA_RULE_ID int8 not null,
-        MEDIA_QUERY_ID int8,
-        STYLE_ID int8,
+       MEDIA_RULE_ID bigint not null,
+        MEDIA_QUERY_ID bigint,
+        STYLE_ID bigint,
         primary key (MEDIA_RULE_ID)
     );
 
     create table CCM_CORE.STYLE_PROPERTIES (
-       PROPERTY_ID int8 not null,
+       PROPERTY_ID bigint not null,
         NAME varchar(256),
         PROPERTY_VALUE varchar(4096),
-        RULE_ID int8,
+        RULE_ID bigint,
         primary key (PROPERTY_ID)
     );
 
     create table CCM_CORE.STYLE_RULES (
-       RULE_ID int8 not null,
+       RULE_ID bigint not null,
         SELECTOR varchar(2048),
-        STYLE_ID int8,
+        STYLE_ID bigint,
         primary key (RULE_ID)
     );
 
     create table CCM_CORE.STYLES (
-       STYLE_ID int8 not null,
+       STYLE_ID bigint not null,
         STYLENAME varchar(255),
         primary key (STYLE_ID)
     );
 
     create table CCM_CORE.THEME_DATA_FILES (
        CREATION_DATE timestamp,
-        FILE_DATA oid,
+        FILE_DATA blob,
         LAST_MODIFIED timestamp,
-        FILE_SIZE int8,
+        FILE_SIZE bigint,
         TYPE varchar(255),
-        FILE_ID int8 not null,
+        FILE_ID bigint not null,
         primary key (FILE_ID)
     );
 
     create table CCM_CORE.theme_directories (
-       FILE_ID int8 not null,
+       FILE_ID bigint not null,
         primary key (FILE_ID)
     );
 
     create table CCM_CORE.THEME_FILES (
-       FILE_ID int8 not null,
+       FILE_ID bigint not null,
         NAME varchar(255) not null,
         FILE_PATH varchar(8192) not null,
         UUID varchar(255) not null,
         VERSION varchar(255),
-        PARENT_DIRECTORY_ID int8,
-        THEME_ID int8,
+        PARENT_DIRECTORY_ID bigint,
+        THEME_ID bigint,
         primary key (FILE_ID)
     );
 
     create table CCM_CORE.THEMES (
-       THEME_ID int8 not null,
+       THEME_ID bigint not null,
         NAME varchar(255),
         UUID varchar(255),
         VERSION varchar(255),
-        ROOT_DIRECTORY_ID int8,
+        ROOT_DIRECTORY_ID bigint,
         primary key (THEME_ID)
     );
 
     create table CCM_CORE.THREADS (
-       OBJECT_ID int8 not null,
-        ROOT_ID int8,
+       OBJECT_ID bigint not null,
+        ROOT_ID bigint,
         primary key (OBJECT_ID)
     );
 
     create table CCM_CORE.USER_EMAIL_ADDRESSES (
-       USER_ID int8 not null,
+       USER_ID bigint not null,
         EMAIL_ADDRESS varchar(512) not null,
         BOUNCING boolean,
         VERIFIED boolean
@@ -686,92 +676,92 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
         EMAIL_ADDRESS varchar(512) not null,
         BOUNCING boolean,
         VERIFIED boolean,
-        PARTY_ID int8 not null,
+        PARTY_ID bigint not null,
         primary key (PARTY_ID)
     );
 
     create table CCM_CORE.WORKFLOW_ASSIGNABLE_TASKS (
        DUE_DATE timestamp,
-        DURATION_MINUTES int8,
+        DURATION_MINUTES bigint,
         LOCKED boolean,
         START_DATE timestamp,
-        TASK_ID int8 not null,
-        LOCKING_USER_ID int8,
-        NOTIFICATION_SENDER int8,
+        TASK_ID bigint not null,
+        LOCKING_USER_ID bigint,
+        NOTIFICATION_SENDER bigint,
         primary key (TASK_ID)
     );
 
     create table CCM_CORE.WORKFLOW_DESCRIPTIONS (
-       WORKFLOW_ID int8 not null,
-        LOCALIZED_VALUE text,
+       WORKFLOW_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (WORKFLOW_ID, LOCALE)
     );
 
     create table CCM_CORE.WORKFLOW_NAMES (
-       WORKFLOW_ID int8 not null,
-        LOCALIZED_VALUE text,
+       WORKFLOW_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (WORKFLOW_ID, LOCALE)
     );
 
     create table CCM_CORE.WORKFLOW_TASK_ASSIGNMENTS (
-       TASK_ASSIGNMENT_ID int8 not null,
+       TASK_ASSIGNMENT_ID bigint not null,
         UUID varchar(255) not null,
-        ROLE_ID int8,
-        TASK_ID int8,
+        ROLE_ID bigint,
+        TASK_ID bigint,
         primary key (TASK_ASSIGNMENT_ID)
     );
 
     create table CCM_CORE.WORKFLOW_TASK_COMMENTS (
-       COMMENT_ID int8 not null,
-        COMMENT text,
+       COMMENT_ID bigint not null,
+        COMMENT varchar(2147483647),
         UUID varchar(255) not null,
-        AUTHOR_ID int8,
-        TASK_ID int8,
+        AUTHOR_ID bigint,
+        TASK_ID bigint,
         primary key (COMMENT_ID)
     );
 
     create table CCM_CORE.WORKFLOW_TASK_DEPENDENCIES (
-       TASK_DEPENDENCY_ID int8 not null,
+       TASK_DEPENDENCY_ID bigint not null,
         uuid varchar(255) not null,
-        BLOCKED_TASK_ID int8,
-        BLOCKING_TASK_ID int8,
+        BLOCKED_TASK_ID bigint,
+        BLOCKING_TASK_ID bigint,
         primary key (TASK_DEPENDENCY_ID)
     );
 
     create table CCM_CORE.WORKFLOW_TASK_DESCRIPTIONS (
-       TASK_ID int8 not null,
-        LOCALIZED_VALUE text,
+       TASK_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (TASK_ID, LOCALE)
     );
 
     create table CCM_CORE.WORKFLOW_TASK_LABELS (
-       TASK_ID int8 not null,
-        LOCALIZED_VALUE text,
+       TASK_ID bigint not null,
+        LOCALIZED_VALUE varchar(2147483647),
         LOCALE varchar(255) not null,
         primary key (TASK_ID, LOCALE)
     );
 
     create table CCM_CORE.WORKFLOW_TASKS (
-       TASK_ID int8 not null,
+       TASK_ID bigint not null,
         ACTIVE boolean,
         TASK_STATE varchar(512),
         UUID varchar(255) not null,
-        WORKFLOW_ID int8,
+        WORKFLOW_ID bigint,
         primary key (TASK_ID)
     );
 
     create table CCM_CORE.WORKFLOWS (
-       WORKFLOW_ID int8 not null,
+       WORKFLOW_ID bigint not null,
         abstract_workflow boolean,
         ACTIVE boolean,
         WORKFLOW_STATE varchar(255),
         TASKS_STATE varchar(255),
         UUID varchar(255) not null,
-        OBJECT_ID int8,
-        TEMPLATE_ID int8,
+        OBJECT_ID bigint,
+        TEMPLATE_ID bigint,
         primary key (WORKFLOW_ID)
     );
 
@@ -836,7 +826,7 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
        add constraint UK_o113id7d1cxql0edsrohlnn9x unique (UUID);
 
     create table CCM_SHORTCUTS.SHORTCUTS (
-       SHORTCUT_ID int8 not null,
+       SHORTCUT_ID bigint not null,
         REDIRECT varchar(1024),
         URL_KEY varchar(1024),
         primary key (SHORTCUT_ID)
@@ -844,7 +834,7 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
 
     alter table CCM_SHORTCUTS.SHORTCUTS 
        add constraint UK_4otuwtog6qqdbg4e6p8xdpw8h unique (URL_KEY);
-create sequence hibernate_sequence start 1 increment 1;
+create sequence hibernate_sequence start with 1 increment by 1;
 
     alter table CCM_CORE.APPLICATIONS 
        add constraint FKatcp9ij6mbkx0nfeig1o6n3lm 
@@ -1297,9 +1287,9 @@ create sequence hibernate_sequence start 1 increment 1;
        references CCM_CORE.STYLE_RULES;
 
     alter table CCM_CORE.STYLE_RULES 
-       add constraint FKf6fb4k6y2d74p70ldmj8awqj3 
+       add constraint FKcbr0k93g001jix7i4kncsce1w 
        foreign key (STYLE_ID) 
-       references CCM_CORE.STYLE_MEDIA_RULES;
+       references CCM_CORE.STYLES;
 
     alter table CCM_CORE.THEME_DATA_FILES 
        add constraint FK630m2y2p7pp487ofowbefrm89 

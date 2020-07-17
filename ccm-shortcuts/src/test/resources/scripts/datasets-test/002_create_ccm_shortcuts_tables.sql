@@ -1,13 +1,3 @@
-DROP SCHEMA IF EXISTS ccm_shortcuts CASCADE;
-DROP SCHEMA IF EXISTS ccm_core CASCADE;
-
-DROP SEQUENCE IF EXISTS hibernate_sequence;
-
-
-    create schema CCM_CORE;
-
-    create schema CCM_SHORTCUTS;
-
 
     create table CCM_CORE.APPLICATIONS (
        APPLICATION_TYPE varchar(1024) not null,
@@ -552,11 +542,11 @@ DROP SEQUENCE IF EXISTS hibernate_sequence;
         SETTING_ID bigint not null,
         CONFIGURATION_CLASS varchar(512) not null,
         NAME varchar(512) not null,
+        SETTING_VALUE_BOOLEAN boolean,
+        SETTING_VALUE_STRING varchar(1024),
         SETTING_VALUE_DOUBLE double,
         SETTING_VALUE_LONG bigint,
         SETTING_VALUE_BIG_DECIMAL decimal(19,2),
-        SETTING_VALUE_STRING varchar(1024),
-        SETTING_VALUE_BOOLEAN boolean,
         primary key (SETTING_ID)
     );
 
@@ -1297,9 +1287,9 @@ create sequence hibernate_sequence start with 1 increment by 1;
        references CCM_CORE.STYLE_RULES;
 
     alter table CCM_CORE.STYLE_RULES 
-       add constraint FKf6fb4k6y2d74p70ldmj8awqj3 
+       add constraint FKcbr0k93g001jix7i4kncsce1w 
        foreign key (STYLE_ID) 
-       references CCM_CORE.STYLE_MEDIA_RULES;
+       references CCM_CORE.STYLES;
 
     alter table CCM_CORE.THEME_DATA_FILES 
        add constraint FK630m2y2p7pp487ofowbefrm89 

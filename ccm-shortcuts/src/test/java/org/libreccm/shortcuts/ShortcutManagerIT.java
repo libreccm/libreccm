@@ -47,10 +47,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.security.Shiro;
-import org.libreccm.tests.categories.IntegrationTest;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -59,14 +57,19 @@ import static org.junit.Assert.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
-@CreateSchema({"create_ccm_shortcuts_schema.sql"})
-@CleanupUsingScript(value = {"cleanup.sql"},
+@CreateSchema(
+    {
+    "001_create_schema.sql",
+    "002_create_ccm_shortcuts_tables.sql",
+    "003_init_hibernate_sequence.sql"
+    }
+)
+@CleanupUsingScript(value = {"999_cleanup.sql"},
                     phase = TestExecutionPhase.BEFORE)
-public class ShortcutManagerTest {
+public class ShortcutManagerIT {
 
     @Inject
     private ShortcutManager shortcutManager;
@@ -77,10 +80,10 @@ public class ShortcutManagerTest {
     @Inject
     private Subject subject;
 
-    @PersistenceContext
+    @PersistenceContext(name = "LibreCCM")
     private EntityManager entityManager;
 
-    public ShortcutManagerTest() {
+    public ShortcutManagerIT() {
     }
 
     @BeforeClass
@@ -104,27 +107,7 @@ public class ShortcutManagerTest {
         return ShrinkWrap.create(
             WebArchive.class,
             "LibreCCM-org.libreccm.shortcuts.ShortcutTest-web.war")
-            .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
-            .addPackage(org.libreccm.categorization.Categorization.class
-                .getPackage())
-            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addPackage(org.libreccm.configuration.Configuration.class
-                .getPackage())
-            .addPackage(org.libreccm.core.CcmCore.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class
-                .getPackage())
-            .addPackage(org.libreccm.security.Permission.class.getPackage())
-            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
-            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
-            .addClass(com.arsdigita.kernel.KernelConfig.class)
-            .addClass(org.libreccm.imexport.Exportable.class)
-            .addClass(org.libreccm.shortcuts.Shortcut.class)
-            .addClass(org.libreccm.shortcuts.ShortcutManager.class)
-            .addClass(org.libreccm.shortcuts.ShortcutRepository.class)
+            .addPackages(true, "com.arsdigita", "org.libreccm")
             .addAsLibraries(getModuleDependencies())
             .addAsLibraries(getCcmCoreDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")
@@ -150,7 +133,8 @@ public class ShortcutManagerTest {
     @UsingDataSet(
         "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/shortcuts/ShortcutManagerTest/after-create.xml",
+        value
+        = "datasets/org/libreccm/shortcuts/ShortcutManagerTest/after-create.xml",
         excludeColumns = {"shortcut_id"})
     @InSequence(100)
     public void createShortcutBySystemUser() {
@@ -168,7 +152,8 @@ public class ShortcutManagerTest {
     @UsingDataSet(
         "datasets/org/libreccm/shortcuts/ShortcutManagerTest/data.xml")
     @ShouldMatchDataSet(
-        value = "datasets/org/libreccm/shortcuts/ShortcutManagerTest/after-create.xml",
+        value
+        = "datasets/org/libreccm/shortcuts/ShortcutManagerTest/after-create.xml",
         excludeColumns = {"shortcut_id"})
     @InSequence(110)
     public void createShortcutByAuthorizedUser() {
