@@ -970,7 +970,6 @@
                     <testResource>
                         <directory>${project.build.directory}/generated-resources</directory>
                     </testResource>
-                    
                 </testResources>
             
                 <plugins>

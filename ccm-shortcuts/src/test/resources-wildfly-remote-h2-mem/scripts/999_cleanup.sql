@@ -36,4 +36,4 @@ DELETE FROM ccm_core.parties;
 
 DELETE FROM ccm_core.ccm_roles;
 
-ALTER SEQUENCE hibernate_sequence RESTART WITH 1;
+ALTER SEQUENCE hibernate_sequence RESTART WITH 100000;

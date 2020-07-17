@@ -27,13 +27,17 @@
             <property name="hibernate.id.new_generator_mappings" value="true"/>
             <property name="hibernate.connection.autocommit" value="false" />
             
+            <property name="wildfly.jpa.hibernate.search.module" 
+                      value="org.hibernate.search.orm:main" />
+
+
             <!-- 
                 Properties for Hibernate Envers 
                 We are using the ValidityAuditStrategy here because it is faster
                 when querying data than the DefaultStrategy
             -->
-            <!--<property name="org.hibernate.envers.audit_strategy" 
-                      value="org.hibernate.envers.strategy.ValidityAuditStrategy"/>-->
+            <property name="org.hibernate.envers.audit_strategy" 
+                      value="org.hibernate.envers.strategy.ValidityAuditStrategy"/>
         </properties>
     </persistence-unit>
     
