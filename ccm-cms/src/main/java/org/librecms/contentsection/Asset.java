@@ -313,7 +313,7 @@ import static org.librecms.CmsConstants.*;
                     + "      '" + AssetPrivileges.VIEW + "' "
                     + "  ) "
                     + "  OR true = :isSystemUser OR true = :isAdmin"
-                    + ") ORDER BY t")
+                    + ") ORDER BY a.displayName")
     ,
     @NamedQuery(
         name = "Asset.countFilterByFolderAndTitle",
