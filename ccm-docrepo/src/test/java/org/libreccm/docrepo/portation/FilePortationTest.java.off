@@ -35,14 +35,12 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.libreccm.docrepo.File;
 import org.libreccm.docrepo.FileMarshaller;
 import org.libreccm.docrepo.FileRepository;
 import org.libreccm.portation.Format;
 import org.libreccm.portation.Marshals;
-import org.libreccm.tests.categories.IntegrationTest;
 
 import javax.inject.Inject;
 import java.io.FileWriter;
@@ -62,7 +60,6 @@ import static org.libreccm.testutils.DependenciesHelpers.getModuleDependencies;
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version 13/01/2016
  */
-@Category(IntegrationTest.class)
 @RunWith(Arquillian.class)
 @PersistenceTest
 @Transactional(TransactionMode.COMMIT)
@@ -156,8 +153,6 @@ public class FilePortationTest {
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
             .addPackage(org.libreccm.testutils.EqualsVerifier.class.getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
             .addPackage(com.arsdigita.xml.CCMTransformerFactory.class
                 .getPackage())
             .addAsLibraries(getModuleDependencies())

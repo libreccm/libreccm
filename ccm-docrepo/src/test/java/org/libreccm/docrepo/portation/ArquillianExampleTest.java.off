@@ -27,7 +27,6 @@ import org.libreccm.core.CcmObjectRepository;
 import org.libreccm.jpa.EntityManagerProducer;
 import org.libreccm.jpa.utils.MimeTypeConverter;
 import org.libreccm.l10n.LocalizedString;
-import org.libreccm.tests.categories.IntegrationTest;
 import org.libreccm.testutils.EqualsVerifier;
 import org.libreccm.workflow.Workflow;
 
@@ -101,7 +100,6 @@ public class ArquillianExampleTest {
                 .addPackage(EntityManagerProducer.class.getPackage())
                 .addPackage(MimeTypeConverter.class.getPackage())
                 .addPackage(EqualsVerifier.class.getPackage())
-                .addPackage(IntegrationTest.class.getPackage())
                 .addAsLibraries(getModuleDependencies())
                 .addAsLibraries(getCcmCoreDependencies())
                 .addAsResource("test-persistence.xml",
