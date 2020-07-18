@@ -121,8 +121,6 @@ public class ShortcutManagerIT {
             .addPackage(org.libreccm.security.Permission.class.getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
             .addClass(com.arsdigita.kernel.KernelConfig.class)
             .addClass(org.libreccm.imexport.Exportable.class)
             .addClass(org.libreccm.shortcuts.Shortcut.class)
