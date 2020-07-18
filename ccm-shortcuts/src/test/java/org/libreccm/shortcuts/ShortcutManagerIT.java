@@ -62,9 +62,9 @@ import static org.junit.Assert.*;
 @Transactional(TransactionMode.COMMIT)
 @CreateSchema(
     {
-    "001_create_schema.sql",
-    "002_create_ccm_shortcuts_tables.sql",
-    "003_init_hibernate_sequence.sql"
+        "001_create_schema.sql",
+        "002_create_ccm_shortcuts_tables.sql",
+        "003_init_hibernate_sequence.sql"
     }
 )
 @CleanupUsingScript(value = {"999_cleanup.sql"},
@@ -107,7 +107,27 @@ public class ShortcutManagerIT {
         return ShrinkWrap.create(
             WebArchive.class,
             "LibreCCM-org.libreccm.shortcuts.ShortcutTest-web.war")
-            .addPackages(true, "com.arsdigita", "org.libreccm")
+            .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
+            .addPackage(org.libreccm.categorization.Categorization.class
+                .getPackage())
+            .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
+            .addPackage(org.libreccm.configuration.Configuration.class
+                .getPackage())
+            .addPackage(org.libreccm.core.CcmCore.class.getPackage())
+            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
+                .getPackage())
+            .addPackage(org.libreccm.l10n.LocalizedString.class
+                .getPackage())
+            .addPackage(org.libreccm.security.Permission.class.getPackage())
+            .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
+            .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
+            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
+                .getPackage())
+            .addClass(com.arsdigita.kernel.KernelConfig.class)
+            .addClass(org.libreccm.imexport.Exportable.class)
+            .addClass(org.libreccm.shortcuts.Shortcut.class)
+            .addClass(org.libreccm.shortcuts.ShortcutManager.class)
+            .addClass(org.libreccm.shortcuts.ShortcutRepository.class)
             .addAsLibraries(getModuleDependencies())
             .addAsLibraries(getCcmCoreDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")
