@@ -18,7 +18,7 @@
  */
 package org.librecms.contenttypes;
 
-import nl.jqno.equalsverifier.EqualsVerifierApi;
+import nl.jqno.equalsverifier.api.SingleTypeEqualsVerifierApi;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -50,7 +50,7 @@ public class EqualsAndHashCodeTest extends EqualsVerifier {
     }
 
     @Override
-    protected void addPrefabValues(final EqualsVerifierApi<?> verifier) {
+    protected void addPrefabValues(final SingleTypeEqualsVerifierApi<?> verifier) {
     }
 
 }

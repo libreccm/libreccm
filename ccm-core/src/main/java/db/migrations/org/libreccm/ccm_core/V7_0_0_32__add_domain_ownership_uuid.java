@@ -18,7 +18,8 @@
  */
 package db.migrations.org.libreccm.ccm_core;
 
-import org.flywaydb.core.api.migration.jdbc.JdbcMigration;
+import org.flywaydb.core.api.migration.BaseJavaMigration;
+import org.flywaydb.core.api.migration.Context;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,12 +30,14 @@ import java.util.UUID;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class V7_0_0_32__add_domain_ownership_uuid implements JdbcMigration {
+public class V7_0_0_32__add_domain_ownership_uuid extends BaseJavaMigration {
     
     
     @Override
-    public void migrate(final Connection connection) throws Exception {
+    public void migrate(final Context context) throws Exception {
 
+        final Connection connection = context.getConnection();
+        
         final PreparedStatement retrieveOwnerships = connection
             .prepareStatement("select OWNERSHIP_ID from CCM_CORE.DOMAIN_OWNERSHIPS");
 
