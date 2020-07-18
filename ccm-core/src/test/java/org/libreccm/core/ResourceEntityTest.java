@@ -26,7 +26,6 @@ import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.Group;
 import org.libreccm.security.Role;
 import org.libreccm.security.User;
-import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.testutils.EqualsVerifier;
 
 import java.util.Arrays;
@@ -42,7 +41,6 @@ import java.util.Locale;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RunWith(Parameterized.class)
-@org.junit.experimental.categories.Category(UnitTest.class)
 public class ResourceEntityTest extends EqualsVerifier {
 
     @Parameterized.Parameters(name = "{0}")
