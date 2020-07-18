@@ -24,7 +24,6 @@ import org.junit.runners.Parameterized;
 import org.libreccm.core.CcmObject;
 import org.libreccm.security.Group;
 import org.libreccm.security.Role;
-import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.testutils.EqualsVerifier;
 
 import java.util.Arrays;
@@ -38,7 +37,6 @@ import java.util.UUID;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RunWith(Parameterized.class)
-@org.junit.experimental.categories.Category(UnitTest.class)
 public class AttachmentsEqualsAndHashCodeTest extends EqualsVerifier {
 
     @Parameterized.Parameters(name = "{0}")

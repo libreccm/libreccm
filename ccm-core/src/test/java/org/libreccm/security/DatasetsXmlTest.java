@@ -20,10 +20,8 @@ package org.libreccm.security;
 
 import static org.libreccm.testutils.DatasetType.*;
 
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.testutils.DatasetType;
 import org.libreccm.testutils.DatasetsVerifier;
 
@@ -35,7 +33,6 @@ import java.util.Collection;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RunWith(Parameterized.class)
-@Category(UnitTest.class)
 public class DatasetsXmlTest extends DatasetsVerifier {
 
     @Parameterized.Parameters(name = "Dataset {0}")

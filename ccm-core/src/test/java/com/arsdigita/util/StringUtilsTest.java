@@ -21,24 +21,26 @@ package com.arsdigita.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.libreccm.tests.categories.UnitTest;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+
 
 /**
  *
  * @author Konermann
  */
-@Category(UnitTest.class)
 public class StringUtilsTest {
 
     public StringUtilsTest() {
