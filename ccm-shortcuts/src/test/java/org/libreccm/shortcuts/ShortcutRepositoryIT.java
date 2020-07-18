@@ -119,8 +119,6 @@ public class ShortcutRepositoryIT {
             .addPackage(org.libreccm.security.Permission.class.getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
-            .addPackage(org.libreccm.tests.categories.IntegrationTest.class
-                .getPackage())
             .addClass(org.libreccm.imexport.Exportable.class)
             .addClass(org.libreccm.shortcuts.Shortcut.class)
             .addClass(org.libreccm.shortcuts.ShortcutRepository.class)
