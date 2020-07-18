@@ -18,7 +18,6 @@
  */
 package com.arsdigita.cms.ui.type;
 
-import com.ibm.icu.impl.IllegalIcuArgumentException;
 import org.libreccm.workflow.Workflow;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionManager;
@@ -90,7 +89,7 @@ class ContentTypeAdminPaneController {
             ofSection.getObjectId()
         )
             .orElseThrow(
-                () -> new IllegalIcuArgumentException(
+                () -> new IllegalArgumentException(
                     String.format(
                         "No ContentSection with ID %d found.",
                         ofSection.getObjectId()

@@ -12,7 +12,7 @@
     <artifactId>ccm-archetype-module</artifactId>
     <version>7.0.0-SNAPSHOT</version>
   
-    <name>LibreCCM Module archetype</name>
+    <name>LibreCCM Module Archetype</name>
     <url>http://www.libreccm.org/devel/modules</url>
   
 </project>

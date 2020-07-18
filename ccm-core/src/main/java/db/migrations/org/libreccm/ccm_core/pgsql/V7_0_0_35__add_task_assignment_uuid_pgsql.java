@@ -19,21 +19,18 @@
 package db.migrations.org.libreccm.ccm_core.pgsql;
 
 import db.migrations.org.libreccm.ccm_core.V7_0_0_35__add_task_assignment_uuid;
-import org.flywaydb.core.api.migration.jdbc.JdbcMigration;
-
-import java.sql.Connection;
+import org.flywaydb.core.api.migration.Context;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class V7_0_0_35__add_task_assignment_uuid_pgsql
-    extends V7_0_0_35__add_task_assignment_uuid
-    implements JdbcMigration {
+    extends V7_0_0_35__add_task_assignment_uuid {
 
     @Override
-    public void migrate(final Connection connection) throws Exception {
-        super.migrate(connection);
+    public void migrate(final Context context) throws Exception {
+        super.migrate(context);
     }
 
 }

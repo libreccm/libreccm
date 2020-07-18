@@ -18,7 +18,6 @@
  */
 package org.libreccm.core.api;
 
-import com.google.common.collect.Sets;
 
 import java.util.Collections;
 import java.util.Set;

@@ -152,7 +152,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -162,7 +162,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.0</version>
+                    <version>3.8.1</version>
                     <configuration>
                         <source>1.8</source>
                         <target>1.8</target>
@@ -179,27 +179,27 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-ear-plugin</artifactId>
-                    <version>3.0.1</version>
+                    <version>3.0.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.0.0-M2</version>
+                    <version>3.0.0-M3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>3.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-pmd-plugin</artifactId>
-                    <version>3.11.0</version>
+                    <version>3.13.0</version>
                     <configuration>
                         <linkXref>true</linkXref>
                         <sourceEncoding>utf-8</sourceEncoding>
@@ -235,12 +235,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.3</version>
+                    <version>3.0.0-M1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -250,7 +250,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M3</version>
+                    <version>3.0.0-M4</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -265,7 +265,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>3.2.2</version>
+                    <version>3.3.0</version>
                 </plugin>
                 
                 <!--
@@ -274,17 +274,17 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
-                    <version>1.6.0</version>
+                    <version>3.0.0</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.eirslett</groupId>
                     <artifactId>frontend-maven-plugin</artifactId>
-                    <version>1.7.6</version>
+                    <version>1.10.0</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.spotbugs</groupId>
                     <artifactId>spotbugs-maven-plugin</artifactId>
-                    <version>3.1.11</version>
+                    <version>4.0.0</version>
                     <configuration>
                         <findbugsXmlOutput>true</findbugsXmlOutput>
                         <xmlOutput>true</xmlOutput>
@@ -306,29 +306,12 @@
                 <plugin>
                     <groupId>io.thorntail</groupId>
                     <artifactId>thorntail-maven-plugin</artifactId>
-                    <version>2.4.0.Final</version>
+                    <version>2.7.0.Final</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.0.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>findbugs-maven-plugin</artifactId>
-                    <version>3.0.5</version>
-                    <configuration>
-                        <findbugsXmlOutput>true</findbugsXmlOutput>
-                        <xmlOutput>true</xmlOutput>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>findbugs</goal>
-                            </goals>
-                        </execution>
-                    </executions>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -343,7 +326,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.3</version>
+                    <version>0.8.5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.wildfly.plugins</groupId>
@@ -360,7 +343,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>3.1.0</version>
                 <configuration>
                     <excludeDefaultDirectories>true</excludeDefaultDirectories>
                     <filesets>
@@ -453,7 +435,7 @@
             <dependency>
                 <groupId>io.thorntail</groupId>
                 <artifactId>bom</artifactId>
-                <version>2.4.0.Final</version>
+                <version>2.7.0.Final</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -467,7 +449,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>5.3.15.Final</version>
+                <version>5.3.17.Final</version>
             </dependency>
 
             <!--
@@ -477,7 +459,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-envers</artifactId>
-                <version>5.3.15.Final</version>
+                <version>5.3.17.Final</version>
             </dependency>
 
             <dependency>
@@ -490,15 +472,16 @@
             Hibernate Validator used as implemenation of the Bean
             Validation API -->
             <dependency>
-                <groupId>org.hibernate</groupId>
+                <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>6.0.18.Final</version>
+                <version>6.1.5.Final</version>
             </dependency>
             <dependency>
-                <groupId>org.hibernate</groupId>
+                <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator-cdi</artifactId>
-                <version>6.0.18.Final</version>
+                <version>6.1.5.Final</version>
             </dependency>
+            
             <dependency>
                 <groupId>javax.el</groupId>
                 <artifactId>javax.el-api</artifactId>
@@ -517,7 +500,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-search-orm</artifactId>
-                <version>5.10.7.Final</version>
+                <version>5.11.5.Final</version>
             </dependency>
 
             <!--
@@ -526,7 +509,7 @@
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-core</artifactId>
-                <version>5.2.4</version>
+                <version>6.4.4</version>
             </dependency>
             
             <!-- 
@@ -548,29 +531,29 @@
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-core</artifactId>
-                <version>1.4.0</version>
+                <version>1.5.3</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-web</artifactId>
-                <version>1.4.0</version>
+                <version>1.5.3</version>
             </dependency>
             
             <!-- Json Web Token support -->
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-api</artifactId>
-                <version>0.10.6</version>
+                <version>0.11.2</version>
             </dependency>
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-impl</artifactId>
-                <version>0.10.6</version>
+                <version>0.11.2</version>
             </dependency>
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-jackson</artifactId>
-                <version>0.10.6</version>
+                <version>0.11.2</version>
             </dependency>
 
             <!--
@@ -590,7 +573,7 @@
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-bom</artifactId>
-                <version>2.11.2</version>
+                <version>2.13.3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -602,13 +585,13 @@
             <dependency>
                 <groupId>org.apache.lucene</groupId>
                 <artifactId>lucene-core</artifactId>
-                <version>8.0.0</version>
+                <version>8.5.2</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.pdfbox</groupId>
                 <artifactId>pdfbox</artifactId>
-                <version>2.0.15</version>
+                <version>2.0.20</version>
             </dependency>
 
 
@@ -616,7 +599,7 @@
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>1.9.3</version>
+                <version>1.9.4</version>
             </dependency>
             <dependency>
                 <groupId>commons-cli</groupId>
@@ -626,7 +609,7 @@
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.12</version>
+                <version>1.14</version>
             </dependency>
             <dependency>
                 <groupId>commons-collections</groupId>
@@ -646,7 +629,7 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.6</version>
+                <version>2.7</version>
             </dependency>
             <dependency>
                 <groupId>commons-lang</groupId>
@@ -674,19 +657,19 @@
             <dependency>
                 <groupId>org.reflections</groupId>
                 <artifactId>reflections</artifactId>
-                <version>0.9.11</version>
+                <version>0.9.12</version>
             </dependency>
 
             <dependency>
                 <groupId>org.freemarker</groupId>
                 <artifactId>freemarker</artifactId>
-                <version>2.3.28</version>
+                <version>2.3.30</version>
             </dependency>
 
             <dependency>
                 <groupId>net.sf.saxon</groupId>
                 <artifactId>Saxon-HE</artifactId>
-                <version>9.9.1-2</version>
+                <version>10.1</version>
             </dependency>
 
             <dependency>
@@ -704,13 +687,13 @@
             <dependency>
                 <groupId>org.jsoup</groupId>
                 <artifactId>jsoup</artifactId>
-                <version>1.11.3</version>
+                <version>1.13.1</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-artifact</artifactId>
-                <version>3.6.1</version>
+                <version>3.6.3</version>
             </dependency>
 
             <dependency>
@@ -758,16 +741,9 @@
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
-                <version>2.9.8</version>
+                <version>2.11.0</version>
                 <scope>import</scope>
                 <type>pom</type>
-            </dependency>
-
-            <!-- better xml library -->
-            <dependency>
-                <groupId>org.codehaus.woodstox</groupId>
-                <artifactId>woodstox-core-asl</artifactId>
-                <version>4.4.1</version>
             </dependency>
 
             <!--
@@ -779,7 +755,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.12</version>
+                <version>4.13</version>
             </dependency>
 
             <!--
@@ -789,7 +765,7 @@
             <dependency>
                 <groupId>org.jboss.arquillian</groupId>
                 <artifactId>arquillian-bom</artifactId>
-                <version>1.4.1.Final</version>
+                <version>1.6.0.Final</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -806,7 +782,7 @@
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-jacoco</artifactId>
-                <version>1.0.0.Alpha10</version>
+                <version>1.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.wildfly.arquillian</groupId>
@@ -821,13 +797,54 @@
                 <scope>test</scope>
             </dependency>
 
+            <dependency>
+                <groupId>org.apache.openejb</groupId>
+                <artifactId>arquillian-tomee-embedded</artifactId>
+                <version>1.7.5</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.apache.openejb</groupId>
+                <artifactId>tomee-embedded</artifactId>
+                <version>1.7.5</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.jboss.logmanager</groupId>
+                <artifactId>jboss-logmanager</artifactId>
+                <version>2.1.16.Final</version>
+                <scope>test</scope>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.apache.openejb</groupId>
+                <artifactId>tomee-webservices</artifactId>
+                <version>4.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.openejb</groupId>
+                <artifactId>tomee-jaxrs</artifactId>
+                <version>1.7.5</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.apache.openejb</groupId>
+                <artifactId>arquillian-tomee-remote</artifactId>
+                <version>1.7.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.openejb</groupId>
+                <artifactId>apache-tomee</artifactId>
+                <version>1.7.5</version>
+            </dependency>
+
             <!--
                 JaCoCo is used to measure the test coverage
             -->
             <dependency>
                 <groupId>org.jacoco</groupId>
                 <artifactId>org.jacoco.core</artifactId>
-                <version>0.8.3</version>
+                <version>0.8.5</version>
                 <scope>test</scope>
             </dependency>
 
@@ -838,12 +855,12 @@
             <dependency>
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest-core</artifactId>
-                <version>2.1</version>
+                <version>2.2</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest-library</artifactId>
-                <version>2.1</version>
+                <version>2.2</version>
                 <scope>test</scope>
             </dependency>
 
@@ -855,15 +872,14 @@
             <dependency>
                 <groupId>nl.jqno.equalsverifier</groupId>
                 <artifactId>equalsverifier</artifactId>
-                <!--<version>1.7.8</version>-->
-                <version>3.1.9</version>
+                <version>3.4</version>
             </dependency>
 
             <!-- h2 database in used to check some database related things -->
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
-                <version>1.4.199</version>
+                <version>1.4.200</version>
             </dependency>
 
             <!-- WebJars -->
