@@ -1,28 +1,22 @@
 pipeline {
     agent any
     tools {
-        maven 'apache-maven-3.6.0'
+        maven 'apache-maven-3.6.3'
     }
     stages {
         stage('Build and Test')  {
             steps {
                 dir('') {
-                    // sh 'mvn clean package test -Pwildfly-remote-h2-mem' 
-                    sh 'mvn clean package -Pwildfly-remote-h2-mem'
-                }
-            }
-            post {
-                always {
-                    sh 'sudo systemctl restart wildfly'
+                    sh 'mvn clean verify -Prun-its-with-wildfly-h2mem'
                 }
             }
         }
         stage("Analyse") {
             steps {
                 dir('') {
-                    sh 'mvn package pmd:pmd pmd:cpd spotbugs:spotbugs'
+                    sh 'mvn pmd:pmd pmd:cpd spotbugs:spotbugs'
                 }
-            }           
+            }
         }
         stage("Deploy") {
             steps {
