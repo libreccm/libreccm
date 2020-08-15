@@ -27,8 +27,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.libreccm.tests.categories.UnitTest;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +38,6 @@ import static org.junit.Assert.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Category(UnitTest.class)
 public class ComparableVersionTest {
 
     public ComparableVersionTest() {

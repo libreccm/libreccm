@@ -20,14 +20,13 @@ package org.libreccm.shortcuts;
 
 import java.util.Arrays;
 import java.util.Collection;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.testutils.DatasetType;
 import org.libreccm.testutils.DatasetsVerifier;
 
@@ -36,7 +35,6 @@ import org.libreccm.testutils.DatasetsVerifier;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RunWith(Parameterized.class)
-@Category(UnitTest.class)
 public class DatasetsTest extends DatasetsVerifier {
 
     @Parameterized.Parameters(name = "Dataset {0}")
@@ -53,13 +51,21 @@ public class DatasetsTest extends DatasetsVerifier {
     }
 
     @Override
+    public DatasetType getDatasetType() {
+        return DatasetType.FLAT_XML;
+    }
+
+    @Override
     public String[] getSchemas() {
         return new String[]{"ccm_core", "ccm_shortcuts"};
     }
 
     @Override
-    public DatasetType getDatasetType() {
-        return DatasetType.FLAT_XML;
+    public String[] getDdlFiles() {
+        return new String[]{
+            "/scripts/datasets-test/001_create_schema.sql",
+            "/scripts/datasets-test/002_create_ccm_shortcuts_tables.sql",
+            "/scripts/datasets-test/003_init_hibernate_sequence.sql",};
     }
 
     @BeforeClass

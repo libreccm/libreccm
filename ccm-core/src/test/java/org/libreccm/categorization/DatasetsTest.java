@@ -20,9 +20,9 @@ package org.libreccm.categorization;
 
 import java.util.Arrays;
 import java.util.Collection;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.testutils.DatasetType;
 import org.libreccm.testutils.DatasetsVerifier;
 
@@ -34,7 +34,6 @@ import static org.libreccm.testutils.DatasetType.*;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RunWith(Parameterized.class)
-@org.junit.experimental.categories.Category(UnitTest.class)
 public class DatasetsTest extends DatasetsVerifier {
 
     @Parameterized.Parameters(name = "Dataset {0}")

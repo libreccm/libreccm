@@ -1,201 +1,362 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <wildfly.version>12.0.0.Final</wildfly.version>
+        
     </properties>
-    
+
     <modelVersion>4.0.0</modelVersion>
-    
+
     <parent>
         <groupId>org.libreccm</groupId>
-        <artifactId>libreccm-parent</artifactId>
+        <artifactId>ccm-bundle-devel</artifactId>
+        <relativePath>../ccm-bundle-devel</relativePath>
         <version>7.0.0-SNAPSHOT</version>
     </parent>
-    
+
     <groupId>org.libreccm</groupId>
     <artifactId>ccm-bundle-devel-wildfly</artifactId>
     <!--<version>7.0.0-SNAPSHOT</version>-->
-    <packaging>ear</packaging>
-    
-    <name>LibreCCM Devel Bundle for Wildfly</name>
-    <url>http://www.libreccm.org/bundles/devel/wildfly</url>
+    <packaging>war</packaging>
 
+    <name>LibreCCM Devel Bundle for Wildfly</name>
+    <url>http://www.libreccm.org/modules/web/wildfly</url>
+    
     <dependencies>
         <dependency>
-            <groupId>org.libreccm</groupId>
-            <artifactId>ccm-bundle-devel-wildfly-web</artifactId>
-            <version>${project.parent.version}</version>
-            <type>war</type>
+            <groupId>org.webjars</groupId>
+            <artifactId>font-awesome</artifactId>
+            <!--<version>4.7.0</version>-->
         </dependency>
-    </dependencies>
-    
-    <build>
-        <finalName>libreccm-devel-${project.version}</finalName>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>requirejs</artifactId>
+            <!--<version>2.3.5</version>-->
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>requirejs-domready</artifactId>
+            <!--<version>2.0.1-2</version>-->
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>tinymce</artifactId>
+            <!--<version>4.8.2</version>-->
+        </dependency>
+        <!-- <dependency>
+            <groupId>org.librecms</groupId>
+            <artifactId>ccm-cms-js</artifactId>
+            <version>7.0.0-SNAPSHOT</version>
+        </dependency> -->
+        <dependency>
+            <groupId>org.librecms</groupId>
+            <artifactId>ccm-cms-pagemodelseditor</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.librecms</groupId>
+            <artifactId>ccm-cms-tinymce</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
         
+        <!--        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>provided</scope>
+        </dependency>-->
+    </dependencies>
+
+    <build>
+        <finalName>libreccm-web-wildfly</finalName>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${project.build.directory}/generated-resources</directory>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-ear-plugin</artifactId>
+                <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <!-- Tell Maven we are using Java EE 7 -->
-                    <version>7</version>
-                    <!-- Use Java EE ear libraries as needed. Java EE ear libraries 
-                    are an easy way to package any libraries needed in the ear, 
-                    and automatically 
-                    have any modules (EJB-JARs and WARs) use them -->
-                    <defaultLibBundleDir>lib</defaultLibBundleDir>
-                    <outputFileNameMapping>no-version</outputFileNameMapping>
-                    <modules>
-                        <webModule>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <optimize>true</optimize>
+                    <debug>true</debug>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+
+                <configuration>
+                    <installDirectory>../node</installDirectory>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>Install node.js and NPM</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>v8.11.4</nodeVersion>
+                        </configuration>
+                    </execution>
+                    <!-- <execution>
+                        <id>npm link @libreccm/ccm-pagemodelseditor</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>link @libreccm/ccm-pagemodelseditor</arguments>
+                        </configuration>
+                    </execution> -->
+                    <execution>
+                        <id>npm link @librecms/ccm-cms-pagemodelseditor</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>link @librecms/ccm-cms-pagemodelseditor</arguments>
+                        </configuration>
+                    </execution>
+                    <!--                    <execution>
+                        <id>npm link @librecms/ccm-cms-tinymce</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>link @librecms/ccm-cms-tinymce</arguments>
+                        </configuration>
+                    </execution>-->
+                    <!--<execution>
+                        <id>npm link @librecms/ccm-cms-js</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>link @librecms/ccm-cms-js</arguments>
+                        </configuration>
+                    </execution>-->
+                    <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>build</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run build</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+
+                    <webResources>
+                        <resource>
+                            <directory>src/main/resources</directory>
+                        </resource>
+                        <resource>
+                            <directory>${project.build.directory}/generated-resources</directory>
+                        </resource>
+                    </webResources>
+
+                    <overlays>
+                        <overlay>
                             <groupId>org.libreccm</groupId>
-                            <artifactId>ccm-bundle-devel-wildfly-web</artifactId>
-                            <contextRoot>/libreccm</contextRoot>
-                        </webModule>
-                    </modules>
+                            <artifactId>ccm-editor</artifactId>
+                            <type>jar</type>
+                        </overlay>
+                        <overlay>
+                            <groupId>org.libreccm</groupId>
+                            <artifactId>ccm-pagemodelseditor</artifactId>
+                            <type>jar</type>
+                        </overlay>
+                        <overlay>
+                            <groupId>org.libreccm</groupId>
+                            <artifactId>ccm-theme-foundry</artifactId>
+                            <type>jar</type>
+                        </overlay>
+                        <overlay>
+                            <groupId>org.libreccm</groupId>
+                            <artifactId>ccm-core</artifactId>
+                            <type>jar</type>
+                            <includes>
+                                <include>assets/</include>
+                            </includes>
+                        </overlay>
+                        <overlay>
+                            <groupId>org.librecms</groupId>
+                            <artifactId>ccm-cms</artifactId>
+                            <type>jar</type>
+                            <includes>
+                                <include>templates/</include>
+                            </includes>
+                        </overlay>
+                        <overlay>
+                            <groupId>org.librecms</groupId>
+                            <artifactId>ccm-cms-tinymce</artifactId>
+                            <type>jar</type>
+                            <includes>
+                                <include>scripts/</include>
+                            </includes>
+                        </overlay>
+                    </overlays>
                 </configuration>
             </plugin>
             
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                    <filesets>
+                        <fileset>
+                            <directory>${project.build.directory}</directory>
+                            <excludes>
+                                <exclude>wildfly*/**</exclude>
+                            </excludes>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                    <propertiesFile>${project.basedir}/wildfly.properties</propertiesFile>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
-
-    <!-- Profiles for running the bundle in a development environment -->
+    
     <profiles>
-        
-        <!-- Profile which uses a H2 database. The DB file is put into the
-            project build directory and therefore deleted when the clean phase
-            runs.
-        -->
         <profile>
-            <id>h2</id>
-            
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.wildfly.plugins</groupId>
-                        <artifactId>wildfly-maven-plugin</artifactId>
-                        
-                        <configuration>
-                            <version>${wildfly.version}</version>
-                            
-                            <skip>false</skip>
-
-                            <add-user>
-                                <users>
-                                    <user>
-                                        <username>admin</username>
-                                        <password>admin123</password>
-                                    </user>
-                                </users>
-                            </add-user>
-
-                            <beforeDeployment>
-                                <commands>
-                                    <command>data-source add --jndi-name=java:/comp/env/jdbc/libreccm/db --name=ccm-devel --connection-url=jdbc:h2:${project.build.directory}/libreccm-db;DB_CLOSE_ON_EXIT=FALSE --driver-name=h2 --driver-class=org.h2.Driver --user-name=sa --password=sa</command>
-                                </commands>
-                            </beforeDeployment>
-                            
-                            <java-opts>
-                                <java-opt>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8787</java-opt>
-                            </java-opts>
-                            
-                        </configuration>
-                        
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        
-        <!-- 
-            Profile which uses a PostgreSQL datasource with a generic 
-            configuration. When using this profile PostgreSQL must run on the
-            local system and a database with the name "libreccm-devel" which
-            is accessible by the user "ccm" with the password "ccm47web" must
-            exist.
-        -->
-        <profile>
-            <id>pgsql</id>
-            
+            <id>setup-runtime</id>
             <dependencies>
                 <dependency>
                     <groupId>org.postgresql</groupId>
                     <artifactId>postgresql</artifactId>
                 </dependency>
             </dependencies>
-            
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>properties-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>read-datasource-properties</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>read-project-properties</goal>
+                                </goals>
+                                <configuration>
+                                    <files>
+                                        <file>${project.basedir}/datasource.properties</file>
+                                    </files>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>org.wildfly.plugins</groupId>
                         <artifactId>wildfly-maven-plugin</artifactId>
-                        
                         <configuration>
-                            <version>${wildfly.version}</version>
-                            
                             <skip>false</skip>
-                            
-                            <add-user>
-                                <users>
-                                    <user>
-                                        <username>admin</username>
-                                        <password>admin1234</password>
-                                    </user>
-                                </users>
-                            </add-user>
-                            
-                            <beforeDeployment>
-                                <commands>
-                                    <!--jdbc-drivers/postgresql-9.4.1208.jar-->
-                                    <command>module add --name=org.postgres --resources=${project.build.directory}/${project.build.finalName}/lib/postgresql.jar --dependencies=javax.api,javax.transaction.api</command>
-                                    <command>/subsystem=datasources/jdbc-driver=postgres:add(driver-name="postgres",driver-module-name="org.postgres",driver-class-name=org.postgresql.Driver)</command>
-                                    <command>data-source add --jndi-name=java:/comp/env/jdbc/libreccm/db --name=libreccm-devel --connection-url=jdbc:postgresql://localhost:5432/libreccm-devel --driver-name=postgres --driver-class=org.postgresql.Driver --user-name=ccm --password=ccm47web</command>
-                                </commands>
-                            </beforeDeployment>
-                            
-                            <java-opts>
-                                <java-opt>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8787</java-opt>
-                            </java-opts>
-                            
+                            <propertiesFile>${project.basedir}/wildfly.properties</propertiesFile>
                         </configuration>
-                        
+                        <executions>
+                            <execution>
+                                <id>start-for-prepare</id>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <stdout>System.out</stdout>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>deploy-jdbc-driver</id>
+                                <configuration>
+                                    <groupId>org.postgresql</groupId>
+                                    <artifactId>postgresql</artifactId>
+                                    <name>postgresql.jar</name>
+                                    <force>true</force>
+                                </configuration>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>deploy-artifact</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>add-datasource</id>
+                                <configuration>
+                                    <address>subsystem=datasources,data-source=ccm-devel</address>
+                                    <force>true</force>
+                                    <resources>
+                                        <resource>
+                                            <properties>
+                                                <connection-url>${libreccm.datasource.connectionUrl}</connection-url>
+                                                <jndi-name>java:/comp/env/jdbc/libreccm/db</jndi-name>
+                                                <enabled>true</enabled>
+                                                <user-name>${libreccm.datasource.username}</user-name>
+                                                <password>${libreccm.datasource.password}</password>
+                                                <use-ccm>false</use-ccm>
+                                                <driver-name>postgresql.jar</driver-name>
+                                            </properties>
+                                        </resource>
+                                    </resources>
+                                   
+                                </configuration>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>add-resource</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>deploy-libreccm-bundle-devel</id>
+                                <configuration>
+                                    <force>true</force>
+                                </configuration>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>deploy-only</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>shutdown-after-deploy</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shutdown</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
         </profile>
-        
-        <!-- 
-            Generic profile for using an existing Wildfly installation. 
-            The datasource for CCM must be configured in the Wildfly instance.
-            Also the plugin must know where the wildfly installation is. This 
-            can either be done by setting the JBOSS_HOME environment variable or
-            by providing the location using -Djboss-as.home=/path/to/wildfly
-            on the command line.
-        -->
-        <profile>
-            <id>generic</id>
-            
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.wildfly.plugins</groupId>
-                        <artifactId>wildfly-maven-plugin</artifactId>
-                        
-                        <configuration>
-                            <version>${wildfly.version}</version>
-                            
-                            <skip>false</skip>
-                            <startupTimeout>120</startupTimeout>
-                            
-                            <java-opts>
-                                <java-opt>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8787</java-opt>
-                            </java-opts>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-            
-        </profile>
+       
     </profiles>
-
 </project>

@@ -61,6 +61,26 @@
             <artifactId>hibernate-validator</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator-cdi</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-search-orm</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-xml-provider</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -283,7 +303,7 @@
                     <linkXref>true</linkXref>
                     <sourceEncoding>utf-8</sourceEncoding>
                     <targetJdk>1.8</targetJdk>
-<!--                    <rulesets>
+                    <!--                    <rulesets>
                         <ruleset>/rulesets/java/basic.xml</ruleset>
                         <ruleset>/rulesets/java/braces.xml</ruleset>
                         <ruleset>/rulesets/java/clone.xml</ruleset>
@@ -332,47 +352,34 @@
     </reporting>
 
     <profiles>
+        
         <profile>
-            <id>wildfly-managed-h2-mem</id>
+            <id>run-its-with-wildfly-h2mem</id>
             <dependencies>
                 <dependency>
                     <groupId>org.wildfly.arquillian</groupId>
-                    <artifactId>wildfly-arquillian-container-managed</artifactId>
+                    <artifactId>wildfly-arquillian-container-remote</artifactId>
                     <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.shrinkwrap.resolver</groupId>
-                    <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>org.jacoco.core</artifactId>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.arquillian.extension</groupId>
-                    <artifactId>arquillian-jacoco</artifactId>
                 </dependency>
                 <dependency>
                     <groupId>net.sf.saxon</groupId>
                     <artifactId>Saxon-HE</artifactId>
                 </dependency>
             </dependencies>
-
+            
             <build>
                 <testResources>
                     <testResource>
                         <directory>src/test/resources</directory>
                     </testResource>
                     <testResource>
-                        <directory>src/test/resources-wildfly-remote-h2-mem</directory>
+                        <directory>src/test/resources-wildfly-h2mem</directory>
                     </testResource>
                     <testResource>
                         <directory>${project.build.directory}/generated-resources</directory>
                     </testResource>
                 </testResources>
-
+                
                 <plugins>
                     <plugin>
                         <groupId>de.jpdigital</groupId>
@@ -398,64 +405,129 @@
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                         <configuration>
                             <forkMode>always</forkMode>
                             <forkCount>999</forkCount>
                             <reuseForks>true</reuseForks>
                             <systemPropertyVariables>
                                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                                <!--<jboss.home>${project.basedir}/target/wildfly-8.2.0.Final</jboss.home>
-                                <module.path>${project.basedir}/target/wildfly-8.2.0.Final/modules</module.path>-->
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <trimStackTrace>false</trimStackTrace>
-                            <groups>
-                                org.libreccm.tests.categories.UnitTest,
-                                org.libreccm.tests.categories.IntegrationTest
-                            </groups>
                         </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
+                        <configuration>
+                            <skip>false</skip>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>start-test-env</id>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                                <phase>pre-integration-test</phase>
+                                <configuration>
+                                    <stdout>System.out</stdout>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>prepare-test-env</id>
+                                <goals>
+                                    <goal>add-resource</goal>
+                                </goals>
+                                <phase>pre-integration-test</phase>
+                                <configuration>
+                                    <address>subsystem=datasources,data-source=ccm-shortcuts-testdb</address>
+                                    <force>true</force>
+                                    <resources>
+                                        <resource>
+                                            <properties>
+                                                <connection-url>jdbc:h2:mem:ccm-shortcuts-testdb</connection-url>
+                                                <jndi-name>java:/comp/env/jdbc/org/libreccm/ccm-shortcuts/h2-mem</jndi-name>
+                                                <enabled>true</enabled>
+                                                <user-name>sa</user-name>
+                                                <password>sa</password>
+                                                <use-ccm>false</use-ccm>
+                                                <driver-name>h2</driver-name>
+                                            </properties>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>shutdown-test-env</id>
+                                <goals>
+                                    <goal>shutdown</goal>
+                                </goals>
+                                <phase>post-integration-test</phase>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
+            
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-report-plugin</artifactId>
+                        <reportSets>
+                            <reportSet>
+                                <id>integration-tests</id>
+                                <reports>
+                                    <report>failsafe-report-only</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>
+                    </plugin>
+                </plugins>
+            </reporting>
         </profile>
-
+        
         <profile>
-            <id>wildfly-managed-pgsql</id>
+            <id>run-its-with-wildfly-pgsql</id>
             <dependencies>
                 <dependency>
                     <groupId>org.wildfly.arquillian</groupId>
-                    <artifactId>wildfly-arquillian-container-managed</artifactId>
+                    <artifactId>wildfly-arquillian-container-remote</artifactId>
                     <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>org.jacoco.core</artifactId>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.arquillian.extension</groupId>
-                    <artifactId>arquillian-jacoco</artifactId>
                 </dependency>
                 <dependency>
                     <groupId>net.sf.saxon</groupId>
                     <artifactId>Saxon-HE</artifactId>
                 </dependency>
+                <dependency>
+                    <groupId>org.postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                    <scope>provided</scope>
+                </dependency>
             </dependencies>
-
+            
             <build>
                 <testResources>
                     <testResource>
                         <directory>src/test/resources</directory>
                     </testResource>
                     <testResource>
-                        <directory>src/test/resources-wildfly-remote-pgsql</directory>
+                        <directory>src/test/resources-wildfly-pgsql</directory>
                     </testResource>
                     <testResource>
                         <directory>${project.build.directory}/generated-resources</directory>
                     </testResource>
                 </testResources>
-
+                
                 <plugins>
                     <plugin>
                         <groupId>de.jpdigital</groupId>
@@ -481,30 +553,130 @@
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                         <configuration>
                             <forkMode>always</forkMode>
                             <forkCount>999</forkCount>
                             <reuseForks>true</reuseForks>
                             <systemPropertyVariables>
                                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                                <!--<jboss.home>${project.basedir}/target/wildfly-8.2.0.Final</jboss.home>
-                                <module.path>${project.basedir}/target/wildfly-8.2.0.Final/modules</module.path>-->
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <trimStackTrace>false</trimStackTrace>
-                            <groups>
-                                org.libreccm.tests.categories.UnitTest,
-                                org.libreccm.tests.categories.IntegrationTest
-                            </groups>
                         </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>properties-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>read-datasource-properties</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>read-project-properties</goal>
+                                </goals>
+                                <configuration>
+                                    <files>
+                                        <file>${project.basedir}/../it-pgsql-datasources.properties</file>
+                                    </files>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
+                        <configuration>
+                            <skip>false</skip>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>start-test-env</id>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                                <phase>pre-integration-test</phase>
+                                <configuration>
+                                    <stdout>System.out</stdout>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>prepare-deploy-jdbc-driver</id>
+                                <configuration>
+                                    <groupId>org.postgresql</groupId>
+                                    <artifactId>postgresql</artifactId>
+                                    <name>postgresql.jar</name>
+                                    <force>true</force>
+                                </configuration>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>deploy-artifact</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>prepare-test-env</id>
+                                <goals>
+                                    <goal>add-resource</goal>
+                                </goals>
+                                <phase>pre-integration-test</phase>
+                                <configuration>
+                                    <address>subsystem=datasources,data-source=ccm-shortcuts-testdb-pgsql</address>
+                                    <force>true</force>
+                                    <resources>
+                                        <resource>
+                                            <properties>
+                                                <connection-url>${it.ccm-shortcuts.datasource.connectionUrl}</connection-url>
+                                                <jndi-name>java:/comp/env/jdbc/org/libreccm/ccm-shortcuts/pgsql</jndi-name>
+                                                <enabled>true</enabled>
+                                                <user-name>${it.ccm-shortcuts.datasource.username}</user-name>
+                                                <password>${it.ccm-shortcuts.datasource.password}</password>
+                                                <use-ccm>false</use-ccm>
+                                                <driver-name>postgresql.jar</driver-name>
+                                            </properties>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>shutdown-test-env</id>
+                                <goals>
+                                    <goal>shutdown</goal>
+                                </goals>
+                                <phase>post-integration-test</phase>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
+            
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-report-plugin</artifactId>
+                        <reportSets>
+                            <reportSet>
+                                <id>integration-tests</id>
+                                <reports>
+                                    <report>failsafe-report-only</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>
+                    </plugin>
+                </plugins>
+            </reporting>
         </profile>
-
+       
         <profile>
-            <id>wildfly-remote-h2-mem</id>
+            <id>run-its-in-remote-wildfly-h2mem</id>
             <dependencies>
                 <dependency>
                     <groupId>org.wildfly.arquillian</groupId>
@@ -517,15 +689,6 @@
                     <scope>test</scope>
                 </dependency>
                 <dependency>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>org.jacoco.core</artifactId>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.arquillian.extension</groupId>
-                    <artifactId>arquillian-jacoco</artifactId>
-                </dependency>
-                <dependency>
                     <groupId>net.sf.saxon</groupId>
                     <artifactId>Saxon-HE</artifactId>
                 </dependency>
@@ -537,7 +700,7 @@
                         <directory>src/test/resources</directory>
                     </testResource>
                     <testResource>
-                        <directory>src/test/resources-wildfly-remote-h2-mem</directory>
+                        <directory>src/test/resources-wildfly-h2mem</directory>
                     </testResource>
                     <testResource>
                         <directory>${project.build.directory}/generated-resources</directory>
@@ -569,30 +732,49 @@
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                         <configuration>
                             <forkMode>always</forkMode>
                             <forkCount>999</forkCount>
                             <reuseForks>true</reuseForks>
                             <systemPropertyVariables>
                                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                                <!--<jboss.home>${project.basedir}/target/wildfly-8.2.0.Final</jboss.home>
-                                <module.path>${project.basedir}/target/wildfly-8.2.0.Final/modules</module.path>-->
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <trimStackTrace>false</trimStackTrace>
-                            <groups>
-                                org.libreccm.tests.categories.UnitTest,
-                                org.libreccm.tests.categories.IntegrationTest
-                            </groups>
                         </configuration>
                     </plugin>
                 </plugins>
             </build>
+            
+             <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-report-plugin</artifactId>
+                        <reportSets>
+                            <reportSet>
+                                <id>integration-tests</id>
+                                <reports>
+                                    <report>failsafe-report-only</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>
+                    </plugin>
+                </plugins>
+            </reporting>
         </profile>
 
         <profile>
-            <id>wildfly-remote-pgsql</id>
+            <id>run-its-in-remote-wildfly-pgsql</id>
             <dependencies>
                 <dependency>
                     <groupId>org.wildfly.arquillian</groupId>
@@ -600,15 +782,6 @@
                     <scope>test</scope>
                 </dependency>
                 <dependency>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>org.jacoco.core</artifactId>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.arquillian.extension</groupId>
-                    <artifactId>arquillian-jacoco</artifactId>
-                </dependency>
-                <dependency>
                     <groupId>net.sf.saxon</groupId>
                     <artifactId>Saxon-HE</artifactId>
                 </dependency>
@@ -620,7 +793,7 @@
                         <directory>src/test/resources</directory>
                     </testResource>
                     <testResource>
-                        <directory>src/test/resources-wildfly-remote-pgsql</directory>
+                        <directory>src/test/resources-wildfly-pgsql</directory>
                     </testResource>
                     <testResource>
                         <directory>${project.build.directory}/generated-resources</directory>
@@ -652,26 +825,45 @@
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                         <configuration>
                             <forkMode>always</forkMode>
                             <forkCount>999</forkCount>
                             <reuseForks>true</reuseForks>
                             <systemPropertyVariables>
                                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                                <!--<jboss.home>${project.basedir}/target/wildfly-8.2.0.Final</jboss.home>
-                                <module.path>${project.basedir}/target/wildfly-8.2.0.Final/modules</module.path>-->
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <trimStackTrace>false</trimStackTrace>
-                            <groups>
-                                org.libreccm.tests.categories.UnitTest,
-                                org.libreccm.tests.categories.IntegrationTest
-                            </groups>
                         </configuration>
                     </plugin>
                 </plugins>
             </build>
+            
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-report-plugin</artifactId>
+                        <reportSets>
+                            <reportSet>
+                                <id>integration-tests</id>
+                                <reports>
+                                    <report>failsafe-report-only</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>
+                    </plugin>
+                </plugins>
+            </reporting>
         </profile>
     </profiles>
 

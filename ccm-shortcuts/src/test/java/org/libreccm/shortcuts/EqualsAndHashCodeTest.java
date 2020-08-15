@@ -23,11 +23,9 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.testutils.EqualsVerifier;
 
 import java.util.Arrays;
@@ -38,7 +36,6 @@ import java.util.Collection;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RunWith(Parameterized.class)
-@Category(UnitTest.class)
 public class EqualsAndHashCodeTest extends EqualsVerifier {
     
     @Parameterized.Parameters(name = "{0}")

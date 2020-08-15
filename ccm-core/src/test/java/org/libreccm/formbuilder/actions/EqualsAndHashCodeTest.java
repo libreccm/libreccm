@@ -23,7 +23,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.formbuilder.Component;
 import org.libreccm.formbuilder.FormSection;
-import org.libreccm.tests.categories.UnitTest;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,7 +39,6 @@ import org.libreccm.testutils.EqualsVerifier;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RunWith(Parameterized.class)
-@org.junit.experimental.categories.Category(UnitTest.class)
 public class EqualsAndHashCodeTest extends EqualsVerifier {
 
     @Parameterized.Parameters(name = "{0}")

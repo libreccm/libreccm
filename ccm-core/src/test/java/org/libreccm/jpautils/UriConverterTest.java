@@ -24,8 +24,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.libreccm.tests.categories.UnitTest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -38,7 +36,6 @@ import static org.hamcrest.Matchers.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Category(UnitTest.class)
 public class UriConverterTest {
 
     private static final String WWW_EXAMPLE_ORG = "http://www.example.org";
