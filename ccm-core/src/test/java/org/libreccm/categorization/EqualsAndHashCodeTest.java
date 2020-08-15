@@ -25,7 +25,6 @@ import org.libreccm.core.CcmObject;
 import org.libreccm.security.Group;
 import org.libreccm.security.Role;
 import org.libreccm.security.User;
-import org.libreccm.tests.categories.UnitTest;
 import org.libreccm.testutils.EqualsVerifier;
 import org.libreccm.web.CcmApplication;
 
@@ -37,7 +36,6 @@ import java.util.Collection;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RunWith(Parameterized.class)
-@org.junit.experimental.categories.Category(UnitTest.class)
 public class EqualsAndHashCodeTest extends EqualsVerifier {
 
     @Parameterized.Parameters(name = "{0}")

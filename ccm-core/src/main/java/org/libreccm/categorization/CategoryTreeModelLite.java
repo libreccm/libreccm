@@ -25,7 +25,6 @@ import com.arsdigita.bebop.tree.TreeNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.l10n.GlobalizationHelper;
 
 import java.util.Iterator;
 import java.util.Objects;

@@ -21,7 +21,6 @@ package org.libreccm.categorization;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.libreccm.testutils.ToStringVerifier;
-import org.libreccm.tests.categories.UnitTest;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,7 +30,6 @@ import java.util.Collection;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RunWith(Parameterized.class)
-@org.junit.experimental.categories.Category(UnitTest.class)
 public class ToStringTest extends ToStringVerifier {
     
     @Parameterized.Parameters(name = "{0}")

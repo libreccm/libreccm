@@ -47,7 +47,9 @@ import org.jboss.arquillian.persistence.dbunit.dataset.yaml.YamlDataSet;
 
 import java.io.InputStream;
 import java.io.StringReader;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 /**
  *
@@ -149,7 +151,7 @@ public class DatasetsVerifier {
                 switch (getDatasetType()) {
                     case FLAT_XML:
                         final FlatXmlDataSetBuilder builder
-                                                        = new FlatXmlDataSetBuilder();
+                            = new FlatXmlDataSetBuilder();
                         dataSet = builder.build(inputStream);
                         break;
                     case JSON:
@@ -167,7 +169,7 @@ public class DatasetsVerifier {
 
             //Create DBUnit DB connection
             final IDatabaseConnection dbUnitConn
-                                          = new DatabaseConnection(connection);
+                = new DatabaseConnection(connection);
             dbUnitConn.getConfig().setProperty(
                 "http://www.dbunit.org/features/qualifiedTableNames", true);
             //Check if dumping works the DB works before loading the dataset.
@@ -187,12 +189,17 @@ public class DatasetsVerifier {
         return new String[]{"/sql/ddl/auto/h2.sql"};
     }
 
-    private void processDdlFile(final Connection connection,
-                                final String ddlFile) throws URISyntaxException,
-                                                             SQLException,
-                                                             IOException {
-        final Path schemaPath = Paths.get(getClass().getResource(ddlFile)
-            .toURI());
+    private void processDdlFile(
+        final Connection connection, final String ddlFile)
+        throws URISyntaxException, SQLException, IOException {
+        final URL resource = Objects.requireNonNull(
+            getClass().getResource(ddlFile),
+            String.format(
+                "Failed to get DDL file: %s,",
+                ddlFile
+            )
+        );
+        final Path schemaPath = Paths.get(resource.toURI());
         RunScript.execute(connection,
                           Files.newBufferedReader(schemaPath,
                                                   StandardCharsets.UTF_8));

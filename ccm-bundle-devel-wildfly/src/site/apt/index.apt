@@ -3,61 +3,10 @@
             --------------
             Jens Pelzetter
             --------------
-              2016-06-03
+              2016-03-18
             --------------
 
-LibreCCM Bundle for Wildfly
+LibreCCM Bundle Web for Wildfly
 
-    This module provides the LibreCCM development bundle for the Wildfly 
-    application server. 
-
-    This bundle is not meant for production use as its contains most of the
-    available modules. 
-
-    Developers can run this LibreCCM directly from Maven. Three profiles are
-    provided:
-
-    [h2] Uses a H2 database located in the project build directory. This means
-    that the database is deleted every time <<<mvn clean>>>.
-    
-    [pgsql] Uses an PostgresSQL database with a generic configuration. The
-      PostgreSQL server must run on localhost and the standard port and there
-      must be a database called with <<<libreccm-devel>>> which is accessible 
-      for the user <<<ccm>>> using the password <<<ccm47web>>>.
-
-    [generic] Uses an existing Wildfly installation. The datasource for the 
-    database which is used by LibreCCM has to be configured by the user for this
-    profile. Also, Maven or more exactly the wildfly-maven-plugin has to know
-    the location of the Wildfly instance to use. The location of the Wildfly 
-    instance can either be provided on the command line when invoking Maven 
-    or by setting the <<<JBOSS_HOME>>> environment variable.
-
-    When using the <<<h2>>> it is not necessary to install a Wildfly application
-    server first. The <wildfly-maven-plugin> will download the Wildfly 
-    application server and extract the server into the <<<target>>> directory.
-
-    The <<<h2>>> and the <<<pgsql>>> profile add a user to the Wildfly server
-    with the username <<<admin>>> and the password <<<admin123>>> which allow 
-    the developer to access the management web UI of the Wildfly server.
-
-* Run examples
-
-    ** Profile h2
-
-    To run the LibreCCM bundle using a H2 database:
-    
-    mvn package wildfly:run -pl ccm-bundle-devel-wildfly -am -Ph2
-
-    ** Profile pgsql
-
-     mvn package wildfly:run -pl ccm-bundle-devel-wildfly -am -Ppgsql
-
-    ** Profile generic
-
-    mvn -Djboss-as.home=/home/mustermann/java-ee-servers/wildfly/wildfly-10.0.0.Final package wildfly:run -pl ccm-bundle-devel-wildfly -am -Pgeneric
-
-    ** Additional options
-
-    The <<<wildfly:run>>> goal of the <wildfly-maven-plugin> provides several 
-    other options. For a complete list please refer to the documentation of the
-    {{{https://docs.jboss.org/wildfly/plugins/maven/latest/run-mojo.html}run goal}}.
+    This module provides the web application part of the the LibreCCM devel 
+    bundle for the Wildfly application server.

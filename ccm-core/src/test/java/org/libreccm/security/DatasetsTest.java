@@ -18,10 +18,8 @@
  */
 package org.libreccm.security;
 
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.libreccm.tests.categories.UnitTest;
 
 import static org.libreccm.testutils.DatasetType.*;
 
@@ -36,7 +34,6 @@ import java.util.Collection;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RunWith(Parameterized.class)
-@Category(UnitTest.class)
 public class DatasetsTest extends DatasetsVerifier {
 
     @Parameterized.Parameters(name = "Dataset {0}")

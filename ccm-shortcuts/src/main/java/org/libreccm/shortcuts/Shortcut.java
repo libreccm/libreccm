@@ -18,8 +18,6 @@
  */
 package org.libreccm.shortcuts;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -31,10 +29,11 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 
 /**
  * Entity representing a single shortcut.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
@@ -46,8 +45,8 @@ import javax.persistence.Table;
     @NamedQuery(
         name = "Shortcut.findByRedirect",
         query = "SELECT s FROM Shortcut s "
-        + "WHERE s.redirect = :redirect "
-        + "ORDER BY s.urlKey")
+                    + "WHERE s.redirect = :redirect "
+                    + "ORDER BY s.urlKey")
 })
 public class Shortcut implements Serializable {
 

@@ -43,6 +43,8 @@ public class ShortcutRepository extends AbstractEntityRepository<Long, Shortcut>
     private static final Logger LOGGER = LogManager.getLogger(
         ShortcutRepository.class);
 
+    private static final long serialVersionUID = 1L;
+
     @Override
     public Class<Shortcut> getEntityClass() {
         return Shortcut.class;

@@ -10,11 +10,10 @@
         </menu>
         
         <menu name="Overview">
-            <item name="The LibreCCM Devel Bundle module" href="index.html"/>
+            <item name="The LibreCCM Devel Bundle Web module" href="index.html"/>
         </menu>
         
         <menu ref="reports"/>
     </body>
     
 </project>
-
