@@ -93,6 +93,10 @@ datasource. At the moment only PostgreSQL is supported as database. The
 datasource configuration is provided by the `datasource.properties` file in the
 bundle directory. To create one copy the example file and adjust the settings.
 
+You also have to create a wildfly.properties file which contains some settings
+for the Wildfly server, for isntance the port the Wildfly server binds to. An 
+example file is provided.
+
 ## Archetypes
 
 To install the archetypes in your local Maven repository run
