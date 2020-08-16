@@ -7,7 +7,7 @@ pipeline {
         stage('Build and Test')  {
             steps {
                 dir('') {
-                    sh 'mvn clean verify -Prun-its-with-wildfly-h2mem -Dwildfly.propertiesFiles=/srv/libreccm-wildfly.properties' 
+                    sh 'mvn clean verify -Prun-its-with-wildfly-h2mem -Dwildfly.propertiesFile=/srv/libreccm-wildfly.properties' 
                 }
             }
         }
