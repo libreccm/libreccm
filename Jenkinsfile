@@ -7,7 +7,7 @@ pipeline {
         stage('Build and Test')  {
             steps {
                 dir('') {
-                    sh 'mvn clean verify -Prun-its-with-wildfly-h2mem'
+                    sh 'mvn clean verify -Prun-its-with-wildfly-h2mem -Dwildfly.port=8180' 
                 }
             }
         }
