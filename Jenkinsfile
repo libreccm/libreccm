@@ -40,7 +40,10 @@ pipeline {
                  body: "Build ${env.BUILD_URL} failed."
         }
         always {
-            junit allowEmptyResults: true testResults: '**/target/surefire-reports/*.xml'
+            junit {
+                allowEmptyResults: true 
+                testResults: '**/target/surefire-reports/*.xml'
+            }
             
             recordIssues enabledForFailure: true, tools: [java(), javaDoc()]
             recordIssues enabledForFailure: false, tool: spotBugs()
