@@ -50,7 +50,8 @@ import java.util.Properties;
 
 
 /**
- *
+ * Describes the {@code ccm-core} module.
+ *  
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Module(applicationTypes = {
