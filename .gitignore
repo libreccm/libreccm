@@ -4,6 +4,7 @@ node
 node_modules
 runtime
 target
+.cache
 .classpath
 .factorypath
 .project
