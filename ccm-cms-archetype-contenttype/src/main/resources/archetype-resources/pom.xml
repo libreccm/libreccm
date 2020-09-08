@@ -113,8 +113,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <optimize>true</optimize>
                     <debug>true</debug>
                     <encoding>${project.build.sourceEncoding}</encoding>
@@ -191,13 +191,8 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.10.3</version>
                 <configuration>
-                    <detectLinks>true</detectLinks>
-                    <detectJavaApiLinks>true</detectJavaApiLinks>
-                    <links>
-                        <link>http://docs.oracle.com/javase/7/docs/api/</link>
-                        <link>http://docs.oracle.com/javaee/7/api/</link>
-                        <link>http://docs.jboss.org/hibernate/orm/4.3/javadocs/</link>
-                    </links>
+                    <detectLinks>false</detectLinks>
+                    <detectJavaApiLinks>false</detectJavaApiLinks>
                     <show>private</show>
                     <docfilessubdirs>true</docfilessubdirs>
                     <charset>UTF-8</charset>
@@ -208,16 +203,6 @@
                     <author>true</author>
                     <keywords>true</keywords>
                     <failOnError>false</failOnError>
-                    <doclet>org.jboss.apiviz.APIviz</doclet>
-                    <docletArtifact>
-                        <groupId>org.jboss.apiviz</groupId>
-                        <artifactId>apiviz</artifactId>
-                        <version>1.3.2.GA</version>
-                    </docletArtifact>
-                    <useStandardDocletOptions>true</useStandardDocletOptions>
-                    <additionalparam>
-                        -sourceclasspath ${project.build.outputDirectory}
-                    </additionalparam>
                 </configuration>
             </plugin>
 

@@ -211,11 +211,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
-                    <detectLinks>true</detectLinks>
-                    <detectJavaApiLinks>true</detectJavaApiLinks>
+                    <detectLinks>false</detectLinks>
+                    <detectJavaApiLinks>false</detectJavaApiLinks>
                     <links>
-                        <link>http://docs.oracle.com/javase/7/docs/api/</link>
-                        <link>http://docs.oracle.com/javaee/7/api/</link>
+                        <link>http://docs.oracle.com/javase/8/docs/api/</link>
+                        <link>http://docs.oracle.com/javaee/8/api/</link>
                         <link>http://docs.jboss.org/hibernate/orm/4.3/javadocs/</link>
                     </links>
                     <show>private</show>
@@ -228,14 +228,6 @@
                     <author>true</author>
                     <keywords>true</keywords>
                     <failOnError>false</failOnError>
-                    <doclet>org.jboss.apiviz.APIviz</doclet>
-                    <docletArtifact>
-                        <groupId>org.jboss.apiviz</groupId>
-                        <artifactId>apiviz</artifactId>
-                        <version>1.3.2.GA</version>
-                    </docletArtifact>
-                    <useStandardDocletOptions>true</useStandardDocletOptions>
-                    <additionalparam>-sourceclasspath ${project.build.outputDirectory}</additionalparam>
                 </configuration>
             </plugin>
 
