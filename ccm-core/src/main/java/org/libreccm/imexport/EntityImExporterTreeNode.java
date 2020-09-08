@@ -24,7 +24,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- *
+ * A node in the dependency tree managed by {@link EntityImExporterTreeManager}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 final class EntityImExporterTreeNode {

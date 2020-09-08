@@ -53,7 +53,9 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 
 /**
- *
+ * Implementation of {@link ThemeProvider} for serves themes stored in the 
+ * classpath.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

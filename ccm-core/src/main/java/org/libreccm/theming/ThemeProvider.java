@@ -25,9 +25,12 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
+import javax.enterprise.context.RequestScoped;
+
 /**
  * A theme provider provides access to the files of a theme. It abstracts from
- * the location and method of loading.
+ * the location and method of loading. Implementation must be CDI beans.
+ * Recommanded scope: {@link RequestScoped}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -149,8 +152,8 @@ public interface ThemeProvider extends Serializable {
      *         {@link Optional}.
      */
     Optional<ThemeFileInfo> getThemeFileInfo(String theme,
-                                         ThemeVersion version,
-                                         String path);
+                                             ThemeVersion version,
+                                             String path);
 
     /**
      * Retrieve a file from a theme. We use an {@link InputStream} here because

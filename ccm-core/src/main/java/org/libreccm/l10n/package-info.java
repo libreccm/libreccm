@@ -16,6 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
+/**
+ * This package provides several classes for localizing texts.
+ */
 @XmlSchema(xmlns = {@XmlNs(prefix = "l10n", namespaceURI = L10N_XML_NS)})
 @XmlAccessorType(XmlAccessType.NONE)
 package org.libreccm.l10n;

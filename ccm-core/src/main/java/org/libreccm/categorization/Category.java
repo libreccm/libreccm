@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import org.hibernate.validator.constraints.NotBlank;
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.RecursivePermissions;
@@ -58,6 +57,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 /**
  * The category entity represents a single category. Each category is part of a

@@ -27,10 +27,12 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 /**
- *
+ * 
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
+@Deprecated
 public class AdminJsfApplicationCreator implements ApplicationCreator<CcmApplication>{
 
     @Inject

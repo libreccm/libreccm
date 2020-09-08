@@ -37,7 +37,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
+ * Shiro filter using JSON Web Tokens for authenticiation.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class JwtVerifyingFilter extends AccessControlFilter {
@@ -62,8 +63,9 @@ public class JwtVerifyingFilter extends AccessControlFilter {
 
         final String jwtClaims = jwt.substring(jwt.indexOf((" ")));
         final Claims claims = Jwts
-            .parser()
+            .parserBuilder()
             .setSigningKey(key)
+            .build()
             .parseClaimsJws(jwtClaims)
             .getBody();
 

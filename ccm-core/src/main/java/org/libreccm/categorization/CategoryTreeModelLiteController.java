@@ -18,6 +18,7 @@
  */
 package org.libreccm.categorization;
 
+import org.hibernate.LazyInitializationException;
 import org.libreccm.l10n.GlobalizationHelper;
 
 import java.util.ArrayList;
@@ -29,7 +30,10 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 /**
- *
+ * CDI bean used as interface between Bebop ({@link CategoryTreeModelLite}) and
+ * CDI. The CDI beans primarly takes are care of transactions and avoids 
+ * {@link LazyInitializationException}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

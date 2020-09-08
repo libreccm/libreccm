@@ -31,7 +31,8 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 /**
- *
+ * Exporter/Importer for users.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

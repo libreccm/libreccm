@@ -36,7 +36,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Provides CRUB operations for {@link Category} objects.
+ * Provides CRUD operations for {@link Category} objects.
  *
  * Note: This repository class does no permission checks when retrieving
  * categories. This is the responsibility of the application which uses the

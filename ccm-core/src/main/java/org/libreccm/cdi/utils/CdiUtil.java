@@ -31,6 +31,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
+ * Utility class providing access the CDI beans in classes not eligible for
+ * injection.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -40,21 +42,41 @@ public class CdiUtil {
 
     private final BeanManager beanManager;
 
-    private CdiUtil(final BeanManager beanManager)  {
+    private CdiUtil(final BeanManager beanManager) {
         this.beanManager = beanManager;
     }
 
+    /**
+     * Get a new instance of {@code CdiUtil}.
+     *
+     * This factory method looks up the {@link BeanManager} using JNDI and
+     * passes the {@link BeanManager} to the constructor of {@code CdiUtil}.
+     *
+     * @return A new instance of {@code CdiUtil}.
+     */
     public static CdiUtil createCdiUtil() {
         try {
-        final InitialContext context = new InitialContext();
+            final InitialContext context = new InitialContext();
             final BeanManager beanManager = (BeanManager) context.lookup(
-                "java:comp/BeanManager");
+                "java:comp/BeanManager"
+            );
             return new CdiUtil(beanManager);
-        } catch(NamingException ex) {
+        } catch (NamingException ex) {
             throw new IllegalStateException("Unable to lookup BeanManager.", ex);
         }
     }
-    
+
+    /**
+     * Get an instance of the CDI bean of the provided class.
+     *
+     * @param <T>      Type of the CDI bean.
+     * @param beanType The type of the bean to retrieve.
+     *
+     * @return An instance of {@code beanType}.
+     *
+     * @throws IllegalStateException if no CDI bean of the type {@code beanType}
+     *                               is available.
+     */
     @SuppressWarnings("unchecked")
     public <T> T findBean(final Class<T> beanType) {
         final Set<Bean<?>> beans = beanManager.getBeans(beanType);

@@ -21,12 +21,23 @@ package org.libreccm.messaging;
 import org.libreccm.jpa.utils.MimeTypeConverter;
 
 import javax.activation.MimeType;
-import javax.persistence.*;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  *

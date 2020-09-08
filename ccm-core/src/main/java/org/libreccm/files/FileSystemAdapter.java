@@ -24,7 +24,12 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.List;
 
+import javax.enterprise.context.RequestScoped;
+
 /**
+ * Interface for a file system adapter. Implement this interface to add support
+ * for a method for storing (large} files. The implementation must be a CDI
+ * bean. It is recommanded that the bean is {@link RequestScoped}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -136,15 +141,15 @@ public interface FileSystemAdapter {
                InsufficientPermissionsException;
 
     String getMimeType(String path) throws FileAccessException;
-    
+
     long getSize(String path) throws FileAccessException;
-    
-    void copy(String sourcePath, 
-              String targetPath, 
+
+    void copy(String sourcePath,
+              String targetPath,
               boolean recursive) throws FileAccessException;
-    
+
     void move(String sourcePath, String targetPath) throws FileAccessException;
-    
+
     /**
      * checks if the provided path points to a directory.
      *
@@ -243,8 +248,7 @@ public interface FileSystemAdapter {
      * @throws FileDoesNotExistException        If the requested file does not
      *                                          exist.
      * @throws DirectoryNotEmptyException       If the directory is not empty
-     *                                          <em>and</em> {@code recursively}
-     *                                          is set to {@code false}.
+     * <em>and</em> {@code recursively} is set to {@code false}.
      * @throws InsufficientPermissionsException If the user which runs the
      *                                          application server does not have
      *                                          the permission to access the

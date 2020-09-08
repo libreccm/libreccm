@@ -21,11 +21,19 @@ package org.libreccm.notification;
 import org.libreccm.messaging.Message;
 import org.libreccm.security.Party;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 /**
  * Represents a notification that has been transferred to the outbound message
@@ -202,13 +210,13 @@ public class QueueItem implements Serializable {
     @Override
     public String toString() {
         return String.format("%s{ "
-                                     + "queueItemId = %d, "
-                                     + "receiver = %s, "
-                                     + "retryCount = %d, "
-                                     + "successful = %b, "
-                                     + "receiverAddress = \"%s\", "
-                                     + "message = %s"
-                                     + " }",
+                                 + "queueItemId = %d, "
+                                 + "receiver = %s, "
+                                 + "retryCount = %d, "
+                                 + "successful = %b, "
+                                 + "receiverAddress = \"%s\", "
+                                 + "message = %s"
+                                 + " }",
                              super.toString(),
                              queueItemId,
                              Objects.toString(receiver),

@@ -19,13 +19,21 @@
 package org.libreccm.web;
 
 /**
+ * Interface for classes which create a application instance.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @param <T>
  */
 public interface ApplicationCreator<T extends CcmApplication> {
-    
-    T createInstance(String primaryUrl,
-                     ApplicationType type);
-    
+
+    /**
+     * Creates a new instance of the the application of type {@code T}.
+     *
+     * @param primaryUrl The URL fragment for the application instance.
+     * @param type The type of the application.
+     *
+     * @return
+     */
+    T createInstance(String primaryUrl, ApplicationType type);
+
 }

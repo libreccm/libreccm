@@ -33,7 +33,9 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonValue;
 
 /**
- *
+ * A {@link Collector} implementation that collects {@link JsonValue}s to
+ * a {@link JsonArray}.
+ *  
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class JsonArrayCollector implements Collector<JsonValue, JsonArrayBuilder, JsonArray>{

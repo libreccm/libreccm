@@ -30,7 +30,7 @@ import java.util.UUID;
 /**
  * A repository class for {@link Permission}.
  *
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
+ * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version created on 3/29/17
  */
 @RequestScoped

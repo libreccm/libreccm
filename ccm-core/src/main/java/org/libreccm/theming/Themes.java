@@ -53,9 +53,6 @@ public class Themes implements Serializable {
     @Any
     private Instance<ThemeProvider> providers;
 //
-//    @Inject
-//    private Instance<ThemeProcessor> processors;
-
     @Inject
     private ThemeProcessors themeProcessors;
 

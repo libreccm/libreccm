@@ -23,7 +23,8 @@ import java.util.Objects;
 import javax.enterprise.context.RequestScoped;
 
 /**
- *
+ * Utils for working with text inside of a theme.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

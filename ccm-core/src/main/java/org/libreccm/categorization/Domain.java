@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import org.hibernate.validator.constraints.NotBlank;
+
 import org.hibernate.validator.constraints.URL;
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.LocalizedString;
@@ -65,6 +65,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotBlank;
 
 /**
  * A domain is collection of categories designed a specific purpose. This entity

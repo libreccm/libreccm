@@ -16,6 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
+/**
+ * This package provides the category system used by CCM.
+ */
 @XmlSchema(xmlns = {@XmlNs(prefix = "cat", namespaceURI = CAT_XML_NS)})
 @XmlAccessorType(XmlAccessType.NONE)
 package org.libreccm.categorization;

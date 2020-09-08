@@ -19,7 +19,9 @@
 package org.libreccm.imexport;
 
 /**
- *
+ * Thrown by the {@link AbstractEntityImExporter} if the something is wrong
+ * with the dependencies between entity types (eg circular dependencies).
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class DependencyException extends Exception {

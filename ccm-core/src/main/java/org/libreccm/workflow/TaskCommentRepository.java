@@ -26,6 +26,8 @@ import javax.persistence.TypedQuery;
 import java.util.Optional;
 
 /**
+ * Repository for {@link TaskComment}s.
+ * 
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers<\a>
  * 
  */

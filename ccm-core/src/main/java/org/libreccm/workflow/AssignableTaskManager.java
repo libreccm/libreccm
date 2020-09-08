@@ -19,7 +19,13 @@
 package org.libreccm.workflow;
 
 import org.libreccm.core.CoreConstants;
-import org.libreccm.security.*;
+import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.RequiresPrivilege;
+import org.libreccm.security.Role;
+import org.libreccm.security.RoleMembership;
+import org.libreccm.security.RoleRepository;
+import org.libreccm.security.Shiro;
+import org.libreccm.security.User;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -35,7 +41,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- *
+ * Manager for {@link AssignableTask}s.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

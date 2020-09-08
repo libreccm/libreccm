@@ -21,6 +21,7 @@ package org.libreccm.l10n.jaxb;
 import static org.libreccm.l10n.L10NConstants.*;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import org.libreccm.l10n.LocalizedString;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -32,7 +33,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
- *
+ * Simple bean class for the values of a {@link LocalizedString} used by JAXB.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

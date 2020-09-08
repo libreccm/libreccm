@@ -19,7 +19,8 @@
 package org.libreccm.theming;
 
 /**
- *
+ * Enum for the possible version states of a theme.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public enum ThemeVersion {

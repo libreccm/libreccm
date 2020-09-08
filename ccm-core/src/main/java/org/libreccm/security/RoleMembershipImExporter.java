@@ -30,7 +30,8 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 /**
- *
+ * Exporter/Importer for {@link RoleMembership}s.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Processes(RoleMembership.class)

@@ -26,10 +26,11 @@ import javax.enterprise.context.RequestScoped;
 import java.io.Serializable;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
+ * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version created on 3/23/17
  */
 @RequestScoped
+@Deprecated
 public class AssignableTaskIdResolver implements Serializable,
                                                  ObjectIdResolver {
 

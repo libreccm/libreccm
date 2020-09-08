@@ -37,6 +37,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
+ * A dependency between two tasks.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -48,19 +49,33 @@ public class TaskDependency implements Serializable, Exportable {
 
     private static final long serialVersionUID = -4383255770131633943L;
 
+    /**
+     * ID of the dependency.
+     */
     @Id
     @Column(name = "TASK_DEPENDENCY_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long taskDependencyId;
 
+    /**
+     * UUID of the dependency.
+     */
     @Column(name = "uuid", unique = true, nullable = false)
     private String uuid;
 
+    /**
+     * The blocked tasks that can only be done after the {@link #blockingTask}
+     * has been finished.
+     */
     @ManyToOne
     @JoinColumn(name = "BLOCKED_TASK_ID")
     @JsonIdentityReference(alwaysAsId = true)
     private Task blockedTask;
 
+    /**
+     * The task that has the be finished be the {@link #blockedTask} can be
+     * executed.
+     */
     @ManyToOne
     @JoinColumn(name = "BLOCKING_TASK_ID")
     @JsonIdentityReference(alwaysAsId = true)

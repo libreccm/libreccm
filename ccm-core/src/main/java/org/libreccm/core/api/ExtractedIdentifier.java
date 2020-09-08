@@ -19,7 +19,10 @@
 package org.libreccm.core.api;
 
 /**
- *
+ * Helper class containing the parts of an extracted identifier.
+ * 
+ * @see IdentifierExtractor
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ExtractedIdentifier {
@@ -35,10 +38,20 @@ public class ExtractedIdentifier {
         this.identifier = identifier;
     }
 
+    /**
+     * The identifier type.
+     * 
+     * @return 
+     */
     public IdentifierType getType() {
         return type;
     }
 
+    /**
+     * The identifier itself.
+     * 
+     * @return 
+     */
     public String getIdentifier() {
         return identifier;
     }

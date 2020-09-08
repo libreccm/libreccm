@@ -36,7 +36,8 @@ import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 /**
- *
+ * Repository for {@link ThemeFile} entities.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

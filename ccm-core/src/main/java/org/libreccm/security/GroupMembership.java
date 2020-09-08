@@ -35,7 +35,6 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.libreccm.imexport.Exportable;
 
 import javax.json.Json;
-import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.persistence.Column;
 import javax.persistence.Entity;

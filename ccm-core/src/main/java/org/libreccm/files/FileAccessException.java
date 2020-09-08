@@ -30,20 +30,10 @@ public class FileAccessException extends Exception {
 
     private static final String MESSAGE_TEMPLATE = "Error accessing file '%s'.";
 
-//    /**
-//     * Creates a new instance of <code>FileAccessException</code> without detail
-//     * message.
-//     */
-//    FileAccessException() {
-//        super();
-//    }
     FileAccessException(final String path) {
         super(String.format(MESSAGE_TEMPLATE, path));
     }
 
-//    FileAccessException(final Exception ex) {
-//        super(ex);
-//    }
     FileAccessException(final String path, final Exception ex) {
         super(String.format(MESSAGE_TEMPLATE, path), ex);
     }

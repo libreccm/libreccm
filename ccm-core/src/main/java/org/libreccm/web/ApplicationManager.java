@@ -37,19 +37,28 @@ import javax.persistence.TypedQuery;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.transaction.Transactional;
+
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+import java.util.ServiceLoader;
 
 /**
+ * Manager for application instances.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ApplicationScoped
 public class ApplicationManager implements Serializable {
+
     private static final long serialVersionUID = -4623791386536335252L;
 
     private static final Logger LOGGER = LogManager.getLogger(
-            ApplicationManager.class);
+        ApplicationManager.class);
 
     @Inject
     private EntityManager entityManager;
@@ -59,14 +68,19 @@ public class ApplicationManager implements Serializable {
 
     private Map<String, ApplicationType> applicationTypes = new HashMap<>();
 
+    /**
+     * Init function run by the CDI container after an instance was created.
+     * Loads all available application types into the {@link #applicationTypes}
+     * map.
+     */
     @PostConstruct
     private void loadApplicationTypes() {
         final ServiceLoader<CcmModule> modules = ServiceLoader.load(
-                CcmModule.class);
+            CcmModule.class);
 
         for (CcmModule module : modules) {
             final Module moduleData = module.getClass().getAnnotation(
-                    Module.class);
+                Module.class);
 
             final ApplicationType[] appTypes = moduleData.applicationTypes();
 
@@ -90,12 +104,12 @@ public class ApplicationManager implements Serializable {
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public <T extends CcmApplication> T createInstance(
-            final ApplicationType type,
-            final String path,
-            final Class<T> applicationClass) throws ApplicationCreateException {
+        final ApplicationType type,
+        final String path,
+        final Class<T> applicationClass) throws ApplicationCreateException {
         @SuppressWarnings("unchecked")
         final ApplicationCreator<T> creator = CdiUtil.createCdiUtil().findBean(
-                type.creator());
+            type.creator());
         final T application = creator.createInstance(path, type);
 
         entityManager.persist(application);
@@ -103,6 +117,11 @@ public class ApplicationManager implements Serializable {
         return application;
     }
 
+    /**
+     * Deletes an application instance.
+     *
+     * @param application The application instance to delete.
+     */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
@@ -110,9 +129,16 @@ public class ApplicationManager implements Serializable {
         entityManager.remove(application);
     }
 
+    /**
+     * Retrieve an application instance by its path.
+     *
+     * @param path The path of the application instance to retrieve.
+     *
+     * @return The application instance.
+     */
     public CcmApplication findApplicationByPath(final String path) {
         final TypedQuery<CcmApplication> query = entityManager.createNamedQuery(
-                "CcmApplication.retrieveApplicationForPath", CcmApplication.class);
+            "CcmApplication.retrieveApplicationForPath", CcmApplication.class);
         query.setParameter("path", path);
         final List<CcmApplication> result = query.getResultList();
         if (result.isEmpty()) {
@@ -124,6 +150,15 @@ public class ApplicationManager implements Serializable {
         }
     }
 
+    /**
+     * Gets the servlet path of an application. Note: It is not required that
+     * the path is mapped directly to a servlet. The path can also point to a
+     * JAX-RS resource or other classes which process requests.
+     *
+     * @param application The application instance.
+     *
+     * @return The servlet path of the application.
+     */
     public String getServletPath(final CcmApplication application) {
         final String typeName = application.getApplicationType();
 
@@ -131,26 +166,26 @@ public class ApplicationManager implements Serializable {
 
         if (type == null) {
             throw new IllegalArgumentException(String.format(
-                    "Unknown application type \"%s\".", typeName));
+                "Unknown application type \"%s\".", typeName));
         }
 
         if (type.servletPath().isEmpty()) {
             if (type.servlet().equals(HttpServlet.class)) {
                 throw new IllegalArgumentException(String.format(
-                        "Application type \"%s\" can no servlet path nor a serlet "
-                                + "definition.",
-                        typeName));
+                    "Application type \"%s\" can no servlet path nor a serlet "
+                        + "definition.",
+                    typeName));
             } else {
                 final Class<? extends HttpServlet> servletClass = type.servlet();
 
                 if (servletClass.isAnnotationPresent(WebServlet.class)) {
                     return servletClass.getAnnotation(WebServlet.class)
-                            .urlPatterns()[0];
+                        .urlPatterns()[0];
                 } else {
                     throw new IllegalArgumentException(String.format(
-                            "Provided servlet for application type \"%s\" has not "
-                                    + "@WebServlet annotation.",
-                            typeName));
+                        "Provided servlet for application type \"%s\" has not "
+                            + "@WebServlet annotation.",
+                        typeName));
                 }
             }
         } else {
@@ -158,8 +193,15 @@ public class ApplicationManager implements Serializable {
         }
     }
 
+    /**
+     * The the title of an application type.
+     *
+     * @param applicationType The application type.
+     *
+     * @return The title of the application type.
+     */
     public String getApplicationTypeTitle(
-            final ApplicationType applicationType) {
+        final ApplicationType applicationType) {
 
         final String descBundle;
         if (Strings.isBlank(applicationType.descBundle())) {
@@ -171,7 +213,7 @@ public class ApplicationManager implements Serializable {
         final ResourceBundle bundle;
         try {
             bundle = ResourceBundle.getBundle(
-                    descBundle, globalizationHelper.getNegotiatedLocale());
+                descBundle, globalizationHelper.getNegotiatedLocale());
             return bundle.getString(applicationType.titleKey());
         } catch (MissingResourceException ex) {
             LOGGER.warn("Failed to find resource bundle '{}'.", ex);
@@ -180,8 +222,15 @@ public class ApplicationManager implements Serializable {
         }
     }
 
+    /**
+     * The the description of an application type.
+     *
+     * @param applicationType The application type.
+     *
+     * @return The description of the application type.
+     */
     public String getApplicationTypeDescription(
-            final ApplicationType applicationType) {
+        final ApplicationType applicationType) {
 
         final String descBundle;
         if (Strings.isBlank(applicationType.descBundle())) {
@@ -193,7 +242,7 @@ public class ApplicationManager implements Serializable {
         final ResourceBundle bundle;
         try {
             bundle = ResourceBundle.getBundle(
-                    descBundle, globalizationHelper.getNegotiatedLocale());
+                descBundle, globalizationHelper.getNegotiatedLocale());
             return bundle.getString(applicationType.descKey());
         } catch (MissingResourceException ex) {
             LOGGER.warn("Failed to find resource bundle '{}'.", ex);
@@ -203,4 +252,3 @@ public class ApplicationManager implements Serializable {
     }
 
 }
-

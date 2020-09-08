@@ -33,7 +33,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- *
+ * Repository for applications.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

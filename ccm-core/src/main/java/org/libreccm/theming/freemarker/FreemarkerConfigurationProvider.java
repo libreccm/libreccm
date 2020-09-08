@@ -24,7 +24,6 @@ import freemarker.cache.TemplateLoader;
 import freemarker.cache.WebappTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;
-import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.theming.ThemeInfo;
 import org.libreccm.theming.Themes;
 
@@ -41,6 +40,8 @@ import javax.inject.Inject;
 import javax.servlet.ServletContext;
 
 /**
+ * CDI bean providing the Freemarker configuration for the
+ * {@link FreemarkerThemeProcessor}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -49,7 +50,7 @@ class FreemarkerConfigurationProvider {
 
     @Inject
     private ServletContext servletContext;
-    
+
     @Inject
     private Themes themes;
 
@@ -71,17 +72,17 @@ class FreemarkerConfigurationProvider {
             configuration.setLogTemplateExceptions(false);
             configuration.setWrapUncheckedExceptions(false);
             configuration.setLocalizedLookup(false);
-            
+
             configuration.setTemplateLoader(
                 new MultiTemplateLoader(new TemplateLoader[]{
-                    // For for files from themes
-                    new CcmTemplateLoader(forTheme), 
-                    // Loader for MacroLibs provided by CCM modules
-                    new WebappTemplateLoader(
-                        servletContext, "/themes/freemarker" 
-                    ),
-                    new ClassTemplateLoader(getClass(), "/themes/freemarker")
-                })
+                // For for files from themes
+                new CcmTemplateLoader(forTheme),
+                // Loader for MacroLibs provided by CCM modules
+                new WebappTemplateLoader(
+                servletContext, "/themes/freemarker"
+                ),
+                new ClassTemplateLoader(getClass(), "/themes/freemarker")
+            })
             );
 
             configurations.put(forTheme, configuration);
@@ -101,7 +102,8 @@ class FreemarkerConfigurationProvider {
         @Override
         public Object findTemplateSource(final String name) throws IOException {
 
-            final Optional<InputStream> source = themes.getFileFromTheme(fromTheme, name);
+            final Optional<InputStream> source = themes.getFileFromTheme(
+                fromTheme, name);
             if (source.isPresent()) {
                 return source.get();
             } else {

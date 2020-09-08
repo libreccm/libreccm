@@ -34,7 +34,8 @@ import java.io.PrintWriter;
 import java.util.Set;
 
 /**
- *
+ * Serves static theme resources from the classpath.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @WebServlet(urlPatterns = {"/themes/static/*"})

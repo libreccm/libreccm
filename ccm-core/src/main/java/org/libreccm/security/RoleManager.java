@@ -37,8 +37,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * Manager for roles providing methods for assigning the role the {@link Party}
- * entities and for removing them.
+ * Manager for roles providing methods for assigning the role and adding and
+ * removing {@link Party} entities entities to the role and for removing them.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

@@ -19,7 +19,8 @@
 package org.libreccm.core.api;
 
 /**
- *
+ * Enum for the supported types of identifiers.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public enum IdentifierType {

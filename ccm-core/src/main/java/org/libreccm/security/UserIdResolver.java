@@ -29,6 +29,7 @@ import java.io.Serializable;
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+@Deprecated
 @RequestScoped
 public class UserIdResolver implements Serializable, ObjectIdResolver {
     

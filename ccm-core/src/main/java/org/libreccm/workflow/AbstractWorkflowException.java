@@ -20,7 +20,8 @@
 package org.libreccm.workflow;
 
 /**
- *
+ * Base class for exception related to workflows.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class AbstractWorkflowException extends RuntimeException {

@@ -32,7 +32,9 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- *
+ * Base class for application setups. For each CCM application it is necessary
+ * to provide an implementation of this class.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public abstract class AbstractCcmApplicationSetup {

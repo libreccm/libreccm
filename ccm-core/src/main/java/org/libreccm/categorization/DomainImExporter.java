@@ -29,7 +29,8 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 /**
- *
+ * Exporter/Importer for {@link Domain} entities.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

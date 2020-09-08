@@ -31,12 +31,14 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 /**
+ * Exporter/Importer for {@link TaskAssignment}s.
+ * 
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 @Processes(TaskAssignment.class)
-public class TaskAssignmentMarshaller 
+public class TaskAssignmentImExporter 
     extends AbstractEntityImExporter<TaskAssignment> {
 
     @Inject

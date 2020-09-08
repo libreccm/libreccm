@@ -19,7 +19,8 @@
 package org.libreccm.core.api;
 
 /**
- *
+ * Constants for the RESTful API endpoints provided by ccm-core
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public final class ApiConstants {
@@ -28,7 +29,13 @@ public final class ApiConstants {
         // Nothing
     }
     
+    /**
+     * Prefix for an ID identifier.
+     */
     public static final String IDENTIFIER_PREFIX_ID = "ID-";
+    /**
+     * Prefix for an UUID identifier
+     */
     public static final String IDENTIFIER_PREFIX_UUID = "UUID-";
     
 }

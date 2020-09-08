@@ -30,20 +30,21 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 /**
+ * Exporter/Importer for application instances.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 @Processes(CcmApplication.class)
-public class ApplicationImExporter 
-    extends AbstractEntityImExporter<CcmApplication>{
+public class ApplicationImExporter
+    extends AbstractEntityImExporter<CcmApplication> {
 
     @Inject
     private ApplicationRepository applicationRepository;
-    
+
     @Override
     protected Class<CcmApplication> getEntityClass() {
-        
+
         return CcmApplication.class;
     }
 
@@ -56,10 +57,8 @@ public class ApplicationImExporter
 
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
-        
+
         return Collections.emptySet();
     }
-    
-    
-    
+
 }

@@ -30,6 +30,8 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 /**
+ * Importer/Exporter for {@link TaskComment}s.
+ * 
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @author <a href="mailto:jens.pelzetter@uni-bremen.de">Jens Pelzetter</a>
  */

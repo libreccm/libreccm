@@ -27,7 +27,8 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 /**
- *
+ * CDI producer for the {@link AuditReader} of Hibernate Envers.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ApplicationScoped
