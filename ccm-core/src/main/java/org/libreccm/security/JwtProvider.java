@@ -49,6 +49,7 @@ import javax.transaction.Transactional;
 import javax.ws.rs.POST;
 
 /**
+ * JAX-RS endpoint for generating JSON Web Tokens for authenticiation.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -62,6 +63,16 @@ public class JwtProvider {
     @Inject
     private Shiro shiro;
 
+    /**
+     * Generates a new JSON Web Token
+     *
+     * @param requestCredentials Credentials for authentication as JSON object
+     *                           with the properties {@code username} and
+     *                           {@code password}.
+     *
+     * @return A response with the JSON Web Token for a Forbidden response if
+     *         the credentials are incorrect.
+     */
     @POST
     @Path("/")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -74,7 +85,6 @@ public class JwtProvider {
                 .build();
         }
 
-        final JsonObjectBuilder jsonObjBuilder = Json.createObjectBuilder();
         final StringReader credentialsReader = new StringReader(
             requestCredentials);
         final JsonReader jsonReader = Json.createReader(credentialsReader);
@@ -139,6 +149,12 @@ public class JwtProvider {
         }
     }
 
+    /**
+     * Helper method for generating a secret for the JSON Web Tokens. 
+     * 
+     * Only called if no secret if found in the {@link KernelConfig}. The secret
+     * is stored in the {@link KernelConfig}.
+     */
     private void generateSecret() {
         final Random random = new SecureRandom();
         final byte[] randomBytes = new byte[64];

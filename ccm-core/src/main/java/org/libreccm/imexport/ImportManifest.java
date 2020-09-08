@@ -23,7 +23,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
+ * Java class containg the properties of an parsed import manifest. 
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ImportManifest {

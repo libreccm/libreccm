@@ -23,12 +23,27 @@ import java.util.Objects;
 import javax.enterprise.context.Dependent;
 
 /**
- *
+ * Extracts the identifier for an entity from a parameter.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Dependent
 public class IdentifierExtractor {
 
+    /**
+     * Extracts the identifier for an entity from a parameter.
+     * 
+     * If the parameter starts with {@link ApiConstants#IDENTIFIER_PREFIX_ID} 
+     * the identifier is assume to be an ID.
+     * 
+     * If the parameter starts with {@link ApiConstants#IDENTIFIER_PREFIX_UUID} 
+     * the identifier is assume to be an UUID.
+     * 
+     * Otherwise the identifier is some property of an entity.
+     * 
+     * @param identifierParam
+     * @return 
+     */
     public ExtractedIdentifier extractIdentifier(final String identifierParam) {
         Objects.requireNonNull(identifierParam, "identifier param is null.");
 

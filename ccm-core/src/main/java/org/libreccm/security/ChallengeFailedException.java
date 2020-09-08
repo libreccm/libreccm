@@ -20,7 +20,8 @@
 package org.libreccm.security;
 
 /**
- *
+ * Thrown if a challenge for user activation or password reset fails.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ChallengeFailedException extends Exception {

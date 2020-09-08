@@ -19,7 +19,8 @@
 package org.libreccm.l10n;
 
 /**
- *
+ * Constants for the classes in the {@link org.libreccm.l10n} package.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public final class L10NConstants {

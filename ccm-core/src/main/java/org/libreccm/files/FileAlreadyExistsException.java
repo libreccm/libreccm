@@ -29,23 +29,10 @@ public class FileAlreadyExistsException extends Exception {
     private static final long serialVersionUID = 2237027823060973043L;
     
     private static final String MESSAGE_TEMPLATE = "The file '%s' already exists.";
-
-//    /**
-//     * Creates a new instance of <code>FileAlreadyExistsException</code> without
-//     * detail message.
-//     */
-//    FileAlreadyExistsException() {
-//        super();
-//    }
-
     
     FileAlreadyExistsException(final String path) {
         super(String.format(MESSAGE_TEMPLATE, path));
     }
-
-//    FileAlreadyExistsException(final Exception ex) {
-//        super(ex);
-//    }
 
     FileAlreadyExistsException(final String path, final Exception ex) {
         super(String.format(MESSAGE_TEMPLATE, path), ex);

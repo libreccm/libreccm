@@ -33,7 +33,8 @@ import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 /**
- *
+ * Repository for {@link Theme} entities.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

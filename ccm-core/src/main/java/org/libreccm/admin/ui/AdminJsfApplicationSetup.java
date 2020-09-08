@@ -28,6 +28,7 @@ import java.util.UUID;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+@Deprecated
 public class AdminJsfApplicationSetup extends AbstractCcmApplicationSetup {
 
     public static final String ADMIN_APP_NAME = "CcmAdminJsf";

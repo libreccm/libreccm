@@ -20,7 +20,8 @@
 package org.libreccm.imexport;
 
 /**
- *
+ * Thrown if something goes wrong during an export.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ExportException extends Exception {

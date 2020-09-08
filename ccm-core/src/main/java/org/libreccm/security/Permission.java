@@ -55,7 +55,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * A permission grants a privilege on an object or system wide to {@link Role}.
+ * A permission grants a privilege on an object or system wide to a
+ * {@link Role}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -63,48 +64,40 @@ import javax.persistence.TemporalType;
 @Table(name = "PERMISSIONS", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(name = "Permission.findByUuid",
-                query = "SELECT p FROM Permission p WHERE p.uuid = :uuid")
-    ,
+                query = "SELECT p FROM Permission p WHERE p.uuid = :uuid"),
     @NamedQuery(name = "Permission.findByCustomPermId",
                 query = "SELECT p FROM Permission p "
                             + "WHERE p.grantedPrivilege = :privilege "
                             + "AND p.grantee = :grantee "
-                            + "AND p.object = :object")
-    ,
+                            + "AND p.object = :object"),
     @NamedQuery(name = "Permission.existsForPrivilegeRoleObject",
                 query = "SELECT COUNT(p) FROM Permission p "
                             + "WHERE p.grantedPrivilege = :privilege "
                             + "AND p.grantee = :grantee "
-                            + "AND p.object = :object")
-    ,
+                            + "AND p.object = :object"),
     @NamedQuery(name = "Permission.existsDirectForPrivilegeRoleObject",
                 query = "SELECT COUNT(p) FROM Permission p "
                             + "WHERE p.grantedPrivilege = :privilege "
                             + "AND p.grantee = :grantee "
                             + "AND p.object = :object "
-                            + "AND p.inherited = false")
-    ,
+                            + "AND p.inherited = false"),
     @NamedQuery(name = "Permission.existsInheritedForPrivilegeRoleObject",
                 query = "SELECT COUNT(p) FROM Permission p "
                             + "WHERE p.grantedPrivilege = :privilege "
                             + "AND p.grantee = :grantee "
                             + "AND p.object = :object "
-                            + "AND p.inherited = true")
-    ,
+                            + "AND p.inherited = true"),
     @NamedQuery(name = "Permission.existsForPrivilegeAndRole",
                 query = "SELECT COUNT(p) FROM Permission p "
                             + "WHERE p.grantedPrivilege = :privilege "
                             + "AND p.grantee = :grantee "
-                            + "AND p.object IS NULL")
-    ,
+                            + "AND p.object IS NULL"),
     @NamedQuery(name = "Permission.findPermissionsForRole",
                 query = "SELECT p FROM Permission p "
-                            + "WHERE p.grantee = :grantee")
-    ,
+                            + "WHERE p.grantee = :grantee"),
     @NamedQuery(name = "Permission.findPermissionsForCcmObject",
                 query = "SELECT p FROM Permission p "
-                            + "WHERE p.object = :object")
-    ,
+                            + "WHERE p.object = :object"),
     @NamedQuery(name = "Permission.findPermissionsForRoleAndObject",
                 query = "SELECT p FROM Permission p "
                             + "WHERE p.object = :object and p.grantee = :grantee")

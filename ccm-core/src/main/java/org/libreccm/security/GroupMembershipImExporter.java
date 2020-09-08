@@ -30,12 +30,15 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 /**
+ * Exporter/Importer for {@link GroupMembership} entities.
+ *
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Processes(GroupMembership.class)
-public class GroupMembershipImExporter extends AbstractEntityImExporter<GroupMembership> {
-
+public class GroupMembershipImExporter 
+    extends AbstractEntityImExporter<GroupMembership> {
+    
     @Inject
     private EntityManager entityManager;
 
@@ -44,14 +47,14 @@ public class GroupMembershipImExporter extends AbstractEntityImExporter<GroupMem
 
         return GroupMembership.class;
     }
-    
+
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
-        
+
         final Set<Class<? extends Exportable>> entities = new HashSet<>();
         entities.add(User.class);
         entities.add(Group.class);
-        
+
         return entities;
     }
 

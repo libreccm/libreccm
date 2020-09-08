@@ -30,7 +30,8 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 /**
- *
+ * Exporter/Importer for {@link Category} entities.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

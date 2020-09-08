@@ -20,6 +20,8 @@ package org.libreccm.l10n.jaxb;
 
 import static org.libreccm.l10n.L10NConstants.*;
 
+import org.libreccm.l10n.LocalizedString;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -29,7 +31,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlValue;
 
 /**
- *
+ * Simple bean class for the value of a {@link LocalizedString} used by JAXB.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

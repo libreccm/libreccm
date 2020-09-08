@@ -27,25 +27,16 @@ package org.libreccm.files;
 public class FileDoesNotExistException extends Exception {
 
     private static final long serialVersionUID = 1L;
-    
-    private static final String MESSAGE_TEMPLATE = "The file '%s' does not exist.";
 
-//    /**
-//     * Creates a new instance of <code>FileDoesNotExistException</code> without
-//     * detail message.
-//     */
-//    FileDoesNotExistException() {
-//    }
+    private static final String MESSAGE_TEMPLATE
+        = "The file '%s' does not exist.";
 
     FileDoesNotExistException(final String path) {
         super(String.format(MESSAGE_TEMPLATE, path));
     }
 
-//    FileDoesNotExistException(final Exception ex) {
-//        super(ex);
-//    }
-
     FileDoesNotExistException(final String path, final Exception ex) {
         super(String.format(MESSAGE_TEMPLATE, path), ex);
     }
+
 }

@@ -19,7 +19,8 @@
 package org.libreccm.theming;
 
 /**
- *
+ * Some constants for the classes managing themes.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public final class ThemeConstants {

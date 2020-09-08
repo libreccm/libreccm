@@ -20,7 +20,8 @@
 package org.libreccm.auditing;
 
 /**
- *
+ * Expectation thrown when an query for revision etc fails.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class AuditQueryException extends RuntimeException {

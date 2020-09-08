@@ -39,6 +39,7 @@ import java.util.ResourceBundle;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+@Deprecated
 @RequestScoped
 @Named
 public class SysInfoController {

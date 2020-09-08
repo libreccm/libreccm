@@ -33,7 +33,9 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 
 /**
- *
+ * Base repository for audited entities. Provides access the the revision of
+ * an entity. 
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @param <K> Primary key of the entity.

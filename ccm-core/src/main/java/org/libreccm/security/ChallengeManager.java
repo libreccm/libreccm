@@ -23,6 +23,7 @@ import com.arsdigita.mail.Mail;
 import com.arsdigita.ui.login.LoginConstants;
 import com.arsdigita.web.ParameterMap;
 import com.arsdigita.web.URL;
+
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,11 +33,16 @@ import org.libreccm.core.CoreConstants;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.l10n.LocalizedString;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
 
 import static com.arsdigita.ui.login.LoginServlet.*;
 

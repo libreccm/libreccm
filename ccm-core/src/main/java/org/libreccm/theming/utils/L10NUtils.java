@@ -39,7 +39,8 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 /**
- *
+ * Utility for getting localized texts for a theme.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

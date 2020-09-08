@@ -19,7 +19,10 @@
 package org.libreccm.categorization;
 
 /**
- *
+ * Thrown by {@link CategoryRepository#findByPath(java.lang.String)} and 
+ * {@link CategoryRepository#findByPath(org.libreccm.categorization.Domain, java.lang.String)}
+ * if the provided category path is invalid.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class InvalidCategoryPathException extends RuntimeException {

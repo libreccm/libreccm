@@ -19,7 +19,8 @@
 package org.libreccm.web;
 
 /**
- *
+ * Some constants for the classes in this package.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public final class WebConstants {

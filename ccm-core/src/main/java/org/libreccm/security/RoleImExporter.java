@@ -28,7 +28,8 @@ import java.util.Set;
 import javax.inject.Inject;
 
 /**
- *
+ * Exporter/Importer for {@link Role}s.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Processes(Role.class)

@@ -20,7 +20,8 @@
 package org.libreccm.web;
 
 /**
- *
+ * Thrown if the creation of a application instance fails.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ApplicationCreateException extends Exception {

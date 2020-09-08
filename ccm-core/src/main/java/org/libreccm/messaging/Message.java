@@ -23,7 +23,7 @@ import org.libreccm.jpa.utils.MimeTypeConverter;
 import org.libreccm.security.User;
 
 import javax.activation.MimeType;
-import javax.persistence.*;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
@@ -31,6 +31,18 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.libreccm.core.CoreConstants.DB_SCHEMA;
+
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *

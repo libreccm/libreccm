@@ -22,6 +22,7 @@ package org.libreccm.admin.ui.sysinfo;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+@Deprecated
 public class SysInfoProperty {
 
     private final String name;

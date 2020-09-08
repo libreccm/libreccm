@@ -19,7 +19,9 @@
 package org.libreccm.web;
 
 /**
- *
+ * Default application creator implementation used if no specific implementation
+ * of the {@link ApplicationCreator} interface is found.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class DefaultApplicationCreator

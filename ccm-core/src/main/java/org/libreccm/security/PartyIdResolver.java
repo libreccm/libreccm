@@ -29,6 +29,7 @@ import java.io.Serializable;
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version created on 3/23/17
  */
+@Deprecated
 @RequestScoped
 public class PartyIdResolver implements Serializable, ObjectIdResolver {
     private static final long serialVersionUID = -1208121020457080214L;

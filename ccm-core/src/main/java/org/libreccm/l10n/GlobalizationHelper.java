@@ -43,6 +43,11 @@ import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 /**
+ * This CDI bean provides most functions for localization in CCM.
+ * 
+ * In addition to providing the negoiated locale is also provides some utility
+ * methods for working with {@link LocalizedString}.
+ * 
  * Provides the locale which has been selected based on the available languages
  * configured in the {@link KernelConfig}, the preferred languages of the client
  * provided an the request, the (optional) {@code lang} attribute in the current
@@ -95,8 +100,8 @@ public class GlobalizationHelper implements Serializable {
      *
      * First tries to get a value for the negotiated locale. If the
      * {@code localizedString} does not have a value for the negotiated locale
-     * the default locale set in {@link KernelConfig} is used. If that also
-     * values the first value available locale (ordered alphabetically) is used.
+     * the default locale set in {@link KernelConfig} is used. If that also failes
+     * the first value available locale (ordered alphabetically) is used.
      *
      * @param localizedString
      *
@@ -136,6 +141,16 @@ public class GlobalizationHelper implements Serializable {
             .getValue();
     }
 
+    /**
+     * Retrieve the value of a {@link LocalizedString} for the current locale.
+     * This variant allows it to provide a method which provides a fallback
+     * which is used when the localized string has no value for the current
+     * locale and the default locale.
+     * 
+     * @param localizedString
+     * @param fallbackProvider
+     * @return 
+     */
     public String getValueFromLocalizedString(
         final LocalizedString localizedString,
         final Callable<String> fallbackProvider) {
@@ -159,6 +174,11 @@ public class GlobalizationHelper implements Serializable {
         }
     }
 
+    /**
+     * Gets the negotiated locale.
+     * 
+     * @return 
+     */
     public Locale getNegotiatedLocale() {
 
         final KernelConfig kernelConfig = confManager.findConfiguration(
@@ -186,6 +206,11 @@ public class GlobalizationHelper implements Serializable {
         return preferred;
     }
 
+    /**
+     * Gets the locale selected by the user agent.
+     * 
+     * @return 
+     */
     public Locale getSelectedLocale() {
         // Get the current session, create one if there is none
         final HttpSession session = request.getSession(true);
@@ -215,6 +240,11 @@ public class GlobalizationHelper implements Serializable {
         return selected;
     }
 
+    /**
+     * Lists all available locales. 
+     * 
+     * @return All locales configured in the {@link KernelConfig}.
+     */
     public List<Locale> getAvailableLocales() {
 
         final KernelConfig kernelConfig = confManager
@@ -230,6 +260,11 @@ public class GlobalizationHelper implements Serializable {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Sets the selected locale.
+     * 
+     * @param locale 
+     */
     public void setSelectedLocale(final Locale locale) {
 
         final HttpSession session = request.getSession(true);
@@ -310,6 +345,11 @@ public class GlobalizationHelper implements Serializable {
         return new GlobalizedMessagesUtil(bundleName);
     }
 
+    /**
+     * Helper function for converting a string to a locale. 
+     * @param language
+     * @return The locale, or null if the string is not a locale.
+     */
     private Locale scanLocale(final String language) {
         if (language == null || language.isEmpty()) {
             return null;

@@ -26,9 +26,10 @@ import javax.enterprise.context.RequestScoped;
 import java.io.Serializable;
 
 /**
- * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers</a>
+ * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @version created on 3/23/17
  */
+@Deprecated
 @RequestScoped
 public class TaskIdResolver implements Serializable, ObjectIdResolver {
     private static final long serialVersionUID = 6444989953192198987L;

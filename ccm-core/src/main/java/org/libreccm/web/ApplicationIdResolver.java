@@ -29,6 +29,7 @@ import java.io.Serializable;
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers<\a>
  * @version created the 8/10/17
  */
+@Deprecated
 @RequestScoped
 public class ApplicationIdResolver implements Serializable, ObjectIdResolver {
     private static final long serialVersionUID = 464933392877186401L;

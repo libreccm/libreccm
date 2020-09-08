@@ -21,7 +21,6 @@ package org.libreccm.theming.freemarker;
 import static org.libreccm.theming.ThemeConstants.*;
 
 import freemarker.template.SimpleNumber;
-import freemarker.template.SimpleScalar;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateMethodModelEx;
@@ -48,7 +47,8 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 /**
- *
+ * A {@link ThemeProcessor} implementation for Freemarker based themes.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ProcessesThemes("freemarker")

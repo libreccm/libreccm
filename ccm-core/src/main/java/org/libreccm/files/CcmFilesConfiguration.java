@@ -22,7 +22,8 @@ import org.libreccm.configuration.Configuration;
 import org.libreccm.configuration.Setting;
 
 /**
- *
+ * Configuration for the CCM files system.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Configuration(descBundle

@@ -44,7 +44,6 @@ import java.io.Serializable;
 /**
  * Provides various operations for user objects.
  *
- *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

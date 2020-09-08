@@ -36,7 +36,9 @@ import javax.ws.rs.core.Response;
 
 
 /**
- *
+ * JAX-RS endpoint for serving files from a theme.
+ * 
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

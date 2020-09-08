@@ -30,6 +30,8 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 /**
+ * Exporter/Importer for {@link AssignableTask}s.
+ * 
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  *
