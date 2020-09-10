@@ -398,6 +398,7 @@
                     <author>true</author>
                     <keywords>true</keywords>
                     <failOnError>false</failOnError>
+                    <additionalOptions>--frames</additionalOptions>
                 </configuration>
             </plugin>
             <plugin>
