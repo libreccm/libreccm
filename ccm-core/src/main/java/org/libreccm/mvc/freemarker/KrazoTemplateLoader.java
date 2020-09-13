@@ -46,7 +46,7 @@ import javax.servlet.ServletContext;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class KrazoTemplateLoader implements TemplateLoader {
+class KrazoTemplateLoader implements TemplateLoader {
 
     private final ServletContext servletContext;
 

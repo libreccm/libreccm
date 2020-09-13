@@ -35,7 +35,7 @@ import java.util.Optional;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class ThemesTemplateLoader implements TemplateLoader {
+class ThemesTemplateLoader implements TemplateLoader {
 
     private final Themes themes;
 
