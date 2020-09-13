@@ -546,6 +546,15 @@
                 <artifactId>javax.mvc-api</artifactId>
                 <version>1.0.0</version>
             </dependency>
+            <!-- 
+                Krazo core dependency. Should be used with the `provided` scope 
+                if a module needs access to internals of Krazo
+            -->
+            <dependency>
+                <groupId>org.eclipse.krazo</groupId>
+                <artifactId>krazo-core</artifactId>
+                <version>1.1.0-M1</version>
+            </dependency>
             <!-- Krazo for Glassfish/Papaya -->
             <dependency>
                 <groupId>org.eclipse.krazo</groupId>
