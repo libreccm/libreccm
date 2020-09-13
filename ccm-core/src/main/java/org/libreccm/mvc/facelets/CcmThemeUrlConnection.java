@@ -30,19 +30,41 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
+ * Special {@link URLConnection} for loading Facelets templates from a LibreCCM
+ * theme.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class CcmThemeUrlConnection extends URLConnection {
 
+    /**
+     * Themes instance used as interface to the theme system
+     */
     private final Themes themes;
 
+    /**
+     * Path of the template to load.
+     */
     private final String path;
 
+    /**
+     * Theme to use. Initialized by {@link #connect()}.
+     */
     private ThemeInfo themeInfo;
 
+    /**
+     * Path of the file relative to the theme root. Initialized by
+     * {@link #connect()}
+     */
     private String filePath;
 
+    /**
+     * Constructor for initalizing the instance, providing the required
+     * parameters.
+     *
+     * @param themes Themes instance to use.
+     * @param url    URL of the template to load.
+     */
     public CcmThemeUrlConnection(final Themes themes, final URL url) {
         super(url);
         this.themes = themes;
@@ -56,6 +78,13 @@ class CcmThemeUrlConnection extends URLConnection {
         }
     }
 
+    /**
+     * Called by Java to connect to the source of the URL. In this case we
+     * retrieve the {@link ThemeInfo} for the theme to use, and initalize the
+     * {@link #filePath} property.
+     *
+     * @throws IOException If the theme is not found or if the URL is malformed.
+     */
     @Override
     public void connect() throws IOException {
         final String[] tokens = path.split("/");
@@ -78,12 +107,21 @@ class CcmThemeUrlConnection extends URLConnection {
                 )));
         } else {
             throw new IOException(
-                "Illegal URL for loading a facelets template from a theme."
+                "Malformed URL for loading a facelets template from a theme."
             );
         }
 
     }
 
+    /**
+     * Get an {@link InputStream} for the resource to which the URL points. In
+     * this case we delagate the retrieval of the the template to
+     * {@link Themes#getFileFromTheme(org.libreccm.theming.ThemeInfo, java.lang.String)}.
+     *
+     * @return An {@code InputStream} for the requested template.
+     *
+     * @throws IOException If the template was not found in the theme.
+     */
     @Override
     public InputStream getInputStream() throws IOException {
         return themes
