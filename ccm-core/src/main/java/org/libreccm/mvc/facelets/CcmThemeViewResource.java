@@ -27,7 +27,8 @@ import java.net.URL;
 import javax.faces.application.ViewResource;
 
 /**
- *
+ * A {@link ViewResource} implementation for templates from LibreCCM themes.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class CcmThemeViewResource extends ViewResource {
@@ -36,13 +37,28 @@ class CcmThemeViewResource extends ViewResource {
 
     private final Themes themes;
 
+    /**
+     * Constructor for the {@code ViewResource} instance.
+     * 
+     * @param themes Interface to the theme system
+     * @param path The path of the template.
+     */
     public CcmThemeViewResource(final Themes themes, final String path) {
         this.themes = themes;
         this.path = path;
     }
 
+    /**
+     * Gets the URL of the URL of the template as {@code ViewResource}.
+     * 
+     * @return The URL of the {@code ViewResource}.
+     */
     @Override
     public URL getURL() {
+        // The URL build here is a "pseudo" URL. Most of the parts of the URL
+        // are no relevant. An special URLStreamHandler implementation is
+        // also passed to the URL. This URLStreamHandler implementation takes
+        // care of retrieving the template from the theme.
         try {
             return new URL(
                 "libreccm",

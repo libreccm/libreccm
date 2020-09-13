@@ -16,32 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.mvc.facelets;
-
-import org.libreccm.theming.Themes;
-
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLStreamHandler;
-
 /**
- * Implementation of {@link URLStreamHandler} for handling URLs to LibreCCM 
- * theme templates.
- * 
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * Integration of the LibreCCM theme system with the Facelet ViewEngine of
+ * Eclipse Krazo.
  */
-class CcmThemeUrlStreamHandler extends URLStreamHandler {
-
-    private final Themes themes;
-    
-    public CcmThemeUrlStreamHandler(final Themes themes) {
-        this.themes = themes;
-    }
-    
-    @Override
-    protected URLConnection openConnection(final URL url) throws IOException {
-        return new CcmThemeUrlConnection(themes, url);
-    }
-    
-}
+package org.libreccm.mvc.facelets;

@@ -69,12 +69,12 @@ class CcmThemeUrlConnection extends URLConnection {
         super(url);
         this.themes = themes;
 
-        final String urlStr = url.toString();
+        final String urlPath = url.getPath();
 
-        if (urlStr.startsWith("/")) {
-            path = urlStr.substring(1);
+        if (urlPath.startsWith("/")) {
+            path = urlPath.substring(1);
         } else {
-            path = urlStr;
+            path = urlPath;
         }
     }
 
