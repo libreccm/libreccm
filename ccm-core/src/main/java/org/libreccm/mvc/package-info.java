@@ -18,8 +18,27 @@
  */
 /**
  * The classes in this package integrate LibreCCM with Jakarta EE MVC and its
- * reference implementation Eclipse Krazo. 
+ * reference implementation Eclipse Krazo.
+ *
+ * And the the moment the ViewEngines for Facelets and Freemarker are supported.
+ * The integration allows it to load templates for these ViewEngines either from
+ * the default locations or from a theme. If the path of template starts with
+ * {@code @themes/} or {@code /@themes/} the integration will delegate loading of
+ * the template to {@link Themes} of the theme. The path must follow the following
+ * pattern: 
  * 
+ * <pre>
+ *     @themes/$themeName/$version/$pathToTemplate
+ * </pre>
+ * 
+ * Where {@code $themeName} is the name of the theme, {@code $version} is the
+ * version of the theme (either {@code live} or {@code draft} and 
+ * {@code $pathToFile} is the path the template.
+ * 
+ * If the path does not start with {@code @themes/} or {@code /@themes/} the
+ * template will be loaded from the default location(s) used by Jakarta EE
+ * MVC/Eclipse Krazo.
+ *
  * @see https://www.mvc-spec.org/
  */
 package org.libreccm.mvc;

@@ -29,20 +29,16 @@ import java.io.Reader;
 import javax.servlet.ServletContext;
 
 /**
- *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
- */
-/**
  * A copy of the {@link TemplateLoader} used by Krazo.
  *
  * The {@code TemplateLoader} used by Krazo is defined as inner class. This
- * class provides the same behaviour as "real" class so that we can use it with
- * Freemarker {@link MultiTemplateLoader}.
+ * class provides the same behaviour as this inner class so that we can use it
+ * with Freemarker's {@link MultiTemplateLoader}.
  *
- * As extension this implementation of the {@code TemplateLoader} interface will
- * not process template paths which start with {@code @themes/} or
- * {@code /@themes/}. These path are processed by the templates loaders for the
- * theming system.
+ * As extension to Krazo's implementation this implementation of the
+ * {@code TemplateLoader} interface will not process template paths which start
+ * with {@code @themes/} or {@code /@themes/}. These path are processed by the
+ * {@link ThemesTemplateLoader} for the theming system.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
