@@ -39,7 +39,7 @@ import javax.inject.Inject;
  * 
  * <pre>
  * &lt;application&gt;
-        &tl;resource-handler&gt;org.libreccm.ui.CcmFaceletsResourceHandler&lt;/resource-handler&gt;
+        &tl;resource-handler&gt;org.libreccm.mvc.facelets.CcmViewResourceHandler&lt;/resource-handler&gt;
     &lt;/application&gt;
 
  * </pre>
