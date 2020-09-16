@@ -25,6 +25,12 @@
     
     <dependencies>
         <dependency>
+            <groupId>org.libreccm</groupId>
+            <artifactId>ccm-wildfly</artifactId>
+            <version>7.0.0-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>font-awesome</artifactId>
             <!--<version>4.7.0</version>-->
@@ -203,6 +209,22 @@
                             </includes>
                         </overlay>
                         <overlay>
+                            <groupId>org.libreccm</groupId>
+                            <artifactId>ccm-core</artifactId>
+                            <type>jar</type>
+                            <includes>
+                                <include>views/</include>
+                            </includes>
+                        </overlay>
+                        <overlay>
+                            <groupId>org.libreccm</groupId>
+                            <artifactId>ccm-core</artifactId>
+                            <type>jar</type>
+                            <includes>
+                                <include>resources/</include>
+                            </includes>
+                        </overlay>
+                        <overlay>
                             <groupId>org.librecms</groupId>
                             <artifactId>ccm-cms</artifactId>
                             <type>jar</type>
@@ -244,6 +266,9 @@
                 <configuration>
                     <skip>false</skip>
                     <propertiesFile>${project.basedir}/wildfly.properties</propertiesFile>
+                    <java-opts>
+                        <java-opt>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8787</java-opt>
+                    </java-opts>
                 </configuration>
             </plugin>
 

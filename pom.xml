@@ -95,8 +95,8 @@
         <module>ccm-cms-archetype-contenttype</module>
         
         <!--<module>ccm-cms-js</module>-->
-        
-    </modules>
+    <module>ccm-wildfly</module>
+  </modules>
 
     <reporting>
         <excludeDefaults>true</excludeDefaults>
@@ -531,6 +531,47 @@
                 <groupId>org.glassfish.jaxb</groupId>
                 <artifactId>jaxb-runtime</artifactId>
                 <version>2.4.0-b180830.0438</version>
+            </dependency>
+            
+            <!--
+                Jakarta MVC is a thin layer ontop of JAX-RS providing a
+                MVC framework for Jakarta EE: https://www.mvc-spec.org
+                
+                The reference implementation Krazo is available for
+                all major application servers. Krazo all provides several 
+                extensions for template engines. 
+            -->
+            <dependency>
+                <groupId>javax.mvc</groupId>
+                <artifactId>javax.mvc-api</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <!-- 
+                Krazo core dependency. Should be used with the `provided` scope 
+                if a module needs access to internals of Krazo
+            -->
+            <dependency>
+                <groupId>org.eclipse.krazo</groupId>
+                <artifactId>krazo-core</artifactId>
+                <version>1.1.0-M1</version>
+            </dependency>
+            <!-- Krazo for Glassfish/Papaya -->
+            <dependency>
+                <groupId>org.eclipse.krazo</groupId>
+                <artifactId>krazo-jersey</artifactId>
+                <version>1.1.0-M1</version>
+            </dependency>
+            <!-- Krazo for Wildfly and JBoss EAP -->
+            <dependency>
+                <groupId>org.eclipse.krazo</groupId>
+                <artifactId>krazo-resteasy</artifactId>
+                <version>1.1.0-M1</version>
+            </dependency>
+            <!-- Krazo support for Freemarker -->
+            <dependency>
+                <groupId>org.eclipse.krazo.ext</groupId>
+                <artifactId>krazo-freemarker</artifactId>
+                <version>1.1.0-M1</version>
             </dependency>
 
             <!-- Shiro lib for security stuff -->
