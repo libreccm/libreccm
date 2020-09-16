@@ -213,7 +213,7 @@
                             <artifactId>ccm-core</artifactId>
                             <type>jar</type>
                             <includes>
-                                <include>views/</include>
+                                <include>WEB-INF/</include>
                             </includes>
                         </overlay>
                         <overlay>
