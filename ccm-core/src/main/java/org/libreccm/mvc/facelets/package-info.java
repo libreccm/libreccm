@@ -18,6 +18,15 @@
  */
 /**
  * Integration of the LibreCCM theme system with the Facelet ViewEngine of
- * Eclipse Krazo.
+ * Eclipse Krazo. The integration allows it to load Facelets either from
+ * a theme using a {@link Themes} or from the default locations. To enable the
+ * integration the following snippet has to be added to the
+ * {@code faces-config.xml}:
+ * <pre>
+ *     &lt;application&gt;
+ *         &tl;resource-handler&gt;org.libreccm.ui.CcmFaceletsResourceHandler&lt;/resource-handler&gt;
+ *     &lt;/application&gt;
+ * </pre>
+ *
  */
 package org.libreccm.mvc.facelets;
