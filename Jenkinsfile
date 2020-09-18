@@ -7,14 +7,14 @@ pipeline {
         stage('Build and Test')  {
             steps {
                 dir('') {
-                    sh 'mvn clean verify -Prun-its-with-wildfly-h2mem -Dwildfly.propertiesFile=/srv/libreccm-wildfly.properties' 
+                    sh 'mvn clean package verify -Prun-its-with-wildfly-h2mem -Dwildfly.propertiesFile=/srv/libreccm-wildfly.properties' 
                 }
             }
         }
         stage("Analyse") {
             steps {
                 dir('') {
-                    sh 'mvn pmd:pmd pmd:cpd spotbugs:spotbugs'
+                    sh 'mvn package pmd:pmd pmd:cpd spotbugs:spotbugs'
                 }
             }
         }
@@ -22,7 +22,7 @@ pipeline {
             steps {
                 dir('') {
                     configFileProvider([configFile(fileId: 'libreccm-packages-deploy', variable: 'MAVEN_SETTINGS')]) {
-                        sh 'mvn -U -s "$MAVEN_SETTINGS" -e deploy'
+                        sh 'mvn -U -s "$MAVEN_SETTINGS" -e package deploy'
                     }
                 }
             }
