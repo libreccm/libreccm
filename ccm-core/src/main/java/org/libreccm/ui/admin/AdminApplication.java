@@ -18,8 +18,9 @@
  */
 package org.libreccm.ui.admin;
 
+import org.libreccm.ui.IsAuthenticatedFilter;
 
-
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,11 +41,19 @@ public class AdminApplication extends Application {
 
     @Override
     public Set<Class<?>> getClasses() {
-        return adminPages
-            .stream()
-            .map(AdminPage::getControllerClasses)
-            .flatMap(controllers -> controllers.stream())
-            .collect(Collectors.toSet());
+        final Set<Class<?>> classes = new HashSet<>();
+
+        classes.add(IsAuthenticatedFilter.class);
+        
+        classes.addAll(
+            adminPages
+                .stream()
+                .map(AdminPage::getControllerClasses)
+                .flatMap(controllers -> controllers.stream())
+                .collect(Collectors.toSet())
+        );
+
+        return classes;
 
 //        final Set<Class<?>> classes = new HashSet<>();
 //        classes.add(SystemInformationController.class);

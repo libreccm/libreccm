@@ -18,6 +18,10 @@
  */
 package org.libreccm.ui.admin.systeminformation;
 
+import org.libreccm.core.CoreConstants;
+import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.RequiresPrivilege;
+
 import javax.enterprise.context.RequestScoped;
 import javax.mvc.Controller;
 import javax.ws.rs.GET;
@@ -34,6 +38,8 @@ public class SystemInformationController {
     
     @GET
     @Path("/")
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     public String getSystemInformation() {
         return "org/libreccm/ui/admin/systeminformation.xhtml";
     }
