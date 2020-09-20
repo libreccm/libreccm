@@ -41,6 +41,11 @@ public class SystemInformationPage implements AdminPage {
     }
 
     @Override
+    public String getPath() {
+        return "systeminformation";
+    }
+
+    @Override
     public String getLabelBundle() {
         return AdminConstants.ADMIN_BUNDLE;
     }
@@ -58,6 +63,11 @@ public class SystemInformationPage implements AdminPage {
     @Override
     public String getDescriptionKey() {
         return "systeminformation.description";
+    }
+
+    @Override
+    public String getIcon() {
+        return "info-circle-fill";
     }
 
     @Override

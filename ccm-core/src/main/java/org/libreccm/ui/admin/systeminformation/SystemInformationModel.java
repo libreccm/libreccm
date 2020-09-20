@@ -18,7 +18,6 @@
  */
 package org.libreccm.ui.admin.systeminformation;
 
-import com.arsdigita.util.SystemInformation;
 import com.arsdigita.util.UncheckedWrapperException;
 
 import java.io.IOException;
@@ -26,7 +25,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;

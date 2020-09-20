@@ -18,6 +18,7 @@
  */
 package org.libreccm.ui.admin;
 
+import java.util.ResourceBundle;
 import java.util.Set;
 
 /**
@@ -32,6 +33,16 @@ public interface AdminPage {
      * @return A set of controllers to be added to the {@link AdminApplication}.
      */
     Set<Class<?>> getControllerClasses();
+
+    /**
+     * The entry point for the admin module. Used to generate the URL for an
+     * admin page in the navigation etc. For example, with the return value will
+     * {@code systeminformation} the generated link is
+     * {@code #{contextPath}/@admin/#{path}}.
+     *
+     * @return The path fragment of the entry point of the admin page/module.
+     */
+    String getPath();
 
     /**
      * Gets the resourcebundle which provides the label of the admin page.
@@ -63,8 +74,15 @@ public interface AdminPage {
     String getDescriptionKey();
 
     /**
-     * Gets the position of the page in the admin nav bar. 
-     * 
+     * Name of icon to use.
+     *
+     * @return The icon to use for the page.
+     */
+    String getIcon();
+
+    /**
+     * Gets the position of the page in the admin nav bar.
+     *
      * @return The position of the page in the admin navigation.
      */
     int getPosition();
