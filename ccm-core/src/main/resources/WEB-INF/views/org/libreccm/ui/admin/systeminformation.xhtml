@@ -4,20 +4,89 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
+        <ui:param name="activePage" value="systeminformation" />
         <ui:param name="title" value="System Information" />
         <ui:define name="main">
             <div class="container">
                 <h1>System Information</h1>
-                <h2>LibreCCM System Information</h2>
-                <dl>
-                    <c:forEach items="#{SystemInformationModel.ccmSystemInformation}" 
-                               var="prop">
-                        <div>
-                            <dt>#{prop.key}</dt>
-                            <dd>#{prop.value}</dd>
-                        </div>
-                    </c:forEach>
-                </dl>
+                <ul class="nav nav-tabs" 
+                    id="systeminformation-tabs" 
+                    role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" 
+                           id="ccminfo-tab"
+                           data-toggle="tab"
+                           href="#ccminfo"
+                           role="tab"
+                           aria-controls="ccminfo"
+                           aria-selected="true">
+                            LibreCCM System Information
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" 
+                           id="javainfo-tab"
+                           data-toggle="tab"
+                           href="#javainfo"
+                           role="tab"
+                           aria-controls="javainfo"
+                           aria-selected="false">
+                            Java System Properties
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="systeminfo-tabcontent">
+                    <div class="tab-pane fade show active"
+                         id="ccminfo"
+                         role="tabpanel"
+                         aria-labelled="LibreCCM System Information Tab"
+                         >
+                        <h2>LibreCCM System Information</h2>
+                        <dl>
+                            <c:forEach items="#{SystemInformationModel.ccmSystemInformation}" 
+                                       var="prop">
+                                <div>
+                                    <dt>#{prop.key}</dt>
+                                    <dd>#{prop.value}</dd>
+                                </div>
+                            </c:forEach>
+                        </dl>
+                    </div>
+                    <div class="tab-pane fade"
+                         id="javainfo"
+                         role="tabpanel"
+                         aria-labelled="Java System Properties Tab"
+                         >
+                        <h2>Java System Properties</h2>
+                        <dl>
+                            <c:forEach items="#{SystemInformationModel.javaSystemProperties}" 
+                                       var="prop">
+                                <div>
+                                    <dt>#{prop.key}</dt>
+                                    <dd>#{prop.value}</dd>
+                                </div>
+                            </c:forEach>
+                        </dl>
+                    </div>
+                </div>
+<!--                
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">...</div>
+  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
+  <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+</div>-->
             </div>
         </ui:define>
     </ui:composition>
