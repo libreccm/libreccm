@@ -16,13 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.ui.admin.systeminformation;
-
-import java.util.HashSet;
-import java.util.Set;
+package org.libreccm.ui.admin.applications;
 
 import org.libreccm.ui.admin.AdminConstants;
 import org.libreccm.ui.admin.AdminPage;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -31,18 +31,18 @@ import javax.enterprise.context.ApplicationScoped;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ApplicationScoped
-public class SystemInformationPage implements AdminPage {
+public class ApplicationsPage implements AdminPage {
 
     @Override
     public Set<Class<?>> getControllerClasses() {
         final Set<Class<?>> classes = new HashSet<>();
-        classes.add(SystemInformationController.class);
+        classes.add(ApplicationsController.class);
         return classes;
     }
 
     @Override
     public String getPath() {
-        return "systeminformation";
+        return "applications";
     }
 
     @Override
@@ -52,7 +52,7 @@ public class SystemInformationPage implements AdminPage {
 
     @Override
     public String getLabelKey() {
-        return "systeminformation.label";
+        return "applications.label";
     }
 
     @Override
@@ -62,17 +62,17 @@ public class SystemInformationPage implements AdminPage {
 
     @Override
     public String getDescriptionKey() {
-        return "systeminformation.description";
+        return "applications.description";
     }
 
     @Override
     public String getIcon() {
-        return "info-circle-fill";
+        return "journals";
     }
 
     @Override
     public int getPosition() {
-        return 70;
+        return 10;
     }
 
 }

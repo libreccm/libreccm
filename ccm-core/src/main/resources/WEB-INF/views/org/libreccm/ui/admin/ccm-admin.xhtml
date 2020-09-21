@@ -27,20 +27,9 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav mr-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#foo">
-                                <svg class="bi"
-                                     width="1em"
-                                     height="1em"
-                                     fill="currentColor">
-                                    <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#info-circle-fill" />
-                                </svg>
-                                <span>Foo</span>
-                            </a>
-                        </li>
                         <c:forEach items="#{AdminPagesModel.adminPages}" var="page">
                             <li class="nav-item">
-                                <a class="nav-link" 
+                                <a class="nav-link #{activePage == page.path?'active':''}" 
                                    href="#{request.contextPath}/@admin/#{page.path}">
                                     <svg class="bi"
                                          width="1em"
