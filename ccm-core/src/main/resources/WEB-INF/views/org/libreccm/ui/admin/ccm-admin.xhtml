@@ -44,6 +44,16 @@
                     </ul>
                 </div>
             </nav>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="#{request.contextPath}/@admin/">
+                            #{AdminMessages['breadcrumbs.start']}
+                        </a>
+                    </li>
+                    <ui:insert name="breadcrumb"></ui:insert>
+                </ol>
+            </nav>
         </header>
         <main>
             <ui:insert name="main"></ui:insert>

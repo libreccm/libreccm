@@ -4,13 +4,22 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
+
         <ui:param name="activePage" value="usersgroupsroles" />
-        <ui:param name="title" value="Users/Groups/Roles" />
+        <ui:param name="title" value="#{AdminMessages['usersgroupsroles.label']}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item active">
+                #{AdminMessages['usersgroupsroles.label']}
+            </li>
+        </ui:define>
+
         <ui:define name="main">
             <div class="container">
-                <h1>Users/Groups/Roles</h1>
+                <h1>#{AdminMessages['usersgroupsroles.label']}</h1>
                 <p>Placeholder</p>
             </div>
         </ui:define>
+
     </ui:composition>
 </html>
