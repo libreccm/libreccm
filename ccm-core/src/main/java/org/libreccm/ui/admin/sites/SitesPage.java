@@ -66,7 +66,7 @@ public class SitesPage implements AdminPage {
 
     @Override
     public String getIcon() {
-        return "bookshelf";
+        return "collection";
     }
 
     @Override

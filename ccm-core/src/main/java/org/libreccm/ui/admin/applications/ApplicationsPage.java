@@ -67,7 +67,7 @@ public class ApplicationsPage implements AdminPage {
 
     @Override
     public String getIcon() {
-        return "journals";
+        return "puzzle";
     }
 
     @Override

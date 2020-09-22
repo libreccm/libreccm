@@ -16,37 +16,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.ui.admin.systeminformation;
+package org.libreccm.ui;
 
-import org.libreccm.core.CoreConstants;
-import org.libreccm.security.AuthorizationRequired;
-import org.libreccm.security.RequiresPrivilege;
+import org.libreccm.l10n.GlobalizationHelper;
+
+import java.util.Locale;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.mvc.Controller;
-import javax.mvc.MvcContext;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import javax.mvc.locale.LocaleResolver;
+import javax.mvc.locale.LocaleResolverContext;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Controller
-@Path("/systeminformation")
-public class SystemInformationController {
-    
+public class MvcLocaleResolver implements LocaleResolver {
+
     @Inject
-    private MvcContext mvc; 
-    
-    @GET
-    @Path("/")
-    @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public String getSystemInformation() {
-        return "org/libreccm/ui/admin/systeminformation.xhtml";
+    private GlobalizationHelper globalizationHelper;
+
+    @Override
+    public Locale resolveLocale(final LocaleResolverContext context) {
+        return globalizationHelper.getNegotiatedLocale();
     }
-    
+
 }
