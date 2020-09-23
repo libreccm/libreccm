@@ -23,14 +23,9 @@ import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import javax.mvc.Controller;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 
 /**
  *
@@ -41,9 +36,7 @@ import javax.ws.rs.QueryParam;
 @Path("/users-groups-roles")
 public class UsersGroupsRolesController {
 
-    @Inject
-    private UsersTableModel usersTableModel;
-
+  
     @GET
     @Path("/")
     @AuthorizationRequired
@@ -68,15 +61,7 @@ public class UsersGroupsRolesController {
         return "org/libreccm/ui/admin/users-groups-roles/roles.xhtml";
     }
 
-    @GET
-    @Path("/users")
-    @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public String getUsers(
-        @QueryParam("filterterm") @DefaultValue("") final String filterTerm
-    ) {
-        usersTableModel.setFilterTerm(filterTerm);
-        return "org/libreccm/ui/admin/users-groups-roles/users.xhtml";
-    }
+    
 
+    
 }
