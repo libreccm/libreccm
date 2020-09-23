@@ -71,6 +71,6 @@ public class SitesPage implements AdminPage {
 
     @Override
     public int getPosition() {
-        return 60;
+        return 50;
     }
 }

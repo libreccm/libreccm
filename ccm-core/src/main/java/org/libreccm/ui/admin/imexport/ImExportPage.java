@@ -18,10 +18,8 @@
  */
 package org.libreccm.ui.admin.imexport;
 
-import org.libreccm.ui.admin.configuration.*;
 import org.libreccm.ui.admin.AdminConstants;
 import org.libreccm.ui.admin.AdminPage;
-import org.libreccm.ui.admin.categories.CategoriesController;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -73,6 +71,6 @@ public class ImExportPage implements AdminPage {
 
     @Override
     public int getPosition() {
-        return 40;
+        return 60;
     }
 }
