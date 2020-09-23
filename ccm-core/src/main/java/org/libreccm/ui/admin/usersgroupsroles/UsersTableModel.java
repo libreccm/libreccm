@@ -21,62 +21,46 @@ package org.libreccm.ui.admin.usersgroupsroles;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
+import org.libreccm.security.User;
+import org.libreccm.security.UserRepository;
+
+import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.mvc.Controller;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
+import javax.inject.Named;
+import javax.transaction.Transactional;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Controller
-@Path("/users-groups-roles")
-public class UsersGroupsRolesController {
+@Named("UsersTableModel")
+public class UsersTableModel {
 
     @Inject
-    private UsersTableModel usersTableModel;
+    private UserRepository userRepository;
 
-    @GET
-    @Path("/")
-    @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public String getOverview() {
-        return "org/libreccm/ui/admin/users-groups-roles/overview.xhtml";
+    private String filterTerm;
+
+    public String getFilterTerm() {
+        return filterTerm;
     }
 
-    @GET
-    @Path("/groups")
-    @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public String getGroups() {
-        return "org/libreccm/ui/admin/users-groups-roles/groups.xhtml";
+    protected void setFilterTerm(final String filterTerm) {
+        this.filterTerm = filterTerm;
     }
 
-    @GET
-    @Path("/roles")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public String getRoles() {
-        return "org/libreccm/ui/admin/users-groups-roles/roles.xhtml";
-    }
-
-    @GET
-    @Path("/users")
-    @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public String getUsers(
-        @QueryParam("filterterm") @DefaultValue("") final String filterTerm
-    ) {
-        usersTableModel.setFilterTerm(filterTerm);
-        return "org/libreccm/ui/admin/users-groups-roles/users.xhtml";
+    @Transactional
+    public List<User> getUsers() {
+        if (filterTerm == null || filterTerm.isEmpty()) {
+            return userRepository.findAllOrderdByUsername();
+        } else {
+            return userRepository.filtered(filterTerm);
+        }
     }
 
 }

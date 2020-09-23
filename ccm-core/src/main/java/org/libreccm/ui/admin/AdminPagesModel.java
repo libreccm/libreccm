@@ -20,7 +20,9 @@ package org.libreccm.ui.admin;
 
 import org.libreccm.l10n.GlobalizationHelper;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -43,6 +45,11 @@ public class AdminPagesModel {
     @Inject
     private GlobalizationHelper globalizationHelper;
 
+    /**
+     * Cache for bundles
+     */
+    private final Map<String, ResourceBundle> bundles = new HashMap<>();
+
     public List<AdminPageModel> getAdminPages() {
         return adminPages
             .stream()
@@ -56,13 +63,11 @@ public class AdminPagesModel {
     }
 
     private AdminPageModel buildAdminPageModel(final AdminPage fromAdminPage) {
-        final ResourceBundle labelBundle = ResourceBundle.getBundle(
-            fromAdminPage.getLabelBundle(),
-            globalizationHelper.getNegotiatedLocale()
+        final ResourceBundle labelBundle = getBundle(
+            fromAdminPage.getLabelBundle()
         );
-        final ResourceBundle descriptionBundle = ResourceBundle.getBundle(
-            fromAdminPage.getDescriptionBundle(),
-            globalizationHelper.getNegotiatedLocale()
+        final ResourceBundle descriptionBundle = getBundle(
+            fromAdminPage.getDescriptionBundle()
         );
 
         final AdminPageModel model = new AdminPageModel();
@@ -75,6 +80,19 @@ public class AdminPagesModel {
         );
         model.setIcon(fromAdminPage.getIcon());
         return model;
+    }
+
+    private ResourceBundle getBundle(final String bundleName) {
+        if (bundles.containsKey(bundleName)) {
+            return bundles.get(bundleName);
+        } else {
+            final ResourceBundle bundle =  ResourceBundle.getBundle(
+                bundleName,
+                globalizationHelper.getNegotiatedLocale()
+            );
+            bundles.put(bundleName, bundle);
+            return bundle;
+        }
     }
 
 }

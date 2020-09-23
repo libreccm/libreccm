@@ -11,3 +11,4 @@ target
 .settings
 .tscache
 *.vscode
+/ccm-core/nbproject/
