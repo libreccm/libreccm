@@ -18,10 +18,8 @@
  */
 package org.libreccm.ui.admin.usersgroupsroles;
 
-import org.libreccm.ui.admin.configuration.*;
 import org.libreccm.ui.admin.AdminConstants;
 import org.libreccm.ui.admin.AdminPage;
-import org.libreccm.ui.admin.categories.CategoriesController;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -38,6 +36,7 @@ public class UsersGroupsRolesPage implements AdminPage {
     public Set<Class<?>> getControllerClasses() {
         final Set<Class<?>> classes = new HashSet<>();
         classes.add(UsersGroupsRolesController.class);
+        classes.add(UsersController.class);
         return classes;
     }
 
@@ -73,6 +72,6 @@ public class UsersGroupsRolesPage implements AdminPage {
 
     @Override
     public int getPosition() {
-        return 80;
+        return 10;
     }
 }

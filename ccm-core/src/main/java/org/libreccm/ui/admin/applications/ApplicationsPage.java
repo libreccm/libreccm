@@ -72,7 +72,7 @@ public class ApplicationsPage implements AdminPage {
 
     @Override
     public int getPosition() {
-        return 10;
+        return 40;
     }
 
 }
