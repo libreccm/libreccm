@@ -18,8 +18,6 @@
  */
 package org.libreccm.core;
 
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -33,6 +31,8 @@ import static org.libreccm.core.CoreConstants.CORE_XML_NS;
 
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 /**
  * An embeddable entity for storing email addresses.

@@ -40,7 +40,7 @@ public class ConfigurationController {
     @Path("/")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public String getPlaceholder() {
+    public String getSettings() {
         return "org/libreccm/ui/admin/configuration.xhtml";
     }
 }

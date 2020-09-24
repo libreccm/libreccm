@@ -20,7 +20,6 @@ package org.libreccm.ui.admin.configuration;
 
 import org.libreccm.ui.admin.AdminConstants;
 import org.libreccm.ui.admin.AdminPage;
-import org.libreccm.ui.admin.categories.CategoriesController;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -41,8 +40,10 @@ public class ConfigurationPage implements AdminPage {
     }
 
     @Override
-    public String getPath() {
-        return "configuration";
+    public String getUriIdentifier() {
+        return String.format(
+            "%s#getSettings", ConfigurationController.class.getSimpleName()
+        );
     }
 
     @Override

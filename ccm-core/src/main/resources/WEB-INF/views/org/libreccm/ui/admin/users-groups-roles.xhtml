@@ -20,19 +20,19 @@
                 <div class="row">
                     <nav class="col-md-2 list-group">
                         <a class="list-group-item list-group-item-action #{activePanel == 'overview' ? 'active' : ''}" 
-                           href="#{request.contextPath}/@admin/users-groups-roles">
+                           href="#{mvc.uri('UsersGroupsRolesController#getOverview')}">
                             #{AdminMessages['usersgroupsroles.overview.label']}
                         </a>
                         <a class="list-group-item list-group-item-action #{activePanel == 'users' ? 'active' : ''}" 
-                           href="#{request.contextPath}/@admin/users-groups-roles/users">
+                           href="#{mvc.uri('UsersController#getUsers')}">
                             #{AdminMessages['usersgroupsroles.users.label']}
                         </a>
                         <a class="list-group-item list-group-item-action #{activePanel == 'groups' ? 'active' : ''}" 
-                           href="#{request.contextPath}/@admin/users-groups-roles/groups">
+                           href="#{mvc.uri('GroupsController#getGroups')}">
                             #{AdminMessages['usersgroupsroles.groups.label']}
                         </a>
                         <a class="list-group-item list-group-item-action #{activePanel == 'roles' ? 'active' : ''}" 
-                           href="#{request.contextPath}/@admin/users-groups-roles/roles">
+                           href="#{mvc.uri('RolesController#getRoles')}">
                             #{AdminMessages['usersgroupsroles.roles.label']}
                         </a>
                     </nav>

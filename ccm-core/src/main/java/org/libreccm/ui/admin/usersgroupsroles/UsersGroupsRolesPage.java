@@ -32,17 +32,23 @@ import javax.enterprise.context.ApplicationScoped;
  */
 @ApplicationScoped
 public class UsersGroupsRolesPage implements AdminPage {
-     @Override
+
+    @Override
     public Set<Class<?>> getControllerClasses() {
         final Set<Class<?>> classes = new HashSet<>();
         classes.add(UsersGroupsRolesController.class);
+        classes.add(GroupsController.class);
+        classes.add(RolesController.class);
         classes.add(UsersController.class);
         return classes;
     }
 
     @Override
-    public String getPath() {
-        return "users-groups-roles";
+    public String getUriIdentifier() {
+        return String.format(
+            "%s#getOverview",
+            UsersGroupsRolesController.class.getSimpleName()
+        );
     }
 
     @Override
@@ -57,7 +63,7 @@ public class UsersGroupsRolesPage implements AdminPage {
 
     @Override
     public String getDescriptionBundle() {
-       return AdminConstants.ADMIN_BUNDLE;
+        return AdminConstants.ADMIN_BUNDLE;
     }
 
     @Override
@@ -74,4 +80,5 @@ public class UsersGroupsRolesPage implements AdminPage {
     public int getPosition() {
         return 10;
     }
+
 }

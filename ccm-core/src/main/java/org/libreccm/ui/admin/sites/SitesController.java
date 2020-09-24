@@ -40,7 +40,7 @@ public class SitesController {
     @Path("/")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public String getPlaceholder() {
+    public String getSites() {
         return "org/libreccm/ui/admin/sites.xhtml";
     }
 }

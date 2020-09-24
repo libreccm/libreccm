@@ -20,7 +20,9 @@ package org.libreccm.ui.admin;
 
 import org.libreccm.l10n.GlobalizationHelper;
 
+import java.text.MessageFormat;
 import java.util.AbstractMap;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,8 +45,6 @@ public class AdminMessages extends AbstractMap<String, String> {
 
     private ResourceBundle messages;
 
-    
-
     @PostConstruct
     private void init() {
         messages = ResourceBundle.getBundle(
@@ -57,21 +57,37 @@ public class AdminMessages extends AbstractMap<String, String> {
         if (messages.containsKey(key)) {
             return messages.getString(key);
         } else {
-            return "???key???";
+            return String.format("???%s???", key);
         }
     }
-    
+
+    public String getMessage(
+        final String key, final List<Object> parameters
+    ) {
+        return getMessage(key, parameters.toArray());
+    }
+
+    public String getMessage(
+        final String key, final Object[] parameters
+    ) {
+        if (messages.containsKey(key)) {
+            return MessageFormat.format(messages.getString(key), parameters);
+        } else {
+            return String.format("???%s???", key);
+        }
+    }
+
     public String get(final String key) {
         return getMessage(key);
     }
-    
+
     @Override
     public Set<Entry<String, String>> entrySet() {
         return messages
             .keySet()
             .stream()
             .collect(
-                Collectors.toMap(key -> key, key-> messages.getString(key))
+                Collectors.toMap(key -> key, key -> messages.getString(key))
             )
             .entrySet();
     }

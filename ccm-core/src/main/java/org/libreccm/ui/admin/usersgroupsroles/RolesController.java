@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.ui.admin.applications;
+package org.libreccm.ui.admin.usersgroupsroles;
 
 import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
@@ -33,14 +33,15 @@ import javax.ws.rs.Path;
  */
 @RequestScoped
 @Controller
-@Path("/applications")
-public class ApplicationsController {
-    
+@Path("/users-groups-roles/roles")
+public class RolesController {
+
     @GET
     @Path("/")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public String getApplications() {
-        return "org/libreccm/ui/admin/applications.xhtml";
+    public String getRoles() {
+        return "org/libreccm/ui/admin/users-groups-roles/roles.xhtml";
     }
+
 }

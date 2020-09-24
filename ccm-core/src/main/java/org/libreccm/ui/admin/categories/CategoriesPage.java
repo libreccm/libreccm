@@ -41,8 +41,10 @@ public class CategoriesPage implements AdminPage {
     }
 
     @Override
-    public String getPath() {
-        return "categories";
+    public String getUriIdentifier() {
+        return String.format(
+            "%s#getCategories", CategoriesController.class.getSimpleName()
+        );
     }
 
     @Override

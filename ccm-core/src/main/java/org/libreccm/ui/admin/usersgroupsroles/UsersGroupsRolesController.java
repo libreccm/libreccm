@@ -36,7 +36,6 @@ import javax.ws.rs.Path;
 @Path("/users-groups-roles")
 public class UsersGroupsRolesController {
 
-  
     @GET
     @Path("/")
     @AuthorizationRequired
@@ -45,23 +44,4 @@ public class UsersGroupsRolesController {
         return "org/libreccm/ui/admin/users-groups-roles/overview.xhtml";
     }
 
-    @GET
-    @Path("/groups")
-    @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public String getGroups() {
-        return "org/libreccm/ui/admin/users-groups-roles/groups.xhtml";
-    }
-
-    @GET
-    @Path("/roles")
-    @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public String getRoles() {
-        return "org/libreccm/ui/admin/users-groups-roles/roles.xhtml";
-    }
-
-    
-
-    
 }

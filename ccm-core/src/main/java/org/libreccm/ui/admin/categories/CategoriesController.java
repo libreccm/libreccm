@@ -40,7 +40,7 @@ public class CategoriesController {
     @Path("/")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public String getPlaceholder() {
+    public String getCategories() {
         return "org/libreccm/ui/admin/categories.xhtml";
     }
 }

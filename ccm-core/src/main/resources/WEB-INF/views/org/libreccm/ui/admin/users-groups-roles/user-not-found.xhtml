@@ -5,9 +5,9 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/users-groups-roles.xhtml">
         <ui:param name="activePage" value="usersgroupsroles" />
-        <ui:param name="activePanel" value="groups" />
-        <ui:param name="title" 
-                  value="#{AdminMessages['usersgroupsroles.groups.label']}" />
+        <ui:param name="activePanel" value="users" />
+        <ui:param name="title"
+                  value="#{AdminMessages('usersgroupsroles.users.not_found.title')}" />
 
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
@@ -15,14 +15,25 @@
                     #{AdminMessages['usersgroupsroles.label']}
                 </a>
             </li>
-            <li class="breadcrumb-item active">
-                #{AdminMessages['usersgroupsroles.groups.label']}
+            <li class="breadcrumb-item">
+                <a href="#{mvc.uri('UsersController#getUsers')}">
+                    #{AdminMessages['usersgroupsroles.users.label']}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                #{AdminMessages['usersgroupsroles.users.not_found.title']}
             </li>
         </ui:define>
 
         <ui:define name="panel">
-            <p>Groups placeholder</p>
+            <c:forEach items="#{UserDetailsModel.messages}" var="message">
+                <div class="alert alert-#{message.type}" role="alert">
+                    #{message}
+                </div>
+            </c:forEach>
         </ui:define>
-    </ui:composition>
-</html>
 
+    </ui:composition>
+
+
+</html>

@@ -40,7 +40,7 @@ public class ImExportController {
     @Path("/")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public String getPlaceholder() {
+    public String getImExportDashboard() {
         return "org/libreccm/ui/admin/imexport.xhtml";
     }
 }

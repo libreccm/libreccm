@@ -18,13 +18,24 @@
  */
 package org.libreccm.ui.admin.usersgroupsroles;
 
+import org.libreccm.api.Identifier;
+import org.libreccm.api.IdentifierParser;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
+import org.libreccm.security.User;
+import org.libreccm.security.UserRepository;
+import org.libreccm.ui.Message;
+import org.libreccm.ui.MessageType;
+import org.libreccm.ui.admin.AdminMessages;
+
+import java.util.Arrays;
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.mvc.Controller;
+import javax.transaction.Transactional;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -40,6 +51,18 @@ import javax.ws.rs.QueryParam;
 @Controller
 @Path("/users-groups-roles/users")
 public class UsersController {
+
+    @Inject
+    private AdminMessages adminMessages;
+
+    @Inject
+    private IdentifierParser identifierParser;
+
+    @Inject
+    private UserDetailsModel userDetailsModel;
+
+    @Inject
+    private UserRepository userRepository;
 
     @Inject
     private UsersTableModel usersTableModel;
@@ -59,11 +82,45 @@ public class UsersController {
     @Path("/{userIdentifier}/details")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public String getUser(
-        @PathParam("userIdentifier") final String userIdentifier
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String getUserDetails(
+        @PathParam("userIdentifier") final String userIdentifierParam
     ) {
+        final Identifier identifier = identifierParser.parseIdentifier(
+            userIdentifierParam
+        );
+        final Optional<User> result;
+        switch (identifier.getType()) {
+            case ID:
+                result = userRepository.findById(
+                    Long.parseLong(identifier.getIdentifier())
+                );
+                break;
+            case UUID:
+                result = userRepository.findByUuid(
+                    identifier.getIdentifier()
+                );
+                break;
+            default:
+                result = userRepository.findByName(identifier.getIdentifier());
+                break;
+        }
 
-        throw new UnsupportedOperationException();
+        if (result.isPresent()) {
+            userDetailsModel.setUser(result.get());
+            return "org/libreccm/ui/admin/users-groups-roles/user-details.xhtml";
+        } else {
+            userDetailsModel.addMessage(
+                new Message(
+                    adminMessages.getMessage(
+                        "usersgroupsroles.users.not_found.message",
+                        Arrays.asList(userIdentifierParam)
+                    ),
+                    MessageType.WARNING
+                )
+            );
+            return "org/libreccm/ui/admin/users-groups-roles/user-not-found.xhtml";
+        }
     }
 
     @POST
