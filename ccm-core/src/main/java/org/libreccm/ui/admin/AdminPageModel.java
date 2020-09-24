@@ -24,7 +24,7 @@ package org.libreccm.ui.admin;
  */
 public class AdminPageModel {
 
-    private String path;
+    private String uriIdentifier;
 
     private String label;
 
@@ -32,19 +32,19 @@ public class AdminPageModel {
 
     private String icon;
 
-    public String getPath() {
-        return path;
+    public String getUriIdentifier() {
+        return uriIdentifier;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setUriIdentifier(final String uriIdentifier) {
+        this.uriIdentifier = uriIdentifier;
     }
 
     public String getLabel() {
         return label;
     }
 
-    public void setLabel(String label) {
+    public void setLabel(final String label) {
         this.label = label;
     }
 
@@ -52,7 +52,7 @@ public class AdminPageModel {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -60,7 +60,7 @@ public class AdminPageModel {
         return icon;
     }
 
-    public void setIcon(String icon) {
+    public void setIcon(final String icon) {
         this.icon = icon;
     }
 

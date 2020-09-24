@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+    <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/users-groups-roles.xhtml">
+        <ui:param name="activePage" value="usersgroupsroles" />
+        <ui:param name="activePanel" value="users" />
+        <ui:param name="title"
+                  value="#{AdminMessages.getMessage('usersgroupsroles.users.user_details.title', [UserDetailsModel.name])}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#{mvc.uri('UsersGroupsRolesController#getOverview')}">
+                    #{AdminMessages['usersgroupsroles.label']}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#{mvc.uri('UsersController#getUsers')}">
+                    #{AdminMessages['usersgroupsroles.users.label']}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                #{UserDetailsModel.name}
+            </li>
+        </ui:define>
+
+        <ui:define name="panel">
+            <dl>
+                <div>
+                    <dt>#{AdminMessages['usergroupsroles.users.user_details.id']}</dt>
+                    <dd>#{UserDetailsModel.userId}</dd>
+                </div>
+                <div>
+                    <dt>#{AdminMessages['usergroupsroles.users.user_details.uuid']}</dt>
+                    <dd>#{UserDetailsModel.uuid}</dd>
+                </div>
+                <div>
+                    <dt>#{AdminMessages['usergroupsroles.users.user_details.name']}</dt>
+                    <dd>#{UserDetailsModel.name}</dd>
+                </div>
+                <div>
+                    <dt>#{AdminMessages['usergroupsroles.users.user_details.given_name']}</dt>
+                    <dd>#{UserDetailsModel.givenName}</dd>
+                </div>
+                <div>
+                    <dt>#{AdminMessages['usergroupsroles.users.user_details.family name']}</dt>
+                    <dd>#{UserDetailsModel.familyName}</dd>
+                </div>
+                <div>
+                    <dt>
+                        #{AdminMessages['usergroupsroles.users.user_details.primary_email_address']}
+                    </dt>
+                    <dd>
+                        <dl>
+                            <dt>#{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.address']}</dt>
+                            <dd>
+                                #{UserDetailsModel.primaryEmailAddress.address}
+                            </dd>
+                            <dt>
+                                #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.boucing']}
+                            </dt>
+                            <dd>
+                                <c:choose>
+                                    <c:when test="#{UserDetailsModel.primaryEmailAddress.bouncing}">
+                                        #{AdminMessages['usergroupsroles.users.user_details.email_address.bouncing.yes']}
+                                    </c:when>
+                                    <c:otherwise>
+                                        #{AdminMessages['usergroupsroles.users.user_details.email_address.bouncing.no']}
+                                    </c:otherwise>
+                                </c:choose>
+                            </dd>
+                            <dt>
+                                #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.verified']}
+                            </dt>
+                            <dd>
+                                <c:choose>
+                                    <c:when test="#{UserDetailsModel.primaryEmailAddress.verified}">
+                                        #{AdminMessages['usergroupsroles.users.user_details.email_address.verified.yes']}
+                                    </c:when>
+                                    <c:otherwise>
+                                        #{AdminMessages['usergroupsroles.users.user_details.email_address.verified.no']}
+                                    </c:otherwise>
+                                </c:choose>
+                            </dd>
+                        </dl>
+                    </dd>
+                </div>
+                <div>
+                    <dt>
+                        #{AdminMessages['usergroupsroles.users.user_details.disabled']}
+                    </dt>
+                    <dd>
+                        <c:choose >
+                            <c:when test="#{UserDetailsModel.banned}">
+                                #{AdminMessages['usergroupsroles.users.user_details.disabled.yes']}
+                            </c:when>
+                            <c:otherwise>
+                                #{AdminMessages['usergroupsroles.users.user_details.disabled.no']}
+                            </c:otherwise>
+                        </c:choose>
+                    </dd>
+                </div>
+                <div>
+                    <dt>
+                        #{AdminMessages['usergroupsroles.users.user_details.password_reset_required']}
+                    </dt>
+                    <dd>
+                        <c:choose >
+                            <c:when test="#{UserDetailsModel.passwordResetRequired}">
+                                #{AdminMessages['usergroupsroles.users.user_details.password_reset_required.yes']}
+                            </c:when>
+                            <c:otherwise>
+                                #{AdminMessages['usergroupsroles.users.user_details.password_reset_required.no']}
+                            </c:otherwise>
+                        </c:choose>
+                    </dd>
+                </div>
+            </dl>
+            <a class="btn btn-info" href="#">
+                <svg class="bi"
+                     width="1em"
+                     height="1em"
+                     fill="currentColor">
+                    <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
+                </svg>
+                <span>
+                    #{AdminMessages['usergroupsroles.users.user_details.edit_user']}
+                </span>
+            </a>
+
+
+            <c:if test="#{UserDetailsModel.emailAddresses.size() > 0}">
+                <h2>
+                    #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.heading']}
+                </h2>
+                <a class="btn btn-secondary" href="#">
+                    <svg class="bi"
+                         width="1em"
+                         height="1em"
+                         fill="currentColor">
+                        <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#plus-circle" />
+                    </svg>
+                    <span>#{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.add']}</span>
+                </a>
+                <table class="table table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>
+                                #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.address']}
+                            </th>
+                            <th class="text-center">
+                                #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.boucing']}
+                            </th>
+                            <th class="text-center">
+                                #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.verified']}
+                            </th>
+                            <th class="text-center" colspan="2">
+                                #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.actions']}
+                            </th>
+                        </tr>
+                        <c:forEach items="#{UserDetailsModel.emailAddresses}"
+                                   var="address">
+                            <tr>
+                                <td>
+                                    #{address.address}
+                                </td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="#{address.bouncing}">
+                                            #{AdminMessages['usergroupsroles.users.user_details.email_address.bouncing.yes']}
+                                        </c:when>
+                                        <c:otherwise>
+                                            #{AdminMessages['usergroupsroles.users.user_details.email_address.bouncing.no']}
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="#{address.verified}">
+                                            #{AdminMessages['usergroupsroles.users.user_details.email_address.verified.yes']}
+                                        </c:when>
+                                        <c:otherwise>
+                                            #{AdminMessages['usergroupsroles.users.user_details.email_address.verified.no']}
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                                <td>
+                                    <a class="btn btn-info" href="#">
+                                        <svg class="bi"
+                                             width="1em"
+                                             height="1em"
+                                             fill="currentColor">
+                                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
+                                        </svg>
+                                        <span>
+                                            #{AdminMessages['usergroupsroles.users.user_details.email_addresses.edit']}
+                                        </span>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a class="btn btn-danger" href="#">
+                                        <svg class="bi"
+                                             width="1em"
+                                             height="1em"
+                                             fill="currentColor">
+                                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#x-circle" />
+                                        </svg>
+                                        <span>
+                                            #{AdminMessages['usergroupsroles.users.user_details.email_addresses.remove']}
+                                        </span>
+                                    </a>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </thead>
+                </table>
+            </c:if>
+
+            <c:if test="#{UserDetailsModel.groupMemberships.size() > 0}">
+                <h2>
+                    #{AdminMessages['usergroupsroles.users.user_details.groups.heading']}
+                </h2>
+                <a class="btn btn-secondary" href="#">
+                    <svg class="bi"
+                         width="1em"
+                         height="1em"
+                         fill="currentColor">
+                        <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#plus-circle" />
+                    </svg>
+                    <span>#{AdminMessages['usergroupsroles.users.user_details.groups.add']}</span>
+                </a>
+                <ul class="list-group mt-1">
+                    <c:forEach items="#{UserDetailsModel.groupMemberships}"
+                               var="group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a href="#">
+                                #{group.groupName}
+                            </a>
+                            <a class="btn btn-danger" href="#">
+                                <svg class="bi"
+                                     width="1em"
+                                     height="1em"
+                                     fill="currentColor">
+                                    <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#x-circle" />
+                                </svg>
+                                <span>
+                                    #{AdminMessages['usergroupsroles.users.user_details.groups.remove']}
+                                </span>
+                            </a>
+                        </li>
+                    </c:forEach>
+                </ul>
+            </c:if>
+
+            <c:if test="#{UserDetailsModel.roles.size() > 0}">
+                <h2>
+                    #{AdminMessages['usergroupsroles.users.user_details.roles.heading']}
+                </h2>
+                <a class="btn btn-secondary" href="#">
+                    <svg class="bi"
+                         width="1em"
+                         height="1em"
+                         fill="currentColor">
+                        <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#plus-circle" />
+                    </svg>
+                    <span>#{AdminMessages['usergroupsroles.users.user_details.roles.add']}</span>
+                </a>
+                <ul class="list-group mt-1">
+                    <c:forEach items="#{UserDetailsModel.roles}"
+                               var="role">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a href="#">
+                                #{role.roleName}
+                            </a>
+                            <a class="btn btn-danger" href="#">
+                                <svg class="bi"
+                                     width="1em"
+                                     height="1em"
+                                     fill="currentColor">
+                                    <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#x-circle" />
+                                </svg>
+                                <span>
+                                    #{AdminMessages['usergroupsroles.users.user_details.roles.remove']}
+                                </span>
+                            </a>
+                        </li>
+                    </c:forEach>
+                </ul>
+            </c:if>
+        </ui:define>
+
+    </ui:composition>
+
+
+</html>
+

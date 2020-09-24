@@ -41,8 +41,10 @@ public class ApplicationsPage implements AdminPage {
     }
 
     @Override
-    public String getPath() {
-        return "applications";
+    public String getUriIdentifier() {
+        return String.format(
+            "%s#getApplications", ApplicationsController.class.getSimpleName()
+        );
     }
 
     @Override

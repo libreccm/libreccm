@@ -11,7 +11,9 @@
 
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="#{request.contextPath}/@admin/users-groups-roles/">#{AdminMessages['usersgroupsroles.label']}</a>
+                <a href="#{mvc.uri('UsersGroupsRolesController#getOverview')}">
+                    #{AdminMessages['usersgroupsroles.label']}
+                </a>
             </li>
             <li class="breadcrumb-item active">
                 #{AdminMessages['usersgroupsroles.roles.label']}

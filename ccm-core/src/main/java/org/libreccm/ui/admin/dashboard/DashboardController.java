@@ -40,7 +40,7 @@ public class DashboardController {
     @Path("/")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public String getPlaceholder() {
+    public String getDashboard() {
         return "org/libreccm/ui/admin/dashboard.xhtml";
     }
 }

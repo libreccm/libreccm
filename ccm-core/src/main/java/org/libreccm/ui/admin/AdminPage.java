@@ -18,8 +18,9 @@
  */
 package org.libreccm.ui.admin;
 
-import java.util.ResourceBundle;
 import java.util.Set;
+
+import javax.mvc.MvcContext;
 
 /**
  *
@@ -35,14 +36,15 @@ public interface AdminPage {
     Set<Class<?>> getControllerClasses();
 
     /**
-     * The entry point for the admin module. Used to generate the URL for an
-     * admin page in the navigation etc. For example, with the return value will
-     * {@code systeminformation} the generated link is
-     * {@code #{contextPath}/@admin/#{path}}.
-     *
-     * @return The path fragment of the entry point of the admin page/module.
+     * A identifier to use by {@link MvcContext#uri(java.lang.String)} to
+     * generate the URI of the page. The identifier has the same format as used in JavaDoc:
+     * <pre>
+     *     ControllerSimpleClassName#methodName
+     * </pre>
+     * 
+     * @return The identifier to use for generating the URL of the page
      */
-    String getPath();
+    String getUriIdentifier();
 
     /**
      * Gets the resourcebundle which provides the label of the admin page.

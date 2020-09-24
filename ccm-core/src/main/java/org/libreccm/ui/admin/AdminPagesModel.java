@@ -71,7 +71,7 @@ public class AdminPagesModel {
         );
 
         final AdminPageModel model = new AdminPageModel();
-        model.setPath(fromAdminPage.getPath());
+        model.setUriIdentifier(fromAdminPage.getUriIdentifier());
         model.setLabel(labelBundle.getString(fromAdminPage.getLabelKey()));
         model.setDescription(
             descriptionBundle.getString(

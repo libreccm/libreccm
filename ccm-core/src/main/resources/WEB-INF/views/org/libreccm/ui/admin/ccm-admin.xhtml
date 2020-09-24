@@ -29,8 +29,8 @@
                     <ul class="navbar-nav mr-auto">
                         <c:forEach items="#{AdminPagesModel.adminPages}" var="page">
                             <li class="nav-item">
-                                <a class="nav-link #{activePage == page.path?'active':''}" 
-                                   href="#{request.contextPath}/@admin/#{page.path}">
+                                <a class="nav-link #{activePage == page.uriIdentifier?'active':''}" 
+                                   href="#{mvc.uri(page.uriIdentifier)}">
                                     <svg class="bi"
                                          width="1em"
                                          height="1em"
@@ -47,7 +47,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
-                        <a href="#{request.contextPath}/@admin/">
+                        <a href="#{mvc.uri('DashboardController#getDashboard')}">
                             #{AdminMessages['breadcrumbs.start']}
                         </a>
                     </li>

@@ -16,31 +16,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.ui.admin.applications;
-
-import org.libreccm.core.CoreConstants;
-import org.libreccm.security.AuthorizationRequired;
-import org.libreccm.security.RequiresPrivilege;
-
-import javax.enterprise.context.RequestScoped;
-import javax.mvc.Controller;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+package org.libreccm.ui;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@RequestScoped
-@Controller
-@Path("/applications")
-public class ApplicationsController {
-    
-    @GET
-    @Path("/")
-    @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public String getApplications() {
-        return "org/libreccm/ui/admin/applications.xhtml";
+public class Message {
+
+    private final String message;
+
+    private final MessageType messageType;
+
+    public Message(String message, MessageType messageType) {
+        this.message = message;
+        this.messageType = messageType;
     }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public MessageType getMessageType() {
+        return messageType;
+    }
+
 }

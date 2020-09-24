@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.libreccm.ui.admin.AdminConstants;
 import org.libreccm.ui.admin.AdminPage;
+import org.libreccm.ui.admin.imexport.ImExportController;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -41,8 +42,11 @@ public class SystemInformationPage implements AdminPage {
     }
 
     @Override
-    public String getPath() {
-        return "systeminformation";
+    public String getUriIdentifier() {
+        return String.format(
+            "%s#getSystemInformation", 
+            SystemInformationController.class.getSimpleName()
+        );
     }
 
     @Override

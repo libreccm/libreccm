@@ -12,7 +12,9 @@
 
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="#{request.contextPath}/@admin/users-groups-roles/">#{AdminMessages['usersgroupsroles.label']}</a>
+                <a href="#{mvc.uri('UsersGroupsRolesController#getOverview')}">
+                    #{AdminMessages['usersgroupsroles.label']}
+                </a>
             </li>
             <li class="breadcrumb-item active">
                 #{AdminMessages['usersgroupsroles.users.label']}
@@ -22,7 +24,7 @@
         <ui:define name="panel">
             <div class="row mb-2">
                 <div class="col-sm-9">
-                    <form action="#{request.contextPath}/@admin/users-groups-roles/users" 
+                    <form action="#{mvc.uri('UsersController#getUsers')}" 
                           class="form-inline" 
                           method="get">
                         <div class="form-group">
@@ -76,14 +78,16 @@
                                 #{user.banned ? AdminMessages['usersgroupsroles.users.table.headers.disabled.true'] : AdminMessages['usersgroupsroles.users.table.headers.disabled.false']}
                             </td>
                             <td class="text-center action-col">
-                                <a class="btn btn-info" href="#">
+                                <a class="btn btn-info" 
+                                   href="#{mvc.uri('UsersController#getUserDetails', { 'userIdentifier': user.name })}">
                                     <svg class="bi"
                                          width="1em"
                                          height="1em"
                                          fill="currentColor">
                                         <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#eye" />
                                     </svg>
-                                    <span>#{AdminMessages['usersgroupsroles.users.detailslink.label']}
+                                    <span>
+                                        #{AdminMessages['usersgroupsroles.users.detailslink.label']}
                                     </span>
                                 </a>
                             </td>

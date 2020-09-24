@@ -20,6 +20,7 @@ package org.libreccm.ui.admin.dashboard;
 
 import org.libreccm.ui.admin.AdminConstants;
 import org.libreccm.ui.admin.AdminPage;
+import org.libreccm.ui.admin.configuration.ConfigurationController;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -40,8 +41,10 @@ public class DashboardPage implements AdminPage {
     }
 
     @Override
-    public String getPath() {
-        return "/";
+    public String getUriIdentifier() {
+        return String.format(
+            "%s#getDashboard", DashboardController.class.getSimpleName()
+        );
     }
 
     @Override
