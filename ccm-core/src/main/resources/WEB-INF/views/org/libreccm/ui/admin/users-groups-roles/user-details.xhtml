@@ -161,7 +161,8 @@
                             </th>
                         </tr>
                         <c:forEach items="#{UserDetailsModel.emailAddresses}"
-                                   var="address">
+                                   var="address"
+                                   varStatus="status">
                             <tr>
                                 <td>
                                     #{address.address}
@@ -200,7 +201,9 @@
                                     </a>
                                 </td>
                                 <td>
-                                    <a class="btn btn-danger" href="#">
+                                    <button class="btn btn-danger" 
+                                            data-toggle="modal"
+                                            data-target="#confirm-remove-#{status.index}">
                                         <svg class="bi"
                                              width="1em"
                                              height="1em"
@@ -210,7 +213,46 @@
                                         <span>
                                             #{AdminMessages['usergroupsroles.users.user_details.email_addresses.remove']}
                                         </span>
-                                    </a>
+                                    </button>
+                                    <div class="modal" 
+                                         id="confirm-remove-#{status.index}" 
+                                         tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <form action="#{mvc.uri('UsersController#removeEmailAddress', { 'userIdentifier': user.name, 'emailId': status.index })}" 
+                                                  class="modal-content"
+                                                  method="post">
+                                                <div class="modal-header">
+                                                    <h3 class="modal-title">
+                                                        #{AdminMessages['usergroupsroles.users.user_details.email_addresses.remove.confirm.title']}
+                                                    </h3>
+                                                    <button aria-label="#{AdminMessages['usergroupsroles.users.user_details.email_addresses.remove.confirm.cancel']}"  
+                                                            class="close" 
+                                                            data-dismiss="modal" 
+                                                            type="button">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    #{AdminMessages.getMessage('usergroupsroles.users.user_details.email_addresses.remove.confirm.message', [address.address])}
+                                                    <input name="confirmed" 
+                                                           type="hidden" 
+                                                           value="true" />
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-secondary" 
+                                                            data-dismiss="modal" 
+                                                            type="button">
+                                                        #{'usergroupsroles.users.user_details.email_addresses.remove.confirm.cancel'}
+                                                    </button>
+                                                    <button class="btn btn-danger" 
+                                                            data-dismiss="modal" 
+                                                            type="submit">
+                                                        #{'usergroupsroles.users.user_details.email_addresses.remove.confirm.yes'}
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         </c:forEach>

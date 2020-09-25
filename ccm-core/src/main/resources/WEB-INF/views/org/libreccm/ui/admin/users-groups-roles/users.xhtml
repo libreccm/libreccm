@@ -92,7 +92,9 @@
                                 </a>
                             </td>
                             <td class="text-center action-col">
-                                <button class="btn btn-danger">
+                                <button class="btn btn-danger"
+                                        data-toggle="modal"
+                                        data-target="#confirm-disable-#{user.name}">
                                     <svg class="bi"
                                          width="1em"
                                          height="1em"
@@ -103,6 +105,45 @@
                                         #{AdminMessages['usersgroupsroles.users.disablebutton.label']}
                                     </span>
                                 </button>
+                                <div class="modal" 
+                                     id="confirm-disable-#{user.name}" 
+                                     tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <form action="#{mvc.uri('UsersController#disableUser', { 'userIdentifier': user.name })}" 
+                                              class="modal-content"
+                                              method="post">
+                                            <div class="modal-header">
+                                                <h3 class="modal-title">
+                                                    #{AdminMessages['usersgroupsroles.users.disable.confirm.title']}
+                                                </h3>
+                                                <button aria-label="#{AdminMessages['usersgroupsroles.users.disable.confirm.cancel']}"  
+                                                        class="close" 
+                                                        data-dismiss="modal" 
+                                                        type="button">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                #{AdminMessages.getMessage('usersgroupsroles.users.disable.confirm.message', [user.name])}
+                                                <input name="confirmed" 
+                                                       type="hidden" 
+                                                       value="true" />
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-secondary" 
+                                                        data-dismiss="modal" 
+                                                        type="button">
+                                                    #{'usersgroupsroles.users.disable.confirm.cancel'}
+                                                </button>
+                                                <button class="btn btn-danger" 
+                                                        data-dismiss="modal" 
+                                                        type="submit">
+                                                    #{'usersgroupsroles.users.disable.confirm.yes'}
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     </c:forEach>

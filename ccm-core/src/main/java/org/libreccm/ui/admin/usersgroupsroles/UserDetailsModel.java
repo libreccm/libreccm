@@ -58,7 +58,7 @@ public class UserDetailsModel {
 
     private boolean banned;
 
-    private boolean passwordResetRequired;
+    private boolean passwordResetRequired = true;
 
     private List<UserGroupMembership> groupMemberships;
 
@@ -153,4 +153,7 @@ public class UserDetailsModel {
         return Collections.unmodifiableList(roles);
     }
 
+    public boolean isNewUser() {
+        return userId == 0;
+    }
 }
