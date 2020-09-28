@@ -36,6 +36,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.mvc.Controller;
 import javax.mvc.Models;
+import javax.mvc.MvcContext;
 import javax.mvc.binding.BindingResult;
 import javax.mvc.binding.MvcBinding;
 import javax.transaction.Transactional;
@@ -66,6 +67,9 @@ public class UserFormController {
 
     @Inject
     private Models models;
+    
+    @Inject
+    private MvcContext mvc;
 
     @Inject
     private UserManager userManager;
@@ -201,7 +205,28 @@ public class UserFormController {
                    ));
             return "org/libreccm/ui/admin/users-groups-roles/user-form.xhtml";
         }
-
+    }
+    
+    @POST
+    @Path("{userIdentifier}/groups")
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String updateGroupMemberships(
+        @PathParam("userIdentifier") final String userIdentifierParam,
+        @FormParam("userGroups") final String[] userGroups
+    ) {
+        // ToDo
+        return String.format(
+            "redirect:%s", 
+            mvc.uri(
+                String.format(
+                    "UsersController#getUserDetails", 
+                    "{userIdentifier: %s}", 
+                    userIdentifierParam
+                )
+            )
+        );
     }
 
 }

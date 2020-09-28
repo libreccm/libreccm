@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
 <html xmlns="http://www.w3.org/1999/xhtml" 
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
@@ -118,7 +118,7 @@
                     </dd>
                 </div>
             </dl>
-            <a class="btn btn-info" href="#">
+            <a class="btn btn-primary" href="#">
                 <svg class="bi"
                      width="1em"
                      height="1em"
@@ -130,211 +130,264 @@
                 </span>
             </a>
 
-
-            <c:if test="#{UserDetailsModel.emailAddresses.size() > 0}">
-                <h2>
+            <div class="d-flex">
+                <h2 class="mr-2">
                     #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.heading']}
                 </h2>
-                <a class="btn btn-secondary" href="#">
-                    <svg class="bi"
-                         width="1em"
-                         height="1em"
-                         fill="currentColor">
-                        <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#plus-circle" />
-                    </svg>
-                    <span>#{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.add']}</span>
-                </a>
-                <table class="table table-hover">
-                    <thead class="thead-light">
-                        <tr>
-                            <th>
-                                #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.address']}
-                            </th>
-                            <th class="text-center">
-                                #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.boucing']}
-                            </th>
-                            <th class="text-center">
-                                #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.verified']}
-                            </th>
-                            <th class="text-center" colspan="2">
-                                #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.actions']}
-                            </th>
-                        </tr>
-                        <c:forEach items="#{UserDetailsModel.emailAddresses}"
-                                   var="address"
-                                   varStatus="status">
+                <div>
+                    <a class="btn btn-primary" href="#">
+                        <svg class="bi"
+                             width="1em"
+                             height="1em"
+                             fill="currentColor">
+                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#plus-circle" />
+                        </svg>
+                        <span>#{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.add']}</span>
+                    </a>
+                </div>
+            </div>
+            <c:choose>
+                <c:when test="#{UserDetailsModel.emailAddresses.size() > 0}">
+                    <table class="table table-hover">
+                        <thead class="thead-light">
                             <tr>
-                                <td>
-                                    #{address.address}
-                                </td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="#{address.bouncing}">
-                                            #{AdminMessages['usergroupsroles.users.user_details.email_address.bouncing.yes']}
-                                        </c:when>
-                                        <c:otherwise>
-                                            #{AdminMessages['usergroupsroles.users.user_details.email_address.bouncing.no']}
-                                        </c:otherwise>
-                                    </c:choose>
-                                </td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="#{address.verified}">
-                                            #{AdminMessages['usergroupsroles.users.user_details.email_address.verified.yes']}
-                                        </c:when>
-                                        <c:otherwise>
-                                            #{AdminMessages['usergroupsroles.users.user_details.email_address.verified.no']}
-                                        </c:otherwise>
-                                    </c:choose>
-                                </td>
-                                <td>
-                                    <a class="btn btn-info" href="#">
-                                        <svg class="bi"
-                                             width="1em"
-                                             height="1em"
-                                             fill="currentColor">
-                                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
-                                        </svg>
-                                        <span>
-                                            #{AdminMessages['usergroupsroles.users.user_details.email_addresses.edit']}
-                                        </span>
-                                    </a>
-                                </td>
-                                <td>
-                                    <button class="btn btn-danger" 
-                                            data-toggle="modal"
-                                            data-target="#confirm-remove-#{status.index}">
-                                        <svg class="bi"
-                                             width="1em"
-                                             height="1em"
-                                             fill="currentColor">
-                                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#x-circle" />
-                                        </svg>
-                                        <span>
-                                            #{AdminMessages['usergroupsroles.users.user_details.email_addresses.remove']}
-                                        </span>
-                                    </button>
-                                    <div class="modal" 
-                                         id="confirm-remove-#{status.index}" 
-                                         tabindex="-1">
-                                        <div class="modal-dialog">
-                                            <form action="#{mvc.uri('UsersController#removeEmailAddress', { 'userIdentifier': user.name, 'emailId': status.index })}" 
-                                                  class="modal-content"
-                                                  method="post">
-                                                <div class="modal-header">
-                                                    <h3 class="modal-title">
-                                                        #{AdminMessages['usergroupsroles.users.user_details.email_addresses.remove.confirm.title']}
-                                                    </h3>
-                                                    <button aria-label="#{AdminMessages['usergroupsroles.users.user_details.email_addresses.remove.confirm.cancel']}"  
-                                                            class="close" 
-                                                            data-dismiss="modal" 
-                                                            type="button">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    #{AdminMessages.getMessage('usergroupsroles.users.user_details.email_addresses.remove.confirm.message', [address.address])}
-                                                    <input name="confirmed" 
-                                                           type="hidden" 
-                                                           value="true" />
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button class="btn btn-secondary" 
-                                                            data-dismiss="modal" 
-                                                            type="button">
-                                                        #{'usergroupsroles.users.user_details.email_addresses.remove.confirm.cancel'}
-                                                    </button>
-                                                    <button class="btn btn-danger" 
-                                                            data-dismiss="modal" 
-                                                            type="submit">
-                                                        #{'usergroupsroles.users.user_details.email_addresses.remove.confirm.yes'}
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </td>
+                                <th>
+                                    #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.address']}
+                                </th>
+                                <th class="text-center">
+                                    #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.boucing']}
+                                </th>
+                                <th class="text-center">
+                                    #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.verified']}
+                                </th>
+                                <th class="text-center" colspan="2">
+                                    #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.actions']}
+                                </th>
                             </tr>
-                        </c:forEach>
-                    </thead>
-                </table>
-            </c:if>
+                            <c:forEach items="#{UserDetailsModel.emailAddresses}"
+                                       var="address"
+                                       varStatus="status">
+                                <tr>
+                                    <td>
+                                        #{address.address}
+                                    </td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="#{address.bouncing}">
+                                                #{AdminMessages['usergroupsroles.users.user_details.email_address.bouncing.yes']}
+                                            </c:when>
+                                            <c:otherwise>
+                                                #{AdminMessages['usergroupsroles.users.user_details.email_address.bouncing.no']}
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="#{address.verified}">
+                                                #{AdminMessages['usergroupsroles.users.user_details.email_address.verified.yes']}
+                                            </c:when>
+                                            <c:otherwise>
+                                                #{AdminMessages['usergroupsroles.users.user_details.email_address.verified.no']}
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-info" href="#">
+                                            <svg class="bi"
+                                                 width="1em"
+                                                 height="1em"
+                                                 fill="currentColor">
+                                                <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
+                                            </svg>
+                                            <span>
+                                                #{AdminMessages['usergroupsroles.users.user_details.email_addresses.edit']}
+                                            </span>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-danger" 
+                                                data-toggle="modal"
+                                                data-target="#confirm-remove-#{status.index}">
+                                            <svg class="bi"
+                                                 width="1em"
+                                                 height="1em"
+                                                 fill="currentColor">
+                                                <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#x-circle" />
+                                            </svg>
+                                            <span>
+                                                #{AdminMessages['usergroupsroles.users.user_details.email_addresses.remove']}
+                                            </span>
+                                        </button>
+                                        <div class="modal" 
+                                             id="confirm-remove-#{status.index}" 
+                                             tabindex="-1">
+                                            <div class="modal-dialog">
+                                                <form action="#{mvc.uri('UsersController#removeEmailAddress', { 'userIdentifier': user.name, 'emailId': status.index })}" 
+                                                      class="modal-content"
+                                                      method="post">
+                                                    <div class="modal-header">
+                                                        <h3 class="modal-title">
+                                                            #{AdminMessages['usergroupsroles.users.user_details.email_addresses.remove.confirm.title']}
+                                                        </h3>
+                                                        <button aria-label="#{AdminMessages['usergroupsroles.users.user_details.email_addresses.remove.confirm.cancel']}"  
+                                                                class="close" 
+                                                                data-dismiss="modal" 
+                                                                type="button">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        #{AdminMessages.getMessage('usergroupsroles.users.user_details.email_addresses.remove.confirm.message', [address.address])}
+                                                        <input name="confirmed" 
+                                                               type="hidden" 
+                                                               value="true" />
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btn btn-secondary" 
+                                                                data-dismiss="modal" 
+                                                                type="button">
+                                                            #{'usergroupsroles.users.user_details.email_addresses.remove.confirm.cancel'}
+                                                        </button>
+                                                        <button class="btn btn-danger" 
+                                                                data-dismiss="modal" 
+                                                                type="submit">
+                                                            #{'usergroupsroles.users.user_details.email_addresses.remove.confirm.yes'}
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </thead>
+                    </table>
+                </c:when>
+                <c:otherwise>
+                    <div class="alert alert-info" role="alert">
+                        #{AdminMessages['usergroupsroles.users.user_details.email_addresses.none']}
+                    </div>
+                </c:otherwise>
+            </c:choose>
 
-            <c:if test="#{UserDetailsModel.groupMemberships.size() > 0}">
-                <h2>
+            <div class="d-flex mb-1">
+                <h2 class="mr-2">
                     #{AdminMessages['usergroupsroles.users.user_details.groups.heading']}
                 </h2>
-                <a class="btn btn-secondary" href="#">
+                <button class="btn btn-primary" 
+                        data-toggle="modal"
+                        data-target="#user-groups-dialog"
+                        type="button">
                     <svg class="bi"
                          width="1em"
                          height="1em"
                          fill="currentColor">
-                        <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#plus-circle" />
+                        <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
                     </svg>
-                    <span>#{AdminMessages['usergroupsroles.users.user_details.groups.add']}</span>
-                </a>
-                <ul class="list-group mt-1">
-                    <c:forEach items="#{UserDetailsModel.groupMemberships}"
-                               var="group">
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <a href="#">
-                                #{group.groupName}
-                            </a>
-                            <a class="btn btn-danger" href="#">
-                                <svg class="bi"
-                                     width="1em"
-                                     height="1em"
-                                     fill="currentColor">
-                                    <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#x-circle" />
-                                </svg>
-                                <span>
-                                    #{AdminMessages['usergroupsroles.users.user_details.groups.remove']}
-                                </span>
-                            </a>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </c:if>
+                    <span>#{AdminMessages['usergroupsroles.users.user_details.groups.edit']}</span>
+                </button>
+                <div aria-labelledby="user-groups-dialog-title"
+                     aria-hidden="true"
+                     class="modal fade" 
+                     data-backdrop="static"
+                     id="user-groups-dialog" 
+                     tabindex="-1">
+                    <div class="modal-dialog">
+                        <form action="" 
+                              class="modal-content" 
+                              method="post">
+                            <div class="modal-header">
+                                <h3 class="modal-title" 
+                                    id="user-groups-dialog-title">
+                                    #{AdminMessages['usergroupsroles.users.user_details.groups.dialog.title']}
+                                </h3>
+                                <button aria-label="#{AdminMessages['usergroupsroles.users.user_details.groups.dialog.close']}"
+                                        class="close"
+                                        data-dismiss="modal"
+                                        type="button">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <c:forEach items="#{UserDetailsModel.userGroupsFormEntries}" 
+                                           var="entry">
+                                    <input checked="#{entry.member ? 'checked' : 'false'}"
+                                           id="group-#{entry.groupName}" 
+                                           name="userGroups[]"
+                                           value="#{entry.groupName}"
+                                           type="checkbox" />
+                                </c:forEach>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" 
+                                        data-dismiss="modal"
+                                        type="button" >
+                                    #{AdminMessages['usergroupsroles.users.user_details.groups.dialog.close']}
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    #{AdminMessages['usergroupsroles.users.user_details.groups.dialog.save']}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <c:choose>
+                <c:when test="#{UserDetailsModel.groupMemberships.size() > 0}">
+                    <ul class="list-group mt-1">
+                        <c:forEach items="#{UserDetailsModel.groupMemberships}">
+                            <li class="list-group-item">
+                                <a href="#">
+                                    #{group.groupName}
+                                </a>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </c:when>
+                <c:otherwise>
+                    <div class="alert alert-info" role="alert">
+                        #{AdminMessages['usergroupsroles.users.user_details.groups.none']}
+                    </div>
+                </c:otherwise>
+            </c:choose>
 
-            <c:if test="#{UserDetailsModel.roles.size() > 0}">
-                <h2>
+            <div class="d-flex mb-1">
+                <h2 class="mr-2">
                     #{AdminMessages['usergroupsroles.users.user_details.roles.heading']}
                 </h2>
-                <a class="btn btn-secondary" href="#">
+                <button class="btn btn-primary" type="button">
                     <svg class="bi"
                          width="1em"
                          height="1em"
                          fill="currentColor">
-                        <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#plus-circle" />
+                        <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
                     </svg>
-                    <span>#{AdminMessages['usergroupsroles.users.user_details.roles.add']}</span>
-                </a>
-                <ul class="list-group mt-1">
-                    <c:forEach items="#{UserDetailsModel.roles}"
-                               var="role">
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <a href="#">
-                                #{role.roleName}
-                            </a>
-                            <a class="btn btn-danger" href="#">
-                                <svg class="bi"
-                                     width="1em"
-                                     height="1em"
-                                     fill="currentColor">
-                                    <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#x-circle" />
-                                </svg>
-                                <span>
-                                    #{AdminMessages['usergroupsroles.users.user_details.roles.remove']}
-                                </span>
-                            </a>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </c:if>
+                    <span>#{AdminMessages['usergroupsroles.users.user_details.roles.edit']}</span>
+                </button>
+            </div>
+
+            <c:choose>
+                <c:when test="#{UserDetailsModel.roles.size() > 0}">
+                    <ul class="list-group mt-1 mb-4">
+                        <c:forEach items="#{UserDetailsModel.roles}" var="role">
+                            <li class="list-group-item">
+                                <a href="#">
+                                    #{role.roleName}
+                                </a>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </c:when>
+                <c:otherwise>
+                    <div class="alert alert-info" role="alert">
+                        #{AdminMessages['usergroupsroles.users.user_details.roles.none']}
+                    </div>
+                </c:otherwise>
+            </c:choose>
+
         </ui:define>
 
     </ui:composition>
-
 
 </html>
 
