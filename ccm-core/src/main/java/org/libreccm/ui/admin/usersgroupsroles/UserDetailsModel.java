@@ -19,7 +19,9 @@
 package org.libreccm.ui.admin.usersgroupsroles;
 
 import org.libreccm.core.EmailAddress;
+import org.libreccm.security.Group;
 import org.libreccm.security.GroupMembership;
+import org.libreccm.security.GroupRepository;
 import org.libreccm.security.RoleMembership;
 import org.libreccm.security.User;
 import org.libreccm.ui.Message;
@@ -31,6 +33,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.transaction.Transactional;
 
@@ -41,6 +44,9 @@ import javax.transaction.Transactional;
 @RequestScoped
 @Named("UserDetailsModel")
 public class UserDetailsModel {
+    
+    @Inject
+    private GroupRepository groupRepository;
 
     private long userId;
 
@@ -148,6 +154,14 @@ public class UserDetailsModel {
     public List<UserGroupMembership> getGroupMemberships() {
         return Collections.unmodifiableList(groupMemberships);
     }
+    
+    public List<UserGroupsFormEntry> getUserGroupsFormEntries() {
+        return groupRepository
+            .findAll()
+            .stream()
+            .map(this::buildUserGroupsFormEntry)
+            .collect(Collectors.toList());
+    }
 
     public List<PartyRoleMembership> getRoles() {
         return Collections.unmodifiableList(roles);
@@ -155,5 +169,20 @@ public class UserDetailsModel {
 
     public boolean isNewUser() {
         return userId == 0;
+    }
+    
+    private UserGroupsFormEntry buildUserGroupsFormEntry(final Group group) {
+        final UserGroupsFormEntry entry = new UserGroupsFormEntry();
+        entry.setGroupId(group.getPartyId());
+        entry.setGroupName(group.getName());
+        entry.setGroupUuid(group.getUuid());
+        entry.setMember(
+            groupMemberships
+            .stream()
+            .anyMatch(
+                membership -> membership.getGroupUuid().equals(group.getUuid())
+            )
+        );
+        return entry;
     }
 }
