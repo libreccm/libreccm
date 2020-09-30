@@ -45,7 +45,7 @@
                     <dd>#{UserDetailsModel.givenName}</dd>
                 </div>
                 <div>
-                    <dt>#{AdminMessages['usergroupsroles.users.user_details.family name']}</dt>
+                    <dt>#{AdminMessages['usergroupsroles.users.user_details.family_name']}</dt>
                     <dd>#{UserDetailsModel.familyName}</dd>
                 </div>
                 <div>
@@ -118,7 +118,8 @@
                     </dd>
                 </div>
             </dl>
-            <a class="btn btn-primary" href="#">
+            <a class="btn btn-primary" 
+               href="#{mvc.uri('UsersController#editUser', {'userIdentifier': UserDetailsModel.name })}">
                 <svg class="bi"
                      width="1em"
                      height="1em"
@@ -222,7 +223,7 @@
                                              id="confirm-remove-#{status.index}" 
                                              tabindex="-1">
                                             <div class="modal-dialog">
-                                                <form action="#{mvc.uri('UsersController#removeEmailAddress', { 'userIdentifier': user.name, 'emailId': status.index })}" 
+                                                <form action="#{mvc.uri('UsersController#removeEmailAddress', { 'userIdentifier': UserDetailsModel.name, 'emailId': status.index })}" 
                                                       class="modal-content"
                                                       method="post">
                                                     <div class="modal-header">
@@ -293,7 +294,7 @@
                      id="user-groups-dialog" 
                      tabindex="-1">
                     <div class="modal-dialog">
-                        <form action="" 
+                        <form action="#{mvc.uri('UserFormController#updateGroupMemberships', {'userIdentifier': UserDetailsModel.name})}" 
                               class="modal-content" 
                               method="post">
                             <div class="modal-header">
@@ -311,11 +312,18 @@
                             <div class="modal-body">
                                 <c:forEach items="#{UserDetailsModel.userGroupsFormEntries}" 
                                            var="entry">
-                                    <input checked="#{entry.member ? 'checked' : 'false'}"
-                                           id="group-#{entry.groupName}" 
-                                           name="userGroups[]"
-                                           value="#{entry.groupName}"
-                                           type="checkbox" />
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input"
+                                               checked="#{entry.member ? 'checked' : ''}"
+                                               id="group-#{entry.groupName}" 
+                                               name="userGroups[]"
+                                               value="#{entry.groupName}"
+                                               type="checkbox" />
+                                        <label class="form-check-label"
+                                               for="group-#{entry.groupName}">
+                                            #{entry.groupName}
+                                        </label>
+                                    </div>
                                 </c:forEach>
                             </div>
                             <div class="modal-footer">
@@ -355,7 +363,10 @@
                 <h2 class="mr-2">
                     #{AdminMessages['usergroupsroles.users.user_details.roles.heading']}
                 </h2>
-                <button class="btn btn-primary" type="button">
+                <button class="btn btn-primary" 
+                        data-toggle="modal"
+                        data-target="#user-roles-dialog"
+                        type="button">
                     <svg class="bi"
                          width="1em"
                          height="1em"
@@ -364,6 +375,57 @@
                     </svg>
                     <span>#{AdminMessages['usergroupsroles.users.user_details.roles.edit']}</span>
                 </button>
+                <div aria-labelledby="user-roles-dialog-title"
+                     aria-hidden="true"
+                     class="modal fade"
+                     data-backdrop="static"
+                     id="user-roles-dialog"
+                     tabindex="-1">
+                    <div class="modal-dialog">
+                        <form action="#{mvc.uri('UserFormController#updateRoleMemberships', {'userIdentifier': UserDetailsModel.name })}"
+                              class="modal-content"
+                              method="post">
+                            <div class="modal-header">
+                                <h3 class="model-title"
+                                    id="user-roles-dialog-title">
+                                    #{AdminMessages['usersgroupsroles.users.user_details.roles.dialog.title']}
+                                </h3>
+                                <button aria-label="#{AdminMessages['usersgroupsroles.users.user_details.roles.dialog.close']}"
+                                        class="close"
+                                        data-dismiss="modal"
+                                        type="button">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <c:forEach items="#{UserDetailsModel.userRolesFormEntries}" 
+                                           var="entry">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input"
+                                               checked="#{entry.member ? 'checked' : ''}"
+                                               id="role-#{entry.roleName}"
+                                               name="userRoles[]"
+                                               value="#{entry.roleName}"
+                                               type="checkbox" />
+                                        <label for="role#{entry.roleName}">
+                                            #{entry.roleName}
+                                        </label>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" 
+                                        data-dismiss="modal"
+                                        type="button" >
+                                    #{AdminMessages['usersgroupsroles.users.user_details.roles.dialog.close']}
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    #{AdminMessages['usersgroupsroles.users.user_details.groups.dialog.save']}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
 
             <c:choose>

@@ -43,7 +43,8 @@
                     </form>
                 </div>
                 <div class="col-sm-3 text-right">
-                    <a class="btn btn-secondary" href="#">
+                    <a class="btn btn-secondary" 
+                       href="#{mvc.uri('UsersController#newUser')}">
                         <svg class="bi"
                              width="1em"
                              height="1em"
@@ -116,7 +117,7 @@
                                                 <h3 class="modal-title">
                                                     #{AdminMessages['usersgroupsroles.users.disable.confirm.title']}
                                                 </h3>
-                                                <button aria-label="#{AdminMessages['usersgroupsroles.users.disable.confirm.cancel']}"  
+                                                <button aria-label="#{AdminMessages['usersgroupsroles.users.disable.confirm.cancel']}"
                                                         class="close" 
                                                         data-dismiss="modal" 
                                                         type="button">

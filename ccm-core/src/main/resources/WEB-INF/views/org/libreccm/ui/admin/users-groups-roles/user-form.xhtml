@@ -7,7 +7,7 @@
         <ui:param name="activePage" value="usersgroupsroles" />
         <ui:param name="activePanel" value="users" />
         <ui:param name="title"
-                  value="#{UserDetailsModel.newUser ? AdminMessages.getMessage('usersgroupsroles.users.edit.title', [UserDetailsModel.name]) : AdminMessages['usersgroupsroles.users.create.title']}" />
+                  value="#{UserDetailsModel.newUser ? AdminMessages['usersgroupsroles.users.create.title'] : AdminMessages.getMessage('usersgroupsroles.users.edit.title', [UserDetailsModel.name]) }" />
 
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
@@ -26,7 +26,7 @@
                 </a>
             </li>
             <li>
-                
+
                 #{UserDetailsModel.newUser ? AdminMessages['usersgroupsroles.users.breadcrumb.new'] : AdminMessages['usersgroupsroles.users.breadcrumb.edit']}
             </li>
         </ui:define>
@@ -37,7 +37,7 @@
                     #{error}
                 </div>
             </c:forEach>
-            <form action="#{UserDetailsModel.newUser ? mvc.uri("UserFormController#createUser") : mvc.uri('UserFormController#updateUser')}"
+            <form action="#{UserDetailsModel.newUser ? mvc.uri('UserFormController#createUser') : mvc.uri('UserFormController#updateUser', { 'userIdentifier': UserDetailsModel.name })}"
                   method="post">
                 <div class="form-group">
                     <label for="username">
@@ -100,22 +100,23 @@
                     </small>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input"
+                    <input checked="#{UserDetailsModel.primaryEmailAddress.bouncing ? 'checked' : ''}"
+                           class="form-check-input"
                            id="primary-email-address-bouncing"
                            name="primaryEmailAddressBouncing"
-                           type="checkbox"
-                           value="#{UserDetailsModel.primaryEmailAddress.bouncing}" />
+                           type="checkbox" />
                     <label for="primary-email-address-bouncing">
                         #{AdminMessages['usersgroupsroles.users.form.primaryemailaddress.boucing.label']}
                     </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input"
+                    <input checked="#{UserDetailsModel.primaryEmailAddress.verified ? 'checked' : ''}"
+                           class="form-check-input"
                            id="primary-email-address-verified"
                            name="primaryEmailAddressVerified"
                            type="checkbox"
-                           value="#{UserDetailsModel.primaryEmailAddress.verified}" />
-                    <label for="primary-email-address-bouncing">
+                           />
+                    <label for="primary-email-address-verified">
                         #{AdminMessages['usersgroupsroles.users.form.primaryemailaddress.verified.label']}
                     </label>
                 </div>
@@ -128,7 +129,7 @@
                                class="form-control" 
                                id="password" 
                                name="password" 
-                               type="text" />
+                               type="password" />
                         <small class="form-text text-muted"
                                id="password-help">
                             #{AdminMessages['usersgroupsroles.users.form.password.help']}
@@ -142,7 +143,7 @@
                                class="form-control" 
                                id="password-confirmation" 
                                name="passwordConfirmation" 
-                               type="text" />
+                               type="password" />
                         <small class="form-text text-muted"
                                id="password-help">
                             #{AdminMessages['usersgroupsroles.users.form.passwordconfirmation.help']}
@@ -150,21 +151,21 @@
                     </div>
                 </c:if>
                 <div class="form-check">
-                    <input class="form-check-input"
+                    <input checked="#{UserDetailsModel.banned ? 'checked' : ''}"
+                           class="form-check-input"
                            id="banned"
                            name="banned"
-                           type="checkbox"
-                           value="#{UserDetailsModel.banned}" />
+                           type="checkbox" />
                     <label for="banned">
                         #{AdminMessages['usersgroupsroles.users.form.banned.label']}
                     </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input"
+                    <input checked="#{UserDetailsModel.passwordResetRequired ? 'checked' : ''}"
+                           class="form-check-input"
                            id="password-reset-required"
                            name="passwordResetRequired"
-                           type="checkbox"
-                           value="#{UserDetailsModel.passwordResetRequired}" />
+                           type="checkbox" />
                     <label for="password-reset-required">
                         #{AdminMessages['usersgroupsroles.users.form.passwordresetrequired.label']}
                     </label>
@@ -185,6 +186,7 @@
                 </button>
             </form>
         </ui:define>
+    </ui:composition>
 
 </html>
 
