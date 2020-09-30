@@ -22,7 +22,9 @@ import org.libreccm.core.EmailAddress;
 import org.libreccm.security.Group;
 import org.libreccm.security.GroupMembership;
 import org.libreccm.security.GroupRepository;
+import org.libreccm.security.Role;
 import org.libreccm.security.RoleMembership;
+import org.libreccm.security.RoleRepository;
 import org.libreccm.security.User;
 import org.libreccm.ui.Message;
 
@@ -47,6 +49,9 @@ public class UserDetailsModel {
     
     @Inject
     private GroupRepository groupRepository;
+    
+    @Inject
+    private RoleRepository roleRepository;
 
     private long userId;
 
@@ -166,6 +171,14 @@ public class UserDetailsModel {
     public List<PartyRoleMembership> getRoles() {
         return Collections.unmodifiableList(roles);
     }
+    
+    public List<UserRolesFormEntry> getUserRolesFormEntries() {
+        return roleRepository
+            .findAll()
+            .stream()
+            .map(this::buildUserRolesFormEntry)
+            .collect(Collectors.toList());
+    }
 
     public boolean isNewUser() {
         return userId == 0;
@@ -181,6 +194,21 @@ public class UserDetailsModel {
             .stream()
             .anyMatch(
                 membership -> membership.getGroupUuid().equals(group.getUuid())
+            )
+        );
+        return entry;
+    }
+    
+    private UserRolesFormEntry buildUserRolesFormEntry(final Role role) {
+        final UserRolesFormEntry entry = new UserRolesFormEntry();
+        entry.setRoleId(role.getRoleId());
+        entry.setRoleName(role.getName());
+        entry.setRoleUuid(role.getUuid());
+        entry.setMember(
+            roles
+            .stream()
+            .anyMatch(
+                membership -> membership.getRoleUuid().equals(role.getUuid())
             )
         );
         return entry;

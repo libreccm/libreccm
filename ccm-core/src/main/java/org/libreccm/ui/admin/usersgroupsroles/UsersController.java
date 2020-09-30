@@ -142,6 +142,7 @@ public class UsersController {
     @Path("/{userIdentifier}/edit")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
     public String editUser(
         @PathParam("userIdentifier") final String userIdentifierParam
     ) {

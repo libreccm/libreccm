@@ -40,6 +40,7 @@ public class UsersGroupsRolesPage implements AdminPage {
         classes.add(GroupsController.class);
         classes.add(RolesController.class);
         classes.add(UsersController.class);
+        classes.add(UserFormController.class);
         return classes;
     }
 
