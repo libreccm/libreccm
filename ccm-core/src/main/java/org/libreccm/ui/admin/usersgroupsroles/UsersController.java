@@ -216,7 +216,8 @@ public class UsersController {
             user.setBanned(true);
             userRepository.save(user);
             return String.format(
-                "redirect:%s", mvc.uri("UsersController#getUsers")
+                //"redirect:%s", mvc.uri("UsersController#getUsers")
+                "redirect:users-groups-roles/users"
             );
         } else {
             userDetailsModel.addMessage(
