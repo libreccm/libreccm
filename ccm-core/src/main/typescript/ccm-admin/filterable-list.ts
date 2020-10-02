@@ -1,3 +1,7 @@
+/**
+ * Not ready yet. Don' use
+ */
+
 export function initFilterables(): void {
     document
         .querySelectorAll("*[data-filter]")
