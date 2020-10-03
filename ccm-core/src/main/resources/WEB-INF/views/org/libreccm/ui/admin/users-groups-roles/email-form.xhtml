@@ -25,7 +25,7 @@
                     #{UserDetailsModel.name}
                 </a>
             </li>
-            <li class=breadcrumb-item active"> 
+            <li class="breadcrumb-item active"> 
                 #{EmailFormModel.new ? AdminMessages['usersgroupsroles.users.breadcrumbs.email.add'] : AdminMessages['usersgroupsroles.users.breadcrumbs.email.edit']}
             </li>
         </ui:define>
@@ -36,7 +36,7 @@
                     #{error}
                 </div>
             </c:forEach>
-            <form action="#{EmailFormModel.new ? mvc.uri('EmailFormController#addNewEmailAddress') : mvc.uri('EmailFormController#updateEmailAddress')}"
+            <form action="#{EmailFormModel.new ? mvc.uri('EmailFormController#addNewEmailAddress', {'userIdentifier': EmailFormModel.userIdentifier }) : mvc.uri('EmailFormController#updateEmailAddress', { 'userIdentifier': EmailFormController.userIdentifier, 'emailId': EmailFormModel.emailId })}"
                   method="post">
                 <div class="form-group">
                     <label for="address">
