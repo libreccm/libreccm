@@ -74,17 +74,17 @@ public class EmailFormController {
     @Inject
     private UserRepository userRepository;
 
-    @MvcBinding
-    @FormParam("address")
-    @NotBlank
-    @Email
-    private String address;
-
-    @FormParam("bouncing")
-    private boolean bouncing;
-
-    @FormParam("verified")
-    private boolean verified;
+//    @MvcBinding
+//    @FormParam("address")
+//    @NotBlank
+//    @Email
+//    private String address;
+//
+//    @FormParam("bouncing")
+//    private boolean bouncing;
+//
+//    @FormParam("verified")
+//    private boolean verified;
 
     @GET
     @Path("/new")
@@ -94,6 +94,10 @@ public class EmailFormController {
     public String getNewEmailAddressForm(
         @PathParam("userIdentifier") final String userIdentifierParam
     ) {
+        emailFormModel.setUserIdentifier(userIdentifierParam);
+        emailFormModel.setAddress("example@example.org");
+        emailFormModel.setBouncing(false);
+        emailFormModel.setVerified(false);
         return "org/libreccm/ui/admin/users-groups-roles/email-form.xhtml";
     }
 
@@ -129,9 +133,9 @@ public class EmailFormController {
             final User user = result.get();
 
             final EmailAddress emailAddress = new EmailAddress();
-            emailAddress.setAddress(address);
-            emailAddress.setBouncing(bouncing);
-            emailAddress.setVerified(verified);
+            emailAddress.setAddress(emailFormModel.getAddress());
+            emailAddress.setBouncing(emailAddress.isBouncing());
+            emailAddress.setVerified(emailFormModel.isVerified());
             user.addEmailAddress(emailAddress);
 
             userRepository.save(user);
@@ -194,6 +198,7 @@ public class EmailFormController {
                 final EmailAddress emailAddress = user
                     .getEmailAddresses()
                     .get(emailId);
+                emailFormModel.setEmailId(emailId);
                 emailFormModel.setAddress(emailAddress.getAddress());
                 emailFormModel.setBouncing(emailAddress.isBouncing());
                 emailFormModel.setVerified(emailAddress.isVerified());
@@ -213,7 +218,7 @@ public class EmailFormController {
             return "org/libreccm/ui/admin/users-groups-roles/user-not-found.xhtml";
         }
     }
-    
+
     @POST
     @Path("/{emailId}")
     @AuthorizationRequired
@@ -254,13 +259,13 @@ public class EmailFormController {
                 final EmailAddress emailAddress = user
                     .getEmailAddresses()
                     .get(emailId);
-                
-                emailAddress.setAddress(address);
-                emailAddress.setBouncing(bouncing);
-                emailAddress.setVerified(verified);
-                
+
+                emailAddress.setAddress(emailFormModel.getAddress());
+                emailAddress.setBouncing(emailFormModel.isBouncing());
+                emailAddress.setVerified(emailFormModel.isVerified());
+
                 userRepository.save(user);
-                
+
                 return "org/libreccm/ui/admin/users-groups-roles/email-form.xhtml";
             }
         } else {

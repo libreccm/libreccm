@@ -27,27 +27,52 @@ import javax.inject.Named;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-
 @RequestScoped
 @Named("EmailFormModel")
 public class EmailFormModel {
+
+    private String userIdentifier;
     
+    private int emailId;
+
     private String address;
-    
+
     private boolean bouncing;
-    
+
     private boolean verified;
-    
-    public void setEmailAddress(final EmailAddress emailAddress) {
+
+    public void setEmailAddress(
+        final String userIdentifier,
+        final int emailId, 
+        final EmailAddress emailAddress
+    ) {
+        this.userIdentifier = userIdentifier;
+        this.emailId = emailId;
         address = emailAddress.getAddress();
         bouncing = emailAddress.isBouncing();
         verified = emailAddress.isVerified();
     }
 
     public boolean isNew() {
-        return address == null;
+        return emailId == 0;
+    }
+
+       public String getUserIdentifier() {
+        return userIdentifier;
+    }
+
+    public void setUserIdentifier(final String userIdentifier) {
+        this.userIdentifier = userIdentifier;
     }
     
+    public int getEmailId() {
+        return emailId;
+    }
+
+    public void setEmailId(final int emailId) {
+        this.emailId = emailId;
+    }
+
     public String getAddress() {
         return address;
     }
@@ -71,6 +96,7 @@ public class EmailFormModel {
     public void setVerified(boolean verified) {
         this.verified = verified;
     }
-    
-    
+
+ 
+
 }

@@ -136,7 +136,8 @@
                     #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.heading']}
                 </h2>
                 <div>
-                    <a class="btn btn-primary" href="#">
+                    <a class="btn btn-primary" 
+                       href="#{mvc.uri('EmailFormController#getNewEmailAddressForm', {'userIdentifier': UserDetailsModel.name })}">
                         <svg class="bi"
                              width="1em"
                              height="1em"
@@ -193,7 +194,8 @@
                                         </c:choose>
                                     </td>
                                     <td>
-                                        <a class="btn btn-info" href="#">
+                                        <a class="btn btn-info" 
+                                           href="#{mvc.uri('UsersController#removeEmailAddress', { 'userIdentifier': UserDetailsModel.name, 'emailId': status.index })}">
                                             <svg class="bi"
                                                  width="1em"
                                                  height="1em"
@@ -223,7 +225,7 @@
                                              id="confirm-remove-#{status.index}" 
                                              tabindex="-1">
                                             <div class="modal-dialog">
-                                                <form action="#{mvc.uri('UsersController#removeEmailAddress', { 'userIdentifier': UserDetailsModel.name, 'emailId': status.index })}" 
+                                                <form action="#" 
                                                       class="modal-content"
                                                       method="post">
                                                     <div class="modal-header">
