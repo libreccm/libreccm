@@ -19,6 +19,11 @@
 package org.libreccm.ui.admin.usersgroupsroles;
 
 import org.libreccm.core.EmailAddress;
+import org.libreccm.ui.Message;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
@@ -40,6 +45,24 @@ public class EmailFormModel {
     private boolean bouncing;
 
     private boolean verified;
+    
+    private List<Message> messages;
+    
+    public EmailFormModel() {
+        this.messages = new ArrayList<>();
+    }
+    
+    public List<Message> getMessages() {
+        return Collections.unmodifiableList(messages);
+    } 
+    
+    public void addMessage(final Message message) {
+        messages.add(message);
+    }
+    
+    public void setMessages(final List<Message> messages) {
+        this.messages = new ArrayList<>(messages);
+    }
 
     public void setEmailAddress(
         final String userIdentifier,

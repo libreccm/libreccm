@@ -59,6 +59,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -186,6 +187,7 @@ public class User extends Party implements Serializable, Exportable {
      * Additional email addresses of the user.
      */
     @ElementCollection(fetch = FetchType.EAGER)
+    @OrderBy("address")
     @CollectionTable(name = "USER_EMAIL_ADDRESSES",
                      schema = DB_SCHEMA,
                      joinColumns = {
@@ -363,36 +365,37 @@ public class User extends Party implements Serializable, Exportable {
 
     @Override
     public JsonObjectBuilder buildJson() {
-        final JsonArrayBuilder emailAddressesArrayBuilder = Json.createArrayBuilder();
-        
+        final JsonArrayBuilder emailAddressesArrayBuilder = Json
+            .createArrayBuilder();
+
         emailAddresses
             .stream()
             .map(EmailAddress::buildJson)
             .forEach(emailAddressesArrayBuilder::add);
-        
+
         return super
             .buildJson()
             .add("givenName", givenName)
             .add("familyName", familyName)
             .add("primaryEmailAddress", primaryEmailAddress.buildJson())
-        .add(
-            "emailAddresses", 
-            emailAddresses
-            .stream()
-            .map(EmailAddress::buildJson)
-            .map(JsonObjectBuilder::build)
-            .collect(new JsonArrayCollector())
-        )
-        .add("banned", banned)
-        .add("passwordResetRequired", passwordResetRequired)
-        .add(
-            "groupMemberships",
-            groupMemberships
-            .stream()
-            .map(GroupMembership::buildJson)
-            .map(JsonObjectBuilder::build)
-            .collect(new JsonArrayCollector())
-        );
+            .add(
+                "emailAddresses",
+                emailAddresses
+                    .stream()
+                    .map(EmailAddress::buildJson)
+                    .map(JsonObjectBuilder::build)
+                    .collect(new JsonArrayCollector())
+            )
+            .add("banned", banned)
+            .add("passwordResetRequired", passwordResetRequired)
+            .add(
+                "groupMemberships",
+                groupMemberships
+                    .stream()
+                    .map(GroupMembership::buildJson)
+                    .map(JsonObjectBuilder::build)
+                    .collect(new JsonArrayCollector())
+            );
     }
 
     @Override

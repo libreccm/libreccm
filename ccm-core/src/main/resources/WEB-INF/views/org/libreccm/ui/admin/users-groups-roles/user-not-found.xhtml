@@ -27,7 +27,7 @@
 
         <ui:define name="panel">
             <c:forEach items="#{UserDetailsModel.messages}" var="message">
-                <div class="alert alert-#{message.type}" role="alert">
+                <div class="alert alert-#{message.messageType}" role="alert">
                     #{message}
                 </div>
             </c:forEach>

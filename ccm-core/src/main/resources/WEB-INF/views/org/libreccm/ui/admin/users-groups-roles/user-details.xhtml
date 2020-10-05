@@ -137,7 +137,7 @@
                 </h2>
                 <div>
                     <a class="btn btn-primary" 
-                       href="#{mvc.uri('EmailFormController#getNewEmailAddressForm', {'userIdentifier': UserDetailsModel.name })}">
+                       href="#{mvc.uri('UsersController#getNewEmailAddressForm', {'userIdentifier': UserDetailsModel.name })}">
                         <svg class="bi"
                              width="1em"
                              height="1em"
@@ -195,7 +195,7 @@
                                     </td>
                                     <td>
                                         <a class="btn btn-info" 
-                                           href="#{mvc.uri('UsersController#removeEmailAddress', { 'userIdentifier': UserDetailsModel.name, 'emailId': status.index })}">
+                                           href="#{mvc.uri('UsersController#getEditEmailAddressForm', { 'userIdentifier': UserDetailsModel.name, 'emailId': status.index })}">
                                             <svg class="bi"
                                                  width="1em"
                                                  height="1em"

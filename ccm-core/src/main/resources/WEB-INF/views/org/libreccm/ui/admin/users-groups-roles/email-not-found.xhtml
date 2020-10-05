@@ -7,7 +7,7 @@
         <ui:param name="activePage" value="usersgroupsroles" />
         <ui:param name="activePanel" value="users" />
         <ui:param name="title"
-                  value="#{AdminMessages('usersgroupsroles.users.email.not_found.title')}" />
+                  value="#{AdminMessages['usersgroupsroles.users.email.not_found.title']}" />
 
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
@@ -28,7 +28,7 @@
         <ui:define name="panel">
             
                 <div class="alert alert-danger" role="alert">
-                    #{AdminMessages.getMessage('usersgroupsroles.users.email.not_found.message', [models['errors.userIdentifier'], models['errors.emailId']])}
+                    #{AdminMessages.getMessage('usersgroupsroles.users.email.not_found.message', [errorUserIdentifier, errorEmailId])}
                 </div>
         </ui:define>
 
