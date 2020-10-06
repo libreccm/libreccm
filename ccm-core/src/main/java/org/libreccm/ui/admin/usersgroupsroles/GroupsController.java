@@ -20,10 +20,16 @@ package org.libreccm.ui.admin.usersgroupsroles;
 
 import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.Group;
+import org.libreccm.security.GroupRepository;
 import org.libreccm.security.RequiresPrivilege;
 
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.mvc.Controller;
+import javax.mvc.Models;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
@@ -33,14 +39,23 @@ import javax.ws.rs.Path;
  */
 @RequestScoped
 @Controller
-@Path("/users-groups-roles/group")
+@Path("/users-groups-roles/groups")
 public class GroupsController {
+    
+    @Inject
+    private GroupRepository groupRepository;
+    
+    @Inject
+    private Models models;
 
     @GET
     @Path("/")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     public String getGroups() {
+        final List<Group> groups = groupRepository.findAll();
+        models.put("groups", groups);
+        
         return "org/libreccm/ui/admin/users-groups-roles/groups.xhtml";
     }
 
