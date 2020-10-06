@@ -37,7 +37,6 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.mvc.Controller;
 import javax.mvc.Models;
-import javax.mvc.binding.BindingResult;
 import javax.transaction.Transactional;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -45,21 +44,23 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
+ * Controller managing the post request from the email edit form.
+ *
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 @Controller
 @Path(
-    "/users-groups-roles/users/{userIdentifier}/email-addresses/{emailIdentifier}/save")
+    "/users-groups-roles/users/{userIdentifier}/email-addresses/{emailIdentifier}/save"
+)
 public class EmailFormController {
 
     @Inject
     private AdminMessages adminMessages;
 
-    @Inject
-    private BindingResult bindingResult;
-
+//    @Inject
+//    private BindingResult bindingResult;
     @Inject
     private EmailFormModel emailFormModel;
 

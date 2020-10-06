@@ -19,7 +19,8 @@
 package org.libreccm.ui.admin;
 
 /**
- *
+ * Some constants for the admin application
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class AdminConstants {
@@ -28,6 +29,9 @@ public class AdminConstants {
         // Nothing
     }
     
+    /**
+     * Bundle that provides the translations for the admin application.
+     */
     public static final String ADMIN_BUNDLE = "org.libreccm.ui.AdminBundle";
     
     

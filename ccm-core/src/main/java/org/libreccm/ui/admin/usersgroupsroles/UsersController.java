@@ -48,7 +48,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
 /**
- *
+ * Controller for the user details view and the {@code GET} requests to the 
+ * user edit form.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

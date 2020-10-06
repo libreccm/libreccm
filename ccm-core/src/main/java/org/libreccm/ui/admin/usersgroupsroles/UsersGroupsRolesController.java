@@ -28,7 +28,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 /**
- *
+ * 
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

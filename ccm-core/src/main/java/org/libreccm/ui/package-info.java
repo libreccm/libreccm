@@ -16,36 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.ui;
-
 /**
- * Stores a message to be displayed in the UI.
- * 
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * Utility classes for Jakarta EE MVC based user interfaces.
  */
-public class Message {
-
-    /**
-     * The message (or the translation key for the message).
-     */
-    private final String message;
-
-    /**
-     * The type of the message.
-     */
-    private final MessageType messageType;
-
-    public Message(String message, MessageType messageType) {
-        this.message = message;
-        this.messageType = messageType;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public MessageType getMessageType() {
-        return messageType;
-    }
-
-}
+package org.libreccm.ui;

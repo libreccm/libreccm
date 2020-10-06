@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 /**
+ * Model for the available admin pages.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -39,6 +40,9 @@ import javax.inject.Named;
 @Named("AdminPagesModel")
 public class AdminPagesModel {
 
+    /**
+     * Injection point for the admin pages.
+     */
     @Inject
     private Instance<AdminPage> adminPages;
 
@@ -50,6 +54,12 @@ public class AdminPagesModel {
      */
     private final Map<String, ResourceBundle> bundles = new HashMap<>();
 
+    /**
+     * Retrieves the available admin pages and converts them into
+     * {@link AdminPageModel}s for usage in the views.
+     *
+     * @return A list of the available admin pages.
+     */
     public List<AdminPageModel> getAdminPages() {
         return adminPages
             .stream()
@@ -86,7 +96,7 @@ public class AdminPagesModel {
         if (bundles.containsKey(bundleName)) {
             return bundles.get(bundleName);
         } else {
-            final ResourceBundle bundle =  ResourceBundle.getBundle(
+            final ResourceBundle bundle = ResourceBundle.getBundle(
                 bundleName,
                 globalizationHelper.getNegotiatedLocale()
             );
