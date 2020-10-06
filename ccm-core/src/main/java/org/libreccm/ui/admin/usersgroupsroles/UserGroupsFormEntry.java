@@ -19,7 +19,8 @@
 package org.libreccm.ui.admin.usersgroupsroles;
 
 /**
- *
+ * Model for an selectable group in the user groups form.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class UserGroupsFormEntry {

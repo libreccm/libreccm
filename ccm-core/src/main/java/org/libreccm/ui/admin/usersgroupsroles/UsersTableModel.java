@@ -32,7 +32,8 @@ import javax.inject.Named;
 import javax.transaction.Transactional;
 
 /**
- *
+ * Model for the table/list of users.
+ *  
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

@@ -33,6 +33,18 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 /**
+ * Provides simple access to the messages in the admin bundle. The make it as
+ * easy as possible to access the messages this class is implemented as a map a
+ * made available as named bean. For simple messages, {@code AdminMesssages} can
+ * be used like a map in a facelets template:
+ *
+ * <pre>
+ * #{AdminMessages['some.message.key'])
+ * </pre>
+ *
+ * Messages with placeholders can be retrieved using
+ * {@link #getMessage(java.lang.String, java.util.List)} or
+ * {@link #getMessage(java.lang.String, java.lang.Object[])}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -40,11 +52,20 @@ import javax.inject.Named;
 @Named("AdminMessages")
 public class AdminMessages extends AbstractMap<String, String> {
 
+    /**
+     * Provides access to the locale negoiated by LibreCCM.
+     */
     @Inject
     private GlobalizationHelper globalizationHelper;
 
+    /**
+     * The {@link ResourceBundle} to use.
+     */
     private ResourceBundle messages;
 
+    /**
+     * Loads the resource bundle.
+     */
     @PostConstruct
     private void init() {
         messages = ResourceBundle.getBundle(
@@ -53,6 +74,13 @@ public class AdminMessages extends AbstractMap<String, String> {
         );
     }
 
+    /**
+     * Retrieves a message from the resource bundle.
+     * 
+     * @param key The key of the message.
+     * @return The translated message or {@code ???message???} if the the key is
+     * not found in the resource bundle (message is replaced with the key).
+     */
     public String getMessage(final String key) {
         if (messages.containsKey(key)) {
             return messages.getString(key);
@@ -61,12 +89,29 @@ public class AdminMessages extends AbstractMap<String, String> {
         }
     }
 
+    /**
+     * Retrieves a message with placeholders.
+     * 
+     * @param key The key of the message.
+     * @param parameters The parameters for the placeholders.
+     * @return The translated message or {@code ???message???} if the the key is
+     * not found in the resource bundle (message is replaced with the key).
+     */
     public String getMessage(
         final String key, final List<Object> parameters
     ) {
         return getMessage(key, parameters.toArray());
     }
 
+    /**
+     * The translated message or {@code ???message???} if the the key is
+     * not found in the resource bundle (message is replaced with the key).
+     * 
+      @param key The key of the message.
+     * @param parameters The parameters for the placeholders.
+     * @return The translated message or {@code ???message???} if the the key is
+     * not found in the resource bundle (message is replaced with the key).
+     */
     public String getMessage(
         final String key, final Object[] parameters
     ) {
@@ -77,6 +122,11 @@ public class AdminMessages extends AbstractMap<String, String> {
         }
     }
 
+    @Override
+    public String get(final Object key) {
+        return get((String) key);
+    }
+    
     public String get(final String key) {
         return getMessage(key);
     }

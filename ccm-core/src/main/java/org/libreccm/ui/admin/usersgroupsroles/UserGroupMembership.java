@@ -21,7 +21,8 @@ package org.libreccm.ui.admin.usersgroupsroles;
 import org.libreccm.security.Group;
 
 /**
- *
+ * Model friendly representation of a group membership of the user.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class UserGroupMembership implements Comparable<UserGroupMembership> {

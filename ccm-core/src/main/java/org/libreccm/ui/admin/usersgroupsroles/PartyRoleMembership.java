@@ -21,7 +21,8 @@ package org.libreccm.ui.admin.usersgroupsroles;
 import org.libreccm.security.Role;
 
 /**
- *
+ * Model friendly representation of the role membership of a {@link Party}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class PartyRoleMembership implements Comparable<PartyRoleMembership>{

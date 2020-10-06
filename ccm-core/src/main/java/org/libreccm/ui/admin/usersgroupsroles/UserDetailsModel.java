@@ -40,7 +40,8 @@ import javax.inject.Named;
 import javax.transaction.Transactional;
 
 /**
- *
+ * Model used by the user details view and the user edit form.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

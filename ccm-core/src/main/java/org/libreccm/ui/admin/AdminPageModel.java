@@ -19,7 +19,10 @@
 package org.libreccm.ui.admin;
 
 /**
- *
+ * Model for the data of an admin page.
+ * 
+ * @see AdminPage
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class AdminPageModel {

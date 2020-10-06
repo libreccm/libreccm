@@ -31,7 +31,8 @@ import javax.inject.Named;
 import javax.transaction.Transactional;
 
 /**
- *
+ * Model for the overview page of the users/groups/roles admin module.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

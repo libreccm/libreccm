@@ -28,7 +28,9 @@ import javax.mvc.locale.LocaleResolver;
 import javax.mvc.locale.LocaleResolverContext;
 
 /**
- *
+ * A locale resolver implementation that simply passes the locale negoiated by
+ * LibreCCM to Jakarta EE MVC.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

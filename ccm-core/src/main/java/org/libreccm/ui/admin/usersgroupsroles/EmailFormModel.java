@@ -29,7 +29,8 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 /**
- *
+ * Model providing the data for the email edit form.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -38,7 +39,7 @@ public class EmailFormModel {
 
     private String userIdentifier;
     
-    private int emailId;
+    private int emailId = -1;
 
     private String address;
 
@@ -77,7 +78,7 @@ public class EmailFormModel {
     }
 
     public boolean isNew() {
-        return emailId == 0;
+        return emailId == -1;
     }
 
        public String getUserIdentifier() {

@@ -23,6 +23,8 @@ import java.util.Set;
 import javax.mvc.MvcContext;
 
 /**
+ * Implementations of this interface provide the controllers etc. for an admin
+ * page.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -37,11 +39,12 @@ public interface AdminPage {
 
     /**
      * A identifier to use by {@link MvcContext#uri(java.lang.String)} to
-     * generate the URI of the page. The identifier has the same format as used in JavaDoc:
+     * generate the URI of the page. The identifier has the same format as used
+     * in JavaDoc:
      * <pre>
      *     ControllerSimpleClassName#methodName
      * </pre>
-     * 
+     *
      * @return The identifier to use for generating the URL of the page
      */
     String getUriIdentifier();

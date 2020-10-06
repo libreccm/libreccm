@@ -31,7 +31,9 @@ import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.Response;
 
 /**
- *
+ * Filter for securing EE MVC UIs. Checks if the current user is authenticated.
+ * If not the user is redirected to the login application.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @PreMatching

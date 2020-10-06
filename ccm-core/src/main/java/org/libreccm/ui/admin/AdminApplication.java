@@ -30,12 +30,17 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 /**
- *
+ * Collects the controllers for the admin application and registers them with
+ * JAX-RS.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ApplicationPath("/@admin")
 public class AdminApplication extends Application {
 
+    /**
+     * Injection point for the admin pages.
+     */
     @Inject
     private Instance<AdminPage> adminPages;
 

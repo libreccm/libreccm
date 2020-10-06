@@ -19,7 +19,9 @@
 package org.libreccm.ui;
 
 /**
- *
+ * Possible message types. The types are equivalent to the contextual classes
+ * of the Bootstrap framework.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public enum MessageType {
