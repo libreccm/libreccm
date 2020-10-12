@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/users-groups-roles.xhtml">
+        <ui:param name="activePage" value="usersgroupsroles" />
+        <ui:param name="activePanel" value="users" />
+        <ui:param name="title"
+                  value="#{GroupDetailsModel.newGroup ? AdminMessages['usersgroupsroles.groups.create.title'] : AdminMessages.getMessage('usersgroupsroles.groups.edit.title', [GroupDetailsModel.name]) }" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#{mvc.uri('UsersGroupsRolesController#getOverview')}">
+                    #{AdminMessages['usersgroupsroles.label']}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#{mvc.uri('GroupsController#getGroup')}">
+                    #{AdminMessages['usersgroupsroles.groups.label']}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#{mvn.uri('GroupsController#getGroupDetails', { 'groupIdentfier': group.name })}">
+                    #{UserDetailsModel.name}
+                </a>
+            </li>
+            <li>
+
+                #{GroupDetailsModel.newGroup ? AdminMessages['usersgroupsroles.groups.breadcrumb.new'] : AdminMessages['usersgroupsroles.groups.breadcrumb.edit']}
+            </li>
+        </ui:define>
+
+        <ui:define name="panel">
+            <c:forEach items="#{errors}" var="error">
+                <div class="alert alert-danger" role="alert">
+                    #{error}
+                </div>
+            </c:forEach>
+            
+            <form action="#{GroupDetailsModel.newGroup ? mvc.uri('GroupFormController#createGroup') : mvc.uri('GroupFormController#updateGroup', { 'groupIdentifier': GroupDetailsModel.groupName })}"
+                  method="post">
+                <div class="form-group">
+                    <label for="groupname">
+                        #{AdminMessages['usersgroupsroles.groups.form.groupname.label']}
+                    </label>
+                    <input aria-described-by="groupname-help"
+                           class="form-control" 
+                           id="groupname" 
+                           name="groupName" 
+                           value="#{GroupDetailsModel.name}"
+                           type="text" />
+                    <small class="form-text text-muted"
+                           id="groupname-help">
+                        #{AdminMessages['usersgroupsroles.groups.form.username.help']}
+                    </small>
+                </div>
+                <a class="btn btn-warning" 
+                   href="#{mvc.uri('UsersController#getGroups')}">
+                    #{AdminMessages['usersgroupsroles.groups.form.buttons.cancel']}
+                </a>
+                <button class="btn btn-success" type="submit">
+                    <c:choose>
+                        <c:when test="#{UserDetailsModel.newGroup}">
+                            #{AdminMessages['usersgroupsroles.groups.form.buttons.create']}
+                        </c:when>
+                        <c:otherwise>
+                            #{AdminMessages['usersgroupsroles.groups.form.buttons.save']}
+                        </c:otherwise>
+                    </c:choose>
+                </button>
+            </form>
+        </ui:define>
+
+    </ui:composition>
+</html>

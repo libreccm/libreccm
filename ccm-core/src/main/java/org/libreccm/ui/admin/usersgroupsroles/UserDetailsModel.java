@@ -102,6 +102,7 @@ public class UserDetailsModel {
         groupMemberships = user
             .getGroupMemberships()
             .stream()
+            .sorted()
             .map(GroupMembership::getGroup)
             .map(UserGroupMembership::new)
             .collect(Collectors.toList());
@@ -110,6 +111,7 @@ public class UserDetailsModel {
             .stream()
             .map(RoleMembership::getRole)
             .map(PartyRoleMembership::new)
+            .sorted()
             .collect(Collectors.toList());
     }
     

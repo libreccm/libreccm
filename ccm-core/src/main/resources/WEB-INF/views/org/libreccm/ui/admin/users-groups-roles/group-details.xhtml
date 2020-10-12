@@ -1,0 +1,127 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+    <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/users-groups-roles.xhtml">
+        <ui:param name="activePage" value="usersgroupsroles" />
+        <ui:param name="activePanel" value="users" />
+        <ui:param name="title"
+                  value="#{AdminMessages.getMessage('usersgroupsroles.groups.group_details.title', [GroupDetailsModel.name])}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#{mvc.uri('UsersGroupsRolesController#getOverview')}">
+                    #{AdminMessages['usersgroupsroles.label']}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#{mvc.uri('UsersController#getGroups')}">
+                    #{AdminMessages['usersgroupsroles.groups.label']}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                #{GroupDetailsModel.name}
+            </li>
+        </ui:define>
+
+        <ui:define name="panel">
+            <dl>
+                <div>
+                    <dt>#{AdminMessages['usersgroupsroles.groups.group_details.id']}</dt>
+                    <dd>#{GroupDetailsModel.groupId}</dd>
+                </div>
+                <div>
+                    <dt>#{AdminMessages['usersgroupsroles.groups.group_details.uuid']}</dt>
+                    <dd>#{GroupDetailsModel.uuid}</dd>
+                </div>
+                <div>
+                    <dt>#{AdminMessages['usersgroupsroles.groups.group_details.name']}</dt>
+                    <dd>#{GroupDetailsModel.name}</dd>
+                </div>
+            </dl>
+            <a class="btn btn-primary" 
+               href="#{mvc.uri('GroupsController#editGroup', {'groupIdentifier': GroupDetailsModel.name })}">
+                <svg class="bi"
+                     width="1em"
+                     height="1em"
+                     fill="currentColor">
+                    <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
+                </svg>
+                <span>
+                    #{AdminMessages['usersgroupsroles.groups.group_details.edit_group']}
+                </span>
+            </a>
+
+            <div class="d-flex mb-1">
+                <h2 class="mr-2">
+                    #{AdminMessages['usersgroupsroles.groups.group_details.members.heading']}
+                </h2>
+                <button class="btn btn-primary" 
+                        data-toggle="modal"
+                        data-target="#group-members-dialog"
+                        type="button">
+                    <svg class="bi"
+                         width="1em"
+                         height="1em"
+                         fill="currentColor">
+                        <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
+                    </svg>
+                    <span>#{AdminMessages['usersgroupsroles.groups.group_details.members.edit']}</span>
+                </button>
+                <div aria-labelledby="group-members-dialog-title"
+                     aria-hidden="true"
+                     class="modal fade" 
+                     data-backdrop="static"
+                     id="group-members-dialog" 
+                     tabindex="-1">
+                    <div class="modal-dialog">
+                        <form action="#{mvc.uri('GroupFormController#updateGroupMemberships', {'groupIdentifier': GroupDetailsModel.name})}" 
+                              class="modal-content" 
+                              method="post">
+                            <div class="modal-header">
+                                <h3 class="modal-title" 
+                                    id="group-members-dialog-title">
+                                    #{AdminMessages['usersgroupsroles.groups.group_details.members.dialog.title']}
+                                </h3>
+                                <button aria-label="#{AdminMessages['usersgroupsroles.groups.group_details.members.dialog.close']}"
+                                        class="close"
+                                        data-dismiss="modal"
+                                        type="button">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <c:forEach items="#{GroupDetailsModel.groupMemberFormEntries}" 
+                                           var="entry">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input"
+                                               checked="#{entry.member ? 'checked' : ''}"
+                                               id="group-#{entry.userName}" 
+                                               name="groupMembers[]"
+                                               value="#{entry.userName}"
+                                               type="checkbox" />
+                                        <label class="form-check-label"
+                                               for="group-#{entry.userName}">
+                                            #{entry.userName}
+                                        </label>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" 
+                                        data-dismiss="modal"
+                                        type="button" >
+                                    #{AdminMessages['usersgroupsroles.groups.group_details.members.dialog.close']}
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    #{AdminMessages['usersgroupsroles.groups.group_details.members.dialog.save']}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>

@@ -29,58 +29,58 @@
         <ui:define name="panel">
             <dl>
                 <div>
-                    <dt>#{AdminMessages['usergroupsroles.users.user_details.id']}</dt>
+                    <dt>#{AdminMessages['usersgroupsroles.users.user_details.id']}</dt>
                     <dd>#{UserDetailsModel.userId}</dd>
                 </div>
                 <div>
-                    <dt>#{AdminMessages['usergroupsroles.users.user_details.uuid']}</dt>
+                    <dt>#{AdminMessages['usersgroupsroles.users.user_details.uuid']}</dt>
                     <dd>#{UserDetailsModel.uuid}</dd>
                 </div>
                 <div>
-                    <dt>#{AdminMessages['usergroupsroles.users.user_details.name']}</dt>
+                    <dt>#{AdminMessages['usersgroupsroles.users.user_details.name']}</dt>
                     <dd>#{UserDetailsModel.name}</dd>
                 </div>
                 <div>
-                    <dt>#{AdminMessages['usergroupsroles.users.user_details.given_name']}</dt>
+                    <dt>#{AdminMessages['usersgroupsroles.users.user_details.given_name']}</dt>
                     <dd>#{UserDetailsModel.givenName}</dd>
                 </div>
                 <div>
-                    <dt>#{AdminMessages['usergroupsroles.users.user_details.family_name']}</dt>
+                    <dt>#{AdminMessages['usersgroupsroles.users.user_details.family_name']}</dt>
                     <dd>#{UserDetailsModel.familyName}</dd>
                 </div>
                 <div>
                     <dt>
-                        #{AdminMessages['usergroupsroles.users.user_details.primary_email_address']}
+                        #{AdminMessages['usersgroupsroles.users.user_details.primary_email_address']}
                     </dt>
                     <dd>
                         <dl>
-                            <dt>#{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.address']}</dt>
+                            <dt>#{AdminMessages['usersgroupsroles.users.user_details.additional_email_addresses.cols.address']}</dt>
                             <dd>
                                 #{UserDetailsModel.primaryEmailAddress.address}
                             </dd>
                             <dt>
-                                #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.boucing']}
+                                #{AdminMessages['usersgroupsroles.users.user_details.additional_email_addresses.cols.boucing']}
                             </dt>
                             <dd>
                                 <c:choose>
                                     <c:when test="#{UserDetailsModel.primaryEmailAddress.bouncing}">
-                                        #{AdminMessages['usergroupsroles.users.user_details.email_address.bouncing.yes']}
+                                        #{AdminMessages['usersgroupsroles.users.user_details.email_address.bouncing.yes']}
                                     </c:when>
                                     <c:otherwise>
-                                        #{AdminMessages['usergroupsroles.users.user_details.email_address.bouncing.no']}
+                                        #{AdminMessages['usersgroupsroles.users.user_details.email_address.bouncing.no']}
                                     </c:otherwise>
                                 </c:choose>
                             </dd>
                             <dt>
-                                #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.verified']}
+                                #{AdminMessages['usersgroupsroles.users.user_details.additional_email_addresses.cols.verified']}
                             </dt>
                             <dd>
                                 <c:choose>
                                     <c:when test="#{UserDetailsModel.primaryEmailAddress.verified}">
-                                        #{AdminMessages['usergroupsroles.users.user_details.email_address.verified.yes']}
+                                        #{AdminMessages['usersgroupsroles.users.user_details.email_address.verified.yes']}
                                     </c:when>
                                     <c:otherwise>
-                                        #{AdminMessages['usergroupsroles.users.user_details.email_address.verified.no']}
+                                        #{AdminMessages['usersgroupsroles.users.user_details.email_address.verified.no']}
                                     </c:otherwise>
                                 </c:choose>
                             </dd>
@@ -89,30 +89,30 @@
                 </div>
                 <div>
                     <dt>
-                        #{AdminMessages['usergroupsroles.users.user_details.disabled']}
+                        #{AdminMessages['usersgroupsroles.users.user_details.disabled']}
                     </dt>
                     <dd>
                         <c:choose >
                             <c:when test="#{UserDetailsModel.banned}">
-                                #{AdminMessages['usergroupsroles.users.user_details.disabled.yes']}
+                                #{AdminMessages['usersgroupsroles.users.user_details.disabled.yes']}
                             </c:when>
                             <c:otherwise>
-                                #{AdminMessages['usergroupsroles.users.user_details.disabled.no']}
+                                #{AdminMessages['usersgroupsroles.users.user_details.disabled.no']}
                             </c:otherwise>
                         </c:choose>
                     </dd>
                 </div>
                 <div>
                     <dt>
-                        #{AdminMessages['usergroupsroles.users.user_details.password_reset_required']}
+                        #{AdminMessages['usersgroupsroles.users.user_details.password_reset_required']}
                     </dt>
                     <dd>
                         <c:choose >
                             <c:when test="#{UserDetailsModel.passwordResetRequired}">
-                                #{AdminMessages['usergroupsroles.users.user_details.password_reset_required.yes']}
+                                #{AdminMessages['usersgroupsroles.users.user_details.password_reset_required.yes']}
                             </c:when>
                             <c:otherwise>
-                                #{AdminMessages['usergroupsroles.users.user_details.password_reset_required.no']}
+                                #{AdminMessages['usersgroupsroles.users.user_details.password_reset_required.no']}
                             </c:otherwise>
                         </c:choose>
                     </dd>
@@ -127,13 +127,13 @@
                     <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
                 </svg>
                 <span>
-                    #{AdminMessages['usergroupsroles.users.user_details.edit_user']}
+                    #{AdminMessages['usersgroupsroles.users.user_details.edit_user']}
                 </span>
             </a>
 
             <div class="d-flex">
                 <h2 class="mr-2">
-                    #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.heading']}
+                    #{AdminMessages['usersgroupsroles.users.user_details.additional_email_addresses.heading']}
                 </h2>
                 <div>
                     <a class="btn btn-primary" 
@@ -144,7 +144,7 @@
                              fill="currentColor">
                             <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#plus-circle" />
                         </svg>
-                        <span>#{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.add']}</span>
+                        <span>#{AdminMessages['usersgroupsroles.users.user_details.additional_email_addresses.add']}</span>
                     </a>
                 </div>
             </div>
@@ -154,16 +154,16 @@
                         <thead class="thead-light">
                             <tr>
                                 <th>
-                                    #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.address']}
+                                    #{AdminMessages['usersgroupsroles.users.user_details.additional_email_addresses.cols.address']}
                                 </th>
                                 <th class="text-center">
-                                    #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.boucing']}
+                                    #{AdminMessages['usersgroupsroles.users.user_details.additional_email_addresses.cols.boucing']}
                                 </th>
                                 <th class="text-center">
-                                    #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.verified']}
+                                    #{AdminMessages['usersgroupsroles.users.user_details.additional_email_addresses.cols.verified']}
                                 </th>
                                 <th class="text-center" colspan="2">
-                                    #{AdminMessages['usergroupsroles.users.user_details.additional_email_addresses.cols.actions']}
+                                    #{AdminMessages['usersgroupsroles.users.user_details.additional_email_addresses.cols.actions']}
                                 </th>
                             </tr>
                             <c:forEach items="#{UserDetailsModel.emailAddresses}"
@@ -176,20 +176,20 @@
                                     <td>
                                         <c:choose>
                                             <c:when test="#{address.bouncing}">
-                                                #{AdminMessages['usergroupsroles.users.user_details.email_address.bouncing.yes']}
+                                                #{AdminMessages['usersgroupsroles.users.user_details.email_address.bouncing.yes']}
                                             </c:when>
                                             <c:otherwise>
-                                                #{AdminMessages['usergroupsroles.users.user_details.email_address.bouncing.no']}
+                                                #{AdminMessages['usersgroupsroles.users.user_details.email_address.bouncing.no']}
                                             </c:otherwise>
                                         </c:choose>
                                     </td>
                                     <td>
                                         <c:choose>
                                             <c:when test="#{address.verified}">
-                                                #{AdminMessages['usergroupsroles.users.user_details.email_address.verified.yes']}
+                                                #{AdminMessages['usersgroupsroles.users.user_details.email_address.verified.yes']}
                                             </c:when>
                                             <c:otherwise>
-                                                #{AdminMessages['usergroupsroles.users.user_details.email_address.verified.no']}
+                                                #{AdminMessages['usersgroupsroles.users.user_details.email_address.verified.no']}
                                             </c:otherwise>
                                         </c:choose>
                                     </td>
@@ -203,7 +203,7 @@
                                                 <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
                                             </svg>
                                             <span>
-                                                #{AdminMessages['usergroupsroles.users.user_details.email_addresses.edit']}
+                                                #{AdminMessages['usersgroupsroles.users.user_details.email_addresses.edit']}
                                             </span>
                                         </a>
                                     </td>
@@ -218,7 +218,7 @@
                                                 <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#x-circle" />
                                             </svg>
                                             <span>
-                                                #{AdminMessages['usergroupsroles.users.user_details.email_addresses.remove']}
+                                                #{AdminMessages['usersgroupsroles.users.user_details.email_addresses.remove']}
                                             </span>
                                         </button>
                                         <div class="modal" 
@@ -230,9 +230,9 @@
                                                       method="post">
                                                     <div class="modal-header">
                                                         <h3 class="modal-title">
-                                                            #{AdminMessages['usergroupsroles.users.user_details.email_addresses.remove.confirm.title']}
+                                                            #{AdminMessages['usersgroupsroles.users.user_details.email_addresses.remove.confirm.title']}
                                                         </h3>
-                                                        <button aria-label="#{AdminMessages['usergroupsroles.users.user_details.email_addresses.remove.confirm.cancel']}"  
+                                                        <button aria-label="#{AdminMessages['usersgroupsroles.users.user_details.email_addresses.remove.confirm.cancel']}"  
                                                                 class="close" 
                                                                 data-dismiss="modal" 
                                                                 type="button">
@@ -240,7 +240,7 @@
                                                         </button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        #{AdminMessages.getMessage('usergroupsroles.users.user_details.email_addresses.remove.confirm.message', [address.address])}
+                                                        #{AdminMessages.getMessage('usersgroupsroles.users.user_details.email_addresses.remove.confirm.message', [address.address])}
                                                         <input name="confirmed" 
                                                                type="hidden" 
                                                                value="true" />
@@ -249,12 +249,12 @@
                                                         <button class="btn btn-secondary" 
                                                                 data-dismiss="modal" 
                                                                 type="button">
-                                                            #AdminMessages['usergroupsroles.users.user_details.email_addresses.remove.confirm.cancel']
+                                                            #AdminMessages['usersgroupsroles.users.user_details.email_addresses.remove.confirm.cancel']
                                                         </button>
                                                         <button class="btn btn-danger" 
                                                                 data-dismiss="modal" 
                                                                 type="submit">
-                                                            #{AdminMessages['usergroupsroles.users.user_details.email_addresses.remove.confirm.yes']}
+                                                            #{AdminMessages['usersgroupsroles.users.user_details.email_addresses.remove.confirm.yes']}
                                                         </button>
                                                     </div>
                                                 </form>
@@ -268,14 +268,14 @@
                 </c:when>
                 <c:otherwise>
                     <div class="alert alert-info" role="alert">
-                        #{AdminMessages['usergroupsroles.users.user_details.email_addresses.none']}
+                        #{AdminMessages['usersgroupsroles.users.user_details.email_addresses.none']}
                     </div>
                 </c:otherwise>
             </c:choose>
 
             <div class="d-flex mb-1">
                 <h2 class="mr-2">
-                    #{AdminMessages['usergroupsroles.users.user_details.groups.heading']}
+                    #{AdminMessages['usersgroupsroles.users.user_details.groups.heading']}
                 </h2>
                 <button class="btn btn-primary" 
                         data-toggle="modal"
@@ -287,7 +287,7 @@
                          fill="currentColor">
                         <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
                     </svg>
-                    <span>#{AdminMessages['usergroupsroles.users.user_details.groups.edit']}</span>
+                    <span>#{AdminMessages['usersgroupsroles.users.user_details.groups.edit']}</span>
                 </button>
                 <div aria-labelledby="user-groups-dialog-title"
                      aria-hidden="true"
@@ -302,9 +302,9 @@
                             <div class="modal-header">
                                 <h3 class="modal-title" 
                                     id="user-groups-dialog-title">
-                                    #{AdminMessages['usergroupsroles.users.user_details.groups.dialog.title']}
+                                    #{AdminMessages['usersgroupsroles.users.user_details.groups.dialog.title']}
                                 </h3>
-                                <button aria-label="#{AdminMessages['usergroupsroles.users.user_details.groups.dialog.close']}"
+                                <button aria-label="#{AdminMessages['usersgroupsroles.users.user_details.groups.dialog.close']}"
                                         class="close"
                                         data-dismiss="modal"
                                         type="button">
@@ -332,10 +332,10 @@
                                 <button class="btn btn-secondary" 
                                         data-dismiss="modal"
                                         type="button" >
-                                    #{AdminMessages['usergroupsroles.users.user_details.groups.dialog.close']}
+                                    #{AdminMessages['usersgroupsroles.users.user_details.groups.dialog.close']}
                                 </button>
                                 <button type="submit" class="btn btn-primary">
-                                    #{AdminMessages['usergroupsroles.users.user_details.groups.dialog.save']}
+                                    #{AdminMessages['usersgroupsroles.users.user_details.groups.dialog.save']}
                                 </button>
                             </div>
                         </form>
@@ -356,14 +356,14 @@
                 </c:when>
                 <c:otherwise>
                     <div class="alert alert-info" role="alert">
-                        #{AdminMessages['usergroupsroles.users.user_details.groups.none']}
+                        #{AdminMessages['usersgroupsroles.users.user_details.groups.none']}
                     </div>
                 </c:otherwise>
             </c:choose>
 
             <div class="d-flex mb-1">
                 <h2 class="mr-2">
-                    #{AdminMessages['usergroupsroles.users.user_details.roles.heading']}
+                    #{AdminMessages['usersgroupsroles.users.user_details.roles.heading']}
                 </h2>
                 <button class="btn btn-primary" 
                         data-toggle="modal"
@@ -375,7 +375,7 @@
                          fill="currentColor">
                         <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
                     </svg>
-                    <span>#{AdminMessages['usergroupsroles.users.user_details.roles.edit']}</span>
+                    <span>#{AdminMessages['usersgroupsroles.users.user_details.roles.edit']}</span>
                 </button>
                 <div aria-labelledby="user-roles-dialog-title"
                      aria-hidden="true"
@@ -444,7 +444,7 @@
                 </c:when>
                 <c:otherwise>
                     <div class="alert alert-info" role="alert">
-                        #{AdminMessages['usergroupsroles.users.user_details.roles.none']}
+                        #{AdminMessages['usersgroupsroles.users.user_details.roles.none']}
                     </div>
                 </c:otherwise>
             </c:choose>
