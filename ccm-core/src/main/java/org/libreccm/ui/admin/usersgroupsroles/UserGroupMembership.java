@@ -38,9 +38,9 @@ public class UserGroupMembership implements Comparable<UserGroupMembership> {
     }
 
     public UserGroupMembership(final Group group) {
-        this.groupId = group.getPartyId();
-        this.groupUuid = group.getUuid();
-        this.groupName = group.getName();
+        groupId = group.getPartyId();
+        groupUuid = group.getUuid();
+        groupName = group.getName();
     }
 
     public long getGroupId() {
