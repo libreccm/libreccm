@@ -142,9 +142,7 @@ public class UsersController {
     @Path("/new")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public String newUser(
-        @PathParam("userIdentifier") final String userIdentifier
-    ) {
+    public String newUser() {
         return "org/libreccm/ui/admin/users-groups-roles/user-form.xhtml";
     }
 

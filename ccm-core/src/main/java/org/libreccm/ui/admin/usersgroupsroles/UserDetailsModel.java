@@ -175,7 +175,7 @@ public class UserDetailsModel {
         return Collections.unmodifiableList(roles);
     }
     
-    public List<UserRolesFormEntry> getUserRolesFormEntries() {
+    public List<PartyRolesFormEntry> getUserRolesFormEntries() {
         return roleRepository
             .findAll()
             .stream()
@@ -202,8 +202,8 @@ public class UserDetailsModel {
         return entry;
     }
     
-    private UserRolesFormEntry buildUserRolesFormEntry(final Role role) {
-        final UserRolesFormEntry entry = new UserRolesFormEntry();
+    private PartyRolesFormEntry buildUserRolesFormEntry(final Role role) {
+        final PartyRolesFormEntry entry = new PartyRolesFormEntry();
         entry.setRoleId(role.getRoleId());
         entry.setRoleName(role.getName());
         entry.setRoleUuid(role.getUuid());
