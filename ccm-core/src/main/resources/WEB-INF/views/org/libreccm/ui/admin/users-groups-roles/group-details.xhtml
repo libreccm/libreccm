@@ -121,7 +121,115 @@
                             </div>
                         </form>
                     </div>
+                </div>
             </div>
+            <c:choose>
+                <c:when test="#{GroupDetailsModel.members.size() > 0}">
+                    <ul class="list-group mt-1">
+                        <c:forEach items="#{GroupDetailsModel.members}" 
+                                   var="member">
+                            <li class="list-group-item">
+                                <a href="#">
+                                    #{member.userName}
+                                </a>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </c:when>
+                <c:otherwise>
+                    <div class="alert alert-info" role="alert">
+                        #{AdminMessages['usersgroupsroles.groups.group_details.members.none']}
+                    </div>
+                </c:otherwise>
+            </c:choose>
+
+            <div class="d-flex mb-1">
+                <h2 class="mr-2">
+                    #{AdminMessages['usersgroupsroles.groups.groups_details.roles.heading']}
+                </h2>
+                <button class="btn btn-primary" 
+                        data-toggle="modal"
+                        data-target="#group-roles-dialog"
+                        type="button">
+                    <svg class="bi"
+                         width="1em"
+                         height="1em"
+                         fill="currentColor">
+                        <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
+                    </svg>
+                    <span>#{AdminMessages['usersgroupsroles.groups.group_details.roles.edit']}</span>
+                </button>
+                <div aria-labelledby="group-roles-dialog-title"
+                     aria-hidden="true"
+                     class="modal fade"
+                     data-backdrop="static"
+                     id="user-roles-dialog"
+                     tabindex="-1">
+                    <div class="modal-dialog">
+                        <form action="#{mvc.uri('UserFormController#updateRoleMemberships', {'userIdentifier': UserDetailsModel.name })}"
+                              class="modal-content"
+                              method="post">
+                            <div class="modal-header">
+                                <h3 class="modal-title"
+                                    id="group-roles-dialog.title">
+                                    #{AdminMessages['usersgroupsroles.groups.group_details.roles.dialog.title']}
+                                </h3>
+                                <button aria-label="#{AdminMessages['usersgroupsroles.groups.group_details.roles.dialog.close']}"
+                                        class="close"
+                                        data-dismiss="modal"
+                                        type="button">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <c:forEach items="#{GroupDetailsModel.groupRolesFormEntries}" 
+                                           var="entry">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input"
+                                               checked="#{entry.member ? 'checked' : ''}"
+                                               id="role-#{entry.roleName}"
+                                               name="userRoles[]"
+                                               value="#{entry.roleName}"
+                                               type="checkbox" />
+                                        <label for="role#{entry.roleName}">
+                                            #{entry.roleName}
+                                        </label>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" 
+                                        data-dismiss="modal"
+                                        type="button" >
+                                    #{AdminMessages['usersgroupsroles.groups.group_details.roles.dialog.close']}
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    #{AdminMessages['usersgroupsroles.groups.group_details.roles.dialog.save']}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <c:choose>
+                <c:when test="#{GroupDetailsModel.roles.size() > 0}">
+                    <ul class="list-group mt-1 mb-4">
+                        <c:forEach items="#{GroupDetailsModel.roles}" 
+                                   var="role">
+                            <a href="#">
+                                #{role.roleName}
+                            </a>
+                        </c:forEach>
+                    </ul>
+                </c:when>
+                <c:otherwise>
+                    <div class="alert alert-info" role="alert">
+                        #{AdminMessages['usersgroupsroles.groups.group_details.roles.none']}
+                    </div>
+                </c:otherwise>
+            </c:choose>
+
         </ui:define>
     </ui:composition>
 </html>

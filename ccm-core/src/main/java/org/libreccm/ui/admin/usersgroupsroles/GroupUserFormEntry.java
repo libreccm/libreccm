@@ -19,42 +19,41 @@
 package org.libreccm.ui.admin.usersgroupsroles;
 
 /**
- * Model for an entry of a selectable role in the user roles form.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class UserRolesFormEntry {
+public class GroupUserFormEntry {
     
-    private long roleId;
+    private long userId;
     
-    private String roleUuid;
+    private String userUuid;
     
-    private String roleName;
+    private String userName;
     
     private boolean member;
 
-    public long getRoleId() {
-        return roleId;
+    public long getUserId() {
+        return userId;
     }
 
-    public void setRoleId(final long roleId) {
-        this.roleId = roleId;
+    public void setUserId(final long userId) {
+        this.userId = userId;
     }
 
-    public String getRoleUuid() {
-        return roleUuid;
+    public String getUserUuid() {
+        return userUuid;
     }
 
-    public void setRoleUuid(final String roleUuid) {
-        this.roleUuid = roleUuid;
+    public void setUserUuid(final String userUuid) {
+        this.userUuid = userUuid;
     }
 
-    public String getRoleName() {
-        return roleName;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setRoleName(final String roleName) {
-        this.roleName = roleName;
+    public void setUserName(final String userName) {
+        this.userName = userName;
     }
 
     public boolean isMember() {
@@ -64,6 +63,7 @@ public class UserRolesFormEntry {
     public void setMember(final boolean member) {
         this.member = member;
     }
+    
     
     
     

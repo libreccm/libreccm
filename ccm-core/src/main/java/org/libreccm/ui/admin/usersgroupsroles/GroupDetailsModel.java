@@ -20,7 +20,11 @@ package org.libreccm.ui.admin.usersgroupsroles;
 
 import org.libreccm.security.Group;
 import org.libreccm.security.GroupMembership;
+import org.libreccm.security.Role;
 import org.libreccm.security.RoleMembership;
+import org.libreccm.security.RoleRepository;
+import org.libreccm.security.User;
+import org.libreccm.security.UserRepository;
 import org.libreccm.ui.Message;
 
 import java.util.ArrayList;
@@ -30,6 +34,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.transaction.Transactional;
 
@@ -41,6 +46,12 @@ import javax.transaction.Transactional;
 @RequestScoped
 @Named("GroupDetailsModel")
 public class GroupDetailsModel {
+    
+    @Inject
+    private RoleRepository roleRepository;
+    
+    @Inject
+    private UserRepository userRepository;
 
     private long groupId;
 
@@ -85,7 +96,23 @@ public class GroupDetailsModel {
     public List<PartyRoleMembership> getRoles() {
         return Collections.unmodifiableList(roles);
     }
-
+    
+    public List<GroupUserFormEntry> getGroupMemberFormEntries() {
+        return userRepository
+            .findAll()
+            .stream()
+            .map(this::buildGroupUserFormEntry)
+            .collect(Collectors.toList());
+    }
+    
+    public List<PartyRolesFormEntry> getGroupRolesFormEntries() {
+        return roleRepository
+            .findAll()
+            .stream()
+            .map(this::buildGroupRolesFormEntry)
+            .collect(Collectors.toList());
+    }
+        
     @Transactional(Transactional.TxType.REQUIRED)
     protected void setGroup(final Group group) {
         Objects.requireNonNull(group);
@@ -111,6 +138,36 @@ public class GroupDetailsModel {
 
     public boolean isNewGroup() {
         return groupId == 0;
+    }
+    
+    private GroupUserFormEntry buildGroupUserFormEntry(final User user) {
+        final GroupUserFormEntry entry = new GroupUserFormEntry();
+        entry.setUserId(user.getPartyId());
+        entry.setUserName(user.getName());
+        entry.setUserUuid(user.getUuid());
+        entry.setMember(
+            members
+            .stream()
+            .anyMatch(
+                membership -> membership.getUserUuid().equals(user.getUuid())
+            )
+        );
+        return entry;
+    }
+    
+    private PartyRolesFormEntry buildGroupRolesFormEntry(final Role role) {
+        final PartyRolesFormEntry entry = new PartyRolesFormEntry();
+        entry.setRoleId(role.getRoleId());
+        entry.setRoleName(role.getName());
+        entry.setRoleUuid(role.getUuid());
+        entry.setMember(
+            roles
+            .stream()
+            .anyMatch(
+                membership -> membership.getRoleUuid().equals(role.getUuid())
+            )
+        );
+        return entry;
     }
 
 }
