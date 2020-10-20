@@ -29,6 +29,7 @@ import org.libreccm.security.UserRepository;
 import org.libreccm.ui.admin.AdminMessages;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -221,11 +222,8 @@ public class UserFormController {
         return String.format(
             "redirect:%s", 
             mvc.uri(
-                String.format(
-                    "UsersController#getUserDetails", 
-                    "{userIdentifier: %s}", 
-                    userIdentifierParam
-                )
+                "UsersController#getUserDetails", 
+                Map.of("userIdentifier", userIdentifierParam)
             )
         );
     }
@@ -243,11 +241,8 @@ public class UserFormController {
         return String.format(
             "redirect:%s", 
             mvc.uri(
-                String.format(
-                    "UsersController#getUserDetails", 
-                    "{userIdentifier: %s}", 
-                    userIdentifierParam
-                )
+                "UsersController#getUserDetails", 
+                Map.of("userIdentifier", userIdentifierParam)
             )
         );
     }

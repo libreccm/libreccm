@@ -38,6 +38,7 @@ public class UsersGroupsRolesPage implements AdminPage {
         final Set<Class<?>> classes = new HashSet<>();
         classes.add(UsersGroupsRolesController.class);
         classes.add(GroupsController.class);
+        classes.add(GroupFormController.class);
         classes.add(RolesController.class);
         classes.add(UsersController.class);
         classes.add(UserFormController.class);

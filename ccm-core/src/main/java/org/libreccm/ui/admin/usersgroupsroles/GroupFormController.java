@@ -29,6 +29,8 @@ import org.libreccm.security.RequiresPrivilege;
 import org.libreccm.ui.admin.AdminMessages;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
@@ -144,6 +146,45 @@ public class GroupFormController {
                    ));
             return "org/libreccm/ui/admin/users-groups-roles/group-form.xhtml";
         }
+    }
+
+    @POST
+    @Path("{groupIdentifier}/groups")
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String updateGroupMemberships(
+        @PathParam("groupIdentifier") final String groupIdentifierParam,
+        @FormParam("groupMembers") final String[] groupMembers
+    ) {
+        final Map<String, Object> params = new HashMap<>();
+        params.put("groupIdentifier", groupIdentifierParam);
+        return String.format(
+            "redirect:",
+            mvc.uri(
+                "GroupsController#getGroupDetails",
+                params
+            )
+        );
+    }
+
+    @POST
+    @Path("{groupIdentifier}/roles")
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String updateRoleMemberships(
+        @PathParam("groupIdentifier") final String groupIdentifierParam,
+        @FormParam("groupRoles") final String[] groupRoles
+    ) {
+        // ToDo
+        return String.format(
+            "redirect:%s", 
+            mvc.uri(
+                "UsersController#getUserDetails", 
+                Map.of("userIdentifier", groupIdentifierParam)
+            )
+        );
     }
 
 }

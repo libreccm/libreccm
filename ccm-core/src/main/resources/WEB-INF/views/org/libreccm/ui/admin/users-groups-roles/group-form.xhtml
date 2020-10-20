@@ -7,7 +7,7 @@
         <ui:param name="activePage" value="usersgroupsroles" />
         <ui:param name="activePanel" value="users" />
         <ui:param name="title"
-                  value="#{GroupDetailsModel.newGroup ? AdminMessages['usersgroupsroles.groups.create.title'] : AdminMessages.getMessage('usersgroupsroles.groups.edit.title', [GroupDetailsModel.name]) }" />
+                  value="#{GroupDetailsModel.newGroup ? AdminMessages['usersgroupsroles.groups.create.title'] : AdminMessages.getMessage('usersgroupsroles.groups.edit.title', [GroupDetailsModel.groupName]) }" />
 
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
@@ -16,13 +16,13 @@
                 </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="#{mvc.uri('GroupsController#getGroup')}">
+                <a href="#{mvc.uri('GroupsController#getGroups')}">
                     #{AdminMessages['usersgroupsroles.groups.label']}
                 </a>
             </li>
             <li class="breadcrumb-item">
                 <a href="#{mvn.uri('GroupsController#getGroupDetails', { 'groupIdentfier': group.name })}">
-                    #{UserDetailsModel.name}
+                    #{GroupDetailsModel.groupName}
                 </a>
             </li>
             <li>
@@ -48,7 +48,7 @@
                            class="form-control" 
                            id="groupname" 
                            name="groupName" 
-                           value="#{GroupDetailsModel.name}"
+                           value="#{GroupDetailsModel.groupName}"
                            type="text" />
                     <small class="form-text text-muted"
                            id="groupname-help">
@@ -56,12 +56,12 @@
                     </small>
                 </div>
                 <a class="btn btn-warning" 
-                   href="#{mvc.uri('UsersController#getGroups')}">
+                   href="#{mvc.uri('GroupsController#getGroups')}">
                     #{AdminMessages['usersgroupsroles.groups.form.buttons.cancel']}
                 </a>
                 <button class="btn btn-success" type="submit">
                     <c:choose>
-                        <c:when test="#{UserDetailsModel.newGroup}">
+                        <c:when test="#{GroupDetailsModel.newGroup}">
                             #{AdminMessages['usersgroupsroles.groups.form.buttons.create']}
                         </c:when>
                         <c:otherwise>

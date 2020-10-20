@@ -28,7 +28,7 @@
                 </div>
                 <div class="col-sm-3 text-right">
                     <a class="btn btn-secondary" 
-                       href="#{mvc.uri("GroupsController#newGroup")}">
+                       href="#{mvc.uri('GroupsController#newGroup')}">
                         <svg class="bi"
                              width="1em"
                              height="1em"
@@ -52,7 +52,7 @@
                                 <td>#{group.name}</td>
                                 <td class="text-center action-col">
                                     <a class="btn btn-info"
-                                       href="#">
+                                       href="#{mvc.uri('GroupsController#getGroupDetails', { 'groupIdentifier': group.name })}">
                                         <svg class="bi"
                                              width="1em"
                                              height="1em"
