@@ -6,9 +6,9 @@
       xmlns:xlink="http://www.w3.org/1999/xlink">
     <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/users-groups-roles.xhtml">
         <ui:param name="activePage" value="usersgroupsroles" />
-        <ui:param name="activePanel" value="users" />
+        <ui:param name="activePanel" value="groups" />
         <ui:param name="title"
-                  value="#{AdminMessages.getMessage('usersgroupsroles.groups.group_details.title', [GroupDetailsModel.name])}" />
+                  value="#{AdminMessages.getMessage('usersgroupsroles.groups.group_details.title', [GroupDetailsModel.groupName])}" />
 
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
@@ -17,19 +17,19 @@
                 </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="#{mvc.uri('UsersController#getGroups')}">
+                <a href="#{mvc.uri('GroupsController#getGroups')}">
                     #{AdminMessages['usersgroupsroles.groups.label']}
                 </a>
             </li>
             <li class="breadcrumb-item">
-                #{GroupDetailsModel.name}
+                #{GroupDetailsModel.groupName}
             </li>
         </ui:define>
 
         <ui:define name="panel">
             <dl>
                 <div>
-                    <dt>#{AdminMessages['usersgroupsroles.groups.group_details.id']}</dt>
+                    <dt>#{AdminMessages['usersgroupsroles.groups.group_details.groupId']}</dt>
                     <dd>#{GroupDetailsModel.groupId}</dd>
                 </div>
                 <div>
@@ -37,12 +37,12 @@
                     <dd>#{GroupDetailsModel.uuid}</dd>
                 </div>
                 <div>
-                    <dt>#{AdminMessages['usersgroupsroles.groups.group_details.name']}</dt>
-                    <dd>#{GroupDetailsModel.name}</dd>
+                    <dt>#{AdminMessages['usersgroupsroles.groups.group_details.groupName']}</dt>
+                    <dd>#{GroupDetailsModel.groupName}</dd>
                 </div>
             </dl>
             <a class="btn btn-primary" 
-               href="#{mvc.uri('GroupsController#editGroup', {'groupIdentifier': GroupDetailsModel.name })}">
+               href="#{mvc.uri('GroupsController#editGroup', {'groupIdentifier': GroupDetailsModel.groupName })}">
                 <svg class="bi"
                      width="1em"
                      height="1em"
@@ -54,7 +54,7 @@
                 </span>
             </a>
 
-            <div class="d-flex mb-1">
+            <div class="d-flex mt-3 mb-1">
                 <h2 class="mr-2">
                     #{AdminMessages['usersgroupsroles.groups.group_details.members.heading']}
                 </h2>
@@ -77,7 +77,7 @@
                      id="group-members-dialog" 
                      tabindex="-1">
                     <div class="modal-dialog">
-                        <form action="#{mvc.uri('GroupFormController#updateGroupMemberships', {'groupIdentifier': GroupDetailsModel.name})}" 
+                        <form action="#{mvc.uri('GroupFormController#updateGroupMemberships', {'groupIdentifier': GroupDetailsModel.groupName})}" 
                               class="modal-content" 
                               method="post">
                             <div class="modal-header">
@@ -163,15 +163,15 @@
                      aria-hidden="true"
                      class="modal fade"
                      data-backdrop="static"
-                     id="user-roles-dialog"
+                     id="group-roles-dialog"
                      tabindex="-1">
                     <div class="modal-dialog">
-                        <form action="#{mvc.uri('UserFormController#updateRoleMemberships', {'userIdentifier': UserDetailsModel.name })}"
+                        <form action="#{mvc.uri('GroupFormController#updateRoleMemberships', {'groupIdentifier': GroupDetailsModel.groupName })}"
                               class="modal-content"
                               method="post">
                             <div class="modal-header">
                                 <h3 class="modal-title"
-                                    id="group-roles-dialog.title">
+                                    id="group-roles-dialog-title">
                                     #{AdminMessages['usersgroupsroles.groups.group_details.roles.dialog.title']}
                                 </h3>
                                 <button aria-label="#{AdminMessages['usersgroupsroles.groups.group_details.roles.dialog.close']}"
@@ -188,7 +188,7 @@
                                         <input class="form-check-input"
                                                checked="#{entry.member ? 'checked' : ''}"
                                                id="role-#{entry.roleName}"
-                                               name="userRoles[]"
+                                               name="groupRoles[]"
                                                value="#{entry.roleName}"
                                                type="checkbox" />
                                         <label for="role#{entry.roleName}">
