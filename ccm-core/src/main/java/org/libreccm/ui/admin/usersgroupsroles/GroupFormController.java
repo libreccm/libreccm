@@ -26,12 +26,16 @@ import org.libreccm.security.Group;
 import org.libreccm.security.GroupManager;
 import org.libreccm.security.GroupRepository;
 import org.libreccm.security.RequiresPrivilege;
+import org.libreccm.security.User;
+import org.libreccm.security.UserRepository;
 import org.libreccm.ui.admin.AdminMessages;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -69,12 +73,6 @@ public class GroupFormController {
     private Models models;
 
     @Inject
-    private MvcContext mvc;
-
-    @Inject
-    private GroupManager groupManager;
-
-    @Inject
     private GroupRepository groupRepository;
 
     @MvcBinding
@@ -105,7 +103,7 @@ public class GroupFormController {
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
-    public String updateUser(
+    public String updateGroup(
         @PathParam("groupIdentifier") final String groupIdentifierParam
     ) {
         if (bindingResult.isFailed()) {
@@ -138,53 +136,16 @@ public class GroupFormController {
             groupRepository.save(group);
             return "redirect:users-groups-roles/groups";
         } else {
-            models.put("errors", Arrays.asList(
-                       adminMessages.getMessage(
-                           "usersgroupsroles.groups.not_found.message",
-                           Arrays.asList(groupIdentifierParam)
-                       )
-                   ));
+            models.put(
+                "errors", Arrays.asList(
+                    adminMessages.getMessage(
+                        "usersgroupsroles.groups.not_found.message",
+                        Arrays.asList(groupIdentifierParam)
+                    )
+                )
+            );
             return "org/libreccm/ui/admin/users-groups-roles/group-form.xhtml";
         }
-    }
-
-    @POST
-    @Path("{groupIdentifier}/groups")
-    @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String updateGroupMemberships(
-        @PathParam("groupIdentifier") final String groupIdentifierParam,
-        @FormParam("groupMembers") final String[] groupMembers
-    ) {
-        final Map<String, Object> params = new HashMap<>();
-        params.put("groupIdentifier", groupIdentifierParam);
-        return String.format(
-            "redirect:",
-            mvc.uri(
-                "GroupsController#getGroupDetails",
-                params
-            )
-        );
-    }
-
-    @POST
-    @Path("{groupIdentifier}/roles")
-    @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String updateRoleMemberships(
-        @PathParam("groupIdentifier") final String groupIdentifierParam,
-        @FormParam("groupRoles") final String[] groupRoles
-    ) {
-        // ToDo
-        return String.format(
-            "redirect:%s", 
-            mvc.uri(
-                "UsersController#getUserDetails", 
-                Map.of("userIdentifier", groupIdentifierParam)
-            )
-        );
     }
 
 }

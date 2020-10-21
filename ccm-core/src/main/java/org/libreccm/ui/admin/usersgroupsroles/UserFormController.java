@@ -50,7 +50,7 @@ import javax.ws.rs.PathParam;
 
 /**
  * Controller managing the user post requests from the user edit form.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Controller
@@ -69,7 +69,7 @@ public class UserFormController {
 
     @Inject
     private Models models;
-    
+
     @Inject
     private MvcContext mvc;
 
@@ -207,44 +207,6 @@ public class UserFormController {
                    ));
             return "org/libreccm/ui/admin/users-groups-roles/user-form.xhtml";
         }
-    }
-    
-    @POST
-    @Path("{userIdentifier}/groups")
-    @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String updateGroupMemberships(
-        @PathParam("userIdentifier") final String userIdentifierParam,
-        @FormParam("userGroups") final String[] userGroups
-    ) {
-        // ToDo
-        return String.format(
-            "redirect:%s", 
-            mvc.uri(
-                "UsersController#getUserDetails", 
-                Map.of("userIdentifier", userIdentifierParam)
-            )
-        );
-    }
-    
-    @POST
-    @Path("{userIdentifier}/roles")
-    @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String updateRoleMemberships(
-        @PathParam("userIdentifier") final String userIdentifierParam,
-        @FormParam("userRoles") final String[] userRoles
-    ) {
-        // ToDo
-        return String.format(
-            "redirect:%s", 
-            mvc.uri(
-                "UsersController#getUserDetails", 
-                Map.of("userIdentifier", userIdentifierParam)
-            )
-        );
     }
 
 }

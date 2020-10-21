@@ -24,8 +24,10 @@ import org.libreccm.security.RequiresPrivilege;
 
 import javax.enterprise.context.RequestScoped;
 import javax.mvc.Controller;
+import javax.transaction.Transactional;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 /**
  *
@@ -42,6 +44,17 @@ public class RolesController {
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     public String getRoles() {
         return "org/libreccm/ui/admin/users-groups-roles/roles.xhtml";
+    }
+
+    @GET
+    @Path("/{roleIdentifier}/details")
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String getRoleDetails(
+        @PathParam("roleIdentifier") final String roleIdentifierParam
+    ) {
+        throw new UnsupportedOperationException();
     }
 
 }
