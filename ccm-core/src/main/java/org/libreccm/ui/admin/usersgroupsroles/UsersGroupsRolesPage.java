@@ -39,9 +39,11 @@ public class UsersGroupsRolesPage implements AdminPage {
         classes.add(UsersGroupsRolesController.class);
         classes.add(GroupsController.class);
         classes.add(GroupFormController.class);
+        classes.add(GroupMembersRolesController.class);
         classes.add(RolesController.class);
         classes.add(UsersController.class);
         classes.add(UserFormController.class);
+        classes.add(UserGroupsRolesController.class);
         classes.add(EmailFormController.class);
         return classes;
     }

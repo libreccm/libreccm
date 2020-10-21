@@ -296,7 +296,7 @@
                      id="user-groups-dialog" 
                      tabindex="-1">
                     <div class="modal-dialog">
-                        <form action="#{mvc.uri('UserFormController#updateGroupMemberships', {'userIdentifier': UserDetailsModel.name})}" 
+                        <form action="#{mvc.uri('UserGroupsRolesController#updateGroupMemberships', {'userIdentifier': UserDetailsModel.name})}" 
                               class="modal-content" 
                               method="post">
                             <div class="modal-header">
@@ -318,7 +318,7 @@
                                         <input class="form-check-input"
                                                checked="#{entry.member ? 'checked' : ''}"
                                                id="group-#{entry.groupName}" 
-                                               name="userGroups[]"
+                                               name="userGroups"
                                                value="#{entry.groupName}"
                                                type="checkbox" />
                                         <label class="form-check-label"
@@ -345,9 +345,10 @@
             <c:choose>
                 <c:when test="#{UserDetailsModel.groupMemberships.size() > 0}">
                     <ul class="list-group mt-1">
-                        <c:forEach items="#{UserDetailsModel.groupMemberships}">
+                        <c:forEach items="#{UserDetailsModel.groupMemberships}" 
+                                   var="group">
                             <li class="list-group-item">
-                                <a href="#">
+                                <a href="#{mvc.uri('GroupsController#getGroupDetails', {'groupIdentifier': group.groupName})}">
                                     #{group.groupName}
                                 </a>
                             </li>
@@ -361,7 +362,7 @@
                 </c:otherwise>
             </c:choose>
 
-            <div class="d-flex mb-1">
+            <div class="d-flex mt-4 mb-1">
                 <h2 class="mr-2">
                     #{AdminMessages['usersgroupsroles.users.user_details.roles.heading']}
                 </h2>
@@ -384,7 +385,7 @@
                      id="user-roles-dialog"
                      tabindex="-1">
                     <div class="modal-dialog">
-                        <form action="#{mvc.uri('UserFormController#updateRoleMemberships', {'userIdentifier': UserDetailsModel.name })}"
+                        <form action="#{mvc.uri('UserGroupsRolesController#updateRoleMemberships', {'userIdentifier': UserDetailsModel.name })}"
                               class="modal-content"
                               method="post">
                             <div class="modal-header">
@@ -406,7 +407,7 @@
                                         <input class="form-check-input"
                                                checked="#{entry.member ? 'checked' : ''}"
                                                id="role-#{entry.roleName}"
-                                               name="userRoles[]"
+                                               name="userRoles"
                                                value="#{entry.roleName}"
                                                type="checkbox" />
                                         <label for="role#{entry.roleName}">
@@ -435,7 +436,7 @@
                     <ul class="list-group mt-1 mb-4">
                         <c:forEach items="#{UserDetailsModel.roles}" var="role">
                             <li class="list-group-item">
-                                <a href="#">
+                                <a href="#{mvc.uri('RolesController#getRoleDetails', {'roleIdentifier': role.roleName })}">
                                     #{role.roleName}
                                 </a>
                             </li>
