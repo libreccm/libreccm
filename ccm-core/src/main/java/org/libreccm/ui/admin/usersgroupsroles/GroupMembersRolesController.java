@@ -82,7 +82,7 @@ public class GroupMembersRolesController {
     private UserRepository userRepository;
 
     @POST
-    @Path("{groupIdentifier}/groups")
+    @Path("{groupIdentifier}/members")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)

@@ -22,38 +22,38 @@ package org.libreccm.ui.admin.usersgroupsroles;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class GroupUserFormEntry {
+public class RolePartyFormEntry {
 
-    private long userId;
+    private long partyId;
 
-    private String userUuid;
+    private String partyUuid;
 
-    private String userName;
+    private String partyName;
 
     private boolean member;
 
-    public long getUserId() {
-        return userId;
+    public long getPartyId() {
+        return partyId;
     }
 
-    public void setUserId(final long userId) {
-        this.userId = userId;
+    public void setPartyId(final long partyId) {
+        this.partyId = partyId;
     }
 
-    public String getUserUuid() {
-        return userUuid;
+    public String getPartyUuid() {
+        return partyUuid;
     }
 
-    public void setUserUuid(final String userUuid) {
-        this.userUuid = userUuid;
+    public void setPartyUuid(final String partyUuid) {
+        this.partyUuid = partyUuid;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getPartyName() {
+        return partyName;
     }
 
-    public void setUserName(final String userName) {
-        this.userName = userName;
+    public void setPartyName(final String partyName) {
+        this.partyName = partyName;
     }
 
     public boolean isMember() {

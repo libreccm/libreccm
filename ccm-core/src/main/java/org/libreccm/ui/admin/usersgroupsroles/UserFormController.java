@@ -205,7 +205,7 @@ public class UserFormController {
                            Arrays.asList(userIdentifierParam)
                        )
                    ));
-            return "org/libreccm/ui/admin/users-groups-roles/user-form.xhtml";
+            return "org/libreccm/ui/admin/users-groups-roles/user-not-found.xhtml";
         }
     }
 

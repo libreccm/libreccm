@@ -83,7 +83,7 @@
                                          id="confirm-delete-#{group.name}"
                                          tabindex="-1">
                                         <div class="modal-dialog">
-                                            <form action="#"
+                                            <form action="#{mvc.uri('GroupsController#deleteGroup', {'groupIdentifier': group.name })}"
                                                   class="modal-content"
                                                   method="post">
                                                 <div class="modal-header">

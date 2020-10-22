@@ -23,8 +23,12 @@ import org.libreccm.api.IdentifierParser;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.Group;
+import org.libreccm.security.GroupManager;
+import org.libreccm.security.GroupMembership;
 import org.libreccm.security.GroupRepository;
 import org.libreccm.security.RequiresPrivilege;
+import org.libreccm.security.RoleManager;
+import org.libreccm.security.RoleMembership;
 import org.libreccm.ui.Message;
 import org.libreccm.ui.MessageType;
 import org.libreccm.ui.admin.AdminMessages;
@@ -38,7 +42,9 @@ import javax.inject.Inject;
 import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.transaction.Transactional;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
@@ -58,6 +64,9 @@ public class GroupsController {
     private GroupDetailsModel groupDetailsModel;
 
     @Inject
+    private GroupManager groupManager;
+
+    @Inject
     private GroupRepository groupRepository;
 
     @Inject
@@ -65,6 +74,9 @@ public class GroupsController {
 
     @Inject
     private Models models;
+
+    @Inject
+    private RoleManager roleManager;
 
     @GET
     @Path("/")
@@ -169,6 +181,70 @@ public class GroupsController {
             );
             return "org/libreccm/ui/admin/users-groups-roles/group-not-found.xhtml";
         }
+    }
+
+    @POST
+    @Path("/{groupIdentifier}/delete")
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String deleteGroup(
+        @PathParam("groupIdentifier") final String groupIdentifierParam,
+        @FormParam("confirmed") final String confirmed
+    ) {
+        if ("true".equals(confirmed)) {
+            final Identifier identifier = identifierParser.parseIdentifier(
+                groupIdentifierParam
+            );
+            final Optional<Group> result;
+            switch (identifier.getType()) {
+                case ID:
+                    result = groupRepository.findById(
+                        Long.parseLong(identifier.getIdentifier())
+                    );
+                    break;
+                case UUID:
+                    result = groupRepository.findByUuid(identifier
+                        .getIdentifier());
+                    break;
+                default:
+                    result = groupRepository.findByName(identifier
+                        .getIdentifier());
+                    break;
+            }
+
+            if (result.isPresent()) {
+                final Group group = result.get();
+                for (final RoleMembership roleMembership : group
+                    .getRoleMemberships()) {
+                    roleManager.removeRoleFromParty(
+                        roleMembership.getRole(), group
+                    );
+                }
+
+                for (final GroupMembership groupMembership : group
+                    .getMemberships()) {
+                    groupManager.removeMemberFromGroup(
+                        groupMembership.getMember(), group
+                    );
+                }
+
+                groupRepository.delete(result.get());
+            } else {
+                groupDetailsModel.addMessage(
+                    new Message(
+                        adminMessages.getMessage(
+                            "usersgroupsroles.groups.not_found.message",
+                            Arrays.asList(groupIdentifierParam)
+                        ),
+                        MessageType.WARNING
+                    )
+                );
+                return "org/libreccm/ui/admin/users-groups-roles/group-not-found.xhtml";
+            }
+        }
+
+        return "redirect:users-groups-roles/groups";
     }
 
 }

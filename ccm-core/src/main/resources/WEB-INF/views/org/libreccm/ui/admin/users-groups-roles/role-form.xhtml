@@ -7,7 +7,7 @@
         <ui:param name="activePage" value="usersgroupsroles" />
         <ui:param name="activePanel" value="users" />
         <ui:param name="title"
-                  value="#{GroupDetailsModel.newGroup ? AdminMessages['usersgroupsroles.groups.create.title'] : AdminMessages.getMessage('usersgroupsroles.groups.edit.title', [GroupDetailsModel.groupName]) }" />
+                  value="#{RoleDetailsModel.newRole ? AdminMessages['usersgroupsroles.roles.create.title'] : AdminMessages.getMessage('usersgroupsroles.roles.edit.title', [RoleDetailsModel.roleName]) }" />
 
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
@@ -17,16 +17,16 @@
             </li>
             <li class="breadcrumb-item">
                 <a href="#{mvc.uri('GroupsController#getGroups')}">
-                    #{AdminMessages['usersgroupsroles.groups.label']}
+                    #{AdminMessages['usersgroupsroles.roles.label']}
                 </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="#{mvn.uri('GroupsController#getGroupDetails', { 'groupIdentfier': GroupDetailsModel.groupName })}">
-                    #{GroupDetailsModel.groupName}
+                <a href="#{mvn.uri('GroupsController#getGroupDetails', { 'roleIdentfier': RoleDetailsModel.roleName })}">
+                    #{RoleDetailsModel.roleName}
                 </a>
             </li>
             <li>
-                #{GroupDetailsModel.newGroup ? AdminMessages['usersgroupsroles.groups.breadcrumb.new'] : AdminMessages['usersgroupsroles.groups.breadcrumb.edit']}
+                #{RoleDetailsModel.newRole ? AdminMessages['usersgroupsroles.roles.breadcrumb.new'] : AdminMessages['usersgroupsroles.roles.breadcrumb.edit']}
             </li>
         </ui:define>
 
@@ -37,39 +37,39 @@
                 </div>
             </c:forEach>
             
-            <form action="#{GroupDetailsModel.newGroup ? mvc.uri('GroupFormController#createGroup') : mvc.uri('GroupFormController#updateGroup', { 'groupIdentifier': GroupDetailsModel.groupName })}"
+            <form action="#{RoleDetailsModel.newRole ? mvc.uri('RoleFormController#createRole') : mvc.uri('RoleFormController#updateRole', {'roleIdentifier' : RoleDetailsModel.roleName })}"
                   method="post">
                 <div class="form-group">
-                    <label for="groupname">
-                        #{AdminMessages['usersgroupsroles.groups.form.groupname.label']}
+                    <label for="rolename">
+                        #{AdminMessages['usersgroupsroles.roles.form.rolename.label']}
                     </label>
-                    <input aria-described-by="groupname-help"
+                    <input aria-described-by="rolename-help"
                            class="form-control" 
-                           id="groupname" 
-                           name="groupName" 
-                           value="#{GroupDetailsModel.groupName}"
+                           id="rolename" 
+                           name="roleName" 
+                           value="#{RoleDetailsModel.roleName}"
                            type="text" />
                     <small class="form-text text-muted"
-                           id="groupname-help">
-                        #{AdminMessages['usersgroupsroles.groups.form.username.help']}
+                           id="rolename-help">
+                        #{AdminMessages['usersgroupsroles.roles.form.rolename.help']}
                     </small>
                 </div>
                 <a class="btn btn-warning" 
-                   href="#{mvc.uri('GroupsController#getGroups')}">
-                    #{AdminMessages['usersgroupsroles.groups.form.buttons.cancel']}
+                   href="#{mvc.uri('RolesController#getRoles')}">
+                    #{AdminMessages['usersgroupsroles.roles.form.buttons.cancel']}
                 </a>
                 <button class="btn btn-success" type="submit">
                     <c:choose>
-                        <c:when test="#{GroupDetailsModel.newGroup}">
-                            #{AdminMessages['usersgroupsroles.groups.form.buttons.create']}
+                        <c:when test="#{RoleDetailsModel.newRole}">
+                            #{AdminMessages['usersgroupsroles.roles.form.buttons.create']}
                         </c:when>
                         <c:otherwise>
-                            #{AdminMessages['usersgroupsroles.groups.form.buttons.save']}
+                            #{AdminMessages['usersgroupsroles.roles.form.buttons.save']}
                         </c:otherwise>
                     </c:choose>
                 </button>
             </form>
         </ui:define>
-
+        
     </ui:composition>
 </html>

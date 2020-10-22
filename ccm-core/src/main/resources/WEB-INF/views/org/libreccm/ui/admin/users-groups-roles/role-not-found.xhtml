@@ -7,7 +7,7 @@
         <ui:param name="activePage" value="usersgroupsroles" />
         <ui:param name="activePanel" value="groups" />
         <ui:param name="title"
-                  value="#{AdminMessages('usersgroupsroles.groups.not_found.title')}" />
+                  value="#{AdminMessages('usersgroupsroles.roles.not_found.title')}" />
 
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
@@ -16,12 +16,12 @@
                 </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="#{mvc.uri('UsersController#getGroups')}">
-                    #{AdminMessages['usersgroupsroles.groups.label']}
+                <a href="#{mvc.uri('UsersController#getRoles')}">
+                    #{AdminMessages['usersgroupsroles.roles.label']}
                 </a>
             </li>
             <li class="breadcrumb-item">
-                #{AdminMessages['usersgroupsroles.groups.not_found.title']}
+                #{AdminMessages['usersgroupsroles.roles.not_found.title']}
             </li>
         </ui:define>
 
@@ -37,4 +37,5 @@
 
 
 </html>
+
 
