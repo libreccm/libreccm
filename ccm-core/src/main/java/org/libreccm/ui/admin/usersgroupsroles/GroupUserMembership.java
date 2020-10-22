@@ -20,6 +20,8 @@ package org.libreccm.ui.admin.usersgroupsroles;
 
 import org.libreccm.security.User;
 
+import java.util.Objects;
+
 /**
  * Model friendly representation of a member of a group.
  *
@@ -42,7 +44,7 @@ public class GroupUserMembership implements Comparable<GroupUserMembership> {
     public GroupUserMembership() {
         // Nothing
     }
-    
+
     public GroupUserMembership(final User user) {
         userId = user.getPartyId();
         userUuid = user.getUuid();
@@ -51,7 +53,7 @@ public class GroupUserMembership implements Comparable<GroupUserMembership> {
         givenName = user.getGivenName();
         familyName = user.getFamilyName();
     }
-    
+
     public long getUserId() {
         return userId;
     }
@@ -102,7 +104,9 @@ public class GroupUserMembership implements Comparable<GroupUserMembership> {
 
     @Override
     public int compareTo(final GroupUserMembership other) {
-        int result = userName.compareTo(other.getUserName());
+        int result = userName.compareTo(
+            Objects.requireNonNull(other.getUserName())
+        );
         if (result == 0) {
             return primaryEmailAddress.compareTo(other.getPrimaryEmailAddress());
         } else {

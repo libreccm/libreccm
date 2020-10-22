@@ -22,9 +22,9 @@ import org.libreccm.api.Identifier;
 import org.libreccm.api.IdentifierParser;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
-import org.libreccm.security.Group;
-import org.libreccm.security.GroupRepository;
 import org.libreccm.security.RequiresPrivilege;
+import org.libreccm.security.Role;
+import org.libreccm.security.RoleRepository;
 import org.libreccm.ui.admin.AdminMessages;
 
 import java.util.Arrays;
@@ -48,9 +48,9 @@ import javax.ws.rs.PathParam;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Controller
-@Path("/users-groups-roles/groups/")
+@Path("/users-groups-roles/roles/")
 @RequestScoped
-public class GroupFormController {
+public class RoleFormController {
 
     @Inject
     private AdminMessages adminMessages;
@@ -65,78 +65,77 @@ public class GroupFormController {
     private Models models;
 
     @Inject
-    private GroupRepository groupRepository;
+    private RoleRepository roleRepository;
 
     @MvcBinding
-    @FormParam("groupName")
+    @FormParam("roleName")
     @NotBlank
-    private String groupName;
+    private String roleName;
 
     @POST
     @Path("/new")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
-    public String createGroup() {
+    public String createRole() {
         if (bindingResult.isFailed()) {
             models.put("errors", bindingResult.getAllMessages());
-            return "org/libreccm/ui/admin/users-groups-roles/group-form.xhtml";
+            return "org/libreccm/ui/admin/users-groups-roles/role-form.xhtml";
         }
 
-        final Group group = new Group();
-        group.setName(groupName);
-        groupRepository.save(group);
+        final Role role = new Role();
+        role.setName(roleName);
+        roleRepository.save(role);
 
-        return "redirect:users-groups-roles/groups";
+        return "redirect:users-groups-roles/roles";
     }
 
     @POST
-    @Path("{groupIdentifier}/edit")
+    @Path("{roleIdentifier}/edit")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
-    public String updateGroup(
-        @PathParam("groupIdentifier") final String groupIdentifierParam
+    public String updateRole(
+        @PathParam("roleIdentifier") final String roleIdentifierParam
     ) {
         if (bindingResult.isFailed()) {
             models.put("errors", bindingResult.getAllMessages());
-            return "org/libreccm/ui/admin/users-groups-roles/group-form.xhtml";
+            return "org/libreccm/ui/admin/users-groups-roles/role-form.xhtml";
         }
 
         final Identifier identifier = identifierParser.parseIdentifier(
-            groupIdentifierParam
+            roleIdentifierParam
         );
-        final Optional<Group> result;
+        final Optional<Role> result;
         switch (identifier.getType()) {
             case ID:
-                result = groupRepository.findById(
+                result = roleRepository.findById(
                     Long.parseLong(identifier.getIdentifier())
                 );
                 break;
             case UUID:
-                result = groupRepository.findByUuid(identifier.getIdentifier());
+                result = roleRepository.findByUuid(identifier.getIdentifier());
                 break;
             default:
-                result = groupRepository.findByName(identifier.getIdentifier());
+                result = roleRepository.findByName(identifier.getIdentifier());
                 break;
         }
-
+        
         if (result.isPresent()) {
-            final Group group = result.get();
-            group.setName(groupName);
-
-            groupRepository.save(group);
-            return "redirect:users-groups-roles/groups";
+            final Role role = result.get();
+            role.setName(roleName);
+            
+            return "redirect:users-groups-roles/roles";
         } else {
             models.put(
                 "errors", Arrays.asList(
                     adminMessages.getMessage(
-                        "usersgroupsroles.groups.not_found.message",
-                        Arrays.asList(groupIdentifierParam)
+                        "usersgroupsroles.roles.not_found.message",
+                        Arrays.asList(roleIdentifierParam)
                     )
                 )
             );
-            return "org/libreccm/ui/admin/users-groups-roles/group-not-found.xhtml";
+            return "org/libreccm/ui/admin/users-groups-roles/role-not-found.xhtml";
         }
     }
 
