@@ -49,7 +49,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
- *
+ * Controller for adding members to a group or removing members from a group
+ * based on the selections in the member form (dialog in group-details).
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Controller

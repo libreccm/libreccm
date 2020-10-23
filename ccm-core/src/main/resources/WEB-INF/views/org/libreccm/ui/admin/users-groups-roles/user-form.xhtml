@@ -47,6 +47,8 @@
                            class="form-control" 
                            id="username" 
                            name="userName" 
+                           pattern="[a-zA-Z0-9_-]*"
+                           required="required"
                            value="#{UserDetailsModel.name}"
                            type="text" />
                     <small class="form-text text-muted"
@@ -92,6 +94,7 @@
                            class="form-control" 
                            id="primary-email-address" 
                            name="primaryEmailAddress" 
+                           required="required"
                            value="#{UserDetailsModel.primaryEmailAddress.address}"
                            type="email" />
                     <small class="form-text text-muted"
@@ -129,6 +132,7 @@
                                class="form-control" 
                                id="password" 
                                name="password" 
+                               required="required"
                                type="password" />
                         <small class="form-text text-muted"
                                id="password-help">
@@ -143,6 +147,7 @@
                                class="form-control" 
                                id="password-confirmation" 
                                name="passwordConfirmation" 
+                               required="required"
                                type="password" />
                         <small class="form-text text-muted"
                                id="password-help">

@@ -45,6 +45,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
+ * Primary controller for managing roles. Retrieves the data for the views for
+ * manageing roles. POST requests from the forms a processed by other
+ * controllers.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

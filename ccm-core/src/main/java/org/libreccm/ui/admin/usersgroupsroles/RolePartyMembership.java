@@ -23,7 +23,8 @@ import org.libreccm.security.Party;
 import java.util.Objects;
 
 /**
- *
+ * Model friendly representation of a member of a role.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class RolePartyMembership implements Comparable<RolePartyMembership>{

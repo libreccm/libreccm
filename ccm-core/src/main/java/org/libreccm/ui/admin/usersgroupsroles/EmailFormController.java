@@ -44,7 +44,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
- * Controller managing the post request from the email edit form.
+ * Controller managing the post requests from the email edit form.
  *
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -59,8 +59,6 @@ public class EmailFormController {
     @Inject
     private AdminMessages adminMessages;
 
-//    @Inject
-//    private BindingResult bindingResult;
     @Inject
     private EmailFormModel emailFormModel;
 
@@ -76,7 +74,7 @@ public class EmailFormController {
     @Inject
     private UserRepository userRepository;
 
-    // MVC does not work with Krazo 1.1.0-M1
+    // MvcBinding does not work with Krazo 1.1.0-M1
 //    @MvcBinding 
     @FormParam("address")
 //    @NotBlank
@@ -121,7 +119,7 @@ public class EmailFormController {
         if (result.isPresent()) {
             final User user = result.get();
 
-            // MVC Binding does not work with Krazo 1.1.0-M1
+            // MvcBinding does not work with Krazo 1.1.0-M1
 //            if (bindingResult.isFailed()) {
 //                models.put("errors", bindingResult.getAllMessages());
 //              emailFormModel.setUserIdentifier(userIdentifierParam);

@@ -19,7 +19,8 @@
 package org.libreccm.ui.admin.usersgroupsroles;
 
 /**
- *
+ * Model of an entry in the form for managing the members of group.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class GroupUserFormEntry {

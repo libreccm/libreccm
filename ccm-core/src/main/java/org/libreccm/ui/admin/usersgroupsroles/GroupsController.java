@@ -49,6 +49,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
+ * Primary controller for managing groups. Retrieves data for the views and
+ * shows them. Processing of POST requests from the forms is done in other
+ * controllers.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

@@ -28,7 +28,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 /**
- * 
+ * Controller for the overview page of the users/groups/roles admin section.
  * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

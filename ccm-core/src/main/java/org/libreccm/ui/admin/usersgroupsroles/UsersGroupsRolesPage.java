@@ -27,6 +27,8 @@ import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 
 /**
+ * {@link AdminPage} implementation for the users/groups/roles section of the
+ * AdminUI.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
