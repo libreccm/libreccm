@@ -36,6 +36,7 @@ public class ConfigurationPage implements AdminPage {
     public Set<Class<?>> getControllerClasses() {
         final Set<Class<?>> classes = new HashSet<>();
         classes.add(ConfigurationController.class);
+        classes.add(SettingsController.class);
         return classes;
     }
 
