@@ -47,6 +47,8 @@
                            class="form-control" 
                            id="groupname" 
                            name="groupName" 
+                           pattern="[a-zA-Z0-9_-]*"
+                           required="required"
                            value="#{GroupDetailsModel.groupName}"
                            type="text" />
                     <small class="form-text text-muted"

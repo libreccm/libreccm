@@ -23,7 +23,8 @@ import org.libreccm.security.Permission;
 import java.util.Objects;
 
 /**
- *
+ * Model friendly representation of a permission granted to a role.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class RolePermission implements Comparable<RolePermission> {

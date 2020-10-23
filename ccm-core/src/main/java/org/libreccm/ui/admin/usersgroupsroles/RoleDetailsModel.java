@@ -36,7 +36,8 @@ import javax.inject.Named;
 import javax.transaction.Transactional;
 
 /**
- *
+ * Provides the data for the details view of a role and the role edit form.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -80,6 +81,10 @@ public class RoleDetailsModel {
 
     public String getRoleName() {
         return roleName;
+    }
+    
+    public void setRoleName(final String roleName) {
+        this.roleName = roleName;
     }
 
     public List<RolePartyMembership> getMembers() {

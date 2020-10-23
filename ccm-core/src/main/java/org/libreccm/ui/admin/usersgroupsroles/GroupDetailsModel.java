@@ -88,6 +88,10 @@ public class GroupDetailsModel {
     public String getGroupName() {
         return groupName;
     }
+    
+    public void setGroupName(final String groupName) {
+        this.groupName = groupName;
+    }
 
     public List<GroupUserMembership> getMembers() {
         return Collections.unmodifiableList(members);

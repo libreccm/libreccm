@@ -28,8 +28,9 @@ import org.libreccm.security.UserManager;
 import org.libreccm.security.UserRepository;
 import org.libreccm.ui.admin.AdminMessages;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -37,12 +38,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.mvc.Controller;
 import javax.mvc.Models;
-import javax.mvc.MvcContext;
-import javax.mvc.binding.BindingResult;
-import javax.mvc.binding.MvcBinding;
 import javax.transaction.Transactional;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -61,9 +57,9 @@ public class UserFormController {
     @Inject
     private AdminMessages adminMessages;
 
-    @Inject
-    private BindingResult bindingResult;
-
+    // MvcBinding does not work with Krazo 1.1.0-M1
+//    @Inject
+//    private BindingResult bindingResult;
     @Inject
     private IdentifierParser identifierParser;
 
@@ -71,7 +67,7 @@ public class UserFormController {
     private Models models;
 
     @Inject
-    private MvcContext mvc;
+    private UserDetailsModel userDetailsModel;
 
     @Inject
     private UserManager userManager;
@@ -79,9 +75,10 @@ public class UserFormController {
     @Inject
     private UserRepository userRepository;
 
-    @MvcBinding
+    // MvcBinding does not work with Krazo 1.1.0-M1
+//    @MvcBinding
     @FormParam("userName")
-    @NotBlank
+//    @NotBlank
     private String userName;
 
     @FormParam("givenName")
@@ -90,10 +87,11 @@ public class UserFormController {
     @FormParam("familyName")
     private String familyName;
 
-    @MvcBinding
+    // MvcBinding does not work with Krazo 1.1.0-M1
+//    @MvcBinding
     @FormParam("primaryEmailAddress")
-    @NotBlank
-    @Email
+//    @NotBlank
+//    @Email
     private String primaryEmailAddress;
 
     @FormParam("primaryEmailAddressBouncing")
@@ -120,24 +118,75 @@ public class UserFormController {
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public String createUser() {
-        if (bindingResult.isFailed()) {
-            models.put("errors", bindingResult.getAllMessages());
-            return "org/libreccm/ui/admin/users-groups-roles/user-form.xhtml";
+        // MvcBinding does not work with Krazo 1.1.0-M1
+//        if (bindingResult.isFailed()) {
+//            models.put("errors", bindingResult.getAllMessages());
+//            return "org/libreccm/ui/admin/users-groups-roles/user-form.xhtml";
+//        }
+        final List<String> errors = new ArrayList<>();
+        if (userName == null || userName.matches("\\s*")) {
+            errors.add(
+                adminMessages.get(
+                    "usersgroupsroles.users.form.errors.username.empty"
+                )
+            );
+        }
+        if (!userName.matches("[a-zA-Z0-9_-]*")) {
+            errors.add(
+                adminMessages.get(
+                    "usersgroupsroles.users.form.errors.username.invalid"
+                )
+            );
+        }
+
+        if (primaryEmailAddress == null || primaryEmailAddress.matches("\\s*")) {
+            errors.add(
+                adminMessages.get(
+                    "usersgroupsroles.users.form.errors.primary_email.empty"
+                )
+            );
+        }
+        if (!primaryEmailAddress.matches(
+            "^[a-zA-Z0-9\\._-]*@[a-zA-Z0-9\\._-]*$"
+        )) {
+            errors.add(
+                adminMessages.get(
+                    "usersgroupsroles.users.form.errors.primary_email.invalid"
+                )
+            );
         }
 
         if (password == null || password.isEmpty()) {
-            models.put("errors", Arrays.asList(
-                       adminMessages.get(
-                           "usersgroupsroles.users.new.errors.password.empty")
-                   ));
-            return "org/libreccm/ui/admin/users-groups-roles/user-form.xhtml";
+            errors.add(
+                adminMessages.get(
+                    "usersgroupsroles.users.new.errors.password.empty"
+                )
+            );
         }
 
         if (!Objects.equals(password, passwordConfirmation)) {
-            models.put("errors", Arrays.asList(
-                       adminMessages.get(
-                           "usersgroupsroles.users.new.errors.password.no_match")
-                   ));
+            errors.add(
+                adminMessages.get(
+                    "usersgroupsroles.users.new.errors.password.no_match"
+                )
+            );
+        }
+        if (!errors.isEmpty()) {
+            models.put("errors", errors);
+            userDetailsModel.setName(userName);
+            userDetailsModel.setGivenName(givenName);
+            userDetailsModel.setFamilyName(familyName);
+            userDetailsModel
+                .getPrimaryEmailAddress()
+                .setAddress(primaryEmailAddress);
+            userDetailsModel
+                .getPrimaryEmailAddress()
+                .setBouncing(primaryEmailAddressBouncing);
+            userDetailsModel
+                .getPrimaryEmailAddress()
+                .setVerified(primaryEmailAddressVerified);
+            userDetailsModel.setBanned(banned);
+            userDetailsModel.setPasswordResetRequired(passwordResetRequired);
             return "org/libreccm/ui/admin/users-groups-roles/user-form.xhtml";
         }
 
@@ -156,11 +205,6 @@ public class UserFormController {
     public String updateUser(
         @PathParam("userIdentifier") final String userIdentifierParam
     ) {
-        if (bindingResult.isFailed()) {
-            models.put("errors", bindingResult.getAllMessages());
-            return "org/libreccm/ui/admin/users-groups-roles/user-form.xhtml";
-        }
-
         final Identifier identifier = identifierParser.parseIdentifier(
             userIdentifierParam
         );
@@ -183,6 +227,60 @@ public class UserFormController {
 
         if (result.isPresent()) {
             final User user = result.get();
+
+            // MvcBinding does not work with Krazo 1.1.0-M1
+//          if (bindingResult.isFailed()) {
+//              models.put("errors", bindingResult.getAllMessages());
+//              return "org/libreccm/ui/admin/users-groups-roles/user-form.xhtml";
+//          }
+            final List<String> errors = new ArrayList<>();
+            if (userName == null || userName.matches("\\s*")) {
+                errors.add(
+                    adminMessages.get(
+                        "usersgroupsroles.users.form.errors.username.empty"
+                    )
+                );
+            }
+            if (!userName.matches("[a-zA-Z0-9_-]*")) {
+                errors.add(
+                    adminMessages.get(
+                        "usersgroupsroles.users.form.errors.username.invalid"
+                    )
+                );
+            }
+
+            if (primaryEmailAddress == null || primaryEmailAddress.matches(
+                "\\s*")) {
+                errors.add(
+                    adminMessages.get(
+                        "usersgroupsroles.users.form.errors.primary_email.empty"
+                    )
+                );
+            }
+            if (!primaryEmailAddress.matches(
+                "^[a-zA-Z0-9\\._-]*@[a-zA-Z0-9\\._-]*$"
+            )) {
+                errors.add(
+                    adminMessages.get(
+                        "usersgroupsroles.users.form.errors.primary_email.invalid"
+                    )
+                );
+            }
+
+            if (password != null) {
+                if (!Objects.equals(password, passwordConfirmation)) {
+                    errors.add(
+                        adminMessages.get(
+                            "usersgroupsroles.users.new.errors.password.no_match"
+                        )
+                    );
+                }
+            }
+            if (!errors.isEmpty()) {
+                userDetailsModel.setUser(user);
+                return "org/libreccm/ui/admin/users-groups-roles/user-form.xhtml";
+            }
+
             user.setUuid(userName);
             user.setGivenName(givenName);
             user.setFamilyName(familyName);

@@ -19,7 +19,8 @@
 package org.libreccm.ui.admin.usersgroupsroles;
 
 /**
- *
+ * Model for an entry in the role members form.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class RolePartyFormEntry {

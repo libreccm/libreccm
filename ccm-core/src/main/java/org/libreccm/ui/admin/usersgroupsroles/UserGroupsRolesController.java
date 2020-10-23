@@ -35,7 +35,6 @@ import org.libreccm.ui.admin.AdminMessages;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -50,7 +49,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
- *
+ * Adds and removes a user from groups and roles depending on the selections
+ * in the corresponding dialogs in the user details view.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Controller

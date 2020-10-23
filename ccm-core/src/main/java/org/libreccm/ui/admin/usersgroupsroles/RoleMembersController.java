@@ -46,7 +46,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
- *
+ * Controller for adding members to a role and removing members from a role 
+ * depending on the selections in the role members management form (dialog in
+ * role details).
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Controller

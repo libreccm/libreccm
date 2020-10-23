@@ -134,19 +134,31 @@ public class UserDetailsModel {
     public String getName() {
         return name;
     }
+    
+    public void setName(final String name) {
+        this.name = name;
+    }
 
     public String getGivenName() {
         return givenName;
+    }
+    
+    public void setGivenName(final String givenName) {
+        this.givenName = givenName;
     }
 
     public String getFamilyName() {
         return familyName;
     }
+    
+    public  void setFamilyName(final String familyName) {
+        this.familyName = familyName;
+    }
 
     public EmailAddress getPrimaryEmailAddress() {
         return primaryEmailAddress;
     }
-
+    
     public List<EmailAddress> getEmailAddresses() {
         return Collections.unmodifiableList(emailAddresses);
     }
@@ -154,9 +166,19 @@ public class UserDetailsModel {
     public boolean isBanned() {
         return banned;
     }
+    
+    public void setBanned(final boolean banned) {
+        this.banned = banned;
+    }
 
     public boolean isPasswordResetRequired() {
         return passwordResetRequired;
+    }
+    
+    public void setPasswordResetRequired(
+        final boolean passwordResetRequired
+    ) {
+        this.passwordResetRequired = passwordResetRequired;
     }
 
     public List<UserGroupMembership> getGroupMemberships() {
