@@ -18,12 +18,22 @@
  */
 package org.libreccm.ui.admin.configuration;
 
+import org.libreccm.configuration.ConfigurationInfo;
+import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.CoreConstants;
+import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.l10n.LocalizedTextsUtil;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.mvc.Controller;
+import javax.mvc.Models;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
@@ -35,12 +45,46 @@ import javax.ws.rs.Path;
 @Controller
 @Path("/configuration")
 public class ConfigurationController {
+
+    @Inject
+    private ConfigurationManager confManager;
+
+    @Inject
+    private GlobalizationHelper globalizationHelper;
     
+    @Inject
+    private Models models;
+
     @GET
     @Path("/")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     public String getSettings() {
+        final List<ConfigurationTableEntry> configurationClasses = confManager
+            .findAllConfigurations()
+            .stream()
+            .map(confManager::getConfigurationInfo)
+            .map(this::buildTableEntry)
+            .sorted()
+            .collect(Collectors.toList());
+
+        models.put("configurationClasses", configurationClasses);
+        
         return "org/libreccm/ui/admin/configuration.xhtml";
     }
+
+    private ConfigurationTableEntry buildTableEntry(
+        final ConfigurationInfo confInfo
+    ) {
+        Objects.requireNonNull(confInfo);
+        final ConfigurationTableEntry entry = new ConfigurationTableEntry();
+        entry.setName(confInfo.getName());
+        final LocalizedTextsUtil util = globalizationHelper
+            .getLocalizedTextsUtil(confInfo.getDescBundle());
+        entry.setTitle(util.getText(confInfo.getTitleKey()));
+        entry.setDescription(util.getText(confInfo.getDescKey()));
+        
+        return entry;
+    }
+
 }
