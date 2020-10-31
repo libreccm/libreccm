@@ -70,7 +70,7 @@ public class ConfigurationController {
 
         models.put("configurationClasses", configurationClasses);
         
-        return "org/libreccm/ui/admin/configuration.xhtml";
+        return "org/libreccm/ui/admin/configuration/configuration.xhtml";
     }
 
     private ConfigurationTableEntry buildTableEntry(

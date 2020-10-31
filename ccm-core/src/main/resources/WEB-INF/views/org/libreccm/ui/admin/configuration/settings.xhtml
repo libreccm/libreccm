@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+    <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
+
+        <ui:param name="activePage" value="configuration" />
+        <ui:param name="title" value="#{AdminMessages['configuration.label']}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                #{AdminMessages['configuration.label']}
+            </li>
+            <li class="breadcrumb-item">>
+                #{confLabel}
+            </li>
+            <li class="breadcrumb-item active">>
+                #{AdminMessages['configuration.settings.label']}
+            </li>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container">
+                <h1>#{confLabel}</h1>
+                <p>
+                    #{confDescription}
+                </p>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">
+                                #{AdminMessages['configuration.settings.table.headings.label']}
+                            </th>
+                            <th scope="col">
+                                #{AdminMessages['configuration.settings.table.headings.value']}
+                            </th>
+                            <th scope="col">
+                                #{AdminMessages['configuration.settings.table.headings.defaultValue']}
+                            </th>
+                            <th scope="col" colspan="3">
+                                #{AdminMessages['configuration.settings.table.headings.actions']}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="#{settings}" var="setting">
+                            <tr>
+                                <td>#{setting.label}</td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="#{setting.value == null}">
+                                            <span class="text-muted">#{setting.defaultValue}</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <strong>
+                                                #{setting.value}
+                                            </strong>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                                <td>#{setting.defaultValue}</td>
+                                <td>
+                                    <button class="btn btn-info" 
+                                            title="#{AdminMessages.getMessage('configuration.settings.table.actions.info.help', [setting.label])}"
+                                            type="button">
+                                         <svg class="bi"
+                                             width="1em"
+                                             height="1em"
+                                             fill="currentColor">
+                                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#info-circle" />
+                                         </svg>
+                                        #{AdminMessages['configuration.settings.table.actions.info']}
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="btn btn-primary" 
+                                            type="button">
+                                        <svg class="bi"
+                                             width="1em"
+                                             height="1em"
+                                             fill="currentColor">
+                                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
+                                        </svg>
+                                        #{AdminMessages['configuration.settings.table.actions.edit']}
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger" 
+                                            title="#{AdminMessages.getMessage('configuration.settings.table.actions.reset.help', [setting.label])}"
+                                            type="button">
+                                        <svg class="bi"
+                                             width="1em"
+                                             height="1em"
+                                             fill="currentColor">
+                                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#x-circle" />
+                                        </svg>
+                                        #{AdminMessages['configuration.settings.table.actions.reset']}
+                                    </button>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>
+

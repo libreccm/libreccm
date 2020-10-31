@@ -21,9 +21,14 @@ package org.libreccm.ui.admin.configuration;
 import org.libreccm.configuration.ConfigurationInfo;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.configuration.SettingInfo;
+import org.libreccm.core.CoreConstants;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.l10n.LocalizedTextsUtil;
+import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.RequiresPrivilege;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -31,6 +36,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.mvc.Controller;
 import javax.mvc.Models;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
@@ -52,7 +58,10 @@ public class SettingsController {
     @Inject
     private Models models;
     
+    @GET
     @Path("/")
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     public String showSettings(
         @PathParam("configurationClass") final String configurationClass
     ) {
@@ -64,25 +73,36 @@ public class SettingsController {
             return "org/libreccm/ui/admin/configuration/configuration-class-not-found.xhtml";
         }
         
-        final Object conf = confManager.findConfiguration(confClass);
         final ConfigurationInfo confInfo = confManager.getConfigurationInfo(
             confClass
         );
         
-        confInfo
+        final LocalizedTextsUtil textUtil = globalizationHelper.getLocalizedTextsUtil(confInfo.getDescBundle());
+        models.put(
+            "confLabel", 
+            textUtil.getText(confInfo.getTitleKey())
+        );
+        models.put(
+            "configurationDesc", 
+            textUtil.getText(confInfo.getDescKey())
+        );
+        
+        final List<SettingsTableEntry> settings = confInfo
             .getSettings()
             .entrySet()
             .stream()
-            .map(info -> buildSettingsTableEntry(info.getValue(), conf))
+            .map(Map.Entry::getValue)
+            .map(this::buildSettingsTableEntry)
             .sorted()
             .collect(Collectors.toList());
         
+        models.put("settings", settings);
         
         return "org/libreccm/ui/admin/configuration/settings.xhtml";
     }
     
     private SettingsTableEntry buildSettingsTableEntry(
-        final SettingInfo settingInfo, final Object conf
+        final SettingInfo settingInfo
     ) {
         Objects.requireNonNull(settingInfo);
         
