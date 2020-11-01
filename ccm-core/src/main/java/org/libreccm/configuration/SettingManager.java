@@ -179,7 +179,7 @@ public class SettingManager {
             settingInfo.setLabelKey(String.join(".", field.getName(),
                                                 "label"));
         } else {
-            settingInfo.setLabelKey(name);
+            settingInfo.setLabelKey(settingAnnotation.labelKey());
         }
 
         if (Strings.isBlank(settingAnnotation.descKey())) {

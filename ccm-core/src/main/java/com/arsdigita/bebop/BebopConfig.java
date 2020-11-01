@@ -41,32 +41,59 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Configuration(
-    descKey = "bebop.config.description")
+    descBundle = "com.arsdigita.bebop.BebopConfig",
+    descKey = "description",
+    titleKey = "title"
+)
 public final class BebopConfig {
 
-    @Setting
+    @Setting(
+        descKey = "presenterClassName.desc",
+        labelKey = "presenterClassName.label"
+    )
     private String presenterClassName = PageTransformer.class.getName();
 
-    @Setting
+    @Setting(
+        descKey = "basePageClassName.desc",
+        labelKey = "basePageClassName.label"
+    )
     private String basePageClassName = SimplePage.class.getName();
 
-    @Setting
+    @Setting(
+        descKey = "tidyConfigFile.desc",
+        labelKey = "tidyConfigFile.label"
+    )
     private String tidyConfigFile
                        = "com/arsdigita/bebop/parameters/tidy.properties";
 
-    @Setting
+    @Setting(
+        descKey = "fancyErrors.desc",
+        labelKey = "fancyErrors.label"
+    )
     private Boolean fancyErrors = false;
 
-    @Setting
+    @Setting(
+        descKey = "dcpOnButtons.desc",
+        labelKey = "dcpOnButtons.label"
+    )
     private Boolean dcpOnButtons = true;
 
-    @Setting
+    @Setting(
+        descKey = "dcpOnLinks.desc",
+        labelKey = "dcpOnLinks.label"
+    )
     private Boolean dcpOnLinks = false;
 
-    @Setting
+    @Setting(
+        descKey = "treeSelectEnabled.desc",
+        labelKey = "treeSelectEnabled.label"
+    )
     private Boolean treeSelectEnabled = false;
 
-    @Setting
+    @Setting(
+        descKey = "dhtmlEditors.desc",
+        labelKey = "dhtmlEditors.label"
+    )
     private Set<String> dhtmlEditors = new HashSet<>(
         Arrays.asList(new String[]{BebopConstants.BEBOP_XINHAEDITOR,
                                    BebopConstants.BEBOP_FCKEDITOR,
@@ -74,14 +101,23 @@ public final class BebopConfig {
                                    BebopConstants.BEBOP_CCMEDITOR,
                                    BebopConstants.BEBOP_TINYMCE_EDITOR}));
 
-    @Setting
+    @Setting(
+        descKey = "defaultDhtmlEditor.desc",
+        labelKey = "defaultDhtmlEditor.label"
+    )
     private String defaultDhtmlEditor = BebopConstants.BEBOP_TINYMCE_EDITOR;
 
-    @Setting
+    @Setting(
+        descKey = "dhtmlEditorSrcFile.desc",
+        labelKey = "dhtmlEditorSrcFile.label"
+    )
 //    private String dhtmlEditorSrcFile = "/ccm-editor/ccm-editor-loader.js";
     private String dhtmlEditorSrcFile = "/webjars/tinymce/4.8.2/tinymce.js";
 
-    @Setting
+    @Setting(
+        descKey = "showClassName.desc",
+        labelKey = "showClassName.label"
+    )
     private Boolean showClassName = false;
 
     public static BebopConfig getConfig() {
