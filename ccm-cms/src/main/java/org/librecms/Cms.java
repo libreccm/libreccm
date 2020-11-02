@@ -93,36 +93,39 @@ import java.util.Properties;
             servletPath = "/templates/servlet/pages"
         )
     },
+    configurations = {
+        org.arsdigita.cms.CMSConfig.class
+    },
     pageModelComponentModels = {
         @PageModelComponentModel(
             modelClass = CategorizedItemComponent.class,
             editor = CategorizedItemComponentForm.class,
             descBundle = CmsConstants.CMS_BUNDLE,
             titleKey
-                = "cms.ui.pagemodel.components.categorized_item_component.title",
+            = "cms.ui.pagemodel.components.categorized_item_component.title",
             descKey
-                = "cms.ui.pagemodel.components.categorized_item_component.desc"),
+            = "cms.ui.pagemodel.components.categorized_item_component.desc"),
         @PageModelComponentModel(
             modelClass = CategoryTreeComponent.class,
             editor = CategoryTreeComponentForm.class,
             descBundle = CmsConstants.CMS_BUNDLE,
             titleKey
-                = "cms.ui.pagemodel.components.category_tree_component.title",
+            = "cms.ui.pagemodel.components.category_tree_component.title",
             descKey = "cms.ui.pagemodel.components.category_tree_component.desc"),
         @PageModelComponentModel(
             modelClass = FixedContentItemComponent.class,
             editor = FixedContentItemComponentForm.class,
             descBundle = CmsConstants.CMS_BUNDLE,
             titleKey
-                = "cms.ui.pagemodel.components.fixed_contentitem_component.title",
+            = "cms.ui.pagemodel.components.fixed_contentitem_component.title",
             descKey
-                = "cms.ui.pagemodel.components.fixed_contentitem_component.desc"),
+            = "cms.ui.pagemodel.components.fixed_contentitem_component.desc"),
         @PageModelComponentModel(
             modelClass = GreetingItemComponent.class,
             editor = GreetingItemComponentForm.class,
             descBundle = CmsConstants.CMS_BUNDLE,
             titleKey
-                = "cms.ui.pagemodel.components.greetingitem_component.title",
+            = "cms.ui.pagemodel.components.greetingitem_component.title",
             descKey = "cms.ui.pagemodel.components.greetingitem_component.desc"),
         @PageModelComponentModel(
             modelClass = ItemListComponent.class,
