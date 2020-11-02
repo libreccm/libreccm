@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
 <html xmlns="http://www.w3.org/1999/xhtml" 
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
@@ -64,17 +64,53 @@
                                 </td>
                                 <td>#{setting.defaultValue}</td>
                                 <td>
-                                    <button class="btn btn-info" 
-                                            title="#{AdminMessages.getMessage('configuration.settings.table.actions.info.help', [setting.label])}"
-                                            type="button">
-                                         <svg class="bi"
-                                             width="1em"
-                                             height="1em"
-                                             fill="currentColor">
-                                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#info-circle" />
-                                         </svg>
-                                        #{AdminMessages['configuration.settings.table.actions.info']}
-                                    </button>
+                                    <c:if test="#{setting.description.length() > 0}">
+                                        <button class="btn btn-info" 
+                                                data-toggle="modal"
+                                                data-target="#setting-info-#{setting.name}"
+                                                title="#{AdminMessages.getMessage('configuration.settings.table.actions.info.help', [setting.label])}"
+                                                type="button">
+                                            <svg class="bi"
+                                                 width="1em"
+                                                 height="1em"
+                                                 fill="currentColor">
+                                                <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#info-circle" />
+                                            </svg>
+                                            #{AdminMessages['configuration.settings.table.actions.info']}
+                                        </button>
+                                        <div aria-hidden="true"
+                                             aria-labelledby="setting-info#{setting.name}-label"
+                                             class="modal fade"
+                                             data-backdrop="static"
+                                             id="setting-info-#{setting.name}"
+                                             tabindex="-1">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h2 class="model-title"
+                                                            id="setting-info-#{setting.name}-label">#{AdminMessages.getMessage('configuration.settings.setting.info.label', [setting.label])}</h2>
+                                                        <button aria-label="#{AdminMessages['configuration.settings.setting.info.close']}"
+                                                                class="close"
+                                                                data-dismiss="modal"
+                                                                type="button"><span aria-hidden="true">&times;</span></button>
+
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>
+                                                            #{setting.description}
+                                                        </p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btn btn-secondary" 
+                                                                data-dismiss="modal"
+                                                                type="button">
+                                                            #{AdminMessages['configuration.settings.setting.info.dismiss']}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </c:if>
                                 </td>
                                 <td>
                                     <button class="btn btn-primary" 
