@@ -109,7 +109,20 @@ public class SettingsController {
             .sorted()
             .collect(Collectors.toList());
 
+        models.put("configurationClass", configurationClass);
+        
         models.put("settings", settings);
+        
+        models.put("BigDecimalClassName", BigDecimal.class.getName());
+        models.put("BooleanClassName", Boolean.class.getName());
+        models.put("DoubleClassName", Double.class.getName());
+        models.put("FloatClassName", Float.class.getName());
+        models.put("IntegerClassName", Integer.class.getName());
+        models.put("ListClassName", List.class.getName());
+        models.put("LongClassName", Long.class.getName());
+        models.put("LocalizedStringClassName", LocalizedString.class.getName());
+        models.put("SetClassName", Set.class.getName());
+        models.put("StringClassName", String.class.getName());
 
         return "org/libreccm/ui/admin/configuration/settings.xhtml";
     }
