@@ -132,7 +132,9 @@
                                          id="setting-#{setting.name}-edit-dialog"
                                          tabindex="-1">
                                         <div class="modal-dialog">
-                                            <div class="modal-content">
+                                            <form action="#{mvc.uri('SettingsController#updateSettingValue', {'configurationClass': configurationClass, 'settingName': setting.name})}"
+                                                  class="modal-content"
+                                                  method="post">
                                                 <div class="modal-header">
                                                     <h2 class="model-title"
                                                         id="setting-#{setting.name}-edit-dialog">
@@ -144,42 +146,59 @@
                                                             type="button"><span aria-hidden="true">&times;</span></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form action="#">
-                                                        <c:choose>
-                                                            <c:when test="#{setting.valueType == BigDecimal.class.getName()}">
-                                                                <pre>BigDecimal</pre>
-                                                            </c:when>
-                                                            <c:when test="#{setting.valueType == Boolean.class.getName()}">
-                                                                <pre>Boolean</pre>
-                                                            </c:when>
-                                                            <c:when test="#{setting.valueType == Double.class.getName()}">
-                                                                <pre>Double</pre>
-                                                            </c:when>
-                                                            <c:when test="#{setting.valueType == Integer.class.getName()}">
-                                                                <pre>Integer</pre>
-                                                            </c:when>
-                                                            <c:when test="#{setting.valueType == "int"}">
-                                                                <pre>int</pre>
-                                                            </c:when>
-                                                            <c:when test="#{setting.valueType == List.class.getName()}">
-                                                                <pre>List</pre>
-                                                            </c:when>
-                                                            <c:when test="#{setting.valueType == org.libreccm.l10n.LocalizedString.class.getName()}">
-                                                                <pre>LocalizedString</pre>
-                                                            </c:when>
-                                                            <c:when test="#{setting.valueType == Set.class.getName()}">
-                                                                <pre>Set</pre>
-                                                            </c:when>
-                                                            <c:when test="#{setting.valueType == String.class.getName()}">
-                                                                <pre>String</pre>
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <p>
-                                                                    #{AdminMessages.getMessage('configuration.settings.setting.dialog.unsupported_type', [setting.valueType])}
-                                                                </p>
-                                                            </c:otherwise>
-                                                        </c:choose>
-                                                    </form>
+                                                    <c:choose>
+                                                        <c:when test="#{setting.valueType.equals(BigDecimalClassName)}">
+                                                            <pre>BigDecimal</pre>
+                                                        </c:when>
+                                                        <c:when test="#{setting.valueType.equals(BooleanClassName)}">
+                                                            <div class="form-group form-check">
+                                                                <input aria-describedby="#{setting.name}-setting-value-help"
+                                                                       class="form-check-input"
+                                                                       id="#{setting.name}-setting-value"
+                                                                       name="settingValue"
+                                                                       type="checkbox" />
+                                                                <label class="form-check-label"
+                                                                       for="#{setting.name}-setting-value">
+                                                                    #{AdminMessages['configuration.settings.setting.dialog.value.label']}
+                                                                </label>
+                                                                <small class="form-text text-muted"
+                                                                       id="#{setting.name}-setting-value-help">
+                                                                    #{setting.description}
+                                                                </small>
+                                                            </div>
+                                                        </c:when>
+                                                        <c:when test="#{setting.valueType.equals(DoubleClassName)}">
+                                                            <pre>Double</pre>
+                                                        </c:when>
+                                                        <c:when test="#{setting.valueType.equals(IntegerClassName)}">
+                                                            <pre>Integer</pre>
+                                                        </c:when>
+                                                        <c:when test="#{setting.valueType.equals('int')}">
+                                                            <pre>int</pre>
+                                                        </c:when>
+                                                        <c:when test="#{setting.valueType.equals(ListClassName)}">
+                                                            <pre>List</pre>
+                                                        </c:when>
+                                                        <c:when test="#{setting.valueType.equals(LocalizedStringClassName)}">
+                                                            <pre>LocalizedString</pre>
+                                                        </c:when>
+                                                        <c:when test="#{setting.valueType.equals(SetClassName)}">
+                                                            <pre>Set</pre>
+                                                        </c:when>
+                                                        <c:when test="#{setting.valueType.equals(StringClassName)}">
+                                                            <pre>String</pre>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <p>
+                                                                #{AdminMessages.getMessage('configuration.settings.setting.dialog.unsupported_type', [setting.valueType])}
+                                                            </p>
+                                                            <pre>
+                                                                    setting.valueType: #{setting.valueType}
+                                                                    Boolean: #{BooleanClassName}
+                                                                    LocalizedString: #{LocalizedStringClassName}
+                                                            </pre>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button class="btn btn-danger"
@@ -188,12 +207,11 @@
                                                         #{AdminMessages['configuration.settings.setting.dialog.close']}
                                                     </button>
                                                     <button class="btn btn-success" 
-                                                            data-dismiss="modal"
-                                                            type="button">
+                                                            type="submit">
                                                         #{AdminMessages['configuration.settings.setting.dialog.save']}
                                                     </button>
                                                 </div>
-                                            </div>
+                                            </form>
                                         </div>
                                     </div>
                                 </td>
