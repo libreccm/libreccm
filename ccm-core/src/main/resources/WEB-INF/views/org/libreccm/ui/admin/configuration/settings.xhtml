@@ -150,9 +150,10 @@
                                                         <c:when test="#{setting.valueType.equals(BigDecimalClassName)}">
                                                             <pre>BigDecimal</pre>
                                                         </c:when>
-                                                        <c:when test="#{setting.valueType.equals(BooleanClassName)}">
+                                                        <c:when test="#{setting.valueType.equals(BooleanClassName) or setting.valueType.equals('boolean')}">
                                                             <div class="form-group form-check">
                                                                 <input aria-describedby="#{setting.name}-setting-value-help"
+                                                                       checked="#{(setting.value.equals('true') or (setting.value == null and setting.defaultValue.equals('true'))) ? 'checked' : ''}"
                                                                        class="form-check-input"
                                                                        id="#{setting.name}-setting-value"
                                                                        name="settingValue"
@@ -167,20 +168,50 @@
                                                                 </small>
                                                             </div>
                                                         </c:when>
-                                                        <c:when test="#{setting.valueType.equals(DoubleClassName)}">
-                                                            <pre>Double</pre>
+                                                        <c:when test="#{setting.valueType.equals(DoubleClassName) or setting.valueType.equals('double')}">
+                                                            <pre>double</pre>
                                                         </c:when>
-                                                        <c:when test="#{setting.valueType.equals(IntegerClassName)}">
-                                                            <pre>Integer</pre>
-                                                        </c:when>
-                                                        <c:when test="#{setting.valueType.equals('int')}">
-                                                            <pre>int</pre>
+                                                        <c:when test="#{setting.valueType.equals(IntegerClassName) or setting.valueType.equals('int')}">
+                                                            <div class="form-group">
+                                                                <label for="#{setting-name}-setting-value">
+                                                                    #{AdminMessages['configuration.settings.setting.dialog.value.label']}
+                                                                </label>
+                                                                <input aria-describedby="#{setting.name}-setting-value-help"
+                                                                       class="form-control" 
+                                                                       id="#{setting.name}-setting-value"
+                                                                       max="#{IntegerMaxValue}"
+                                                                       min="#{IntegerMinValue}"
+                                                                       name="settingValue"
+                                                                       step="1"
+                                                                       type="number" 
+                                                                       value="#{setting.value}" />
+                                                                <small class="form-text text-muted"
+                                                                       id="#{setting.name}-setting-value-help">
+                                                                    #{setting.description}
+                                                                </small>
+                                                            </div>
+
                                                         </c:when>
                                                         <c:when test="#{setting.valueType.equals(ListClassName)}">
                                                             <pre>List</pre>
                                                         </c:when>
                                                         <c:when test="#{setting.valueType.equals(LocalizedStringClassName)}">
                                                             <pre>LocalizedString</pre>
+                                                        </c:when>
+                                                        <c:when test="#{setting.valueType.equals(LongClassName) or setting.valueType.equals('long')}">
+                                                            <div class="form-group">
+                                                               <label for="#{setting-name}-setting-value">
+                                                                    #{AdminMessages['configuration.settings.setting.dialog.value.label']}
+                                                                </label>
+                                                                <input aria-describedby="#{setting.name}-setting-value-help"
+                                                                       class="form-control" 
+                                                                       id="#{setting.name}-setting-value"
+                                                                       name="settingValue"
+                                                                       step="1"
+                                                                       type="number" 
+                                                                       value="#{setting.value}" />
+                                                                
+                                                            </div>
                                                         </c:when>
                                                         <c:when test="#{setting.valueType.equals(SetClassName)}">
                                                             <pre>Set</pre>
