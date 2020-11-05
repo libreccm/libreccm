@@ -6,7 +6,7 @@
     <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
         <ui:param name="activePage" value="configuration" />
         <ui:param name="title"
-                  value="#{AdminMessages('configuration.class.not_found.title')}" />
+                  value="#{AdminMessages['configuration.setting.failed_to_update.title']}" />
 
         <ui:define name="breadcrumb">
             <ui:define name="breadcrumb">
@@ -18,7 +18,7 @@
 
         <ui:define name="main">
             <div class="alert alert-warning" role="alert">
-                #{AdminMessages.getMessage('configuration.class.not_found.message', [configurationClass])}
+                #{AdminMessages.getMessage('configuration.setting.failed_to_update.message', [configurationClass, settingName])}
             </div>
         </ui:define>
 
@@ -26,4 +26,7 @@
 
 
 </html>
+
+
+
 
