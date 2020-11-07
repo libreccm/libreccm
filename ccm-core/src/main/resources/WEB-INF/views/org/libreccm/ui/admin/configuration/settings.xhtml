@@ -53,16 +53,16 @@
                                 <td>
                                     <c:choose>
                                         <c:when test="#{setting.value == null}">
-                                            <span class="text-muted">#{setting.defaultValue}</span>
+                                            <pre class="text-muted">#{setting.defaultValue}</pre>
                                         </c:when>
                                         <c:otherwise>
-                                            <strong>
-                                                <pre>#{setting.value}</pre>
-                                            </strong>
+                                            <pre>#{setting.value}</pre>
                                         </c:otherwise>
                                     </c:choose>
                                 </td>
-                                <td>#{setting.defaultValue}</td>
+                                <td>
+                                    <pre>#{setting.defaultValue}</pre>
+                                </td>
                                 <td>
                                     <c:if test="#{setting.description.length() > 0}">
                                         <button class="btn btn-info" 
@@ -137,7 +137,7 @@
                                                   method="post">
                                                 <div class="modal-header">
                                                     <h2 class="model-title"
-                                                        id="setting-#{setting.name}-edit-dialog">
+                                                        id="setting-#{setting.name}-edit-dialog-title">
                                                         #{AdminMessages.getMessage('configuration.settings.setting.dialog.title', [setting.label])}
                                                     </h2>
                                                     <button aria-label="#{AdminMessages['configuration.settings.setting.dialog.close']}"
@@ -336,7 +336,9 @@
                                 </td>
                                 <td>
                                     <button class="btn btn-danger" 
-                                            title="#{AdminMessages.getMessage('configuration.settings.table.actions.reset.help', [setting.label])}"
+                                            data-toggle="modal"
+                                            data-target="#setting-#{setting.name}-reset-dialog"
+                                            title="#{AdminMessages.getMessage('configuration.settings.table.actions.reset.help', [setting.label, setting.defaultValue])}"
                                             type="button">
                                         <svg class="bi"
                                              width="1em"
@@ -346,6 +348,48 @@
                                         </svg>
                                         #{AdminMessages['configuration.settings.table.actions.reset']}
                                     </button>
+                                    <div aria-hidden="true"
+                                         aria-labelledby="setting-#{setting.name}-reset-dialog-title"
+                                         class="modal fade"
+                                         data-backdrop="static"
+                                         id="setting-#{setting.name}-reset-dialog"
+                                         tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <form action="#{mvc.uri('SettingsController#resetSettingValue', {'configurationClass': configurationClass, 'settingName': setting.name })}"
+                                                  class="modal-content"
+                                                  method="post">
+                                                <div class="modal-header">
+                                                    <h2 class="modal-title"
+                                                        id="setting-#{setting.name}-reset-dialog-title">
+                                                        #{AdminMessages.getMessage('configuration.settings.setting.reset.title', [setting.label])}
+                                                    </h2>
+                                                    <button aria-label="#{AdminMessages['configuration.settings.setting.reset.close']}"
+                                                            class="close"
+                                                            data-dismiss="modal"
+                                                            type="button"><span aria-hidden="true">&times;</span></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>
+                                                        #{AdminMessages.getMessage('configuration.settings.setting.reset.confirm', [configuration.name, setting.label, setting.defaultValue])}
+                                                    </p>
+                                                    <input name="confirmed"
+                                                           type="hidden" 
+                                                           value="true" />
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-danger"
+                                                            data-dismiss="modal"
+                                                            type="button">
+                                                        #{AdminMessages['configuration.settings.setting.reset.close']}
+                                                    </button>
+                                                    <button class="btn btn-success" 
+                                                            type="submit">
+                                                        #{AdminMessages['configuration.settings.setting.reset.submit']}
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         </c:forEach>
