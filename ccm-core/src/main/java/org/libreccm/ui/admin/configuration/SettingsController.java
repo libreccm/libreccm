@@ -135,7 +135,7 @@ public class SettingsController {
         models.put("LocalizedStringClassName", LocalizedString.class.getName());
         models.put("SetClassName", Set.class.getName());
         models.put("StringClassName", String.class.getName());
-        
+
         models.put("IntegerMaxValue", Integer.toString(Integer.MAX_VALUE));
         models.put("IntegerMinValue", Integer.toString(Integer.MIN_VALUE));
         models.put("LongMaxValue", Long.toString(Long.MAX_VALUE));
@@ -323,6 +323,42 @@ public class SettingsController {
         }
     }
 
+    @POST
+    @Path("/{settingName}/reset")
+    @Transactional(Transactional.TxType.REQUIRED)
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    public String resetSettingValue(
+        @PathParam("configurationClass")
+        final String configurationClassName,
+        @PathParam("settingName")
+        final String settingName,
+        @FormParam("confirmed")
+        final String confirmed
+    ) {
+        if ("true".equals(confirmed)) {
+            final Class<?> configurationClass;
+            try {
+                configurationClass = Class.forName(
+                    configurationClassName
+                );
+            } catch (ClassNotFoundException ex) {
+                models.put("configurationClass", configurationClassName);
+                return "org/libreccm/ui/admin/configuration/configuration-class-not-found.xhtml";
+            }
+            final SettingInfo settingInfo = settingManager.getSettingInfo(
+                configurationClass, settingName
+            );
+            return updateSettingValue(
+                configurationClassName, 
+                settingName, 
+                settingInfo.getDefaultValue()
+            );
+        } else {
+            return buildRedirectAfterUpdateSettingTarget(configurationClassName);
+        }
+    }
+
     private String updateBigDecimalSetting(
         final String configurationClassName,
         final Class<?> configurationClass,
@@ -480,8 +516,8 @@ public class SettingsController {
             value
         );
     }
-    
-     private String updateStringSetSetting(
+
+    private String updateStringSetSetting(
         final String configurationClassName,
         final Class<?> configurationClass,
         final Object configuration,
