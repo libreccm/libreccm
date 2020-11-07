@@ -20,7 +20,6 @@ package org.libreccm.ui.admin.configuration;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.libreccm.configuration.AbstractSetting;
 import org.libreccm.configuration.ConfigurationInfo;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.configuration.SettingInfo;
@@ -35,6 +34,7 @@ import org.libreccm.security.RequiresPrivilege;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -163,9 +163,15 @@ public class SettingsController {
                 .getClass()
                 .getDeclaredField(settingInfo.getName());
             field.setAccessible(true);
-            if (field.get(configuration) instanceof LocalizedString) {
-                final LocalizedString localizedStr = (LocalizedString) field
-                    .get(configuration);
+            final Object valueObj = field.get(configuration);
+            if (valueObj instanceof List) {
+                @SuppressWarnings("unchecked")
+                final List<String> list = (List<String>) valueObj;
+                value = list
+                    .stream()
+                    .collect(Collectors.joining("\n"));
+            } else if (valueObj instanceof LocalizedString) {
+                final LocalizedString localizedStr = (LocalizedString) valueObj;
                 value = localizedStr
                     .getValues()
                     .entrySet()
@@ -177,9 +183,15 @@ public class SettingsController {
                         )
                     )
                     .sorted()
-                    .collect(Collectors.joining(", "));
+                    .collect(Collectors.joining("\n"));
+            } else if (valueObj instanceof Set) {
+                @SuppressWarnings("unchecked")
+                final Set<String> set = (Set<String>) valueObj;
+                value = set
+                    .stream()
+                    .collect(Collectors.joining("\n"));
             } else {
-                value = Objects.toString(field.get(configuration));
+                value = Objects.toString(valueObj);
             }
         } catch (NoSuchFieldException | IllegalAccessException | SecurityException ex) {
             LOGGER.error(
@@ -286,7 +298,7 @@ public class SettingsController {
                 valueParam
             );
         } else if (valueType.equals(Set.class.getName())) {
-            return updateStringListSetting(
+            return updateStringSetSetting(
                 configurationClassName,
                 confClass,
                 conf,
@@ -403,7 +415,7 @@ public class SettingsController {
                 continue;
             }
             final Locale locale = new Locale(tokens[0]);
-            final String localeValue = tokens[1];
+            final String localeValue = tokens[1].trim();
             value.addValue(locale, localeValue);
         }
         return updateSetting(
@@ -453,8 +465,32 @@ public class SettingsController {
         final String valueType,
         final String valueParam
     ) {
+        final String[] tokens = valueParam.split("\n");
+        final List<String> value = Arrays
+            .asList(tokens)
+            .stream()
+            .map(String::trim)
+            .collect(Collectors.toList());
+        return updateSetting(
+            configurationClassName,
+            configurationClass,
+            configuration,
+            settingName,
+            valueType,
+            value
+        );
+    }
+    
+     private String updateStringSetSetting(
+        final String configurationClassName,
+        final Class<?> configurationClass,
+        final Object configuration,
+        final String settingName,
+        final String valueType,
+        final String valueParam
+    ) {
         final String[] tokens = valueParam.split(",");
-        final List<String> value = Arrays.asList(tokens);
+        final Set<String> value = new HashSet<>(Arrays.asList(tokens));
         return updateSetting(
             configurationClassName,
             configurationClass,

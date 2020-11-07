@@ -22,18 +22,24 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 import org.libreccm.core.CoreConstants;
+import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
+
+import java.lang.reflect.Constructor;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -163,9 +169,33 @@ public class SettingManager {
         settingInfo.setValueType(field.getType().getName());
 
         try {
-            final Object conf = configuration.newInstance();
-            settingInfo.setDefaultValue(Objects.toString(field.get(conf)));
-        } catch (InstantiationException | IllegalAccessException ex) {
+            final Constructor<?> constructor = configuration.getConstructor();
+            final Object conf = constructor.newInstance();
+            final Object defaultValueObj = field.get(conf);
+            final String defaultValue;
+            if (defaultValueObj instanceof LocalizedString) {
+                final LocalizedString defaultValueLstr
+                    = (LocalizedString) defaultValueObj;
+                defaultValue = defaultValueLstr
+                    .getValues()
+                    .entrySet()
+                    .stream()
+                    .map(
+                        entry -> String.format(
+                            "%s: %s",
+                            entry.getKey().toString(), entry.getValue()
+                        )
+                    )
+                    .collect(Collectors.joining(", "));
+            } else {
+                defaultValue = Objects.toString(defaultValueObj);
+            }
+            settingInfo.setDefaultValue(defaultValue);
+
+        } catch (NoSuchMethodException
+                 | InstantiationException
+                 | InvocationTargetException
+                 | IllegalAccessException ex) {
             LOGGER.warn(String.format("Failed to create instance of \"%s\" to "
                                           + "get default values.",
                                       configuration.getName()),
