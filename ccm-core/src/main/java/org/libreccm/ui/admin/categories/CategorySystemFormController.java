@@ -24,23 +24,35 @@ import org.libreccm.security.RequiresPrivilege;
 
 import javax.enterprise.context.RequestScoped;
 import javax.mvc.Controller;
-import javax.ws.rs.GET;
+import javax.transaction.Transactional;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@RequestScoped
 @Controller
-@Path("/categories")
-public class CategoriesController {
+@Path("/categorysystems")
+@RequestScoped
+public class CategorySystemFormController {
     
-    @GET
-    @Path("/")
+    @POST
+    @Path("/new")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public String getCategories() {
-        return "org/libreccm/ui/admin/categories.xhtml";
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String createCategorySystem() {
+        throw new UnsupportedOperationException();
     }
+    
+    @POST
+    @Path("/{categorySystemIdentifier}/edit")
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String updateCategorySystem() {
+        throw new UnsupportedOperationException();
+    }
+    
 }
