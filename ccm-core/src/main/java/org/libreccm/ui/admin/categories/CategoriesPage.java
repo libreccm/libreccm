@@ -36,14 +36,15 @@ public class CategoriesPage implements AdminPage {
     @Override
     public Set<Class<?>> getControllerClasses() {
         final Set<Class<?>> classes = new HashSet<>();
-        classes.add(CategoriesController.class);
+        classes.add(CategorySystemsController.class);
+        classes.add(CategorySystemFormController.class);
         return classes;
     }
 
     @Override
     public String getUriIdentifier() {
         return String.format(
-            "%s#getCategories", CategoriesController.class.getSimpleName()
+            "%s#getCategories", CategorySystemsController.class.getSimpleName()
         );
     }
 
