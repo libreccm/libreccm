@@ -32,27 +32,27 @@ import javax.ws.rs.Path;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Controller
-@Path("/categorymanager/categorysystems")
 @RequestScoped
-public class CategorySystemFormController {
-    
+@Controller
+@Path("/categorymanager/categories")
+public class CategoryFormController {
+
     @POST
     @Path("/new")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
-    public String createCategorySystem() {
+    public String createCategory() {
         throw new UnsupportedOperationException();
     }
-    
+
     @POST
-    @Path("/{categorySystemIdentifier}/edit")
+    @Path("/{categoryIdentifier}/edit")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
-    public String updateCategorySystem() {
+    public String updateCategory() {
         throw new UnsupportedOperationException();
     }
-    
+
 }

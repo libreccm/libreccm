@@ -38,6 +38,8 @@ public class CategoriesPage implements AdminPage {
         final Set<Class<?>> classes = new HashSet<>();
         classes.add(CategorySystemsController.class);
         classes.add(CategorySystemFormController.class);
+        classes.add(CategoriesController.class);
+        classes.add(CategoryFormController.class);
         return classes;
     }
 
