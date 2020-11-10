@@ -18,8 +18,7 @@
  */
 package org.libreccm.ui.admin.categories;
 
-import org.libreccm.categorization.Domain;
-import org.libreccm.categorization.DomainOwnership;
+import org.libreccm.categorization.Category;
 import org.libreccm.ui.Message;
 
 import java.util.ArrayList;
@@ -39,42 +38,52 @@ import javax.transaction.Transactional;
  */
 @RequestScoped
 @Named("CategoryDetailsModel")
-public class CategorySystemDetailsModel {
+public class CategoryDetailsModel {
 
-    private long categorySystemId;
+    private long categoryId;
 
     private String uuid;
 
-    private String domainKey;
+    private String uniqueId;
 
-    private String uri;
+    private String name;
 
     private Map<String, String> title;
 
     private Map<String, String> description;
 
-    private List<CategorySystemOwnerRow> owners;
+    private boolean enabled;
+
+    private boolean visible;
+
+    private boolean abstractCategory;
+
+    private List<CategoryNodeModel> subCategories;
+
+    private CategoryNodeModel parentCategory;
+
+    private long categoryOrder;
 
     private final List<Message> messages;
 
-    public CategorySystemDetailsModel() {
-        messages = new ArrayList<>();
+    public CategoryDetailsModel() {
+        this.messages = new ArrayList<>();
     }
 
-    public long getCategorySystemId() {
-        return categorySystemId;
+    public long getCategoryId() {
+        return categoryId;
     }
 
     public String getUuid() {
         return uuid;
     }
 
-    public String getDomainKey() {
-        return domainKey;
+    public String getUniqueId() {
+        return uniqueId;
     }
 
-    public String getUri() {
-        return uri;
+    public String getName() {
+        return name;
     }
 
     public Map<String, String> getTitle() {
@@ -85,8 +94,28 @@ public class CategorySystemDetailsModel {
         return Collections.unmodifiableMap(description);
     }
 
-    public List<CategorySystemOwnerRow> getOwners() {
-        return Collections.unmodifiableList(owners);
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public boolean isAbstractCategory() {
+        return abstractCategory;
+    }
+
+    public List<CategoryNodeModel> getSubCategories() {
+        return Collections.unmodifiableList(subCategories);
+    }
+
+    public CategoryNodeModel getParentCategory() {
+        return parentCategory;
+    }
+
+    public long getCategoryOrder() {
+        return categoryOrder;
     }
 
     public List<Message> getMessages() {
@@ -98,14 +127,14 @@ public class CategorySystemDetailsModel {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    protected void setCategorySystem(final Domain domain) {
-        Objects.requireNonNull(domain);
+    protected void setCategory(final Category category) {
+        Objects.requireNonNull(category);
 
-        categorySystemId = domain.getObjectId();
-        uuid = domain.getUuid();
-        domainKey = domain.getDomainKey();
-        uri = domain.getUri();
-        title = domain
+        categoryId = category.getObjectId();
+        uuid = category.getUuid();
+        uniqueId = category.getUniqueId();
+        name = category.getName();
+        title = category
             .getTitle()
             .getValues()
             .entrySet()
@@ -116,7 +145,7 @@ public class CategorySystemDetailsModel {
                     entry -> entry.getValue()
                 )
             );
-        description = domain
+        description = category
             .getDescription()
             .getValues()
             .entrySet()
@@ -127,26 +156,17 @@ public class CategorySystemDetailsModel {
                     entry -> entry.getValue()
                 )
             );
-
-        owners = domain
-            .getOwners()
+        enabled = category.isEnabled();
+        visible = category.isVisible();
+        abstractCategory = category.isAbstractCategory();
+        subCategories = category
+            .getSubCategories()
             .stream()
-            .map(this::buildOwnerRow)
+            .map(CategoryNodeModel::new)
             .sorted()
             .collect(Collectors.toList());
-    }
-
-    private CategorySystemOwnerRow buildOwnerRow(
-        final DomainOwnership ownership
-    ) {
-        final CategorySystemOwnerRow ownerRow = new CategorySystemOwnerRow();
-        ownerRow.setOwnershipId(ownership.getOwnershipId());
-        ownerRow.setUuid(ownership.getUuid());
-        ownerRow.setContext(ownership.getContext());
-        ownerRow.setOwnerOrder(ownership.getOwnerOrder());
-        ownerRow.setOwnerAppName(ownership.getOwner().getDisplayName());
-
-        return ownerRow;
+        parentCategory = new CategoryNodeModel(category.getParentCategory());
+        categoryOrder = category.getCategoryOrder();
     }
 
 }

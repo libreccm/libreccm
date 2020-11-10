@@ -46,7 +46,7 @@ public class CategoriesPage implements AdminPage {
     @Override
     public String getUriIdentifier() {
         return String.format(
-            "%s#getCategories", CategorySystemsController.class.getSimpleName()
+            "%s#getCategorySystems", CategorySystemsController.class.getSimpleName()
         );
     }
 

@@ -290,6 +290,7 @@ public class CategorySystemsController {
 
             final Locale locale = new Locale(localeParam);
             domain.getTitle().addValue(locale, value);
+            domainRepository.save(domain);
             categorySystemDetailsModel.setCategorySystem(domain);
             return "org/libreccm/ui/admin/categories/categorysystem-form.xhtml";
         } else {
@@ -343,6 +344,7 @@ public class CategorySystemsController {
 
             final Locale locale = new Locale(localeParam);
             domain.getTitle().addValue(locale, value);
+            domainRepository.save(domain);
             categorySystemDetailsModel.setCategorySystem(domain);
             return "org/libreccm/ui/admin/categories/categorysystem-form.xhtml";
         } else {
@@ -395,6 +397,7 @@ public class CategorySystemsController {
 
             final Locale locale = new Locale(localeParam);
             domain.getTitle().removeValue(locale);
+            domainRepository.save(domain);
             categorySystemDetailsModel.setCategorySystem(domain);
             return "org/libreccm/ui/admin/categories/categorysystem-form.xhtml";
         } else {
@@ -448,6 +451,7 @@ public class CategorySystemsController {
 
             final Locale locale = new Locale(localeParam);
             domain.getDescription().addValue(locale, value);
+            domainRepository.save(domain);
             categorySystemDetailsModel.setCategorySystem(domain);
             return "org/libreccm/ui/admin/categories/categorysystem-form.xhtml";
         } else {
@@ -502,6 +506,7 @@ public class CategorySystemsController {
 
             final Locale locale = new Locale(localeParam);
             domain.getDescription().addValue(locale, value);
+            domainRepository.save(domain);
             categorySystemDetailsModel.setCategorySystem(domain);
             return "org/libreccm/ui/admin/categories/categorysystem-form.xhtml";
         } else {
@@ -555,6 +560,7 @@ public class CategorySystemsController {
 
             final Locale locale = new Locale(localeParam);
             domain.getDescription().removeValue(locale);
+            domainRepository.save(domain);
             categorySystemDetailsModel.setCategorySystem(domain);
             return "org/libreccm/ui/admin/categories/categorysystem-form.xhtml";
         } else {
@@ -641,8 +647,6 @@ public class CategorySystemsController {
             );
             return "org/libreccm/ui/admin/categories/categorysystem-not-found.xhtml";
         }
-
-        // ToDo
     }
 
     @POST

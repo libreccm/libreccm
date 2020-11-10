@@ -19,7 +19,6 @@
 package org.libreccm.ui.admin.categories;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -28,7 +27,8 @@ import java.util.Objects;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class CategorySystemTableRow implements Comparable<CategorySystemTableRow>{
+public class CategorySystemTableRow implements
+    Comparable<CategorySystemTableRow> {
 
     private long domainId;
 
@@ -48,6 +48,10 @@ public class CategorySystemTableRow implements Comparable<CategorySystemTableRow
 
     void setDomainId(final long domainId) {
         this.domainId = domainId;
+    }
+
+    public String getIdentifier() {
+        return String.format("ID-%d", domainId);
     }
 
     public String getDomainKey() {
@@ -89,24 +93,24 @@ public class CategorySystemTableRow implements Comparable<CategorySystemTableRow
     void setReleased(final String released) {
         this.released = released;
     }
-    
-      @Override
+
+    @Override
     public int compareTo(final CategorySystemTableRow other) {
         int result;
         result = Objects.compare(
             domainKey, other.getDomainKey(), String::compareTo
         );
-        
+
         if (result == 0) {
             result = Objects.compare(uri, uri, String::compareTo);
         }
-        
+
         if (result == 0) {
             result = Objects.compare(
                 domainId, other.getDomainId(), Long::compare
             );
         }
-        
+
         return result;
     }
 
