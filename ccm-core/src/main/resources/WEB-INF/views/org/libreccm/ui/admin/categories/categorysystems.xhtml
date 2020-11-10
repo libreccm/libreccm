@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+    <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
+
+        <ui:param name="activePage" value="categories" />
+        <ui:param name="title" value="#{AdminMessages['categories.label']}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item active">
+                #{AdminMessages['categories.label']}
+            </li>
+            <li class="breadcrumb-item active">
+                #{AdminMessages['categories.label']}
+            </li>
+            <li class="breadcrumb-item active">
+                #{AdminMessages['categorysystems.label']}
+            </li>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container">
+                <h1>#{AdminMessages['categorysystems.label']}</h1>
+
+                <div class="text-right">
+                    <a class="btn btn-secondary"
+                       href="#{mvc.uri('CategorySystemsController#newCategorySystem')}">
+                        <svg class="bi"
+                             width="1em"
+                             height="1em"
+                             fill="currentColor">
+                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#circle-plus" />
+                        </svg>
+                        <span>#{AdminMessages['categorysystems.add']}</span>
+                    </a>
+                </div>
+                <table class="table table-hover categorysystems-table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>#{AdminMessages['categorysystems.table.headers.domainKey']}</th>
+                            <th>#{AdminMessages['categorysystems.table.headers.uri']}</th>
+                            <th>#{AdminMessages['categorysystems.table.headers.version']}</th>
+                            <th>#{AdminMessages['categorysystems.table.headers.released']}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="#{CategorySystemsTableModel.categorySystems}" 
+                                   var="categorySystem">
+                            <tr>
+                                <td>
+                                    <a href="#{mvc.uri('CategorySystemsController#getCategorySystemDetails', categorySystem.identifier)}">
+                                    #{categorySystem.domainKey}
+                                    </a>
+                                </td>
+                                <td>#{categorySystem.uri}</td>
+                                <td>#{categorySystem.version}</td>
+                                <td>#{categorySystem.released}</td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>
