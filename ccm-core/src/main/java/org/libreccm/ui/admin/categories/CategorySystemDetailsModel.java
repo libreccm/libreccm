@@ -38,7 +38,7 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Named("CategoryDetailsModel")
+@Named("CategorySystemDetailsModel")
 public class CategorySystemDetailsModel {
 
     private long categorySystemId;
