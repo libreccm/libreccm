@@ -64,6 +64,10 @@ public class CategorySystemDetailsModel {
     public long getCategorySystemId() {
         return categorySystemId;
     }
+    
+    public String getIdentifier() {
+        return String.format("ID-%d", categorySystemId);
+    }
 
     public String getUuid() {
         return uuid;
