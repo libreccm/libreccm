@@ -54,7 +54,7 @@ import javax.ws.rs.PathParam;
  */
 @RequestScoped
 @Controller
-@Path("/categorymanager")
+@Path("/categorymanager/categorysystems")
 public class CategorySystemsController {
 
     @Inject
@@ -78,16 +78,16 @@ public class CategorySystemsController {
     @Inject
     private Models models;
 
-    @GET
-    @Path("/")
-    @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public String getCategoryManager() {
-        return getCategorySystems();
-    }
+//    @GET
+//    @Path("/")
+//    @AuthorizationRequired
+//    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+//    public String getCategoryManager() {
+//        return getCategorySystems();
+//    }
 
     @GET
-    @Path("/categorysystems")
+    @Path("/")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     public String getCategorySystems() {
@@ -95,7 +95,7 @@ public class CategorySystemsController {
     }
 
     @GET
-    @Path("/categorysystems/{categorySystemIdentifier}/details")
+    @Path("/{categorySystemIdentifier}/details")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
@@ -144,7 +144,7 @@ public class CategorySystemsController {
     }
 
     @GET
-    @Path("/categorysystems/new")
+    @Path("/new")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     public String newCategorySystem() {
@@ -152,7 +152,7 @@ public class CategorySystemsController {
     }
 
     @GET
-    @Path("/categorysystems/{categorySystemIdentifier}/edit")
+    @Path("/{categorySystemIdentifier}/edit")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
@@ -201,7 +201,7 @@ public class CategorySystemsController {
     }
 
     @POST
-    @Path("/categorysystems/{categorySystemIdentifier}/delete")
+    @Path("/{categorySystemIdentifier}/delete")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
@@ -253,7 +253,7 @@ public class CategorySystemsController {
     }
 
     @POST
-    @Path("/categorysystems/{categorySystemIdentifier}/title/add")
+    @Path("/{categorySystemIdentifier}/title/add")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String addTitle(
@@ -308,7 +308,7 @@ public class CategorySystemsController {
     }
 
     @POST
-    @Path("/categorysystems/{categorySystemIdentifier}/title/${locale}/edit")
+    @Path("/{categorySystemIdentifier}/title/${locale}/edit")
     @AuthorizationRequired
     public String editTitle(
         @PathParam("categorySystemIdentifier")
@@ -362,7 +362,7 @@ public class CategorySystemsController {
     }
 
     @POST
-    @Path("/categorysystems/{categorySystemIdentifier}/title/${locale}/remove")
+    @Path("/{categorySystemIdentifier}/title/${locale}/remove")
     @AuthorizationRequired
     public String removeTitle(
         @PathParam("categorySystemIdentifier")
@@ -415,7 +415,7 @@ public class CategorySystemsController {
     }
 
     @POST
-    @Path("/categorysystems/{categorySystemIdentifier}/description/add")
+    @Path("/{categorySystemIdentifier}/description/add")
     @AuthorizationRequired
     public String addDescription(
         @PathParam("categorySystemIdentifier")
@@ -470,7 +470,7 @@ public class CategorySystemsController {
 
     @POST
     @Path(
-        "/categorysystems/{categorySystemIdentifier}/description/${locale}/edit")
+        "categorysystems/{categorySystemIdentifier}/description/${locale}/edit")
     @AuthorizationRequired
     public String editDescription(
         @PathParam("categorySystemIdentifier")
@@ -525,7 +525,7 @@ public class CategorySystemsController {
 
     @POST
     @Path(
-        "/categorysystems/{categorySystemIdentifier}/description/${locale}/remove")
+        "categorysystems/{categorySystemIdentifier}/description/${locale}/remove")
     @AuthorizationRequired
     public String removeDescription(
         @PathParam("categorySystemIdentifier")
@@ -578,7 +578,7 @@ public class CategorySystemsController {
     }
 
     @POST
-    @Path("/categorysystems/{categorySystemIdentifier}/owners/add")
+    @Path("/{categorySystemIdentifier}/owners/add")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     public String addOwner(
@@ -650,7 +650,7 @@ public class CategorySystemsController {
     }
 
     @POST
-    @Path("/categorysystems/{categorySystemIdentifier}/owners/remove")
+    @Path("/{categorySystemIdentifier}/owners/remove")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     public String removeOwner(

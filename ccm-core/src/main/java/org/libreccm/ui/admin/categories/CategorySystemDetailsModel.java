@@ -89,6 +89,10 @@ public class CategorySystemDetailsModel {
         return Collections.unmodifiableList(owners);
     }
 
+    public boolean isNew() {
+        return categorySystemId == 0;
+    }
+    
     public List<Message> getMessages() {
         return Collections.unmodifiableList(messages);
     }

@@ -58,6 +58,9 @@ public class CategorySystemFormController {
     private CategorySystemDetailsModel categorySystemDetailsModel;
 
     @Inject
+    private DomainManager domainManager;
+    
+    @Inject
     private DomainRepository domainRepository;
 
     @Inject
@@ -75,17 +78,17 @@ public class CategorySystemFormController {
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public String createCategorySystem() {
-        final Domain domain = new Domain();
-        domain.setDomainKey(domainKey);
+        
+        final Domain domain = domainManager.createDomain(domainKey, domainKey);
+        
         domain.setUri(uri);
-
         domainRepository.save(domain);
 
         return "redirect:/categorymanager/categorysystems";
     }
 
     @POST
-    @Path("/{categorySystemIdentifier}/edit")
+    @Path("{categorySystemIdentifier}/edit")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)

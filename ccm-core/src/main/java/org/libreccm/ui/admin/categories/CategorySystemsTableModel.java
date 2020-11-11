@@ -58,29 +58,32 @@ public class CategorySystemsTableModel {
 
     private CategorySystemTableRow buildTableRow(final Domain domain) {
         final CategorySystemTableRow row = new CategorySystemTableRow();
-        
+
         row.setDomainId(domain.getObjectId());
         row.setDomainKey(domain.getDomainKey());
         row.setUri(domain.getUri());
         row.setVersion(domain.getVersion());
-        row.setReleased(
-            DateTimeFormatter.ISO_DATE_TIME.format(
-                domain.getReleased().toInstant()
-            )
-        );
+        if (domain.getReleased() != null) {
+            row.setReleased(
+                DateTimeFormatter.ISO_DATE_TIME.format(
+                    domain.getReleased().toInstant()
+                )
+            );
+        }
         row.setTitle(
             domain
                 .getTitle()
-            .getValues()
-            .entrySet()
-            .stream()
-            .collect(
-                Collectors.toMap(
-                    entry -> entry.getKey().toString(), 
-                    entry -> entry.getValue()
+                .getValues()
+                .entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> entry.getValue()
+                    )
                 )
-            )
         );
         return row;
     }
+
 }
