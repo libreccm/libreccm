@@ -34,7 +34,7 @@
 
         <ui:define name="main">
             <div class="container">
-                <h1>#{CategorySystemDetailsModel.new ? AdminMessages['categorysystems.new.label'] : AdminMessages.getMessage('categorysystems.edit.label', CategorySystemDetailsModel.domainKey)}</h1>
+                <h1>#{CategorySystemDetailsModel.new ? AdminMessages['categorysystems.new.label'] : AdminMessages.getMessage('categorysystems.edit.label', [CategorySystemDetailsModel.domainKey])}</h1>
 
                 <form action="#{CategorySystemDetailsModel.new ? mvc.uri('CategorySystemFormController#createCategorySystem') : mvc.uri('CategorySystemFormController#updateCategorySystem', {'categorySystemIdentifier': CategoryDetailsModel.domainKey })}"
                       method="post">
@@ -45,7 +45,8 @@
                         <input aria-describedby="domainKey-help"
                                class="form-control"
                                name="domainKey"
-                               type="text" />
+                               type="text" 
+                               value="#{CategorySystemDetailsModel.domainKey}" />
                         <small class="form-text text-muted"
                                id="domainKey-help">
                             #{AdminMessages['categorysystems.form.domainKey.help']}
@@ -58,7 +59,9 @@
                         <input aria-describedby="uri-help"
                                class="form-control"
                                name="domainKey"
-                               type="text" />
+                               type="text" 
+                               value="#{CategorySystemDetailsModel.uri}"
+                               />
                         <small class="form-text text-muted"
                                id="domainKey-help">
                             #{AdminMessages['categorysystems.form.uri.help']}

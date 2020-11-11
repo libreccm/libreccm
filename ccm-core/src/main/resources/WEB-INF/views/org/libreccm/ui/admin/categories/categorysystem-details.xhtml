@@ -22,7 +22,7 @@
 
         <ui:define name="main">
             <div class="container">
-                <h1>#{AdminMessages.getMessage('categorysystems.details.title', [CategorySystemsDetailsModel.domainKey])}</h1>
+                <h1>#{AdminMessages.getMessage('categorysystems.details.title', [CategorySystemDetailsModel.domainKey])}</h1>
 
                 <dl>
                     <div>
@@ -58,6 +58,18 @@
                         </dd>
                     </div>
                 </dl>
+                <div class="mb-4">
+                    <a class="btn btn-primary"
+                       href="#{mvc.uri('CategorySystemsController#editCategorySystem', {'categorySystemIdentifier': CategorySystemDetailsModel.identifier } )}">
+                        <svg class="bi"
+                             width="1em"
+                             height="1em"
+                             fill="currentColor">
+                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
+                        </svg>
+                        <span>#{AdminMessages['categorysystems.details.edit']}</span>
+                    </a>
+                </div>
 
                 <h2>
                     #{AdminMessages['categorysystems.details.title.heading']}
@@ -103,7 +115,7 @@
                                             #{entry.value}
                                         </td>
                                         <td>
-                                            <button class="btn btn-primary"
+                                            <button class="btn btn-info"
                                                     type="button">
                                                 <svg class="bi"
                                                      width="1em"
@@ -178,7 +190,7 @@
                                             #{entry.value}
                                         </td>
                                         <td>
-                                            <button class="btn btn-primary"
+                                            <button class="btn btn-info"
                                                     type="button">
                                                 <svg class="bi"
                                                      width="1em"
