@@ -22,8 +22,14 @@ import org.libreccm.categorization.Domain;
 import org.libreccm.categorization.DomainOwnership;
 import org.libreccm.ui.Message;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -49,6 +55,10 @@ public class CategorySystemDetailsModel {
 
     private String uri;
 
+    private String version;
+
+    private String released;
+
     private Map<String, String> title;
 
     private Map<String, String> description;
@@ -65,6 +75,10 @@ public class CategorySystemDetailsModel {
         return categorySystemId;
     }
     
+    protected void setCategorySystemId(final long categorySystemId) {
+        this.categorySystemId = categorySystemId;
+    }
+
     public String getIdentifier() {
         return String.format("ID-%d", categorySystemId);
     }
@@ -72,13 +86,54 @@ public class CategorySystemDetailsModel {
     public String getUuid() {
         return uuid;
     }
+    
+    protected void setUuid(final String uuid) {
+        this.uuid = uuid;
+    }
 
     public String getDomainKey() {
         return domainKey;
     }
+    
+    protected void setDomainKey(final String uuid) {
+        this.uuid = uuid;
+    }
 
     public String getUri() {
         return uri;
+    }
+    
+    protected void setUri(final String uri) {
+        this.uri = uri;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    protected void setVersion(final String version) {
+        this.version = version;
+    }
+    
+    public String getReleased() {
+        return released;
+    }
+    
+    protected void setReleased(final String released) {
+        this.released = released;
+    }
+    
+    protected void setReleased(final Date released) {
+        if (released == null) {
+            this.released = "";
+        } else {
+            this.released = DateTimeFormatter.ISO_DATE.format(
+                LocalDateTime.ofInstant(
+                    Instant.ofEpochMilli(released.getTime()),
+                    ZoneOffset.UTC
+                )
+            );
+        }
     }
 
     public Map<String, String> getTitle() {
@@ -96,7 +151,7 @@ public class CategorySystemDetailsModel {
     public boolean isNew() {
         return categorySystemId == 0;
     }
-    
+
     public List<Message> getMessages() {
         return Collections.unmodifiableList(messages);
     }
@@ -113,6 +168,17 @@ public class CategorySystemDetailsModel {
         uuid = domain.getUuid();
         domainKey = domain.getDomainKey();
         uri = domain.getUri();
+        version = domain.getVersion();
+        if (domain.getReleased() == null) {
+            released = "";
+        } else {
+            released = DateTimeFormatter.ISO_DATE_TIME.format(
+                LocalDateTime.ofInstant(
+                    Instant.ofEpochMilli(domain.getReleased().getTime()),
+                    ZoneOffset.UTC
+                )
+            );
+        }
         title = domain
             .getTitle()
             .getValues()
