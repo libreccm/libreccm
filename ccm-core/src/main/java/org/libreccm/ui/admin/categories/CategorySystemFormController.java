@@ -18,6 +18,7 @@
  */
 package org.libreccm.ui.admin.categories;
 
+import org.apache.commons.validator.routines.UrlValidator;
 import org.libreccm.api.Identifier;
 import org.libreccm.api.IdentifierParser;
 import org.libreccm.categorization.Domain;
@@ -30,7 +31,18 @@ import org.libreccm.ui.Message;
 import org.libreccm.ui.MessageType;
 import org.libreccm.ui.admin.AdminMessages;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
@@ -59,7 +71,7 @@ public class CategorySystemFormController {
 
     @Inject
     private DomainManager domainManager;
-    
+
     @Inject
     private DomainRepository domainRepository;
 
@@ -72,16 +84,41 @@ public class CategorySystemFormController {
     @FormParam("uri")
     private String uri;
 
+    @FormParam("version")
+    private String version;
+
+    @FormParam("released")
+    private String released;
+
     @POST
     @Path("/new")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public String createCategorySystem() {
-        
+
         final Domain domain = domainManager.createDomain(domainKey, domainKey);
-        
+
+        if (!isValidUri(uri)) {
+            categorySystemDetailsModel.setDomainKey(domainKey);
+            categorySystemDetailsModel.setUri(uri);
+            categorySystemDetailsModel.setVersion(version);
+            categorySystemDetailsModel.setReleased(released);
+
+            categorySystemDetailsModel.addMessage(
+                new Message(
+                    adminMessages.get("categorysystems.form.errors.uri_invalid"),
+                    MessageType.PRIMARY)
+            );
+        }
+
         domain.setUri(uri);
+        domain.setVersion(version);
+        if (released == null) {
+            domain.setReleased(null);
+        } else {
+            domain.setReleased(convertReleased());
+        }
         domainRepository.save(domain);
 
         return "redirect:/categorymanager/categorysystems";
@@ -117,13 +154,34 @@ public class CategorySystemFormController {
         }
 
         if (result.isPresent()) {
+            if (!isValidUri(uri)) {
+                categorySystemDetailsModel.setDomainKey(domainKey);
+                categorySystemDetailsModel.setUri(uri);
+                categorySystemDetailsModel.setVersion(version);
+                categorySystemDetailsModel.setReleased(released);
+
+                categorySystemDetailsModel.addMessage(
+                    new Message(
+                        adminMessages.get(
+                            "categorysystems.form.errors.uri_invalid"),
+                        MessageType.PRIMARY)
+                );
+            }
             final Domain domain = result.get();
             domain.setDomainKey(domainKey);
             domain.setUri(uri);
+            domain.setVersion(version);
+            if (released == null) {
+                domain.setReleased(null);
+            } else {
+                domain.setReleased(convertReleased());
+            }
             domainRepository.save(domain);
 
-            categorySystemDetailsModel.setCategorySystem(domain);
-            return "org/libreccm/ui/admin/categories/categorysystem-details.xhtml";
+            return String.format(
+                "redirect:/categorymanager/categorysystems/ID-%d/details",
+                domain.getObjectId()
+            );
         } else {
             categorySystemDetailsModel.addMessage(
                 new Message(
@@ -136,6 +194,20 @@ public class CategorySystemFormController {
             );
             return "org/libreccm/ui/admin/categories/categorysystem-not-found.xhtml";
         }
+    }
+
+    private Date convertReleased() {
+        final String param = String.format("%sT00:00:00", released);
+        return Date.from(
+            LocalDateTime
+                .parse(param, DateTimeFormatter.ISO_DATE_TIME)
+                .toInstant(ZoneOffset.UTC)
+        );
+    }
+
+    private boolean isValidUri(final String uriStr) {
+        final UrlValidator urlValidator = new UrlValidator();
+        return urlValidator.isValid(uri);
     }
 
 }

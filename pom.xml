@@ -693,6 +693,11 @@
                 <artifactId>commons-primitives</artifactId>
                 <version>1.0</version>
             </dependency>
+            <dependency>
+                <groupId>commons-validator</groupId>
+                <artifactId>commons-validator</artifactId>
+                <version>1.7</version>
+            </dependency>
             <!-- Apache Commons libraries end -->
 
             <!--<dependency>
