@@ -42,6 +42,9 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 import org.libreccm.imexport.Exportable;
 
+import java.text.DateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -196,9 +199,9 @@ public class Domain extends CcmObject implements Serializable, Exportable {
      * A timestamp for the release date of the {@code Domain}.
      */
     @Column(name = "RELEASED")
-    @Temporal(TemporalType.TIMESTAMP)
+//    @Temporal(TemporalType.TIMESTAMP)
     @XmlElement(name = "released", namespace = CAT_XML_NS)
-    private Date released;
+    private LocalDate released;
 
     /**
      * The root category of the domain.
@@ -267,20 +270,12 @@ public class Domain extends CcmObject implements Serializable, Exportable {
         this.version = version;
     }
 
-    public Date getReleased() {
-        if (released == null) {
-            return null;
-        } else {
-            return new Date(released.getTime());
-        }
+    public LocalDate getReleased() {
+        return released;
     }
 
-    public void setReleased(final Date released) {
-        if (released == null) {
-            this.released = null;
-        } else {
-            this.released = new Date(released.getTime());
-        }
+    public void setReleased(final LocalDate released) {
+        this.released = released;
     }
 
     public Category getRoot() {
@@ -399,18 +394,24 @@ public class Domain extends CcmObject implements Serializable, Exportable {
 
     @Override
     public String toString(final String data) {
+        final String releasedStr;
+        if (released == null) {
+            releasedStr = "";
+        } else {
+            releasedStr = DateTimeFormatter.ISO_DATE.format(released);
+        }
         return String.format(
             ", domainKey = \"%s\", "
                 + "uri = \"%s\", "
                 + "title = \"%s\", "
                 + "version = \"%s\", "
-                + "released = %tF %<tT, "
+                + "released = %s, "
                 + "root = \"%s\"%s",
             domainKey,
             Objects.toString(uri),
             Objects.toString(title),
             version,
-            released,
+            releasedStr,
             Objects.toString(root),
             data
         );
