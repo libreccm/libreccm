@@ -23,6 +23,7 @@ import org.libreccm.categorization.DomainOwnership;
 import org.libreccm.ui.Message;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -74,7 +75,7 @@ public class CategorySystemDetailsModel {
     public long getCategorySystemId() {
         return categorySystemId;
     }
-    
+
     protected void setCategorySystemId(final long categorySystemId) {
         this.categorySystemId = categorySystemId;
     }
@@ -86,7 +87,7 @@ public class CategorySystemDetailsModel {
     public String getUuid() {
         return uuid;
     }
-    
+
     protected void setUuid(final String uuid) {
         this.uuid = uuid;
     }
@@ -94,7 +95,7 @@ public class CategorySystemDetailsModel {
     public String getDomainKey() {
         return domainKey;
     }
-    
+
     protected void setDomainKey(final String uuid) {
         this.uuid = uuid;
     }
@@ -102,7 +103,7 @@ public class CategorySystemDetailsModel {
     public String getUri() {
         return uri;
     }
-    
+
     protected void setUri(final String uri) {
         this.uri = uri;
     }
@@ -114,25 +115,20 @@ public class CategorySystemDetailsModel {
     protected void setVersion(final String version) {
         this.version = version;
     }
-    
+
     public String getReleased() {
         return released;
     }
-    
+
     protected void setReleased(final String released) {
         this.released = released;
     }
-    
-    protected void setReleased(final Date released) {
+
+    protected void setReleased(final LocalDate released) {
         if (released == null) {
             this.released = "";
         } else {
-            this.released = DateTimeFormatter.ISO_DATE.format(
-                LocalDateTime.ofInstant(
-                    Instant.ofEpochMilli(released.getTime()),
-                    ZoneOffset.UTC
-                )
-            );
+            this.released = DateTimeFormatter.ISO_DATE.format(released);
         }
     }
 
@@ -172,12 +168,9 @@ public class CategorySystemDetailsModel {
         if (domain.getReleased() == null) {
             released = "";
         } else {
-            released = DateTimeFormatter.ISO_DATE_TIME.format(
-                LocalDateTime.ofInstant(
-                    Instant.ofEpochMilli(domain.getReleased().getTime()),
-                    ZoneOffset.UTC
-                )
-            );
+            released = DateTimeFormatter.ISO_DATE_TIME
+                .withZone(ZoneOffset.systemDefault())
+                .format(domain.getReleased());
         }
         title = domain
             .getTitle()

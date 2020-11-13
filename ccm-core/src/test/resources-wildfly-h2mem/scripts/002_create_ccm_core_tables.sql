@@ -54,7 +54,7 @@
 
     create table CCM_CORE.CATEGORY_DOMAINS (
         DOMAIN_KEY varchar(255) not null,
-        RELEASED timestamp,
+        RELEASED date,
         URI varchar(1024),
         VERSION varchar(255),
         OBJECT_ID bigint not null,

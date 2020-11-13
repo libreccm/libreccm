@@ -31,18 +31,10 @@ import org.libreccm.ui.Message;
 import org.libreccm.ui.MessageType;
 import org.libreccm.ui.admin.AdminMessages;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
@@ -99,7 +91,7 @@ public class CategorySystemFormController {
 
         final Domain domain = domainManager.createDomain(domainKey, domainKey);
 
-        if (!isValidUri(uri)) {
+        if (!isValidUri()) {
             categorySystemDetailsModel.setDomainKey(domainKey);
             categorySystemDetailsModel.setUri(uri);
             categorySystemDetailsModel.setVersion(version);
@@ -154,7 +146,7 @@ public class CategorySystemFormController {
         }
 
         if (result.isPresent()) {
-            if (!isValidUri(uri)) {
+            if (!isValidUri()) {
                 categorySystemDetailsModel.setDomainKey(domainKey);
                 categorySystemDetailsModel.setUri(uri);
                 categorySystemDetailsModel.setVersion(version);
@@ -166,6 +158,7 @@ public class CategorySystemFormController {
                             "categorysystems.form.errors.uri_invalid"),
                         MessageType.PRIMARY)
                 );
+                return "org/libreccm/ui/admin/categories/categorysystem-form.xhtml";
             }
             final Domain domain = result.get();
             domain.setDomainKey(domainKey);
@@ -196,16 +189,14 @@ public class CategorySystemFormController {
         }
     }
 
-    private Date convertReleased() {
-        final String param = String.format("%sT00:00:00", released);
-        return Date.from(
-            LocalDateTime
-                .parse(param, DateTimeFormatter.ISO_DATE_TIME)
-                .toInstant(ZoneOffset.UTC)
+    private LocalDate convertReleased() {
+        return LocalDate.parse(
+            released,
+            DateTimeFormatter.ISO_DATE.withZone(ZoneOffset.systemDefault())
         );
     }
 
-    private boolean isValidUri(final String uriStr) {
+    private boolean isValidUri() {
         final UrlValidator urlValidator = new UrlValidator();
         return urlValidator.isValid(uri);
     }

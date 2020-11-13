@@ -66,7 +66,7 @@ public class CategorySystemsTableModel {
         if (domain.getReleased() != null) {
             row.setReleased(
                 DateTimeFormatter.ISO_DATE_TIME.format(
-                    domain.getReleased().toInstant()
+                    domain.getReleased()
                 )
             );
         }
