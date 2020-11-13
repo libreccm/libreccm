@@ -47,5 +47,9 @@ public class Message {
     public MessageType getMessageType() {
         return messageType;
     }
+    
+    public String getMessageTypeClass() {
+        return messageType.toString().toLowerCase();
+    }
 
 }

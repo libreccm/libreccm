@@ -22,18 +22,16 @@ import org.libreccm.categorization.Domain;
 import org.libreccm.categorization.DomainOwnership;
 import org.libreccm.ui.Message;
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -67,9 +65,12 @@ public class CategorySystemDetailsModel {
     private List<CategorySystemOwnerRow> owners;
 
     private final List<Message> messages;
+    
+    private Set<String> invalidFields;
 
     public CategorySystemDetailsModel() {
         messages = new ArrayList<>();
+        invalidFields = new HashSet<>();
     }
 
     public long getCategorySystemId() {
@@ -96,8 +97,8 @@ public class CategorySystemDetailsModel {
         return domainKey;
     }
 
-    protected void setDomainKey(final String uuid) {
-        this.uuid = uuid;
+    protected void setDomainKey(final String domainKey) {
+        this.domainKey = domainKey;
     }
 
     public String getUri() {
@@ -154,6 +155,18 @@ public class CategorySystemDetailsModel {
 
     public void addMessage(final Message message) {
         messages.add(message);
+    }
+    
+    public Set<String> getInvalidFields() {
+        return Collections.unmodifiableSet(invalidFields);
+    }
+    
+    protected void addInvalidField(final String invalidField) {
+        invalidFields.add(invalidField);
+    }
+    
+    protected void setInvalidFields(final Set<String> invalidFields) {
+        this.invalidFields = new HashSet<>(invalidFields);
     }
 
     @Transactional(Transactional.TxType.REQUIRED)

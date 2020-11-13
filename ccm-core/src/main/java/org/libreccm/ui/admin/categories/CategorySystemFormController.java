@@ -89,8 +89,6 @@ public class CategorySystemFormController {
     @Transactional(Transactional.TxType.REQUIRED)
     public String createCategorySystem() {
 
-        final Domain domain = domainManager.createDomain(domainKey, domainKey);
-
         if (!isValidUri()) {
             categorySystemDetailsModel.setDomainKey(domainKey);
             categorySystemDetailsModel.setUri(uri);
@@ -102,11 +100,14 @@ public class CategorySystemFormController {
                     adminMessages.get("categorysystems.form.errors.uri_invalid"),
                     MessageType.PRIMARY)
             );
+            categorySystemDetailsModel.addInvalidField("uri");
+            return "org/libreccm/ui/admin/categories/categorysystem-form.xhtml";
         }
 
+        final Domain domain = domainManager.createDomain(domainKey, domainKey);
         domain.setUri(uri);
         domain.setVersion(version);
-        if (released == null) {
+        if (released == null || released.isEmpty()) {
             domain.setReleased(null);
         } else {
             domain.setReleased(convertReleased());
@@ -158,13 +159,14 @@ public class CategorySystemFormController {
                             "categorysystems.form.errors.uri_invalid"),
                         MessageType.PRIMARY)
                 );
+                categorySystemDetailsModel.addInvalidField("uri");
                 return "org/libreccm/ui/admin/categories/categorysystem-form.xhtml";
             }
             final Domain domain = result.get();
             domain.setDomainKey(domainKey);
             domain.setUri(uri);
             domain.setVersion(version);
-            if (released == null) {
+            if (released == null || released.isEmpty()) {
                 domain.setReleased(null);
             } else {
                 domain.setReleased(convertReleased());
