@@ -36,6 +36,12 @@
             <div class="container">
                 <h1>#{CategorySystemDetailsModel.new ? AdminMessages['categorysystems.new.label'] : AdminMessages.getMessage('categorysystems.edit.label', [CategorySystemDetailsModel.domainKey])}</h1>
 
+                <c:forEach items="#{CategorySystemDetailsModel.messages}" var="message">
+                    <div class="alert alert-#{message.messageTypeClass}" role="alert">
+                        #{message.message}
+                    </div>
+                </c:forEach>
+
                 <form action="#{CategorySystemDetailsModel.new ? mvc.uri('CategorySystemFormController#createCategorySystem') : mvc.uri('CategorySystemFormController#updateCategorySystem', {'categorySystemIdentifier': CategorySystemDetailsModel.domainKey })}"
                       method="post">
                     <div class="form-group">
