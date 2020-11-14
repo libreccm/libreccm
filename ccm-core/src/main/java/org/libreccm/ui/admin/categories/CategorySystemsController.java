@@ -85,7 +85,6 @@ public class CategorySystemsController {
 //    public String getCategoryManager() {
 //        return getCategorySystems();
 //    }
-
     @GET
     @Path("/")
     @AuthorizationRequired
@@ -291,8 +290,10 @@ public class CategorySystemsController {
             final Locale locale = new Locale(localeParam);
             domain.getTitle().addValue(locale, value);
             domainRepository.save(domain);
-            categorySystemDetailsModel.setCategorySystem(domain);
-            return "org/libreccm/ui/admin/categories/categorysystem-form.xhtml";
+            return String.format(
+                "redirect:categorymanager/categorysystems/ID-%d/details",
+                domain.getObjectId()
+            );
         } else {
             categorySystemDetailsModel.addMessage(
                 new Message(
@@ -310,6 +311,7 @@ public class CategorySystemsController {
     @POST
     @Path("/{categorySystemIdentifier}/title/${locale}/edit")
     @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
     public String editTitle(
         @PathParam("categorySystemIdentifier")
         final String categorySystemIdentifier,
@@ -345,8 +347,10 @@ public class CategorySystemsController {
             final Locale locale = new Locale(localeParam);
             domain.getTitle().addValue(locale, value);
             domainRepository.save(domain);
-            categorySystemDetailsModel.setCategorySystem(domain);
-            return "org/libreccm/ui/admin/categories/categorysystem-form.xhtml";
+            return String.format(
+                "redirect:categorymanager/categorysystems/ID-%d/details",
+                domain.getObjectId()
+            );
         } else {
             categorySystemDetailsModel.addMessage(
                 new Message(
@@ -364,11 +368,15 @@ public class CategorySystemsController {
     @POST
     @Path("/{categorySystemIdentifier}/title/${locale}/remove")
     @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
     public String removeTitle(
         @PathParam("categorySystemIdentifier")
         final String categorySystemIdentifier,
-        @PathParam("locale") final String localeParam
+        @PathParam("locale") final String localeParam,
+        @FormParam("confirmed")
+        final String confirmed
     ) {
+
         final Identifier identifier = identifierParser.parseIdentifier(
             categorySystemIdentifier
         );
@@ -395,11 +403,15 @@ public class CategorySystemsController {
         if (result.isPresent()) {
             final Domain domain = result.get();
 
-            final Locale locale = new Locale(localeParam);
-            domain.getTitle().removeValue(locale);
-            domainRepository.save(domain);
-            categorySystemDetailsModel.setCategorySystem(domain);
-            return "org/libreccm/ui/admin/categories/categorysystem-form.xhtml";
+            if (Objects.equals(confirmed, "true")) {
+                final Locale locale = new Locale(localeParam);
+                domain.getTitle().removeValue(locale);
+                domainRepository.save(domain);
+            }
+            return String.format(
+                "redirect:categorymanager/categorysystems/ID-%d/details",
+                domain.getObjectId()
+            );
         } else {
             categorySystemDetailsModel.addMessage(
                 new Message(
@@ -417,6 +429,7 @@ public class CategorySystemsController {
     @POST
     @Path("/{categorySystemIdentifier}/description/add")
     @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
     public String addDescription(
         @PathParam("categorySystemIdentifier")
         final String categorySystemIdentifier,
@@ -452,8 +465,10 @@ public class CategorySystemsController {
             final Locale locale = new Locale(localeParam);
             domain.getDescription().addValue(locale, value);
             domainRepository.save(domain);
-            categorySystemDetailsModel.setCategorySystem(domain);
-            return "org/libreccm/ui/admin/categories/categorysystem-form.xhtml";
+            return String.format(
+                "redirect:categorymanager/categorysystems/ID-%d/details",
+                domain.getObjectId()
+            );
         } else {
             categorySystemDetailsModel.addMessage(
                 new Message(
@@ -470,8 +485,10 @@ public class CategorySystemsController {
 
     @POST
     @Path(
-        "categorysystems/{categorySystemIdentifier}/description/${locale}/edit")
+        "categorysystems/{categorySystemIdentifier}/description/${locale}/edit"
+    )
     @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
     public String editDescription(
         @PathParam("categorySystemIdentifier")
         final String categorySystemIdentifier,
@@ -507,8 +524,10 @@ public class CategorySystemsController {
             final Locale locale = new Locale(localeParam);
             domain.getDescription().addValue(locale, value);
             domainRepository.save(domain);
-            categorySystemDetailsModel.setCategorySystem(domain);
-            return "org/libreccm/ui/admin/categories/categorysystem-form.xhtml";
+            return String.format(
+                "redirect:categorymanager/categorysystems/ID-%d/details",
+                domain.getObjectId()
+            );
         } else {
             categorySystemDetailsModel.addMessage(
                 new Message(
@@ -527,10 +546,13 @@ public class CategorySystemsController {
     @Path(
         "categorysystems/{categorySystemIdentifier}/description/${locale}/remove")
     @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
     public String removeDescription(
         @PathParam("categorySystemIdentifier")
         final String categorySystemIdentifier,
-        @PathParam("locale") final String localeParam
+        @PathParam("locale") final String localeParam,
+        @FormParam("confirmed")
+        final String confirmed
     ) {
         final Identifier identifier = identifierParser.parseIdentifier(
             categorySystemIdentifier
@@ -558,11 +580,15 @@ public class CategorySystemsController {
         if (result.isPresent()) {
             final Domain domain = result.get();
 
-            final Locale locale = new Locale(localeParam);
-            domain.getDescription().removeValue(locale);
-            domainRepository.save(domain);
-            categorySystemDetailsModel.setCategorySystem(domain);
-            return "org/libreccm/ui/admin/categories/categorysystem-form.xhtml";
+            if (Objects.equals(confirmed, "true")) {
+                final Locale locale = new Locale(localeParam);
+                domain.getDescription().removeValue(locale);
+                domainRepository.save(domain);
+            }
+            return String.format(
+                "redirect:categorymanager/categorysystems/ID-%d/details",
+                domain.getObjectId()
+            );
         } else {
             categorySystemDetailsModel.addMessage(
                 new Message(
@@ -581,10 +607,12 @@ public class CategorySystemsController {
     @Path("/{categorySystemIdentifier}/owners/add")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
     public String addOwner(
         @PathParam("categorySystemIdentifier")
         final String categorySystemIdentifier,
-        @FormParam("applicationUuid") final String applicationUuid
+        @FormParam("applicationUuid") final String applicationUuid,
+        @FormParam("context") final String context
     ) {
         final Identifier identifier = identifierParser.parseIdentifier(
             categorySystemIdentifier
@@ -628,11 +656,16 @@ public class CategorySystemsController {
             }
 
             final CcmApplication owner = appResult.get();
-
-            domainManager.addDomainOwner(owner, domain);
+            if (context == null
+                    || context.isEmpty()
+                    || context.matches("\\s*")) {
+                domainManager.addDomainOwner(owner, domain);
+            } else {
+                domainManager.addDomainOwner(owner, domain, context);
+            }
 
             return String.format(
-                "redirect:categorymanager/categorysystems/%s",
+                "redirect:categorymanager/categorysystems/ID-%s/details",
                 categorySystemIdentifier
             );
         } else {
@@ -650,13 +683,15 @@ public class CategorySystemsController {
     }
 
     @POST
-    @Path("/{categorySystemIdentifier}/owners/remove")
+    @Path("/{categorySystemIdentifier}/owners/${applicationUuid}/remove")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
     public String removeOwner(
         @PathParam("categorySystemIdentifier")
         final String categorySystemIdentifier,
-        @FormParam("applicationUuid") final String applicationUuid
+        @PathParam("applicationUuid") final String applicationUuid,
+        @FormParam("confirmed") final String confirmed
     ) {
         final Identifier identifier = identifierParser.parseIdentifier(
             categorySystemIdentifier
@@ -699,12 +734,13 @@ public class CategorySystemsController {
                 return "org/libreccm/ui/admin/categories/application-not-found.xhtml";
             }
 
-            final CcmApplication owner = appResult.get();
-
-            domainManager.removeDomainOwner(owner, domain);
+            if (Objects.equals(confirmed, "true")) {
+                final CcmApplication owner = appResult.get();
+                domainManager.removeDomainOwner(owner, domain);
+            }
 
             return String.format(
-                "redirect:categorymanager/categorysystems/%s",
+                "redirect:categorymanager/categorysystems/ID-%s/details",
                 categorySystemIdentifier
             );
         } else {

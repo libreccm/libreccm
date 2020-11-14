@@ -20,7 +20,12 @@ package org.libreccm.ui.admin.categories;
 
 import org.libreccm.categorization.Domain;
 import org.libreccm.categorization.DomainOwnership;
+import org.libreccm.configuration.ConfigurationManager;
+import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.l10n.LocalizedTextsUtil;
 import org.libreccm.ui.Message;
+import org.libreccm.web.ApplicationRepository;
+import org.libreccm.web.CcmApplication;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -29,12 +34,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.transaction.Transactional;
 
@@ -45,6 +52,12 @@ import javax.transaction.Transactional;
 @RequestScoped
 @Named("CategorySystemDetailsModel")
 public class CategorySystemDetailsModel {
+
+    @Inject
+    private ApplicationRepository applicationRepository;
+
+    @Inject
+    private GlobalizationHelper globalizationHelper;
 
     private long categorySystemId;
 
@@ -60,12 +73,18 @@ public class CategorySystemDetailsModel {
 
     private Map<String, String> title;
 
+    private List<String> unusedTitleLocales;
+
     private Map<String, String> description;
+
+    private List<String> unusedDescriptionLocales;
 
     private List<CategorySystemOwnerRow> owners;
 
+    private List<CategorySystemOwnerOption> ownerOptions;
+
     private final List<Message> messages;
-    
+
     private Set<String> invalidFields;
 
     public CategorySystemDetailsModel() {
@@ -137,12 +156,32 @@ public class CategorySystemDetailsModel {
         return Collections.unmodifiableMap(title);
     }
 
+    public List<String> getUnusedTitleLocales() {
+        return Collections.unmodifiableList(unusedTitleLocales);
+    }
+
+    public boolean hasUnusedTitleLocales() {
+        return !unusedTitleLocales.isEmpty();
+    }
+
     public Map<String, String> getDescription() {
         return Collections.unmodifiableMap(description);
     }
 
+    public List<String> getUnusedDescriptionLocales() {
+        return Collections.unmodifiableList(unusedDescriptionLocales);
+    }
+
+    public boolean hasUnusedDescriptionLocales() {
+        return !unusedDescriptionLocales.isEmpty();
+    }
+
     public List<CategorySystemOwnerRow> getOwners() {
         return Collections.unmodifiableList(owners);
+    }
+
+    public List<CategorySystemOwnerOption> getOwnerOptions() {
+        return Collections.unmodifiableList(ownerOptions);
     }
 
     public boolean isNew() {
@@ -156,15 +195,15 @@ public class CategorySystemDetailsModel {
     public void addMessage(final Message message) {
         messages.add(message);
     }
-    
+
     public Set<String> getInvalidFields() {
         return Collections.unmodifiableSet(invalidFields);
     }
-    
+
     protected void addInvalidField(final String invalidField) {
         invalidFields.add(invalidField);
     }
-    
+
     protected void setInvalidFields(final Set<String> invalidFields) {
         this.invalidFields = new HashSet<>(invalidFields);
     }
@@ -185,6 +224,8 @@ public class CategorySystemDetailsModel {
                 .withZone(ZoneOffset.systemDefault())
                 .format(domain.getReleased());
         }
+        final List<Locale> availableLocales = globalizationHelper
+            .getAvailableLocales();
         title = domain
             .getTitle()
             .getValues()
@@ -196,6 +237,16 @@ public class CategorySystemDetailsModel {
                     entry -> entry.getValue()
                 )
             );
+        final Set<Locale> titleLocales = domain
+            .getTitle()
+            .getAvailableLocales();
+        unusedTitleLocales = availableLocales
+            .stream()
+            .filter(locale -> !titleLocales.contains(locale))
+            .map(Locale::toString)
+            .sorted()
+            .collect(Collectors.toList());
+
         description = domain
             .getDescription()
             .getValues()
@@ -207,11 +258,34 @@ public class CategorySystemDetailsModel {
                     entry -> entry.getValue()
                 )
             );
+        final Set<Locale> descriptionLocales = domain
+            .getDescription()
+            .getAvailableLocales();
+        unusedDescriptionLocales = availableLocales
+            .stream()
+            .filter(locale -> !descriptionLocales.contains(locale))
+            .map(Locale::toString)
+            .sorted()
+            .collect(Collectors.toList());
 
         owners = domain
             .getOwners()
             .stream()
             .map(this::buildOwnerRow)
+            .sorted()
+            .collect(Collectors.toList());
+
+        final List<CcmApplication> ownerApplications = domain
+            .getOwners()
+            .stream()
+            .map(DomainOwnership::getOwner)
+            .collect(Collectors.toList());
+
+        ownerOptions = applicationRepository
+            .findAll()
+            .stream()
+            .filter(application -> !ownerApplications.contains(application))
+            .map(CategorySystemOwnerOption::new)
             .sorted()
             .collect(Collectors.toList());
     }
@@ -221,10 +295,14 @@ public class CategorySystemDetailsModel {
     ) {
         final CategorySystemOwnerRow ownerRow = new CategorySystemOwnerRow();
         ownerRow.setOwnershipId(ownership.getOwnershipId());
-        ownerRow.setUuid(ownership.getUuid());
+        ownerRow.setUuid(ownership.getOwner().getUuid());
         ownerRow.setContext(ownership.getContext());
         ownerRow.setOwnerOrder(ownership.getOwnerOrder());
-        ownerRow.setOwnerAppName(ownership.getOwner().getDisplayName());
+        if (ownership.getOwner().getDisplayName() == null) {
+            ownerRow.setOwnerAppName(ownership.getOwner().getApplicationType());
+        } else {
+            ownerRow.setOwnerAppName(ownership.getOwner().getDisplayName());
+        }
 
         return ownerRow;
     }
