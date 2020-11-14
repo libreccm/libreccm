@@ -181,7 +181,7 @@ public class CategorySystemDetailsModel {
         if (domain.getReleased() == null) {
             released = "";
         } else {
-            released = DateTimeFormatter.ISO_DATE_TIME
+            released = DateTimeFormatter.ISO_DATE
                 .withZone(ZoneOffset.systemDefault())
                 .format(domain.getReleased());
         }

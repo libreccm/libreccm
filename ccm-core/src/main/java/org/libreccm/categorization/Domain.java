@@ -42,12 +42,10 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 import org.libreccm.imexport.Exportable;
 
-import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -66,8 +64,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
 
 /**
@@ -191,7 +187,6 @@ public class Domain extends CcmObject implements Serializable, Exportable {
      * A version string for the {@code Domain}.
      */
     @Column(name = "VERSION", nullable = true)
-    @NotBlank
     @XmlElement(name = "version", namespace = CAT_XML_NS)
     private String version;
 
@@ -199,7 +194,6 @@ public class Domain extends CcmObject implements Serializable, Exportable {
      * A timestamp for the release date of the {@code Domain}.
      */
     @Column(name = "RELEASED")
-//    @Temporal(TemporalType.TIMESTAMP)
     @XmlElement(name = "released", namespace = CAT_XML_NS)
     private LocalDate released;
 

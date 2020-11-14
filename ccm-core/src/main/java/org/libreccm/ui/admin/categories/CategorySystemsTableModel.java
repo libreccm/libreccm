@@ -24,6 +24,7 @@ import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -65,9 +66,9 @@ public class CategorySystemsTableModel {
         row.setVersion(domain.getVersion());
         if (domain.getReleased() != null) {
             row.setReleased(
-                DateTimeFormatter.ISO_DATE_TIME.format(
-                    domain.getReleased()
-                )
+                DateTimeFormatter.ISO_DATE
+                    .withZone(ZoneId.systemDefault())
+                    .format(domain.getReleased())
             );
         }
         row.setTitle(

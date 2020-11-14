@@ -98,7 +98,7 @@ public class CategorySystemFormController {
             categorySystemDetailsModel.addMessage(
                 new Message(
                     adminMessages.get("categorysystems.form.errors.uri_invalid"),
-                    MessageType.PRIMARY)
+                    MessageType.DANGER)
             );
             categorySystemDetailsModel.addInvalidField("uri");
             return "org/libreccm/ui/admin/categories/categorysystem-form.xhtml";
@@ -157,7 +157,7 @@ public class CategorySystemFormController {
                     new Message(
                         adminMessages.get(
                             "categorysystems.form.errors.uri_invalid"),
-                        MessageType.PRIMARY)
+                        MessageType.DANGER)
                 );
                 categorySystemDetailsModel.addInvalidField("uri");
                 return "org/libreccm/ui/admin/categories/categorysystem-form.xhtml";
