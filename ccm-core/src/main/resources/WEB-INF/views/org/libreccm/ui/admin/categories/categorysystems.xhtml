@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
 <html xmlns="http://www.w3.org/1999/xhtml" 
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
@@ -32,7 +32,7 @@
                              width="1em"
                              height="1em"
                              fill="currentColor">
-                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#circle-plus" />
+                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#plus-circle" />
                         </svg>
                         <span>#{AdminMessages['categorysystems.add']}</span>
                     </a>
@@ -44,20 +44,83 @@
                             <th>#{AdminMessages['categorysystems.table.headers.uri']}</th>
                             <th>#{AdminMessages['categorysystems.table.headers.version']}</th>
                             <th>#{AdminMessages['categorysystems.table.headers.released']}</th>
+                            <th class="text-center" colspan="2">
+                                #{AdminMessages['categorysystems.table.headers.actions']}
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
                         <c:forEach items="#{CategorySystemsTableModel.categorySystems}" 
                                    var="categorySystem">
                             <tr>
-                                <td>
-                                    <a href="#{mvc.uri('CategorySystemsController#getCategorySystemDetails', { 'categorySystemIdentifier': categorySystem.identifier })}">
-                                    #{categorySystem.domainKey}
-                                    </a>
-                                </td>
+                                <td>#{categorySystem.domainKey}</td>
                                 <td>#{categorySystem.uri}</td>
                                 <td>#{categorySystem.version}</td>
                                 <td>#{categorySystem.released}</td>
+                                <td>
+                                    <a class="btn btn-info"
+                                       href="#{mvc.uri('CategorySystemsController#getCategorySystemDetails', { 'categorySystemIdentifier': categorySystem.identifier })}">
+                                        <svg class="bi"
+                                             width="1em"
+                                             height="1em"
+                                             fill="currentColor">
+                                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
+                                        </svg>
+                                        #{AdminMessages['categorysystems.table.actions.edit']}
+                                    </a>
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger"
+                                            data-target="#confirm-delete-#{categorySystem.identifier}"
+                                            data-toggle="modal"
+                                            type="button">
+                                        <svg class="bi"
+                                             width="1em"
+                                             height="1em"
+                                             fill="currentColor">
+                                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#x-circle" />
+                                        </svg>
+                                        #{AdminMessages['categorysystems.table.actions.delete']}
+                                    </button>
+                                    <div class="modal"
+                                         id="confirm-delete-#{categorySystem.identifier}"
+                                         tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <form action="#{mvc.uri('CategorySystemsController#deleteCategorySystem', {'categorySystemIdentifier': categorySystem.identifier })}"
+                                                  class="modal-content"
+                                                  method="post">
+                                                <div class="modal-header">
+                                                    <h3 class="modal-title">
+                                                        #{AdminMessages['categorysystems.delete.confirm.title']}
+                                                    </h3>
+                                                    <button aria-label="#{AdminMessages['usersgroupsroles.groups.delete.confirm.cancel']}"
+                                                            class="close" 
+                                                            data-dismiss="modal" 
+                                                            type="button">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    #{AdminMessages.getMessage('categorysystems.delete.confirm.message', [categorySystem.identifier])}
+                                                    <input name="confirmed"
+                                                           type="hidden"
+                                                           value="true" />
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-secondary"
+                                                            data-dismiss="modal"
+                                                            type="button">
+                                                        #{AdminMessages['categorysystems.delete.confirm.cancel']}
+                                                    </button>
+                                                    <button class="btn btn-danger" 
+                                                            type="submit">
+                                                        #{AdminMessages['categorysystems.delete.confirm.yes']}
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
                         </c:forEach>
                     </tbody>

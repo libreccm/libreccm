@@ -49,7 +49,7 @@
                             #{AdminMessages['categorysystems.form.domainKey.label']}
                         </label>
                         <input aria-describedby="domainKey-help"
-                               class="form-control"
+                               class="form-control #{CategorySystemDetailsModel.invalidFields.contains('domainKey') ? 'is-invalid' : ''}"
                                name="domainKey"
                                required="true"
                                type="text" 
@@ -64,7 +64,7 @@
                             #{AdminMessages['categorysystems.form.uri.label']}
                         </label>
                         <input aria-describedby="uri-help"
-                               class="form-control"
+                               class="form-control #{CategorySystemDetailsModel.invalidFields.contains('uri') ? 'is-invalid' : ''}"
                                name="uri"
                                type="text" 
                                value="#{CategorySystemDetailsModel.uri}"
@@ -79,7 +79,7 @@
                             #{AdminMessages['categorysystems.form.version.label']}
                         </label>
                         <input aria-describedby="version-help"
-                               class="form-control"
+                               class="form-control #{CategorySystemDetailsModel.invalidFields.contains('version') ? 'is-invalid' : ''}"
                                name="version"
                                type="text" 
                                value="#{CategorySystemDetailsModel.version}"
@@ -94,7 +94,7 @@
                             #{AdminMessages['categorysystems.form.released.label']}
                         </label>
                         <input aria-describedby="released-help"
-                               class="form-control"
+                               class="form-control #{CategorySystemDetailsModel.invalidFields.contains('released') ? 'is-invalid' : ''}"
                                name="released"
                                type="date" 
                                value="#{CategorySystemDetailsModel.released}"
