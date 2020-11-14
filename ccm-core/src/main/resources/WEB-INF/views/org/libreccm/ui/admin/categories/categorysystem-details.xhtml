@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
 <html xmlns="http://www.w3.org/1999/xhtml" 
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
@@ -90,20 +90,92 @@
                 <h2>
                     #{AdminMessages['categorysystems.details.title.heading']}
                 </h2>
-                <div class="text-right mb-2">
-                    <a class="btn btn-secondary"
-                       href="#">
-                        <svg class="bi"
-                             width="1em"
-                             height="1em"
-                             fill="currentColor">
-                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#circle-plus" />
-                        </svg>
-                        <span>#{AdminMessages['categorysystems.details.title.add']}</span>
-                    </a>
-                </div>
-                <c:choose>
+                <c:if test="#{CategorySystemDetailsModel.hasUnusedTitleLocales()}">
+                    <div class="mb-2">
+                        <div class="text-right">
+                            <button class="btn btn-secondary"
+                                    data-target="#categorysystem-title-add"
+                                    data-toggle="modal"
+                                    type="button">
+                                <svg class="bi"
+                                     width="1em"
+                                     height="1em"
+                                     fill="currentColor">
+                                    <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#plus-circle" />
+                                </svg>
+                                <span>#{AdminMessages['categorysystems.details.title.add']}</span>
+                            </button>
+                        </div>
+                        <div class="modal fade"
+                             data-backdrop="static"
+                             id="categorysystem-title-add"
+                             tabindex="-1">
+                            <div class="modal-dialog">
+                                <form action="#{mvc.uri('CategorySystemsController#addTitle', {'categorySystemIdentifier': CategorySystemDetailsModel.identifier })}"
+                                      class="modal-content"
+                                      method="post">
+                                    <div class="modal-header">
+                                        <h3 class="modal-title">
+                                            #{AdminMessages['categorysystems.details.title.add.dialog.title']}
+                                        </h3>
+                                        <button aria-label="#{AdminMessages['categorysystems.details.title.add.dialog.close']}"
+                                                class="close" 
+                                                data-dismiss="modal" 
+                                                type="button">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <label for="categorysystem-title-add-locale">
+                                                #{AdminMessages['categorysystems.details.title.add.dialog.locale.label']}
+                                            </label>
+                                            <select aria-describedby="categorysystem-title-add-locale-help"
+                                                    id="categorysystem-title-add-locale"
+                                                    name="locale"
+                                                    required="true">
+                                                <c:forEach items="#{CategorySystemDetailsModel.unusedTitleLocales}" var="locale">
+                                                    <option value="#{locale}">#{locale}</option>
+                                                </c:forEach>
+                                            </select>
+                                            <small class="form-text text-muted"
+                                                   id="categorysystem-title-add-locale-help">
+                                                #{AdminMessages['categorysystems.details.title.add.dialog.locale.help']}
+                                            </small>
 
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="categorysystem-title-add-value">
+                                                #{AdminMessages['categorysystems.details.title.add.dialog.value.label']}
+                                            </label>
+                                            <input aria-describedby="categorysystem-title-add-value-help"
+                                                   class="form-control"
+                                                   id="categorysystem-title-add-value"
+                                                   name="value"
+                                                   required="true"
+                                                   type="text" />
+                                            <small class="form-text text-muted"
+                                                   id="categorysystem-title-add-locale-help">
+                                                #{AdminMessages['categorysystems.details.title.add.dialog.value.help']}
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button class="btn btn-secondary" 
+                                                data-dismiss="modal"
+                                                type="button" >
+                                            #{AdminMessages['categorysystems.details.title.add.dialog.close']}
+                                        </button>
+                                        <button type="submit" class="btn btn-primary">
+                                            #{AdminMessages['categorysystems.details.title.add.dialog.submit']}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
+                <c:choose>
                     <c:when test="#{CategorySystemDetailsModel.getTitle().isEmpty()}">
                         <p>
                             #{AdminMessages['categorysystems.details.title.none']}
@@ -131,28 +203,137 @@
                                             #{entry.value}
                                         </td>
                                         <td>
-                                            <button class="btn btn-info"
-                                                    type="button">
-                                                <svg class="bi"
-                                                     width="1em"
-                                                     height="1em"
-                                                     fill="currentColor">
-                                                    <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
-                                                </svg>
-                                                <span>#{AdminMessages['categorysystems.details.title.table.actions.edit']}</span>
-                                            </button>
+                                            <div class="text-center">
+                                                <button class="btn btn-info"
+                                                        data-target="#categorysystem-title-#{entry.key}-edit"
+                                                        data-toggle="modal"
+                                                        type="button">
+                                                    <svg class="bi"
+                                                         width="1em"
+                                                         height="1em"
+                                                         fill="currentColor">
+                                                        <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
+                                                    </svg>
+                                                    <span>#{AdminMessages['categorysystems.details.title.table.actions.edit']}</span>
+                                                </button>
+                                            </div>
+                                            <div aria-describedby="categorysystem-title-#{entry.key}-edit-title"
+                                                 aria-hidden="true"
+                                                 class="modal fade"
+                                                 data-backdrop="static"
+                                                 id="categorysystem-title-#{entry.key}-edit"
+                                                 tabindex="-1">
+                                                <div class="modal-dialog">
+                                                    <form action="#{mvc.uri('CategorySystemsController#editTitle', {'categorySystemIdentifier': CategorySystemDetailsModel.identifier, 'locale': entry.key })}"
+                                                          class="modal-content"
+                                                          method="post">
+                                                        <div class="modal-header">
+                                                            <h3 class="modal-title" id="categorysystem-title-#{entry.key}-edit-title">
+                                                                #{AdminMessages['categorysystems.details.title.table.actions.edit.dialog.title']}
+                                                            </h3>
+                                                            <button aria-label="#{AdminMessages['categorysystems.details.title.edit.dialog.close']}"
+                                                                    class="close"
+                                                                    data-dismiss="modal"
+                                                                    type="button">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <input name="locale"
+                                                                   value="#{entry.key}"
+                                                                   type="hidden" />
+                                                            <div class="form-group">
+                                                                <label for="categorysystem-title-#{entry.key}-edit-value">
+                                                                    #{AdminMessages['categorysystems.details.title.edit.dialog.value.label']}
+                                                                </label>
+                                                                <input aria-describedby="categorysystem-title-#{entry.key}-edit-value-help"
+                                                                       class="form-control"
+                                                                       id="categorysystem-title-#{entry.key}-edit-value"
+                                                                       name="value"
+                                                                       required="true"
+                                                                       type="text" 
+                                                                       value="#{entry.value}" />
+                                                                <small class="form-text text-muted"
+                                                                       id="categorysystem-title-#{entry.key}-edit-value-help">
+                                                                    #{AdminMessages['categorysystems.details.title.edit.dialog.value.help']}
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <div class="modal-footer">
+                                                                <button class="btn btn-secondary" 
+                                                                        data-dismiss="modal"
+                                                                        type="button" >
+                                                                    #{AdminMessages['categorysystems.details.title.edit.dialog.close']}
+                                                                </button>
+                                                                <button type="submit" class="btn btn-primary">
+                                                                    #{AdminMessages['categorysystems.details.title.edit.dialog.submit']}
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </td>
                                         <td>
-                                            <button class="btn btn-danger"
-                                                    type="button">
-                                                <svg class="bi"
-                                                     width="1em"
-                                                     height="1em"
-                                                     fill="currentColor">
-                                                    <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#x-circle" />
-                                                </svg>
-                                                <span>#{AdminMessages['categorysystems.details.title.table.actions.remove']}</span>
-                                            </button>
+                                            <div class="text-center">
+                                                <button class="btn btn-danger"
+                                                        data-target="#categorysystem-title-#{entry.key}-remove"
+                                                        data-toggle="modal"
+                                                        type="button">
+                                                    <svg class="bi"
+                                                         width="1em"
+                                                         height="1em"
+                                                         fill="currentColor">
+                                                        <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#x-circle" />
+                                                    </svg>
+                                                    <span>#{AdminMessages['categorysystems.details.title.table.actions.remove']}</span>
+                                                </button>
+                                            </div>
+                                            <div aria-describedby="categorysystem-title-#{entry.key}-remove-title"
+                                                 aria-hidden="true"
+                                                 class="modal fade"
+                                                 data-backdrop="static"
+                                                 id="categorysystem-title-#{entry.key}-remove"
+                                                 tabindex="-1">
+                                                <div class="modal-dialog">
+                                                    <form action="#{mvc.uri('CategorySystemsController#removeTitle', {'categorySystemIdentifier': CategorySystemDetailsModel.identifier, 'locale': entry.key })}"
+                                                          class="modal-content"
+                                                          method="post">
+                                                        <div class="modal-header">
+                                                            <h3 class="modal-title" id="categorysystem-title-#{entry.key}-remove-title">
+                                                                #{AdminMessages['categorysystems.details.title.table.actions.remove.dialog.title']}
+                                                            </h3>
+                                                            <button aria-label="#{AdminMessages['categorysystems.details.title.remove.dialog.close']}"
+                                                                    class="close"
+                                                                    data-dismiss="modal"
+                                                                    type="button">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>
+                                                                #{AdminMessages.getMessage('categorysystems.details.title.remove.dialog.message', [entry.key, entry.value])}
+                                                            </p>
+                                                            <input name="confirmed" 
+                                                                   type="hidden" 
+                                                                   value="true" />
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <div class="modal-footer">
+                                                                <button class="btn btn-secondary" 
+                                                                        data-dismiss="modal"
+                                                                        type="button" >
+                                                                    #{AdminMessages['categorysystems.details.title.remove.dialog.close']}
+                                                                </button>
+                                                                <button type="submit" class="btn btn-danger">
+                                                                    #{AdminMessages['categorysystems.details.title.remove.dialog.submit']}
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -164,21 +345,92 @@
                 <h2>
                     #{AdminMessages['categorysystems.details.description.heading']}
                 </h2>
-                <div class="text-right mb-2">
-                    <a class="btn btn-secondary"
-                       href="
-                       ">
-                        <svg class="bi"
-                             width="1em"
-                             height="1em"
-                             fill="currentColor">
-                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#circle-plus" />
-                        </svg>
-                        <span>#{AdminMessages['categorysystems.details.description.add']}</span>
-                    </a>
-                </div>
+                <c:if test="#{CategorySystemDetailsModel.hasUnusedDescriptionLocales()}">
+                    <div class="mb-2">
+                        <div class="text-right">
+                            <button class="btn btn-secondary"
+                                    data-target="#categorysystem-description-add"
+                                    data-toggle="modal"
+                                    type="button">
+                                <svg class="bi"
+                                     width="1em"
+                                     height="1em"
+                                     fill="currentColor">
+                                    <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#plus-circle" />
+                                </svg>
+                                <span>#{AdminMessages['categorysystems.details.description.add']}</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="modal fade"
+                         data-backdrop="static"
+                         id="categorysystem-description-add"
+                         tabindex="-1">
+                        <div class="modal-dialog">
+                            <form action="#{mvc.uri('CategorySystemsController#addDescription', {'categorySystemIdentifier': CategorySystemDetailsModel.identifier })}"
+                                  class="modal-content"
+                                  method="post">
+                                <div class="modal-header">
+                                    <h3 class="modal-title">
+                                        #{AdminMessages['categorysystems.details.description.add.dialog.title']}
+                                    </h3>
+                                    <button aria-label="#{AdminMessages['categorysystems.details.title.add.dialog.close']}"
+                                            class="close" 
+                                            data-dismiss="modal" 
+                                            type="button">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="categorysystem-description-add-locale">
+                                            #{AdminMessages['categorysystems.details.description.add.dialog.locale.label']}
+                                        </label>
+                                        <select aria-describedby="categorysystem-description-add-locale-help"
+                                                id="categorysystem-description-add-locale"
+                                                name="locale"
+                                                required="true">
+                                            <c:forEach items="#{CategorySystemDetailsModel.unusedDescriptionLocales}" var="locale">
+                                                <option value="#{locale}">#{locale}</option>
+                                            </c:forEach>
+                                        </select>
+                                        <small class="form-text text-muted"
+                                               id="categorysystem-description-add-locale-help">
+                                            #{AdminMessages['categorysystems.details.description.add.dialog.locale.help']}
+                                        </small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="categorysystem-description-add-value">
+                                            #{AdminMessages['categorysystems.details.description.add.dialog.value.label']}
+                                        </label>
+                                        <textarea aria-describedby="categorysystem-description-add-value-help"
+                                                  class="form-control"
+                                                  cols="80"
+                                                  id="categorysystem-description-add-value"
+                                                  name="value"
+                                                  required="true"
+                                                  rows="10"></textarea>
+                                        <small class="form-text text-muted"
+                                               id="categorysystem-description-add-locale-help">
+                                            #{AdminMessages['categorysystems.details.description.add.dialog.value.help']}
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-secondary" 
+                                            data-dismiss="modal"
+                                            type="button" >
+                                        #{AdminMessages['categorysystems.details.description.add.dialog.close']}
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        #{AdminMessages['categorysystems.details.description.add.dialog.submit']}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </c:if>
                 <c:choose>
-
                     <c:when test="#{CategorySystemDetailsModel.getDescription().isEmpty()}">
                         <p>
                             #{AdminMessages['categorysystems.details.description.none']}
@@ -196,7 +448,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <c:forEach items="#{CategorySystemDetailsModel.title}"
+                                <c:forEach items="#{CategorySystemDetailsModel.description}"
                                            var="entry">
                                     <tr>
                                         <td>
@@ -206,28 +458,137 @@
                                             #{entry.value}
                                         </td>
                                         <td>
-                                            <button class="btn btn-info"
-                                                    type="button">
-                                                <svg class="bi"
-                                                     width="1em"
-                                                     height="1em"
-                                                     fill="currentColor">
-                                                    <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
-                                                </svg>
-                                                <span>#{AdminMessages['categorysystems.details.description.table.actions.edit']}</span>
-                                            </button>
+                                            <div class="text-center">
+                                                <button class="btn btn-info"
+                                                        data-target="#categorysystem-description-#{entry.key}-edit"
+                                                        data-toggle="modal"
+                                                        type="button">
+                                                    <svg class="bi"
+                                                         width="1em"
+                                                         height="1em"
+                                                         fill="currentColor">
+                                                        <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
+                                                    </svg>
+                                                    <span>#{AdminMessages['categorysystems.details.description.table.actions.edit']}</span>
+                                                </button>
+                                            </div>
+                                            <div aria-describedby="categorysystem-description-#{entry.key}-edit-title"
+                                                 aria-hidden="true"
+                                                 class="modal fade"
+                                                 data-backdrop="static"
+                                                 id="categorysystem-description-#{entry.key}-edit"
+                                                 tabindex="-1">
+                                                <div class="modal-dialog">
+                                                    <form action="#{mvc.uri('CategorySystemsController#editDescription', {'categorySystemIdentifier': CategorySystemDetailsModel.identifier, 'locale': entry.key })}"
+                                                          class="modal-content"
+                                                          method="post">
+                                                        <div class="modal-header">
+                                                            <h3 class="modal-title" 
+                                                                id="categorysystem-description-#{entry.key}-edit-title">
+                                                                #{AdminMessages['categorysystems.details.description.table.actions.edit.dialog.title']}
+                                                            </h3>
+                                                            <button aria-label="#{AdminMessages['categorysystems.details.description.edit.dialog.close']}"
+                                                                    class="close"
+                                                                    data-dismiss="modal"
+                                                                    type="button">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <input name="locale"
+                                                                   value="#{entry.key}"
+                                                                   type="hidden" />
+                                                            <div class="form-group">
+                                                                <label for="categorysystem-description-#{entry.key}-edit-value">
+                                                                    #{AdminMessages['categorysystems.details.description.edit.dialog.value.label']}
+                                                                </label>
+                                                                <textarea aria-describedby="categorysystem-description-#{entry.key}-edit-value-help"
+                                                                          class="form-control"
+                                                                          cols="80"
+                                                                          id="categorysystem-description-#{entry.key}-edit-value"
+                                                                          name="value"
+                                                                          required="true"
+                                                                          rows="10"
+                                                                          type="text">#{entry.value}</textarea>
+                                                                <small class="form-text text-muted"
+                                                                       id="categorysystem-description-#{entry.key}-edit-value-help">
+                                                                    #{AdminMessages['categorysystems.details.description.edit.dialog.value.help']}
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <div class="modal-footer">
+                                                                <button class="btn btn-secondary" 
+                                                                        data-dismiss="modal"
+                                                                        type="button" >
+                                                                    #{AdminMessages['categorysystems.details.description.edit.dialog.close']}
+                                                                </button>
+                                                                <button type="submit" class="btn btn-primary">
+                                                                    #{AdminMessages['categorysystems.details.description.edit.dialog.submit']}
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </td>
                                         <td>
-                                            <button class="btn btn-danger"
-                                                    type="button">
-                                                <svg class="bi"
-                                                     width="1em"
-                                                     height="1em"
-                                                     fill="currentColor">
-                                                    <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#x-circle" />
-                                                </svg>
-                                                <span>#{AdminMessages['categorysystems.details.description.table.actions.remove']}</span>
-                                            </button>
+                                            <div class="text-center">
+                                                <button class="btn btn-danger"
+                                                        data-target="#categorysystem-description-#{entry.key}-remove"
+                                                        data-toggle="modal"
+                                                        type="button">
+                                                    <svg class="bi"
+                                                         width="1em"
+                                                         height="1em"
+                                                         fill="currentColor">
+                                                        <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#x-circle" />
+                                                    </svg>
+                                                    <span>#{AdminMessages['categorysystems.details.description.table.actions.remove']}</span>
+                                                </button>
+                                            </div>
+                                            <div aria-describedby="categorysystem-description-#{entry.key}-remove-title"
+                                                 aria-hidden="true"
+                                                 class="modal fade"
+                                                 data-backdrop="static"
+                                                 id="categorysystem-description-#{entry.key}-remove"
+                                                 tabindex="-1">
+                                                <div class="modal-dialog">
+                                                    <form action="#{mvc.uri('CategorySystemsController#removeDescription', {'categorySystemIdentifier': CategorySystemDetailsModel.identifier, 'locale': entry.key })}"
+                                                          class="modal-content"
+                                                          method="post">
+                                                        <div class="modal-header">
+                                                            <h3 class="modal-description" id="categorysystem-description-#{entry.key}-remove-title">
+                                                                #{AdminMessages['categorysystems.details.description.table.actions.remove.dialog.title']}
+                                                            </h3>
+                                                            <button aria-label="#{AdminMessages['categorysystems.details.description.remove.dialog.close']}"
+                                                                    class="close"
+                                                                    data-dismiss="modal"
+                                                                    type="button">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>
+                                                                #{AdminMessages.getMessage('categorysystems.details.description.remove.dialog.message', [entry.key, entry.value])}
+                                                            </p>
+                                                            <input name="confirmed" 
+                                                                   type="hidden" 
+                                                                   value="true" />
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button class="btn btn-secondary" 
+                                                                    data-dismiss="modal"
+                                                                    type="button" >
+                                                                #{AdminMessages['categorysystems.details.description.remove.dialog.close']}
+                                                            </button>
+                                                            <button type="submit" class="btn btn-danger">
+                                                                #{AdminMessages['categorysystems.details.description.remove.dialog.submit']}
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -239,18 +600,88 @@
                 <h2>
                     #{AdminMessages['categorysystems.details.owners.heading']}
                 </h2>
-                <div class="text-right mb-2">
-                    <a class="btn btn-secondary"
-                       href="
-                       ">
-                        <svg class="bi"
-                             width="1em"
-                             height="1em"
-                             fill="currentColor">
-                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#circle-plus" />
-                        </svg>
-                        <span>#{AdminMessages['categorysystems.details.owners.add']}</span>
-                    </a>
+                <div class="mb-2">
+                    <div class="text-right">
+                        <button class="btn btn-secondary"
+                                data-target="#categorysystem-owner-add"
+                                data-toggle="modal"
+                                type="button">
+                            <svg class="bi"
+                                 width="1em"
+                                 height="1em"
+                                 fill="currentColor">
+                                <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#plus-circle" />
+                            </svg>
+                            <span>#{AdminMessages['categorysystems.details.owners.add']}</span>
+                        </button>
+                    </div>
+                    <div class="modal fade"
+                         data-backdrop="static"
+                         id="categorysystem-owner-add"
+                         tabindex="-1">
+                        <div class="modal-dialog">
+                            <form action="#{mvc.uri('CategorySystemsController#addOwner', {'categorySystemIdentifier': CategorySystemDetailsModel.identifier })}"
+                                  class="modal-content"
+                                  method="post">
+                                <div class="modal-header">
+                                    <h3 class="modal-title">
+                                        #{AdminMessages['categorysstems.details.owner.add.dialog.title']}
+                                    </h3>
+                                    <button aria-label="#{AdminMessages['categorysystems.details.owner.add.dialog.close']}"
+                                            class="close"
+                                            data-dismiss="modal"
+                                            type="button">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="categorysystem-owner-add-application">
+                                            #{AdminMessages['categorysystems.details.owner.add.dialog.application.label']}
+                                        </label>
+                                        <select aria-describedby="categorysystem-owner-add-application-help"
+                                                id="categorysystem-owner-add-appliaction"
+                                                name="applicationUuid"
+                                                required="true"
+                                                size="1">
+                                            <c:forEach items="#{CategorySystemDetailsModel.ownerOptions}" var="application">
+                                                <option value="#{application.applicationUuid}">
+                                                    #{application.applicationName}
+                                                </option>
+                                            </c:forEach>
+                                        </select>
+                                        <small class="form-text text-muted"
+                                               id="categorysystem-owner-add-application-help">
+                                            #{AdminMessages['categorysystems.details.owner.add.dialog.application.help']}
+                                        </small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="categorysystem-owner-add-context">
+                                            #{AdminMessages['categorysystems.details.owner.add.dialog.context.label']}
+                                        </label>
+                                        <input aria-describedby="categorysystem-owner-add-context-help"
+                                               id="categorysystem-owner-add-context"
+                                               name="context"
+                                               type="text" />
+                                        <small class="form-text text-muted"
+                                               id="categorysystem-owner-add-context-help">
+                                            #{AdminMessages['categorysystems.details.owner.add.dialog.context.help']}
+                                        </small>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button class="btn btn-secondary" 
+                                                data-dismiss="modal"
+                                                type="button" >
+                                            #{AdminMessages['categorysystems.details.owner.add.dialog.close']}
+                                        </button>
+                                        <button type="submit" class="btn btn-primary">
+                                            #{AdminMessages['categorysystems.details.owner.add.dialog.submit']}
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
                 <c:choose>
                     <c:when test="#{CategorySystemDetailsModel.getOwners().isEmpty()}">
@@ -259,7 +690,7 @@
                         </p>
                     </c:when>
                     <c:otherwise>
-                        <table>
+                        <table class="table table-hover">
                             <thead>
                                 <tr>
                                     <th>
@@ -284,16 +715,63 @@
                                             #{owner.context}
                                         </td>
                                         <td>
-                                            <button class="btn btn-danger"
-                                                    type="button">
-                                                <svg class="bi"
-                                                     width="1em"
-                                                     height="1em"
-                                                     fill="currentColor">
-                                                    <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#x-circle" />
-                                                </svg>
-                                                <span>#{AdminMessages['categorysystems.details.owners.remove']}</span>
-                                            </button>
+                                            <div class="text-center">
+                                                <button class="btn btn-danger"
+                                                        data-target="#categorysystem-owner-#{owner.uuid}-remove"
+                                                        data-toggle="modal"
+                                                        type="button">
+                                                    <svg class="bi"
+                                                         width="1em"
+                                                         height="1em"
+                                                         fill="currentColor">
+                                                        <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#x-circle" />
+                                                    </svg>
+                                                    <span>#{AdminMessages['categorysystems.details.owners.remove']}</span>
+                                                </button>
+                                            </div>
+                                            <div aria-describedby="categorysystem-owner-#{owner.uuid}-remove-title"
+                                                 aria-hidden="true"
+                                                 class="modal fade"
+                                                 data-backdrop="static"
+                                                 id="categorysystem-owner-#{owner.uuid}-remove"
+                                                 tabindex="-1">
+                                                <div class="modal-dialog">
+                                                    <form action="#{mvc.uri('CategorySystemsController#removeOwner', { 'categorySystemIdentifier': CategorySystemDetailsModel.identifier, 'applicationUuid': owner.uuid })}"
+                                                          class="modal-content"
+                                                          method="post">
+                                                        <div class="modal-header">
+                                                            <h3 class="modal-title"
+                                                                id="categorysystem-owner-#{owner.uuid}-remove-title">
+                                                                #{AdminMessages['categorysystems.details.owners.remove.title']}
+                                                            </h3>
+                                                            <button aria-label="#{AdminMessages['categorysystems.details.owners.remove.close']}"
+                                                                    class="close"
+                                                                    data-dismiss="modal"
+                                                                    type="button">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>
+                                                                #{AdminMessages.getMessage('categorysystems.details.owners.remove.message', [owner.ownerAppName])}
+                                                            </p>
+                                                            <input type="hidden"
+                                                                   name="confirmed" 
+                                                                   value="true" />
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button class="btn btn-secondary" 
+                                                                    data-dismiss="modal"
+                                                                    type="button" >
+                                                                #{AdminMessages['categorysystems.details.owners.remove.close']}
+                                                            </button>
+                                                            <button type="submit" class="btn btn-danger">
+                                                                #{AdminMessages['categorysystems.details.owners.remove.submit']}
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 </c:forEach>
