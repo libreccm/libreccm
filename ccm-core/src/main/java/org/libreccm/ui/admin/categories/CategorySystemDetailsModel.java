@@ -20,9 +20,7 @@ package org.libreccm.ui.admin.categories;
 
 import org.libreccm.categorization.Domain;
 import org.libreccm.categorization.DomainOwnership;
-import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.l10n.GlobalizationHelper;
-import org.libreccm.l10n.LocalizedTextsUtil;
 import org.libreccm.ui.Message;
 import org.libreccm.web.ApplicationRepository;
 import org.libreccm.web.CcmApplication;
@@ -82,6 +80,10 @@ public class CategorySystemDetailsModel {
     private List<CategorySystemOwnerRow> owners;
 
     private List<CategorySystemOwnerOption> ownerOptions;
+    
+    private String rootIdentifier;
+    
+    private List<CategoryTableRow> categories;
 
     private final List<Message> messages;
 
@@ -102,6 +104,14 @@ public class CategorySystemDetailsModel {
 
     public String getIdentifier() {
         return String.format("ID-%d", categorySystemId);
+    }
+    
+    public String getRootIdentifier() {
+        return String.format("UUID-%s", rootIdentifier);
+    }
+    
+    protected void setRootIdentifier(final String rootIdentifier) {
+        this.rootIdentifier = rootIdentifier;
     }
 
     public String getUuid() {
@@ -184,6 +194,10 @@ public class CategorySystemDetailsModel {
         return Collections.unmodifiableList(ownerOptions);
     }
 
+    public List<CategoryTableRow> getCategories() {
+        return Collections.unmodifiableList(categories);
+    }
+    
     public boolean isNew() {
         return categorySystemId == 0;
     }
@@ -286,6 +300,17 @@ public class CategorySystemDetailsModel {
             .stream()
             .filter(application -> !ownerApplications.contains(application))
             .map(CategorySystemOwnerOption::new)
+            .sorted()
+            .collect(Collectors.toList());
+        
+
+        rootIdentifier = String.format("UUID-%s", domain.getRoot().getUuid());
+        
+        categories = domain
+            .getRoot()
+            .getSubCategories()
+            .stream()
+            .map(CategoryTableRow::new)
             .sorted()
             .collect(Collectors.toList());
     }

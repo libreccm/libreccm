@@ -115,7 +115,7 @@
                                                 title="#{AdminMessages['categorysystems.details.title.heading']}"
                                                 unusedLocales="#{CategorySystemDetailsModel.unusedTitleLocales}"
                                                 values="#{CategorySystemDetailsModel.title}" />
-                
+
                 <libreccm:localizedStringEditor addMethod="CategorySystemsController#addDescription"
                                                 addButtonLabel="#{AdminMessages['categorysystems.details.description.add']}"
                                                 addDialogCancelLabel="#{AdminMessages['categorysystems.details.description.add.dialog.close']}"
@@ -315,6 +315,99 @@
                                                     </form>
                                                 </div>
                                             </div>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </c:otherwise>
+                </c:choose>
+
+                <h2>#{AdminMessages['categorysystems.details.categories.heading']}</h2>
+                <div class="mb-2">
+                    <div class="text-right">
+                        <a class="btn btn-secondary"
+                           data-target="#categorysystem-category-add"
+                           data-toggle="modal"
+                           href="#{mvc.uri('CategoriesController#newSubCategory', {'categoryIdentifier': CategorySystemDetailsModel.rootIdentifier})}"
+                           type="button">
+                            <bootstrap:svgIcon icon="plus-circle" />
+                            <span>#{AdminMessages['categorysystems.details.categories.add']}</span>
+                        </a>
+                    </div>
+                </div>
+                <c:choose>
+                    <c:when test="#{CategorySystemDetailsModel.categories.isEmpty()}">
+                        <p>
+                            #{AdminMessages['categorysystems.details.categories.none']}
+                        </p>
+                    </c:when>
+                    <c:otherwise>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        #{AdminMessages['categorysystems.details.categories.table.headings.name']}
+                                    </th>
+                                    <th>
+                                        #{AdminMessages['categorysystems.details.categories.table.headings.enabled']}
+                                    </th>
+                                    <th>
+                                        #{AdminMessages['categorysystems.details.categories.table.headings.visible']}
+                                    </th>
+                                    <th>
+                                        #{AdminMessages['categorysystems.details.categories.table.headings.abstract']}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach items="#{CategorySystemDetailsModel.categories}" 
+                                           var="category">
+                                    <tr>
+                                        <td>
+                                            <a href="#{mvc.uri('CategoriesController#getCategory', { 'categoryIdentifier': category.identifier})}">
+                                                #{category.name}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="#{category.enabled}">
+                                                    #{AdminMessages['categorysystems.details.categories.table.headings.enabled.true']}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    #{AdminMessages['categorysystems.details.categories.table.headings.enabled.false']}
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="#{category.visible}">
+                                                    #{AdminMessages['categorysystems.details.categories.table.headings.visible.true']}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    #{AdminMessages['categorysystems.details.categories.table.headings.visible.false']}
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="#{category.abstractCategory}">
+                                                    #{AdminMessages['categorysystems.details.categories.table.headings.abstract.true']}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    #{AdminMessages['categorysystems.details.categories.table.headings.abstract.false']}
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td class="text-center">
+                                            <button class="btn btn-danger"
+                                                    data-target="#categorysystem-categories-#{category.uuid}-delete"
+                                                    data-toggle="modal"
+                                                    type="button">
+                                                <bootstrap:svgIcon icon="x-circle" />
+                                                <span>#{AdminMessages['categorysystems.details.categories.delete']}</span>
+                                            </button>
+                                            <!-- ToDo: Delete Dialog -->
                                         </td>
                                     </tr>
                                 </c:forEach>
