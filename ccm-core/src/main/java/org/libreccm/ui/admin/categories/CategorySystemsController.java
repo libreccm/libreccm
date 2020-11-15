@@ -109,8 +109,7 @@ public class CategorySystemsController {
         switch (identifier.getType()) {
             case ID:
                 result = domainRepository.findById(
-                    Long.parseLong(identifier.getIdentifier()
-                    )
+                    Long.parseLong(identifier.getIdentifier())
                 );
                 break;
             case UUID:
@@ -659,8 +658,8 @@ public class CategorySystemsController {
             }
 
             return String.format(
-                "redirect:categorymanager/categorysystems/ID-%s/details",
-                categorySystemIdentifier
+                "redirect:categorymanager/categorysystems/ID-%d/details",
+                domain.getObjectId()
             );
         } else {
             categorySystemDetailsModel.addMessage(
@@ -734,8 +733,8 @@ public class CategorySystemsController {
             }
 
             return String.format(
-                "redirect:categorymanager/categorysystems/ID-%s/details",
-                categorySystemIdentifier
+                "redirect:categorymanager/categorysystems/ID-%d/details",
+                domain.getObjectId()
             );
         } else {
             categorySystemDetailsModel.addMessage(
