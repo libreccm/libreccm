@@ -252,12 +252,11 @@ public class CategorySystemsController {
     }
 
     @POST
-    @Path("/{categorySystemIdentifier}/title/add")
+    @Path("/{identifier}/title/add")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String addTitle(
-        @PathParam("categorySystemIdentifier")
-        final String categorySystemIdentifier,
+        @PathParam("identifier") final String categorySystemIdentifier,
         @FormParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
@@ -309,12 +308,11 @@ public class CategorySystemsController {
     }
 
     @POST
-    @Path("/{categorySystemIdentifier}/title/${locale}/edit")
+    @Path("/{identifier}/title/${locale}/edit")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String editTitle(
-        @PathParam("categorySystemIdentifier")
-        final String categorySystemIdentifier,
+        @PathParam("identifier") final String categorySystemIdentifier,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
@@ -366,12 +364,11 @@ public class CategorySystemsController {
     }
 
     @POST
-    @Path("/{categorySystemIdentifier}/title/${locale}/remove")
+    @Path("/{identifier}/title/${locale}/remove")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeTitle(
-        @PathParam("categorySystemIdentifier")
-        final String categorySystemIdentifier,
+        @PathParam("identifier") final String categorySystemIdentifier,
         @PathParam("locale") final String localeParam,
         @FormParam("confirmed")
         final String confirmed
@@ -427,12 +424,11 @@ public class CategorySystemsController {
     }
 
     @POST
-    @Path("/{categorySystemIdentifier}/description/add")
+    @Path("/{identifier}/description/add")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String addDescription(
-        @PathParam("categorySystemIdentifier")
-        final String categorySystemIdentifier,
+        @PathParam("identifier") final String categorySystemIdentifier,
         @FormParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
@@ -485,13 +481,12 @@ public class CategorySystemsController {
 
     @POST
     @Path(
-        "categorysystems/{categorySystemIdentifier}/description/${locale}/edit"
+        "categorysystems/{identifier}/description/${locale}/edit"
     )
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String editDescription(
-        @PathParam("categorySystemIdentifier")
-        final String categorySystemIdentifier,
+        @PathParam("identifier") final String categorySystemIdentifier,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
@@ -544,12 +539,11 @@ public class CategorySystemsController {
 
     @POST
     @Path(
-        "categorysystems/{categorySystemIdentifier}/description/${locale}/remove")
+        "categorysystems/{identifier}/description/${locale}/remove")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeDescription(
-        @PathParam("categorySystemIdentifier")
-        final String categorySystemIdentifier,
+        @PathParam("identifier") final String categorySystemIdentifier,
         @PathParam("locale") final String localeParam,
         @FormParam("confirmed")
         final String confirmed
