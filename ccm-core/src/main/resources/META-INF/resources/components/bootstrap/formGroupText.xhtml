@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
+<html xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns="http://www.w3.org/1999/xhtml"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
@@ -52,27 +53,23 @@
                       type="String" />
     </cc:interface>
     <cc:implementation>
-        <c:if test="#{cc.attrs.value.length() > 0}">
-            <pre>has value</pre>
-        </c:if>
-        <div class="form-group">
-            <label for="#{cc.attrs.inputId}">${cc.attrs.label}</label>
-            <input aria-describedby="#{cc.attrs.inputId}-help"
-                   id="#{cc.attrs.inputId}"
-                   maxlength="#{(not empty cc.attrs.maxlength) ? cc.attrs.maxlength : null}"
-                   minlength="#{(not empty cc.attrs.minlength) ? cc.attrs.minlength : null}"
-                   name="#{cc.attrs.name}"
-                   pattern="#{not empty cc.attrs.pattern ? cc.attrs.pattern : null}"
-                   placeholder="#{not empty cc.attrs.placeholder ? cc.attrs.placeholder: null}"
-                   required="#{cc.attrs.required ? 'required' : ''}"
-                   size="#{not empty cc.attrs.size ? cc.attrs.size : null}"
-                   value="#{not empty cc.attrs.value ? cc.attrs.value : ''}"
-                   type="text" />
-            <small class="form-text text-muted"
-                   id="#{cc.attrs.inputId}-help">
-                #{cc.attrs.help}
-            </small>
-        </div>
+        <bootstrap:formGroup help="#{cc.attrs.help}"
+                             inputId="#{cc.attrs.inputId}"
+                             label="#{cc.attrs.label}">
+            <f:facet name="input">
+                <input aria-describedby="#{cc.attrs.inputId}-help"
+                       id="#{cc.attrs.inputId}"
+                       maxlength="#{(not empty cc.attrs.maxlength) ? cc.attrs.maxlength : null}"
+                       minlength="#{(not empty cc.attrs.minlength) ? cc.attrs.minlength : null}"
+                       name="#{cc.attrs.name}"
+                       pattern="#{not empty cc.attrs.pattern ? cc.attrs.pattern : null}"
+                       placeholder="#{not empty cc.attrs.placeholder ? cc.attrs.placeholder: null}"
+                       required="#{cc.attrs.required ? 'required' : ''}"
+                       size="#{not empty cc.attrs.size ? cc.attrs.size : null}"
+                       value="#{not empty cc.attrs.value ? cc.attrs.value : ''}"
+                       type="text" />
+            </f:facet>
+        </bootstrap:formGroup>
     </cc:implementation>
 </html>
 

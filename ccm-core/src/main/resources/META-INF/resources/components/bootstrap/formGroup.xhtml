@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <cc:interface shortDescription="A base component for form groups. The control (input) is added by the input facet.">
+        <cc:attribute name="help"
+                      required="true"
+                      shortDescription="A short description of the input field"
+                      type="String" />
+        <cc:attribute name="inputId" 
+                      required="true" 
+                      shortDescription="The ID of the input field."
+                      type="String" />
+        <cc:attribute name="label"
+                      required="true"
+                      shortDescription="The label of the input field."
+                      type="String" />
+
+        <cc:facet name="input" required="true" />
+    </cc:interface>
+    <cc:implementation>
+        <div class="form-group">
+            <label for="#{cc.attrs.inputId}">${cc.attrs.label}</label>
+            <cc:renderFacet name="input" />
+            <small class="form-text text-muted"
+                   id="#{cc.attrs.inputId}-help">
+                #{cc.attrs.help}
+            </small>
+        </div>
+    </cc:implementation>
+</html>
+
