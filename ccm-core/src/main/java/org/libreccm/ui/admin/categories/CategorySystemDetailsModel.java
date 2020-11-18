@@ -107,7 +107,7 @@ public class CategorySystemDetailsModel {
     }
     
     public String getRootIdentifier() {
-        return String.format("UUID-%s", rootIdentifier);
+        return rootIdentifier;
     }
     
     protected void setRootIdentifier(final String rootIdentifier) {
