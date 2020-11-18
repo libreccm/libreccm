@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
@@ -17,6 +18,13 @@
         <ui:define name="main">
             <div class="container">
                 <h1>#{AdminMessages['categories.label']}</h1>
+                
+                <form action="#" method="post">
+                    <bootstrap:formGroupText help="test"
+                                             inputId="test"
+                                             label="Test"
+                                             name="test" />
+                </form>
                 <p>ToDo</p>
             </div>
         </ui:define>
