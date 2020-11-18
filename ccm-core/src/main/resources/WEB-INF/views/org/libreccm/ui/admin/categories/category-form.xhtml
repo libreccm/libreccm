@@ -5,20 +5,20 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
-        
+
         <ui:param name="activePage" value="categories" />
         <ui:param name="title" value="#{AdminMessages['categories.label']}" />
-    
+
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item active">
                 #{AdminMessages['categories.label']}
             </li>
         </ui:define>
-        
+
         <ui:define name="main">
             <div class="container">
                 <h1>#{AdminMessages['categories.label']}</h1>
-                
+
                 <form action="#" method="post">
                     <bootstrap:formGroupText help="test"
                                              inputId="test"
@@ -31,10 +31,74 @@
                                                name="price" 
                                                step="0.01" 
                                                value="10.0" />
+                    <bootstrap:formGroupDate help="Test of date form group"
+                                             inputId="dateTest"
+                                             label="Date Test"
+                                             max="2020-11-30"
+                                             min="2020-11-02"
+                                             name="dateTest"
+                                             step="7"
+                                             value="2020-11-02" />
+                    <bootstrap:formGroupTime help="Test of date form group"
+                                             inputId="dateTest"
+                                             label="Date Test"
+                                             max="08:00"
+                                             min="18:00"
+                                             name="dateTest"
+                                             step="900"
+                                             value="08:00" />
+                    <bootstrap:formGroupSearch help="search test"
+                                               inputId="searchtest"
+                                               label="Search Test"
+                                               name="searchtest" 
+                                               placeholder="Search" />
+                    <bootstrap:formGroupPassword help="password test"
+                                                 inputId="passwordtest"
+                                                 label="Password Test"
+                                                 name="passwordtest" 
+                                                 placeholder="Password" />
+                    <bootstrap:formGroupEmail help="email test"
+                                              inputId="emailtest"
+                                              label="Email Test"
+                                              name="emailtest" 
+                                              placeholder="foo@example.com" />
+                    <bootstrap:formGroupTel help="Tel test"
+                                            inputId="teltest"
+                                            label="Tel Test"
+                                            name="teltest" 
+                                            placeholder="00000 00000" />
+                    <bootstrap:formGroupFile help="File test"
+                                             inputId="filetest"
+                                             label="File Test"
+                                             name="filetest"  />
+                    <bootstrap:formGroupUrl help="URL test"
+                                            inputId="urltest"
+                                            label="URL Test"
+                                            name="urltest" 
+                                            placeholder="https://www.example.org/foo/bar" />
+                    <bootstrap:formGroupColor help="Color Test"
+                                              inputId="colortest"
+                                              label="Color"
+                                              name="color" />
+                    <bootstrap:formGroupRange help="A range"
+                                              inputId="rangetest"
+                                              label="Range"
+                                              max="20"
+                                              min="5"
+                                              name="rangetest" 
+                                              step="0.1" 
+                                              value="10.0" />
+                    <bootstrap:formGroupTextarea cols="80"
+                                                 help="Textarea Test"
+                                                 label="Textarea"
+                                                 inputId="textareatest"
+                                                 name="textareatest"
+                                                 rows="10" />
+
                 </form>
                 <p>ToDo</p>
             </div>
         </ui:define>
-    
+
     </ui:composition>
 </html>

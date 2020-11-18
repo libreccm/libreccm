@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite">
-    <cc:interface shortDescription="Component for a form group with a number input">
+    <cc:interface shortDescription="Component for a form group with a text input">
         <cc:attribute name="help"
                       required="true"
                       shortDescription="A short description of the input field"
@@ -14,17 +14,26 @@
                       required="true"
                       shortDescription="The label of the input field."
                       type="String" />
-        <cc:attribute name="max"
+        <cc:attribute name="maxlength" 
                       required="false"
-                      shortDescription="Maximum allowed value."
-                      type="String" />
-        <cc:attribute name="min"
+                      shortDescription="Maximum length of the text in this field."
+                      type="int" />
+        <cc:attribute name="minlength" 
                       required="false"
-                      shortDescription="Minimum allowed value."
-                      type="String" />
+                      shortDescription="Minium length of the text in this field."
+                      type="int" />
+        <cc:attribute default="false"
+                      name="multiple"
+                      required="false"
+                      shortDescription="Whether or not to allow multiple, comma-separated, e-mail addresses to be entered"
+                      type="boolean" />
         <cc:attribute name="name" 
                       required="true" 
-                      shortDescription="The name of the input field. This is also the name which is used to send the value of the input to the server." 
+                      shortDescription="The name of the input field. This is also the name which is used to send the value of the input to the server."
+                      type="String" />
+        <cc:attribute name="pattern"
+                      required="false"
+                      shortDescription="A RegEx pattern that the value entered into this field must match"
                       type="String" />
         <cc:attribute name="placeholder"
                       required="false"
@@ -35,11 +44,12 @@
                       shortDescription="Is the field required?"
                       required="false"
                       type="boolean" />
-        <cc:attribute name="step"
+        <cc:attribute name="size"
+                      shortDescription="Length of the field. Can be overwritten using CSS."
                       required="false"
-                      shortDescription="Stepping interval for the input"
-                      type="String" />
+                      type="int" />
         <cc:attribute name="value"
+                      default=""
                       required="false"
                       shortDescription="Value of the input field"
                       type="String" />
@@ -49,14 +59,16 @@
             <label for="#{cc.attrs.inputId}">${cc.attrs.label}</label>
             <input aria-describedby="#{cc.attrs.inputId}-help"
                    id="#{cc.attrs.inputId}"
-                   max="#{not empty cc.attrs.max ? cc.attrs.max : null}"
-                   min="#{not empty cc.attrs.min ? cc.attrs.min : null}"
+                   maxlength="#{(not empty cc.attrs.maxlength) ? cc.attrs.maxlength : null}"
+                   minlength="#{(not empty cc.attrs.minlength) ? cc.attrs.minlength : null}"
+                   multiple="#{cc.attrs.multiple ? 'multiple' : null}"
                    name="#{cc.attrs.name}"
-                   placeholder="#{not empty cc.attrs.placeholder ? cc.attrs.placeholder : null}"
+                   pattern="#{not empty cc.attrs.pattern ? cc.attrs.pattern : null}"
+                   placeholder="#{not empty cc.attrs.placeholder ? cc.attrs.placeholder: null}"
                    required="#{cc.attrs.required ? 'required' : null}"
-                   step="#{cc.attrs.step}"
-                   type="number"
-                   value="#{not empty cc.attrs.value ? cc.attrs.value : null}" />
+                   size="#{not empty cc.attrs.size ? cc.attrs.size : null}"
+                   type="email" 
+                   value="#{not empty cc.attrs.value ? cc.attrs.value : ''}" />
             <small class="form-text text-muted"
                    id="#{cc.attrs.inputId}-help">
                 #{cc.attrs.help}
@@ -64,4 +76,7 @@
         </div>
     </cc:implementation>
 </html>
+
+
+
 

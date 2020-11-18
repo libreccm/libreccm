@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite">
-    <cc:interface shortDescription="Component for a form group with a number input">
+    <cc:interface shortDescription="Component for a form grouo with an HTML date input field">
         <cc:attribute name="help"
                       required="true"
                       shortDescription="A short description of the input field"
@@ -16,19 +16,15 @@
                       type="String" />
         <cc:attribute name="max"
                       required="false"
-                      shortDescription="Maximum allowed value."
+                      shortDescription="The latest time to accept."
                       type="String" />
         <cc:attribute name="min"
                       required="false"
-                      shortDescription="Minimum allowed value."
+                      shortDescription="The earliest time to accept as a valid input"
                       type="String" />
         <cc:attribute name="name" 
                       required="true" 
                       shortDescription="The name of the input field. This is also the name which is used to send the value of the input to the server." 
-                      type="String" />
-        <cc:attribute name="placeholder"
-                      required="false"
-                      shortDescription="A placeholder to show in the empty field."
                       type="String" />
         <cc:attribute default="false"
                       name="required"
@@ -37,8 +33,8 @@
                       type="boolean" />
         <cc:attribute name="step"
                       required="false"
-                      shortDescription="Stepping interval for the input"
-                      type="String" />
+                      shortDescription="The stepping interval (in seconds)"
+                      type="int" />
         <cc:attribute name="value"
                       required="false"
                       shortDescription="Value of the input field"
@@ -49,14 +45,12 @@
             <label for="#{cc.attrs.inputId}">${cc.attrs.label}</label>
             <input aria-describedby="#{cc.attrs.inputId}-help"
                    id="#{cc.attrs.inputId}"
-                   max="#{not empty cc.attrs.max ? cc.attrs.max : null}"
-                   min="#{not empty cc.attrs.min ? cc.attrs.min : null}"
+                   max="#{cc.attrs.max}"
+                   min="#{cc.attrs.min}"
                    name="#{cc.attrs.name}"
-                   placeholder="#{not empty cc.attrs.placeholder ? cc.attrs.placeholder : null}"
-                   required="#{cc.attrs.required ? 'required' : null}"
                    step="#{cc.attrs.step}"
-                   type="number"
-                   value="#{not empty cc.attrs.value ? cc.attrs.value : null}" />
+                   type="time" 
+                   value="#{cc.attrs.value}" />
             <small class="form-text text-muted"
                    id="#{cc.attrs.inputId}-help">
                 #{cc.attrs.help}
