@@ -48,6 +48,7 @@
         <div class="form-group">
             <label for="#{cc.attrs.inputId}">${cc.attrs.label}</label>
             <input aria-describedby="#{cc.attrs.inputId}-help"
+                   class="custom-range"
                    id="#{cc.attrs.inputId}"
                    max="#{not empty cc.attrs.max ? cc.attrs.max : null}"
                    min="#{not empty cc.attrs.min ? cc.attrs.min : null}"
@@ -55,7 +56,7 @@
                    placeholder="#{not empty cc.attrs.placeholder ? cc.attrs.placeholder : null}"
                    required="#{cc.attrs.required ? 'required' : null}"
                    step="#{cc.attrs.step}"
-                   type="number"
+                   type="range"
                    value="#{not empty cc.attrs.value ? cc.attrs.value : null}" />
             <small class="form-text text-muted"
                    id="#{cc.attrs.inputId}-help">

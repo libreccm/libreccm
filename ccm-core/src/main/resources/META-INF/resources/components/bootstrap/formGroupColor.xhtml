@@ -14,31 +14,15 @@
                       required="true"
                       shortDescription="The label of the input field."
                       type="String" />
-        <cc:attribute name="max"
-                      required="false"
-                      shortDescription="Maximum allowed value."
-                      type="String" />
-        <cc:attribute name="min"
-                      required="false"
-                      shortDescription="Minimum allowed value."
-                      type="String" />
         <cc:attribute name="name" 
                       required="true" 
                       shortDescription="The name of the input field. This is also the name which is used to send the value of the input to the server." 
-                      type="String" />
-        <cc:attribute name="placeholder"
-                      required="false"
-                      shortDescription="A placeholder to show in the empty field."
                       type="String" />
         <cc:attribute default="false"
                       name="required"
                       shortDescription="Is the field required?"
                       required="false"
                       type="boolean" />
-        <cc:attribute name="step"
-                      required="false"
-                      shortDescription="Stepping interval for the input"
-                      type="String" />
         <cc:attribute name="value"
                       required="false"
                       shortDescription="Value of the input field"
@@ -49,13 +33,9 @@
             <label for="#{cc.attrs.inputId}">${cc.attrs.label}</label>
             <input aria-describedby="#{cc.attrs.inputId}-help"
                    id="#{cc.attrs.inputId}"
-                   max="#{not empty cc.attrs.max ? cc.attrs.max : null}"
-                   min="#{not empty cc.attrs.min ? cc.attrs.min : null}"
                    name="#{cc.attrs.name}"
-                   placeholder="#{not empty cc.attrs.placeholder ? cc.attrs.placeholder : null}"
                    required="#{cc.attrs.required ? 'required' : null}"
-                   step="#{cc.attrs.step}"
-                   type="number"
+                   type="color"
                    value="#{not empty cc.attrs.value ? cc.attrs.value : null}" />
             <small class="form-text text-muted"
                    id="#{cc.attrs.inputId}-help">
@@ -64,4 +44,5 @@
         </div>
     </cc:implementation>
 </html>
+
 
