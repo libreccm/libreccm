@@ -9,12 +9,12 @@
     <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
 
         <ui:param name="activePage" value="categories" />
-        <ui:param name="title" value="#{AdminMessages['categories.label']}" />
+        <ui:param name="title" value="#{AdminMessages['categorymanager.label']}" />
 
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="#{mvc.uri('CategorySystemsController#getCategorySystems')}">
-                    #{AdminMessages['categories.label']}
+                    #{AdminMessages['categorymanager.label']}
                 </a>
             </li>
             <li class="breadcrumb-item active">
@@ -308,8 +308,7 @@
                 <div class="mb-2">
                     <div class="text-right">
                         <a class="btn btn-secondary"
-                           href="#{mvc.uri('CategoriesController#newSubCategory', {'categoryIdentifier': CategorySystemDetailsModel.rootIdentifier})}"
-                           type="button">
+                           href="#{mvc.uri('CategoriesController#newSubCategory', {'categoryIdentifier': CategorySystemDetailsModel.rootIdentifier})}">
                             <bootstrap:svgIcon icon="plus-circle" />
                             <span>#{AdminMessages['categorysystems.details.categories.add']}</span>
                         </a>
@@ -378,15 +377,17 @@
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
-                                        <td class="text-center">
-                                            <button class="btn btn-danger"
-                                                    data-target="#categorysystem-categories-#{category.uuid}-delete"
-                                                    data-toggle="modal"
-                                                    type="button">
-                                                <bootstrap:svgIcon icon="x-circle" />
-                                                <span>#{AdminMessages['categorysystems.details.categories.delete']}</span>
-                                            </button>
-                                            <!-- ToDo: Delete Dialog -->
+                                        <td>
+                                            <libreccm:deleteDialog 
+                                                actionTarget="#{mvc.uri('CategoriesController#removeSubCategory', {'categoryIdentifier': category.identifier})}"
+                                                buttonText="#{AdminMeesages['categories.details.subcategories.delete']}"
+                                                buttonTextClass="text-center"
+                                                cancelLabel="#{AdminMessages['categories.details.subcategories.delete.cancel']}"
+                                                confirmLabel="#{AdminMessages['categories.details.subcategories.delete.confirm']}"
+                                                dialogId="categories-subcategories-#{category.categoryId}-delete"
+                                                dialogTitle="#{AdminMessages['categories.details.subcategories.delete.title']}"
+                                                message="#{AdminMessages.getMessage('categories.details.subcategories.delete.message', [category.path])}"
+                                                />
                                         </td>
                                     </tr>
                                 </c:forEach>

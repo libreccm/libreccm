@@ -213,19 +213,24 @@
                                 <div class="modal-header">
                                     <c:choose>
                                         <c:when test="#{cc.attrs.headingLevel == 1}">
-                                            <h2>#{cc.attrs.addDialogTitle}</h2>
+                                            <h2 class="modal-title"
+                                                id="#{cc.attrs.editorId}-dialog-title">#{cc.attrs.addDialogTitle}</h2>
                                         </c:when>
                                         <c:when test="#{cc.attrs.headingLevel == 2}">
-                                            <h3>#{cc.attrs.addDialogTitle}</h3>
+                                            <h3 class="modal-title"
+                                                id="#{cc.attrs.editorId}-dialog-title">#{cc.attrs.addDialogTitle}</h3>
                                         </c:when>
                                         <c:when test="#{cc.attrs.headingLevel == 3}">
-                                            <h4>#{cc.attrs.addDialogTitle}</h4>
+                                            <h4 class="modal-title"
+                                                id="#{cc.attrs.editorId}-dialog-title">#{cc.attrs.addDialogTitle}</h4>
                                         </c:when>
                                         <c:when test="#{cc.attrs.headingLevel == 4}">
-                                            <h5>#{cc.attrs.addDialogTitle}</h5>
+                                            <h5 class="modal-title"
+                                                id="#{cc.attrs.editorId}-dialog-title">#{cc.attrs.addDialogTitle}</h5>
                                         </c:when>
                                         <c:when test="#{cc.attrs.headingLevel == 5}">
-                                            <h6>#{cc.attrs.addDialogTitle}</h6>
+                                            <h6 class="modal-title"
+                                                id="#{cc.attrs.editorId}-dialog-title">#{cc.attrs.addDialogTitle}</h6>
                                         </c:when>
                                         <c:otherwise>
                                             <div>#{cc.attrs.addDialogTitle}</div>

@@ -19,7 +19,7 @@
                       type="String" />
         <cc:attribute name="buttonText"
                       required="true"
-                      shortDescription="Text for the button toggleing the modal form."
+                      shortDescription="Text of the button toggleing the modal form."
                       type="String" />
         <cc:attribute name="buttonTextClass"
                       default=""
@@ -28,7 +28,7 @@
                       type="String" />
         <cc:attribute name="dialogId"
                       required="true"
-                      shortDescription="ID for the dialog."
+                      shortDescription="ID of the dialog."
                       type="String" />
         <cc:attribute name="method"
                       default="post"
@@ -41,8 +41,7 @@
     </cc:interface>
     <cc:implementation>
         <div class="#{cc.attrs.buttonTextClass}">
-            <button aria-labelledby="#{cc.attrs.dialogId}-title"
-                class="btn #{cc.attrs.buttonClass}"
+            <button class="btn #{cc.attrs.buttonClass}"
                     data-target="##{cc.attrs.dialogId}"
                     data-toggle="modal"
                     type="button">
@@ -52,7 +51,9 @@
                 <span>#{cc.attrs.buttonText}</span>
             </button>
         </div>
-        <div class="modal fade"
+        <div aria-labelledby="#{cc.attrs.dialogId}-title"
+             aria-hidden="true"
+             class="modal fade"
              data-backdrop="static"
              id="#{cc.attrs.dialogId}"
              tabindex="-1">
