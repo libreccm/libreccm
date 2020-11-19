@@ -94,6 +94,18 @@
                                                  inputId="textareatest"
                                                  name="textareatest"
                                                  rows="10" />
+                    <bootstrap:formGroupSelect help="Select Test 1"
+                                               label="choose an option"
+                                               inputId="selecttest1"
+                                               name="selecttest1" 
+                                               options="#{CategoryDetailsModel.options}" />
+                    <bootstrap:formGroupSelect help="Select Test 2"
+                                               label="choose an option"
+                                               inputId="selecttest2"
+                                               name="selecttest2" 
+                                               options="#{CategoryDetailsModel.options}" 
+                                               selectedOptions="#{CategoryDetailsModel.selectedOptions}" 
+                                               size="3" />
 
                 </form>
                 <p>ToDo</p>

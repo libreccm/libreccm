@@ -23,9 +23,12 @@ import org.libreccm.ui.Message;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -118,6 +121,26 @@ public class CategoryDetailsModel {
         return categoryOrder;
     }
 
+    /**
+     * Only for testing components
+     * @return 
+     */
+    public Map<String, String> getOptions() {
+        final Map<String, String> options = new TreeMap<>();
+        options.put("alpha", "Option Alpha");
+        options.put("bravo", "Option Bravo");
+        options.put("charlie", "Option Charlie");
+        options.put("delta", "Option Delta");
+        options.put("echo", "Option Echo");
+        return options;
+    }
+    
+    public Set<String> getSelectedOptions() {
+        final Set<String> selectedOptions = new HashSet<>();
+        selectedOptions.add("delta");
+        return selectedOptions;
+    }
+    
     public List<Message> getMessages() {
         return Collections.unmodifiableList(messages);
     }
