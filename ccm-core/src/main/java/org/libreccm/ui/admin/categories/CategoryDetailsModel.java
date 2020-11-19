@@ -19,6 +19,7 @@
 package org.libreccm.ui.admin.categories;
 
 import org.libreccm.categorization.Category;
+import org.libreccm.categorization.CategoryManager;
 import org.libreccm.ui.Message;
 
 import java.util.ArrayList;
@@ -28,10 +29,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.transaction.Transactional;
 
@@ -43,6 +44,9 @@ import javax.transaction.Transactional;
 @Named("CategoryDetailsModel")
 public class CategoryDetailsModel {
 
+    @Inject
+    private CategoryManager categoryManager;
+
     private long categoryId;
 
     private String uuid;
@@ -50,6 +54,8 @@ public class CategoryDetailsModel {
     private String uniqueId;
 
     private String name;
+
+    private String path;
 
     private Map<String, String> title;
 
@@ -69,12 +75,18 @@ public class CategoryDetailsModel {
 
     private final List<Message> messages;
 
+    private Set<String> invalidFields;
+
     public CategoryDetailsModel() {
         this.messages = new ArrayList<>();
     }
 
     public long getCategoryId() {
         return categoryId;
+    }
+
+    public String getIdentifier() {
+        return String.format("ID-%d", categoryId);
     }
 
     public String getUuid() {
@@ -87,6 +99,10 @@ public class CategoryDetailsModel {
 
     public String getName() {
         return name;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public Map<String, String> getTitle() {
@@ -117,43 +133,36 @@ public class CategoryDetailsModel {
         return parentCategory;
     }
 
+    protected void setParentCategory(final Category parent) {
+        parentCategory = buildCategoryNodeModel(parent);
+    }
+
     public long getCategoryOrder() {
         return categoryOrder;
     }
 
-    /**
-     * Only for testing components
-     * @return 
-     */
-    public Map<String, String> getOptions() {
-        final Map<String, String> options = new TreeMap<>();
-        options.put("alpha", "Option Alpha");
-        options.put("bravo", "Option Bravo");
-        options.put("charlie", "Option Charlie");
-        options.put("delta", "Option Delta");
-        options.put("echo", "Option Echo");
-        return options;
+    public boolean isNew() {
+        return categoryId == 0;
     }
-    
-    public Set<String> getSelectedOptions() {
-        final Set<String> selectedOptions = new HashSet<>();
-        selectedOptions.add("delta");
-        return selectedOptions;
-    }
-    
-    public Set<String> getMultipleSelectedOptions() {
-        final Set<String> selectedOptions = new HashSet<>();
-        selectedOptions.add("delta");
-        selectedOptions.add("bravo");
-        return selectedOptions;
-    }
-    
+
     public List<Message> getMessages() {
         return Collections.unmodifiableList(messages);
     }
 
     public void addMessage(final Message message) {
         messages.add(message);
+    }
+
+    public Set<String> getInvalidFields() {
+        return Collections.unmodifiableSet(invalidFields);
+    }
+
+    protected void addInvalidField(final String invalidField) {
+        invalidFields.add(invalidField);
+    }
+
+    protected void setInvalidFields(final Set<String> invalidFields) {
+        this.invalidFields = new HashSet<>(invalidFields);
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -164,6 +173,7 @@ public class CategoryDetailsModel {
         uuid = category.getUuid();
         uniqueId = category.getUniqueId();
         name = category.getName();
+        path = categoryManager.getCategoryPath(category);
         title = category
             .getTitle()
             .getValues()
@@ -192,11 +202,22 @@ public class CategoryDetailsModel {
         subCategories = category
             .getSubCategories()
             .stream()
-            .map(CategoryNodeModel::new)
+            .map(this::buildCategoryNodeModel)
             .sorted()
             .collect(Collectors.toList());
-        parentCategory = new CategoryNodeModel(category.getParentCategory());
+        parentCategory = buildCategoryNodeModel(category.getParentCategory());
         categoryOrder = category.getCategoryOrder();
+    }
+
+    private CategoryNodeModel buildCategoryNodeModel(final Category category) {
+        final CategoryNodeModel model = new CategoryNodeModel();
+        model.setCategoryId(category.getObjectId());
+        model.setUuid(category.getUuid());
+        model.setUniqueId(category.getUniqueId());
+        model.setName(category.getName());
+        model.setPath(categoryManager.getCategoryPath(category));
+        model.setCategoryOrder(category.getCategoryOrder());
+        return model;
     }
 
 }

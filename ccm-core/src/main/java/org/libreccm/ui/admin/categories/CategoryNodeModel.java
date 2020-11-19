@@ -28,45 +28,70 @@ import java.util.Objects;
  */
 public class CategoryNodeModel implements Comparable<CategoryNodeModel> {
 
-    private final long categoryId;
+    private long categoryId;
 
-    private final String uuid;
+    private String uuid;
 
-    private final String uniqueId;
+    private String uniqueId;
 
-    private final String name;
+    private String name;
+    
+    private String path;
 
-    private final long categoryOrder;
-
-    public CategoryNodeModel(final Category category) {
-        Objects.requireNonNull(category);
-        categoryId = category.getObjectId();
-        uuid = category.getUuid();
-        uniqueId = category.getUniqueId();
-        categoryOrder = category.getCategoryOrder();
-        name = category.getName();
-    }
+    private long categoryOrder;
 
     public long getCategoryId() {
         return categoryId;
     }
 
+    protected void setCategoryId(final long categoryId) {
+        this.categoryId = categoryId;
+    }
+    
+    public String getIdentifier() {
+        return String.format("ID-%d", categoryId);
+    }
+    
     public String getUuid() {
         return uuid;
+    }
+    
+    protected void setUuid(final String uuid) {
+        this.uuid = uuid;
     }
 
     public String getUniqueId() {
         return uniqueId;
     }
+    
+    protected void setUniqueId(final String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
 
     public String getName() {
         return name;
+    }
+    
+    protected void setName(final String name) {
+        this.name = name;
+    }
+    
+    public String getPath() {
+        return path;
+    }
+    
+    protected void setPath(final String path) {
+        this.path = path;
     }
 
     public long getCategoryOrder() {
         return categoryOrder;
     }
 
+    protected void setCategoryOrder(final long categoryOrder) {
+        this.categoryOrder = categoryOrder;
+    }
+    
     @Override
     public int compareTo(final CategoryNodeModel other) {
         int result = Long.compare(

@@ -76,23 +76,19 @@ public class CategoryFormController {
     private boolean enabled;
 
     @FormParam("visible")
-    private boolean visisble;
+    private boolean visible;
 
     @FormParam("abstractCategory")
     private boolean abstractCategory;
 
-    @FormParam("categoryOrder")
-    private long categoryOrder;
-
-    @FormParam("parentCategoryIdentifier")
-    private String parentCategoryIdentifier;
-
     @POST
-    @Path("/new")
+    @Path("/{parentCategoryIdentifier}/new")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
-    public String createCategory() {
+    public String createCategory(
+        @PathParam("parentCategoryIdentifier") final String parentCategoryIdentifier
+    ) {
         final Identifier parentIdentifier = identifierParser.parseIdentifier(
             parentCategoryIdentifier
         );
@@ -118,9 +114,8 @@ public class CategoryFormController {
             category.setUniqueId(uniqueId);
             category.setName(name);
             category.setEnabled(enabled);
-            category.setVisible(visisble);
+            category.setVisible(visible);
             category.setAbstractCategory(abstractCategory);
-            category.setCategoryOrder(categoryOrder);
 
             categoryRepository.save(category);
             categoryManager.addSubCategoryToCategory(category, parentCategory);
@@ -152,7 +147,7 @@ public class CategoryFormController {
         final String categoryIdentifierParam
     ) {
         final Identifier identifier = identifierParser.parseIdentifier(
-            parentCategoryIdentifier
+            categoryIdentifierParam
         );
         final Optional<Category> result;
         switch (identifier.getType()) {
@@ -175,12 +170,11 @@ public class CategoryFormController {
             category.setUniqueId(uniqueId);
             category.setName(name);
             category.setEnabled(enabled);
-            category.setVisible(visisble);
+            category.setVisible(visible);
             category.setAbstractCategory(abstractCategory);
-            category.setCategoryOrder(categoryOrder);
-            
+
             categoryRepository.save(category);
-            
+
             return String.format(
                 "redirect:categorymanager/categories/ID-%s",
                 category.getObjectId()
