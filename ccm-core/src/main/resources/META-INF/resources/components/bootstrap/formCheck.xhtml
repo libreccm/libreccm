@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+    <cc:interface shortDescription="Component for a single checkbox">
+        <cc:attribute default="false"
+                      name="checked"
+                      shortDescription="Is the checkbox selected?"
+                      required="false"
+                      type="boolean" />
+        <cc:attribute name="inputId" 
+                      required="true" 
+                      shortDescription="The ID of the input field."
+                      type="String" />
+        <cc:attribute name="label"
+                      required="true"
+                      shortDescription="The label of the input field."
+                      type="String" />
+        <cc:attribute name="name" 
+                      required="true" 
+                      shortDescription="The name of the input field. This is also the name which is used to send the value of the input to the server." 
+                      type="String" />
+        <cc:attribute default="false" 
+                      name="required"
+                      shortDescription="Is the field required?"
+                      required="false"
+                      type="boolean" />
+        <cc:attribute default="on"
+                      name="value"
+                      shortDescription="Value of the checkbox"
+                      required="false"
+                      type="String" />
+    </cc:interface>
+    <cc:implementation>
+        <div class="form-check">
+            <input class="form-check-input" 
+                   id="#{cc.attrs.inputId}"
+                   name="#{cc.attrs.name}"
+                   type="checkbox"
+                   value="#{cc.attrs.value}" />
+            <label for="#{cc.attrs.inputId}">#{cc.attrs.label}</label>
+        </div>
+    </cc:implementation>
+</html>
