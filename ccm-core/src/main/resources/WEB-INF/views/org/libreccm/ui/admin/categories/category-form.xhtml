@@ -107,6 +107,46 @@
                                                selectedOptions="#{CategoryDetailsModel.selectedOptions}" 
                                                size="3" />
 
+                    <bootstrap:formGroupSelect help="Select Test 2"
+                                               label="choose an option"
+                                               inputId="selecttest2"
+                                               multiple="true"
+                                               name="selecttest2" 
+                                               options="#{CategoryDetailsModel.options}" 
+                                               selectedOptions="#{CategoryDetailsModel.multipleSelectedOptions}" 
+                                               size="3" />
+                    <bootstrap:formCheck label="Are you sure?"
+                                         inputId="checkboxtest1"
+                                         name="checkboxtest1" />
+                    <bootstrap:formGroupChecks help="Checkbox Test 1"
+                                               inputId="checkboxes1"
+                                               label="Checkboxes 1"
+                                               name="checkboxes1"
+                                               options="#{CategoryDetailsModel.options}" />
+                    <bootstrap:formGroupChecks help="Checkbox Test2 "
+                                               inputId="checkboxes2"
+                                               label="Checkboxes 2"
+                                               name="checkboxes2"
+                                               selectedOptions="#{CategoryDetailsModel.selectedOptions}"
+                                               options="#{CategoryDetailsModel.options}" />
+                    <bootstrap:formGroupChecks help="Checkbox Test 3"
+                                               inputId="checkboxes3"
+                                               label="Checkboxes 3"
+                                               name="checkboxes3"
+                                               selectedOptions="#{CategoryDetailsModel.multipleSelectedOptions}"
+                                               options="#{CategoryDetailsModel.options}" />
+                    
+                    <bootstrap:formGroupRadio help="Radio Test 1"
+                                               inputId="radio1"
+                                               label="Radio 1"
+                                               name="radio1"
+                                               options="#{CategoryDetailsModel.options}" />
+                    <bootstrap:formGroupRadio help="Radio Test 2 "
+                                               inputId="radios2"
+                                               label="Radio 2"
+                                               name="radio2"
+                                               selectedOption="charlie"
+                                               options="#{CategoryDetailsModel.options}" />
                 </form>
                 <p>ToDo</p>
             </div>

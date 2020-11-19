@@ -141,6 +141,13 @@ public class CategoryDetailsModel {
         return selectedOptions;
     }
     
+    public Set<String> getMultipleSelectedOptions() {
+        final Set<String> selectedOptions = new HashSet<>();
+        selectedOptions.add("delta");
+        selectedOptions.add("bravo");
+        return selectedOptions;
+    }
+    
     public List<Message> getMessages() {
         return Collections.unmodifiableList(messages);
     }
