@@ -336,6 +336,9 @@
                                     <th>
                                         #{AdminMessages['categorysystems.details.categories.table.headings.abstract']}
                                     </th>
+                                    <th class="text-center">
+                                        #{AdminMessages['categorysystems.details.categories.table.headings.actions']}
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -380,7 +383,7 @@
                                         <td>
                                             <libreccm:deleteDialog 
                                                 actionTarget="#{mvc.uri('CategoriesController#removeSubCategory', {'categoryIdentifier': category.identifier})}"
-                                                buttonText="#{AdminMeesages['categories.details.subcategories.delete']}"
+                                                buttonText="#{AdminMessages['categories.details.subcategories.delete']}"
                                                 buttonTextClass="text-center"
                                                 cancelLabel="#{AdminMessages['categories.details.subcategories.delete.cancel']}"
                                                 confirmLabel="#{AdminMessages['categories.details.subcategories.delete.confirm']}"

@@ -24,7 +24,7 @@
                 </c:when>
                 <c:otherwise>
                     <li class="breadcrumb-item active">
-                        #{AdminMessages.getMessage('categories.edit.breadcrumb', CategoryDetailsModel.name)}
+                        #{AdminMessages.getMessage('categories.edit.breadcrumb', [ CategoryDetailsModel.name ])}
                     </li>
                 </c:otherwise>
             </c:choose>
@@ -35,44 +35,49 @@
                 <h1>
                     <c:choose>
                         <c:when test="#{CategoryDetailsModel.new}">
-                            #{AdminMessage.getMessage('categories.new.label', CategoryDetailsModel.parent.path)}
+                            #{AdminMessage.getMessage('categories.new.label', [ CategoryDetailsModel.parent.path ])}
                         </c:when>
                         <c:otherwise>
-                            #{AdminMessage.getMessage('categories.edit.label', CategoryDetailsModel.path)}
+                            #{AdminMessage.getMessage('categories.edit.label', [ CategoryDetailsModel.path ])}
                         </c:otherwise>
                     </c:choose>
                     #{AdminMessages['categories.label']}
                 </h1>
 
-                <form action="#{CategoryDetailsModel.new ? mvc.uri('CategoryFormController#createCategory', {'parentCategoryIdentifier', CategoryDetailsModel.parentCategory.identifier }) : mvc.uri('CategoryFormController#updateCategory', {'categoryIdentifier', CategoryDetailsModel.identifier })}" 
+                <form action="#{CategoryDetailsModel.new ? mvc.uri('CategoryFormController#createCategory', {'parentCategoryIdentifier': CategoryDetailsModel.parentCategory.identifier }) : mvc.uri('CategoryFormController#updateCategory', {'categoryIdentifier': CategoryDetailsModel.identifier })}" 
                       method="post">
                     <bootstrap:formGroupText help="#{AdminMessages['categories.form.name.help']}" 
                                              inputId="name" 
                                              label="#{AdminMessages['categories.form.name.label']}" 
                                              name="name" 
                                              pattern="[\\w-.]*"
-                                             required="true" />
+                                             required="true"
+                                             value="#{CategoryDetailsModel.name}" />
                     <bootstrap:formGroupText help="#{AdminMessages['categories.form.uniqueId.help']}" 
                                              inputId="uniqueId" 
                                              label="#{AdminMessages['categories.form.uniqueId.label']}" 
                                              name="uniqueId" 
-                                             required="false" />
+                                             required="false" 
+                                             value="#{CategoryDetailsModel.uniqueId}" />
                     <bootstrap:formCheck label="#{AdminMessages['categories.form.enabled.label']}"
                                          inputId="enabled"
-                                         name="enabled" />
+                                         name="enabled" 
+                                         value="#{CategoryDetailsModel.new ? true : CategoryDetailsModel.enabled}" />
                     <bootstrap:formCheck label="#{AdminMessages['categories.form.visible.label']}"
                                          inputId="visible"
-                                         name="visible" />
+                                         name="visible"
+                                         value="#{CategoryDetailsModel.new ? true : CategoryDetailsModel.visible}"/>
                     <bootstrap:formCheck label="#{AdminMessages['categories.form.abstractCategory.label']}"
                                          inputId="abstractCategory"
-                                         name="abstractCategory" />
+                                         name="abstractCategory"
+                                         value="#{CategoryDetailsModel.new ? false : CategoryDetailsModel.abstractCategory}" />
                     <a class="btn btn-warning" 
-                       href="#{mvc.uri('CategorySystemsController#getCategorySystems')}">
+                       href="#{mvc.uri('CategoriesController#getCategory', {'categoryIdentifier': CategoryDetailsModel.identifier })}">
                         #{AdminMessages['categories.form.buttons.cancel']}
                     </a>
                     <button class="btn btn-success" type="submit">
                         <c:choose>
-                            <c:when test="#{CategorySystemDetailsModel.new}">
+                            <c:when test="#{CategoryDetailsModel.new}">
                                 #{AdminMessages['categories.form.buttons.create']}
                             </c:when>
                             <c:otherwise>

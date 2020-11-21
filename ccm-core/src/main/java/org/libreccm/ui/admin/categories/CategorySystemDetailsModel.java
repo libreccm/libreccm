@@ -18,6 +18,8 @@
  */
 package org.libreccm.ui.admin.categories;
 
+import org.libreccm.categorization.Category;
+import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.Domain;
 import org.libreccm.categorization.DomainOwnership;
 import org.libreccm.l10n.GlobalizationHelper;
@@ -55,6 +57,9 @@ public class CategorySystemDetailsModel {
     private ApplicationRepository applicationRepository;
 
     @Inject
+    private CategoryManager categoryManager;
+    
+    @Inject
     private GlobalizationHelper globalizationHelper;
 
     private long categorySystemId;
@@ -83,7 +88,7 @@ public class CategorySystemDetailsModel {
     
     private String rootIdentifier;
     
-    private List<CategoryTableRow> categories;
+    private List<CategoryNodeModel> categories;
 
     private final List<Message> messages;
 
@@ -194,7 +199,7 @@ public class CategorySystemDetailsModel {
         return Collections.unmodifiableList(ownerOptions);
     }
 
-    public List<CategoryTableRow> getCategories() {
+    public List<CategoryNodeModel> getCategories() {
         return Collections.unmodifiableList(categories);
     }
     
@@ -238,6 +243,7 @@ public class CategorySystemDetailsModel {
                 .withZone(ZoneOffset.systemDefault())
                 .format(domain.getReleased());
         }
+       
         final List<Locale> availableLocales = globalizationHelper
             .getAvailableLocales();
         title = domain
@@ -310,7 +316,7 @@ public class CategorySystemDetailsModel {
             .getRoot()
             .getSubCategories()
             .stream()
-            .map(CategoryTableRow::new)
+            .map(this::buildCategoryTableRow)
             .sorted()
             .collect(Collectors.toList());
     }
@@ -330,6 +336,20 @@ public class CategorySystemDetailsModel {
         }
 
         return ownerRow;
+    }
+    
+    private CategoryNodeModel buildCategoryTableRow(final Category category) {
+        final CategoryNodeModel row = new CategoryNodeModel();
+        row.setCategoryId(category.getObjectId());
+        row.setUuid(category.getUuid());
+        row.setUniqueId(category.getUniqueId());
+        row.setName(category.getName());
+        row.setPath(categoryManager.getCategoryPath(category));
+        row.setEnabled(category.isEnabled());
+        row.setVisible(category.isVisible());
+        row.setAbstractCategory(category.isAbstractCategory());
+        row.setCategoryOrder(category.getCategoryOrder());
+        return row;
     }
 
 }

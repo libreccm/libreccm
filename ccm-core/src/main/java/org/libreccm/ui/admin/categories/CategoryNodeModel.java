@@ -18,8 +18,6 @@
  */
 package org.libreccm.ui.admin.categories;
 
-import org.libreccm.categorization.Category;
-
 import java.util.Objects;
 
 /**
@@ -35,8 +33,14 @@ public class CategoryNodeModel implements Comparable<CategoryNodeModel> {
     private String uniqueId;
 
     private String name;
-    
+
     private String path;
+
+    private boolean enabled;
+
+    private boolean visible;
+
+    private boolean abstractCategory;
 
     private long categoryOrder;
 
@@ -47,15 +51,15 @@ public class CategoryNodeModel implements Comparable<CategoryNodeModel> {
     protected void setCategoryId(final long categoryId) {
         this.categoryId = categoryId;
     }
-    
+
     public String getIdentifier() {
         return String.format("ID-%d", categoryId);
     }
-    
+
     public String getUuid() {
         return uuid;
     }
-    
+
     protected void setUuid(final String uuid) {
         this.uuid = uuid;
     }
@@ -63,7 +67,7 @@ public class CategoryNodeModel implements Comparable<CategoryNodeModel> {
     public String getUniqueId() {
         return uniqueId;
     }
-    
+
     protected void setUniqueId(final String uniqueId) {
         this.uniqueId = uniqueId;
     }
@@ -71,15 +75,15 @@ public class CategoryNodeModel implements Comparable<CategoryNodeModel> {
     public String getName() {
         return name;
     }
-    
+
     protected void setName(final String name) {
         this.name = name;
     }
-    
+
     public String getPath() {
         return path;
     }
-    
+
     protected void setPath(final String path) {
         this.path = path;
     }
@@ -91,22 +95,46 @@ public class CategoryNodeModel implements Comparable<CategoryNodeModel> {
     protected void setCategoryOrder(final long categoryOrder) {
         this.categoryOrder = categoryOrder;
     }
-    
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    protected void setEnabled(final boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    protected void setVisible(final boolean visible) {
+        this.visible = visible;
+    }
+
+    public boolean isAbstractCategory() {
+        return abstractCategory;
+    }
+
+    protected void setAbstractCategory(final boolean abstractCategory) {
+        this.abstractCategory = abstractCategory;
+    }
+
     @Override
     public int compareTo(final CategoryNodeModel other) {
         int result = Long.compare(
             categoryOrder,
             Objects.requireNonNull(other).getCategoryOrder()
         );
-        
+
         if (result == 0) {
             result = Objects.compare(
-                name, 
-                Objects.requireNonNull(other).getName(), 
+                name,
+                Objects.requireNonNull(other).getName(),
                 String::compareTo
             );
         }
-        
+
         return result;
     }
 

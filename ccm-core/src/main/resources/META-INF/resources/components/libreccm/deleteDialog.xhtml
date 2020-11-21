@@ -9,7 +9,7 @@
                       shortDescription="URL to POST request is send." />
         <cc:attribute name="buttonText"
                       required="true"
-                      shortDescription="Text pf the button toggleing the modal form."
+                      shortDescription="Text of the button toggleing the modal form."
                       type="String" />
         <cc:attribute name="buttonTextClass"
                       default=""
@@ -70,35 +70,35 @@
                             <c:choose>
                                 <c:when test="#{cc.attrs.headingLevel == 1}">
                                     <h2 class="modal-title"
-                                        id="#{cc.attrs.editorId}-dialog-title">#{cc.attrs.addDialogTitle}</h2>
+                                        id="#{cc.attrs.dialogId}-dialog-title">#{cc.attrs.dialogTitle}</h2>
                                 </c:when>
                                 <c:when test="#{cc.attrs.headingLevel == 2}">
                                     <h3 class="modal-title"
-                                        id="#{cc.attrs.editorId}-dialog-title">#{cc.attrs.addDialogTitle}</h3>
+                                        id="#{cc.attrs.dialogId}-dialog-title">#{cc.attrs.dialogTitle}</h3>
                                 </c:when>
                                 <c:when test="#{cc.attrs.headingLevel == 3}">
                                     <h4 class="modal-title"
-                                        id="#{cc.attrs.editorId}-dialog-title">#{cc.attrs.addDialogTitle}</h4>
+                                        id="#{cc.attrs.dialogId}-dialog-title">#{cc.attrs.dialogTitle}</h4>
                                 </c:when>
                                 <c:when test="#{cc.attrs.headingLevel == 4}">
                                     <h5 class="modal-title"
-                                        id="#{cc.attrs.editorId}-dialog-title">#{cc.attrs.addDialogTitle}</h5>
+                                        id="#{cc.attrs.dialogId}-dialog-title">#{cc.attrs.dialogTitle}</h5>
                                 </c:when>
                                 <c:when test="#{cc.attrs.headingLevel == 5}">
                                     <h6 class="modal-title"
-                                        id="#{cc.attrs.editorId}-dialog-title">#{cc.attrs.addDialogTitle}</h6>
+                                        id="#{cc.attrs.dialogId}-dialog-title">#{cc.attrs.dialogTitle}</h6>
                                 </c:when>
                                 <c:otherwise>
-                                    <div>#{cc.attrs.addDialogTitle}</div>
+                                    <div>#{cc.attrs.dialogTitle}</div>
                                 </c:otherwise>
                             </c:choose>
-                            <button aria-label="#{cc.attrs.addDialogCancelLabel}"
-                                    class="close" 
-                                    data-dismiss="modal" 
-                                    type="button"   >
-                                <span aria-hidden="true">&times;</span>
-                            </button>
                         </div>
+                        <button aria-label="#{cc.attrs.cancelLabel}"
+                                class="close" 
+                                data-dismiss="modal" 
+                                type="button"   >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
                     <div class="modal-body">
                         <p>
