@@ -345,7 +345,8 @@
                                              id="#{cc.attrs.editorId}-#{entry.key}-edit-dialog"
                                              tabindex="-1">
                                             <div class="modal-dialog">
-                                                <form action="#{mvc.uri(cc.attrs.addMethod, { 'identifier': cc.attrs.objectIdentifier, 'locale': entry.key })}"
+                                                <form accept-charset="UTF-8"
+                                                      action="#{mvc.uri(cc.attrs.editMethod, { 'identifier': cc.attrs.objectIdentifier, 'locale': entry.key })}"
                                                       class="modal-content"
                                                       method="post">
                                                     <div class="modal-header">

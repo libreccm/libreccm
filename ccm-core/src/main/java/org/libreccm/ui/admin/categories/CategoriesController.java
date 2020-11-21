@@ -30,6 +30,8 @@ import org.libreccm.ui.Message;
 import org.libreccm.ui.MessageType;
 import org.libreccm.ui.admin.AdminMessages;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
@@ -38,13 +40,17 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.mvc.Controller;
 import javax.mvc.Models;
-import javax.mvc.MvcContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.Encoded;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 
 /**
  *
@@ -72,7 +78,7 @@ public class CategoriesController {
 
     @Inject
     private Models models;
-    
+
     @GET
     @Path("/{categoryIdentifier}")
     @AuthorizationRequired
@@ -163,7 +169,37 @@ public class CategoriesController {
     public String newSubCategory(
         @PathParam("categoryIdentifier") final String categoryIdentifier
     ) {
-        return "org/libreccm/ui/admin/categories/category-form.xhtml";
+        final Identifier identifier = identifierParser.parseIdentifier(
+            categoryIdentifier
+        );
+        final Optional<Category> result;
+        switch (identifier.getType()) {
+            case ID:
+                result = categoryRepository.findById(
+                    Long.parseLong(identifier.getIdentifier())
+                );
+                break;
+            default:
+                result = categoryRepository.findByUuid(
+                    identifier.getIdentifier()
+                );
+                break;
+        }
+
+        if (result.isPresent()) {
+            categoryDetailsModel.setParentCategory(result.get());
+            return "org/libreccm/ui/admin/categories/category-form.xhtml";
+        } else {
+            categoryDetailsModel.addMessage(
+                new Message(
+                    adminMessages.getMessage(
+                        "categories.not_found.message",
+                        Arrays.asList(categoryIdentifier)
+                    ), MessageType.WARNING
+                )
+            );
+            return "org/libreccm/ui/admin/categories/category-not-found.xhtml";
+        }
     }
 
     @POST
@@ -306,17 +342,16 @@ public class CategoriesController {
     }
 
     @POST
-    @Path("/{categoryIdentifier}/title/add")
+    @Path("/{identifier}/title/add")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String addTitle(
-        @PathParam("categoryIdentifier")
-        final String categoryIdentifierParam,
+        @PathParam("identifier") final String identifierParam,
         @FormParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
         final Identifier identifier = identifierParser.parseIdentifier(
-            categoryIdentifierParam
+            identifierParam
         );
         final Optional<Category> result;
         switch (identifier.getType()) {
@@ -347,7 +382,7 @@ public class CategoriesController {
                 new Message(
                     adminMessages.getMessage(
                         "categories.not_found.message",
-                        Arrays.asList(categoryIdentifierParam)
+                        Arrays.asList(identifierParam)
                     ), MessageType.WARNING
                 )
             );
@@ -356,17 +391,16 @@ public class CategoriesController {
     }
 
     @POST
-    @Path("/{categoryIdentifier}/title/${locale}/edit")
+    @Path("/{identifier}/title/{locale}/edit")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String editTitle(
-        @PathParam("categoryIdentifier")
-        final String categoryIdentifierParam,
+        @PathParam("identifier") final String identifierParam,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
         final Identifier identifier = identifierParser.parseIdentifier(
-            categoryIdentifierParam
+            identifierParam
         );
         final Optional<Category> result;
         switch (identifier.getType()) {
@@ -397,7 +431,7 @@ public class CategoriesController {
                 new Message(
                     adminMessages.getMessage(
                         "categories.not_found.message",
-                        Arrays.asList(categoryIdentifierParam)
+                        Arrays.asList(identifierParam)
                     ), MessageType.WARNING
                 )
             );
@@ -406,10 +440,11 @@ public class CategoriesController {
     }
 
     @POST
-    @Path("/{categoryIdentifier}/title/${locale}/remove")
+    @Path("/{identifier}/title/{locale}/remove")
     @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
     public String removeTitle(
-        @PathParam("categoryIdentifier")
+        @PathParam("identifier")
         final String categoryIdentifierParam,
         @PathParam("locale") final String localeParam
     ) {
@@ -454,16 +489,16 @@ public class CategoriesController {
     }
 
     @POST
-    @Path("/{categoryIdentifier}description/add")
+    @Path("/{identifier}decsription/add")
     @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
     public String addDescription(
-        @PathParam("categoryIdentifier")
-        final String categoryIdentifierParam,
+        @PathParam("identifier") final String identifierParam,
         @FormParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
         final Identifier identifier = identifierParser.parseIdentifier(
-            categoryIdentifierParam
+            identifierParam
         );
         final Optional<Category> result;
         switch (identifier.getType()) {
@@ -494,7 +529,7 @@ public class CategoriesController {
                 new Message(
                     adminMessages.getMessage(
                         "categories.not_found.message",
-                        Arrays.asList(categoryIdentifierParam)
+                        Arrays.asList(identifierParam)
                     ), MessageType.WARNING
                 )
             );
@@ -503,16 +538,17 @@ public class CategoriesController {
     }
 
     @POST
-    @Path("/{categoryIdentifier}/description/${locale}/edit")
+    @Path("/{identifier}/description/{locale}/edit")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
     public String editDescription(
-        @PathParam("categoryIdentifier")
-        final String categoryIdentifierParam,
+        @PathParam("identifier") final String identifierParam,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
         final Identifier identifier = identifierParser.parseIdentifier(
-            categoryIdentifierParam
+            identifierParam
         );
         final Optional<Category> result;
         switch (identifier.getType()) {
@@ -543,7 +579,7 @@ public class CategoriesController {
                 new Message(
                     adminMessages.getMessage(
                         "categories.not_found.message",
-                        Arrays.asList(categoryIdentifierParam)
+                        Arrays.asList(identifierParam)
                     ), MessageType.WARNING
                 )
             );
@@ -552,15 +588,15 @@ public class CategoriesController {
     }
 
     @POST
-    @Path("/{categoryIdentifier}/description/${locale}/remove")
+    @Path("/{identifier}/description/{locale}/remove")
     @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
     public String removeDescription(
-        @PathParam("categoryIdentifier")
-        final String categoryIdentifierParam,
+        @PathParam("identifier") final String identifierParam,
         @PathParam("locale") final String localeParam
     ) {
         final Identifier identifier = identifierParser.parseIdentifier(
-            categoryIdentifierParam
+            identifierParam
         );
         final Optional<Category> result;
         switch (identifier.getType()) {
@@ -591,7 +627,7 @@ public class CategoriesController {
                 new Message(
                     adminMessages.getMessage(
                         "categories.not_found.message",
-                        Arrays.asList(categoryIdentifierParam)
+                        Arrays.asList(identifierParam)
                     ), MessageType.WARNING
                 )
             );

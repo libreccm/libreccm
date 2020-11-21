@@ -46,6 +46,23 @@
                         <dd>#{CategoryDetailsModel.name}</dd>
                     </div>
                     <div>
+                        <dt>#{AdminMessages['categories.details.path']}</dt>
+                        <dd>
+                            <c:if test="#{CategoryDetailsModel.categoryPath.domain != null}">
+                                <a href="#{mvc.uri('CategorySystemsController#getCategorySystemDetails', {'categorySystemIdentifier': CategoryDetailsModel.categoryPath.domain.identifier})}">
+                                    #{CategoryDetailsModel.categoryPath.domain.domainKey}
+                                </a>
+                            </c:if>
+                            <c:forEach items="#{CategoryDetailsModel.categoryPath.categories}" 
+                                       var="category" >
+                                <span>/</span>
+                                <a href="#{mvc.uri('CategoriesController#getCategory', {'categoryIdentifier': category.identifier})}">
+                                    #{category.name}
+                                </a>
+                            </c:forEach>
+                        </dd>
+                    </div>
+                    <div>
                         <dt>#{AdminMessages['categories.details.enabled']}</dt>
                         <dd>
                             <c:choose>
@@ -62,7 +79,7 @@
                         <dt>#{AdminMessages['categories.details.visible']}</dt>
                         <dd>
                             <c:choose>
-                                <c:when test="#{CategoryDetailsModel.enabled}">
+                                <c:when test="#{CategoryDetailsModel.visible}">
                                     #{AdminMessages['categories.details.visible.yes']}
                                 </c:when>
                                 <c:otherwise>
@@ -75,7 +92,7 @@
                         <dt>#{AdminMessages['categories.details.abstract_category']}</dt>
                         <dd>
                             <c:choose>
-                                <c:when test="#{CategoryDetailsModel.enabled}">
+                                <c:when test="#{CategoryDetailsModel.abstractCategory}">
                                     #{AdminMessages['categories.details.abstract_category.yes']}
                                 </c:when>
                                 <c:otherwise>
@@ -110,10 +127,10 @@
                                                 editDialogValueHelp="#{AdminMessages['categories.details.title.edit.dialog.value.help']}"
                                                 editDialogValueLabel="#{AdminMessages['categories.details.title.edit.dialog.value.label']}"
                                                 editMethod="CategoriesController#editTitle"
-                                                editorId="categorysystem-title"
+                                                editorId="category-title"
                                                 emptyText="#{AdminMessages['categories.details.title.none']}"
-                                                hasUnusedLocales="#{CategorySystemDetailsModel.hasUnusedTitleLocales()}"
-                                                objectIdentifier="#{CategorySystemDetailsModel.identifier}"
+                                                hasUnusedLocales="#{CategoryDetailsModel.hasUnusedTitleLocales()}"
+                                                objectIdentifier="#{CategoryDetailsModel.identifier}"
                                                 removeButtonLabel="#{AdminMessages['categories.details.title.table.actions.remove']}"
                                                 removeDialogCancelLabel="#{AdminMessages['categories.details.title.remove.dialog.close']}"
                                                 removeDialogSubmitLabel="#{AdminMessages['categories.details.title.remove.dialog.submit']}"
@@ -124,8 +141,8 @@
                                                 tableLocaleHeading="#{AdminMessages['categories.details.title.table.headings.locale']}"
                                                 tableValueHeading="#{AdminMessages['categories.details.title.table.headings.value']}"
                                                 title="#{AdminMessages['categories.details.title.heading']}"
-                                                unusedLocales="#{CategorySystemDetailsModel.unusedTitleLocales}"
-                                                values="#{CategorySystemDetailsModel.title}" />
+                                                unusedLocales="#{CategoryDetailsModel.unusedTitleLocales}"
+                                                values="#{CategoryDetailsModel.title}" />
 
                 <libreccm:localizedStringEditor addMethod="CategoriesController#addDescription"
                                                 addButtonLabel="#{AdminMessages['categories.details.description.add']}"
@@ -143,10 +160,10 @@
                                                 editDialogValueHelp="#{AdminMessages['categories.details.description.edit.dialog.value.help']}"
                                                 editDialogValueLabel="#{AdminMessages['categories.details.description.edit.dialog.value.label']}"
                                                 editMethod="CategoriesController#editDescription"
-                                                editorId="categorysystem-description"
+                                                editorId="category-description"
                                                 emptyText="#{AdminMessages['categories.details.description.none']}"
-                                                hasUnusedLocales="#{CategorySystemDetailsModel.hasUnusedDescriptionLocales()}"
-                                                objectIdentifier="#{CategorySystemDetailsModel.identifier}"
+                                                hasUnusedLocales="#{CategoryDetailsModel.hasUnusedDescriptionLocales()}"
+                                                objectIdentifier="#{CategoryDetailsModel.identifier}"
                                                 removeButtonLabel="#{AdminMessages['categories.details.description.table.actions.remove']}"
                                                 removeDialogCancelLabel="#{AdminMessages['categories.details.description.remove.dialog.close']}"
                                                 removeDialogSubmitLabel="#{AdminMessages['categories.details.description.remove.dialog.submit']}"
@@ -157,15 +174,15 @@
                                                 tableLocaleHeading="#{AdminMessages['categories.details.description.table.headings.locale']}"
                                                 tableValueHeading="#{AdminMessages['categories.details.description.table.headings.value']}"
                                                 title="#{AdminMessages['categories.details.description.heading']}"
-                                                unusedLocales="#{CategorySystemDetailsModel.unusedTitleLocales}"
+                                                unusedLocales="#{CategoryDetailsModel.unusedDescriptionLocales}"
                                                 useTextarea="true"
-                                                values="#{CategorySystemDetailsModel.description}" />
+                                                values="#{CategoryDetailsModel.description}" />
 
                 <h2>#{AdminMessages['categories.details.subcategories.heading']}</h2>
                 <div class="mb-2">
                     <div class="text-right">
                         <a class="btn btn-secondary"
-                           href="#{mvc.uri('CategoriesController#newSubCategory', {'categoryIdentifier': CategorySystemDetailsModel.parentIdentifier})}">
+                           href="#{mvc.uri('CategoriesController#newSubCategory', {'categoryIdentifier': CategoryDetailsModel.identifier})}">
                             <bootstrap:svgIcon icon="plus-circle" />
                             <span>#{AdminMessages['categories.details.subcategories.add']}</span>
                         </a>
@@ -247,9 +264,10 @@
                                     </tr>
                                 </c:forEach>
                             </tbody>
+                        </table>
                     </c:otherwise>
                 </c:choose>
-
+                
             </div>
         </ui:define>
 

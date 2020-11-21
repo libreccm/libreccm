@@ -23,6 +23,8 @@ import org.libreccm.api.IdentifierParser;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.CategoryRepository;
+import org.libreccm.categorization.Domain;
+import org.libreccm.categorization.DomainRepository;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
@@ -64,6 +66,9 @@ public class CategoryFormController {
     private CategoryRepository categoryRepository;
 
     @Inject
+    private DomainRepository domainRepository;
+    
+    @Inject
     private IdentifierParser identifierParser;
 
     @FormParam("uniqueId")
@@ -73,13 +78,13 @@ public class CategoryFormController {
     private String name;
 
     @FormParam("enabled")
-    private boolean enabled;
+    private String enabled;
 
     @FormParam("visible")
-    private boolean visible;
+    private String visible;
 
     @FormParam("abstractCategory")
-    private boolean abstractCategory;
+    private String abstractCategory;
 
     @POST
     @Path("/{parentCategoryIdentifier}/new")
@@ -113,17 +118,33 @@ public class CategoryFormController {
             final Category category = new Category();
             category.setUniqueId(uniqueId);
             category.setName(name);
-            category.setEnabled(enabled);
-            category.setVisible(visible);
-            category.setAbstractCategory(abstractCategory);
+            category.setEnabled(enabled != null);
+            category.setVisible(visible != null);
+            category.setAbstractCategory(abstractCategory != null);
 
             categoryRepository.save(category);
             categoryManager.addSubCategoryToCategory(category, parentCategory);
 
-            return String.format(
-                "redirect:categorymanager/categories/ID-%s",
-                parentCategory.getObjectId()
-            );
+            if (parentCategory.getParentCategory() == null) {
+                final Optional<Domain> categorySystem = domainRepository
+                    .findByRootCategory(parentCategory);
+                if (categorySystem.isPresent()) {
+                    return String.format(
+                        "redirect:categorymanager/categorysystems/ID-%d/details",
+                        categorySystem.get().getObjectId()
+                    );
+                } else {
+                    return String.format(
+                    "redirect:categorymanager/categories/ID-%d/details",
+                    parentCategory.getObjectId()
+                );
+                }
+            } else {
+                return String.format(
+                    "redirect:categorymanager/categories/ID-%d/details",
+                    parentCategory.getObjectId()
+                );
+            }
         } else {
             categoryDetailsModel.addMessage(
                 new Message(
@@ -143,7 +164,7 @@ public class CategoryFormController {
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public String updateCategory(
-        @PathParam("categoryIdentifierParam")
+        @PathParam("categoryIdentifier")
         final String categoryIdentifierParam
     ) {
         final Identifier identifier = identifierParser.parseIdentifier(
@@ -169,9 +190,9 @@ public class CategoryFormController {
             final Category category = result.get();
             category.setUniqueId(uniqueId);
             category.setName(name);
-            category.setEnabled(enabled);
-            category.setVisible(visible);
-            category.setAbstractCategory(abstractCategory);
+            category.setEnabled(enabled != null);
+            category.setVisible(visible != null);
+            category.setAbstractCategory(abstractCategory != null);
 
             categoryRepository.save(category);
 

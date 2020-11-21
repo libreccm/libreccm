@@ -20,14 +20,19 @@ package org.libreccm.ui.admin.categories;
 
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
+import org.libreccm.categorization.Domain;
+import org.libreccm.categorization.DomainRepository;
+import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.ui.Message;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,6 +52,12 @@ public class CategoryDetailsModel {
     @Inject
     private CategoryManager categoryManager;
 
+    @Inject
+    private DomainRepository domainRepository;
+    
+    @Inject
+    private GlobalizationHelper globalizationHelper;
+
     private long categoryId;
 
     private String uuid;
@@ -59,7 +70,11 @@ public class CategoryDetailsModel {
 
     private Map<String, String> title;
 
+    private List<String> unusedTitleLocales;
+
     private Map<String, String> description;
+
+    private List<String> unusedDescriptionLocales;
 
     private boolean enabled;
 
@@ -70,6 +85,8 @@ public class CategoryDetailsModel {
     private List<CategoryNodeModel> subCategories;
 
     private CategoryNodeModel parentCategory;
+
+    private CategoryPathModel categoryPath;
 
     private long categoryOrder;
 
@@ -109,8 +126,24 @@ public class CategoryDetailsModel {
         return Collections.unmodifiableMap(title);
     }
 
+    public List<String> getUnusedTitleLocales() {
+        return Collections.unmodifiableList(unusedTitleLocales);
+    }
+
+    public boolean hasUnusedTitleLocales() {
+        return !unusedTitleLocales.isEmpty();
+    }
+
     public Map<String, String> getDescription() {
         return Collections.unmodifiableMap(description);
+    }
+
+    public List<String> getUnusedDescriptionLocales() {
+        return Collections.unmodifiableList(unusedDescriptionLocales);
+    }
+
+    public boolean hasUnusedDescriptionLocales() {
+        return !unusedDescriptionLocales.isEmpty();
     }
 
     public boolean isEnabled() {
@@ -135,6 +168,10 @@ public class CategoryDetailsModel {
 
     protected void setParentCategory(final Category parent) {
         parentCategory = buildCategoryNodeModel(parent);
+    }
+
+    public CategoryPathModel getCategoryPath() {
+        return categoryPath;
     }
 
     public long getCategoryOrder() {
@@ -174,6 +211,9 @@ public class CategoryDetailsModel {
         uniqueId = category.getUniqueId();
         name = category.getName();
         path = categoryManager.getCategoryPath(category);
+
+        final List<Locale> availableLocales = globalizationHelper
+            .getAvailableLocales();
         title = category
             .getTitle()
             .getValues()
@@ -185,6 +225,16 @@ public class CategoryDetailsModel {
                     entry -> entry.getValue()
                 )
             );
+        final Set<Locale> titleLocales = category
+            .getTitle()
+            .getAvailableLocales();
+        unusedTitleLocales = availableLocales
+            .stream()
+            .filter(locale -> !titleLocales.contains(locale))
+            .map(Locale::toString)
+            .sorted()
+            .collect(Collectors.toList());
+
         description = category
             .getDescription()
             .getValues()
@@ -196,6 +246,16 @@ public class CategoryDetailsModel {
                     entry -> entry.getValue()
                 )
             );
+        final Set<Locale> descriptionLocales = category
+            .getDescription()
+            .getAvailableLocales();
+        unusedDescriptionLocales = availableLocales
+            .stream()
+            .filter(locale -> !descriptionLocales.contains(locale))
+            .map(Locale::toString)
+            .sorted()
+            .collect(Collectors.toList());
+
         enabled = category.isEnabled();
         visible = category.isVisible();
         abstractCategory = category.isAbstractCategory();
@@ -205,8 +265,21 @@ public class CategoryDetailsModel {
             .map(this::buildCategoryNodeModel)
             .sorted()
             .collect(Collectors.toList());
-        parentCategory = buildCategoryNodeModel(category.getParentCategory());
+        if (category.getParentCategory() != null) {
+            parentCategory
+                = buildCategoryNodeModel(category.getParentCategory());
+        }
+        categoryPath = buildCategoryPathModel(category);
         categoryOrder = category.getCategoryOrder();
+    }
+
+    private DomainNodeModel buildDomainNodeModel(final Domain domain) {
+        final DomainNodeModel model = new DomainNodeModel();
+        model.setDomainId(domain.getObjectId());
+        model.setUuid(domain.getUuid());
+        model.setDomainKey(domain.getDomainKey());
+
+        return model;
     }
 
     private CategoryNodeModel buildCategoryNodeModel(final Category category) {
@@ -217,7 +290,32 @@ public class CategoryDetailsModel {
         model.setName(category.getName());
         model.setPath(categoryManager.getCategoryPath(category));
         model.setCategoryOrder(category.getCategoryOrder());
+        model.setEnabled(category.isEnabled());
+        model.setVisible(category.isVisible());
+        model.setAbstractCategory(category.isAbstractCategory());
         return model;
+    }
+
+    private CategoryPathModel buildCategoryPathModel(final Category category) {
+        return buildCategoryPathModel(category, new CategoryPathModel());
+    }
+
+    private CategoryPathModel buildCategoryPathModel(
+        final Category category,
+        final CategoryPathModel categoryPathModel
+    ) {
+        categoryPathModel.addCategoryAtBegin(buildCategoryNodeModel(category));
+        final Category parent = category.getParentCategory();
+        if (parent == null) {
+            final Optional<Domain> domain = domainRepository
+                .findByRootCategory(category);
+            if (domain.isPresent()) {
+                categoryPathModel.setDomain(buildDomainNodeModel(domain.get()));
+            }
+            return categoryPathModel;
+        } else {
+            return buildCategoryPathModel(parent, categoryPathModel);
+        }
     }
 
 }
