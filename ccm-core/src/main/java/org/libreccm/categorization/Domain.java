@@ -82,21 +82,33 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @Table(name = "CATEGORY_DOMAINS", schema = DB_SCHEMA)
 @NamedQueries({
-    @NamedQuery(name = "Domain.findByKey",
-                query = "SELECT d FROM Domain d WHERE d.domainKey = :key"),
-    @NamedQuery(name = "Domain.findByUri",
-                query = "SELECT d FROM Domain d WHERE d.uri = :uri"),
-    @NamedQuery(name = "Domain.findByUuid",
-                query = "SELECT d FROM Domain d WHERE d.uuid = :uuid"),
-    @NamedQuery(name = "Domain.findAll",
-                query = "SELECT d FROM Domain d ORDER BY d.domainKey"),
+    @NamedQuery(
+        name = "Domain.findByKey",
+        query = "SELECT d FROM Domain d WHERE d.domainKey = :key"
+    ),
+    @NamedQuery(
+        name = "Domain.findByUri",
+        query = "SELECT d FROM Domain d WHERE d.uri = :uri"
+    ),
+    @NamedQuery(
+        name = "Domain.findByUuid",
+        query = "SELECT d FROM Domain d WHERE d.uuid = :uuid"
+    ),
+    @NamedQuery(
+        name = "Domain.findByRootCategory",
+        query = "SELECT d FROM Domain d WHERE d.root = :root"
+    ),
+    @NamedQuery(
+        name = "Domain.findAll",
+        query = "SELECT d FROM Domain d ORDER BY d.domainKey"
+    ),
     @NamedQuery(
         name = "Domain.search",
         query
-            = "SELECT d FROM Domain d "
-                  + "WHERE d.domainKey LIKE CONCAT (LOWER(:term), '%') "
-                  + "OR d.uri LIKE CONCAT (LOWER(:term), '%') "
-                  + "ORDER BY d.domainKey")
+        = "SELECT d FROM Domain d "
+              + "WHERE d.domainKey LIKE CONCAT (LOWER(:term), '%') "
+              + "OR d.uri LIKE CONCAT (LOWER(:term), '%') "
+              + "ORDER BY d.domainKey")
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(
