@@ -40,7 +40,7 @@ public class IdentifierParser {
             ApiConstants.IDENTIFIER_PREFIX_UUID)) {
             final String identifier = identifierParam
                 .substring(ApiConstants.IDENTIFIER_PREFIX_UUID.length());
-            return new Identifier(IdentifierType.ID, identifier);
+            return new Identifier(IdentifierType.UUID, identifier);
         } else {
             return new Identifier(
                 IdentifierType.PROPERTY, identifierParam
