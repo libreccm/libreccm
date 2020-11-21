@@ -32,11 +32,11 @@
     </cc:interface>
     <cc:implementation>
         <div class="form-check">
-            <input class="form-check-input" 
+            <input checked="#{cc.attrs.value ? 'checked': null}"
+                class="form-check-input" 
                    id="#{cc.attrs.inputId}"
                    name="#{cc.attrs.name}"
-                   type="checkbox"
-                   value="#{cc.attrs.value}" />
+                   type="checkbox" />
             <label for="#{cc.attrs.inputId}">#{cc.attrs.label}</label>
         </div>
     </cc:implementation>
