@@ -23,6 +23,8 @@ import org.libreccm.api.IdentifierParser;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.categorization.CategoryRepository;
+import org.libreccm.categorization.Domain;
+import org.libreccm.categorization.DomainRepository;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
@@ -30,8 +32,6 @@ import org.libreccm.ui.Message;
 import org.libreccm.ui.MessageType;
 import org.libreccm.ui.admin.AdminMessages;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
@@ -40,16 +40,13 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.mvc.Controller;
 import javax.mvc.Models;
-import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.Encoded;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -73,6 +70,9 @@ public class CategoriesController {
     @Inject
     private CategoryRepository categoryRepository;
 
+    @Inject
+    private DomainRepository domainRepository;
+    
     @Inject
     private IdentifierParser identifierParser;
 
@@ -632,6 +632,118 @@ public class CategoriesController {
                 )
             );
             return "org/libreccm/ui/admin/categories/category-not-found.xhtml";
+        }
+    }
+
+    @POST
+    @Path("/{categoryIdentifier}/subcategories/{subCategoryIdentifier}/reorder")
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String reorderSubCategory(
+        @PathParam("categoryIdentifier") final String categoryIdentifierParam,
+        @PathParam("subCategoryIdentifier") final String subCategoryIdentifierParam,
+        @FormParam("direction") final String direction
+    ) {
+        final Identifier categoryIdentifier = identifierParser.parseIdentifier(
+            categoryIdentifierParam
+        );
+        final Identifier subCategoryIdentifier = identifierParser
+            .parseIdentifier(subCategoryIdentifierParam);
+
+        final Optional<Category> categoryResult;
+        switch (categoryIdentifier.getType()) {
+            case ID:
+                categoryResult = categoryRepository.findById(
+                    Long.parseLong(categoryIdentifier.getIdentifier())
+                );
+                break;
+            default:
+                categoryResult = categoryRepository.findByUuid(
+                    categoryIdentifier.getIdentifier()
+                );
+                break;
+        }
+        final Category category;
+        if (categoryResult.isPresent()) {
+            category = categoryResult.get();
+        } else {
+            categoryDetailsModel.addMessage(
+                new Message(
+                    adminMessages.getMessage(
+                        "categories.not_found.message",
+                        Arrays.asList(categoryIdentifierParam)
+                    ), MessageType.WARNING
+                )
+            );
+            return "org/libreccm/ui/admin/categories/category-not-found.xhtml";
+        }
+
+        final Optional<Category> subCategoryResult;
+        switch (subCategoryIdentifier.getType()) {
+            case ID:
+                subCategoryResult = categoryRepository.findById(
+                    Long.parseLong(subCategoryIdentifier.getIdentifier())
+                );
+                break;
+            default:
+                subCategoryResult = categoryRepository.findByUuid(
+                    subCategoryIdentifier.getIdentifier()
+                );
+                break;
+        }
+        final Category subCategory;
+        if (subCategoryResult.isPresent()) {
+            subCategory = subCategoryResult.get();
+        } else {
+            categoryDetailsModel.addMessage(
+                new Message(
+                    adminMessages.getMessage(
+                        "categories.not_found.message",
+                        Arrays.asList(subCategoryIdentifierParam)
+                    ), MessageType.WARNING
+                )
+            );
+            return "org/libreccm/ui/admin/categories/category-not-found.xhtml";
+        }
+
+        switch (direction) {
+            case "DECREASE":
+                categoryManager.decreaseCategoryOrder(subCategory, category);
+                break;
+            case "INCREASE":
+                categoryManager.increaseCategoryOrder(subCategory, category);
+                break;
+            default:
+                categoryDetailsModel.addMessage(
+                    new Message(
+                        adminMessages.getMessage(
+                            "categories.invalid_direction.message",
+                            Arrays.asList(direction)),
+                        MessageType.WARNING
+                    )
+                );
+        }
+        
+        if (category.getParentCategory() == null) {
+            final Optional<Domain> categorySystem = domainRepository
+                .findByRootCategory(category);
+            if (categorySystem.isPresent()) {
+                return String.format(
+                    "redirect:categorymanager/categorysystems/ID-%d/details",
+                    categorySystem.get().getObjectId()
+                );
+            } else {
+                return String.format(
+                    "redirect:categorymanager/categories/ID-%d", 
+                    category.getObjectId()
+                );
+            }
+        } else {
+            return String.format(
+                "redirect:categorymanager/categories/ID-%d",
+                category.getObjectId()
+            );
         }
     }
 

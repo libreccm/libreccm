@@ -135,13 +135,13 @@ public class CategoryFormController {
                     );
                 } else {
                     return String.format(
-                    "redirect:categorymanager/categories/ID-%d/details",
+                    "redirect:categorymanager/categories/ID-%d",
                     parentCategory.getObjectId()
                 );
                 }
             } else {
                 return String.format(
-                    "redirect:categorymanager/categories/ID-%d/details",
+                    "redirect:categorymanager/categories/ID-%d",
                     parentCategory.getObjectId()
                 );
             }
@@ -197,7 +197,7 @@ public class CategoryFormController {
             categoryRepository.save(category);
 
             return String.format(
-                "redirect:categorymanager/categories/ID-%s",
+                "redirect:categorymanager/categories/ID-%d",
                 category.getObjectId()
             );
         } else {
