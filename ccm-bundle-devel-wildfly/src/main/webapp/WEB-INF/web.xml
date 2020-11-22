@@ -69,6 +69,10 @@
         <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
         <param-value>true</param-value>
     </context-param>
+    <context-param>
+        <param-name>PARAMETER_ENCODING</param-name>
+        <param-value>UTF-8</param-value>
+    </context-param>
     
     <!--    <servlet>
         <servlet-name>vaadin-servlet</servlet-name>
