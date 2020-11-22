@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
 
@@ -18,7 +20,64 @@
         <ui:define name="main">
             <div class="container">
                 <h1>#{AdminMessages['sites.label']}</h1>
-                <p>Placeholder</p>
+
+                <div class="mb-2">
+                    <div class="text-right">
+                        <a class="btn btn-secondary"
+                           href="#{mvc.uri('SitesController#createNewSite')}">
+                            <bootstrap:svgIcon icon="plus-circle" />
+                            <span>#{AdminMessages['sites.add_site']}</span>
+                        </a>
+                    </div>
+                </div>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#{AdminMessages['sites.table.heading.domain']}</th>
+                            <th>#{AdminMessages['sites.table.heading.defaultSite']}</th>
+                            <th>#{AdminMessages['sites.table.heading.defaultTheme']}</th>
+                            <th class="text-center" colspan="2">#{AdminMessages['sites.table.heading.actions']}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="#{sites}" var="site">
+                            <tr>
+                                <td>#{site.domain}</td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="#{site.defaultSite}">
+                                            #{AdminMessages['sites.table.defaultSite.yes']}
+                                        </c:when>
+                                        <c:otherwise>
+                                            #{AdminMessages['sites.table.defaultSite.no']}
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                                <td>
+                                    #{site.defaultTheme}
+                                </td>
+                                <td>
+                                    <a class="btn btn-info"
+                                       href="#{mvc.uri('SitesController#getSite', {'siteIdentifier': site.identifier })}">
+                                        <bootstrap:svgIcon icon="pen" />
+                                        <span>
+                                            #{AdminMessages['sites.table.edit']}
+                                        </span>
+                                    </a>
+                                </td>
+                                <td>
+                                    <libreccm:deleteDialog actionTarget="#{mvc.uri('SitesController#deleteSite', {'identifier': site.identifier })}" 
+                                                           buttonText="#{AdminMessages['sites.table.delete']}"
+                                                           cancelLabel="#{AdminMessages['sites.delete_dialog.cancel']}"
+                                                           confirmLabel="#{AdminMessages['sites.delete_dialog.confirm']}"
+                                                           dialogId="delete-site-dialog-#{site.siteId}"
+                                                           dialogTitle="#{AdminMessages['sites.delete_dialog.title']}"
+                                                           message="#{AdminMessages.getMessage('sites.delete_dialog.message', [site.domain])}" />
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
             </div>
         </ui:define>
 

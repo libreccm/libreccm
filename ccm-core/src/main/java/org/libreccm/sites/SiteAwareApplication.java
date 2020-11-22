@@ -67,7 +67,7 @@ public class SiteAwareApplication extends CcmApplication {
 
     @Override
     public int hashCode() {
-        int hash = 3;
+        int hash = super.hashCode();
         if (site != null) {
             hash = 59 * hash + Objects.hashCode(site.getDomainOfSite());
             hash = 59 * hash + Objects.hashCode(site.isDefaultSite());
@@ -82,6 +82,9 @@ public class SiteAwareApplication extends CcmApplication {
             return true;
         }
         if (obj == null) {
+            return false;
+        }
+        if (!super.equals(obj)) {
             return false;
         }
         if (!(obj instanceof SiteAwareApplication)) {
