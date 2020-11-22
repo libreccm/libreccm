@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
+
+        <ui:param name="activePage" value="sites" />
+        <ui:param name="title" value="#{AdminMessages['sites.label']}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#{mvc.uri('SitesController#getSites')}">
+                    #{AdminMessages['sites.label']}
+                </a>
+            </li>
+            <c:choose>
+                <c:when test="#{SiteDetailsModel.new}">
+                    <li class="breadcrumb-item active">
+                        #{AdminMessages['sites.breadcrumbs.create']}
+                    </li>
+                </c:when>
+                <c:otherwise>
+                    <li class="breadcrumb-item">
+                        <a href="#{mvc.uri('SitesController#getSite', {'siteIdentifier': SiteDetailsModel.identifier })}">
+                            #{SiteDetailsModel.domain}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">
+                        #{AdminMessages['sites.breadcrumbs.edit']}
+                    </li>
+                </c:otherwise>
+            </c:choose>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container">
+                <h1>
+                    <c:choose>
+                        <c:when test="#{SiteDetailsModel.new}">
+                            #{AdminMessages['sites.create.label']}
+                        </c:when>
+                        <c:otherwise>
+                            #{AdminMessages.getMessage('sites.edit.label', [SiteDetailsModel.domain])}
+                        </c:otherwise>
+                    </c:choose>
+                </h1>
+
+                <form action="#{SiteDetailsModel.new ? mvc.uri('SiteFormController#createSite') : mvc.uri('SiteFormController#updateSite', {'siteIdentifier': SiteDetailsModel.identifier })}"
+                      method="post">
+                    <bootstrap:formGroupText help="#{AdminMessages['sites.form.domain.help']}"
+                                             inputId="domain"
+                                             label="#{AdminMessages['sites.form.domain.label']}"
+                                             name="domain"
+                                             required="true"
+                                             value="#{SiteDetailsModel.domain}" />
+                    <bootstrap:formCheck label="#{AdminMessages['sites.form.defaultsite.label']}"
+                                         inputId="defaultSite"
+                                         name="defaultSite"
+                                         required="false"
+                                         value="#{SiteDetailsModel.defaultSite}" />
+                    <bootstrap:formGroupSelect help="#{AdminMessages['sites.form.defaulttheme.help']}"
+                                               inputId="defaultTheme"
+                                               label="#{AdminMessages['sites.form.defaulttheme.label']}"
+                                               name="defaultTheme"
+                                               options="#{SiteDetailsModel.availableThemes}" />
+                    <a class="btn btn-warning"
+                       href="#{SiteDetailsModel.new ? mvc.uri('SitesController#getSites') : mvc.uri('SitesController#getSite', { 'siteIdentifier': SiteDetailsModel.identifier })}">
+                        #{AdminMessages['sites.form.buttons.cancel']}
+                    </a>
+                    <button class="btn btn-success" type="submit">
+                        <c:choose>
+                            <c:when test="#{SiteDetailsModel.new}">
+                                #{AdminMessages['sites.form.buttons.create']}
+                            </c:when>
+                            <c:otherwise>
+                                #{AdminMessages['sites.form.buttons.save']}
+                            </c:otherwise>
+                        </c:choose>
+                    </button>
+                </form>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

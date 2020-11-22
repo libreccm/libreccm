@@ -36,6 +36,7 @@ public class SitesPage implements AdminPage {
     public Set<Class<?>> getControllerClasses() {
         final Set<Class<?>> classes = new HashSet<>();
         classes.add(SitesController.class);
+        classes.add(SiteFormController.class);
         return classes;
     }
 
