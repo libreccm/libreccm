@@ -43,7 +43,7 @@ public class ApplicationsPage implements AdminPage {
     @Override
     public String getUriIdentifier() {
         return String.format(
-            "%s#getApplications", ApplicationsController.class.getSimpleName()
+            "%s#getApplicationTypes", ApplicationsController.class.getSimpleName()
         );
     }
 

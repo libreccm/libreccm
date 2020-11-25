@@ -23,8 +23,12 @@ import com.arsdigita.ui.admin.applications.AbstractAppSettingsPane;
 import com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm;
 import com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane;
 
+import org.libreccm.ui.admin.applications.ApplicationController;
+import org.libreccm.ui.admin.applications.DefaultApplicationController;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -111,9 +115,12 @@ public @interface ApplicationType {
      *
      * @return
      */
+    @SuppressWarnings("rawtypes") // Can't specify type here, otherwise problems in using classes.
     Class<? extends ApplicationCreator> creator();
 
     Class<? extends AbstractAppInstanceForm> instanceForm() default DefaultApplicationInstanceForm.class;
+    
+    Class<? extends ApplicationController> adminController() default DefaultApplicationController.class;
 
     Class<? extends AbstractAppSettingsPane> settingsPane() default DefaultApplicationSettingsPane.class;
 
