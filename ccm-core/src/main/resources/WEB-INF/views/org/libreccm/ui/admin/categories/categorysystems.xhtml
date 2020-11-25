@@ -1,9 +1,9 @@
 <!DOCTYPE html [<!ENTITY times '&#215;'>]>
 <html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:xlink="http://www.w3.org/1999/xlink">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
 
         <ui:param name="activePage" value="categories" />
@@ -28,12 +28,7 @@
                 <div class="text-right mb-2">
                     <a class="btn btn-secondary"
                        href="#{mvc.uri('CategorySystemsController#newCategorySystem')}">
-                        <svg class="bi"
-                             width="1em"
-                             height="1em"
-                             fill="currentColor">
-                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#plus-circle" />
-                        </svg>
+                        <bootstrap:svgIcon icon="plus-circle" />
                         <span>#{AdminMessages['categorysystems.add']}</span>
                     </a>
                 </div>
@@ -60,12 +55,7 @@
                                 <td>
                                     <a class="btn btn-info"
                                        href="#{mvc.uri('CategorySystemsController#getCategorySystemDetails', { 'categorySystemIdentifier': categorySystem.identifier })}">
-                                        <svg class="bi"
-                                             width="1em"
-                                             height="1em"
-                                             fill="currentColor">
-                                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
-                                        </svg>
+                                        <bootstrap:svgIcon icon="pen"/>
                                         #{AdminMessages['categorysystems.table.actions.edit']}
                                     </a>
                                 </td>
@@ -74,12 +64,7 @@
                                             data-target="#confirm-delete-#{categorySystem.identifier}"
                                             data-toggle="modal"
                                             type="button">
-                                        <svg class="bi"
-                                             width="1em"
-                                             height="1em"
-                                             fill="currentColor">
-                                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#x-circle" />
-                                        </svg>
+                                        <bootstrap:svgIcon icon="x-circle" />
                                         #{AdminMessages['categorysystems.table.actions.delete']}
                                     </button>
                                     <div class="modal"

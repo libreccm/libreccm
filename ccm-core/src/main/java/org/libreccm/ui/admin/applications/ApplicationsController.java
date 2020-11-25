@@ -19,13 +19,25 @@
 package org.libreccm.ui.admin.applications;
 
 import org.libreccm.core.CoreConstants;
+import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.l10n.LocalizedTextsUtil;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
+import org.libreccm.web.ApplicationManager;
+import org.libreccm.web.ApplicationRepository;
+import org.libreccm.web.ApplicationType;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.mvc.Controller;
+import javax.mvc.Models;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 /**
  *
@@ -35,12 +47,64 @@ import javax.ws.rs.Path;
 @Controller
 @Path("/applications")
 public class ApplicationsController {
+
+    @Inject
+    private ApplicationManager appManager;
     
+    @Inject
+    private ApplicationRepository appRepository;
+
+    @Inject
+    private GlobalizationHelper globalizationHelper;
+    
+    @Inject
+    private Models models;
+
     @GET
     @Path("/")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public String getApplications() {
-        return "org/libreccm/ui/admin/applications.xhtml";
+    public String getApplicationTypes() {
+        final List<ApplicationTypeInfoItem> appTypes = appManager
+            .getApplicationTypes()
+            .entrySet()
+            .stream()
+            .map(Map.Entry::getValue)
+            .map(this::buildTypeInfoItem)
+            .sorted()
+            .collect(Collectors.toList());
+        
+        models.put("applicationTypes", appTypes);
+
+        return "org/libreccm/ui/admin/applications/applicationtypes.xhtml";
     }
+
+    @GET
+    @Path("/{type}")
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    public String getApplicationInstances(
+        @PathParam("type") final String type
+    ) {
+        throw new UnsupportedOperationException();
+    }
+    
+    private ApplicationTypeInfoItem buildTypeInfoItem(
+        final ApplicationType applicationType
+    ) {
+        final ApplicationTypeInfoItem item = new ApplicationTypeInfoItem();
+        item.setName(applicationType.name());
+
+        final LocalizedTextsUtil textsUtil = globalizationHelper
+            .getLocalizedTextsUtil(applicationType.descBundle());
+        item.setTitle(textsUtil.getText(applicationType.titleKey()));
+        item.setDescription(textsUtil.getText(applicationType.descKey()));
+        item.setSingleton(applicationType.singleton());
+        item.setNumberOfInstances(
+            appRepository.findByType(applicationType.name()).size()
+        );
+
+        return item;
+    }
+
 }
