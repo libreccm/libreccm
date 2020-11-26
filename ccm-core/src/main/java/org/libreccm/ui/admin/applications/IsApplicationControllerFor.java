@@ -18,10 +18,31 @@
  */
 package org.libreccm.ui.admin.applications;
 
+import org.libreccm.web.CcmApplication;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.inject.Qualifier;
+
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class DefaultApplicationController implements ApplicationController {
+@Qualifier
+@Retention(RetentionPolicy.RUNTIME)
+@Target(
+    {
+        ElementType.METHOD,
+        ElementType.FIELD,
+        ElementType.PARAMETER,
+        ElementType.TYPE
+    }
+)
+public @interface IsApplicationControllerFor {
+
+    String value();
     
 }

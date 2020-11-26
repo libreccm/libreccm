@@ -36,6 +36,8 @@ public class ApplicationTypeInfoItem implements
     private boolean singleton;
 
     private long numberOfInstances;
+    
+    private String controllerLink;
 
     protected ApplicationTypeInfoItem() {
         // Nothing
@@ -79,6 +81,14 @@ public class ApplicationTypeInfoItem implements
 
     protected void setNumberOfInstances(final long numberOfInstances) {
         this.numberOfInstances = numberOfInstances;
+    }
+    
+    public String getControllerLink() {
+        return controllerLink;
+    }
+    
+    protected void setControllerLink(final String controllerLink) {
+        this.controllerLink = controllerLink;
     }
 
     @Override

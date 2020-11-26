@@ -23,9 +23,6 @@ import com.arsdigita.ui.admin.applications.AbstractAppSettingsPane;
 import com.arsdigita.ui.admin.applications.DefaultApplicationInstanceForm;
 import com.arsdigita.ui.admin.applications.DefaultApplicationSettingsPane;
 
-import org.libreccm.ui.admin.applications.ApplicationController;
-import org.libreccm.ui.admin.applications.DefaultApplicationController;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 
@@ -119,9 +116,7 @@ public @interface ApplicationType {
     Class<? extends ApplicationCreator> creator();
 
     Class<? extends AbstractAppInstanceForm> instanceForm() default DefaultApplicationInstanceForm.class;
-    
-    Class<? extends ApplicationController> adminController() default DefaultApplicationController.class;
-
+  
     Class<? extends AbstractAppSettingsPane> settingsPane() default DefaultApplicationSettingsPane.class;
 
 }

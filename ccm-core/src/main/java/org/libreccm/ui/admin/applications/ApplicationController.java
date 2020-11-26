@@ -24,4 +24,6 @@ package org.libreccm.ui.admin.applications;
  */
 public interface ApplicationController {
     
+    String getApplication();
+    
 }

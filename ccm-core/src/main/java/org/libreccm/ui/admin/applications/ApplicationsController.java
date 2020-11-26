@@ -32,12 +32,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.mvc.Controller;
 import javax.mvc.Models;
+import javax.mvc.MvcContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 
 /**
  *
@@ -50,15 +53,22 @@ public class ApplicationsController {
 
     @Inject
     private ApplicationManager appManager;
-    
+
     @Inject
     private ApplicationRepository appRepository;
 
     @Inject
     private GlobalizationHelper globalizationHelper;
-    
+
     @Inject
     private Models models;
+
+    @Inject
+    private MvcContext mvc;
+
+    @Inject
+    @Any
+    private Instance<ApplicationController> applicationControllers;
 
     @GET
     @Path("/")
@@ -73,22 +83,12 @@ public class ApplicationsController {
             .map(this::buildTypeInfoItem)
             .sorted()
             .collect(Collectors.toList());
-        
+
         models.put("applicationTypes", appTypes);
 
         return "org/libreccm/ui/admin/applications/applicationtypes.xhtml";
     }
 
-    @GET
-    @Path("/{type}")
-    @AuthorizationRequired
-    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-    public String getApplicationInstances(
-        @PathParam("type") final String type
-    ) {
-        throw new UnsupportedOperationException();
-    }
-    
     private ApplicationTypeInfoItem buildTypeInfoItem(
         final ApplicationType applicationType
     ) {
@@ -104,7 +104,46 @@ public class ApplicationsController {
             appRepository.findByType(applicationType.name()).size()
         );
 
+        final IsApplicationControllerForLiteral literal
+            = new IsApplicationControllerForLiteral(applicationType.name());
+
+        final Instance<ApplicationController> instance = applicationControllers
+            .select(literal);
+
+        if (instance.isResolvable()) {
+            final ApplicationController controller = instance.get();
+            item.setControllerLink(
+                mvc.uri(
+                    String.format(
+                        "%s#getApplication",
+                        controller.getClass().getSimpleName()
+                    )
+                ).toString()
+            );
+        }
+
         return item;
+    }
+
+    private class IsApplicationControllerForLiteral
+        extends AnnotationLiteral<IsApplicationControllerFor>
+        implements IsApplicationControllerFor {
+
+        private static final long serialVersionUID = 1L;
+
+        private final String value;
+
+        public IsApplicationControllerForLiteral(
+            final String value
+        ) {
+            this.value = value;
+        }
+
+        @Override
+        public String value() {
+            return value;
+        }
+
     }
 
 }

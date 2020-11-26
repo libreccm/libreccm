@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
+
+        <ui:param name="activePage" value="applications" />
+        <ui:param name="title" value="#{AdminMessages['applications.label']}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                #{AdminMessages['applications.label']}
+            </li>
+            <li class="breadcrumb-item active">
+                #{ShortcutAdminMessages['application_title']}
+            </li>
+        </ui:define>
+        
+        <ui:define name="main">
+            <div class="container">
+                <h1>#{ShortcutAdminMessages['application_title']}</h1>
+                
+                <div class="text-right mb-2">
+                    <a class="btn btn-secondary"
+                       href="#">
+                        <bootstrap:svgIcon icon="plus-circle" />
+                        <span>#{ShortcutAdminMessages['shortcuts.ui.admin.add_shortcut']}</span>
+                    </a>
+                </div>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#{ShortcutAdminMessages['shortcuts.ui.admin.shortcuts_table.col_url_key.header']}</th>
+                            <th>#{ShortcutAdminMessages['shortcuts.ui.admin.shortcuts_table.col_redirect.header']}</th>
+                            <th class="text-center" colspan="2"><th>#{ShortcutAdminMessages['shortcuts.ui.admin.shortcuts_table.col_actions.header']}</th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="#{shortcuts}" var="shortcut">
+                            <tr>
+                                <td>#{shortcut.urlKey}</td>
+                                <td>#{shortcut.redirect}</td>
+                                <td>
+                                    <a class="btn btn-info" 
+                                       href="#">
+                                           <bootstrap:svgIcon icon="pen"/>
+                                           #{ShortcutAdminMessages['shortcuts.ui.admin.shortcuts_table.edit']}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a class="btn btn-danger" 
+                                       href="#">
+                                           <bootstrap:svgIcon icon="x-circle"/>
+                                           #{ShortcutAdminMessages['shortcuts.ui.admin.shortcuts_table.delete']}
+                                    </a>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>
+
