@@ -25,6 +25,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
 /**
  *
@@ -33,17 +36,28 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class ApplicationsPage implements AdminPage {
 
+    @Inject
+    @Any
+    private Instance<ApplicationController> applicationControllers;
+    
     @Override
     public Set<Class<?>> getControllerClasses() {
         final Set<Class<?>> classes = new HashSet<>();
         classes.add(ApplicationsController.class);
+        
+        applicationControllers
+            .stream()
+            .map(controller -> controller.getClass())
+            .forEach(classes::add);
+        
         return classes;
     }
 
     @Override
     public String getUriIdentifier() {
         return String.format(
-            "%s#getApplicationTypes", ApplicationsController.class.getSimpleName()
+            "%s#getApplicationTypes", ApplicationsController.class
+                .getSimpleName()
         );
     }
 
