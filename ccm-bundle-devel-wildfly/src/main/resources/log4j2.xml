@@ -101,5 +101,11 @@
         <Logger name="com.arsdigita.web.DefaultApplicationFileResolver"
                 level="debug">
         </Logger>
+        <Logger name = "org.libreccm.ui.admin.AdminApplication"
+                level="debug">
+        </Logger>
+        <Logger name="org.libreccm.ui.admin.applications.ApplicationsPage"
+                level="debug">
+        </Logger>
     </Loggers>
 </Configuration>

@@ -27,24 +27,29 @@ import org.libreccm.modules.RequiredModule;
 import org.libreccm.modules.ShutdownEvent;
 import org.libreccm.modules.UnInstallEvent;
 import org.libreccm.shortcuts.ui.ShortcutsSettingsPane;
+import org.libreccm.ui.admin.applications.shortcuts.ShortcutsApplicationController;
 import org.libreccm.web.ApplicationType;
 
 /**
- * The {@code Shortcuts} module for CCM. Defines the {@code Shortcuts} 
+ * The {@code Shortcuts} module for CCM. Defines the {@code Shortcuts}
  * application and sets up the module when the module is installed.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Module(
-        requiredModules = {
-            @RequiredModule(module = CcmCore.class)
-        },
-        applicationTypes = {
-            @ApplicationType(name = ShortcutsConstants.SHORTCUTS_APP_TYPE,
-                             descBundle = ShortcutsConstants.SHORTCUTS_BUNDLE,
-                             singleton = true,
-                             settingsPane = ShortcutsSettingsPane.class,
-                             creator = ShortcutsApplicationCreator.class)})
+    requiredModules = {
+        @RequiredModule(module = CcmCore.class)
+    },
+    applicationTypes = {
+        @ApplicationType(
+            name = ShortcutsConstants.SHORTCUTS_APP_TYPE,
+            descBundle = ShortcutsConstants.SHORTCUTS_BUNDLE,
+            singleton = true,
+            settingsPane = ShortcutsSettingsPane.class,
+            creator = ShortcutsApplicationCreator.class,
+            applicationController = ShortcutsApplicationController.class
+        )}
+)
 public class Shortcuts implements CcmModule {
 
     @Override
