@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
+
+        <ui:param name="activePage" value="applications" />
+        <ui:param name="title" value="#{AdminMessages['applications.label']}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                #{AdminMessages['applications.label']}
+            </li>
+            <li class="breadcrumb-item active">
+                #{ContentSectionAdminMessages['application_title']}
+            </li>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container">
+                <h1>#{ContentSectionAdminMessages['application_title']}</h1>
+
+                <div class="mb-2">
+                    <bootstrap:modalForm actionTarget="#{mvc.uri('ContentSectionApplicationController#addContentSection')}"
+                                         buttonIcon="plus-circle"
+                                         buttonText="#{ContentSectionAdminMessages['contentsections.ui.admin.instances.add']}"
+                                         buttonTextClass="text-right"
+                                         dialogId="contentsection-add-form"
+                                         >
+                        <f:facet name="title">
+                            <h3>#{ContentSectionAdminMessages['contentsections.ui.admin.instances.add_form.title']}</h3>
+                        </f:facet>
+                        <f:facet name="body">
+                            <bootstrap:formGroupText help="#{ContentSectionAdminMessages['contentsections.ui.admin.instances.add_form.name.help']}"
+                                                     inputId="contentsection-add-form-name"
+                                                     label="#{ContentSectionAdminMessages['contentsections.ui.admin.instances.add_form.name.label']}" 
+                                                     name="label" 
+                                                     pattern="[\\w-.]"/>
+                        </f:facet>
+                        <f:facet name="footer">
+                            <button class="btn btn-secondary" 
+                                    data-dismiss="modal"
+                                    type="button" >
+                                #{ContentSectionAdminMessages['contentsections.ui.admin.instances.add_form.cancel']}
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                #{ContentSectionAdminMessages['contentsections.ui.admin.instances.add_form.submit']}
+                            </button>
+                        </f:facet>
+                    </bootstrap:modalForm>
+                </div>
+
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#{ContentSectionAdminMessages['contentsections.ui.admin.instances_table.col_name.header']}</th>
+                            <th class="text-center" colspan="2">#{ContentSectionAdminMessages['contentsections.ui.admin.instances_table.col_name.actions']}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="#{sections}" var="section">
+                            <tr>
+                                <td>#{section.label}</td>
+                                <td class="text-center">
+                                    <bootstrap:modalForm actionTarget="#{mvc.uri('ContentSectionApplicationController#updateContentSection', { 'sectionId': section.sectionId })}"
+                                                         buttonIcon="plus-circle"
+                                                         buttonText="#{ContentSectionAdminMessages['contentsections.ui.admin.instances.edit']}"
+                                                         buttonTextClass="text-right"
+                                                         dialogId="contentsection-#{section.sectionId}-edit-form"
+                                                         >
+                                        <f:facet name="title">
+                                            <h3>#{ContentSectionAdminMessages['contentsections.ui.admin.instances.add_form.title']}</h3>
+                                        </f:facet>
+                                        <f:facet name="body">
+                                            <bootstrap:formGroupText help="#{ContentSectionAdminMessages['contentsections.ui.admin.instances.edit_form.name.help']}"
+                                                                     inputId="contentsection-add-form-name"
+                                                                     label="#{ContentSectionAdminMessages['contentsections.ui.admin.instances.edit_form.name.label']}" 
+                                                                     name="label" 
+                                                                     pattern="[\\w-.]" 
+                                                                     value="#{section.label}" />
+                                        </f:facet>
+                                        <f:facet name="footer">
+                                            <button class="btn btn-secondary" 
+                                                    data-dismiss="modal"
+                                                    type="button" >
+                                                #{ContentSectionAdminMessages['contentsections.ui.admin.instances.edit_form.cancel']}
+                                            </button>
+                                            <button type="submit" class="btn btn-primary">
+                                                #{ContentSectionAdminMessages['contentsections.ui.admin.instances.edit_form.submit']}
+                                            </button>
+                                        </f:facet>
+                                    </bootstrap:modalForm>
+                                </td>
+                                <td class="text-center">
+                                    <libreccm:deleteDialog actionTarget="#{mvc.uri('ContentSectionApplicationController#deleteContentSection', { 'sectionId': section.sectionId })}"
+                                                           buttonText="#{ContentSectionAdminMessages['contentsections.ui.admin.instances.delete_dialog.button_text']}" 
+                                                           cancelLabel="#{ContentSectionAdminMessages['contentsections.ui.admin.instances.delete_dialog.cancel']}"
+                                                           confirmLabel="#{ContentSectionAdminMessages['contentsections.ui.admin.instances.delete_dialog.confirm']}"
+                                                           dialogId="contentsection-#{section.sectionId}-deletedialog"
+                                                           dialogTitle="#{ContentSectionAdminMessages['contentsections.ui.admin.instances.delete_dialog.title']}"
+                                                           message="#{ContentSectionAdminMessages.getMessage('contentsections.ui.admin.instances.delete_dialog.message', [section.label])}" />
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>
