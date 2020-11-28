@@ -218,6 +218,14 @@
                         </overlay>
                         <overlay>
                             <groupId>org.libreccm</groupId>
+                            <artifactId>ccm-shortcuts</artifactId>
+                            <type>jar</type>
+                            <includes>
+                                <include>WEB-INF/</include>
+                            </includes>
+                        </overlay>
+                        <overlay>
+                            <groupId>org.libreccm</groupId>
                             <artifactId>ccm-core</artifactId>
                             <type>jar</type>
                             <includes>

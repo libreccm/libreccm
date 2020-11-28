@@ -36,7 +36,7 @@ public class ApplicationTypeInfoItem implements
     private boolean singleton;
 
     private long numberOfInstances;
-    
+       
     private String controllerLink;
 
     protected ApplicationTypeInfoItem() {

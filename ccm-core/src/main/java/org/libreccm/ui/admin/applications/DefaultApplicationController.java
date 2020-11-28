@@ -18,31 +18,22 @@
  */
 package org.libreccm.ui.admin.applications;
 
-import org.libreccm.web.CcmApplication;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import javax.inject.Qualifier;
+import javax.enterprise.context.RequestScoped;
+import javax.mvc.Controller;
+import javax.ws.rs.Path;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Qualifier
-@Retention(RetentionPolicy.RUNTIME)
-@Target(
-    {
-        ElementType.METHOD,
-        ElementType.FIELD,
-        ElementType.PARAMETER,
-        ElementType.TYPE
-    }
-)
-public @interface IsApplicationControllerFor {
+@RequestScoped
+@Controller
+@Path("/application")
+public class DefaultApplicationController implements ApplicationController {
 
-    String value();
-    
+    @Override
+    public String getApplication() {
+        return "";
+    }
+
 }

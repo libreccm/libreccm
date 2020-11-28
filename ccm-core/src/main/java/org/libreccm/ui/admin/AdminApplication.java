@@ -18,9 +18,12 @@
  */
 package org.libreccm.ui.admin;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.ui.IsAuthenticatedFilter;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,11 +35,15 @@ import javax.ws.rs.core.Application;
 /**
  * Collects the controllers for the admin application and registers them with
  * JAX-RS.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ApplicationPath("/@admin")
 public class AdminApplication extends Application {
+
+    private static final Logger LOGGER = LogManager.getLogger(
+        AdminApplication.class
+    );
 
     /**
      * Injection point for the admin pages.
@@ -49,7 +56,7 @@ public class AdminApplication extends Application {
         final Set<Class<?>> classes = new HashSet<>();
 
         classes.add(IsAuthenticatedFilter.class);
-        
+
         classes.addAll(
             adminPages
                 .stream()
@@ -58,12 +65,11 @@ public class AdminApplication extends Application {
                 .collect(Collectors.toSet())
         );
 
-        return classes;
+        LOGGER.debug(
+            "Adding classes to AdminApplication: {}", Objects.toString(classes)
+        );
 
-//        final Set<Class<?>> classes = new HashSet<>();
-//        classes.add(SystemInformationController.class);
-////        classes.add(UsersApi.class);
-//        return classes;
+        return classes;
     }
 
 }

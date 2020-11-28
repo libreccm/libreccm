@@ -18,15 +18,17 @@
  */
 package org.libreccm.ui.admin.applications;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.ui.admin.AdminConstants;
 import org.libreccm.ui.admin.AdminPage;
+import org.libreccm.web.ApplicationManager;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 /**
@@ -35,21 +37,28 @@ import javax.inject.Inject;
  */
 @ApplicationScoped
 public class ApplicationsPage implements AdminPage {
+    
+    private static final Logger LOGGER = LogManager.getLogger(
+        ApplicationsPage.class
+    );
 
     @Inject
-    @Any
-    private Instance<ApplicationController> applicationControllers;
-    
+    private ApplicationManager applicationManager;
+
     @Override
     public Set<Class<?>> getControllerClasses() {
         final Set<Class<?>> classes = new HashSet<>();
         classes.add(ApplicationsController.class);
         
-        applicationControllers
-            .stream()
-            .map(controller -> controller.getClass())
-            .forEach(classes::add);
-        
+        classes.addAll(
+            applicationManager
+                .getApplicationTypes()
+                .entrySet()
+                .stream()
+                .map(type -> type.getValue().applicationController())
+                .collect(Collectors.toSet())
+        );
+
         return classes;
     }
 
