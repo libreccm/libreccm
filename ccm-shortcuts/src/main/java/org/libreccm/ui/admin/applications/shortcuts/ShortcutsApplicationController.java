@@ -113,12 +113,13 @@ public class ShortcutsApplicationController implements ApplicationController {
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeShortcut(
-        @PathParam("shortcutId") final long shortcutId
+        @PathParam("shortcutId") final long shortcutId,
+        @FormParam("confirmed") final String confirmed
     ) {
         final Optional<Shortcut> result = shortcutRepository
             .findById(shortcutId);
         
-        if (result.isPresent()) {
+        if (result.isPresent() && "true".equals(confirmed)) {
             shortcutRepository.delete(result.get());
         }
         

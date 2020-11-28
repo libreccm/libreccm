@@ -23,6 +23,7 @@ import org.libreccm.modules.RequiredModule;
 import org.libreccm.modules.ShutdownEvent;
 import org.libreccm.modules.UnInstallEvent;
 import org.libreccm.pagemodel.PageModelComponentModel;
+import org.libreccm.ui.admin.contentsections.ContentSectionApplicationController;
 import org.libreccm.web.ApplicationType;
 import org.libreccm.web.CcmApplication;
 import org.librecms.assets.AssetTypes;
@@ -80,7 +81,8 @@ import java.util.Properties;
             settingsPane = SettingsPane.class,
             descBundle = CmsConstants.CONTENT_SECTION_DESC_BUNDLE,
             creator = ContentSectionCreator.class,
-            servletPath = "/templates/servlet/content-section"
+            servletPath = "/templates/servlet/content-section",
+            applicationController = ContentSectionApplicationController.class
         ),
         @ApplicationType(
             name = "org.librecms.pages.Pages",
