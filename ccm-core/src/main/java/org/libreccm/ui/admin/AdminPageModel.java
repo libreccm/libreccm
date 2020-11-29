@@ -18,14 +18,16 @@
  */
 package org.libreccm.ui.admin;
 
+import java.util.Comparator;
+
 /**
  * Model for the data of an admin page.
- * 
+ *
  * @see AdminPage
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class AdminPageModel {
+public class AdminPageModel implements Comparable<AdminPageModel> {
 
     private String uriIdentifier;
 
@@ -35,11 +37,13 @@ public class AdminPageModel {
 
     private String icon;
 
+    private long position;
+
     public String getUriIdentifier() {
         return uriIdentifier;
     }
 
-    public void setUriIdentifier(final String uriIdentifier) {
+    protected void setUriIdentifier(final String uriIdentifier) {
         this.uriIdentifier = uriIdentifier;
     }
 
@@ -47,7 +51,7 @@ public class AdminPageModel {
         return label;
     }
 
-    public void setLabel(final String label) {
+    protected void setLabel(final String label) {
         this.label = label;
     }
 
@@ -55,7 +59,7 @@ public class AdminPageModel {
         return description;
     }
 
-    public void setDescription(final String description) {
+    protected void setDescription(final String description) {
         this.description = description;
     }
 
@@ -63,8 +67,26 @@ public class AdminPageModel {
         return icon;
     }
 
-    public void setIcon(final String icon) {
+    protected void setIcon(final String icon) {
         this.icon = icon;
+    }
+
+    public long getPosition() {
+        return position;
+    }
+
+    protected void setPosition(final long position) {
+        this.position = position;
+    }
+
+    @Override
+    public int compareTo(final AdminPageModel other) {
+        return Comparator
+            .nullsFirst(
+                Comparator
+                    .comparing(AdminPageModel::getPosition)
+                    .thenComparing(AdminPageModel::getLabel)
+            ).compare(this, other);
     }
 
 }
