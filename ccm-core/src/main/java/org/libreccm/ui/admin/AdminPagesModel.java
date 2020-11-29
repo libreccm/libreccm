@@ -89,6 +89,7 @@ public class AdminPagesModel {
             )
         );
         model.setIcon(fromAdminPage.getIcon());
+        model.setPosition(fromAdminPage.getPosition());
         return model;
     }
 
