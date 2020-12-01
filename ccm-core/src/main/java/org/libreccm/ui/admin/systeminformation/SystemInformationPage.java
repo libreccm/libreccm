@@ -23,7 +23,6 @@ import java.util.Set;
 
 import org.libreccm.ui.admin.AdminConstants;
 import org.libreccm.ui.admin.AdminPage;
-import org.libreccm.ui.admin.imexport.ImExportController;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -76,7 +75,7 @@ public class SystemInformationPage implements AdminPage {
 
     @Override
     public int getPosition() {
-        return 70;
+        return 80;
     }
 
 }

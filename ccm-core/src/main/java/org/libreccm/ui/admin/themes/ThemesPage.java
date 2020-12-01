@@ -16,53 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.ui.admin.applications;
+package org.libreccm.ui.admin.themes;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.libreccm.ui.admin.AdminConstants;
 import org.libreccm.ui.admin.AdminPage;
-import org.libreccm.web.ApplicationManager;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ApplicationScoped
-public class ApplicationsPage implements AdminPage {
-
-    @Inject
-    private ApplicationManager applicationManager;
+public class ThemesPage implements AdminPage {
 
     @Override
     public Set<Class<?>> getControllerClasses() {
         final Set<Class<?>> classes = new HashSet<>();
-        classes.add(ApplicationsController.class);
-
-        classes.addAll(
-            applicationManager
-                .getApplicationTypes()
-                .entrySet()
-                .stream()
-                .map(type -> type.getValue().applicationController())
-                .collect(Collectors.toSet())
-        );
-
+        classes.add(ThemesController.class);
         return classes;
     }
 
     @Override
     public String getUriIdentifier() {
         return String.format(
-            "%s#getApplicationTypes",
-            ApplicationsController.class.getSimpleName()
+            "%s#getThemes", ThemesController.class.getSimpleName()
         );
     }
 
@@ -73,7 +54,7 @@ public class ApplicationsPage implements AdminPage {
 
     @Override
     public String getLabelKey() {
-        return "applications.label";
+        return "themes.label";
     }
 
     @Override
@@ -83,17 +64,19 @@ public class ApplicationsPage implements AdminPage {
 
     @Override
     public String getDescriptionKey() {
-        return "applications.description";
+        return "themes.description";
     }
 
     @Override
     public String getIcon() {
-        return "puzzle";
+        return "brush-fill";
     }
 
     @Override
     public int getPosition() {
-        return 40;
+        return 70;
     }
-
+    
+    
+    
 }
