@@ -78,6 +78,11 @@ public class FileSystemThemeProvider implements ThemeProvider {
     private ThemeFileInfoUtil themeFileInfoUtil;
 
     @Override
+    public String getName() {
+        return "FileSystemThemeProvider";
+    }
+    
+    @Override
     public List<ThemeInfo> getThemes() {
 
         try {

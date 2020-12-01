@@ -72,6 +72,11 @@ public class DatabaseThemeProvider implements ThemeProvider {
     private ThemeRepository themeRepository;
 
     @Override
+    public String getName() {
+        return "DatabaseThemeProvider";
+    }
+
+    @Override
     @Transactional(Transactional.TxType.REQUIRED)
     public List<ThemeInfo> getThemes() {
 
@@ -193,7 +198,7 @@ public class DatabaseThemeProvider implements ThemeProvider {
 
         final Optional<ThemeFile> themeFile = fileRepository
             .findByPath(theme, path, version);
-        
+
         if (themeFile.isPresent()) {
             return Optional.of(createThemeFileInfo(themeFile.get()));
         } else {
@@ -419,6 +424,7 @@ public class DatabaseThemeProvider implements ThemeProvider {
     private class DataFileOutputStream extends OutputStream {
 
         private final DataFile dataFile;
+
         private final ByteArrayOutputStream outputStream;
 
         private DataFileOutputStream(final DataFile dataFile) {

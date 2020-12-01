@@ -1,0 +1,168 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
+
+        <ui:param name="activePage" value="applications" />
+        <ui:param name="title" value="#{AdminMessages['applications.label']}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item active">
+                #{AdminMessages['themes.label']}
+            </li>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container-fluid">
+                <h1>#{AdminMessages['themes.label']}</h1>
+
+                <bootstrap:modalForm actionTarget="#{mvc.uri('ThemesController#createTheme')}"
+                                     buttonIcon="plus-circle"
+                                     buttonText="#{AdminMessages['themes.create_new_theme']}"
+                                     buttonTextClass="text-right"
+                                     dialogId="create-theme-dialog">
+                    <f:facet name="title">
+                        <h2>#{AdminMessages['themes.dialog.new_theme.title']}</h2>
+                    </f:facet>
+                    <f:facet name="body">
+                        <bootstrap:formGroupText help="#{AdminMessages['themes.dialog.new_theme.name.help']}"
+                                                 inputId="create-theme-dialog-name"
+                                                 label="#{AdminMessages['themes.dialog.new_theme.name.label']}"
+                                                 name="themeName" />
+                        <bootstrap:formGroupSelect help="#{AdminMessages['themes.dialog.new_theme.provider.help']}"
+                                                   inputId="create-theme-dialog-provider"
+                                                   label="#{AdminMessages['themes.dialog.new_theme.provider.label']}"
+                                                   name="providerName"
+                                                   options="#{Themes.providerOptions}">
+                        </bootstrap:formGroupSelect>
+                    </f:facet>
+                    <f:facet name="footer">
+                         <button class="btn btn-secondary" 
+                                    data-dismiss="modal"
+                                    type="button" >
+                                #{AdminMessages['themes.dialog.new_theme.close']}
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                #{AdminMessages['themes.dialog.new_theme.create']}
+                            </button>
+                    </f:facet>
+                </bootstrap:modalForm>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#{AdminMessages['themes.table.headers.name']}</th>
+                            <th>#{AdminMessages['themes.table.headers.title']}</th>
+                            <th>#{AdminMessages['themes.table.headers.version']}</th>
+                            <th>#{AdminMessages['themes.table.headers.type']}</th>
+                            <th>#{AdminMessages['themes.table.headers.provider']}</th>
+                            <th class="text-center" colspan="4">#{AdminMessages['themes.table.headers.actions']}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="#{Themes.themes}" var="theme">
+                            <tr>
+                                <td>#{theme.name}</td>
+                                <td>#{theme.title}</td>
+                                <td>#{theme.version}</td>
+                                <td>#{theme.type}</td>
+                                <td>#{theme.provider}</td>
+                                <td>
+                                    <c:if test="#{theme.description != null and !theme.description.isEmpty()}">
+                                        <button class="btn btn-info"
+                                                data-target="#theme-#{theme.name}-description"
+                                                data-toggle="modal"
+                                                type="button">
+                                            <bootstrap:svgIcon icon="info-circle" />
+                                            <span class="sr-only">#{AdminMessages.getMessage('themes.table.description.show', [theme.name])}</span>
+                                        </button>
+                                        <div aria-labelledby="theme-#{theme.name}-description-title"
+                                             aria-hidden="true"
+                                            class="modal fade"
+                                             id="theme-#{theme.name}-description"
+                                             tabindex="-1">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header"
+                                                         id="theme-#{theme.name}-description-title">
+                                                        <h2>#{AdminMessages.getMessage('themes.dialog.description.title', [theme.name])}</h2>
+                                                        <button aria-label="#{AdminMessages['themes.dialog.description.close']}"
+                                                            class="close"
+                                                                data-dismiss="modal"
+                                                                type="button">
+                                                                      <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>
+                                                            #{theme.description}
+                                                        </p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btn btn-primary"
+                                                                data-dismiss="modal"
+                                                                type="button">
+                                                            #{AdminMessages['themes.dialog.description.close']}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </c:if>
+                                </td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="#{theme.publishable and theme.published }">
+                                            <form action="#{mvc.uri('ThemesController#publishTheme', {'themeName': theme.name})}">
+                                                <button class="btn btn-primary"
+                                                        type="button">
+                                                            #{AdminMessages['themes.table.actions.republish']}
+                                                </button>
+                                            </form>
+                                        </c:when>
+                                        <c:when test="#{theme.publishable}">
+                                            <form action="#{mvc.uri('ThemesController#publishTheme', {'themeName': theme.name})}">
+                                                <button class="btn btn-primary"
+                                                        type="button">
+                                                            #{AdminMessages['themes.table.actions.publish']}
+                                                </button>
+                                            </form>
+                                        </c:when>
+                                    </c:choose>
+                                </td>
+                                <td>
+                                    <c:if test="#{theme.published and theme.publishable}">
+                                        <libreccm:deleteDialog actionTarget="#{mvc.uri('ThemesController#unpublishTheme', {'themeName': theme.name})}"
+                                                               buttonText="#{AdminMessages['themes.table.actions.unpublish']}"
+                                                               cancelLabel="#{AdminMessages['themes.table.actions.unpublish.cancel']}"
+                                                               confirmLabel="#{AdminMessages['themes.table.actions.unpublish.confirm']}"
+                                                               dialogId="theme-#{theme.name}-unpublish"
+                                                               dialogTitle="#{AdminMessages['themes.table.actions.unpublish.title']}"
+                                                               message="#{AdminMessages.getMessage('themes.table.actions.unpublish.message', [theme.name])}"
+                                            />
+                                    </c:if>
+                                </td>
+                                <td>
+                                    <c:if test="#{theme.editable and !theme.published}">
+                                        <libreccm:deleteDialog actionTarget="#{mvc.uri('ThemesController#deleteTheme', {'themeName': theme.name})}"
+                                                               buttonText="#{AdminMessages['themes.table.actions.delete']}"
+                                                               cancelLabel="#{AdminMessages['themes.table.actions.delete.cancel']}"
+                                                               confirmLabel="#{AdminMessages['themes.table.actions.delete.confirm']}"
+                                                               dialogId="theme-#{theme.name}-unpublish"
+                                                               dialogTitle="#{AdminMessages['themes.table.actions.delete.title']}"
+                                                               message="#{AdminMessages.getMessage('themes.table.actions.delete.message', [theme.name])}"
+                                            />
+                                    </c:if>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>
