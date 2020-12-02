@@ -18,12 +18,17 @@
  */
 package org.libreccm.ui.admin.imexport;
 
+import com.arsdigita.ui.admin.importexport.ImportExportMonitor;
+
 import org.libreccm.core.CoreConstants;
+import org.libreccm.imexport.ImportExport;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.mvc.Controller;
+import javax.mvc.Models;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
@@ -35,12 +40,31 @@ import javax.ws.rs.Path;
 @Controller
 @Path("/imexport")
 public class ImExportController {
+
+    @Inject
+    private ImportExport importExport;
+
+    @Inject
+    private ImportExportMonitor importExportMonitor;
     
+    @Inject
+    private Models models;
+
     @GET
     @Path("/")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     public String getImExportDashboard() {
-        return "org/libreccm/ui/admin/imexport.xhtml";
+        return "org/libreccm/ui/admin/imexport/imexport.xhtml";
+    }
+
+    @GET
+    @Path("/export")
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    public String exportEntities() {
+        models.put("exportables", importExport.getExportableEntityTypes());
+        
+        return "org/libreccm/ui/admin/imexport/export.xhtml";
     }
 }

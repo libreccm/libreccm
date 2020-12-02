@@ -89,9 +89,9 @@ public class ImportExport {
      *
      * @see CcmFilesConfiguration#dataPath
      */
-    public void exportEntities(final List<Exportable> entities,
-                               final String exportName) {
-
+    public void exportEntities(
+        final List<Exportable> entities, final String exportName
+    ) {
         final JsonObjectBuilder manifestBuilder = Json.createObjectBuilder();
         manifestBuilder.add("created",
                             LocalDateTime.now(ZoneId.of("UTC")).toString());
@@ -150,6 +150,14 @@ public class ImportExport {
                                    entry.getKey(),
                                    entry.getValue());
         }
+    }
+    
+    public List<String> getExportableEntityTypes() {
+       return imExporters
+           .stream()
+           .map(imexporter -> imexporter.getEntityClass().getName())
+           .sorted()
+           .collect(Collectors.toList());
     }
 
     @SuppressWarnings("unchecked")
@@ -254,12 +262,12 @@ public class ImportExport {
         }
 
         final List<AbstractEntityImExporter<?>> imExportersList
-                                                    = new ArrayList<>();
+            = new ArrayList<>();
         imExporters.forEach(imExporter -> imExportersList.add(imExporter));
 
         try {
             final EntityImExporterTreeManager treeManager
-                                                  = new EntityImExporterTreeManager();
+                = new EntityImExporterTreeManager();
             final List<EntityImExporterTreeNode> tree = treeManager
                 .generateTree(imExportersList);
             final List<EntityImExporterTreeNode> orderedNodes = treeManager
@@ -332,7 +340,7 @@ public class ImportExport {
                                               type,
                                               fileName);
         try (final InputStream inputStream
-                                   = ccmFiles.createInputStream(filePath)) {
+            = ccmFiles.createInputStream(filePath)) {
 
             final String data = new BufferedReader(
                 new InputStreamReader(inputStream, StandardCharsets.UTF_8))
@@ -429,7 +437,7 @@ public class ImportExport {
 //                .collect(Collectors.toList());
             final JsonArray typesArray = manifestJson.getJsonArray("types");
             final List<String> types = new ArrayList<>();
-            for(int i = 0; i < typesArray.size(); i++) {
+            for (int i = 0; i < typesArray.size(); i++) {
                 types.add(typesArray.getString(i));
             }
 
