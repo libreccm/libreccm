@@ -43,8 +43,7 @@ public class ApplicationImExporter
     private ApplicationRepository applicationRepository;
 
     @Override
-    protected Class<CcmApplication> getEntityClass() {
-
+    public Class<CcmApplication> getEntityClass() {
         return CcmApplication.class;
     }
 

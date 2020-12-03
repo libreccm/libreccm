@@ -21,15 +21,20 @@ package org.libreccm.ui.admin.imexport;
 import com.arsdigita.ui.admin.importexport.ImportExportMonitor;
 
 import org.libreccm.core.CoreConstants;
+import org.libreccm.imexport.AbstractEntityImExporter;
+import org.libreccm.imexport.EntityImExporterTreeNode;
 import org.libreccm.imexport.ImportExport;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
+
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 
 /**
@@ -46,7 +51,7 @@ public class ImExportController {
 
     @Inject
     private ImportExportMonitor importExportMonitor;
-    
+
     @Inject
     private Models models;
 
@@ -63,8 +68,27 @@ public class ImExportController {
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     public String exportEntities() {
-        models.put("exportables", importExport.getExportableEntityTypes());
-        
+        models.put(
+            "exportableEntities",
+            importExport
+                .getExportableEntityTypes()
+                .stream()
+                .map(EntityImExporterTreeNode::getEntityImExporter)
+                .map(AbstractEntityImExporter::getEntityClass)
+                .map(Class::getName)
+                .sorted()
+                .collect(Collectors.toList())
+        );
+
         return "org/libreccm/ui/admin/imexport/export.xhtml";
     }
+    
+    @GET
+    @Path("/import")
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    public String importEntities() {
+        throw new NotFoundException();
+    }
+
 }

@@ -41,14 +41,14 @@
                         </bootstrap:formGroupSelect>
                     </f:facet>
                     <f:facet name="footer">
-                         <button class="btn btn-secondary" 
-                                    data-dismiss="modal"
-                                    type="button" >
-                                #{AdminMessages['themes.dialog.new_theme.close']}
-                            </button>
-                            <button type="submit" class="btn btn-primary">
-                                #{AdminMessages['themes.dialog.new_theme.create']}
-                            </button>
+                        <button class="btn btn-secondary" 
+                                data-dismiss="modal"
+                                type="button" >
+                            #{AdminMessages['themes.dialog.new_theme.close']}
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            #{AdminMessages['themes.dialog.new_theme.create']}
+                        </button>
                     </f:facet>
                 </bootstrap:modalForm>
                 <table class="table table-hover">
@@ -81,7 +81,7 @@
                                         </button>
                                         <div aria-labelledby="theme-#{theme.name}-description-title"
                                              aria-hidden="true"
-                                            class="modal fade"
+                                             class="modal fade"
                                              id="theme-#{theme.name}-description"
                                              tabindex="-1">
                                             <div class="modal-dialog">
@@ -90,10 +90,10 @@
                                                          id="theme-#{theme.name}-description-title">
                                                         <h2>#{AdminMessages.getMessage('themes.dialog.description.title', [theme.name])}</h2>
                                                         <button aria-label="#{AdminMessages['themes.dialog.description.close']}"
-                                                            class="close"
+                                                                class="close"
                                                                 data-dismiss="modal"
                                                                 type="button">
-                                                                      <span aria-hidden="true">&times;</span>
+                                                            <span aria-hidden="true">&times;</span>
                                                         </button>
                                                     </div>
                                                     <div class="modal-body">
@@ -119,7 +119,7 @@
                                             <form action="#{mvc.uri('ThemesController#publishTheme', {'themeName': theme.name})}">
                                                 <button class="btn btn-primary"
                                                         type="button">
-                                                            #{AdminMessages['themes.table.actions.republish']}
+                                                    #{AdminMessages['themes.table.actions.republish']}
                                                 </button>
                                             </form>
                                         </c:when>
@@ -127,7 +127,7 @@
                                             <form action="#{mvc.uri('ThemesController#publishTheme', {'themeName': theme.name})}">
                                                 <button class="btn btn-primary"
                                                         type="button">
-                                                            #{AdminMessages['themes.table.actions.publish']}
+                                                    #{AdminMessages['themes.table.actions.publish']}
                                                 </button>
                                             </form>
                                         </c:when>
@@ -142,7 +142,7 @@
                                                                dialogId="theme-#{theme.name}-unpublish"
                                                                dialogTitle="#{AdminMessages['themes.table.actions.unpublish.title']}"
                                                                message="#{AdminMessages.getMessage('themes.table.actions.unpublish.message', [theme.name])}"
-                                            />
+                                                               />
                                     </c:if>
                                 </td>
                                 <td>
@@ -154,7 +154,7 @@
                                                                dialogId="theme-#{theme.name}-unpublish"
                                                                dialogTitle="#{AdminMessages['themes.table.actions.delete.title']}"
                                                                message="#{AdminMessages.getMessage('themes.table.actions.delete.message', [theme.name])}"
-                                            />
+                                                               />
                                     </c:if>
                                 </td>
                             </tr>
