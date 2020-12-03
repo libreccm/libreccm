@@ -22,92 +22,94 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * A node in the dependency tree managed by {@link EntityImExporterTreeManager}.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 final class EntityImExporterTreeNode {
-    
+
     private AbstractEntityImExporter<?> entityImExporter;
-    
+
     private List<EntityImExporterTreeNode> dependentImExporters;
-    
+
     private List<EntityImExporterTreeNode> dependsOn;
-    
+
     public EntityImExporterTreeNode() {
-        
+
         super();
-        
+
         dependentImExporters = new ArrayList<>();
         dependsOn = new ArrayList<>();
     }
-    
+
     public EntityImExporterTreeNode(
         final AbstractEntityImExporter<?> entityImExporter) {
-        
+
         this();
         this.entityImExporter = entityImExporter;
     }
-    
+
     public AbstractEntityImExporter<?> getEntityImExporter() {
-        
+
         return entityImExporter;
     }
-    
+
     void setEntityImExporter(
         final AbstractEntityImExporter<?> entityImExporter) {
-        
+
         this.entityImExporter = entityImExporter;
     }
-    
+
     public List<EntityImExporterTreeNode> getDependentImExporters() {
         return Collections.unmodifiableList(dependentImExporters);
     }
-    
+
     void setDependentImExporters(
         final List<EntityImExporterTreeNode> dependentImExporters) {
-        
+
         this.dependentImExporters = new ArrayList<>(dependentImExporters);
     }
-    
+
     void addDependentImExporter(final EntityImExporterTreeNode node) {
-        
+
         dependentImExporters.add(node);
     }
-    
+
     void removeDependentImExporter(final EntityImExporterTreeNode node) {
-        
+
         dependentImExporters.remove(node);
     }
-    
+
     public List<EntityImExporterTreeNode> getDependsOn() {
-        
+
         return Collections.unmodifiableList(dependsOn);
     }
-    
+
     void setDependsOn(final List<EntityImExporterTreeNode> dependsOn) {
-        
+
         this.dependsOn = new ArrayList<>(dependsOn);
     }
-    
+
     void addDependsOn(final EntityImExporterTreeNode node) {
-        
+
         dependsOn.add(node);
     }
-    
+
     void removeDependsOn(final EntityImExporterTreeNode node) {
-        
+
         dependsOn.remove(node);
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 47 
-               * hash 
-               + Objects.hashCode(this.entityImExporter.getClass().getName());
+        hash = 47
+                   * hash
+                   + Objects
+                .hashCode(this.entityImExporter.getClass().getName());
         return hash;
     }
 
@@ -127,7 +129,30 @@ final class EntityImExporterTreeNode {
             this.entityImExporter.getClass().getName(),
             other.getEntityImExporter().getClass().getName());
     }
-    
-    
-    
+
+    @Override
+    public String toString() {
+        return String.format(
+            "%s{ "
+                + "entityImExporter: %s, "
+                + "dependentImExporters: [%s], "
+                + "dependsOn: [%s]"
+                + " }",
+            super.toString(),
+            entityImExporter.getEntityClass().toString(),
+            dependentImExporters
+                .stream()
+                .map(EntityImExporterTreeNode::getEntityImExporter)
+                .map(AbstractEntityImExporter::getEntityClass)
+                .map(Class::getName)
+                .collect(Collectors.joining(", ")),
+            dependsOn
+                .stream()
+                .map(EntityImExporterTreeNode::getEntityImExporter)
+                .map(AbstractEntityImExporter::getEntityClass)
+                .map(Class::getName)
+                .collect(Collectors.joining(", "))
+        );
+    }
+
 }
