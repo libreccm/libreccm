@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
 
@@ -24,14 +26,32 @@
             <div class="container">
                 <h1>#{AdminMessages['imexport.export.label']}</h1>
 
-                <p>Exportable classes</p>
-                <ul>
-                    <c:forEach items="#{exportables}" var="exportable">
-                        <li><code>${exportable}</code></li>
-                    </c:forEach>
-                </ul>
+                <form action="#"
+                      aria-describedby="export-help">
+                    <p id="export-help">#{AdminMessages['imexport.export.help']}</p>
 
-                <p>Placeholder</p>
+                    <c:forEach items="#{exportableEntities}" var="entity">
+                        <bootstrap:formCheck
+                            inputId="#{entity.replace('.', '-')}"
+                            label="#{entity}"
+                            name="#{entity.replace('.', '-')}"
+                            value="#{entity}" />
+                    </c:forEach>
+
+                    <bootstrap:formGroupText 
+                        help="#{AdminMessages['imexport.export.export_name.help']}"
+                        inputId="exportName"
+                        label="#{AdminMessages['imexport.export.export_name.label']}"
+                        name="exportName" />
+
+                    <a class="btn btn-warning"
+                       href="#{mvc.uri('ImExportController#getImExportDashboard')}">
+                        #{AdminMessages['imexport.export.cancel']}
+                    </a>
+                    <button class="btn btn-success" type="submit">
+                        #{AdminMessages['imexport.export.submit']}
+                    </button>
+                </form>
             </div>
         </ui:define>
 
