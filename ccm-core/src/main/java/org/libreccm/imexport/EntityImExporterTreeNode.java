@@ -37,7 +37,7 @@ public final class EntityImExporterTreeNode {
 
     private List<EntityImExporterTreeNode> dependsOn;
 
-    public EntityImExporterTreeNode() {
+    protected EntityImExporterTreeNode() {
         super();
 
         dependentImExporters = new ArrayList<>();
