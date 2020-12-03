@@ -29,7 +29,7 @@ public class ContentSectionImExporter
     private ContentSectionRepository sectionRepository;
 
     @Override
-    protected Class<ContentSection> getEntityClass() {
+    public Class<ContentSection> getEntityClass() {
         return ContentSection.class;
     }
 

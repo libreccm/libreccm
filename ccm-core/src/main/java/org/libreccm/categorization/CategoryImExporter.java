@@ -42,7 +42,7 @@ public class CategoryImExporter extends AbstractEntityImExporter<Category> {
     private CategoryRepository categoryRepository;
 
     @Override
-    protected Class<Category> getEntityClass() {
+    public Class<Category> getEntityClass() {
         return Category.class;
     }
 

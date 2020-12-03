@@ -45,7 +45,7 @@ public class TaskDependencyImExporter
     private EntityManager entityManager;
 
     @Override
-    protected Class<TaskDependency> getEntityClass() {
+    public Class<TaskDependency> getEntityClass() {
         return TaskDependency.class;
     }
 

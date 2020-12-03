@@ -42,8 +42,7 @@ public class RoleMembershipImExporter
     private EntityManager entityManager;
 
     @Override
-    protected Class<RoleMembership> getEntityClass() {
-
+    public Class<RoleMembership> getEntityClass() {
         return RoleMembership.class;
     }
 

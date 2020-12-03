@@ -53,7 +53,7 @@ public abstract class AbstractEntityImExporter<T extends Exportable> {
      *
      * @return The Entity class which is handled by the implementation.
      */
-    protected abstract Class<T> getEntityClass();
+    public abstract Class<T> getEntityClass();
 
     /**
      * A set of entities which should be processed before this implementation is

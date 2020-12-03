@@ -43,7 +43,7 @@ public class TaskCommentImExporter extends AbstractEntityImExporter<TaskComment>
     private TaskCommentRepository taskCommentRepository;
 
     @Override
-    protected Class<TaskComment> getEntityClass() {
+    public Class<TaskComment> getEntityClass() {
         return TaskComment.class;
     }
 

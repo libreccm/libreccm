@@ -45,7 +45,7 @@ public class TaskAssignmentImExporter
     private EntityManager entityManager;
 
     @Override
-    protected Class<TaskAssignment> getEntityClass() {
+    public Class<TaskAssignment> getEntityClass() {
 
         return TaskAssignment.class;
     }

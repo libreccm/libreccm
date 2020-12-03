@@ -48,8 +48,7 @@ public class CategorizationImExporter
     private Instance<CategorizationImExporterDependenciesProvider> dependenciesProviders;
 
     @Override
-    protected Class<Categorization> getEntityClass() {
-
+    public Class<Categorization> getEntityClass() {
         return Categorization.class;
     }
 

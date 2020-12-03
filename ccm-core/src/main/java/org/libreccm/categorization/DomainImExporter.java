@@ -41,7 +41,7 @@ public class DomainImExporter extends AbstractEntityImExporter<Domain> {
     private DomainRepository domainRepository;
     
     @Override
-    protected Class<Domain> getEntityClass() {
+    public Class<Domain> getEntityClass() {
         
         return Domain.class;
     }

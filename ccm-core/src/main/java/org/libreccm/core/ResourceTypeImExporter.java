@@ -39,8 +39,7 @@ public class ResourceTypeImExporter
     private ResourceTypeRepository repository;
 
     @Override
-    protected Class<ResourceType> getEntityClass() {
-        
+    public Class<ResourceType> getEntityClass() {
         return ResourceType.class;
     }
 

@@ -41,7 +41,7 @@ public class PermissionImExporter extends AbstractEntityImExporter<Permission>{
     private PermissionRepository permissionRepository;
     
     @Override
-    protected Class<Permission> getEntityClass() {
+    public Class<Permission> getEntityClass() {
         return Permission.class;
     }
 

@@ -46,7 +46,7 @@ public class GroupImExporter extends AbstractEntityImExporter<Group> {
     private GroupRepository groupRepository;
     
     @Override
-    protected Class<Group> getEntityClass() {
+    public Class<Group> getEntityClass() {
         return Group.class;
     }
     
