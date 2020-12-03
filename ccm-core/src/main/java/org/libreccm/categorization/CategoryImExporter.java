@@ -43,13 +43,11 @@ public class CategoryImExporter extends AbstractEntityImExporter<Category> {
 
     @Override
     protected Class<Category> getEntityClass() {
-
         return Category.class;
     }
 
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
-
         final Set<Class<? extends Exportable>> entities = new HashSet<>();
         entities.add(Domain.class);
 
@@ -59,7 +57,6 @@ public class CategoryImExporter extends AbstractEntityImExporter<Category> {
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     protected void saveImportedEntity(final Category entity) {
-
         categoryRepository.save(entity);
     }
 
