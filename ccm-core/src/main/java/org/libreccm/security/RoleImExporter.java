@@ -39,8 +39,7 @@ public class RoleImExporter extends AbstractEntityImExporter<Role> {
     private RoleRepository roleRepository;
     
     @Override
-    protected Class<Role> getEntityClass() {
-        
+    public Class<Role> getEntityClass() {
         return Role.class;
     }
 

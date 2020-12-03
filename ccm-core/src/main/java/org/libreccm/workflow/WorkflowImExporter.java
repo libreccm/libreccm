@@ -42,7 +42,7 @@ public class WorkflowImExporter extends AbstractEntityImExporter<Workflow> {
     private WorkflowRepository workflowRepository;
 
     @Override
-    protected Class<Workflow> getEntityClass() {
+    public Class<Workflow> getEntityClass() {
 
         return Workflow.class;
     }

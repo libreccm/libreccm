@@ -43,8 +43,7 @@ public class GroupMembershipImExporter
     private EntityManager entityManager;
 
     @Override
-    protected Class<GroupMembership> getEntityClass() {
-
+    public Class<GroupMembership> getEntityClass() {
         return GroupMembership.class;
     }
 

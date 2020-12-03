@@ -19,7 +19,7 @@ import javax.enterprise.context.RequestScoped;
 public class EventImExporter extends AbstractContentItemImExporter<Event> {
 
     @Override
-    protected Class<Event> getEntityClass() {
+    public Class<Event> getEntityClass() {
         return Event.class;
     }
 

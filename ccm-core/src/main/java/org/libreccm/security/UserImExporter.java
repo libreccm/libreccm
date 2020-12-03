@@ -46,7 +46,7 @@ public class UserImExporter extends AbstractEntityImExporter<User> {
     private UserRepository userRepository;
 
     @Override
-    protected Class<User> getEntityClass() {
+    public Class<User> getEntityClass() {
         return User.class;
     }
 

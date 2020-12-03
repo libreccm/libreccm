@@ -46,7 +46,7 @@ public class DomainOwnershipImExporter
     private EntityManager entityManager;
 
     @Override
-    protected Class<DomainOwnership> getEntityClass() {
+    public Class<DomainOwnership> getEntityClass() {
 
         return DomainOwnership.class;
     }
