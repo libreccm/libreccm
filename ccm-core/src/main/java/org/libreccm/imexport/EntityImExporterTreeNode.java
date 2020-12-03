@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-final class EntityImExporterTreeNode {
+public final class EntityImExporterTreeNode {
 
     private AbstractEntityImExporter<?> entityImExporter;
 
@@ -38,7 +38,6 @@ final class EntityImExporterTreeNode {
     private List<EntityImExporterTreeNode> dependsOn;
 
     public EntityImExporterTreeNode() {
-
         super();
 
         dependentImExporters = new ArrayList<>();
