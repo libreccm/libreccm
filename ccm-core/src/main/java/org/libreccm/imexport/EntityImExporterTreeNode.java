@@ -105,10 +105,10 @@ public final class EntityImExporterTreeNode {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 47
-                   * hash
-                   + Objects
-                .hashCode(this.entityImExporter.getClass().getName());
+        hash = 47 * hash
+                   + Objects.hashCode(
+                this.entityImExporter.getClass().getName()
+            );
         return hash;
     }
 

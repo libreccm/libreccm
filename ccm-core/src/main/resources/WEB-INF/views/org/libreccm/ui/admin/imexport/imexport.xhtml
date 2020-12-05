@@ -42,7 +42,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="col mb-4">
                         <div aria-describedby="export-card-body"
                              class="card pt-2"
@@ -66,6 +66,100 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div>
+                    <h2>#{AdminMessages['imexport.activeexports.heading']}</h2>
+
+                    <c:choose>
+                        <c:when test="#{ImportExportTaskManager.exportTasks.isEmpty()}">
+                            <p>
+                                #{AdminMessages['imexport.activeexports.none']}
+                            </p>
+                        </c:when>
+                        <c:otherwise>
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#{AdminMessages['imexport.activeexports.table.columns.name.heading']}</th>
+                                        <th>#{AdminMessages['imexport.activeexports.table.columns.started.heading']}</th>
+                                        <th>#{AdminMessages['imexport.activeexports.table.columns.status.heading']}</th>
+                                        <th>#{AdminMessages['imexport.activeexports.table.columns.actions.heading']}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach items="#{ImportExportTaskManager.exportTasks}" var="task">
+                                        <tr>
+                                            <td>#{task.name}</td>
+                                            <td>#{task.started}</td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="#{task.done}">
+                                                        #{AdminMessages['imexport.activeexports.table.columns.status.finished']}
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        #{AdminMessages['imexport.activeexports.table.columns.status.running']}
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-warning" href="#">
+                                                    #{AdminMessages['imexport.activeexports.table.columns.actions.button_label']}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+                
+                <div>
+                    <h2>#{AdminMessages['imexport.activeimports.heading']}</h2>
+
+                    <c:choose>
+                        <c:when test="#{ImportExportTaskManager.importTasks.isEmpty()}">
+                            <p>
+                                #{AdminMessages['imexport.activeimports.none']}
+                            </p>
+                        </c:when>
+                        <c:otherwise>
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#{AdminMessages['imexport.activeimports.table.columns.name.heading']}</th>
+                                        <th>#{AdminMessages['imexport.activeimports.table.columns.started.heading']}</th>
+                                        <th>#{AdminMessages['imexport.activeimports.table.columns.status.heading']}</th>
+                                        <th>#{AdminMessages['imexport.activeimports.table.columns.actions.heading']}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach items="#{ImportExportTaskManager.importTasks}" var="task">
+                                        <tr>
+                                            <td>#{task.name}</td>
+                                            <td>#{task.started}</td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="#{task.done}">
+                                                        #{AdminMessages['imexport.activeimports.table.columns.status.finished']}
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        #{AdminMessages['imexport.activeimports.table.columns.status.running']}
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-warning" href="#">
+                                                    #{AdminMessages['imexport.activeimports.table.columns.actions.button_label']}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
             </div>
         </ui:define>

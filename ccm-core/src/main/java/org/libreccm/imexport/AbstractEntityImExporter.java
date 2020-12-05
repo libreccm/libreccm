@@ -85,7 +85,6 @@ public abstract class AbstractEntityImExporter<T extends Exportable> {
 
     @Transactional(Transactional.TxType.REQUIRED)
     public String exportEntity(final Exportable entity) throws ExportException {
-
         try {
             return objectMapper.writeValueAsString(entity);
         } catch (JsonProcessingException ex) {

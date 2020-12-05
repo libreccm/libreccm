@@ -18,23 +18,28 @@
  */
 package org.libreccm.ui.admin.imexport;
 
-import com.arsdigita.ui.admin.importexport.ImportExportMonitor;
-
 import org.libreccm.core.CoreConstants;
 import org.libreccm.imexport.AbstractEntityImExporter;
 import org.libreccm.imexport.EntityImExporterTreeNode;
+import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.ImportExport;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.mvc.Controller;
 import javax.mvc.Models;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 /**
@@ -50,7 +55,7 @@ public class ImExportController {
     private ImportExport importExport;
 
     @Inject
-    private ImportExportMonitor importExportMonitor;
+    private ImportExportTaskManager taskManager;
 
     @Inject
     private Models models;
@@ -77,18 +82,98 @@ public class ImExportController {
                 .map(AbstractEntityImExporter::getEntityClass)
                 .map(Class::getName)
                 .sorted()
-                .collect(Collectors.toList())
+                .collect(
+                    Collectors.toMap(
+                        clazz -> clazz,
+                        clazz -> clazz,
+                        this::noDuplicateKeys,
+                        TreeMap::new
+                    )
+                )
+        //.collect(Collectors.toList())
         );
 
         return "org/libreccm/ui/admin/imexport/export.xhtml";
     }
-    
+
+    @POST
+    @Path("/export")
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    public String exportEntities(
+        @FormParam("selectedEntities") final String[] selectedEntitiesParam,
+        @FormParam("exportName") final String exportName
+    ) {
+        final Set<String> selectedEntities = Arrays
+            .stream(selectedEntitiesParam)
+            .collect(Collectors.toSet());
+
+        final Set<EntityImExporterTreeNode> selectedNodes = importExport
+            .getExportableEntityTypes()
+            .stream()
+            .filter(
+                node -> selectedEntities.contains(
+                    node.getEntityImExporter().getEntityClass().getName()
+                )
+            )
+            .collect(Collectors.toSet());
+
+        final Set<EntityImExporterTreeNode> exportNodes = addRequiredEntities(
+            new HashSet<>(selectedNodes)
+        );
+
+        final Set<Class<? extends Exportable>> exportTypes = exportNodes
+            .stream()
+            .map(node -> node.getEntityImExporter().getEntityClass())
+            .collect(Collectors.toSet());
+
+        taskManager.exportEntities(exportTypes, exportName);
+
+//        models.put(
+//            "exportEntities",
+//            exportNodes
+//                .stream()
+//                .map(node -> node.getEntityImExporter().getEntityClass().getName())
+//                .sorted()
+//                .collect(Collectors.joining("\n"))
+//        );
+//        return "org/libreccm/ui/admin/imexport/exporting.xhtml";
+        return "redirect:imexport";
+    }
+
     @GET
     @Path("/import")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     public String importEntities() {
         throw new NotFoundException();
+    }
+
+    private String noDuplicateKeys(final String str1, final String str2) {
+        throw new RuntimeException("No duplicate keys allowed.");
+    }
+
+    private Set<EntityImExporterTreeNode> addRequiredEntities(
+        final Set<EntityImExporterTreeNode> selectedNodes
+    ) {
+        boolean foundRequiredNodes = false;
+        final Set<EntityImExporterTreeNode> exportNodes = new HashSet<>(
+            selectedNodes
+        );
+        for (final EntityImExporterTreeNode node : selectedNodes) {
+            if (node.getDependsOn() != null
+                    && !node.getDependsOn().isEmpty()
+                    && !exportNodes.containsAll(node.getDependsOn())) {
+                exportNodes.addAll(node.getDependsOn());
+                foundRequiredNodes = true;
+            }
+        }
+
+        if (foundRequiredNodes) {
+            return addRequiredEntities(exportNodes);
+        } else {
+            return exportNodes;
+        }
     }
 
 }

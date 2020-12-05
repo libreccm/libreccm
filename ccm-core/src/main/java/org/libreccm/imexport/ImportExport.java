@@ -38,6 +38,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +60,7 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
 import javax.json.JsonString;
 import javax.json.JsonWriter;
+import javax.transaction.Transactional;
 
 /**
  * Central service for importing and exporting entities.
@@ -106,8 +108,9 @@ public class ImportExport {
      *
      * @see CcmFilesConfiguration#dataPath
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void exportEntities(
-        final List<Exportable> entities, final String exportName
+        final Collection<Exportable> entities, final String exportName
     ) {
         final JsonObjectBuilder manifestBuilder = Json.createObjectBuilder();
         manifestBuilder.add("created",
@@ -162,7 +165,6 @@ public class ImportExport {
 
         for (final Map.Entry<String, List<Exportable>> entry
                  : typeEntityMap.entrySet()) {
-
             createExportedEntities(exportName,
                                    entry.getKey(),
                                    entry.getValue());
@@ -182,8 +184,8 @@ public class ImportExport {
      *
      * @see CcmFilesConfiguration#dataPath
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void importEntities(final String importName) {
-
         final String importsPath = String.format("imports/%s", importName);
 
         try {

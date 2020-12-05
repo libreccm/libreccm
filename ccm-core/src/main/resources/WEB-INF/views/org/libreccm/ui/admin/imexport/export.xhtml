@@ -26,23 +26,31 @@
             <div class="container">
                 <h1>#{AdminMessages['imexport.export.label']}</h1>
 
-                <form action="#"
-                      aria-describedby="export-help">
+                <form action="#{mvc.uri('ImExportController#exportEntities')}"
+                      aria-describedby="export-help"
+                      method="post">
                     <p id="export-help">#{AdminMessages['imexport.export.help']}</p>
 
-                    <c:forEach items="#{exportableEntities}" var="entity">
+<!--                    <c:forEach items="#{exportableEntities}" var="entity">
                         <bootstrap:formCheck
                             inputId="#{entity.replace('.', '-')}"
                             label="#{entity}"
-                            name="#{entity.replace('.', '-')}"
+                            name="selectedEntities"
                             value="#{entity}" />
-                    </c:forEach>
+                    </c:forEach>-->
+                    
+                    <bootstrap:formGroupChecks options="#{exportableEntities}"
+                                               help="#{AdminMessages['imexport.export.exportentities.help']}"
+                                               inputId="exportentity"
+                                               label="#{AdminMessages['imexport.export.exportentities.label']}"
+                                               name="selectedEntities" />
 
                     <bootstrap:formGroupText 
                         help="#{AdminMessages['imexport.export.export_name.help']}"
                         inputId="exportName"
                         label="#{AdminMessages['imexport.export.export_name.label']}"
-                        name="exportName" />
+                        name="exportName"
+                        required="treu" />
 
                     <a class="btn btn-warning"
                        href="#{mvc.uri('ImExportController#getImExportDashboard')}">
