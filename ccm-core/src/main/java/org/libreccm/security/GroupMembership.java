@@ -56,14 +56,25 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "GROUP_MEMBERSHIPS", schema = DB_SCHEMA)
 @NamedQueries({
-    @NamedQuery(name = "GroupMembership.findByUuid",
-                query = "SELECT m FROM GroupMembership m WHERE m.uuid = :uuid"),
-    @NamedQuery(name = "GroupMembership.findByGroupAndUser",
-                query = "SELECT m FROM GroupMembership m "
-                            + "WHERE m.member = :member AND m.group = :group")})
+    @NamedQuery(
+        name = "GroupMembership.findById",
+        query
+        = "SELECT m FROM GroupMembership m WHERE m.membershipId = :membershipId"
+    ),
+    @NamedQuery(
+        name = "GroupMembership.findByUuid",
+        query = "SELECT m FROM GroupMembership m WHERE m.uuid = :uuid"
+    ),
+    @NamedQuery(
+        name = "GroupMembership.findByGroupAndUser",
+        query = "SELECT m FROM GroupMembership m "
+                    + "WHERE m.member = :member AND m.group = :group")
+})
 @XmlRootElement(name = "group-membership", namespace = CORE_XML_NS)
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
-                  property = "uuid")
+@JsonIdentityInfo(
+    generator = ObjectIdGenerators.PropertyGenerator.class,
+    property = "uuid"
+)
 public class GroupMembership implements Serializable, Exportable {
 
     private static final long serialVersionUID = 83192968306850665L;

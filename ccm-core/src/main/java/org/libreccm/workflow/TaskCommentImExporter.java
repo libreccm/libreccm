@@ -23,6 +23,7 @@ import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
@@ -55,11 +56,24 @@ public class TaskCommentImExporter extends AbstractEntityImExporter<TaskComment>
 
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
-        
         final Set<Class<? extends Exportable>> classes = new HashSet<>();
         classes.add(AssignableTask.class);
         
         return classes;
+    }
+
+    @Override
+    protected TaskComment reloadEntity(final TaskComment entity) {
+        return taskCommentRepository
+            .findById(Objects.requireNonNull(entity).getCommentId())
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "TaskComment entity %s not found in database.",
+                        Objects.toString(entity)
+                    )
+                )
+            );
     }
     
     

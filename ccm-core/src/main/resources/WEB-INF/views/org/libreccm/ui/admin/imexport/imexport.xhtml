@@ -88,20 +88,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <c:forEach items="#{ImportExportTaskManager.exportTasks}" var="task">
+                                    <c:forEach items="#{ImportExportTaskManager.exportTasks}" 
+                                               var="task">
                                         <tr>
                                             <td>#{task.name}</td>
                                             <td>#{task.started}</td>
-                                            <td>
-                                                <c:choose>
-                                                    <c:when test="#{task.done}">
-                                                        #{AdminMessages['imexport.activeexports.table.columns.status.finished']}
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        #{AdminMessages['imexport.activeexports.table.columns.status.running']}
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </td>
+                                            <td>#{task.status}</td>
                                             <td>
                                                 <a class="btn btn-warning" href="#">
                                                     #{AdminMessages['imexport.activeexports.table.columns.actions.button_label']}
@@ -135,7 +127,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <c:forEach items="#{ImportExportTaskManager.importTasks}" var="task">
+                                    <c:forEach items="#{ImportExportTaskManager.importTasks}" 
+                                               var="task">
                                         <tr>
                                             <td>#{task.name}</td>
                                             <td>#{task.started}</td>

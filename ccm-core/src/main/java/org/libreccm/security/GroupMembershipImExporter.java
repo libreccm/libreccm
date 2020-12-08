@@ -23,10 +23,12 @@ import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 
 /**
@@ -36,9 +38,9 @@ import javax.transaction.Transactional;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Processes(GroupMembership.class)
-public class GroupMembershipImExporter 
+public class GroupMembershipImExporter
     extends AbstractEntityImExporter<GroupMembership> {
-    
+
     @Inject
     private EntityManager entityManager;
 
@@ -49,7 +51,6 @@ public class GroupMembershipImExporter
 
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
-
         final Set<Class<? extends Exportable>> entities = new HashSet<>();
         entities.add(User.class);
         entities.add(Group.class);
@@ -60,9 +61,30 @@ public class GroupMembershipImExporter
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     protected void saveImportedEntity(final GroupMembership entity) {
-
         entity.setMembershipId(0);
         entityManager.persist(entity);
+    }
+
+    @Override
+    protected GroupMembership reloadEntity(final GroupMembership entity) {
+        try {
+            return entityManager
+                .createNamedQuery(
+                    "GroupMembership.findById", GroupMembership.class
+                )
+                .setParameter(
+                    "membershipId",
+                    Objects.requireNonNull(entity).getMembershipId()
+                )
+                .getSingleResult();
+        } catch (NoResultException ex) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "GroupMembership entity %s does not exist in the database.",
+                    Objects.toString(entity)
+                )
+            );
+        }
     }
 
 }

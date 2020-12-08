@@ -23,6 +23,7 @@ import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
@@ -50,14 +51,26 @@ public class ApplicationImExporter
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     protected void saveImportedEntity(final CcmApplication entity) {
-
         applicationRepository.save(entity);
     }
 
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
-
         return Collections.emptySet();
+    }
+
+    @Override
+    protected CcmApplication reloadEntity(final CcmApplication entity) {
+        return applicationRepository
+            .findById(Objects.requireNonNull(entity).getObjectId())
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "CcmApplication entity %s not found in database.",
+                        Objects.toString(entity)
+                    )
+                )
+            );
     }
 
 }

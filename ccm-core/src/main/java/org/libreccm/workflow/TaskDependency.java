@@ -34,6 +34,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
@@ -43,8 +45,28 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "WORKFLOW_TASK_DEPENDENCIES", schema = CoreConstants.DB_SCHEMA)
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
-                  property = "uuid")
+@NamedQueries({
+    @NamedQuery(
+        name = "TaskDependency.findById",
+        query = "SELECT d FROM TaskDependency d WHERE d.taskDependencyId = :dependencyId"
+    ),
+    @NamedQuery(
+        name = "TaskDependency.findByUuid",
+        query = "SELECT d FROM TaskDependency d WHERE d.uuid = :uuid"
+    ),
+    @NamedQuery(
+        name = "TaskDependency.findByBlockedTask",
+        query = "SELECT d FROM TaskDependency d WHERE d.blockedTask = :task"
+    ),
+    @NamedQuery(
+        name = "TaskDependency.findByBlockingTask",
+        query = "SELECT d FROM TaskDependency d WHERE d.blockingTask = :task"
+    )
+})
+@JsonIdentityInfo(
+    generator = ObjectIdGenerators.PropertyGenerator.class,
+                  property = "uuid"
+)
 public class TaskDependency implements Serializable, Exportable {
 
     private static final long serialVersionUID = -4383255770131633943L;

@@ -37,17 +37,39 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
  * Represents the assignment of a {@link AssignableTask} to a {@link Role}.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
 @Table(name = "WORKFLOW_TASK_ASSIGNMENTS", schema = DB_SCHEMA)
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
-                  property = "customAssignId")
+@NamedQueries({
+    @NamedQuery(
+        name = "TaskAssignment.findById",
+        query = "SELECT t FROM TaskAssignment t WHERE t.taskAssignmentId = :assignmentId"
+    ),
+    @NamedQuery(
+        name = "TaskAssignment.findByUuid",
+        query = "SELECT t FROM TaskAssignment t WHERE t.uuid = :uuid"
+    ),
+    @NamedQuery(
+        name = "TaskAssignment.findByTask",
+        query = "SELECT t FROM TaskAssignment t WHERE t.task = :task"
+    ),
+    @NamedQuery(
+        name = "TaskAssignment.findByRole",
+        query = "SELECT t FROM TaskAssignment t WHERE t.role = :role"
+    )
+})
+@JsonIdentityInfo(
+    generator = ObjectIdGenerators.PropertyGenerator.class,
+    property = "customAssignId"
+)
 public class TaskAssignment implements Serializable, Exportable {
 
     private static final long serialVersionUID = -4427537363301565707L;
@@ -62,7 +84,7 @@ public class TaskAssignment implements Serializable, Exportable {
 
     @Column(name = "UUID", unique = true, nullable = false)
     private String uuid;
-    
+
     /**
      * The task.
      */
@@ -86,7 +108,7 @@ public class TaskAssignment implements Serializable, Exportable {
     protected void setTaskAssignmentId(final long taskAssignmentId) {
         this.taskAssignmentId = taskAssignmentId;
     }
-    
+
     @Override
     public String getUuid() {
         return uuid;
@@ -95,7 +117,6 @@ public class TaskAssignment implements Serializable, Exportable {
     public void setUuid(final String uuid) {
         this.uuid = uuid;
     }
-    
 
     public AssignableTask getTask() {
         return task;

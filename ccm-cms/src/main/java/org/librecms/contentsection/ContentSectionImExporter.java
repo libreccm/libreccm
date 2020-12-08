@@ -10,6 +10,7 @@ import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
@@ -42,6 +43,20 @@ public class ContentSectionImExporter
     @Transactional(Transactional.TxType.REQUIRED)
     protected void saveImportedEntity(final ContentSection entity) {
         sectionRepository.save(entity);
+    }
+
+    @Override
+    protected ContentSection reloadEntity(final ContentSection entity) {
+        return sectionRepository
+            .findById(Objects.requireNonNull(entity).getObjectId())
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "ContentSection entity %s not found in database.",
+                        Objects.toString(entity)
+                    )
+                )
+            );
     }
 
 }

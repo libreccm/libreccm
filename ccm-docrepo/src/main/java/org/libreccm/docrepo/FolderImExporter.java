@@ -22,9 +22,10 @@ import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
-import javax.faces.bean.RequestScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
@@ -43,7 +44,7 @@ public class FolderImExporter extends AbstractResourceImExporter<Folder> {
     private FolderRepository folderRepository;
 
     @Override
-    protected Class<Folder> getEntityClass() {
+    public Class<Folder> getEntityClass() {
         return Folder.class;
     }
 
@@ -56,6 +57,20 @@ public class FolderImExporter extends AbstractResourceImExporter<Folder> {
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
         return Collections.emptySet();
+    }
+
+    @Override
+    protected Folder reloadEntity(final Folder entity) {
+        return folderRepository
+            .findById(Objects.requireNonNull(entity).getObjectId())
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "Folder entity %s not found in database.",
+                        Objects.toString(entity)
+                    )
+                )
+            );
     }
 
 }

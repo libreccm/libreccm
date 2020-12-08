@@ -18,7 +18,6 @@
  */
 package org.libreccm.ui.admin.imexport;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -30,7 +29,7 @@ import java.util.concurrent.Future;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class ImExportTask implements Comparable<ImExportTask> {
+public class ImExportTaskStatus implements Comparable<ImExportTaskStatus> {
 
     private String name;
 
@@ -92,10 +91,10 @@ public class ImExportTask implements Comparable<ImExportTask> {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof ImExportTask)) {
+        if (!(obj instanceof ImExportTaskStatus)) {
             return false;
         }
-        final ImExportTask other = (ImExportTask) obj;
+        final ImExportTaskStatus other = (ImExportTaskStatus) obj;
         if (!other.canEqual(this)) {
             return false;
         }
@@ -106,15 +105,15 @@ public class ImExportTask implements Comparable<ImExportTask> {
     }
 
     public boolean canEqual(final Object obj) {
-        return obj instanceof ImExportTask;
+        return obj instanceof ImExportTaskStatus;
     }
 
     @Override
-    public int compareTo(final ImExportTask other) {
+    public int compareTo(final ImExportTaskStatus other) {
         return Comparator
             .nullsFirst(Comparator
-                .comparing(ImExportTask::getName)
-                .thenComparing(ImExportTask::getStarted)
+                .comparing(ImExportTaskStatus::getName)
+                .thenComparing(ImExportTaskStatus::getStarted)
             )
             .compare(this, other);
     }
