@@ -23,6 +23,7 @@ import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
@@ -32,37 +33,48 @@ import javax.transaction.Transactional;
 
 /**
  * Exporter/Importer for {@link Group}s.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 @Processes(Group.class)
 public class GroupImExporter extends AbstractEntityImExporter<Group> {
-    
+
     @Inject
     private EntityManager entityManager;
-    
+
     @Inject
     private GroupRepository groupRepository;
-    
+
     @Override
     public Class<Group> getEntityClass() {
         return Group.class;
     }
-    
+
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     protected void saveImportedEntity(final Group entity) {
-        
         entity.setPartyId(0);
-//        groupRepository.save(entity);
         entityManager.persist(entity);
     }
-    
+
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
-        
         return Collections.emptySet();
     }
-    
+
+    @Override
+    protected Group reloadEntity(final Group entity) {
+        return groupRepository
+            .findById(Objects.requireNonNull(entity).getPartyId())
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "Group entity %s was not found in database.",
+                        Objects.toString(entity)
+                    )
+                )
+            );
+    }
+
 }

@@ -24,17 +24,19 @@ import org.libreccm.imexport.Processes;
 import org.libreccm.web.CcmApplication;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 
 /**
  * Exporter/Importer for {@link DomainOwnership} entities.
- * 
- * 
+ *
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -47,25 +49,44 @@ public class DomainOwnershipImExporter
 
     @Override
     public Class<DomainOwnership> getEntityClass() {
-
         return DomainOwnership.class;
     }
 
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     protected void saveImportedEntity(final DomainOwnership entity) {
-
         entityManager.persist(entity);
     }
 
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
-
         final Set<Class<? extends Exportable>> classes = new HashSet<>();
         classes.add(CcmApplication.class);
         classes.add(Domain.class);
 
         return classes;
+    }
+
+    @Override
+    protected DomainOwnership reloadEntity(final DomainOwnership entity) {
+        try {
+            return entityManager
+                .createNamedQuery(
+                    "DomainOwnership.findById",
+                    DomainOwnership.class
+                )
+                .setParameter(
+                    "ownershipId",
+                    Objects.requireNonNull(entity.getOwnershipId())
+                ).getSingleResult();
+        } catch (NoResultException ex) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "DomainOwnership entity %s not found in database.",
+                    Objects.toString(entity)
+                )
+            );
+        }
     }
 
 }

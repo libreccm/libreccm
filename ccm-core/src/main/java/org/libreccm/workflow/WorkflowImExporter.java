@@ -23,6 +23,7 @@ import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
@@ -31,7 +32,7 @@ import javax.transaction.Transactional;
 
 /**
  * Importer/Exporter for {@link Workflow}s.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -50,14 +51,26 @@ public class WorkflowImExporter extends AbstractEntityImExporter<Workflow> {
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     protected void saveImportedEntity(final Workflow entity) {
-        
         workflowRepository.save(entity);
     }
 
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
-
         return Collections.emptySet();
+    }
+
+    @Override
+    protected Workflow reloadEntity(final Workflow entity) {
+        return workflowRepository
+            .findById(Objects.requireNonNull(entity).getWorkflowId())
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "Workflow entity %s not found in database.",
+                        Objects.toString(entity)
+                    )
+                )
+            );
     }
 
 }

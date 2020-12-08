@@ -23,6 +23,7 @@ import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
@@ -30,16 +31,16 @@ import javax.inject.Inject;
 
 /**
  * Exporter/Importer for {@link Permission}s.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 @Processes(Permission.class)
-public class PermissionImExporter extends AbstractEntityImExporter<Permission>{
+public class PermissionImExporter extends AbstractEntityImExporter<Permission> {
 
     @Inject
     private PermissionRepository permissionRepository;
-    
+
     @Override
     public Class<Permission> getEntityClass() {
         return Permission.class;
@@ -47,19 +48,29 @@ public class PermissionImExporter extends AbstractEntityImExporter<Permission>{
 
     @Override
     protected void saveImportedEntity(final Permission entity) {
-        
         permissionRepository.save(entity);
     }
 
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
-        
         final Set<Class<? extends Exportable>> classes = new HashSet<>();
         classes.add(Role.class);
-        
+
         return classes;
     }
-    
-    
-    
+
+    @Override
+    protected Permission reloadEntity(final Permission entity) {
+        return permissionRepository
+            .findById(Objects.requireNonNull(entity).getPermissionId())
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "Permission entity %s not found in the database.",
+                        Objects.toString(entity)
+                    )
+                )
+            );
+    }
+
 }

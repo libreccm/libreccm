@@ -23,22 +23,24 @@ import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 
 /**
  * Exporter/Importer for {@link TaskDependency} entities.
- * 
+ *
  * @author <a href="mailto:tosmers@uni-bremen.de>Tobias Osmers<\a>
  * @version created the 12/12/17
  */
 @RequestScoped
 @Processes(TaskDependency.class)
-public class TaskDependencyImExporter 
+public class TaskDependencyImExporter
     extends AbstractEntityImExporter<TaskDependency> {
 
     @Inject
@@ -52,19 +54,36 @@ public class TaskDependencyImExporter
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     protected void saveImportedEntity(final TaskDependency entity) {
-        
         entityManager.persist(entity);
     }
 
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
-        
         final Set<Class<? extends Exportable>> classes = new HashSet<>();
         classes.add(AssignableTask.class);
-        
+
         return classes;
     }
 
-    
-    
+    @Override
+    protected TaskDependency reloadEntity(final TaskDependency entity) {
+        try {
+            return entityManager
+                .createNamedQuery(
+                    "TaskDependency.findById", TaskDependency.class
+                )
+                .setParameter(
+                    "dependencyId",
+                    Objects.requireNonNull(entity).getTaskDependencyId()
+                ).getSingleResult();
+        } catch (NoResultException ex) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "TaskDependency entity %s not found in database.",
+                    Objects.toString(entity)
+                )
+            );
+        }
+    }
+
 }

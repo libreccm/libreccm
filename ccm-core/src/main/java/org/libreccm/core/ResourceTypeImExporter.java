@@ -23,6 +23,7 @@ import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -45,14 +46,29 @@ public class ResourceTypeImExporter
 
     @Override
     protected void saveImportedEntity(final ResourceType entity) {
-        
         repository.save(entity);
     }
 
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
-        
         return Collections.emptySet();
+    }
+
+    @Override
+    protected ResourceType reloadEntity(final ResourceType entity) {
+        return repository
+            .findById(
+                Objects.requireNonNull(entity).getResourceTypeId()
+            )
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "The provided ResourceType %s was not found in the "
+                            + "database.",
+                        Objects.toString(entity)
+                    )
+                )
+            );
     }
     
     

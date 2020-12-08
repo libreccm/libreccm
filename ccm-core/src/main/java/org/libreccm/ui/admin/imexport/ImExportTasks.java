@@ -26,9 +26,12 @@ import java.util.concurrent.Future;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
+import javax.ejb.Singleton;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.ObservesAsync;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
@@ -36,29 +39,45 @@ import javax.transaction.Transactional;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Stateless
+@ApplicationScoped
 public class ImExportTasks {
 
     @Inject
     private ImportExport importExport;
 
-    @Asynchronous
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Future<?> startExport(
-        final Collection<Exportable> entities,
-        final String exportName
-    ) {
+//    @Asynchronous
+//    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+//    public Future<?> startExport(
+//        final Collection<Exportable> entities,
+//        final String exportName
+//    ) {
+//        importExport.exportEntities(entities, exportName);
+//        return new AsyncResult<>(null);
+//    }
+//
+//    @Asynchronous
+//    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+//    public Future<?> startImport(final String importName) {
+//        importExport.importEntities(importName);
+//        return new AsyncResult<>(null);
+//    }
+    
+    @Transactional(Transactional.TxType.REQUIRED)
+    public ExportTask exportEntities(@ObservesAsync final ExportTask task) {
+        final Collection<Exportable> entities = task.getEntities();
+        final String exportName = task.getName();
+        
         importExport.exportEntities(entities, exportName);
-        return new AsyncResult<>(null);
+        task.getStatus().setStatus(ImExportTaskStatusEnum.FINISHED);
+        return task;
     }
-
-    @Asynchronous
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Future<?> startImport(final String importName) {
+    
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void importEntitites(@ObservesAsync final ImExportTaskStatus task) {
+        final String importName = task.getName();
+        
         importExport.importEntities(importName);
-        return new AsyncResult<>(null);
     }
+    
 
 }
