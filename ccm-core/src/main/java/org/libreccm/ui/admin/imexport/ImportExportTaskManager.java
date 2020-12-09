@@ -109,7 +109,7 @@ public class ImportExportTaskManager {
             new ExportTask(exportName, LocalDate.now(), entities, taskStatus)
         ).handle((task , ex) -> handleExportTaskResult(task, ex, taskStatus));
 
-        taskStatus.setStatus(ImExportTaskStatusEnum.RUNNING);
+        taskStatus.setStatus(ImExportTaskStatus.RUNNING);
         exportTasks.add(taskStatus);
     }
 
@@ -120,20 +120,17 @@ public class ImportExportTaskManager {
             new ImportTask(importName, LocalDate.now(), taskStatus)
         ).handle((task, ex) -> handleImportTaskResult(task, ex, taskStatus));
         
-        taskStatus.setStatus(ImExportTaskStatusEnum.RUNNING);
+        taskStatus.setStatus(ImExportTaskStatus.RUNNING);
         importTasks.add(taskStatus);
     }
 
     @Schedule(hour = "*", minute = "*/5", persistent = false)
     protected void removeFinishedTasks() {
-        exportTasks.removeIf(taskStatus -> taskStatus.getStatus() == ImExportTaskStatusEnum.FINISHED);
-//        importTasks.removeIf(taskStatus -> taskStatus.getStatus() == ImExportTaskStatusEnum.FINISHED);
+        exportTasks.removeIf(taskStatus -> taskStatus.getStatus() == ImExportTaskStatus.FINISHED);
+//        importTasks.removeIf(taskStatus -> taskStatus.getStatus() == ImExportTaskStatus.FINISHED);
     }
 
-    public void cancelTask(final ImExportTaskStatus task) {
-        task.cancel();
-    }
-
+    
     private Set<? extends Exportable> collectEntities(
         final Class<Exportable> ofType
     ) {
@@ -152,9 +149,9 @@ public class ImportExportTaskManager {
         final ExportTask task, final Throwable ex, final ExportTaskStatus status
     ) {
         if (ex == null) {
-            status.setStatus(ImExportTaskStatusEnum.FINISHED);
+            status.setStatus(ImExportTaskStatus.FINISHED);
         } else {
-            status.setStatus(ImExportTaskStatusEnum.ERROR);
+            status.setStatus(ImExportTaskStatus.ERROR);
             status.setException(ex);
             LOGGER.error("Export Task {} failed ", task);
             LOGGER.error("with exception:", ex);
@@ -166,9 +163,9 @@ public class ImportExportTaskManager {
         final ImportTask task, final Throwable ex, final ImportTaskStatus status
     ) {
         if (ex == null) {
-            status.setStatus(ImExportTaskStatusEnum.FINISHED);
+            status.setStatus(ImExportTaskStatus.FINISHED);
         } else {
-            status.setStatus(ImExportTaskStatusEnum.ERROR);
+            status.setStatus(ImExportTaskStatus.ERROR);
             status.setException(ex);
             LOGGER.error("Import Task {} failed", task);
             LOGGER.error("with exception: ", ex);

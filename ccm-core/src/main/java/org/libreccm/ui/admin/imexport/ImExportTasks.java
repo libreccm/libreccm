@@ -45,7 +45,7 @@ public class ImExportTasks {
         final String exportName = task.getName();
         
         importExport.exportEntities(entities, exportName);
-        task.getStatus().setStatus(ImExportTaskStatusEnum.FINISHED);
+        task.getStatus().setStatus(ImExportTaskStatus.FINISHED);
         return task;
     }
     
