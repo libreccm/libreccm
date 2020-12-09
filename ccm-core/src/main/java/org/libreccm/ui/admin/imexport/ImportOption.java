@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 LibreCCM Foundation.
+ * Copyright (C) 2020 LibreCCM Foundation.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,53 +16,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.imexport;
+package org.libreccm.ui.admin.imexport;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.Objects;
 
 /**
- * Java class containg the properties of an parsed import manifest.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class ImportManifest {
+public class ImportOption implements Comparable<ImportOption> {
 
     private final String importName;
 
-    private final Date created;
+    private final String label;
 
-    private final String onServer;
-
-    private final List<String> types;
-
-    public ImportManifest(
+    public ImportOption(
         final String importName,
-        final Date created,
-        final String onServer,
-        final List<String> types
+        final String label
     ) {
         this.importName = importName;
-        this.created = created;
-        this.onServer = onServer;
-        this.types = types;
+        this.label = label;
     }
 
     public String getImportName() {
         return importName;
     }
-    
-    public Date getCreated() {
-        return new Date(created.getTime());
+
+    public String getLabel() {
+        return label;
     }
 
-    public String getOnServer() {
-        return onServer;
-    }
-
-    public List<String> getTypes() {
-        return Collections.unmodifiableList(types);
+    @Override
+    public int compareTo(final ImportOption other) {
+        return importName.compareTo(
+            Objects.requireNonNull(other).getImportName()
+        );
     }
 
 }

@@ -30,9 +30,16 @@ public class ImportTask {
 
     private final LocalDate started;
 
-    public ImportTask(final String name, final LocalDate started) {
+    private final ImportTaskStatus status;
+
+    public ImportTask(
+        final String name,
+        final LocalDate started,
+        final ImportTaskStatus status
+    ) {
         this.name = name;
         this.started = started;
+        this.status = status;
     }
 
     public String getName() {
@@ -41,6 +48,10 @@ public class ImportTask {
 
     public LocalDate getStarted() {
         return started;
+    }
+
+    public ImportTaskStatus getStatus() {
+        return status;
     }
 
 }

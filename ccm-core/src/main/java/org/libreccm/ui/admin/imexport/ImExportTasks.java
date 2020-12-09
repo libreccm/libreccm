@@ -22,14 +22,7 @@ import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.ImportExport;
 
 import java.util.Collection;
-import java.util.concurrent.Future;
 
-import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
-import javax.ejb.Singleton;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.ObservesAsync;
 import javax.inject.Inject;
@@ -45,22 +38,6 @@ public class ImExportTasks {
     @Inject
     private ImportExport importExport;
 
-//    @Asynchronous
-//    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-//    public Future<?> startExport(
-//        final Collection<Exportable> entities,
-//        final String exportName
-//    ) {
-//        importExport.exportEntities(entities, exportName);
-//        return new AsyncResult<>(null);
-//    }
-//
-//    @Asynchronous
-//    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-//    public Future<?> startImport(final String importName) {
-//        importExport.importEntities(importName);
-//        return new AsyncResult<>(null);
-//    }
     
     @Transactional(Transactional.TxType.REQUIRED)
     public ExportTask exportEntities(@ObservesAsync final ExportTask task) {
@@ -73,7 +50,7 @@ public class ImExportTasks {
     }
     
     @Transactional(Transactional.TxType.REQUIRED)
-    public void importEntitites(@ObservesAsync final ImExportTaskStatus task) {
+    public void importEntitites(@ObservesAsync final ImportTask task) {
         final String importName = task.getName();
         
         importExport.importEntities(importName);

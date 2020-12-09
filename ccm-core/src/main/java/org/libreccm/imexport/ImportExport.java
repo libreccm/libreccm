@@ -87,7 +87,7 @@ public class ImportExport {
                         .stream()
                         .collect(Collectors.toList())
                 );
-            
+
             return tree;
         } catch (DependencyException ex) {
             throw new UnexpectedErrorException(ex);
@@ -402,8 +402,9 @@ public class ImportExport {
 
     private ImportManifest createImportManifest(final String path) {
 
-        final String manifestPath = String.format("imports/%s/ccm-export.json",
-                                                  path);
+        final String manifestPath = String.format(
+            "imports/%s/ccm-export.json", path
+        );
 
         try (final InputStream inputStream = ccmFiles
             .createInputStream(manifestPath)) {
@@ -412,24 +413,33 @@ public class ImportExport {
             final JsonObject manifestJson = reader.readObject();
 
             if (!manifestJson.containsKey("created")) {
-                throw new IllegalArgumentException(String.format(
-                    "The manifest file \"%s\" is malformed. "
-                        + "Key \"created\" is missing.",
-                    manifestPath));
+                throw new IllegalArgumentException(
+                    String.format(
+                        "The manifest file \"%s\" is malformed. "
+                            + "Key \"created\" is missing.",
+                        manifestPath
+                    )
+                );
             }
 
             if (!manifestJson.containsKey("onServer")) {
-                throw new IllegalArgumentException(String.format(
-                    "The manifest file \"%s\" is malformed. "
-                        + "Key \"onServer\" is missing.",
-                    manifestPath));
+                throw new IllegalArgumentException(
+                    String.format(
+                        "The manifest file \"%s\" is malformed. "
+                            + "Key \"onServer\" is missing.",
+                        manifestPath
+                    )
+                );
             }
 
             if (!manifestJson.containsKey("types")) {
-                throw new IllegalArgumentException(String.format(
-                    "The manifest file \"%s\" is malformed. "
-                        + "Key \"types\" is missing.",
-                    manifestPath));
+                throw new IllegalArgumentException(
+                    String.format(
+                        "The manifest file \"%s\" is malformed. "
+                            + "Key \"types\" is missing.",
+                        manifestPath
+                    )
+                );
             }
 
             final LocalDateTime created = LocalDateTime
@@ -446,9 +456,11 @@ public class ImportExport {
             }
 
             return new ImportManifest(
+                path,
                 Date.from(created.atZone(ZoneId.of("UTC")).toInstant()),
                 onServer,
-                types);
+                types
+            );
         } catch (IOException
                  | FileAccessException
                  | FileDoesNotExistException

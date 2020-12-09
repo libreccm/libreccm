@@ -63,12 +63,6 @@ public class ImportExportTaskManager {
     @Inject
     private Event<ImportTask> importTaskSender;
 
-//    @Inject
-//    private ImExportTasks imExportTasks;
-
-//    private SortedSet<ImExportTaskStatus> exportTasks;
-//
-//    private SortedSet<ImExportTaskStatus> importTasks;
     private final SortedSet<ExportTaskStatus> exportTasks;
 
     private final SortedSet<ImportTaskStatus> importTasks;
@@ -111,9 +105,6 @@ public class ImportExportTaskManager {
         final ExportTaskStatus taskStatus = new ExportTaskStatus();
         taskStatus.setName(exportName);
         taskStatus.setStarted(LocalDateTime.now());
-//        final Future<?> status = imExportTasks.startExport(
-//            entities, exportName
-//        );
         exportTaskSender.fireAsync(
             new ExportTask(exportName, LocalDate.now(), entities, taskStatus)
         ).handle((task , ex) -> handleExportTaskResult(task, ex, taskStatus));
@@ -122,24 +113,15 @@ public class ImportExportTaskManager {
         exportTasks.add(taskStatus);
     }
 
-//    public void exportEntities(
-//        final Collection<Exportable> entities, final String exportName
-//    ) {
-//        final ImExportTaskStatus task = new ImExportTaskStatus();
-//        task.setName(exportName);
-//        task.setStarted(LocalDate.now());
-//        final Future<?> status = startExport(entities, exportName);
-//        task.setStatus(status);
-//        exportTasks.add(task);
-//    }
     public void importEntities(final String importName) {
-//        final ImExportTaskStatus task = new ImExportTaskStatus();
-//        task.setName(importName);
-//        task.setStarted(LocalDateTime.now());
-//        final Future<?> status = imExportTasks.startImport(importName);
-//        task.setStatus(status);
-//        importTasks.add(task);
-        throw new UnsupportedOperationException();
+        final ImportTaskStatus taskStatus = new ImportTaskStatus();
+        taskStatus.setStarted(LocalDateTime.now());
+        importTaskSender.fireAsync(
+            new ImportTask(importName, LocalDate.now(), taskStatus)
+        ).handle((task, ex) -> handleImportTaskResult(task, ex, taskStatus));
+        
+        taskStatus.setStatus(ImExportTaskStatusEnum.RUNNING);
+        importTasks.add(taskStatus);
     }
 
     @Schedule(hour = "*", minute = "*/5", persistent = false)
@@ -180,4 +162,17 @@ public class ImportExportTaskManager {
         return task;
     }
 
+    private Object handleImportTaskResult(
+        final ImportTask task, final Throwable ex, final ImportTaskStatus status
+    ) {
+        if (ex == null) {
+            status.setStatus(ImExportTaskStatusEnum.FINISHED);
+        } else {
+            status.setStatus(ImExportTaskStatusEnum.ERROR);
+            status.setException(ex);
+            LOGGER.error("Import Task {} failed", task);
+            LOGGER.error("with exception: ", ex);
+        }
+        return task;
+    }
 }
