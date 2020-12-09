@@ -34,7 +34,7 @@ public class ExportTaskStatus implements Comparable<ExportTaskStatus> {
 
     private LocalDateTime started;
 
-    private ImExportTaskStatusEnum status;
+    private ImExportTaskStatus status;
 
     private Throwable exception;
 
@@ -54,11 +54,11 @@ public class ExportTaskStatus implements Comparable<ExportTaskStatus> {
         this.started = started;
     }
 
-    public ImExportTaskStatusEnum getStatus() {
+    public ImExportTaskStatus getStatus() {
         return status;
     }
 
-    protected void setStatus(final ImExportTaskStatusEnum status) {
+    protected void setStatus(final ImExportTaskStatus status) {
         this.status = status;
     }
 
@@ -104,7 +104,7 @@ public class ExportTaskStatus implements Comparable<ExportTaskStatus> {
     }
 
     public boolean canEqual(final Object obj) {
-        return obj instanceof ImExportTaskStatus;
+        return obj instanceof ExportTaskStatus;
     }
 
     @Override
