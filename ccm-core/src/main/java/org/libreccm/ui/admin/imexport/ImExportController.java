@@ -23,9 +23,12 @@ import org.libreccm.imexport.AbstractEntityImExporter;
 import org.libreccm.imexport.EntityImExporterTreeNode;
 import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.ImportExport;
+import org.libreccm.imexport.ImportManifest;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -129,15 +132,6 @@ public class ImExportController {
 
         taskManager.exportEntities(exportTypes, exportName);
 
-//        models.put(
-//            "exportEntities",
-//            exportNodes
-//                .stream()
-//                .map(node -> node.getEntityImExporter().getEntityClass().getName())
-//                .sorted()
-//                .collect(Collectors.joining("\n"))
-//        );
-//        return "org/libreccm/ui/admin/imexport/exporting.xhtml";
         return "redirect:imexport";
     }
 
@@ -146,7 +140,33 @@ public class ImExportController {
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     public String importEntities() {
-        throw new NotFoundException();
+        models.put(
+            "importArchives",
+            importExport
+                .listAvailableImportArchivies()
+                .stream()
+                .map(this::buildImportOption)
+                .sorted()
+                .collect(
+                    Collectors.toMap(
+                        ImportOption::getImportName,
+                        ImportOption::getLabel
+                    )
+                )
+        );
+        return "org/libreccm/ui/admin/imexport/import.xhtml";
+    }
+
+    @POST
+    @Path("/import")
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    public String importEntities(
+        @FormParam("archive") final String importArchive
+    ) {
+        taskManager.importEntities(importArchive);
+
+        return "redirect:imexport";
     }
 
     private String noDuplicateKeys(final String str1, final String str2) {
@@ -174,6 +194,21 @@ public class ImExportController {
         } else {
             return exportNodes;
         }
+    }
+
+    private ImportOption buildImportOption(final ImportManifest manifest) {
+        return new ImportOption(
+            manifest.getImportName(),
+            String.format(
+                "%s from server %s created on %s with types %s",
+                manifest.getImportName(),
+                manifest.getOnServer(),
+                DateTimeFormatter.ISO_DATE_TIME.withZone(
+                    ZoneOffset.systemDefault()
+                ).format(manifest.getCreated().toInstant()),
+                manifest.getTypes().stream().collect(Collectors.joining(", "))
+            )
+        );
     }
 
 }

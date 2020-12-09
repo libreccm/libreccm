@@ -23,7 +23,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.Objects;
-import java.util.concurrent.CompletionStage;
 
 /**
  *
@@ -35,12 +34,15 @@ public class ImportTaskStatus implements Comparable<ImportTaskStatus> {
 
     private LocalDateTime started;
 
-    private CompletionStage<ImportTask> status;
+    private ImExportTaskStatusEnum status;
+    
+    private Throwable exception;
 
     public String getName() {
         return name;
     }
 
+   
     protected void setName(final String name) {
         this.name = name;
     }
@@ -53,14 +55,56 @@ public class ImportTaskStatus implements Comparable<ImportTaskStatus> {
         this.started = started;
     }
 
-    public CompletionStage<ImportTask> getStatus() {
+    public ImExportTaskStatusEnum getStatus() {
         return status;
     }
 
-    protected void setStatus(final CompletionStage<ImportTask> status) {
+    protected void setStatus(final ImExportTaskStatusEnum status) {
         this.status = status;
     }
+    
+        public Throwable getException() {
+        return exception;
+    }
 
+    protected void setException(final Throwable exception) {
+        this.exception = exception;
+    }
+
+     @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + Objects.hashCode(name);
+        hash = 53 * hash + Objects.hashCode(started);
+        hash = 53 * hash + Objects.hashCode(status);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof ImExportTaskStatus)) {
+            return false;
+        }
+        final ImportTaskStatus other = (ImportTaskStatus) obj;
+        if (!other.canEqual(this)) {
+            return false;
+        }
+        if (!Objects.equals(name, other.getName())) {
+            return false;
+        }
+        if (!Objects.equals(started, other.getStarted())) {
+            return false;
+        }
+        return status == other.getStatus();
+    }
+
+    
     public boolean canEqual(final Object obj) {
         return obj instanceof ImExportTaskStatus;
     }
