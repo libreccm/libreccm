@@ -34,12 +34,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 /**
+ * Model for the themes page.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -53,6 +52,11 @@ public class ThemesModel {
     @Inject
     private Themes themes;
 
+    /**
+     * Get all available themes.
+     *
+     * @return A list of all available themes.
+     */
     public List<ThemesTableRow> getThemes() {
         return themes
             .getAvailableThemes()
@@ -61,6 +65,12 @@ public class ThemesModel {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Get all available {@link org.libreccm.theming.ThemeProvider}s which
+     * support changes and draft themes.
+     *
+     * @return
+     */
     public Map<String, String> getProviderOptions() {
         return themes
             .getThemeProviders()
@@ -75,8 +85,15 @@ public class ThemesModel {
             );
     }
 
+    /**
+     * Helper function for mapping a {@link ThemeInfo} instance to a
+     * {@link ThemesTableRow} instance.
+     *
+     * @param themeInfo The {@link ThemeInfo} instance to map.
+     *
+     * @return A {@link ThemesTableRow} instance for the theme.
+     */
     private ThemesTableRow mapThemeInfo(final ThemeInfo themeInfo) {
-
         final LocalizedTextsUtil textsUtil = globalizationHelper
             .getLocalizedTextsUtil(AdminConstants.ADMIN_BUNDLE);
 

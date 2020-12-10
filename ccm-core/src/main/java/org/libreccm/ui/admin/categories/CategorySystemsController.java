@@ -49,6 +49,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
+ * Controller for the UI for managing category systems.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -78,13 +79,11 @@ public class CategorySystemsController {
     @Inject
     private Models models;
 
-//    @GET
-//    @Path("/")
-//    @AuthorizationRequired
-//    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
-//    public String getCategoryManager() {
-//        return getCategorySystems();
-//    }
+    /**
+     * Show a list of all available category systems.
+     *
+     * @return The template to use.
+     */
     @GET
     @Path("/")
     @AuthorizationRequired
@@ -93,6 +92,14 @@ public class CategorySystemsController {
         return "org/libreccm/ui/admin/categories/categorysystems.xhtml";
     }
 
+    /**
+     * Display the details of a category system.
+     *
+     * @param categorySystemIdentifier Identifier of the category system to
+     *                                 show.
+     *
+     * @return The template to use.
+     */
     @GET
     @Path("/{categorySystemIdentifier}/details")
     @AuthorizationRequired
@@ -141,6 +148,11 @@ public class CategorySystemsController {
         }
     }
 
+    /**
+     * Show the form for creating a new category system.
+     *
+     * @return The template to use.
+     */
     @GET
     @Path("/new")
     @AuthorizationRequired
@@ -149,6 +161,14 @@ public class CategorySystemsController {
         return "org/libreccm/ui/admin/categories/categorysystem-form.xhtml";
     }
 
+    /**
+     * Edit a category system.
+     *
+     * @param categorySystemIdentifier Identifier of the category system to
+     *                                 edit.
+     *
+     * @return The template to use.
+     */
     @GET
     @Path("/{categorySystemIdentifier}/edit")
     @AuthorizationRequired
@@ -198,6 +218,15 @@ public class CategorySystemsController {
         }
     }
 
+    /**
+     * Delete a category system and all its categories.
+     *
+     * @param categorySystemIdentifier Identifier of the category system to
+     *                                 delete.
+     * @param confirmed                Was the deletion confirmed by the user?
+     *
+     * @return Redirect to the categorysystems overview.
+     */
     @POST
     @Path("/{categorySystemIdentifier}/delete")
     @AuthorizationRequired
@@ -250,6 +279,15 @@ public class CategorySystemsController {
         return "redirect:categorymanager/categorysystems";
     }
 
+    /**
+     * Adds a localized title the a category system.
+     *
+     * @param categorySystemIdentifier Identifier of the category system.
+     * @param localeParam              The locale of the title.
+     * @param value                    The localized title.
+     *
+     * @return Redirect to the details page of the category system.
+     */
     @POST
     @Path("/{identifier}/title/add")
     @AuthorizationRequired
@@ -306,6 +344,15 @@ public class CategorySystemsController {
         }
     }
 
+    /**
+     * Updates a localized title the a category system.
+     *
+     * @param categorySystemIdentifier Identifier of the category system.
+     * @param localeParam              The locale of the title.
+     * @param value                    The localized title.
+     *
+     * @return Redirect to the details page of the category system.
+     */
     @POST
     @Path("/{identifier}/title/${locale}/edit")
     @AuthorizationRequired
@@ -362,6 +409,14 @@ public class CategorySystemsController {
         }
     }
 
+    /**
+     * Removes a localized title the a category system.
+     *
+     * @param categorySystemIdentifier Identifier of the category system.
+     * @param localeParam              The locale of the title.
+     *
+     * @return Redirect to the details page of the category system.
+     */
     @POST
     @Path("/{identifier}/title/${locale}/remove")
     @AuthorizationRequired
@@ -422,6 +477,15 @@ public class CategorySystemsController {
         }
     }
 
+    /**
+     * Adds a localized description the a category system.
+     *
+     * @param categorySystemIdentifier Identifier of the category system.
+     * @param localeParam              The locale of the description.
+     * @param value                    The localized description.
+     *
+     * @return Redirect to the details page of the category system.
+     */
     @POST
     @Path("/{identifier}/description/add")
     @AuthorizationRequired
@@ -478,6 +542,15 @@ public class CategorySystemsController {
         }
     }
 
+    /**
+     * Updates a localized description the a category system.
+     *
+     * @param categorySystemIdentifier Identifier of the category system.
+     * @param localeParam              The locale of the description.
+     * @param value                    The localized description.
+     *
+     * @return Redirect to the details page of the category system.
+     */
     @POST
     @Path(
         "categorysystems/{identifier}/description/${locale}/edit"
@@ -536,6 +609,14 @@ public class CategorySystemsController {
         }
     }
 
+    /**
+     * Removes a localized description of a category system.
+     *
+     * @param categorySystemIdentifier Identifier of the category system.
+     * @param localeParam              The locale of the description.
+     *
+     * @return Redirect to the details page of the category system.
+     */
     @POST
     @Path(
         "categorysystems/{identifier}/description/${locale}/remove")
@@ -596,6 +677,15 @@ public class CategorySystemsController {
         }
     }
 
+    /**
+     * Adds an owner to a category system.
+     *
+     * @param categorySystemIdentifier Identifier of teh category system.
+     * @param applicationUuid          UUID of the new owner.
+     * @param context                  An optional context.
+     *
+     * @return Redirect to the details page of the category system.
+     */
     @POST
     @Path("/{categorySystemIdentifier}/owners/add")
     @AuthorizationRequired
@@ -675,6 +765,15 @@ public class CategorySystemsController {
         }
     }
 
+    /**
+     * Remove an owner from a category system.
+     *
+     * @param categorySystemIdentifier Identifier of teh category system.
+     * @param applicationUuid          UUID of the owner to remove.
+     * @param confirmed Was the deletion confirmed by the user?
+     *
+     * @return Redirect to the details page of the category system.
+     */
     @POST
     @Path("/{categorySystemIdentifier}/owners/${applicationUuid}/remove")
     @AuthorizationRequired

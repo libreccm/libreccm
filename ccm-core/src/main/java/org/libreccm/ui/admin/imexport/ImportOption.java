@@ -18,16 +18,26 @@
  */
 package org.libreccm.ui.admin.imexport;
 
+import org.libreccm.imexport.ImportManifest;
+
 import java.util.Objects;
 
 /**
+ * Provides a preprocessed {@link ImportManifest} for easier use in a template.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ImportOption implements Comparable<ImportOption> {
 
+    /**
+     * Name of the import.
+     */
     private final String importName;
 
+    /**
+     * Label of the import, includes the relevant data from the
+     * {@link ImportManifest}.
+     */
     private final String label;
 
     public ImportOption(

@@ -28,7 +28,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 /**
- *
+ * Controller for the dashboard page (start page) of the Admin UI:
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -36,6 +37,11 @@ import javax.ws.rs.Path;
 @Path("/")
 public class DashboardController {
     
+    /**
+     * Show the dashboard page.
+     * 
+     * @return The template to use.
+     */
     @GET
     @Path("/")
     @AuthorizationRequired

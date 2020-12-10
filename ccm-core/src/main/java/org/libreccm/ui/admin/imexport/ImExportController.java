@@ -41,11 +41,11 @@ import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 /**
+ * Controller for the Import/Export UI.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -63,6 +63,12 @@ public class ImExportController {
     @Inject
     private Models models;
 
+    /**
+     * Provides the main page with an overview of all running import/export
+     * processes.
+     *
+     * @return
+     */
     @GET
     @Path("/")
     @AuthorizationRequired
@@ -71,6 +77,11 @@ public class ImExportController {
         return "org/libreccm/ui/admin/imexport/imexport.xhtml";
     }
 
+    /**
+     * UI for starting exports.
+     *
+     * @return The template to use.
+     */
     @GET
     @Path("/export")
     @AuthorizationRequired
@@ -99,6 +110,14 @@ public class ImExportController {
         return "org/libreccm/ui/admin/imexport/export.xhtml";
     }
 
+    /**
+     * Starts an export.
+     *
+     * @param selectedEntitiesParam The entity types selected for export.
+     * @param exportName            The name of the export archive.
+     *
+     * @return Redirect to the main import/export page.
+     */
     @POST
     @Path("/export")
     @AuthorizationRequired
@@ -135,6 +154,11 @@ public class ImExportController {
         return "redirect:imexport";
     }
 
+    /**
+     * Displays the import page that allows to select a import archive.
+     *
+     * @return The template to use.
+     */
     @GET
     @Path("/import")
     @AuthorizationRequired
@@ -157,6 +181,13 @@ public class ImExportController {
         return "org/libreccm/ui/admin/imexport/import.xhtml";
     }
 
+    /**
+     * Execute an import.
+     *
+     * @param importArchive The name of the import archive to use.
+     *
+     * @return Redirect to to the main import/export page.
+     */
     @POST
     @Path("/import")
     @AuthorizationRequired
@@ -169,10 +200,34 @@ public class ImExportController {
         return "redirect:imexport";
     }
 
+    /**
+     * Merge function for {@link Collectors#toMap(java.util.function.Function, java.util.function.Function, java.util.function.BinaryOperator, java.util.function.Supplier).
+     *
+     * @param str1 First key
+     * @param str2 Second key
+     *
+     * @return First key.
+     *
+     * @throws RuntimeException if both keys are equal.
+     */
     private String noDuplicateKeys(final String str1, final String str2) {
-        throw new RuntimeException("No duplicate keys allowed.");
+        if (str1.equals(str2)) {
+            throw new RuntimeException("No duplicate keys allowed.");
+        } else {
+            return str1;
+        }
     }
 
+    /**
+     * Helper method for adding required entities to an export task. Some entity
+     * types require also other entity types. This method traverses through the
+     * selected entity types of an export and adds required entity types if
+     * necessary.
+     *
+     * @param selectedNodes The selected entity types.
+     *
+     * @return The final list of exported types.
+     */
     private Set<EntityImExporterTreeNode> addRequiredEntities(
         final Set<EntityImExporterTreeNode> selectedNodes
     ) {
@@ -196,6 +251,16 @@ public class ImExportController {
         }
     }
 
+    /**
+     * Helper function to build an
+     * {@link org.libreccm.ui.admin.imexport.ImportOption} instance from a
+     * {@link org.libreccm.imexport.ImportManifest}.
+     *
+     * @param manifest The manifest to map to a
+     *                 {@link org.libreccm.ui.admin.imexport.ImportOption}.
+     *
+     * @return An {@link org.libreccm.ui.admin.imexport.ImportOption} instance.
+     */
     private ImportOption buildImportOption(final ImportManifest manifest) {
         return new ImportOption(
             manifest.getImportName(),

@@ -27,7 +27,8 @@ import org.libreccm.ui.admin.AdminPage;
 import javax.enterprise.context.ApplicationScoped;
 
 /**
- *
+ * {@link AdminPage} implementaton for the system information page.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ApplicationScoped

@@ -25,17 +25,30 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- *
+ * Data for an export task.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ExportTask {
 
+    /**
+     * Name of the export archive.
+     */
     private final String name;
 
+    /**
+     * When was the export task started?
+     */
     private final LocalDate started;
 
+    /**
+     * The entities to export.
+     */
     private final Collection<Exportable> entities;
     
+    /**
+     * The status of the export task.
+     */
     private final ExportTaskStatus status;
 
     public ExportTask(

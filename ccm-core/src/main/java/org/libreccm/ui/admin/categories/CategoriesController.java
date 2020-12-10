@@ -50,6 +50,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
 /**
+ * Primary controller for the UI for managing category systems and categories.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -72,13 +73,20 @@ public class CategoriesController {
 
     @Inject
     private DomainRepository domainRepository;
-    
+
     @Inject
     private IdentifierParser identifierParser;
 
     @Inject
     private Models models;
 
+    /**
+     * Show details about a category.
+     *
+     * @param categoryIdentifier Identifier of the category to show.
+     *
+     * @return The template to render.
+     */
     @GET
     @Path("/{categoryIdentifier}")
     @AuthorizationRequired
@@ -120,6 +128,13 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Show the edit form for a category.
+     *
+     * @param categoryIdentifier Identifier of the category to edit.
+     *
+     * @return The template to render.
+     */
     @GET
     @Path("/{categoryIdentifier}/edit")
     @AuthorizationRequired
@@ -161,6 +176,13 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Displays the form for creating a new subcategory.
+     *
+     * @param categoryIdentifier The identifier of the parent category.
+     *
+     * @return The template to render.
+     */
     @GET
     @Path("/{categoryIdentifier}/subcategories/new")
     @AuthorizationRequired
@@ -202,6 +224,15 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Moves a category from one parent category to another. The target is
+     * provided
+     *
+     * @param categoryIdentifierParam Identifier of the category to move.
+     * @param targetIdentifierParam   Identifier of the target category.
+     *
+     * @return Redirect to the detail page of the target category.
+     */
     @POST
     @Path("/{categoryIdentifier}/subcategories/move")
     @AuthorizationRequired
@@ -286,6 +317,14 @@ public class CategoriesController {
         );
     }
 
+    /**
+     * Deletes a category.
+     *
+     * @param categoryIdentifier Identifier of the category to remove.
+     *
+     * @return Redirect to the details page of the parent category of the
+     *         removed category.
+     */
     @POST
     @Path("/{categoryIdentifier}/subcategories/remove")
     @AuthorizationRequired
@@ -341,6 +380,15 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Adds a localized title the a category.
+     *
+     * @param identifierParam Identifier of the category.
+     * @param localeParam     The locale of the title.
+     * @param value           The localized title.
+     *
+     * @return Redirect to the details page of the category.
+     */
     @POST
     @Path("/{identifier}/title/add")
     @AuthorizationRequired
@@ -390,6 +438,15 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Updates the localized title of a category.
+     *
+     * @param identifierParam Identifier of the category.
+     * @param localeParam     The locale of the title.
+     * @param value           The localized title.
+     *
+     * @return Redirect to the details page of the category.
+     */
     @POST
     @Path("/{identifier}/title/{locale}/edit")
     @AuthorizationRequired
@@ -439,6 +496,14 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Removes the localized title of a category.
+     *
+     * @param categoryIdentifierParam Identifier of the category.
+     * @param localeParam             The locale of the title.
+     *
+     * @return Redirect to the details page of the category.
+     */
     @POST
     @Path("/{identifier}/title/{locale}/remove")
     @AuthorizationRequired
@@ -488,6 +553,15 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Adds a localized description the a category.
+     *
+     * @param identifierParam Identifier of the category.
+     * @param localeParam     The locale of the description
+     * @param value           The localized description.
+     *
+     * @return Redirect to the details page of the category.
+     */
     @POST
     @Path("/{identifier}decsription/add")
     @AuthorizationRequired
@@ -537,6 +611,15 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Updates the localized description the a category.
+     *
+     * @param identifierParam Identifier of the category.
+     * @param localeParam     The locale of the description
+     * @param value           The localized description.
+     *
+     * @return Redirect to the details page of the category.
+     */
     @POST
     @Path("/{identifier}/description/{locale}/edit")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -587,6 +670,14 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Removes a localized description the a category.
+     *
+     * @param identifierParam Identifier of the category.
+     * @param localeParam     The locale of the description
+     *
+     * @return Redirect to the details page of the category.
+     */
     @POST
     @Path("/{identifier}/description/{locale}/remove")
     @AuthorizationRequired
@@ -635,6 +726,16 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Changes the order of the subcategories of a category.
+     *
+     * @param categoryIdentifierParam    Identifier of the category.
+     * @param subCategoryIdentifierParam Identifier of the sub category to move.
+     * @param direction                  The direction, either
+     *                                   {@code INCREASE or DECREASE}.
+     *
+     * @return Redirect to the details page of the category.
+     */
     @POST
     @Path("/{categoryIdentifier}/subcategories/{subCategoryIdentifier}/reorder")
     @AuthorizationRequired
@@ -724,7 +825,7 @@ public class CategoriesController {
                     )
                 );
         }
-        
+
         if (category.getParentCategory() == null) {
             final Optional<Domain> categorySystem = domainRepository
                 .findByRootCategory(category);
@@ -735,7 +836,7 @@ public class CategoriesController {
                 );
             } else {
                 return String.format(
-                    "redirect:categorymanager/categories/ID-%d", 
+                    "redirect:categorymanager/categories/ID-%d",
                     category.getObjectId()
                 );
             }

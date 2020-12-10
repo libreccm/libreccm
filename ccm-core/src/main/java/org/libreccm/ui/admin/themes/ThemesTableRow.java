@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 /**
+ * Data of theme for displaying in the table of available themes.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

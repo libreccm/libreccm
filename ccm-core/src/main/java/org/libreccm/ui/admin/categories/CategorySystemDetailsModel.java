@@ -46,7 +46,10 @@ import javax.inject.Named;
 import javax.transaction.Transactional;
 
 /**
- *
+ * Model for the details of a category system (Domain)
+ * 
+ * @see org.libreccm.categorization.Domain
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -227,6 +230,10 @@ public class CategorySystemDetailsModel {
         this.invalidFields = new HashSet<>(invalidFields);
     }
 
+    /**
+     * Sets the properties of this model using the provided {@link Domain}.
+     * @param domain The domain to display.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     protected void setCategorySystem(final Domain domain) {
         Objects.requireNonNull(domain);

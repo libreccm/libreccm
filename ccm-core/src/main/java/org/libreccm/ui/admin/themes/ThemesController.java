@@ -21,12 +21,7 @@ package org.libreccm.ui.admin.themes;
 import org.libreccm.core.CoreConstants;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
-import org.libreccm.theming.ThemeInfo;
 import org.libreccm.theming.Themes;
-import org.libreccm.theming.manager.ThemeManager;
-;
-
-import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -40,11 +35,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
+ * Primary controller for the UI for managing themes.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-
-
 @RequestScoped
 @Controller
 @Path("/themes")
@@ -53,10 +47,14 @@ public class ThemesController {
     @Inject
     private Themes themes;
 
-  
     @Inject
     private Models models;
 
+    /**
+     * Show all available themes.
+     *
+     * @return The template to use.
+     */
     @GET
     @Path("/")
     @AuthorizationRequired
@@ -66,6 +64,14 @@ public class ThemesController {
         return "org/libreccm/ui/admin/themes/themes.xhtml";
     }
 
+    /**
+     * Create a new theme.
+     *
+     * @param themeName    The name of the new theme.
+     * @param providerName The provider of the new theme.
+     *
+     * @return Redirect to the list of available themes.
+     */
     @POST
     @Path("/new")
     @AuthorizationRequired
@@ -76,10 +82,17 @@ public class ThemesController {
         @FormParam("providerName") final String providerName
     ) {
         themes.createTheme(themeName, providerName);
-        
+
         return "redirect:themes/";
     }
-    
+
+    /**
+     * (Re-)Publish a theme.
+     *
+     * @param themeName The theme to (re-)publish.
+     *
+     * @return Redirect to the list of themes.
+     */
     @POST
     @Path("/{themeName}/publish")
     @AuthorizationRequired
@@ -87,10 +100,17 @@ public class ThemesController {
     @Transactional(Transactional.TxType.REQUIRED)
     public String publishTheme(final String themeName) {
         themes.publishTheme(themeName);
-        
+
         return "redirect:themes/";
     }
-    
+
+    /**
+     * Unpublish a theme.
+     *
+     * @param themeName The theme to unpublish.
+     *
+     * @return Redirect to the list of themes.
+     */
     @POST
     @Path("/{themeName}/unpublish")
     @AuthorizationRequired
@@ -98,10 +118,17 @@ public class ThemesController {
     @Transactional(Transactional.TxType.REQUIRED)
     public String unpublishTheme(final String themeName) {
         themes.unpublishTheme(themeName);
-        
+
         return "redirect:themes/";
     }
-    
+
+    /**
+     * Delete a theme.
+     *
+     * @param themeName The theme to delete.
+     *
+     * @return Redirect to the list of themes.
+     */
     @POST
     @Path("/{themeName}/delete")
     @AuthorizationRequired
@@ -109,9 +136,8 @@ public class ThemesController {
     @Transactional(Transactional.TxType.REQUIRED)
     public String deleteTheme(@PathParam("themeName") final String themeName) {
         themes.deleteTheme(themeName);
-        
+
         return "redirect:themes/";
     }
 
-    
 }

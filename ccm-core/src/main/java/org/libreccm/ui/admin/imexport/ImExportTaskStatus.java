@@ -19,13 +19,23 @@
 package org.libreccm.ui.admin.imexport;
 
 /**
- *
+ * Enumeration for the possible states of an export or import task.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public enum ImExportTaskStatus {
 
+    /**
+     * An error occured during the process.
+     */
     ERROR,
+    /**
+     * The import or export task is finished.
+     */
     FINISHED,
+    /**
+     * The task is still running.
+     */
     RUNNING,
 
 }

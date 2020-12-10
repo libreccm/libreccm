@@ -29,6 +29,8 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 /**
+ * Listens for CDI events fired by {@link org.libreccm.ui.admin.imexport.ImportExportTaskManager}
+ * and executes tasks.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -38,23 +40,33 @@ public class ImExportTasks {
     @Inject
     private ImportExport importExport;
 
-    
+    /**
+     * Listens for {@link org.libreccm.ui.admin.imexport.ExportTask}s.
+     * 
+     * @param task The task to execute.
+     * @return The task.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     public ExportTask exportEntities(@ObservesAsync final ExportTask task) {
         final Collection<Exportable> entities = task.getEntities();
         final String exportName = task.getName();
-        
+
         importExport.exportEntities(entities, exportName);
         task.getStatus().setStatus(ImExportTaskStatus.FINISHED);
         return task;
     }
-    
+
+    /**
+     * Listens for {@link org.libreccm.ui.admin.imexport.ImportTask}s.
+     * 
+     * @param task The task to execute.
+     * @return The task.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     public void importEntitites(@ObservesAsync final ImportTask task) {
         final String importName = task.getName();
-        
+
         importExport.importEntities(importName);
     }
-    
 
 }

@@ -38,6 +38,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 /**
+ * Controller for the UI for managing the configuration of CCM.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -51,10 +52,15 @@ public class ConfigurationController {
 
     @Inject
     private GlobalizationHelper globalizationHelper;
-    
+
     @Inject
     private Models models;
 
+    /**
+     * Show all available configurations (groups of settings).
+     *
+     * @return The template to use.
+     */
     @GET
     @Path("/")
     @AuthorizationRequired
@@ -69,10 +75,20 @@ public class ConfigurationController {
             .collect(Collectors.toList());
 
         models.put("configurationClasses", configurationClasses);
-        
+
         return "org/libreccm/ui/admin/configuration/configuration.xhtml";
     }
 
+    /**
+     * Helper method for converting a
+     * {@link org.libreccm.configuration.ConfigurationInfo} instance into a
+     * {@link org.libreccm.ui.admin.configuration.ConfigurationTableEntry}
+     * instance.
+     *
+     * @param confInfo Configuration info to convert.
+     *
+     * @return A {@link ConfigurationTableEntry} for the configuration.
+     */
     private ConfigurationTableEntry buildTableEntry(
         final ConfigurationInfo confInfo
     ) {
@@ -83,7 +99,7 @@ public class ConfigurationController {
             .getLocalizedTextsUtil(confInfo.getDescBundle());
         entry.setTitle(util.getText(confInfo.getTitleKey()));
         entry.setDescription(util.getText(confInfo.getDescKey()));
-        
+
         return entry;
     }
 

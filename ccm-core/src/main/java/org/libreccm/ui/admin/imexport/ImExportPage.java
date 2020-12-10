@@ -27,7 +27,8 @@ import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 
 /**
- *
+ * Provides the UI for importing and exporting entities.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ApplicationScoped

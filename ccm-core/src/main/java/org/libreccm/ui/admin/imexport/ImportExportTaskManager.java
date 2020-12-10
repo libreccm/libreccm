@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.CompletionStage;
 
 import javax.ejb.Schedule;
 import javax.enterprise.context.ApplicationScoped;
@@ -43,6 +44,7 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 /**
+ * Provides the backend for importing and exporting entities.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -54,17 +56,34 @@ public class ImportExportTaskManager {
         ImportExportTaskManager.class
     );
 
+    /**
+     * Entity manager used for some special queries. To execute import and
+     * export tasks concurrently CDI events are used which are processed by the
+     * {@link ImExportTasks} class.
+     */
     @Inject
     private EntityManager entityManager;
 
+    /**
+     * CDI event sender for export tasks.
+     */
     @Inject
     private Event<ExportTask> exportTaskSender;
 
+    /**
+     * CDI event sender for import tasks.
+     */
     @Inject
     private Event<ImportTask> importTaskSender;
 
+    /**
+     * Status of all active export tasks.
+     */
     private final SortedSet<ExportTaskStatus> exportTasks;
 
+    /**
+     * Status of all active import tasks.
+     */
     private final SortedSet<ImportTaskStatus> importTasks;
 
     public ImportExportTaskManager() {
@@ -80,14 +99,31 @@ public class ImportExportTaskManager {
         );
     }
 
+    /**
+     * Returns the active export tasks.
+     *
+     * @return All active export tasks.
+     */
     public SortedSet<ExportTaskStatus> getExportTasks() {
         return Collections.unmodifiableSortedSet(exportTasks);
     }
 
+    /**
+     * Returns the active import tasks.
+     *
+     * @return All active import tasks.
+     */
     public SortedSet<ImportTaskStatus> getImportTasks() {
         return Collections.unmodifiableSortedSet(importTasks);
     }
 
+    /**
+     * Export all entities of the selected entity types.
+     *
+     * @param exportTypes The entity types to export.
+     * @param exportName  Name of the export archive.
+     *
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     public void exportEntities(
         final Set<Class<? extends Exportable>> exportTypes,
@@ -107,7 +143,7 @@ public class ImportExportTaskManager {
         taskStatus.setStarted(LocalDateTime.now());
         exportTaskSender.fireAsync(
             new ExportTask(exportName, LocalDate.now(), entities, taskStatus)
-        ).handle((task , ex) -> handleExportTaskResult(task, ex, taskStatus));
+        ).handle((task, ex) -> handleExportTaskResult(task, ex, taskStatus));
 
         taskStatus.setStatus(ImExportTaskStatus.RUNNING);
         exportTasks.add(taskStatus);
@@ -119,18 +155,32 @@ public class ImportExportTaskManager {
         importTaskSender.fireAsync(
             new ImportTask(importName, LocalDate.now(), taskStatus)
         ).handle((task, ex) -> handleImportTaskResult(task, ex, taskStatus));
-        
+
         taskStatus.setStatus(ImExportTaskStatus.RUNNING);
         importTasks.add(taskStatus);
     }
 
+    /**
+     * Called every 5 minutes to remove finished tasks from {@link #exportTasks}
+     * and and {@link #importTasks}.
+     */
     @Schedule(hour = "*", minute = "*/5", persistent = false)
     protected void removeFinishedTasks() {
-        exportTasks.removeIf(taskStatus -> taskStatus.getStatus() == ImExportTaskStatus.FINISHED);
-//        importTasks.removeIf(taskStatus -> taskStatus.getStatus() == ImExportTaskStatus.FINISHED);
+        exportTasks.removeIf(
+            taskStatus -> taskStatus.getStatus() == ImExportTaskStatus.FINISHED
+        );
+        importTasks.removeIf(
+            taskStatus -> taskStatus.getStatus() == ImExportTaskStatus.FINISHED
+        );
     }
 
-    
+    /**
+     * Collects the entities of the provided types for exporting.
+     *
+     * @param ofType The entity type.
+     *
+     * @return All entities of the provided type.
+     */
     private Set<? extends Exportable> collectEntities(
         final Class<Exportable> ofType
     ) {
@@ -145,6 +195,19 @@ public class ImportExportTaskManager {
         );
     }
 
+    /**
+     * Handler function for processing the result of an export tasks.
+     *
+     * @param task   The task.
+     * @param ex     Exception thrown during the export process. If the export
+     *               process run without errors, this parameter will be
+     *               {@code null}.
+     * @param status The status of the task.
+     *
+     * @return The task.
+     * 
+     * @see CompletionStage#handle(java.util.function.BiFunction)
+     */
     private Object handleExportTaskResult(
         final ExportTask task, final Throwable ex, final ExportTaskStatus status
     ) {
@@ -159,6 +222,19 @@ public class ImportExportTaskManager {
         return task;
     }
 
+    /**
+     * Handler function for processing the result of an import tasks.
+     *
+     * @param task   The task.
+     * @param ex     Exception thrown during the import process. If the import
+     *               process run without errors, this parameter will be
+     *               {@code null}.
+     * @param status The status of the task.
+     *
+     * @return The task.
+     *
+     * @see CompletionStage#handle(java.util.function.BiFunction)
+     */
     private Object handleImportTaskResult(
         final ImportTask task, final Throwable ex, final ImportTaskStatus status
     ) {
@@ -172,4 +248,5 @@ public class ImportExportTaskManager {
         }
         return task;
     }
+
 }

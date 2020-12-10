@@ -47,6 +47,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
+ * Primary controller for the UI for managing sites.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -73,6 +74,11 @@ public class SitesController {
     @Inject
     private Themes themes;
 
+    /**
+     * Show all available sites.
+     *
+     * @return The template to use.
+     */
     @GET
     @Path("/")
     @AuthorizationRequired
@@ -91,6 +97,13 @@ public class SitesController {
         return "org/libreccm/ui/admin/sites/sites.xhtml";
     }
 
+    /**
+     * Show the details of a site.
+     *
+     * @param siteIdentifierParam Identifier of the site to show.
+     *
+     * @return The template to use.
+     */
     @GET
     @Path("/{siteIdentifier}/details")
     @AuthorizationRequired
@@ -137,6 +150,11 @@ public class SitesController {
         }
     }
 
+    /**
+     * Show the form for creating a new site.
+     *
+     * @return The template to use.
+     */
     @GET
     @Path("/new")
     @AuthorizationRequired
@@ -147,6 +165,13 @@ public class SitesController {
         return "org/libreccm/ui/admin/sites/site-form.xhtml";
     }
 
+    /**
+     * Show the form for editing a site.
+     *
+     * @param siteIdentifierParam The identifier of the site to edit.
+     *
+     * @return The template to use.
+     */
     @GET
     @Path("/{siteIdentifier}/edit")
     @AuthorizationRequired
@@ -192,7 +217,15 @@ public class SitesController {
             return "org/libreccm/ui/admin/sites/site-not-found.xhtml";
         }
     }
-    
+
+    /**
+     * Delete a site.
+     *
+     * @param siteIdentifierParam The identifier of the site to delete.
+     * @param confirmed           Was the deletion confirmed by the user?
+     *
+     * @return Redirect to the list of all available sites.
+     */
     @POST
     @Path("/{identifier}/delete")
     @AuthorizationRequired
@@ -204,31 +237,40 @@ public class SitesController {
     ) {
         if ("true".equals(confirmed)) {
             final Identifier siteIdentifier = identifierParser.parseIdentifier(
-            siteIdentifierParam
-        );
+                siteIdentifierParam
+            );
 
-        final Optional<Site> result;
-        switch (siteIdentifier.getType()) {
-            case ID:
-                result = siteRepository.findById(
-                    Long.parseLong(siteIdentifier.getIdentifier())
-                );
-                break;
-            default:
-                result = siteRepository.findByUuid(
-                    siteIdentifier.getIdentifier()
-                );
-                break;
+            final Optional<Site> result;
+            switch (siteIdentifier.getType()) {
+                case ID:
+                    result = siteRepository.findById(
+                        Long.parseLong(siteIdentifier.getIdentifier())
+                    );
+                    break;
+                default:
+                    result = siteRepository.findByUuid(
+                        siteIdentifier.getIdentifier()
+                    );
+                    break;
+            }
+
+            if (result.isPresent()) {
+                siteRepository.delete(result.get());
+            }
         }
 
-        if (result.isPresent()) {
-            siteRepository.delete(result.get());
-        }
-        }
-        
         return "redirect:sites";
     }
 
+    /**
+     * Helper method for building a
+     * {@link org.libreccm.ui.admin.sites.SiteTableRow} instance for a
+     * {@link Site}.
+     *
+     * @param site The site.
+     *
+     * @return A {@link SiteTableRow} instance for the site.
+     */
     private SiteTableRow buildSiteTableRow(final Site site) {
         final SiteTableRow row = new SiteTableRow();
         row.setSiteId(site.getObjectId());

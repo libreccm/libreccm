@@ -22,7 +22,6 @@ import org.libreccm.sites.Site;
 import org.libreccm.theming.ThemeInfo;
 import org.libreccm.ui.Message;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +32,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 /**
+ * Model providing the properties of a site for the UI.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -96,6 +96,12 @@ public class SiteDetailsModel {
         messages.add(message);
     }
 
+    /**
+     * Set the properties of this model to the values of the properties of the
+     * provided site.
+     *
+     * @param site The site.
+     */
     protected void setSite(final Site site) {
         Objects.requireNonNull(site);
 

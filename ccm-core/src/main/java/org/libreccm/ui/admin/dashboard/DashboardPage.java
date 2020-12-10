@@ -20,7 +20,6 @@ package org.libreccm.ui.admin.dashboard;
 
 import org.libreccm.ui.admin.AdminConstants;
 import org.libreccm.ui.admin.AdminPage;
-import org.libreccm.ui.admin.configuration.ConfigurationController;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,12 +27,14 @@ import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 
 /**
+ * {@link AdminPage} implementation for the dashboard page.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ApplicationScoped
 public class DashboardPage implements AdminPage {
-     @Override
+
+    @Override
     public Set<Class<?>> getControllerClasses() {
         final Set<Class<?>> classes = new HashSet<>();
         classes.add(DashboardController.class);
@@ -59,7 +60,7 @@ public class DashboardPage implements AdminPage {
 
     @Override
     public String getDescriptionBundle() {
-       return AdminConstants.ADMIN_BUNDLE;
+        return AdminConstants.ADMIN_BUNDLE;
     }
 
     @Override
@@ -76,4 +77,5 @@ public class DashboardPage implements AdminPage {
     public int getPosition() {
         return 0;
     }
+
 }

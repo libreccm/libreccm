@@ -21,22 +21,45 @@ package org.libreccm.ui.admin.applications;
 import java.util.Objects;
 
 /**
+ * Data Transfer Object providing the information about an application. Used for
+ * rendering the informations the available applications in UI.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ApplicationTypeInfoItem implements
     Comparable<ApplicationTypeInfoItem> {
 
+    /**
+     * Name of the application.
+     */
     private String name;
 
+    /**
+     * Localized title of the application, if available in the language of the
+     * current user.
+     */
     private String title;
 
+    /**
+     * Localized title of the application, if available in the language of the
+     * current user.
+     */
     private String description;
 
+    /**
+     * Is the application a singleton application?
+     */
     private boolean singleton;
 
+    /**
+     * Number of existing instances of the application.
+     */
     private long numberOfInstances;
-       
+
+    /**
+     * Link the {@link ApplicationController} implementation of the application,
+     * if an implementation is available.
+     */
     private String controllerLink;
 
     protected ApplicationTypeInfoItem() {
@@ -82,11 +105,11 @@ public class ApplicationTypeInfoItem implements
     protected void setNumberOfInstances(final long numberOfInstances) {
         this.numberOfInstances = numberOfInstances;
     }
-    
+
     public String getControllerLink() {
         return controllerLink;
     }
-    
+
     protected void setControllerLink(final String controllerLink) {
         this.controllerLink = controllerLink;
     }

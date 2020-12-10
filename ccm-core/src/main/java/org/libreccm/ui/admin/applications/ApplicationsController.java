@@ -40,6 +40,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 /**
+ * Controller for the UI for managing application instances.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -60,9 +61,13 @@ public class ApplicationsController {
     @Inject
     private Models models;
 
-//    @Inject
-//    private MvcContext mvc;
-
+    /**
+     * Retrives the avaiable application types, creates
+     * {@link ApplicationTypeInfoItem}s for them and makes them available using
+     * {@link #models}.
+     *
+     * @return The template to render.
+     */
     @GET
     @Path("/")
     @AuthorizationRequired
@@ -83,6 +88,15 @@ public class ApplicationsController {
         return "org/libreccm/ui/admin/applications/applicationtypes.xhtml";
     }
 
+    /**
+     * Helper method for building an {@link ApplicationTypeInfoItem} for an
+     * {@link ApplicationType}.
+     *
+     * @param applicationType The application type.
+     *
+     * @return An {@link ApplicationTypeInfoItem} for the provided application
+     *         type.
+     */
     private ApplicationTypeInfoItem buildTypeInfoItem(
         final ApplicationType applicationType
     ) {
@@ -101,15 +115,9 @@ public class ApplicationsController {
         final Class<? extends ApplicationController> controllerClass
             = applicationType.applicationController();
 
-        if (!DefaultApplicationController.class
-            .isAssignableFrom(controllerClass)) {
-//            item.setControllerLink(
-//                mvc.uri(
-//                    String.format(
-//                        "%s#getApplication", controllerClass.getSimpleName()
-//                    )
-//                ).toString()
-//            );
+        if (!DefaultApplicationController.class.isAssignableFrom(
+            controllerClass
+        )) {
             item.setControllerLink(
                 String.format(
                     "%s#getApplication",

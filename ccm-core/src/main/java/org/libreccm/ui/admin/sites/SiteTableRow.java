@@ -19,7 +19,8 @@
 package org.libreccm.ui.admin.sites;
 
 /**
- *
+ * Data for a row in the table showing all available sites.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class SiteTableRow {

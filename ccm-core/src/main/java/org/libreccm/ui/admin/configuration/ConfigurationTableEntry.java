@@ -21,7 +21,8 @@ package org.libreccm.ui.admin.configuration;
 import java.util.Objects;
 
 /**
- *
+ * A row in the table of available configurations.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ConfigurationTableEntry

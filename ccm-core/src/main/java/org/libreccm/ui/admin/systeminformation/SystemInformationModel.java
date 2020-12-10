@@ -30,6 +30,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 /**
+ * Model providing the date for the system information page.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -37,6 +38,12 @@ import javax.inject.Named;
 @Named("SystemInformationModel")
 public class SystemInformationModel {
 
+    /**
+     * Get some data about this LibreCCM installation, eg. version, application
+     * name, and homepage.
+     *
+     * @return The information about this CCM installation.
+     */
     public Map<String, String> getCcmSystemInformation() {
         final Properties properties = new Properties();
         try {
@@ -64,6 +71,11 @@ public class SystemInformationModel {
         return sysInfo;
     }
 
+    /**
+     * Get the Java System Properties from the runtime environment.
+     * 
+     * @return The Java System Properties of the runtime environment.
+     */
     public Map<String, String> getJavaSystemProperties() {
         final Properties systemProperties = System.getProperties();
         final Map<String, String> result = new HashMap<>();
@@ -74,4 +86,5 @@ public class SystemInformationModel {
         }
         return result;
     }
+
 }

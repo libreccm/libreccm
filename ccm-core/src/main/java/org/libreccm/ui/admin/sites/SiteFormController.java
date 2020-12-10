@@ -42,6 +42,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
+ * Controller for processing the {@code POST} requests from the form for
+ * creating and editing sites.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -71,6 +73,11 @@ public class SiteFormController {
     @FormParam("defaultTheme")
     private String defaultTheme;
 
+    /**
+     * Create a new site.
+     * 
+     * @return Redirect to the sites overview.
+     */
     @POST
     @Path("/new")
     @AuthorizationRequired
@@ -90,6 +97,12 @@ public class SiteFormController {
         return "redirect:sites";
     }
 
+    /**
+     * Update a site with the data from the form.
+     * 
+     * @param siteIdentifierParam The identifier of the site to update.
+     * @return Redirect to the details page of the site.
+     */
     @POST
     @Path("/{siteIdentifier}/edit")
     @AuthorizationRequired
@@ -147,6 +160,9 @@ public class SiteFormController {
         }
     }
 
+    /**
+     * Helper method for resetting the default site of an installation.
+     */
     private void resetDefaultSite() {
         final Optional<Site> result = siteRepository
             .findDefaultSite();

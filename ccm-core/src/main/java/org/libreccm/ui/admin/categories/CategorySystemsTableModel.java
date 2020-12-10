@@ -38,6 +38,11 @@ import javax.transaction.Transactional;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+/**
+ * Model providing the data for the table of category systems.
+ *
+ * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ */
 @RequestScoped
 @Named("CategorySystemsTableModel")
 public class CategorySystemsTableModel {
@@ -45,6 +50,13 @@ public class CategorySystemsTableModel {
     @Inject
     private DomainRepository domainRepository;
 
+    /**
+     * Get all available category systems
+     *
+     * @return A list of
+     *         {@link org.libreccm.ui.admin.categories.CategorySystemTableRow}
+     *         items, one for each available category.
+     */
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional
@@ -57,6 +69,16 @@ public class CategorySystemsTableModel {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Helper method for building a
+     * {@link org.libreccm.ui.admin.categories.CategorySystemTableRow} instance
+     * for a category system.
+     *
+     * @param domain The domain (category system) to convert.
+     *
+     * @return A {@link org.libreccm.ui.admin.categories.CategorySystemTableRow}
+     *         instance for the category.
+     */
     private CategorySystemTableRow buildTableRow(final Domain domain) {
         final CategorySystemTableRow row = new CategorySystemTableRow();
 

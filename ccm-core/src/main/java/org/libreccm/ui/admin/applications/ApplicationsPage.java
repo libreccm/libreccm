@@ -18,8 +18,6 @@
  */
 package org.libreccm.ui.admin.applications;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.libreccm.ui.admin.AdminConstants;
 import org.libreccm.ui.admin.AdminPage;
 import org.libreccm.web.ApplicationManager;
@@ -32,7 +30,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 /**
- *
+ * {@link AdminPage} for managing applications.
+ *  
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ApplicationScoped
