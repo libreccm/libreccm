@@ -24,7 +24,8 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- *
+ * Data for a row in the table of category systems.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class CategorySystemTableRow implements

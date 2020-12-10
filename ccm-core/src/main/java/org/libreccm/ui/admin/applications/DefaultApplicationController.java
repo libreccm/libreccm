@@ -23,6 +23,10 @@ import javax.mvc.Controller;
 import javax.ws.rs.Path;
 
 /**
+ * A default implementation of the {@link ApplicationController} used if there
+ * is not implementation of the {@link ApplicationController} interface for an
+ * application.
+ *
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

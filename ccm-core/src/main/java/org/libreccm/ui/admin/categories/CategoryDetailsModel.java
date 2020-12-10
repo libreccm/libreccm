@@ -42,7 +42,8 @@ import javax.inject.Named;
 import javax.transaction.Transactional;
 
 /**
- *
+ * Model for the details of a category.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -202,6 +203,11 @@ public class CategoryDetailsModel {
         this.invalidFields = new HashSet<>(invalidFields);
     }
 
+    /**
+     * Sets the model to the properties of the provided category.
+     * 
+     * @param category The category.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     protected void setCategory(final Category category) {
         Objects.requireNonNull(category);

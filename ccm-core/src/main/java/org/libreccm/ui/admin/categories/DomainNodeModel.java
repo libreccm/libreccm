@@ -18,7 +18,10 @@
  */
 package org.libreccm.ui.admin.categories;
 
+import org.libreccm.categorization.Domain;
+
 /**
+ * DTO with the data about a {@link Domain} shown in the UI.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -37,11 +40,11 @@ public class DomainNodeModel {
     protected void setDomainId(final long domainId) {
         this.domainId = domainId;
     }
-    
+
     public String getIdentifier() {
         return String.format("ID-%s", domainId);
     }
-    
+
     public String getUuid() {
         return uuid;
     }

@@ -19,7 +19,8 @@
 package org.libreccm.ui.admin.categories;
 
 /**
- *
+ * Data for a row in the table of owner applications of a category system.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class CategorySystemOwnerRow 

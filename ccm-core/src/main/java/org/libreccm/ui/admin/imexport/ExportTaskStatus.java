@@ -25,17 +25,30 @@ import java.util.Comparator;
 import java.util.Objects;
 
 /**
- *
+ * Status of an export task.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ExportTaskStatus implements Comparable<ExportTaskStatus> {
 
+    /**
+     * Name of the export archive.
+     */
     private String name;
 
+    /**
+     * When was the task started?
+     */
     private LocalDateTime started;
 
+    /**
+     * Status of the export task.
+     */
     private ImExportTaskStatus status;
 
+    /**
+     * If the proces throw an exception, it is stored here.
+     */
     private Throwable exception;
 
     public String getName() {

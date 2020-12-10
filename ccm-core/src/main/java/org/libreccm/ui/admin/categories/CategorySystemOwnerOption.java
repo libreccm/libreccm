@@ -23,7 +23,8 @@ import org.libreccm.web.CcmApplication;
 import java.util.Objects;
 
 /**
- *
+ * DTO for the options for selecting the owner applications of a category system. 
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class CategorySystemOwnerOption

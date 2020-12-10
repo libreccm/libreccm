@@ -47,6 +47,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
+ * Controller for processing the {@code POST} requests from the form for
+ * creating and editing category systems.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -82,6 +84,11 @@ public class CategorySystemFormController {
     @FormParam("released")
     private String released;
 
+    /**
+     * Creates a new category system (domain).
+     *
+     * @return Redirect to the list of category systems.
+     */
     @POST
     @Path("/new")
     @AuthorizationRequired
@@ -117,6 +124,13 @@ public class CategorySystemFormController {
         return "redirect:/categorymanager/categorysystems";
     }
 
+    /**
+     * Update a category with the data from the form.
+     *
+     * @param identifierParam Identifier of the category system to update.
+     *
+     * @return Redirect to the details page of the category system.
+     */
     @POST
     @Path("{categorySystemIdentifier}/edit")
     @AuthorizationRequired
@@ -191,6 +205,12 @@ public class CategorySystemFormController {
         }
     }
 
+    /**
+     * Helper method for converting the {@link #released} date to an ISO 8601
+     * formatted string.
+     *
+     * @return The released date in ISO 8601 format.
+     */
     private LocalDate convertReleased() {
         return LocalDate.parse(
             released,
@@ -198,6 +218,11 @@ public class CategorySystemFormController {
         );
     }
 
+    /**
+     * Helper method for validating a URI.
+     *
+     * @return {@code true} if the URI is valid, {@code false} otherwise.
+     */
     private boolean isValidUri() {
         final UrlValidator urlValidator = new UrlValidator();
         return urlValidator.isValid(uri);

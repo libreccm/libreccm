@@ -25,24 +25,36 @@ import java.util.Comparator;
 import java.util.Objects;
 
 /**
+ * Status of an import task.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ImportTaskStatus implements Comparable<ImportTaskStatus> {
 
+    /**
+     * Name of the import archive.
+     */
     private String name;
 
+    /**
+     * When was the task started?
+     */
     private LocalDateTime started;
 
+    /**
+     * Status of the import task.
+     */
     private ImExportTaskStatus status;
-    
+
+    /**
+     * If the proces throw an exception, it is stored here.
+     */
     private Throwable exception;
 
     public String getName() {
         return name;
     }
 
-   
     protected void setName(final String name) {
         this.name = name;
     }
@@ -62,8 +74,8 @@ public class ImportTaskStatus implements Comparable<ImportTaskStatus> {
     protected void setStatus(final ImExportTaskStatus status) {
         this.status = status;
     }
-    
-        public Throwable getException() {
+
+    public Throwable getException() {
         return exception;
     }
 
@@ -71,7 +83,7 @@ public class ImportTaskStatus implements Comparable<ImportTaskStatus> {
         this.exception = exception;
     }
 
-     @Override
+    @Override
     public int hashCode() {
         int hash = 7;
         hash = 53 * hash + Objects.hashCode(name);
@@ -104,7 +116,6 @@ public class ImportTaskStatus implements Comparable<ImportTaskStatus> {
         return status == other.getStatus();
     }
 
-    
     public boolean canEqual(final Object obj) {
         return obj instanceof ImportTaskStatus;
     }

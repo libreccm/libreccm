@@ -16,16 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.ui.admin.applications;
-
 /**
- * Interface for controllers providing the UI for managing the instances of 
- * an application.
- * 
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * UI for managing themes.
  */
-public interface ApplicationController {
-    
-    String getApplication();
-    
-}
+package org.libreccm.ui.admin.themes;

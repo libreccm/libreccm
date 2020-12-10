@@ -23,7 +23,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- *
+ * Model for displaying the path of category in the UI.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class CategoryPathModel {

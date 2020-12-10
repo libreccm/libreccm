@@ -30,6 +30,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 /**
+ * Controller for the systeminformations page.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -37,10 +38,12 @@ import javax.ws.rs.Path;
 @Controller
 @Path("/systeminformation")
 public class SystemInformationController {
-    
-    @Inject
-    private MvcContext mvc; 
-    
+
+    /**
+     * Show the system information page.
+     *
+     * @return The template to use.
+     */
     @GET
     @Path("/")
     @AuthorizationRequired
@@ -48,5 +51,5 @@ public class SystemInformationController {
     public String getSystemInformation() {
         return "org/libreccm/ui/admin/systeminformation.xhtml";
     }
-    
+
 }

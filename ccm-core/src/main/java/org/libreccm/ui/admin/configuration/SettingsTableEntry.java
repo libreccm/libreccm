@@ -21,7 +21,8 @@ package org.libreccm.ui.admin.configuration;
 import java.util.Objects;
 
 /**
- *
+ * Data for row in the table of settings of a configuration.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class SettingsTableEntry implements Comparable<SettingsTableEntry> {

@@ -27,7 +27,8 @@ import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 
 /**
- *
+ * {@link AdminPage} implementation for the UI for managing themes.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ApplicationScoped

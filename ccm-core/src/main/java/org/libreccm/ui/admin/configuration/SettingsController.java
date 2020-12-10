@@ -54,7 +54,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
- *
+ * Controller for the UI for viewing and editing settings.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Controller
@@ -78,6 +79,12 @@ public class SettingsController {
     @Inject
     private SettingManager settingManager;
 
+    /**
+     * Show all settings of a configuration.
+     * 
+     * @param configurationClass The configuration class
+     * @return The template to use.
+     */
     @GET
     @Path("/")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -146,6 +153,13 @@ public class SettingsController {
         return "org/libreccm/ui/admin/configuration/settings.xhtml";
     }
 
+    /**
+     * Helper method for building a {@link SettingsTableEntry} for a setting.
+     * 
+     * @param settingInfo The setting to convert.
+     * @param configuration The configuration to which the settings belongs.
+     * @return A {@link SettingsTableEntry} for the setting.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     private SettingsTableEntry buildSettingsTableEntry(
         final SettingInfo settingInfo,

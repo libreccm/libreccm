@@ -45,6 +45,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
+ * Controller processing the POST requests from the form for creating and
+ * editing categories.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -67,7 +69,7 @@ public class CategoryFormController {
 
     @Inject
     private DomainRepository domainRepository;
-    
+
     @Inject
     private IdentifierParser identifierParser;
 
@@ -86,6 +88,12 @@ public class CategoryFormController {
     @FormParam("abstractCategory")
     private String abstractCategory;
 
+    /**
+     * Create a new category.
+     * 
+     * @param parentCategoryIdentifier Identifier of the parent category.
+     * @return Redirect to the details page of the parent category.
+     */
     @POST
     @Path("/{parentCategoryIdentifier}/new")
     @AuthorizationRequired
@@ -135,9 +143,9 @@ public class CategoryFormController {
                     );
                 } else {
                     return String.format(
-                    "redirect:categorymanager/categories/ID-%d",
-                    parentCategory.getObjectId()
-                );
+                        "redirect:categorymanager/categories/ID-%d",
+                        parentCategory.getObjectId()
+                    );
                 }
             } else {
                 return String.format(
@@ -158,6 +166,12 @@ public class CategoryFormController {
         }
     }
 
+    /**
+     * Updates a category with the data from the form.
+     * 
+     * @param categoryIdentifierParam Identifier of the category to update.
+     * @return Redirect to the details page of the category.
+     */
     @POST
     @Path("/{categoryIdentifier}/edit")
     @AuthorizationRequired

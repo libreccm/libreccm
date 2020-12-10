@@ -21,15 +21,25 @@ package org.libreccm.ui.admin.imexport;
 import java.time.LocalDate;
 
 /**
+ * Data for an import task.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ImportTask {
 
+    /**
+     * Name of the import archive.
+     */
     private final String name;
 
+    /**
+     * When was the import task started?
+     */
     private final LocalDate started;
 
+    /**
+     * The status of the import task.
+     */
     private final ImportTaskStatus status;
 
     public ImportTask(

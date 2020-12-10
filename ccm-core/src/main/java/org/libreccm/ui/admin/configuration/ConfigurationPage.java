@@ -27,12 +27,15 @@ import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 
 /**
+ * {@link AdminPage} implementation providing the UI for managing the
+ * configuration of CCM.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ApplicationScoped
 public class ConfigurationPage implements AdminPage {
-     @Override
+
+    @Override
     public Set<Class<?>> getControllerClasses() {
         final Set<Class<?>> classes = new HashSet<>();
         classes.add(ConfigurationController.class);
@@ -59,7 +62,7 @@ public class ConfigurationPage implements AdminPage {
 
     @Override
     public String getDescriptionBundle() {
-       return AdminConstants.ADMIN_BUNDLE;
+        return AdminConstants.ADMIN_BUNDLE;
     }
 
     @Override
@@ -76,4 +79,5 @@ public class ConfigurationPage implements AdminPage {
     public int getPosition() {
         return 30;
     }
+
 }

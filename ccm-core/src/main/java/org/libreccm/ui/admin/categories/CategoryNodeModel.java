@@ -21,7 +21,8 @@ package org.libreccm.ui.admin.categories;
 import java.util.Objects;
 
 /**
- *
+ * A DTO with the of a category shown in the UI.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class CategoryNodeModel implements Comparable<CategoryNodeModel> {
