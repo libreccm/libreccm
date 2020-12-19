@@ -34,6 +34,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import static org.libreccm.theming.ThemeConstants.*;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Each theme contains a Manifest (either in XML or JSON format) which provides
@@ -88,8 +91,13 @@ public class ThemeManifest implements Serializable {
     @XmlElement(name = "default-template", namespace = THEMES_XML_NS)
     private String defaultTemplate;
 
+    @XmlElementWrapper(name = "mvcTemplates", namespace = THEMES_XML_NS)
+    @XmlElement(name = "template", namespace = THEME_MANIFEST_XML)
+    private Map<String, Map<String, ThemeTemplate>> mvcTemplates;
+
     public ThemeManifest() {
         templates = new ArrayList<>();
+        mvcTemplates = new HashMap<>();
     }
 
     public String getName() {
@@ -156,6 +164,65 @@ public class ThemeManifest implements Serializable {
         this.defaultTemplate = defaultTemplate;
     }
 
+    public Map<String, Map<String, ThemeTemplate>> getMvcTemplates() {
+        return Collections.unmodifiableMap(mvcTemplates);
+    }
+
+    public Optional<Map<String, ThemeTemplate>> getMvcTemplatesOfCategory(
+        final String category
+    ) {
+        return Optional.ofNullable(mvcTemplates.get(category));
+    }
+
+    public void addMvcTemplatesCategory(final String category) {
+        mvcTemplates.put(category, new HashMap<>());
+    }
+
+    public void addMvcTemplatesCategory(
+        final String category, final Map<String, ThemeTemplate> templates
+    ) {
+        mvcTemplates.put(category, templates);
+    }
+
+    public Optional<ThemeTemplate> getMvcTemplate(
+        final String category, final String objectType
+    ) {
+        final Optional<Map<String, ThemeTemplate>> templatesInCat
+            = getMvcTemplatesOfCategory(category);
+
+        if (templatesInCat.isPresent()) {
+            return Optional.ofNullable(templatesInCat.get().get(objectType));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public void addMvcTemplate(
+        final String category,
+        final String objectType,
+        final ThemeTemplate template
+    ) {
+        if (!mvcTemplates.containsKey(category)) {
+            addMvcTemplatesCategory(category);
+        }
+
+        mvcTemplates
+            .get(category)
+            .put(
+                objectType,
+                Objects.requireNonNull(
+                    template,
+                    "Template can't be null."
+                )
+            );
+    }
+
+    protected void setMvcTemplates(
+        final Map<String, Map<String, ThemeTemplate>> mvcTemplates
+    ) {
+        this.mvcTemplates = mvcTemplates;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -166,6 +233,7 @@ public class ThemeManifest implements Serializable {
         hash = 83 * hash + Objects.hashCode(description);
         hash = 83 * hash + Objects.hashCode(templates);
         hash = 83 * hash + Objects.hashCode(defaultTemplate);
+        hash = 83 * hash + Objects.hashCode(mvcTemplates);
         return hash;
     }
 
@@ -202,7 +270,10 @@ public class ThemeManifest implements Serializable {
         if (!Objects.equals(templates, other.getTemplates())) {
             return false;
         }
-        return Objects.equals(defaultTemplate, other.getDefaultTemplate());
+        if (!Objects.equals(defaultTemplate, other.getDefaultTemplate())) {
+            return false;
+        }
+        return mvcTemplates.equals(other.getMvcTemplates());
     }
 
     public boolean canEqual(final Object obj) {
@@ -216,24 +287,28 @@ public class ThemeManifest implements Serializable {
 
     public String toString(final String data) {
 
-        return String.format("%s{ "
-                                 + "name = \"%s\", "
-                                 + "type = \"%s\", "
-                                 + "masterTheme = \"%s\", "
-                                 + "title = \"%s\", "
-                                 + "description = \"%s\", "
-                                 + "templates = %s, "
-                                 + "defaultTemplate%s"
-                                 + " }",
-                             super.toString(),
-                             name,
-                             type,
-                             masterTheme,
-                             Objects.toString(title),
-                             Objects.toString(description),
-                             Objects.toString(templates),
-                             defaultTemplate,
-                             data);
+        return String.format(
+            "%s{ "
+                + "name = \"%s\", "
+                + "type = \"%s\", "
+                + "masterTheme = \"%s\", "
+                + "title = \"%s\", "
+                + "description = \"%s\", "
+                + "templates = %s, "
+                + "defaultTemplate, "
+                + "mvcTemplates = %s%s"
+                + " }",
+            super.toString(),
+            name,
+            type,
+            masterTheme,
+            Objects.toString(title),
+            Objects.toString(description),
+            Objects.toString(templates),
+            defaultTemplate,
+            Objects.toString(mvcTemplates),
+            data
+        );
 
     }
 
