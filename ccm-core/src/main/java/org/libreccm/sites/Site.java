@@ -45,6 +45,10 @@ import javax.persistence.Table;
 @Table(name = "SITES", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(
+        name = "Site.findByUuid",
+        query = "SELECT s FROM Site s WHERE s.uuid = :uuid"
+    ),
+    @NamedQuery(
         name = "Site.findByDomain",
         query = "SELECT s FROM Site s "
                     + "WHERE s.domainOfSite = :domain "

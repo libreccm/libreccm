@@ -55,6 +55,11 @@ import javax.persistence.Table;
 @Table(name = "CATEGORIZATIONS", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(
+        name = "Categorization.findById",
+        query
+        = "SELECT c FROM Categorization c WHERE c.categorizationId = :categorizationId"
+    ),
+    @NamedQuery(
         name = "Categorization.findByUuid",
         query = "SELECT c FROM Categorization c WHERE c.uuid = :uuid"
     ),
@@ -62,36 +67,31 @@ import javax.persistence.Table;
         name = "Categorization.find",
         query = "SELECT c FROM Categorization c "
                     + "WHERE c.category = :category "
-                    + "AND c.categorizedObject = :object")
-    ,
+                    + "AND c.categorizedObject = :object"),
     @NamedQuery(
         name = "Categorization.isAssignedTo",
         query = "SELECT (CASE WHEN COUNT(c) > 0 THEN true ELSE false END) "
                     + "FROM Categorization c "
                     + "WHERE c.category = :category "
-                    + "AND c.categorizedObject = :object")
-    ,
+                    + "AND c.categorizedObject = :object"),
     @NamedQuery(
         name = "Categorization.isAssignedToWithType",
         query = "SELECT (CASE WHEN COUNT(c) > 0 THEN true ELSE false END) "
                     + "FROM Categorization c "
                     + "WHERE c.category = :category "
                     + "AND c.categorizedObject = :object "
-                    + "AND c.type = :type")
-    ,
+                    + "AND c.type = :type"),
     @NamedQuery(
         name = "Categorization.findIndexObject",
         query = "SELECT c.categorizedObject FROM Categorization c "
                     + "WHERE c.category = :category "
-                    + "AND c.indexObject = TRUE")
-    ,
+                    + "AND c.indexObject = TRUE"),
     @NamedQuery(
         name = "Categorization.findIndexObjectCategorization",
         query = "SELECT c FROM Categorization c "
                     + "WHERE c.category = :category "
                     + "AND c.indexObject = TRUE"
-    )
-    ,
+    ),
     @NamedQuery(
         name = "Categorization.hasIndexObject",
         query = "SELECT (CASE WHEN COUNT(c.categorizedObject) > 0 THEN true "

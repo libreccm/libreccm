@@ -23,15 +23,17 @@ import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 
 /**
  * Exporter/Importer for {@link RoleMembership}s.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Processes(RoleMembership.class)
@@ -42,27 +44,45 @@ public class RoleMembershipImExporter
     private EntityManager entityManager;
 
     @Override
-    protected Class<RoleMembership> getEntityClass() {
-
+    public Class<RoleMembership> getEntityClass() {
         return RoleMembership.class;
     }
 
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     protected void saveImportedEntity(final RoleMembership entity) {
-
         entityManager.persist(entity);
     }
 
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
-
         final Set<Class<? extends Exportable>> classes = new HashSet<>();
         classes.add(User.class);
         classes.add(Group.class);
         classes.add(Role.class);
-        
+
         return classes;
+    }
+
+    @Override
+    protected RoleMembership reloadEntity(final RoleMembership entity) {
+        try {
+            return entityManager
+                .createNamedQuery(
+                    "RoleMembership.findById", RoleMembership.class
+                )
+                .setParameter(
+                    "membershipId",
+                    Objects.requireNonNull(entity).getMembershipId()
+                ).getSingleResult();
+        } catch (NoResultException ex) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "RoleMembeship entity %s not found in database.",
+                    Objects.toString(entity)
+                )
+            );
+        }
     }
 
 }

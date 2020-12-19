@@ -23,25 +23,36 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Java class containg the properties of an parsed import manifest. 
- * 
+ * Java class containg the properties of an parsed import manifest.
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ImportManifest {
 
+    private final String importName;
+
     private final Date created;
+
     private final String onServer;
+
     private final List<String> types;
 
-    public ImportManifest(final Date created,
-                          final String onServer,
-                          final List<String> types) {
-
+    public ImportManifest(
+        final String importName,
+        final Date created,
+        final String onServer,
+        final List<String> types
+    ) {
+        this.importName = importName;
         this.created = created;
         this.onServer = onServer;
         this.types = types;
     }
 
+    public String getImportName() {
+        return importName;
+    }
+    
     public Date getCreated() {
         return new Date(created.getTime());
     }

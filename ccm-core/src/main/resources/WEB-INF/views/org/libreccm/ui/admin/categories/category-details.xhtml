@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
+
+        <ui:param name="activePage" value="categories" />
+        <ui:param name="title" value="#{AdminMessages['categorymanager.label']}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item active">
+                #{AdminMessages['categorymanager.label']}
+            </li>
+            <li class="breadcrumb-item">
+                #{AdminMessages['categories.label']}
+            </li>
+            <li class="breadcrumb-item">
+                #{CategoryDetailsModel.categoryId}
+            </li>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container">
+                <h1>#{AdminMessages.getMessage('categories.details.title', [CategoryDetailsModel.path])}</h1>
+
+                <libreccm:messages messages="#{CategoryDetailsModel.messages}" />
+
+                <dl>
+                    <div>
+                        <dt>#{AdminMessages['categories.details.id']}</dt>
+                        <dd>#{CategoryDetailsModel.categoryId}</dd>
+                    </div>
+                    <div>
+                        <dt>#{AdminMessages['categories.details.uuid']}</dt>
+                        <dd>#{CategoryDetailsModel.uuid}</dd>
+                    </div>
+                    <div>
+                        <dt>#{AdminMessages['categories.details.uniqueId']}</dt>
+                        <dd>#{CategoryDetailsModel.uniqueId}</dd>
+                    </div>
+                    <div>
+                        <dt>#{AdminMessages['categories.details.name']}</dt>
+                        <dd>#{CategoryDetailsModel.name}</dd>
+                    </div>
+                    <div>
+                        <dt>#{AdminMessages['categories.details.path']}</dt>
+                        <dd>
+                            <c:if test="#{CategoryDetailsModel.categoryPath.domain != null}">
+                                <a href="#{mvc.uri('CategorySystemsController#getCategorySystemDetails', {'categorySystemIdentifier': CategoryDetailsModel.categoryPath.domain.identifier})}">
+                                    #{CategoryDetailsModel.categoryPath.domain.domainKey}
+                                </a>
+                            </c:if>
+                            <c:forEach items="#{CategoryDetailsModel.categoryPath.categories}" 
+                                       var="category" >
+                                <span>/</span>
+                                <a href="#{mvc.uri('CategoriesController#getCategory', {'categoryIdentifier': category.identifier})}">
+                                    #{category.name}
+                                </a>
+                            </c:forEach>
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>#{AdminMessages['categories.details.enabled']}</dt>
+                        <dd>
+                            <c:choose>
+                                <c:when test="#{CategoryDetailsModel.enabled}">
+                                    #{AdminMessages['categories.details.enabled.yes']}
+                                </c:when>
+                                <c:otherwise>
+                                    #{AdminMessages['categories.details.enabled.no']}
+                                </c:otherwise>
+                            </c:choose>
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>#{AdminMessages['categories.details.visible']}</dt>
+                        <dd>
+                            <c:choose>
+                                <c:when test="#{CategoryDetailsModel.visible}">
+                                    #{AdminMessages['categories.details.visible.yes']}
+                                </c:when>
+                                <c:otherwise>
+                                    #{AdminMessages['categories.details.visible.no']}
+                                </c:otherwise>
+                            </c:choose>
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>#{AdminMessages['categories.details.abstract_category']}</dt>
+                        <dd>
+                            <c:choose>
+                                <c:when test="#{CategoryDetailsModel.abstractCategory}">
+                                    #{AdminMessages['categories.details.abstract_category.yes']}
+                                </c:when>
+                                <c:otherwise>
+                                    #{AdminMessages['categories.details.abstract_category.no']}
+                                </c:otherwise>
+                            </c:choose>
+                        </dd>
+                    </div>
+                </dl>
+
+                <div class="mb-4">
+                    <a class="btn btn-primary"
+                       href="#{mvc.uri('CategoriesController#editCategory', {'categoryIdentifier': CategoryDetailsModel.identifier } )}">
+                        <bootstrap:svgIcon icon="pen" />
+                        <span>#{AdminMessages['categories.details.edit']}</span>
+                    </a>
+                </div>
+
+                <libreccm:localizedStringEditor addMethod="CategoriesController#addTitle"
+                                                addButtonLabel="#{AdminMessages['categories.details.title.add']}"
+                                                addDialogCancelLabel="#{AdminMessages['categories.details.title.add.dialog.close']}"
+                                                addDialogLocaleSelectHelp="#{AdminMessages['categories.details.title.add.dialog.locale.help']}"
+                                                addDialogLocaleSelectLabel="#{AdminMessages['categories.details.title.add.dialog.locale.label']}"
+                                                addDialogSubmitLabel="#{AdminMessages['categories.details.title.add.dialog.submit']}"
+                                                addDialogTitle="#{AdminMessages['categories.details.title.add.dialog.title']}"
+                                                addDialogValueHelp="#{AdminMessages['categories.details.title.add.dialog.value.help']}"
+                                                addDialogValueLabel="#{AdminMessages['categories.details.title.add.dialog.value.label']}"
+                                                editButtonLabel="#{AdminMessages['categories.details.title.table.actions.edit']}"
+                                                editDialogCancelLabel="#{AdminMessages['categories.details.title.edit.dialog.close']}"
+                                                editDialogSubmitLabel="#{AdminMessages['categories.details.title.edit.dialog.submit']}"
+                                                editDialogTitle="#{AdminMessages['categories.details.title.table.actions.edit.dialog.title']}"
+                                                editDialogValueHelp="#{AdminMessages['categories.details.title.edit.dialog.value.help']}"
+                                                editDialogValueLabel="#{AdminMessages['categories.details.title.edit.dialog.value.label']}"
+                                                editMethod="CategoriesController#editTitle"
+                                                editorId="category-title"
+                                                emptyText="#{AdminMessages['categories.details.title.none']}"
+                                                hasUnusedLocales="#{CategoryDetailsModel.hasUnusedTitleLocales()}"
+                                                objectIdentifier="#{CategoryDetailsModel.identifier}"
+                                                removeButtonLabel="#{AdminMessages['categories.details.title.table.actions.remove']}"
+                                                removeDialogCancelLabel="#{AdminMessages['categories.details.title.remove.dialog.close']}"
+                                                removeDialogSubmitLabel="#{AdminMessages['categories.details.title.remove.dialog.submit']}"
+                                                removeDialogText="#{AdminMessages['categories.details.title.remove.dialog.message']}"
+                                                removeDialogTitle="#{AdminMessages['categories.details.title.table.actions.remove.dialog.title']}"
+                                                removeMethod="CategoriesController#removeTitle"
+                                                tableActionsHeading="#{AdminMessages['categories.details.title.table.headings.actions']}"
+                                                tableLocaleHeading="#{AdminMessages['categories.details.title.table.headings.locale']}"
+                                                tableValueHeading="#{AdminMessages['categories.details.title.table.headings.value']}"
+                                                title="#{AdminMessages['categories.details.title.heading']}"
+                                                unusedLocales="#{CategoryDetailsModel.unusedTitleLocales}"
+                                                values="#{CategoryDetailsModel.title}" />
+
+                <libreccm:localizedStringEditor addMethod="CategoriesController#addDescription"
+                                                addButtonLabel="#{AdminMessages['categories.details.description.add']}"
+                                                addDialogCancelLabel="#{AdminMessages['categories.details.description.add.dialog.close']}"
+                                                addDialogLocaleSelectHelp="#{AdminMessages['categories.details.description.add.dialog.locale.help']}"
+                                                addDialogLocaleSelectLabel=" #{AdminMessages['categories.details.description.add.dialog.locale.label']}"
+                                                addDialogSubmitLabel="#{AdminMessages['categories.details.description.add.dialog.submit']}"
+                                                addDialogTitle="#{AdminMessages['categories.details.description.add.dialog.title']}"
+                                                addDialogValueHelp="#{AdminMessages['categories.details.description.add.dialog.value.help']}"
+                                                addDialogValueLabel="#{AdminMessages['categories.details.description.add.dialog.value.label']}"
+                                                editButtonLabel="#{AdminMessages['categories.details.description.table.actions.edit']}"
+                                                editDialogCancelLabel="#{AdminMessages['categories.details.description.edit.dialog.close']}"
+                                                editDialogSubmitLabel="#{AdminMessages['categories.details.description.edit.dialog.submit']}"
+                                                editDialogTitle="#{AdminMessages['categories.details.description.table.actions.edit.dialog.title']}"
+                                                editDialogValueHelp="#{AdminMessages['categories.details.description.edit.dialog.value.help']}"
+                                                editDialogValueLabel="#{AdminMessages['categories.details.description.edit.dialog.value.label']}"
+                                                editMethod="CategoriesController#editDescription"
+                                                editorId="category-description"
+                                                emptyText="#{AdminMessages['categories.details.description.none']}"
+                                                hasUnusedLocales="#{CategoryDetailsModel.hasUnusedDescriptionLocales()}"
+                                                objectIdentifier="#{CategoryDetailsModel.identifier}"
+                                                removeButtonLabel="#{AdminMessages['categories.details.description.table.actions.remove']}"
+                                                removeDialogCancelLabel="#{AdminMessages['categories.details.description.remove.dialog.close']}"
+                                                removeDialogSubmitLabel="#{AdminMessages['categories.details.description.remove.dialog.submit']}"
+                                                removeDialogText="#{AdminMessages['categories.details.description.remove.dialog.message']}"
+                                                removeDialogTitle="#{AdminMessages['categories.details.description.table.actions.remove.dialog.title']}"
+                                                removeMethod="CategoriesController#removeDescription"
+                                                tableActionsHeading="#{AdminMessages['categories.details.description.table.headings.actions']}"
+                                                tableLocaleHeading="#{AdminMessages['categories.details.description.table.headings.locale']}"
+                                                tableValueHeading="#{AdminMessages['categories.details.description.table.headings.value']}"
+                                                title="#{AdminMessages['categories.details.description.heading']}"
+                                                unusedLocales="#{CategoryDetailsModel.unusedDescriptionLocales}"
+                                                useTextarea="true"
+                                                values="#{CategoryDetailsModel.description}" />
+
+                <h2>#{AdminMessages['categories.details.subcategories.heading']}</h2>
+                <div class="mb-2">
+                    <div class="text-right">
+                        <a class="btn btn-secondary"
+                           href="#{mvc.uri('CategoriesController#newSubCategory', {'categoryIdentifier': CategoryDetailsModel.identifier})}">
+                            <bootstrap:svgIcon icon="plus-circle" />
+                            <span>#{AdminMessages['categories.details.subcategories.add']}</span>
+                        </a>
+                    </div>
+                </div>
+                <c:choose>
+                    <c:when test="#{CategoryDetailsModel.subCategories.isEmpty()}">
+                        <p>#{AdminMessages['categories.details.subcategories.none']}</p>
+                    </c:when>
+                    <c:otherwise>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        #{AdminMessages['categories.details.subcategories.table.headings.name']}
+                                    </th>
+                                    <th>
+                                        #{AdminMessages['categories.details.subcategories.table.headings.enabled']}
+                                    </th>
+                                    <th>
+                                        #{AdminMessages['categories.details.subcategories.table.headings.visible']}
+                                    </th>
+                                    <th>
+                                        #{AdminMessages['categories.details.subcategories.table.headings.abstract']}
+                                    </th>
+                                    <th class="text-center" colspan="3">
+                                        #{AdminMessages['categories.details.subcategories.table.headings.actions']}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach items="#{CategoryDetailsModel.subCategories}" 
+                                           var="category">
+                                    <tr>
+                                        <td>
+                                            <a href="#{mvc.uri('CategoriesController#getCategory', { 'categoryIdentifier': category.identifier})}">
+                                                #{category.name}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="#{category.enabled}">
+                                                    #{AdminMessages['categories.details.enabled.yes']}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    #{AdminMessages['categories.details.enabled.no']}
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="#{category.visible}">
+                                                    #{AdminMessages['categories.details.visible.yes']}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    #{AdminMessages['categories.details.visible.no']}
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="#{category.abstractCategory}">
+                                                    #{AdminMessages['categories.details.abstract_category.yes']}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    #{AdminMessages['categories.details.abstract_category.no']}
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                            <c:if test="#{category.categoryOrder != 1}">
+                                                <form action="#{mvc.uri('CategoriesController#reorderSubCategory', {'categoryIdentifier': CategoryDetailsModel.identifier, 'subCategoryIdentifier': category.identifier})}"
+                                                      method="post">
+                                                    <input name="direction" 
+                                                           value="DECREASE"
+                                                           type="hidden" />
+                                                    <button class="btn btn-info"
+                                                            type="submit">
+                                                        <bootstrap:svgIcon icon="caret-up-fill" />
+                                                        <span class="sr-only">#{AdminMessages['categories.details.subcategories.reorder.decrease']}</span>
+                                                    </button>
+                                                </form>
+                                            </c:if>
+                                        </td>
+                                        <td>
+                                            <c:if test="#{category.categoryOrder lt CategoryDetailsModel.subCategories.size()}">
+                                                <form action="#{mvc.uri('CategoriesController#reorderSubCategory', {'categoryIdentifier': CategoryDetailsModel.identifier, 'subCategoryIdentifier': category.identifier})}"
+                                                      method="post">
+                                                    <input name="direction" 
+                                                           value="INCREASE"
+                                                           type="hidden" />
+                                                    <button class="btn btn-info"
+                                                            type="submit">
+                                                        <bootstrap:svgIcon icon="caret-down-fill" />
+                                                        <span class="sr-only">#{AdminMessages['categories.details.subcategories.reorder.increase']}</span>
+                                                    </button>
+                                                </form>
+                                            </c:if>
+                                        </td>
+                                        <td>
+                                            <libreccm:deleteDialog 
+                                                actionTarget="#{mvc.uri('CategoriesController#removeSubCategory', {'categoryIdentifier': category.identifier})}"
+                                                buttonText="#{AdminMeesages['categories.details.subcategories.delete']}"
+                                                buttonTextClass="text-center"
+                                                cancelLabel="#{AdminMessages['categories.details.subcategories.delete.cancel']}"
+                                                confirmLabel="#{AdminMessages['categories.details.subcategories.delete.confirm']}"
+                                                dialogId="categories-subcategories-#{category.categoryId}-delete"
+                                                dialogTitle="#{AdminMessages['categories.details.subcategories.delete.title']}"
+                                                message="#{AdminMessages.getMessage('categories.details.subcategories.delete.message', [category.path])}"
+                                                />
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </c:otherwise>
+                </c:choose>
+
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <cc:interface shortDescription="A generic confirmation dialog for delete actions. The request is send by POST and contains a value confirmed=true">
+        <cc:attribute name="actionTarget"
+                      required="true"
+                      shortDescription="URL to POST request is send." />
+        <cc:attribute name="buttonText"
+                      required="true"
+                      shortDescription="Text of the button toggleing the modal form."
+                      type="String" />
+        <cc:attribute name="buttonTextClass"
+                      default=""
+                      required="false"
+                      shortDescription="Class used for aligning the button. Either text-left, text-center or text-right."
+                      type="String" />
+        <cc:attribute name="cancelLabel"
+                      required="true"
+                      shortDescription="Label for the cancel button"
+                      type="String" />
+        <cc:attribute name="confirmLabel"
+                      required="true"
+                      shortDescription="Label for the confirm button"
+                      type="String" />
+        <cc:attribute name="dialogId"
+                      required="true"
+                      shortDescription="ID of the dialog."
+                      type="String" />
+        <cc:attribute name="dialogTitle"
+                      required="true"
+                      shortDescription="Title of the dialog."
+                      type="String" />
+        <cc:attribute name="headingLevel" 
+                      default="3" 
+                      required="false" 
+                      shortDescription="Level of the heading used for the component. Also determines the heading levels used for other parts of the component." 
+                      type="int" />
+        <cc:attribute name="message"
+                      required="true"
+                      shortDescription="Message to be shown in the dialog"
+                      type="String" />
+    </cc:interface>
+    <cc:implementation>
+        <div class="#{cc.attrs.buttonTextClass}">
+            <button
+                class="btn btn-danger"
+                data-target="##{cc.attrs.dialogId}"
+                data-toggle="modal"
+                type="button">
+                <c:if test="#{!cc.attrs.buttonIcon.isEmpty()}">
+                    <bootstrap:svgIcon icon="x-circle" />
+                </c:if>
+                <span>#{cc.attrs.buttonText}</span>
+            </button>
+        </div>
+        <div aria-labelledby="#{cc.attrs.dialogId}-title}"
+             aria-hidden="true"
+             class="modal fade"
+             data-backdrop="static"
+             id="#{cc.attrs.dialogId}"
+             tabindex="-1">
+            <div class="modal-dialog">
+                <form action="#{cc.attrs.actionTarget}"
+                      class="modal-content"
+                      method="post">
+                    <div class="modal-header">
+                        <div class="modal-title">
+                            <c:choose>
+                                <c:when test="#{cc.attrs.headingLevel == 1}">
+                                    <h2 class="modal-title"
+                                        id="#{cc.attrs.dialogId}-dialog-title">#{cc.attrs.dialogTitle}</h2>
+                                </c:when>
+                                <c:when test="#{cc.attrs.headingLevel == 2}">
+                                    <h3 class="modal-title"
+                                        id="#{cc.attrs.dialogId}-dialog-title">#{cc.attrs.dialogTitle}</h3>
+                                </c:when>
+                                <c:when test="#{cc.attrs.headingLevel == 3}">
+                                    <h4 class="modal-title"
+                                        id="#{cc.attrs.dialogId}-dialog-title">#{cc.attrs.dialogTitle}</h4>
+                                </c:when>
+                                <c:when test="#{cc.attrs.headingLevel == 4}">
+                                    <h5 class="modal-title"
+                                        id="#{cc.attrs.dialogId}-dialog-title">#{cc.attrs.dialogTitle}</h5>
+                                </c:when>
+                                <c:when test="#{cc.attrs.headingLevel == 5}">
+                                    <h6 class="modal-title"
+                                        id="#{cc.attrs.dialogId}-dialog-title">#{cc.attrs.dialogTitle}</h6>
+                                </c:when>
+                                <c:otherwise>
+                                    <div>#{cc.attrs.dialogTitle}</div>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                        <button aria-label="#{cc.attrs.cancelLabel}"
+                                class="close" 
+                                data-dismiss="modal" 
+                                type="button"   >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input name="confirmed" type="hidden" value="true" />
+                        <p>
+                            #{cc.attrs.message}
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" 
+                                data-dismiss="modal"
+                                type="button" >
+                            #{cc.attrs.cancelLabel}
+                        </button>
+                        <button type="submit" class="btn btn-danger">
+                            #{cc.attrs.confirmLabel}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </cc:implementation>
+</html>
+

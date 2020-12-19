@@ -47,11 +47,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-
-
 /**
  * Describes the {@code ccm-core} module.
- *  
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Module(applicationTypes = {
@@ -59,22 +57,19 @@ import java.util.Properties;
                      descBundle = "com.arsdigita.ui.login.LoginResources",
                      singleton = true,
                      creator = LoginApplicationCreator.class,
-                     servlet = LoginServlet.class)
-    ,
+                     servlet = LoginServlet.class),
     @ApplicationType(name = AdminUiConstants.ADMIN_APP_TYPE,
                      descBundle = "com.arsdigita.ui.admin.AdminResources",
                      singleton = true,
                      creator = AdminApplicationCreator.class,
-                     servlet = AdminServlet.class)
-    ,
+                     servlet = AdminServlet.class),
     @ApplicationType(name = "org.libreccm.ui.admin.AdminFaces",
                      descBundle = "com.arsdigita.ui.admin.AdminResources",
                      singleton = true,
                      creator = AdminJsfApplicationCreator.class,
-                     servletPath = "/admin-jsf/admin.xhtml")},
-        pageModelComponentModels = {
-            
-        },
+                     servletPath = "/admin-jsf/admin.xhtml")
+    },
+        pageModelComponentModels = {},
         configurations = {
             com.arsdigita.bebop.BebopConfig.class,
             com.arsdigita.dispatcher.DispatcherConfig.class,
@@ -107,17 +102,17 @@ public class CcmCore implements CcmModule {
 
         LOGGER.info("Setting up admin application (/ccm/admin/)...");
         final AdminApplicationSetup adminSetup
-                                        = new AdminApplicationSetup(event);
+            = new AdminApplicationSetup(event);
         adminSetup.setup();
 
         LOGGER.info("Setting up admin-jsf application (/ccm/admin-jsf/)...");
         final AdminJsfApplicationSetup adminJsfSetup
-                                           = new AdminJsfApplicationSetup(event);
+            = new AdminJsfApplicationSetup(event);
         adminJsfSetup.setup();
 
         LOGGER.info("Setting up login application...");
         final LoginApplicationSetup loginSetup
-                                        = new LoginApplicationSetup(event);
+            = new LoginApplicationSetup(event);
         loginSetup.setup();
 
         LOGGER.info("Importing category domains from bundle (if any)...");

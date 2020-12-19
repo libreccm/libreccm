@@ -1,0 +1,435 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
+
+        <ui:param name="activePage" value="categories" />
+        <ui:param name="title" value="#{AdminMessages['categorymanager.label']}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#{mvc.uri('CategorySystemsController#getCategorySystems')}">
+                    #{AdminMessages['categorymanager.label']}
+                </a>
+            </li>
+            <li class="breadcrumb-item active">
+                #{CategorySystemDetailsModel.domainKey}
+            </li>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container">
+                <h1>#{AdminMessages.getMessage('categorysystems.details.title', [CategorySystemDetailsModel.domainKey])}</h1>
+
+                <libreccm:messages messages="#{CategorySystemDetailsModel.messages}" />
+
+                <dl>
+                    <div>
+                        <dt>
+                            #{AdminMessages['categorysystems.details.id']}
+                        </dt>
+                        <dd>
+                            #{CategorySystemDetailsModel.categorySystemId}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>
+                            #{AdminMessages['categorysystems.details.uuid']}
+                        </dt>
+                        <dd>
+                            #{CategorySystemDetailsModel.uuid}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>
+                            #{AdminMessages['categorysystems.details.domainKey']}
+                        </dt>
+                        <dd>
+                            #{CategorySystemDetailsModel.domainKey}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>
+                            #{AdminMessages['categorysystems.details.uri']}
+                        </dt>
+                        <dd>
+                            #{CategorySystemDetailsModel.uri}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>
+                            #{AdminMessages['categorysystems.details.version']}
+                        </dt>
+                        <dd>
+                            #{CategorySystemDetailsModel.version}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>
+                            #{AdminMessages['categorysystems.details.released']}
+                        </dt>
+                        <dd>
+                            #{CategorySystemDetailsModel.released}
+                        </dd>
+                    </div>
+                </dl>
+                <div class="mb-4">
+                    <a class="btn btn-primary"
+                       href="#{mvc.uri('CategorySystemsController#editCategorySystem', {'categorySystemIdentifier': CategorySystemDetailsModel.identifier } )}">
+                        <bootstrap:svgIcon icon="pen" />
+                        <span>#{AdminMessages['categorysystems.details.edit']}</span>
+                    </a>
+                </div>
+
+                <libreccm:localizedStringEditor addMethod="CategorySystemsController#addTitle"
+                                                addButtonLabel="#{AdminMessages['categorysystems.details.title.add']}"
+                                                addDialogCancelLabel="#{AdminMessages['categorysystems.details.title.add.dialog.close']}"
+                                                addDialogLocaleSelectHelp="#{AdminMessages['categorysystems.details.title.add.dialog.locale.help']}"
+                                                addDialogLocaleSelectLabel="#{AdminMessages['categorysystems.details.title.add.dialog.locale.label']}"
+                                                addDialogSubmitLabel="#{AdminMessages['categorysystems.details.title.add.dialog.submit']}"
+                                                addDialogTitle="#{AdminMessages['categorysystems.details.title.add.dialog.title']}"
+                                                addDialogValueHelp="#{AdminMessages['categorysystems.details.title.add.dialog.value.help']}"
+                                                addDialogValueLabel="#{AdminMessages['categorysystems.details.title.add.dialog.value.label']}"
+                                                editButtonLabel="#{AdminMessages['categorysystems.details.title.table.actions.edit']}"
+                                                editDialogCancelLabel="#{AdminMessages['categorysystems.details.title.edit.dialog.close']}"
+                                                editDialogSubmitLabel="#{AdminMessages['categorysystems.details.title.edit.dialog.submit']}"
+                                                editDialogTitle="#{AdminMessages['categorysystems.details.title.table.actions.edit.dialog.title']}"
+                                                editDialogValueHelp="#{AdminMessages['categorysystems.details.title.edit.dialog.value.help']}"
+                                                editDialogValueLabel="#{AdminMessages['categorysystems.details.title.edit.dialog.value.label']}"
+                                                editMethod="CategorySystemsController#editTitle"
+                                                editorId="categorysystem-title"
+                                                emptyText="#{AdminMessages['categorysystems.details.title.none']}"
+                                                hasUnusedLocales="#{CategorySystemDetailsModel.hasUnusedTitleLocales()}"
+                                                objectIdentifier="#{CategorySystemDetailsModel.identifier}"
+                                                removeButtonLabel="#{AdminMessages['categorysystems.details.title.table.actions.remove']}"
+                                                removeDialogCancelLabel="#{AdminMessages['categorysystems.details.title.remove.dialog.close']}"
+                                                removeDialogSubmitLabel="#{AdminMessages['categorysystems.details.title.remove.dialog.submit']}"
+                                                removeDialogText="#{AdminMessages['categorysystems.details.title.remove.dialog.message']}"
+                                                removeDialogTitle="#{AdminMessages['categorysystems.details.title.table.actions.remove.dialog.title']}"
+                                                removeMethod="CategorySystemsController#removeTitle"
+                                                tableActionsHeading="#{AdminMessages['categorysystems.details.title.table.headings.actions']}"
+                                                tableLocaleHeading="#{AdminMessages['categorysystems.details.title.table.headings.locale']}"
+                                                tableValueHeading="#{AdminMessages['categorysystems.details.title.table.headings.value']}"
+                                                title="#{AdminMessages['categorysystems.details.title.heading']}"
+                                                unusedLocales="#{CategorySystemDetailsModel.unusedTitleLocales}"
+                                                values="#{CategorySystemDetailsModel.title}" />
+
+                <libreccm:localizedStringEditor addMethod="CategorySystemsController#addDescription"
+                                                addButtonLabel="#{AdminMessages['categorysystems.details.description.add']}"
+                                                addDialogCancelLabel="#{AdminMessages['categorysystems.details.description.add.dialog.close']}"
+                                                addDialogLocaleSelectHelp="#{AdminMessages['categorysystems.details.description.add.dialog.locale.help']}"
+                                                addDialogLocaleSelectLabel=" #{AdminMessages['categorysystems.details.description.add.dialog.locale.label']}"
+                                                addDialogSubmitLabel="#{AdminMessages['categorysystems.details.description.add.dialog.submit']}"
+                                                addDialogTitle="#{AdminMessages['categorysystems.details.description.add.dialog.title']}"
+                                                addDialogValueHelp="#{AdminMessages['categorysystems.details.description.add.dialog.value.help']}"
+                                                addDialogValueLabel="#{AdminMessages['categorysystems.details.description.add.dialog.value.label']}"
+                                                editButtonLabel="#{AdminMessages['categorysystems.details.description.table.actions.edit']}"
+                                                editDialogCancelLabel="#{AdminMessages['categorysystems.details.description.edit.dialog.close']}"
+                                                editDialogSubmitLabel="#{AdminMessages['categorysystems.details.description.edit.dialog.submit']}"
+                                                editDialogTitle="#{AdminMessages['categorysystems.details.description.table.actions.edit.dialog.title']}"
+                                                editDialogValueHelp="#{AdminMessages['categorysystems.details.description.edit.dialog.value.help']}"
+                                                editDialogValueLabel="#{AdminMessages['categorysystems.details.description.edit.dialog.value.label']}"
+                                                editMethod="CategorySystemsController#editDescription"
+                                                editorId="categorysystem-description"
+                                                emptyText="#{AdminMessages['categorysystems.details.description.none']}"
+                                                hasUnusedLocales="#{CategorySystemDetailsModel.hasUnusedDescriptionLocales()}"
+                                                objectIdentifier="#{CategorySystemDetailsModel.identifier}"
+                                                removeButtonLabel="#{AdminMessages['categorysystems.details.description.table.actions.remove']}"
+                                                removeDialogCancelLabel="#{AdminMessages['categorysystems.details.description.remove.dialog.close']}"
+                                                removeDialogSubmitLabel="#{AdminMessages['categorysystems.details.description.remove.dialog.submit']}"
+                                                removeDialogText="#{AdminMessages['categorysystems.details.description.remove.dialog.message']}"
+                                                removeDialogTitle="#{AdminMessages['categorysystems.details.description.table.actions.remove.dialog.title']}"
+                                                removeMethod="CategorySystemsController#removeDescription"
+                                                tableActionsHeading="#{AdminMessages['categorysystems.details.description.table.headings.actions']}"
+                                                tableLocaleHeading="#{AdminMessages['categorysystems.details.description.table.headings.locale']}"
+                                                tableValueHeading="#{AdminMessages['categorysystems.details.description.table.headings.value']}"
+                                                title="#{AdminMessages['categorysystems.details.description.heading']}"
+                                                unusedLocales="#{CategorySystemDetailsModel.unusedTitleLocales}"
+                                                useTextarea="true"
+                                                values="#{CategorySystemDetailsModel.description}" />
+
+                <h2>
+                    #{AdminMessages['categorysystems.details.owners.heading']}
+                </h2>
+                <div class="mb-2">
+                    <bootstrap:modalForm actionTarget="#{mvc.uri('CategorySystemsController#addOwner', {'categorySystemIdentifier': CategorySystemDetailsModel.identifier })}"
+                                         buttonIcon="plus-circle"
+                                         buttonText="#{AdminMessages['categorysystems.details.owners.add']}"
+                                         buttonTextClass="text-right"
+                                         dialogId="categorysystem-owner-add">
+                        <f:facet name="title">
+                            <h3>#{AdminMessages['categorysstems.details.owner.add.dialog.title']}</h3>
+                        </f:facet>
+                        <f:facet name="body">
+                            <div class="form-group">
+                                <label for="categorysystem-owner-add-application">
+                                    #{AdminMessages['categorysystems.details.owner.add.dialog.application.label']}
+                                </label>
+                                <select aria-describedby="categorysystem-owner-add-application-help"
+                                        id="categorysystem-owner-add-appliaction"
+                                        name="applicationUuid"
+                                        required="true"
+                                        size="1">
+                                    <c:forEach items="#{CategorySystemDetailsModel.ownerOptions}" var="application">
+                                        <option value="#{application.applicationUuid}">
+                                            #{application.applicationName}
+                                        </option>
+                                    </c:forEach>
+                                </select>
+                                <small class="form-text text-muted"
+                                       id="categorysystem-owner-add-application-help">
+                                    #{AdminMessages['categorysystems.details.owner.add.dialog.application.help']}
+                                </small>
+                            </div>
+                            <div class="form-group">
+                                <label for="categorysystem-owner-add-context">
+                                    #{AdminMessages['categorysystems.details.owner.add.dialog.context.label']}
+                                </label>
+                                <input aria-describedby="categorysystem-owner-add-context-help"
+                                       id="categorysystem-owner-add-context"
+                                       name="context"
+                                       type="text" />
+                                <small class="form-text text-muted"
+                                       id="categorysystem-owner-add-context-help">
+                                    #{AdminMessages['categorysystems.details.owner.add.dialog.context.help']}
+                                </small>
+                            </div>
+                        </f:facet>
+                        <f:facet name="footer">
+                            <button class="btn btn-secondary" 
+                                    data-dismiss="modal"
+                                    type="button" >
+                                #{AdminMessages['categorysystems.details.owner.add.dialog.close']}
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                #{AdminMessages['categorysystems.details.owner.add.dialog.submit']}
+                            </button>
+                        </f:facet>
+                    </bootstrap:modalForm>
+                </div>
+                <c:choose>
+                    <c:when test="#{CategorySystemDetailsModel.getOwners().isEmpty()}">
+                        <p>
+                            #{AdminMessages['categorysystems.details.owners.none']}
+                        </p>
+                    </c:when>
+                    <c:otherwise>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        #{AdminMessages['categorysystems.details.owners.applicationname']}
+                                    </th>
+                                    <th scope="col">
+                                        #{AdminMessages['categorysystems.details.owners.context']}
+                                    </th>
+                                    <th class="text-center" scope="col">
+                                        #{AdminMessages['categorysystems.details.owners.actions']}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach items="#{CategorySystemDetailsModel.owners}"
+                                           var="owner">
+                                    <tr>
+                                        <td>
+                                            #{owner.ownerAppName}
+                                        </td>
+                                        <td>
+                                            #{owner.context}
+                                        </td>
+                                        <td>
+                                            <div class="text-center">
+                                                <button class="btn btn-danger"
+                                                        data-target="#categorysystem-owner-#{owner.uuid}-remove"
+                                                        data-toggle="modal"
+                                                        type="button">
+                                                    <bootstrap:svgIcon icon="x-circle" />
+                                                    <span>#{AdminMessages['categorysystems.details.owners.remove']}</span>
+                                                </button>
+                                            </div>
+                                            <div aria-describedby="categorysystem-owner-#{owner.uuid}-remove-title"
+                                                 aria-hidden="true"
+                                                 class="modal fade"
+                                                 data-backdrop="static"
+                                                 id="categorysystem-owner-#{owner.uuid}-remove"
+                                                 tabindex="-1">
+                                                <div class="modal-dialog">
+                                                    <form action="#{mvc.uri('CategorySystemsController#removeOwner', { 'categorySystemIdentifier': CategorySystemDetailsModel.identifier, 'applicationUuid': owner.uuid })}"
+                                                          class="modal-content"
+                                                          method="post">
+                                                        <div class="modal-header">
+                                                            <h3 class="modal-title"
+                                                                id="categorysystem-owner-#{owner.uuid}-remove-title">
+                                                                #{AdminMessages['categorysystems.details.owners.remove.title']}
+                                                            </h3>
+                                                            <button aria-label="#{AdminMessages['categorysystems.details.owners.remove.close']}"
+                                                                    class="close"
+                                                                    data-dismiss="modal"
+                                                                    type="button">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>
+                                                                #{AdminMessages.getMessage('categorysystems.details.owners.remove.message', [owner.ownerAppName])}
+                                                            </p>
+                                                            <input type="hidden"
+                                                                   name="confirmed" 
+                                                                   value="true" />
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button class="btn btn-secondary" 
+                                                                    data-dismiss="modal"
+                                                                    type="button" >
+                                                                #{AdminMessages['categorysystems.details.owners.remove.close']}
+                                                            </button>
+                                                            <button type="submit" class="btn btn-danger">
+                                                                #{AdminMessages['categorysystems.details.owners.remove.submit']}
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </c:otherwise>
+                </c:choose>
+
+                <h2>#{AdminMessages['categorysystems.details.categories.heading']}</h2>
+                <div class="mb-2">
+                    <div class="text-right">
+                        <a class="btn btn-secondary"
+                           href="#{mvc.uri('CategoriesController#newSubCategory', {'categoryIdentifier': CategorySystemDetailsModel.rootIdentifier})}">
+                            <bootstrap:svgIcon icon="plus-circle" />
+                            <span>#{AdminMessages['categorysystems.details.categories.add']}</span>
+                        </a>
+                    </div>
+                </div>
+                <c:choose>
+                    <c:when test="#{CategorySystemDetailsModel.categories.isEmpty()}">
+                        <p>
+                            #{AdminMessages['categorysystems.details.categories.none']}
+                        </p>
+                    </c:when>
+                    <c:otherwise>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        #{AdminMessages['categorysystems.details.categories.table.headings.name']}
+                                    </th>
+                                    <th>
+                                        #{AdminMessages['categorysystems.details.categories.table.headings.enabled']}
+                                    </th>
+                                    <th>
+                                        #{AdminMessages['categorysystems.details.categories.table.headings.visible']}
+                                    </th>
+                                    <th>
+                                        #{AdminMessages['categorysystems.details.categories.table.headings.abstract']}
+                                    </th>
+                                    <th class="text-center" colspan="3">
+                                        #{AdminMessages['categorysystems.details.categories.table.headings.actions']}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach items="#{CategorySystemDetailsModel.categories}" 
+                                           var="category">
+                                    <tr>
+                                        <td>
+                                            <a href="#{mvc.uri('CategoriesController#getCategory', { 'categoryIdentifier': category.identifier})}">
+                                                #{category.name}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="#{category.enabled}">
+                                                    #{AdminMessages['categorysystems.details.categories.table.headings.enabled.true']}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    #{AdminMessages['categorysystems.details.categories.table.headings.enabled.false']}
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="#{category.visible}">
+                                                    #{AdminMessages['categorysystems.details.categories.table.headings.visible.true']}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    #{AdminMessages['categorysystems.details.categories.table.headings.visible.false']}
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="#{category.abstractCategory}">
+                                                    #{AdminMessages['categorysystems.details.categories.table.headings.abstract.true']}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    #{AdminMessages['categorysystems.details.categories.table.headings.abstract.false']}
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                            <c:if test="#{category.categoryOrder != 0}">
+                                                <form action="#{mvc.uri('CategoriesController#reorderSubCategory', {'categoryIdentifier': CategorySystemDetailsModel.rootIdentifier, 'subCategoryIdentifier': category.identifier})}"
+                                                      method="post">
+                                                    <input name="direction"
+                                                           type="hidden"
+                                                           value="DECREASE" />
+                                                    <button class="btn btn-info"
+                                                            type="submit">
+                                                        <bootstrap:svgIcon icon="caret-up-fill" />
+                                                        <span class="sr-only">#{AdminMessages['categories.details.subcategories.reorder.decrease']}</span>
+                                                    </button>
+                                                </form>
+                                            </c:if>
+                                        </td>
+                                        <td>
+                                            <c:if test="#{category.categoryOrder lt CategorySystemDetailsModel.categories.size()}">
+                                                <form action="#{mvc.uri('CategoriesController#reorderSubCategory', {'categoryIdentifier': CategorySystemDetailsModel.rootIdentifier, 'subCategoryIdentifier': category.identifier})}"
+                                                      method="post">
+                                                    <input name="direction" 
+                                                           value="INCREASE" 
+                                                           type="hidden" />
+                                                    <button class="btn btn-info"
+                                                            type="submit">
+                                                        <bootstrap:svgIcon icon="caret-down-fill" />
+                                                        <span class="sr-only">#{AdminMessages['categories.details.subcategories.reorder.increase']}</span>
+                                                    </button>
+                                                </form>
+                                            </c:if>
+                                        </td>
+                                        <td>
+                                            <libreccm:deleteDialog 
+                                                actionTarget="#{mvc.uri('CategoriesController#removeSubCategory', {'categoryIdentifier': category.identifier})}"
+                                                buttonText="#{AdminMessages['categories.details.subcategories.delete']}"
+                                                buttonTextClass="text-center"
+                                                cancelLabel="#{AdminMessages['categories.details.subcategories.delete.cancel']}"
+                                                confirmLabel="#{AdminMessages['categories.details.subcategories.delete.confirm']}"
+                                                dialogId="categories-subcategories-#{category.categoryId}-delete"
+                                                dialogTitle="#{AdminMessages['categories.details.subcategories.delete.title']}"
+                                                message="#{AdminMessages.getMessage('categories.details.subcategories.delete.message', [category.path])}"
+                                                />
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

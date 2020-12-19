@@ -56,11 +56,20 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "ROLE_MEMBERSHIPS", schema = DB_SCHEMA)
 @NamedQueries({
-    @NamedQuery(name = "RoleMembership.findByUuid",
-                query = "SELECT m FROM RoleMembership m WHERE m.uuid = :uuid"),
-    @NamedQuery(name = "RoleMembership.findByRoleAndMember",
-                query = "SELECT m FROM RoleMembership m "
-                            + "WHERE m.member = :member AND m.role = :role")
+    @NamedQuery(
+        name = "RoleMembership.findById",
+        query
+        = "SELECT m FROM RoleMembership m WHERE m.membershipId = :membershipId"
+    ),
+    @NamedQuery(
+        name = "RoleMembership.findByUuid",
+        query = "SELECT m FROM RoleMembership m WHERE m.uuid = :uuid"
+    ),
+    @NamedQuery(
+        name = "RoleMembership.findByRoleAndMember",
+        query
+        = "SELECT m FROM RoleMembership m WHERE m.member = :member AND m.role = :role"
+    )
 })
 @XmlRootElement(name = "role-membership", namespace = CORE_XML_NS)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,

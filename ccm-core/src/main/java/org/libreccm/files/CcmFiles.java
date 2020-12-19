@@ -172,9 +172,10 @@ public class CcmFiles {
             if (adapter.isConfigured()) {
                 return adapter;
             } else {
-                throw new UnexpectedErrorException(
+                throw new CcmFilesNotConfiguredException(
                     "Only the default FileSystemAdapter is available but is "
-                        + "not correctly configured.");
+                        + "not correctly configured."
+                );
             }
         }
     }
@@ -196,7 +197,9 @@ public class CcmFiles {
         final String dataPath = filesConf.getDataPath();
 
         if (dataPath == null || dataPath.trim().isEmpty()) {
-            throw new UnexpectedErrorException("dataPath is not configured.");
+            throw new CcmFilesNotConfiguredException(
+                "dataPath is not configured."
+            );
         }
 
         if (dataPath.endsWith("/")) {

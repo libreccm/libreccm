@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <cc:interface shortDescription="Component for a single checkbox">
+        <cc:attribute default="false"
+                      name="checked"
+                      shortDescription="Is the checkbox selected?"
+                      required="false"
+                      type="boolean" />
+        <cc:attribute name="help"
+                      required="true"
+                      shortDescription="A short description of the input field"
+                      type="String" />
+        <cc:attribute name="inputId" 
+                      required="true" 
+                      shortDescription="The ID of the input field."
+                      type="String" />
+        <cc:attribute name="label"
+                      required="true"
+                      shortDescription="The label of the input field."
+                      type="String" />
+        <cc:attribute name="name" 
+                      required="true" 
+                      shortDescription="The name of the input field. This is also the name which is used to send the value of the input to the server." 
+                      type="String" />
+        <cc:attribute name="options"
+                      required="true"
+                      shortDescription="The options for the select as Map with Strings as key and value . The keys of the Map is used for the value attribute of the option elements, the values of the map are used as content of the option elements"
+                      type="java.util.Map" />
+        <cc:attribute default="false" 
+                      name="required"
+                      shortDescription="Is the field required?"
+                      required="false"
+                      type="boolean" />
+        <cc:attribute default="#{java.util.Collections.emptySet()}"
+                      name="selectedOptions"
+                      required="false"
+                      shortDescription="A collection of the keys of the selected options. The keys must be strings."
+                      type="java.util.Collection" />
+    </cc:interface>
+    <cc:implementation>
+        <fieldset aria-describedby="#{cc.attrs.inputId}-help" class="form-group">
+            <div class="row">
+                <legend class="col-form-label col-sm-2 pt-0">#{cc.attrs.label}</legend>
+                <div class="col-sm-10">
+                    <c:forEach items="#{cc.attrs.options.entrySet()}" var="option">
+                        <div class="form-check">
+                            <input checked="#{cc.attrs.selectedOptions.contains(option.key) ? 'checked' : null}"
+                                   class="form-check-input" 
+                                   id="#{cc.attrs.inputId}-#{option.key}"
+                                   name="#{cc.attrs.name}"
+                                   type="checkbox"
+                                   value="#{option.key}" />
+                            <label for="#{cc.attrs.inputId}-#{option.key}">#{option.value}</label>
+                        </div>
+                    </c:forEach>
+                </div>
+            </div>
+            <small class="form-text text-muted"
+                   id="#{cc.attrs.inputId}-help">
+                #{cc.attrs.help}
+            </small>
+        </fieldset>
+    </cc:implementation>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
+
+        <ui:param name="activePage" value="applications" />
+        <ui:param name="title" value="#{AdminMessages['applications.label']}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                #{AdminMessages['applications.label']}
+            </li>
+            <li class="breadcrumb-item active">
+                #{ShortcutAdminMessages['application_title']}
+            </li>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container">
+                <h1>#{ShortcutAdminMessages['application_title']}</h1>
+
+                <div class="mb-2">
+                    <bootstrap:modalForm actionTarget="#{mvc.uri('ShortcutsApplicationController#addShortcut')}"
+                                         buttonIcon="plus-circle"
+                                         buttonText="#{ShortcutAdminMessages['shortcuts.ui.admin.add_shortcut']}"
+                                         buttonTextClass="text-right"
+                                         dialogId="shortcuts-add-form">
+                        <f:facet name="title">
+                            <h2>#{ShortcutAdminMessages['shortcuts.ui.admin.add_shortcut.dialog.title']}</h2>
+                        </f:facet>
+                        <f:facet name="body">
+                            <bootstrap:formGroupText help="#{ShortcutAdminMessages['shortcuts.ui.admin.add_shortcut.dialog.urlkey.help']}"
+                                                     inputId="shortcuts-add-form-urlkey"
+                                                     label="#{ShortcutAdminMessages['shortcuts.ui.admin.add_shortcut.dialog.urlkey.label']}" 
+                                                     name="urlKey" />
+                            <bootstrap:formGroupText help="#{ShortcutAdminMessages['shortcuts.ui.admin.add_shortcut.dialog.redirect.help']}"
+                                                     inputId="shortcuts-add-form-redirect"
+                                                     label="#{ShortcutAdminMessages['shortcuts.ui.admin.add_shortcut.dialog.redirect.label']}" 
+                                                     name="redirect" />
+                        </f:facet>
+                        <f:facet name="footer">
+                            <button class="btn btn-secondary" 
+                                    data-dismiss="modal"
+                                    type="button" >
+                                #{ShortcutAdminMessages['shortcuts.ui.admin.add_shortcut.dialog.cancel']}
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                #{ShortcutAdminMessages['shortcuts.ui.admin.add_shortcut.dialog.submit']}
+                            </button>
+                        </f:facet>
+                    </bootstrap:modalForm>
+                </div>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#{ShortcutAdminMessages['shortcuts.ui.admin.shortcuts_table.col_url_key.header']}</th>
+                            <th>#{ShortcutAdminMessages['shortcuts.ui.admin.shortcuts_table.col_redirect.header']}</th>
+                            <th class="text-center" colspan="2">#{ShortcutAdminMessages['shortcuts.ui.admin.shortcuts_table.col_actions.header']}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="#{shortcuts}" var="shortcut">
+                            <tr>
+                                <td>#{shortcut.urlKey}</td>
+                                <td>#{shortcut.redirect}</td>
+                                <td>
+                                    <bootstrap:modalForm actionTarget="#{mvc.uri('ShortcutsApplicationController#updateShortcut', { 'shortcutId': shortcut.shortcutId })}"
+                                                         buttonIcon="pen"
+                                                         buttonText="#{ShortcutAdminMessages['shortcuts.ui.admin.shortcuts_table.edit']}"
+                                                         buttonTextClass="text-center"
+                                                         dialogId="shortcut-#{shortcut.shortcutId}-edit-form">
+                                        <f:facet name="title">
+                                            <h3>#{ShortcutAdminMessages['shortcuts.ui.admin.edit_shortcut.dialog.title']}</h3>
+                                        </f:facet>
+                                        <f:facet name="body">
+                                            <bootstrap:formGroupText help="#{ShortcutAdminMessages['shortcuts.ui.admin.edit_shortcut.dialog.urlkey.help']}"
+                                                                     inputId="shortcut-#{shortcut.shortcutId}-edit-form-urlkey"
+                                                                     label="#{ShortcutAdminMessages['shortcuts.ui.admin.edit_shortcut.dialog.urlkey.label']}" 
+                                                                     name="urlKey" 
+                                                                     value="#{shortcut.urlKey}" />
+                                            <bootstrap:formGroupText help="#{ShortcutAdminMessages['shortcuts.ui.admin.edit_shortcut.dialog.redirect.help']}"
+                                                                     inputId="shortcut-#{shortcut.shortcutId}-edit-form-redirect"
+                                                                     label="#{ShortcutAdminMessages['shortcuts.ui.admin.edit_shortcut.dialog.redirect.label']}" 
+                                                                     name="redirect"
+                                                                     value="#{shortcut.redirect}" />
+                                        </f:facet>
+                                        <f:facet name="footer">
+                                            <button class="btn btn-secondary" 
+                                                    data-dismiss="modal"
+                                                    type="button" >
+                                                #{ShortcutAdminMessages['shortcuts.ui.admin.edit_shortcut.dialog.cancel']}
+                                            </button>
+                                            <button type="submit" class="btn btn-primary">
+                                                #{ShortcutAdminMessages['shortcuts.ui.admin.edit_shortcut.dialog.submit']}
+                                            </button>
+                                        </f:facet>
+                                    </bootstrap:modalForm>
+                                </td>
+                                <td>
+                                    <libreccm:deleteDialog actionTarget="#{mvc.uri('ShortcutsApplicationController#removeShortcut', { 'shortcutId': shortcut.shortcutId })}" 
+                                                           buttonText="#{ShortcutAdminMessages['shortcuts.ui.admin.shortcuts_table.delete']}"
+                                                           cancelLabel="#{ShortcutAdminMessages['shortcuts.ui.admin.delete_dialog.cancel']}"
+                                                           confirmLabel="#{ShortcutAdminMessages['shortcuts.ui.admin.delete_dialog.confirm']}" 
+                                                           dialogId="remove-shortcut-dialog-#{shortcut.shortcutId}" 
+                                                           dialogTitle="#{ShortcutAdminMessages['shortcuts.ui.admin.delete_dialog.title']}" 
+                                                           message="#{ShortcutAdminMessages.getMessage('shortcuts.ui.admin.delete_dialog.message', [shortcut.urlKey, shortcut.redirect])}"/>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>
+

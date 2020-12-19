@@ -120,6 +120,41 @@ public class DomainManager implements Serializable {
     }
 
     /**
+     * Adds a {@code CcmApplication} to the owners of a {@link Domain}.If the
+ provided {@code CcmApplication} is already an owner of the provided
+    {@code Domain} the method does nothing.
+     *
+     * @param application The {@code CcmApplication} to add to the owners of the
+     *                    {@code Domain}.
+     * @param domain      The {@code Domain} to which owners the
+     *                    {@code CcmApplication is added}.
+     * @param context Context for the mapping
+     */
+    @AuthorizationRequired
+    @RequiresPrivilege(CategorizationConstants.PRIVILEGE_MANAGE_DOMAINS)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void addDomainOwner(
+        final CcmApplication application,
+        final Domain domain,
+        final String context
+    ) {
+        final DomainOwnership ownership = new DomainOwnership();
+        ownership.setUuid(UUID.randomUUID().toString());
+        ownership.setDomain(domain);
+        ownership.setOwner(application);
+        ownership.setContext(context);
+        ownership.setOwnerOrder(domain.getOwners().size() + 1);
+        ownership.setDomainOrder(application.getDomains().size() + 1);
+
+        application.addDomain(ownership);
+        domain.addOwner(ownership);
+
+        entityManager.persist(ownership);
+        applicationRepo.save(application);
+        domainRepo.save(domain);
+    }
+
+    /**
      * Removes a {@code CcmApplication} from the owners of a {@code Domain}. If
      * the provided {@code CcmApplication} is not an owner of the provided
      * {@code Domain} the method does nothing.

@@ -55,7 +55,7 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
     public String getIdAttributeName() {
         return "objectId";
     }
-    
+
     @Override
     public Long getIdOfEntity(final Domain entity) {
         return entity.getObjectId();
@@ -87,6 +87,7 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
      * @return The {@code Domain} identified by {@code domainKey} or
      *         {@code null} if there is no such {@code Domain}.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public Optional<Domain> findByDomainKey(final String domainKey) {
         final TypedQuery<Domain> query = getEntityManager()
             .createNamedQuery("Domain.findByKey", Domain.class);
@@ -111,6 +112,7 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
      * @return The {@code Domain} identified by the provided URI or {@code null}
      *         if there is so such {@code Domain}.
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public Domain findByUri(final URI uri) {
         final TypedQuery<Domain> query = getEntityManager()
             .createNamedQuery("Domain.findByUri", Domain.class);
@@ -126,18 +128,37 @@ public class DomainRepository extends AbstractEntityRepository<Long, Domain> {
      *
      * @return An optional either with the found item or empty
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public Optional<Domain> findByUuid(final String uuid) {
-        final TypedQuery<Domain> query = getEntityManager()
-            .createNamedQuery("Domain.findByUuid", Domain.class);
-        query.setParameter("uuid", uuid);
-
         try {
-            return Optional.of(query.getSingleResult());
+            return Optional.of(
+                getEntityManager()
+                    .createNamedQuery("Domain.findByUuid", Domain.class)
+                    .setParameter("uuid", uuid)
+                    .getSingleResult()
+            );
         } catch (NoResultException ex) {
             return Optional.empty();
         }
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
+    public Optional<Domain> findByRootCategory(final Category rootCategory) {
+        try {
+            return Optional.of(
+                getEntityManager()
+                    .createNamedQuery(
+                        "Domain.findByRootCategory", Domain.class
+                    )
+                    .setParameter("root", rootCategory)
+                    .getSingleResult()
+            );
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
     public List<Domain> search(final String term) {
         final TypedQuery<Domain> query = getEntityManager()
             .createNamedQuery("Domain.search", Domain.class);

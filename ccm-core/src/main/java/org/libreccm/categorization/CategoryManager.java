@@ -872,7 +872,7 @@ public class CategoryManager implements Serializable {
      * The first entry in the list is the root category, the last entry is the
      * provided category.
      *
-     * @param ofCategory The category for whic the tree is generated.
+     * @param ofCategory The category for which the tree is generated.
      *
      * @return A list of a categories in the path of the provided category.
      */

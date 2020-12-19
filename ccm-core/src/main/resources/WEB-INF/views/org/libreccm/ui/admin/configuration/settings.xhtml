@@ -1,0 +1,403 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+    <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
+
+        <ui:param name="activePage" value="configuration" />
+        <ui:param name="title" value="#{AdminMessages['configuration.label']}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#{mvc.uri('ConfigurationController#getSettings')}">
+                    #{AdminMessages['configuration.label']}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                #{confLabel}
+            </li>
+            <li class="breadcrumb-item active">
+                #{AdminMessages['configuration.settings.label']}
+            </li>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container-fluid">
+                <h1>#{confLabel}</h1>
+                <p>
+                    #{confDescription}
+                </p>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">
+                                #{AdminMessages['configuration.settings.table.headings.label']}
+                            </th>
+                            <th scope="col">
+                                #{AdminMessages['configuration.settings.table.headings.value']}
+                            </th>
+                            <th scope="col">
+                                #{AdminMessages['configuration.settings.table.headings.defaultValue']}
+                            </th>
+                            <th scope="col" colspan="3">
+                                #{AdminMessages['configuration.settings.table.headings.actions']}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="#{settings}" var="setting">
+                            <tr>
+                                <td>#{setting.label}</td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="#{setting.value == null}">
+                                            <pre class="text-muted">#{setting.defaultValue}</pre>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <pre>#{setting.value}</pre>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                                <td>
+                                    <pre>#{setting.defaultValue}</pre>
+                                </td>
+                                <td>
+                                    <c:if test="#{setting.description.length() > 0}">
+                                        <button class="btn btn-info" 
+                                                data-toggle="modal"
+                                                data-target="#setting-info-#{setting.name}"
+                                                title="#{AdminMessages.getMessage('configuration.settings.table.actions.info.help', [setting.label])}"
+                                                type="button">
+                                            <svg class="bi"
+                                                 width="1em"
+                                                 height="1em"
+                                                 fill="currentColor">
+                                                <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#info-circle" />
+                                            </svg>
+                                            #{AdminMessages['configuration.settings.table.actions.info']}
+                                        </button>
+                                        <div aria-hidden="true"
+                                             aria-labelledby="setting-info#{setting.name}-label"
+                                             class="modal fade"
+                                             data-backdrop="static"
+                                             id="setting-info-#{setting.name}"
+                                             tabindex="-1">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h2 class="model-title"
+                                                            id="setting-info-#{setting.name}-label">#{AdminMessages.getMessage('configuration.settings.setting.info.label', [setting.label])}</h2>
+                                                        <button aria-label="#{AdminMessages['configuration.settings.setting.info.close']}"
+                                                                class="close"
+                                                                data-dismiss="modal"
+                                                                type="button"><span aria-hidden="true">&times;</span></button>
+
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>
+                                                            #{setting.description}
+                                                        </p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btn btn-secondary" 
+                                                                data-dismiss="modal"
+                                                                type="button">
+                                                            #{AdminMessages['configuration.settings.setting.info.dismiss']}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </c:if>
+                                </td>
+                                <td>
+                                    <button class="btn btn-primary" 
+                                            data-toggle="modal"
+                                            data-target="#setting-#{setting.name}-edit-dialog"
+                                            type="button">
+                                        <svg class="bi"
+                                             width="1em"
+                                             height="1em"
+                                             fill="currentColor">
+                                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
+                                        </svg>
+                                        #{AdminMessages['configuration.settings.table.actions.edit']}
+                                    </button>
+                                    <div aria-hidden="true"
+                                         aria-labelledby="setting-#{setting.name}-edit-dialog-title"
+                                         class="modal fade"
+                                         data-backdrop="static"
+                                         id="setting-#{setting.name}-edit-dialog"
+                                         tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <form action="#{mvc.uri('SettingsController#updateSettingValue', {'configurationClass': configurationClass, 'settingName': setting.name})}"
+                                                  class="modal-content"
+                                                  method="post">
+                                                <div class="modal-header">
+                                                    <h2 class="model-title"
+                                                        id="setting-#{setting.name}-edit-dialog-title">
+                                                        #{AdminMessages.getMessage('configuration.settings.setting.dialog.title', [setting.label])}
+                                                    </h2>
+                                                    <button aria-label="#{AdminMessages['configuration.settings.setting.dialog.close']}"
+                                                            class="close"
+                                                            data-dismiss="modal"
+                                                            type="button"><span aria-hidden="true">&times;</span></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <c:choose>
+                                                        <c:when test="#{setting.valueType.equals(BigDecimalClassName)}">
+                                                            <div class="form-group">
+                                                                <label for="#{setting.name}-setting-value">
+                                                                    #{AdminMessages['configuration.settings.setting.dialog.value.label']}
+                                                                </label>
+                                                                <input aria-describedby="#{setting.name}-setting-value-help"
+                                                                       class="form-control" 
+                                                                       id="#{setting.name}-setting-value"
+                                                                       name="settingValue"
+                                                                       step="0.01"
+                                                                       type="number" 
+                                                                       value="#{setting.value}" />
+                                                                <small class="form-text text-muted"
+                                                                       id="#{setting.name}-setting-value-help">
+                                                                    #{setting.description}
+                                                                </small>
+                                                            </div>
+                                                        </c:when>
+                                                        <c:when test="#{setting.valueType.equals(BooleanClassName) or setting.valueType.equals('boolean')}">
+                                                            <div class="form-group form-check">
+                                                                <input aria-describedby="#{setting.name}-setting-value-help"
+                                                                       checked="#{(setting.value.equals('true') or (setting.value == null and setting.defaultValue.equals('true'))) ? 'checked' : ''}"
+                                                                       class="form-check-input"
+                                                                       id="#{setting.name}-setting-value"
+                                                                       name="settingValue"
+                                                                       type="checkbox" />
+                                                                <label class="form-check-label"
+                                                                       for="#{setting.name}-setting-value">
+                                                                    #{AdminMessages['configuration.settings.setting.dialog.value.label']}
+                                                                </label>
+                                                                <small class="form-text text-muted"
+                                                                       id="#{setting.name}-setting-value-help">
+                                                                    #{setting.description}
+                                                                </small>
+                                                            </div>
+                                                        </c:when>
+                                                        <c:when test="#{setting.valueType.equals(DoubleClassName) or setting.valueType.equals('double')}">
+                                                            <div class="form-group">
+                                                                <label for="#{setting.name}-setting-value">
+                                                                    #{AdminMessages['configuration.settings.setting.dialog.value.label']}
+                                                                </label>
+                                                                <input aria-describedby="#{setting.name}-setting-value-help"
+                                                                       class="form-control" 
+                                                                       id="#{setting.name}-setting-value"
+                                                                       max="#{DoubleMaxValue}"
+                                                                       min="#{DoubleMinValue}"
+                                                                       name="settingValue"
+                                                                       step="0.01"
+                                                                       type="number" 
+                                                                       value="#{setting.value}" />
+                                                                <small class="form-text text-muted"
+                                                                       id="#{setting.name}-setting-value-help">
+                                                                    #{setting.description}
+                                                                </small>
+                                                            </div>
+                                                        </c:when>
+                                                        <c:when test="#{setting.valueType.equals(IntegerClassName) or setting.valueType.equals('int')}">
+                                                            <div class="form-group">
+                                                                <label for="#{setting.name}-setting-value">
+                                                                    #{AdminMessages['configuration.settings.setting.dialog.value.label']}
+                                                                </label>
+                                                                <input aria-describedby="#{setting.name}-setting-value-help"
+                                                                       class="form-control" 
+                                                                       id="#{setting.name}-setting-value"
+                                                                       max="#{IntegerMaxValue}"
+                                                                       min="#{IntegerMinValue}"
+                                                                       name="settingValue"
+                                                                       step="1"
+                                                                       type="number" 
+                                                                       value="#{setting.value}" />
+                                                                <small class="form-text text-muted"
+                                                                       id="#{setting.name}-setting-value-help">
+                                                                    #{setting.description}
+                                                                </small>
+                                                            </div>
+
+                                                        </c:when>
+                                                        <c:when test="#{setting.valueType.equals(ListClassName)}">
+                                                            <div class="form-group">
+                                                                <label for="#{setting.name}-setting-value">
+                                                                    #{AdminMessages['configuration.settings.setting.dialog.value.label']}
+                                                                </label>
+                                                                <textarea aria-describedby="#{setting.name}-setting-value-help"
+                                                                          class="form-control"
+                                                                          cols="80"
+                                                                          id="#{setting.name}-setting-value"
+                                                                          name="settingValue"
+                                                                          rows="10">#{setting.value}</textarea>
+                                                                <small class="form-text text-muted"
+                                                                       id="#{setting.name}-setting-value-help">
+                                                                    #{setting.description}
+                                                                </small>
+                                                            </div>
+                                                        </c:when>
+                                                        <c:when test="#{setting.valueType.equals(LocalizedStringClassName)}">
+                                                            <div class="form-group">
+                                                                <label for="#{setting.name}-setting-value">
+                                                                    #{AdminMessages['configuration.settings.setting.dialog.value.label']}
+                                                                </label>
+                                                                <textarea aria-describedby="#{setting.name}-setting-value-help"
+                                                                          class="form-control"
+                                                                          cols="80"
+                                                                          id="#{setting.name}-setting-value"
+                                                                          name="settingValue"
+                                                                          rows="10">#{setting.value}</textarea>
+                                                                <small class="form-text text-muted"
+                                                                       id="#{setting.name}-setting-value-help">
+                                                                    #{setting.description}
+                                                                </small>
+                                                            </div>
+                                                        </c:when>
+                                                        <c:when test="#{setting.valueType.equals(LongClassName) or setting.valueType.equals('long')}">
+                                                            <div class="form-group">
+                                                                <label for="#{setting.name}-setting-value">
+                                                                    #{AdminMessages['configuration.settings.setting.dialog.value.label']}
+                                                                </label>
+                                                                <input aria-describedby="#{setting.name}-setting-value-help"
+                                                                       class="form-control" 
+                                                                       id="#{setting.name}-setting-value"
+                                                                       max="#{LongMaxValue}"
+                                                                       min="#{LongMinValue}"
+                                                                       name="settingValue"
+                                                                       step="1"
+                                                                       type="number" 
+                                                                       value="#{setting.value}" />
+                                                                <small class="form-text text-muted"
+                                                                       id="#{setting.name}-setting-value-help">
+                                                                    #{setting.description}
+                                                                </small>
+                                                            </div>
+                                                        </c:when>
+                                                        <c:when test="#{setting.valueType.equals(SetClassName)}">
+                                                            <div class="form-group">
+                                                                <label for="#{setting.name}-setting-value">
+                                                                    #{AdminMessages['configuration.settings.setting.dialog.value.label']}
+                                                                </label>
+                                                                <textarea aria-describedby="#{setting.name}-setting-value-help"
+                                                                          class="form-control"
+                                                                          cols="80"
+                                                                          id="#{setting.name}-setting-value"
+                                                                          name="settingValue"
+                                                                          rows="10">#{setting.value}</textarea>
+                                                                <small class="form-text text-muted"
+                                                                       id="#{setting.name}-setting-value-help">
+                                                                    #{setting.description}
+                                                                </small>
+                                                            </div>
+                                                        </c:when>
+                                                        <c:when test="#{setting.valueType.equals(StringClassName)}">
+                                                            <div class="form-group">
+                                                                <label for="#{setting.name}-setting-value">
+                                                                    #{AdminMessages['configuration.settings.setting.dialog.value.label']}
+                                                                </label>
+                                                                <input aria-describedby="#{setting.name}-setting-value-help"
+                                                                       class="form-control" 
+                                                                       id="#{setting.name}-setting-value"
+                                                                       name="settingValue"
+                                                                       type="text" 
+                                                                       value="#{setting.value}" />
+                                                                <small class="form-text text-muted"
+                                                                       id="#{setting.name}-setting-value-help">
+                                                                    #{setting.description}
+                                                                </small>
+                                                            </div>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <p>
+                                                                #{AdminMessages.getMessage('configuration.settings.setting.dialog.unsupported_type', [setting.valueType])}
+                                                            </p>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-danger"
+                                                            data-dismiss="modal"
+                                                            type="button">
+                                                        #{AdminMessages['configuration.settings.setting.dialog.close']}
+                                                    </button>
+                                                    <button class="btn btn-success" 
+                                                            type="submit">
+                                                        #{AdminMessages['configuration.settings.setting.dialog.save']}
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger" 
+                                            data-toggle="modal"
+                                            data-target="#setting-#{setting.name}-reset-dialog"
+                                            title="#{AdminMessages.getMessage('configuration.settings.table.actions.reset.help', [setting.label, setting.defaultValue])}"
+                                            type="button">
+                                        <svg class="bi"
+                                             width="1em"
+                                             height="1em"
+                                             fill="currentColor">
+                                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#x-circle" />
+                                        </svg>
+                                        #{AdminMessages['configuration.settings.table.actions.reset']}
+                                    </button>
+                                    <div aria-hidden="true"
+                                         aria-labelledby="setting-#{setting.name}-reset-dialog-title"
+                                         class="modal fade"
+                                         data-backdrop="static"
+                                         id="setting-#{setting.name}-reset-dialog"
+                                         tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <form action="#{mvc.uri('SettingsController#resetSettingValue', {'configurationClass': configurationClass, 'settingName': setting.name })}"
+                                                  class="modal-content"
+                                                  method="post">
+                                                <div class="modal-header">
+                                                    <h2 class="modal-title"
+                                                        id="setting-#{setting.name}-reset-dialog-title">
+                                                        #{AdminMessages.getMessage('configuration.settings.setting.reset.title', [setting.label])}
+                                                    </h2>
+                                                    <button aria-label="#{AdminMessages['configuration.settings.setting.reset.close']}"
+                                                            class="close"
+                                                            data-dismiss="modal"
+                                                            type="button"><span aria-hidden="true">&times;</span></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>
+                                                        #{AdminMessages.getMessage('configuration.settings.setting.reset.confirm', [configuration.name, setting.label, setting.defaultValue])}
+                                                    </p>
+                                                    <input name="confirmed"
+                                                           type="hidden" 
+                                                           value="true" />
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-danger"
+                                                            data-dismiss="modal"
+                                                            type="button">
+                                                        #{AdminMessages['configuration.settings.setting.reset.close']}
+                                                    </button>
+                                                    <button class="btn btn-success" 
+                                                            type="submit">
+                                                        #{AdminMessages['configuration.settings.setting.reset.submit']}
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>
+

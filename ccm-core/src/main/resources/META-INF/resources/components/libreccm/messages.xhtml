@@ -1,0 +1,21 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <cc:interface shortDescription="Component for showing messages (org.libreccm.ui.Message).">
+        <cc:attribute name="messages" 
+                      required="true"
+                      shortDescription="The messages to show"
+                      type="java.util.Collection" />
+    </cc:interface>
+    <cc:implementation>
+        <div>
+            <c:forEach items="#{cc.attrs.message}" var="message">
+                <div class="alert alert-#{message.messageTypeClass}" 
+                     role="alert">
+                    #{message.message}
+                </div>
+            </c:forEach>
+        </div>
+    </cc:implementation>
+</html>

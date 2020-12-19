@@ -23,17 +23,17 @@ import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
-
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 /**
- * Im/Exporter  for importing and exporting {@code File}s from the
- * system into a specified file and the other way around.
+ * Im/Exporter for importing and exporting {@code File}s from the system into a
+ * specified file and the other way around.
  *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -46,7 +46,7 @@ public class FileImExporter extends AbstractEntityImExporter<File> {
     private FileRepository fileRepository;
 
     @Override
-    protected Class<File> getEntityClass() {
+    public Class<File> getEntityClass() {
         return File.class;
     }
 
@@ -60,6 +60,19 @@ public class FileImExporter extends AbstractEntityImExporter<File> {
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
         return Collections.emptySet();
     }
-    
-    
+
+    @Override
+    protected File reloadEntity(final File entity) {
+        return fileRepository
+            .findById(Objects.requireNonNull(entity).getObjectId())
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "File entity %s not found in database",
+                        Objects.toString(entity)
+                    )
+                )
+            );
+    }
+
 }

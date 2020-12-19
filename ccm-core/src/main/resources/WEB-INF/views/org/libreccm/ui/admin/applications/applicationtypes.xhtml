@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
+
+        <ui:param name="activePage" value="applications" />
+        <ui:param name="title" value="#{AdminMessages['applications.label']}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item active">
+                #{AdminMessages['applications.label']}
+            </li>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container">
+                <h1>#{AdminMessages['applications.label']}</h1>
+
+                <ul class="list-group">
+                    <c:forEach items="#{applicationTypes}" var="type">
+                        <li class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <h2>
+                                    <c:choose>
+                                        <c:when test="#{type.controllerLink != null}">
+                                            <a href="#{mvc.uri(type.controllerLink)}">#{type.title}</a>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span>#{type.title}</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </h2>
+                                <small class="badge badge-info badge-pill">
+                                    <c:choose>
+                                        <c:when test="#{type.singleton}">
+                                            #{AdminMessages['applications.types.singleton']}
+                                        </c:when>
+                                        <c:when test="#{type.numberOfInstances == 1}">
+                                            #{AdminMessages.getMessage('applications.number_of_instances_one', [type.numberOfInstances])}
+                                        </c:when>
+                                        <c:otherwise>
+                                            #{AdminMessages.getMessage('applications.number_of_instances', [type.numberOfInstances])}
+                                        </c:otherwise>
+                                    </c:choose>
+                                </small>
+                            </div>
+                            <p>
+                                ${type.description}
+                            </p>
+                        </li>
+                    </c:forEach>
+                </ul>
+
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

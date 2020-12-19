@@ -28,7 +28,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Any;
@@ -53,6 +55,7 @@ public class Themes implements Serializable {
     @Any
     private Instance<ThemeProvider> providers;
 //
+
     @Inject
     private ThemeProcessors themeProcessors;
 
@@ -106,6 +109,100 @@ public class Themes implements Serializable {
         }
 
         return Optional.empty();
+    }
+
+    public List<ThemeProvider> getThemeProviders() {
+        return providers
+            .stream()
+            .collect(Collectors.toList());
+    }
+
+    public Optional<ThemeProvider> findThemeProviderInstance(
+        final Class<? extends ThemeProvider> ofClazz
+    ) {
+        final Instance<? extends ThemeProvider> instance = providers
+            .select(ofClazz);
+        if (instance.isResolvable()) {
+            return Optional.of(instance.get());
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public ThemeInfo createTheme(
+        final String themeName, final String providerName
+    ) {
+        final Class<ThemeProvider> providerClass = getThemeProviderClass(
+            providerName
+        );
+
+        return createTheme(
+            themeName,
+            findThemeProviderInstance(providerClass).orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "No instance of ThemeProvider implementation %s available.",
+                        providerName
+                    )
+                )
+            )
+        );
+    }
+
+    public ThemeInfo createTheme(
+        final String themeName, final ThemeProvider themeProvider
+    ) {
+        return themeProvider.createTheme(themeName);
+    }
+
+    public void deleteTheme(final String themeName) {
+        final Optional<ThemeProvider> provider = findProviderOfTheme(
+            Objects.requireNonNull(
+                themeName,
+                "Can't delete theme null."
+            )
+        );
+
+        if (provider.isPresent()) {
+            provider.get().deleteTheme(themeName);
+        } else {
+            throw new IllegalArgumentException(
+                String.format(
+                    "No provider providing a theme named %s found.",
+                    themeName
+                )
+            );
+        }
+    }
+
+    public void publishTheme(final String themeName) {
+        final Optional<ThemeProvider> provider = findProviderOfTheme(themeName);
+
+        if (provider.isPresent()) {
+            provider.get().publishTheme(themeName);
+        } else {
+            throw new IllegalArgumentException(
+                String.format(
+                    "No provider providing a theme named %s found.",
+                    themeName
+                )
+            );
+        }
+    }
+
+    public void unpublishTheme(final String themeName) {
+        final Optional<ThemeProvider> provider = findProviderOfTheme(themeName);
+
+        if (provider.isPresent()) {
+            provider.get().unpublishTheme(themeName);
+        } else {
+            throw new IllegalArgumentException(
+                String.format(
+                    "No provider providing a theme named %s found.",
+                    themeName
+                )
+            );
+        }
     }
 
     /**
@@ -240,7 +337,37 @@ public class Themes implements Serializable {
 
         final ThemeProvider provider = forTheme.get();
         provider.deleteThemeFile(theme.getName(), path);
+    }
 
+    @SuppressWarnings("unchecked")
+    private Class<ThemeProvider> getThemeProviderClass(
+        final String providerName
+    ) {
+        try {
+            return (Class<ThemeProvider>) Class.forName(providerName);
+        } catch (ClassNotFoundException ex) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "No ThemeProvider implementation %s available.",
+                    providerName
+                )
+            );
+        }
+    }
+
+    private Optional<ThemeProvider> findProviderOfTheme(
+        final String themeName
+    ) {
+        final List<ThemeProvider> providersList = new ArrayList<>();
+        providers.forEach(provider -> providersList.add(provider));
+
+        return providersList
+            .stream()
+            .filter(
+                current -> current.providesTheme(
+                    themeName, ThemeVersion.DRAFT
+                )
+            ).findAny();
     }
 
 }

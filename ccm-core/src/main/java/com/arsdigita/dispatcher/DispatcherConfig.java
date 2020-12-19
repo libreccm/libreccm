@@ -28,19 +28,35 @@ import org.libreccm.configuration.Setting;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Configuration
+@Configuration(
+    descBundle = "com.arsdigita.dispatcher.DispatcherConfig",
+    descKey = "description",
+    titleKey = "title"
+)
 public final class DispatcherConfig {
 
-    @Setting
+    @Setting(
+        descKey = "cachingActive.desc",
+        labelKey = "cachingActive.label"
+    )
     private Boolean cachingActive = true;
 
-    @Setting
+    @Setting(
+        descKey = "defaultExpiry.desc",
+        labelKey = "defaultExpiry.label"
+    )
     private Integer defaultExpiry = 259200;
 
-    @Setting
+    @Setting(
+        descKey = "staticUrlPrefix.desc",
+        labelKey = "statusUrlPrefix.label"
+    )
     private String staticUrlPrefix = "/STATICII/";
 
-    @Setting
+    @Setting(
+        descKey = "defaultPageClass.desc",
+        labelKey = "defaultPageClass.label"
+    )
     private String defaultPageClass = "com.arsdigita.bebop.Page";
 
     public static DispatcherConfig getConfig() {

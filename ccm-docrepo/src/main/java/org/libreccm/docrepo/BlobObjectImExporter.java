@@ -23,9 +23,10 @@ import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
-import javax.faces.bean.RequestScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
@@ -45,7 +46,7 @@ public class BlobObjectImExporter extends AbstractEntityImExporter<BlobObject> {
     private BlobObjectRepository blobObjectRepository;
 
     @Override
-    protected Class<BlobObject> getEntityClass() {
+    public Class<BlobObject> getEntityClass() {
         return BlobObject.class;
     }
 
@@ -59,6 +60,20 @@ public class BlobObjectImExporter extends AbstractEntityImExporter<BlobObject> {
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
         return Collections.emptySet();
+    }
+
+    @Override
+    protected BlobObject reloadEntity(final BlobObject entity) {
+        return blobObjectRepository
+            .findById(Objects.requireNonNull(entity).getBlobObjectId())
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "BlobObject entity %s not found in database.",
+                        Objects.toString(entity)
+                    )
+                )
+            );
     }
 
 }

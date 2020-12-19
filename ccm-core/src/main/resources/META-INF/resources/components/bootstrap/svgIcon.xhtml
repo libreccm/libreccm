@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+    <cc:interface shortDescription="Component for inserting Bootstrap icons">
+        <cc:attribute name="icon" 
+                      required="true" 
+                      shortDescription="The name of the Icon to insert" />
+    </cc:interface>
+    <cc:implementation>
+        <svg class="bi"
+             width="1em"
+             height="1em"
+             fill="currentColor">
+            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg##{cc.attrs.icon}" />
+        </svg>
+    </cc:implementation>
+</html>
