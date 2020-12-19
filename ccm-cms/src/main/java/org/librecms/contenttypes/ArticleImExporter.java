@@ -19,7 +19,7 @@ import javax.enterprise.context.RequestScoped;
 public class ArticleImExporter extends AbstractContentItemImExporter<Article> {
 
     @Override
-    protected Class<Article> getEntityClass() {
+    public Class<Article> getEntityClass() {
         return Article.class;
     }
 

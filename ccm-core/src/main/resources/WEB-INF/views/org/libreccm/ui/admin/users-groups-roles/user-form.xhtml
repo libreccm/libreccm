@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/users-groups-roles.xhtml">
+        <ui:param name="activePage" value="usersgroupsroles" />
+        <ui:param name="activePanel" value="users" />
+        <ui:param name="title"
+                  value="#{UserDetailsModel.newUser ? AdminMessages['usersgroupsroles.users.create.title'] : AdminMessages.getMessage('usersgroupsroles.users.edit.title', [UserDetailsModel.name]) }" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#{mvc.uri('UsersGroupsRolesController#getOverview')}">
+                    #{AdminMessages['usersgroupsroles.label']}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#{mvc.uri('UsersController#getUsers')}">
+                    #{AdminMessages['usersgroupsroles.users.label']}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#{mvn.uri('UsersController#getUserDetails', { 'userIdentfier': user.name })}">
+                    #{UserDetailsModel.name}
+                </a>
+            </li>
+            <li>
+
+                #{UserDetailsModel.newUser ? AdminMessages['usersgroupsroles.users.breadcrumb.new'] : AdminMessages['usersgroupsroles.users.breadcrumb.edit']}
+            </li>
+        </ui:define>
+
+        <ui:define name="panel">
+            <c:forEach items="#{errors}" var="error">
+                <div class="alert alert-danger" role="alert">
+                    #{error}
+                </div>
+            </c:forEach>
+            <form action="#{UserDetailsModel.newUser ? mvc.uri('UserFormController#createUser') : mvc.uri('UserFormController#updateUser', { 'userIdentifier': UserDetailsModel.name })}"
+                  method="post">
+                <div class="form-group">
+                    <label for="username">
+                        #{AdminMessages['usersgroupsroles.users.form.username.label']}
+                    </label>
+                    <input aria-describedby="username-help"
+                           class="form-control" 
+                           id="username" 
+                           name="userName" 
+                           pattern="[a-zA-Z0-9_-]*"
+                           required="required"
+                           value="#{UserDetailsModel.name}"
+                           type="text" />
+                    <small class="form-text text-muted"
+                           id="username-help">
+                        #{AdminMessages['usersgroupsroles.users.form.username.help']}
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label for="givenname">
+                        #{AdminMessages['usersgroupsroles.users.form.givenname.label']}
+                    </label>
+                    <input aria-described-by="givenname-help"
+                           class="form-control" 
+                           id="givenname" 
+                           name="givenName" 
+                           value="#{UserDetailsModel.givenName}"
+                           type="text" />
+                    <small class="form-text text-muted"
+                           id="givenname-help">
+                        #{AdminMessages['usersgroupsroles.users.form.givenname.help']}
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label for="familyname">
+                        #{AdminMessages['usersgroupsroles.users.form.familyname.label']}
+                    </label>
+                    <input aria-described-by="familyname-help"
+                           class="form-control" 
+                           id="familyname" 
+                           name="familyName" 
+                           value="#{UserDetailsModel.familyName}"
+                           type="text" />
+                    <small class="form-text text-muted"
+                           id="familyname-help">
+                        #{AdminMessages['usersgroupsroles.users.form.familyname.help']}
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label for="primary-email-address">
+                        #{AdminMessages['usersgroupsroles.users.form.primaryemailaddress.label']}
+                    </label>
+                    <input aria-described-by="primary-email-address-help"
+                           class="form-control" 
+                           id="primary-email-address" 
+                           name="primaryEmailAddress" 
+                           required="required"
+                           value="#{UserDetailsModel.primaryEmailAddress.address}"
+                           type="email" />
+                    <small class="form-text text-muted"
+                           id="primary-email-address-help">
+                        #{AdminMessages['usersgroupsroles.users.form.primaryemailaddress.help']}
+                    </small>
+                </div>
+                <div class="form-check">
+                    <input checked="#{UserDetailsModel.primaryEmailAddress.bouncing ? 'checked' : ''}"
+                           class="form-check-input"
+                           id="primary-email-address-bouncing"
+                           name="primaryEmailAddressBouncing"
+                           type="checkbox" />
+                    <label for="primary-email-address-bouncing">
+                        #{AdminMessages['usersgroupsroles.users.form.primaryemailaddress.boucing.label']}
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input checked="#{UserDetailsModel.primaryEmailAddress.verified ? 'checked' : ''}"
+                           class="form-check-input"
+                           id="primary-email-address-verified"
+                           name="primaryEmailAddressVerified"
+                           type="checkbox"
+                           />
+                    <label for="primary-email-address-verified">
+                        #{AdminMessages['usersgroupsroles.users.form.primaryemailaddress.verified.label']}
+                    </label>
+                </div>
+                <c:if test="#{UserDetailsModel.newUser}">
+                    <div class="form-group">
+                        <label for="password">
+                            #{AdminMessages['usersgroupsroles.users.form.password']}
+                        </label>
+                        <input aria-described-by="password-help"
+                               class="form-control" 
+                               id="password" 
+                               name="password" 
+                               required="required"
+                               type="password" />
+                        <small class="form-text text-muted"
+                               id="password-help">
+                            #{AdminMessages['usersgroupsroles.users.form.password.help']}
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <label for="password-confirmation">
+                            #{AdminMessages['usersgroupsroles.users.form.passwordconfirmation']}
+                        </label>
+                        <input aria-described-by="password-confirmation-help"
+                               class="form-control" 
+                               id="password-confirmation" 
+                               name="passwordConfirmation" 
+                               required="required"
+                               type="password" />
+                        <small class="form-text text-muted"
+                               id="password-help">
+                            #{AdminMessages['usersgroupsroles.users.form.passwordconfirmation.help']}
+                        </small>
+                    </div>
+                </c:if>
+                <div class="form-check">
+                    <input checked="#{UserDetailsModel.banned ? 'checked' : ''}"
+                           class="form-check-input"
+                           id="banned"
+                           name="banned"
+                           type="checkbox" />
+                    <label for="banned">
+                        #{AdminMessages['usersgroupsroles.users.form.banned.label']}
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input checked="#{UserDetailsModel.passwordResetRequired ? 'checked' : ''}"
+                           class="form-check-input"
+                           id="password-reset-required"
+                           name="passwordResetRequired"
+                           type="checkbox" />
+                    <label for="password-reset-required">
+                        #{AdminMessages['usersgroupsroles.users.form.passwordresetrequired.label']}
+                    </label>
+                </div>
+                <a class="btn btn-warning" 
+                   href="#{mvc.uri('UsersController#getUsers')}">
+                    #{AdminMessages['usersgroupsroles.users.form.buttons.cancel']}
+                </a>
+                <button class="btn btn-success" type="submit">
+                    <c:choose>
+                        <c:when test="#{UserDetailsModel.newUser}">
+                            #{AdminMessages['usersgroupsroles.users.form.buttons.create']}
+                        </c:when>
+                        <c:otherwise>
+                            #{AdminMessages['usersgroupsroles.users.form.buttons.save']}
+                        </c:otherwise>
+                    </c:choose>
+                </button>
+            </form>
+        </ui:define>
+    </ui:composition>
+
+</html>
+

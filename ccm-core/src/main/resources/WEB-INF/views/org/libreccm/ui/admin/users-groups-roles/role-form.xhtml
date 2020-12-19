@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/users-groups-roles.xhtml">
+        <ui:param name="activePage" value="usersgroupsroles" />
+        <ui:param name="activePanel" value="users" />
+        <ui:param name="title"
+                  value="#{RoleDetailsModel.newRole ? AdminMessages['usersgroupsroles.roles.create.title'] : AdminMessages.getMessage('usersgroupsroles.roles.edit.title', [RoleDetailsModel.roleName]) }" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#{mvc.uri('UsersGroupsRolesController#getOverview')}">
+                    #{AdminMessages['usersgroupsroles.label']}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#{mvc.uri('GroupsController#getGroups')}">
+                    #{AdminMessages['usersgroupsroles.roles.label']}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#{mvn.uri('GroupsController#getGroupDetails', { 'roleIdentfier': RoleDetailsModel.roleName })}">
+                    #{RoleDetailsModel.roleName}
+                </a>
+            </li>
+            <li>
+                #{RoleDetailsModel.newRole ? AdminMessages['usersgroupsroles.roles.breadcrumb.new'] : AdminMessages['usersgroupsroles.roles.breadcrumb.edit']}
+            </li>
+        </ui:define>
+
+        <ui:define name="panel">
+            <c:forEach items="#{errors}" var="error">
+                <div class="alert alert-danger" role="alert">
+                    #{error}
+                </div>
+            </c:forEach>
+            
+            <form action="#{RoleDetailsModel.newRole ? mvc.uri('RoleFormController#createRole') : mvc.uri('RoleFormController#updateRole', {'roleIdentifier' : RoleDetailsModel.roleName })}"
+                  method="post">
+                <div class="form-group">
+                    <label for="rolename">
+                        #{AdminMessages['usersgroupsroles.roles.form.rolename.label']}
+                    </label>
+                    <input aria-described-by="rolename-help"
+                           class="form-control" 
+                           id="rolename" 
+                           name="roleName" 
+                           pattern="[a-zA-Z0-9_-]*"
+                           required="required"
+                           value="#{RoleDetailsModel.roleName}"
+                           type="text" />
+                    <small class="form-text text-muted"
+                           id="rolename-help">
+                        #{AdminMessages['usersgroupsroles.roles.form.rolename.help']}
+                    </small>
+                </div>
+                <a class="btn btn-warning" 
+                   href="#{mvc.uri('RolesController#getRoles')}">
+                    #{AdminMessages['usersgroupsroles.roles.form.buttons.cancel']}
+                </a>
+                <button class="btn btn-success" type="submit">
+                    <c:choose>
+                        <c:when test="#{RoleDetailsModel.newRole}">
+                            #{AdminMessages['usersgroupsroles.roles.form.buttons.create']}
+                        </c:when>
+                        <c:otherwise>
+                            #{AdminMessages['usersgroupsroles.roles.form.buttons.save']}
+                        </c:otherwise>
+                    </c:choose>
+                </button>
+            </form>
+        </ui:define>
+        
+    </ui:composition>
+</html>

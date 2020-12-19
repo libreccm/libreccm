@@ -42,6 +42,28 @@ public class SiteRepository extends AbstractEntityRepository<Long, Site> {
     private static final long serialVersionUID = 3120528987720524155L;
 
     /**
+     * Retrieve a {@link Site} by its UUID.
+     *
+     * @param uuid The UUID of the site.
+     *
+     * @return An {@link Optional} containing the {@link Site} if a site for the
+     *         provided UUID exists.
+     */
+    @Transactional(Transactional.TxType.REQUIRED)
+    public Optional<Site> findByUuid(final String uuid) {
+        try {
+            return Optional.of(
+                getEntityManager()
+                    .createNamedQuery("Site.findByUuid", Site.class)
+                    .setParameter("uuid", uuid)
+                    .getSingleResult()
+            );
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
+    }
+
+    /**
      * Retrieve the {@link Site} for a specific domain.
      *
      * @param domain The domain of site to retrieve.
@@ -127,7 +149,7 @@ public class SiteRepository extends AbstractEntityRepository<Long, Site> {
     public String getIdAttributeName() {
         return "objectId";
     }
-    
+
     @Override
     public Long getIdOfEntity(final Site entity) {
         return entity.getObjectId();

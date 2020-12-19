@@ -15,6 +15,10 @@
         <param-name>ccm.distribution</param-name>
         <param-value>libreccm</param-value>
     </context-param>
+    <context-param>
+        <param-name>resteasy.resources</param-name>
+        <param-value>org.jboss.resteasy.plugins.stats.RegistryStatsResource</param-value>
+    </context-param>
 
     <!-- No JSESSIONID!!! -->
     <session-config>
@@ -65,8 +69,12 @@
         <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
         <param-value>true</param-value>
     </context-param>
+    <context-param>
+        <param-name>PARAMETER_ENCODING</param-name>
+        <param-value>UTF-8</param-value>
+    </context-param>
     
-<!--    <servlet>
+    <!--    <servlet>
         <servlet-name>vaadin-servlet</servlet-name>
         <servlet-class>com.vaadin.cdi.server.VaadinCDIServlet</servlet-class>
     </servlet>

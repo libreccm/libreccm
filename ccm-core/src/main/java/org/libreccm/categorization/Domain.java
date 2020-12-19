@@ -42,9 +42,10 @@ import static org.libreccm.core.CoreConstants.DB_SCHEMA;
 
 import org.libreccm.imexport.Exportable;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -63,8 +64,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
 
 /**
@@ -83,21 +82,33 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @Table(name = "CATEGORY_DOMAINS", schema = DB_SCHEMA)
 @NamedQueries({
-    @NamedQuery(name = "Domain.findByKey",
-                query = "SELECT d FROM Domain d WHERE d.domainKey = :key"),
-    @NamedQuery(name = "Domain.findByUri",
-                query = "SELECT d FROM Domain d WHERE d.uri = :uri"),
-    @NamedQuery(name = "Domain.findByUuid",
-                query = "SELECT d FROM Domain d WHERE d.uuid = :uuid"),
-    @NamedQuery(name = "Domain.findAll",
-                query = "SELECT d FROM Domain d ORDER BY d.domainKey"),
+    @NamedQuery(
+        name = "Domain.findByKey",
+        query = "SELECT d FROM Domain d WHERE d.domainKey = :key"
+    ),
+    @NamedQuery(
+        name = "Domain.findByUri",
+        query = "SELECT d FROM Domain d WHERE d.uri = :uri"
+    ),
+    @NamedQuery(
+        name = "Domain.findByUuid",
+        query = "SELECT d FROM Domain d WHERE d.uuid = :uuid"
+    ),
+    @NamedQuery(
+        name = "Domain.findByRootCategory",
+        query = "SELECT d FROM Domain d WHERE d.root = :root"
+    ),
+    @NamedQuery(
+        name = "Domain.findAll",
+        query = "SELECT d FROM Domain d ORDER BY d.domainKey"
+    ),
     @NamedQuery(
         name = "Domain.search",
         query
-            = "SELECT d FROM Domain d "
-                  + "WHERE d.domainKey LIKE CONCAT (LOWER(:term), '%') "
-                  + "OR d.uri LIKE CONCAT (LOWER(:term), '%') "
-                  + "ORDER BY d.domainKey")
+        = "SELECT d FROM Domain d "
+              + "WHERE d.domainKey LIKE CONCAT (LOWER(:term), '%') "
+              + "OR d.uri LIKE CONCAT (LOWER(:term), '%') "
+              + "ORDER BY d.domainKey")
 })
 @NamedEntityGraphs({
     @NamedEntityGraph(
@@ -188,7 +199,6 @@ public class Domain extends CcmObject implements Serializable, Exportable {
      * A version string for the {@code Domain}.
      */
     @Column(name = "VERSION", nullable = true)
-    @NotBlank
     @XmlElement(name = "version", namespace = CAT_XML_NS)
     private String version;
 
@@ -196,9 +206,8 @@ public class Domain extends CcmObject implements Serializable, Exportable {
      * A timestamp for the release date of the {@code Domain}.
      */
     @Column(name = "RELEASED")
-    @Temporal(TemporalType.TIMESTAMP)
     @XmlElement(name = "released", namespace = CAT_XML_NS)
-    private Date released;
+    private LocalDate released;
 
     /**
      * The root category of the domain.
@@ -267,20 +276,12 @@ public class Domain extends CcmObject implements Serializable, Exportable {
         this.version = version;
     }
 
-    public Date getReleased() {
-        if (released == null) {
-            return null;
-        } else {
-            return new Date(released.getTime());
-        }
+    public LocalDate getReleased() {
+        return released;
     }
 
-    public void setReleased(final Date released) {
-        if (released == null) {
-            this.released = null;
-        } else {
-            this.released = new Date(released.getTime());
-        }
+    public void setReleased(final LocalDate released) {
+        this.released = released;
     }
 
     public Category getRoot() {
@@ -399,18 +400,24 @@ public class Domain extends CcmObject implements Serializable, Exportable {
 
     @Override
     public String toString(final String data) {
+        final String releasedStr;
+        if (released == null) {
+            releasedStr = "";
+        } else {
+            releasedStr = DateTimeFormatter.ISO_DATE.format(released);
+        }
         return String.format(
             ", domainKey = \"%s\", "
                 + "uri = \"%s\", "
                 + "title = \"%s\", "
                 + "version = \"%s\", "
-                + "released = %tF %<tT, "
+                + "released = %s, "
                 + "root = \"%s\"%s",
             domainKey,
             Objects.toString(uri),
             Objects.toString(title),
             version,
-            released,
+            releasedStr,
             Objects.toString(root),
             data
         );

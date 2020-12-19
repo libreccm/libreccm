@@ -1,0 +1,80 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <cc:interface shortDescription="Component for showing messages (org.libreccm.ui.Message).">
+        <cc:attribute name="actionTarget"
+                      required="true"
+                      shortDescription="URL to which the form is send." />
+        <cc:attribute name="buttonClass"
+                      default="btn-secondary"
+                      required="false"
+                      shortDescription="Bootstrap button context class to use for the button toggleing the modal form, eg. button-info."
+                      type="String" />
+        <cc:attribute name="buttonIcon"
+                      default=""
+                      required="false"
+                      shortDescription="Name of the icon to use in the button. If empty no icon will be used."
+                      type="String" />
+        <cc:attribute name="buttonText"
+                      required="true"
+                      shortDescription="Text of the button toggleing the modal form."
+                      type="String" />
+        <cc:attribute name="buttonTextClass"
+                      default=""
+                      required="false"
+                      shortDescription="Class used for aligning the button. Either text-left, text-center or text-right."
+                      type="String" />
+        <cc:attribute name="dialogId"
+                      required="true"
+                      shortDescription="ID of the dialog."
+                      type="String" />
+        <cc:attribute name="method"
+                      default="post"
+                      required="false"
+                      shortDescription="Method used to send to form. Defaults to POST."
+                      type="String" />
+        <cc:facet name="body" required="true" />
+        <cc:facet name="footer" required="true"/>
+        <cc:facet name="title" required="true" />
+    </cc:interface>
+    <cc:implementation>
+        <div class="#{cc.attrs.buttonTextClass}">
+            <button class="btn #{cc.attrs.buttonClass}"
+                    data-target="##{cc.attrs.dialogId}"
+                    data-toggle="modal"
+                    type="button">
+                <c:if test="#{!cc.attrs.buttonIcon.isEmpty()}">
+                    <bootstrap:svgIcon icon="#{cc.attrs.buttonIcon}" />
+                </c:if>
+                <span>#{cc.attrs.buttonText}</span>
+            </button>
+        </div>
+        <div aria-labelledby="#{cc.attrs.dialogId}-title"
+             aria-hidden="true"
+             class="modal fade"
+             data-backdrop="static"
+             id="#{cc.attrs.dialogId}"
+             tabindex="-1">
+            <div class="modal-dialog">
+                <form action="#{cc.attrs.actionTarget}"
+                      class="modal-content"
+                      method="#{cc.attrs.method}">
+                    <div class="modal-header">
+                        <div class="modal-title" 
+                             id="#{cc.attrs.dialogId}-title">
+                            <cc:renderFacet name="title" />
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <cc:renderFacet name="body" />
+                    </div>
+                    <div class="modal-footer">
+                        <cc:renderFacet name="footer" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </cc:implementation>
+</html>

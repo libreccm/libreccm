@@ -254,16 +254,12 @@ final class EntityImExporterTreeManager {
 
         //Check if the nodes list has an entry for the required module.
         if (!nodes.containsKey(requiredClass.getName())) {
-
             LOGGER.fatal("Required EntityImExporter for \"{}\" no found.",
                          requiredClass.getName());
             throw new DependencyException(String.format(
                 "EntityImExporter for type \"%s\" depends on type \"%s\" "
                     + "but no EntityImExporter for type \"%s\" is available.",
-                node
-                    .getEntityImExporter()
-                    .getClass()
-                    .getAnnotation(Processes.class).value().getName(),
+                node.getEntityImExporter().getEntityClass(),
                 requiredClass.getName(),
                 requiredClass.getName()));
         }

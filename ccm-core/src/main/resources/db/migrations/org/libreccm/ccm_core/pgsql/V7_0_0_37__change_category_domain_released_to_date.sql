@@ -1,0 +1,1 @@
+alter table CCM_CORE.CATEGORY_DOMAINS alter column RELEASED type date;

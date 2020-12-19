@@ -20,7 +20,7 @@ public class MultiPartArticleImExporter
     extends AbstractContentItemImExporter<MultiPartArticle> {
 
     @Override
-    protected Class<MultiPartArticle> getEntityClass() {
+    public Class<MultiPartArticle> getEntityClass() {
         return MultiPartArticle.class;
     }
     

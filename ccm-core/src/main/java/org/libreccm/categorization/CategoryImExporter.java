@@ -23,6 +23,7 @@ import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
@@ -42,14 +43,12 @@ public class CategoryImExporter extends AbstractEntityImExporter<Category> {
     private CategoryRepository categoryRepository;
 
     @Override
-    protected Class<Category> getEntityClass() {
-
+    public Class<Category> getEntityClass() {
         return Category.class;
     }
 
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
-
         final Set<Class<? extends Exportable>> entities = new HashSet<>();
         entities.add(Domain.class);
 
@@ -59,8 +58,21 @@ public class CategoryImExporter extends AbstractEntityImExporter<Category> {
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     protected void saveImportedEntity(final Category entity) {
-
         categoryRepository.save(entity);
+    }
+
+    @Override
+    protected Category reloadEntity(final Category entity) {
+        return categoryRepository
+            .findById(Objects.requireNonNull(entity).getObjectId())
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "Category entity %s does not exist in the database.",
+                        Objects.toString(entity)
+                    )
+                )
+            );
     }
 
 }

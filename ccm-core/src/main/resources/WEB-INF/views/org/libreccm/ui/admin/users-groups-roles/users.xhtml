@@ -1,0 +1,158 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+    <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/users-groups-roles.xhtml">
+        <ui:param name="activePage" value="usersgroupsroles" />
+        <ui:param name="activePanel" value="users" />
+        <ui:param name="title" 
+                  value="#{AdminMessages['usersgroupsroles.users.label']}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#{mvc.uri('UsersGroupsRolesController#getOverview')}">
+                    #{AdminMessages['usersgroupsroles.label']}
+                </a>
+            </li>
+            <li class="breadcrumb-item active">
+                #{AdminMessages['usersgroupsroles.users.label']}
+            </li>
+        </ui:define>
+
+        <ui:define name="panel">
+            <div class="row mb-2">
+                <div class="col-sm-9">
+                    <form action="#{mvc.uri('UsersController#getUsers')}" 
+                          class="form-inline" 
+                          method="get">
+                        <div class="form-group">
+                            <label class="mr-2" for="filter-term">
+                                #{AdminMessages['usersgroupsroles.users.filter.label']}
+                            </label>
+                            <input class="form-control" 
+                                   id="filter-term" 
+                                   name="filterterm"
+                                   type="text" 
+                                   value="#{UsersTableModel.filterTerm}"/>
+                        </div>
+                        <button class="btn btn-secondary ml-1" type="submit">
+                            #{AdminMessages['usersgroupsroles.users.filter.submit']}
+                        </button>
+                    </form>
+                </div>
+                <div class="col-sm-3 text-right">
+                    <a class="btn btn-secondary" 
+                       href="#{mvc.uri('UsersController#newUser')}">
+                        <svg class="bi"
+                             width="1em"
+                             height="1em"
+                             fill="currentColor">
+                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#person-plus" />
+                        </svg>
+                        <span>#{AdminMessages['usersgroupsroles.users.add']}</span>
+                    </a>
+                </div>
+            </div>
+            <table class="table table-hover users-table">
+                <thead class="thead-light">
+                    <tr>
+                        <th>#{AdminMessages['usersgroupsroles.users.table.headers.username']}</th>
+                        <th>#{AdminMessages['usersgroupsroles.users.table.headers.givenname']}</th>
+                        <th>#{AdminMessages['usersgroupsroles.users.table.headers.familyname']}</th>
+                        <th>#{AdminMessages['usersgroupsroles.users.table.headers.email']}</th>
+                        <th class="text-center">#{AdminMessages['usersgroupsroles.users.table.headers.disabled']}</th>
+                        <th class="text-center" colspan="2">#{AdminMessages['usersgroupsroles.users.table.headers.actions']}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach items="#{UsersTableModel.users}" 
+                               var="user">
+                        <tr class="#{user.banned ? 'text-muted' : ''}">
+                            <td>#{user.name}</td>
+                            <td>#{user.givenName}</td>
+                            <td>#{user.familyName}</td>
+                            <td>
+                                #{user.primaryEmailAddress.address}
+                            </td>
+                            <td class="text-center">
+                                #{user.banned ? AdminMessages['usersgroupsroles.users.table.headers.disabled.true'] : AdminMessages['usersgroupsroles.users.table.headers.disabled.false']}
+                            </td>
+                            <td class="text-center action-col">
+                                <a class="btn btn-info" 
+                                   href="#{mvc.uri('UsersController#getUserDetails', { 'userIdentifier': user.name })}">
+                                    <svg class="bi"
+                                         width="1em"
+                                         height="1em"
+                                         fill="currentColor">
+                                        <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#eye" />
+                                    </svg>
+                                    <span>
+                                        #{AdminMessages['usersgroupsroles.users.detailslink.label']}
+                                    </span>
+                                </a>
+                            </td>
+                            <td class="text-center action-col">
+                                <c:if test="#{!user.banned}">
+                                    <button class="btn btn-danger"
+                                            data-toggle="modal"
+                                            data-target="#confirm-disable-#{user.name}">
+                                        <svg class="bi"
+                                             width="1em"
+                                             height="1em"
+                                             fill="currentColor">
+                                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#person-x" />
+                                        </svg>
+                                        <span>
+                                            #{AdminMessages['usersgroupsroles.users.disablebutton.label']}
+                                        </span>
+                                    </button>
+                                    <div class="modal" 
+                                         id="confirm-disable-#{user.name}" 
+                                         tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <form action="#{mvc.uri('UsersController#disableUser', { 'userIdentifier': user.name })}" 
+                                                  class="modal-content"
+                                                  method="post">
+                                                <div class="modal-header">
+                                                    <h3 class="modal-title">
+                                                        #{AdminMessages['usersgroupsroles.users.disable.confirm.title']}
+                                                    </h3>
+                                                    <button aria-label="#{AdminMessages['usersgroupsroles.users.disable.confirm.cancel']}"
+                                                            class="close" 
+                                                            data-dismiss="modal" 
+                                                            type="button">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    #{AdminMessages.getMessage('usersgroupsroles.users.disable.confirm.message', [user.name])}
+                                                    <input name="confirmed" 
+                                                           type="hidden" 
+                                                           value="true" />
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-secondary" 
+                                                            data-dismiss="modal" 
+                                                            type="button">
+                                                        #{AdminMessages['usersgroupsroles.users.disable.confirm.cancel']}
+                                                    </button>
+                                                    <button class="btn btn-danger" 
+                                                            data-submit-confirm-dialog="#confirm-disable-#{user.name}"
+                                                            type="submit">
+                                                        #{AdminMessages['usersgroupsroles.users.disable.confirm.yes']}
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </c:if>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+        </ui:define>
+    </ui:composition>
+</html>
+

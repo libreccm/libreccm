@@ -53,7 +53,7 @@ public abstract class AbstractEntityImExporter<T extends Exportable> {
      *
      * @return The Entity class which is handled by the implementation.
      */
-    protected abstract Class<T> getEntityClass();
+    public abstract Class<T> getEntityClass();
 
     /**
      * A set of entities which should be processed before this implementation is
@@ -61,7 +61,6 @@ public abstract class AbstractEntityImExporter<T extends Exportable> {
      * annotations in a portable way in the rest of the code because CDI
      * containers usually create a {@link java.lang.reflect.Proxy} class and
      * there is no portable way to unproxy a class.
-     *
      *
      * @return A {@link Set} of exportable entity classes which should be
      *         processed before the entities which are processed by this
@@ -72,7 +71,6 @@ public abstract class AbstractEntityImExporter<T extends Exportable> {
 
     @Transactional(Transactional.TxType.REQUIRED)
     public T importEntity(final String data) throws ImportExpection {
-
         try {
             final T entity = objectMapper.readValue(data, getEntityClass());
             saveImportedEntity(entity);
@@ -80,14 +78,26 @@ public abstract class AbstractEntityImExporter<T extends Exportable> {
         } catch (IOException ex) {
             throw new ImportExpection(ex);
         }
-
     }
 
+    protected abstract void saveImportedEntity(T entity);
+
+    /**
+     * Export an entity (as JSON). There should be no need to overwrite this
+     * method.
+     *
+     * @param entity The entity to export.
+     *
+     * @return The entity as JSON
+     *
+     * @throws ExportException If an error occurs.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     public String exportEntity(final Exportable entity) throws ExportException {
-
+        @SuppressWarnings("unchecked")
+        final T export = reloadEntity((T) entity);
         try {
-            return objectMapper.writeValueAsString(entity);
+            return objectMapper.writeValueAsString(export);
         } catch (JsonProcessingException ex) {
             throw new ExportException(String.format(
                 "Failed to export entity \"%s\" of type \"%s\".",
@@ -95,9 +105,17 @@ public abstract class AbstractEntityImExporter<T extends Exportable> {
                 getEntityClass().getName()),
                                       ex);
         }
-
     }
 
-    protected abstract void saveImportedEntity(T entity);
+    /**
+     * Reloads the entity to export. Entities become detacted for several
+     * reasons before they are passed to the null     {@link #exportEntity(org.libreccm.imexport.Exportable) method. The 
+     * implementation of this should reload the passed entity.
+     *
+     * @param entity The entity to reload.
+     *
+     * @return The reloaded entity
+     */
+    protected abstract T reloadEntity(final T entity);
 
 }

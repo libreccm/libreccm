@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/users-groups-roles.xhtml">
+        <ui:param name="activePage" value="usersgroupsroles" />
+        <ui:param name="activePanel" value="users" />
+        <ui:param name="title"
+                  value="#{EmailFormModel.new ?  AdminMessages['usersgroupsroles.users.email.add.title'] : AdminMessages.getMessage('usersgroupsroles.users.email.edit.title', [UserDetailsModel.name])}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#{mvc.uri('UsersGroupsRolesController#getOverview')}">
+                    #{AdminMessages['usersgroupsroles.label']}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#{mvc.uri('UsersController#getUsers')}">
+                    #{AdminMessages['usersgroupsroles.users.label']}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#{mvn.uri('UsersController#getUserDetails', { 'userIdentfier': user.name })}">
+                    #{UserDetailsModel.name}
+                </a>
+            </li>
+            <li class="breadcrumb-item active"> 
+                #{EmailFormModel.new ? AdminMessages['usersgroupsroles.users.breadcrumbs.email.add'] : AdminMessages['usersgroupsroles.users.breadcrumbs.email.edit']}
+            </li>
+        </ui:define>
+
+        <ui:define name="panel">
+            <c:forEach items="#{errors}" var="error">
+                <div class="alert alert-danger" role="alert">
+                    #{error}
+                </div>
+            </c:forEach>
+            <c:forEach items="#{EmailFormModel.messages}" var="message">
+                <div class="alert alert-#{message.messageType}" role="alert">
+                    #{AdminMessages[message]}
+                </div>
+            </c:forEach>
+            <form action="#{EmailFormModel.new ? mvc.uri('EmailFormController#saveEmailAddress', {'userIdentifier': EmailFormModel.userIdentifier, 'emailIdentifier': 'new' }) : mvc.uri('EmailFormController#saveEmailAddress', { 'userIdentifier': EmailFormController.userIdentifier, 'emailIdentifier': EmailFormModel.emailId })}"
+                  method="post">
+                <div class="form-group">
+                    <label for="address">
+                        #{AdminMessages['usersgroupsroles.users.email.form.address.label']}
+                    </label>
+                    <input aria-described-by="address-help"
+                           class="form-control"
+                           id="address"
+                           name="address"
+                           required="required"
+                           value="#{EmailFormModel.address}"
+                           type="email" />
+                    <small class="form-text text-muted"
+                           id="address-help">
+                        #{AdminMessages['usersgroupsroles.users.email.form.address.help']}
+                    </small>
+                </div>
+                <div class="form-check">
+                    <input checked="#{EmailFormModel.bouncing ? 'checked' : ''}"
+                           class="form-check-input"
+                           id="bouncing"
+                           name="bouncing"
+                           type="checkbox"
+                           value="#{EmailFormModel.bouncing}" />
+                    <label for="bouncing">
+                        #{AdminMessages['usersgroupsroles.users.email.form.bouncing.label']}
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input checked="#{EmailFormModel.verified ? 'checked' : ''}"
+                           class="form-check-input"
+                           id="verified"
+                           name="verified"
+                           type="checkbox" />
+                    <label for="verified">
+                        #{AdminMessages['usersgroupsroles.users.email.form.verified.label']}
+                    </label>
+                </div>
+                <button class="btn btn-success" type="submit">
+                    <c:choose>
+                        <c:when test="#{EmailFormModel.new}">
+                            #{AdminMessages['usersgroupsroles.users.email.form.buttons.add']}
+                        </c:when>
+                        <c:otherwise>
+                            #{AdminMessages['usersgroupsroles.users.email.form.buttons.save']}
+                        </c:otherwise>
+                    </c:choose>
+                </button>
+            </form>
+        </ui:define>
+
+    </ui:composition>
+</html>

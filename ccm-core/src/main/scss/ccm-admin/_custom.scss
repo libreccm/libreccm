@@ -1,0 +1,60 @@
+
+$grid-breakpoints: (
+    xs: 0,
+    sm: 36rem,
+    md: 48rem,
+    lg: 62rem,
+    xl: 75rem
+);
+
+$container-max-widths: (
+    sm: 33.75rem,
+    md: 45rem,
+    lg: 60rem,
+    xl: 71.25rem
+);
+
+$grid-gutter-width: 1.875rem;
+
+$form-grid-gutter-width: 0.625rem;
+
+$tooltip-max-width: 12.5rem;
+
+$popover-maxwidth: 17.25rem;
+
+$toast-max-width: 21.875rem;
+
+$modal-xl: 71.25rem;
+$modal-lg: 50rem;
+$modal-md: 31.25rem;
+$modal-sm: 18.75rem;
+
+$modal-fade-transform: translate(0, -3.125rem);
+
+$carousel-indicator-width: 1.875rem;
+$carousel-control-icon-width: 1.25rem;
+
+$pre-scrollable-max-height: 21.25rem;
+
+// Navbar default colors have insufficient contrast
+$navbar-dark-color: #fff;
+
+table.users-table,
+table.groups-table,
+table.roles-table {
+    tbody {
+        td.action-col {
+            width: 8em;
+        }
+    }
+}
+
+table.group-members,
+table.group-roles,
+table.role-members {
+    tbody {
+        td.action-col {
+            width: 8em;
+        }
+    }
+}

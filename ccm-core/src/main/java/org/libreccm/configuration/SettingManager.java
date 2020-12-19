@@ -22,18 +22,25 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 import org.libreccm.core.CoreConstants;
+import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
+
+import java.lang.reflect.Constructor;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -106,10 +113,10 @@ public class SettingManager {
     /**
      * Create a {@link SettingInfo} instance for a setting.
      *
-     * @param configuration The configuration class to which the settings
-     *                      belongs.
-     * @param name          The name of the setting for which the
-     *                      {@link SettingInfo} is generated.
+     * @param configurationClass The configuration class to which the settings
+     *                           belongs.
+     * @param name               The name of the setting for which the
+     *                           {@link SettingInfo} is generated.
      *
      * @return The {@link SettingInfo} for the provided configuration class.
      */
@@ -117,28 +124,29 @@ public class SettingManager {
                        "PMD.CyclomaticComplexity",
                        "PMD.StandardCyclomaticComplexity"})
     public SettingInfo getSettingInfo(
-        final Class<?> configuration,
-        final String name) {
-        if (configuration == null) {
+        final Class<?> configurationClass,
+        final String name
+    ) {
+        if (configurationClass == null) {
             throw new IllegalArgumentException("Configuration can't be null");
         }
 
-        if (configuration.getAnnotation(Configuration.class) == null) {
+        if (configurationClass.getAnnotation(Configuration.class) == null) {
             throw new IllegalArgumentException(String.format(
                 "The class \"%s\" of the provided object is not annotated "
                     + "with \"%s\".",
-                configuration.getClass().getName(),
+                configurationClass.getClass().getName(),
                 Configuration.class.getName()));
         }
 
         final Field field;
         try {
-            field = configuration.getDeclaredField(name);
+            field = configurationClass.getDeclaredField(name);
         } catch (SecurityException | NoSuchFieldException ex) {
             LOGGER.warn(String.format(
                 "Failed to generate SettingInfo for field \"%s\" of "
                     + "configuration \"%s\". Ignoring field.",
-                configuration.getClass().getName(),
+                configurationClass.getClass().getName(),
                 name),
                         ex);
             return null;
@@ -163,23 +171,61 @@ public class SettingManager {
         settingInfo.setValueType(field.getType().getName());
 
         try {
-            final Object conf = configuration.newInstance();
-            settingInfo.setDefaultValue(Objects.toString(field.get(conf)));
-        } catch (InstantiationException | IllegalAccessException ex) {
+            final Constructor<?> constructor = configurationClass
+                .getConstructor();
+            final Object configuration = constructor.newInstance();
+            final Object defaultValueObj = field.get(configuration);
+            final String defaultValue;
+            if (defaultValueObj instanceof List) {
+                @SuppressWarnings("unchecked")
+                final List<String> defaultValueList
+                    = (List<String>) defaultValueObj;
+                defaultValue = defaultValueList
+                    .stream()
+                    .collect(Collectors.joining("\n"));
+            } else if (defaultValueObj instanceof LocalizedString) {
+                final LocalizedString defaultValueLstr
+                    = (LocalizedString) defaultValueObj;
+                defaultValue = defaultValueLstr
+                    .getValues()
+                    .entrySet()
+                    .stream()
+                    .map(
+                        entry -> String.format(
+                            "%s: %s",
+                            entry.getKey().toString(), entry.getValue()
+                        )
+                    )
+                    .collect(Collectors.joining("\n"));
+            } else if (defaultValueObj instanceof Set) {
+                @SuppressWarnings("unchecked")
+                final Set<String> defaultValueSet
+                    = (Set<String>) defaultValueObj;
+                defaultValue = defaultValueSet
+                    .stream()
+                    .collect(Collectors.joining("\n"));
+            } else {
+                defaultValue = Objects.toString(defaultValueObj);
+            }
+            settingInfo.setDefaultValue(defaultValue);
+        } catch (NoSuchMethodException
+                 | InstantiationException
+                 | InvocationTargetException
+                 | IllegalAccessException ex) {
             LOGGER.warn(String.format("Failed to create instance of \"%s\" to "
                                           + "get default values.",
-                                      configuration.getName()),
+                                      configurationClass.getName()),
                         ex);
         }
 
-        settingInfo.setConfClass(configuration.getName());
-        settingInfo.setDescBundle(getDescBundle(configuration));
+        settingInfo.setConfClass(configurationClass.getName());
+        settingInfo.setDescBundle(getDescBundle(configurationClass));
 
         if (Strings.isBlank(settingAnnotation.labelKey())) {
             settingInfo.setLabelKey(String.join(".", field.getName(),
                                                 "label"));
         } else {
-            settingInfo.setLabelKey(name);
+            settingInfo.setLabelKey(settingAnnotation.labelKey());
         }
 
         if (Strings.isBlank(settingAnnotation.descKey())) {
@@ -224,6 +270,61 @@ public class SettingManager {
             return null;
         } else {
             return result.get(0);
+        }
+    }
+
+    public Object getDefaultValue(
+        final Class<?> configurationClass,
+        final String settingName
+    ) {
+        if (configurationClass == null) {
+            throw new IllegalArgumentException("Configuration can't be null");
+        }
+
+        if (configurationClass.getAnnotation(Configuration.class) == null) {
+            throw new IllegalArgumentException(String.format(
+                "The class \"%s\" of the provided object is not annotated "
+                    + "with \"%s\".",
+                configurationClass.getClass().getName(),
+                Configuration.class.getName()));
+        }
+
+        final Field field;
+        try {
+            field = configurationClass.getDeclaredField(settingName);
+        } catch (SecurityException | NoSuchFieldException ex) {
+            LOGGER.warn(String.format(
+                "Failed to generate SettingInfo for field \"%s\" of "
+                    + "configuration \"%s\". Ignoring field.",
+                configurationClass.getClass().getName(),
+                settingName),
+                        ex);
+            return null;
+        }
+
+        //Make the field accessible even if it has a private modifier
+        field.setAccessible(true);
+
+        if (field.getAnnotation(Setting.class) == null) {
+            return null;
+        }
+
+        try {
+            final Constructor<?> constructor = configurationClass
+                .getConstructor();
+            final Object configuration = constructor.newInstance();
+            final Object defaultValueObj = field.get(configuration);
+
+            return defaultValueObj;
+        } catch (NoSuchMethodException
+                 | IllegalAccessException
+                 | InstantiationException
+                 | InvocationTargetException ex) {
+            LOGGER.warn(String.format("Failed to create instance of \"%s\" to "
+                                          + "get default values.",
+                                      configurationClass.getName()),
+                        ex);
+            return null;
         }
     }
 

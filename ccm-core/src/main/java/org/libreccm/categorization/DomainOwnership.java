@@ -55,10 +55,14 @@ import javax.xml.bind.annotation.XmlElement;
 @Table(name = "DOMAIN_OWNERSHIPS", schema = DB_SCHEMA)
 @NamedQueries({
     @NamedQuery(
+        name = "DomainOwnership.findById",
+        query
+        = "SELECT o FROM DomainOwnership o WHERE o.ownershipId = :ownershipId"
+    ),
+    @NamedQuery(
         name = "DomainOwnership.findByUuid",
         query = "SELECT o FROM DomainOwnership o WHERE o.uuid = :uuid"
-    )
-    ,
+    ),
     @NamedQuery(
         name = "DomainOwnership.findByOwnerAndDomain",
         query = "SELECT o FROM DomainOwnership o "
@@ -77,7 +81,7 @@ public class DomainOwnership implements Serializable, Exportable {
     @Column(name = "OWNERSHIP_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long ownershipId;
-    
+
     @Column(name = "UUID", unique = true, nullable = false)
     @XmlElement(name = "uuid", namespace = CoreConstants.CORE_XML_NS)
     private String uuid;
@@ -132,7 +136,7 @@ public class DomainOwnership implements Serializable, Exportable {
     public void setUuid(final String uuid) {
         this.uuid = uuid;
     }
-    
+
     public CcmApplication getOwner() {
         return owner;
     }

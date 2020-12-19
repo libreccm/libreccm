@@ -35,6 +35,8 @@ import org.libreccm.categorization.DomainManager;
 import org.libreccm.categorization.DomainRepository;
 import org.libreccm.cdi.utils.CdiUtil;
 
+import java.time.LocalDate;
+
 import static com.arsdigita.ui.admin.AdminUiConstants.*;
 
 /**
@@ -187,7 +189,8 @@ class DomainForm extends Form {
                 }
                 final String versionData = data.getString(VERSION);
                 final java.util.Date releasedData = (java.util.Date) data.get(
-                    RELEASED);
+                    RELEASED
+                );
                 final String rootCategoryNameData = data.getString(
                     ROOT_CATEGORY_NAME);
 
@@ -207,7 +210,7 @@ class DomainForm extends Form {
                 domain.setDomainKey(domainKeyData);
                 domain.setUri(domainUriData);
                 domain.setVersion(versionData);
-                domain.setReleased(releasedData);
+                domain.setReleased(LocalDate.from(releasedData.toInstant()));
 
                 domainRepository.save(domain);
             }

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+    <cc:interface shortDescription="Component for a form group with a number input">
+        <cc:attribute name="cols"
+                      required="false"
+                      shortDescription="The visible width of the text control, in average character widths. If it is specified, it must be a positive integer. If it is not specified, the default value is 20."
+                      type="int" />
+        <cc:attribute name="help"
+                      required="true"
+                      shortDescription="A short description of the input field"
+                      type="String" />
+        <cc:attribute name="inputId" 
+                      required="true" 
+                      shortDescription="The ID of the input field."
+                      type="String" />
+        <cc:attribute name="label"
+                      required="true"
+                      shortDescription="The label of the input field."
+                      type="String" />
+         <cc:attribute name="maxlength" 
+                      required="false"
+                      shortDescription="Maximum length of the text in this field."
+                      type="int" />
+        <cc:attribute name="minlength" 
+                      required="false"
+                      shortDescription="Minium length of the text in this field."
+                      type="int" />
+        <cc:attribute name="name" 
+                      required="true" 
+                      shortDescription="The name of the input field. This is also the name which is used to send the value of the input to the server." 
+                      type="String" />
+        <cc:attribute default="false"
+                      name="required"
+                      shortDescription="Is the field required?"
+                      required="false"
+                      type="boolean" />
+        <cc:attribute name="rows"
+                      required="false"
+                      shortDescription="The number of visible text lines for the control."
+                      type="int" />
+        <cc:attribute name="value"
+                      required="false"
+                      shortDescription="Value of the input field"
+                      type="String" />
+        <cc:attribute name="wrap"
+                      required="false"
+                      shortDescription="Indicates how the control wraps text."
+                      type="String" />
+    </cc:interface>
+    <cc:implementation>
+        <div class="form-group">
+            <label for="#{cc.attrs.inputId}">${cc.attrs.label}</label>
+            <textarea aria-describedby="#{cc.attrs.inputId}-help"
+                      cols="#{not empty cc.attrs.cols ? cc.attrs.cols : null}"
+                      id="#{cc.attrs.inputId}"
+                      maxlength="#{not empty cc.attrs.maxlength ? cc.attrs.maxlength : null}"
+                      minlength="#{not empty cc.attrs.minlength ? cc.attrs.maxlength : null}"
+                      name="#{cc.attrs.name}"
+                      rows="#{not empty cc.attrs.rows ? cc.attrs.rows : null}"
+                      wrap="#{not empty cc.attrs.wrap ? cc.attrs.wrap : null}">#{cc.attrs.value}</textarea>
+            <small class="form-text text-muted"
+                   id="#{cc.attrs.inputId}-help">
+                #{cc.attrs.help}
+            </small>
+        </div>
+    </cc:implementation>
+</html>
+

@@ -39,49 +39,71 @@ import java.util.List;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Configuration
+@Configuration(
+    descBundle = "com.arsdigita.cms.CMSConfig",
+    descKey = "description",
+    titleKey = "title"
+)
 public class CMSConfig {
 
     /**
      * Path for the default item template. Path is relative to the Template Root
      * path.
      */
-    @Setting
+    @Setting(
+        descKey = "defaultItemTemplatePath.desc",
+        labelKey = "defaultItemTemplatePath.label"
+    )
     private String defaultItemTemplatePath = "/default/item.jsp";
 
     /**
      * Path for the default folder template. Path is relative to the Template
      * Root path.
      */
-    @Setting
+    @Setting(
+        descKey = "defaultFolderTemplatePath.desc",
+        labelKey = "defaultFolderTemplatePath.label"
+    )
     private String defaultFolderTemplatePath = "/default/folder.jsp";
 
     /**
      * Path or the root folder for template folders. Path is relative to webapp
      * root. Modify with care! Usually modified by developers only!
      */
-    @Setting
+    @Setting(
+        descKey = "templateRootPath.desc",
+        labelKey = "templateRootPath.label"
+    )
     private String templateRootPath = "/templates/ccm-cms/content-section/";
 
     /**
      * Item Adapters File, path to an XML resource containing adapter
      * specifications. Path is relative to webapp root.
      */
-    @Setting
+    @Setting(
+        descKey = "itemAdapters.desc",
+        labelKey = "itemAdapters.label"
+    )
     private String itemAdapters = "/WEB-INF/resources/cms-item-adapters.xml";
 
     /**
      * Use streamlined content creation: upon item creation, automatically open
      * authoring steps and forward to the next step
      */
-    @Setting
+    @Setting(
+        descKey = "useStreamlinedCreation.desc",
+        labelKey = "useStreamlinedCreation.label"
+    )
     private boolean useStreamlinedCreation = true;
 
     /**
      * DHTML Editor Configuration for use in CMS module, lists the configuration
      * object name and Javascript source location for its definition.
      */
-    @Setting
+    @Setting(
+        descKey = "dhtmlEditorConfig.desc",
+        labelKey = "dhtmlEditorConfig.label"
+    )
     private List<String> dhtmlEditorConfig = Arrays.asList(new String[]{
         "TinyMCE.Config", "scripts/ccm-cms/tinymce-loader.js"
     });
@@ -91,74 +113,107 @@ public class CMSConfig {
      * Defines which plugins to use, e.g.TableOperations,CSS Format:
      * [string,string,string]
      */
-    @Setting
+    @Setting(
+        descKey = "dhtmlEditorPlugins.desc",
+        labelKey = "dhtmlEditorPlugins.label"
+    )
     private List<String> dhtmlEditorPlugins = Arrays.asList(new String[]{
-//        "scripts/ccm-cms/tinymce/plugins/insertimage.js"
-          "http://localhost/web/ccm-cms-tinymce/insertimage.js"
+        //        "scripts/ccm-cms/tinymce/plugins/insertimage.js"
+        "http://localhost/web/ccm-cms-tinymce/insertimage.js"
     });
 
     /**
      * Prevent undesirable functions from being made available, eg images should
      * only be added through the cms methods.
      */
-    @Setting
+    @Setting(
+        descKey = "dhtmlEditorHiddenButtons.desc",
+        labelKey = "dhtmlEditorHiddenButtons.label"
+    )
     private List<String> dhtmlEditorHiddenButtons = Collections.emptyList();
 
     /**
      * Hide section admin tabs from users without administrative rights.
      */
-    @Setting
+    @Setting(
+        descKey = "hideAdminTabs.desc",
+        labelKey = "hideAdminTabs.label"
+    )
     private boolean hideAdminTabs = true;
 
     /**
      * Hide Folder Index Checkbox from folder view
      */
-    @Setting
+    @Setting(
+        descKey = "hideFolderIndexCheckbox.desc",
+        labelKey = "hideFolderIndexCheckbox.label"
+    )
     private boolean hideFolderIndexCheckbox = true;
 
     /**
      * Hide launch date parameter on all forms and displays where it's used.
      */
-    @Setting
+    @Setting(
+        descKey = "hideLaunchDate.desc",
+        labelKey = "hideLaunchDate.label"
+    )
     private boolean hideLaunchDate = true;
 
     /**
      * Require the launch date parameter to be set by the content author.
      */
-    @Setting
+    @Setting(
+        descKey = "requireLaunchDate.desc",
+        labelKey = "requireLaunchDate.label"
+    )
     private boolean requireLaunchDate = true;
 
     /**
      * Hide the templates tab on the item admin page.
      */
-    @Setting
+    @Setting(
+        descKey = "hideTemplatesTab.desc",
+        labelKey = "hideTemplatesTab.label"
+    )
     private boolean hideTemplatesTab = false;
 
     /**
      * Hide the upload file link in the editing of a text asset.
      */
-    @Setting
+    @Setting(
+        descKey = "hideTextAssetUploadFile.desc",
+        labelKey = "hideTextAssetUploadFile.label"
+    )
     private boolean hideTextAssetUploadFile = false;
 
     /**
      * Hide timezone labels (if, for example, all users will be in the same
      * timezone and such information would be unnecessary)
      */
-    @Setting
+    @Setting(
+        descKey = "hideTimezone.desc",
+        labelKey = "hideTimezone.label"
+    )
     private boolean hideTimezone = false;
 
     /**
      * Whether the Wysiwyg editor should clear the text of MSWord tags,
      * everytime the user clicks on 'Save'
      */
-    @Setting
+    @Setting(
+        descKey = "saveTextCleansWordTags.desc",
+        labelKey = "saveTextCleansWordTags.label"
+    )
     private boolean saveTextCleansWordTags = true;
 
     /**
      * Get the search indexing not to process FileAssets, eg to avoid PDF
      * slowdowns
      */
-    @Setting
+    @Setting(
+        descKey = "disableFileAssetExtraction.desc",
+        labelKey = "disableFileAssetExtraction.label"
+    )
     private boolean disableFileAssetExtraction = false;
 
     /**
@@ -172,55 +227,79 @@ public class CMSConfig {
      * link to restart a workflow will not work.
      *
      */
-    @Setting
+    @Setting(
+        descKey = "deleteWorkflowAfterPublication.desc",
+        labelKey = "deleteWorkflowAfterPublication.label"
+    )
     private boolean deleteWorkflowAfterPublication = false;
 
     /**
      * Defines the number of days ahead that are covered in the 'Soon Expired'
      * tab
      */
-    @Setting
+    @Setting(
+        descKey = "soonExpiredTimespanDays.desc",
+        labelKey = "soonExpiredTimespanDays.label"
+    )
     private int soonExpiredTimespanDays = 14;
 
     /**
      * Defines the number of months ahead that are covered in the 'Soon Expired'
      * tab
      */
-    @Setting
+    @Setting(
+        descKey = "soonExpiredTimespanMonths.desc",
+        labelKey = "soonExpiredTimespanMonths.label"
+    )
     private int soonExpiredTimespanMonths = 1;
 
     /**
      * Does a redirect to the unpublished item generate not found error?
      */
-    @Setting
+    @Setting(
+        descKey = "unpublishedNotFound.desc",
+        labelKey = "unpublishedNotFound.label"
+    )
     private boolean unpublishedNotFound = true;
 
     /**
      * Links created through browse interfaces should only be within the same
      * subsite
      */
-    @Setting
+    @Setting(
+        descKey = "linksOnlyInSameSubsite.desc",
+        labelKey = "linksOnlyInSameSubsite.label"
+    )
     private boolean linksOnlyInSameSubsite = false;
 
     /**
      * Link available to reset lifecycle on republish. If false don't display
      * the link otherwise display.
      */
-    @Setting
+    @Setting(
+        descKey = "hideResetLifecycleLink.desc",
+        labelKey = "hideResetLifecycleLink.label"
+    )
     private boolean hideResetLifecycleLink = true;
 
     /**
      * Whether to include INPATH operators to contains clause in intermedia
      * search
      */
-    @Setting
+    @Setting(
+        descKey = "scoreTitleAndKeywords.desc",
+        labelKey = "scoreTitleAndKeywords.label"
+    )
     private boolean scoreTitleAndKeywords = false;
 
     /**
      * Title Weight, the relative weight given to title element within cms:item
      * when ranking search results (only used by interMedia)
      */
-    @Setting
+    @Setting(
+        descKey = "titleWeight.desc",
+        labelKey = "titleWeight.label"
+    )
     private int titleWeight = 1;
 
     /**
@@ -228,13 +307,19 @@ public class CMSConfig {
      * within dublinCore element within cms:item element when ranking search
      * results (only used by interMedia)
      */
-    @Setting
+    @Setting(
+        descKey = "keywordWeight.desc",
+        labelKey = "keywordWeight.label"
+    )
     private int keywordWeight = 1;
 
     /**
      * Limit the item search to current content section
      */
-    @Setting
+    @Setting(
+        descKey = "limitItemSearchToContentSection.desc",
+        labelKey = "limitItemSearchToContentSection.label"
+    )
     private boolean limitItemSearchToContentSection = true;
 
     /**
@@ -245,60 +330,87 @@ public class CMSConfig {
      * Second string is the name of the bebop step component eg
      * com.arsdigita.cms.contenttypes.ui.ImageStep
      */
-    @Setting
+    @Setting(
+        descKey = "skipAssetSteps.desc",
+        labelKey = "skipAssetSteps.label"
+    )
     private List<String> skipAssetSteps = Collections.emptyList();
 
     /**
      * Mandatory Descriptions Content types may refer to this to decide whether
      * to validate against empty descriptions
      */
-    @Setting
+    @Setting(
+        descKey = "mandatoryDescriptions.desc",
+        labelKey = "mandatoryDescriptions.label"
+    )
     private boolean mandatoryDescriptions = false;
 
     /**
      * Delete Finished Lifecycles. Decide whether lifecycles and their phases
      * should be deleted from the system when finished.
      */
-    @Setting
+    @Setting(
+        descKey = "deleteLifecycleWhenComplete.desc",
+        labelKey = "deleteLifecycleWhenComplete.label"
+    )
     private boolean deleteLifecycleWhenComplete = false;
 
     /**
      * Delete Sent Workflow Notifications. Decide whether successfully sent
      * notifications and messages should be deleted from the system
      */
-    @Setting
+    @Setting(
+        descKey = "deleteWorkflowNotificationWhenSend.desc",
+        labelKey = "deleteWorkflowNotificationWhenSend.label"
+    )
     private boolean deleteWorkflowNotificationWhenSend = false;
 
     /**
      * Decide whether successfully sent notifications and messages should be
      * deleted from the system
      */
-    @Setting
+    @Setting(
+        descKey = "deleteExpiryNotificationsWhenSent.desc",
+        labelKey = "deleteExpiryNotificationsWhenSent.label"
+    )
     private boolean deleteExpiryNotificationsWhenSent = false;
 
     /**
      * Amount of time (in hours) before the expiration of a content item that
      * users in the Alert Recipient role are alerted via email
      */
-    @Setting
+    @Setting(
+        descKey = "defaultNotificationTime.desc",
+        labelKey = "defaultNotificationTime.label"
+    )
     private int defaultNotificationTime = 0;
 
     /**
      * Whether a content item's author should be notified by the item's
      * LifecycleListener; defaults to true
      */
-    @Setting
+    @Setting(
+        descKey = "notifyAuthorOnLifecycle.desc",
+        labelKey = "notifyAuthorOnLifecycle.label"
+    )
     private boolean notifyAuthorOnLifecycle = false;
 
     /**
      * XML Mapping of the content center tabs to URLs, see
      * {@link ContentCenterDispatcher}
      */
-    @Setting
+    @Setting(
+        descKey = "contentCenterMap.desc",
+        labelKey = "contentCenterMap.label"
+    )
     private String contentCenterMap
-                       = "/WEB-INF/resources/content-center-map.xml";
+        = "/WEB-INF/resources/content-center-map.xml";
 
-    @Setting
+    @Setting(
+        descKey = "defaultItemResolverClassNames.desc",
+        labelKey = "defaultItemResolverClassNames.label"
+    )
     private List<String> defaultItemResolverClassNames = Arrays.asList(
         new String[]{
             SimpleItemResolver.class.getName()
@@ -310,87 +422,165 @@ public class CMSConfig {
 //            DefaultTemplateResolver.class.getName(),
 //            TemplateResolver.class.getName()
 //        });
-    @Setting
+    @Setting(
+        descKey = "itemSearchDefaultTab.desc",
+        labelKey = "itemSearchDefaultTab.label"
+    )
     private String itemSearchDefaultTab = "flatBrowse";
 
-    @Setting
+    @Setting(
+        descKey = "itemSearchFlatBrowsePanePageSize.desc",
+        labelKey = "itemSearchFlatBrowsePanePageSize.label"
+    )
     private int itemSearchFlatBrowsePanePageSize = 20;
 
-    @Setting
+    @Setting(
+        descKey = "folderBrowseListSize.desc",
+        labelKey = "folderBrowseListSize.label"
+    )
     private int folderBrowseListSize = 20;
 
-    @Setting
+    @Setting(
+        descKey = "folderAtoZShowLimit.desc",
+        labelKey = "folderAtoZShowLimit.label"
+    )
     private int folderAtoZShowLimit = 100;
 
-    @Setting
+    @Setting(
+        descKey = "useOldStyleItemLifecycleItemPane.desc",
+        labelKey = "useOldStyleItemLifecycleItemPane.label"
+    )
     private boolean useOldStyleItemLifecycleItemPane = false;
 
-    @Setting
+    @Setting(
+        descKey = "threadPublishing.desc",
+        labelKey = "threadPublishing.label"
+    )
     private boolean threadPublishing = false;
 
-    @Setting
+    @Setting(
+        descKey = "publishingFailureSender.desc",
+        labelKey = "publishingFailureSender.label"
+    )
     private String publishingFailureSender = "";
 
-    @Setting
+    @Setting(
+        descKey = "publishingFailureReceiver.desc",
+        labelKey = "publishingFailureReceiver.label"
+    )
     private String publishingFailureReceiver = "";
 
-    @Setting
+    @Setting(
+        descKey = "imageBrowserThumbnailMaxWidth.desc",
+        labelKey = "imageBrowserThumbnailMaxWidth.label"
+    )
     private int imageBrowserThumbnailMaxWidth = 50;
 
-    @Setting
+    @Setting(
+        descKey = "imageBrowserThumbnailMaxHeight.desc",
+        labelKey = "imageBrowserThumbnailMaxHeight.label"
+    )
     private int imageBrowserThumbnailMaxHeight = 50;
 
-    @Setting
+    @Setting(
+        descKey = "imageBrowserCaptionSize.desc",
+        labelKey = "imageBrowserCaptionSize.label"
+    )
     private int imageBrowserCaptionSize = 50;
 
-    @Setting
+    @Setting(
+        descKey = "imageBrowserDescriptionSize.desc",
+        labelKey = "imageBrowserDescriptionSize.label"
+    )
     private int imageBrowserDescriptionSize = 400;
 
-    @Setting
+    @Setting(
+        descKey = "imageBrowserTitleSize.desc",
+        labelKey = "imageBrowserTitleSize.label"
+    )
     private int imageBrowserTitleSize = 200;
 
-    @Setting
+    @Setting(
+        descKey = "imageCacheEnabled.desc",
+        labelKey = "imageCacheEnabled.label"
+    )
     private boolean imageCacheEnabled = true;
 
-    @Setting
+    @Setting(
+        descKey = "imageCachePrefetchEnabled.desc",
+        labelKey = "imageCachePrefetchEnabled.label"
+    )
     private boolean imageCachePrefetchEnabled = false;
 
-    @Setting
+    @Setting(
+        descKey = "imageCacheMaxSize.desc",
+        labelKey = "imageCacheMaxSize.label"
+    )
     private int imageCacheMaxSize = 100;
 
-    @Setting
+    @Setting(
+        descKey = "imageCacheMaxAge.desc",
+        labelKey = "imageCacheMaxAge.label"
+    )
     private int imageCacheMaxAge = 300;
 
-    @Setting
+    @Setting(
+        descKey = "attachPersonOrgaUnitsStep.desc",
+        labelKey = "attachPersonOrgaUnitsStep.label"
+    )
     private boolean attachPersonOrgaUnitsStep = true;
 
-    @Setting
+    @Setting(
+        descKey = "personOrgaUnitsStepSortKey.desc",
+        labelKey = "personOrgaUnitsStepSortKey.label"
+    )
     private int personOrgaUnitsStepSortKey = 20;
 
-    @Setting
+    @Setting(
+        descKey = "enableXmlCache.desc",
+        labelKey = "enableXmlCache.label"
+    )
     private boolean enableXmlCache = false;
 
-    @Setting
+    @Setting(
+        descKey = "xmlCacheSize.desc",
+        labelKey = "xmlCacheSize.label"
+    )
     private int xmlCacheSize = 2500;
 
-    @Setting
+    @Setting(
+        descKey = "xmlCacheAge.desc",
+        labelKey = "xmlCacheAge.label"
+    )
     private int xmlCacheAge = 60 * 60 * 24;
 
-    @Setting
+    @Setting(
+        descKey = "categoryAuthoringAddForm.desc",
+        labelKey = "categoryAuthoringAddForm.label"
+    )
     private String categoryAuthoringAddForm = ItemCategoryPicker.class.getName();
 
-    @Setting
+    @Setting(
+        descKey = "categoryAuthoringExtension.desc",
+        labelKey = "categoryAuthoringExtension.label"
+    )
     private String categoryAuthoringExtension = ItemCategoryExtension.class
         .getName();
 
-    @Setting
+    @Setting(
+        descKey = "categoryPickerAjaxExpandAll.desc",
+        labelKey = "categoryPickerAjaxExpandAll.label"
+    )
     private boolean categoryPickerAjaxExpandAll = false;
 
     /**
      * Max length of the description of a link (in database max length are 4000
      * characters)
      */
-    @Setting
+    @Setting(
+        descKey = "linkDescMaxLength.desc",
+        labelKey = "linkDescMaxLength.label"
+    )
     private int linkDescMaxLength = 400;
 
     public static CMSConfig getConfig() {

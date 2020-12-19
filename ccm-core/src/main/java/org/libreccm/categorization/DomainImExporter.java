@@ -23,6 +23,7 @@ import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
@@ -30,7 +31,7 @@ import javax.inject.Inject;
 
 /**
  * Exporter/Importer for {@link Domain} entities.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -39,10 +40,10 @@ public class DomainImExporter extends AbstractEntityImExporter<Domain> {
 
     @Inject
     private DomainRepository domainRepository;
-    
+
     @Override
-    protected Class<Domain> getEntityClass() {
-        
+    public Class<Domain> getEntityClass() {
+
         return Domain.class;
     }
 
@@ -54,10 +55,22 @@ public class DomainImExporter extends AbstractEntityImExporter<Domain> {
 
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
-        
+
         return Collections.emptySet();
     }
-    
-    
-    
+
+    @Override
+    protected Domain reloadEntity(final Domain entity) {
+        return domainRepository
+            .findById(Objects.requireNonNull(entity).getObjectId())
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "Domain entity %s was not found in the database.",
+                        Objects.toString(entity)
+                    )
+                )
+            );
+    }
+
 }

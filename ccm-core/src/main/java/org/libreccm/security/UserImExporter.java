@@ -23,6 +23,7 @@ import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
@@ -32,7 +33,7 @@ import javax.transaction.Transactional;
 
 /**
  * Exporter/Importer for users.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -41,19 +42,18 @@ public class UserImExporter extends AbstractEntityImExporter<User> {
 
     @Inject
     private EntityManager entityManager;
-    
+
     @Inject
     private UserRepository userRepository;
 
     @Override
-    protected Class<User> getEntityClass() {
+    public Class<User> getEntityClass() {
         return User.class;
     }
 
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     protected void saveImportedEntity(final User entity) {
-
         // Reset partyId.
         entity.setPartyId(0);
 //        userRepository.save(entity);
@@ -62,8 +62,21 @@ public class UserImExporter extends AbstractEntityImExporter<User> {
 
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
-
         return Collections.emptySet();
+    }
+
+    @Override
+    protected User reloadEntity(final User entity) {
+        return userRepository
+            .findById(Objects.requireNonNull(entity).getPartyId())
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "User entity %s was not found in database.",
+                        Objects.toString(entity)
+                    )
+                )
+            );
     }
 
 }

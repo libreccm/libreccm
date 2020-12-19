@@ -38,6 +38,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +60,7 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
 import javax.json.JsonString;
 import javax.json.JsonWriter;
+import javax.transaction.Transactional;
 
 /**
  * Central service for importing and exporting entities.
@@ -75,6 +77,23 @@ public class ImportExport {
     @Any
     private Instance<AbstractEntityImExporter<?>> imExporters;
 
+    public List<EntityImExporterTreeNode> getExportableEntityTypes() {
+        try {
+            final EntityImExporterTreeManager treeManager
+                = new EntityImExporterTreeManager();
+            final List<EntityImExporterTreeNode> tree = treeManager
+                .generateTree(
+                    imExporters
+                        .stream()
+                        .collect(Collectors.toList())
+                );
+
+            return tree;
+        } catch (DependencyException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+    }
+
     /**
      * Exports the provided entities. The export will be written to a to the
      * {@code exports} directory in the CCM files directory. If {@code split} is
@@ -89,9 +108,10 @@ public class ImportExport {
      *
      * @see CcmFilesConfiguration#dataPath
      */
-    public void exportEntities(final List<Exportable> entities,
-                               final String exportName) {
-
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void exportEntities(
+        final Collection<Exportable> entities, final String exportName
+    ) {
         final JsonObjectBuilder manifestBuilder = Json.createObjectBuilder();
         manifestBuilder.add("created",
                             LocalDateTime.now(ZoneId.of("UTC")).toString());
@@ -145,81 +165,10 @@ public class ImportExport {
 
         for (final Map.Entry<String, List<Exportable>> entry
                  : typeEntityMap.entrySet()) {
-
             createExportedEntities(exportName,
                                    entry.getKey(),
                                    entry.getValue());
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private JsonArrayBuilder createExportedEntities(
-        final String exportName,
-        final String type,
-        final List<Exportable> entities) {
-
-        final JsonArrayBuilder filesArrayBuilder = Json.createArrayBuilder();
-
-        final Class<? extends Exportable> clazz;
-        try {
-            clazz = (Class<? extends Exportable>) Class.forName(type);
-        } catch (ClassNotFoundException ex) {
-            throw new UnexpectedErrorException(ex);
-        }
-
-        final Instance<AbstractEntityImExporter<?>> instance = imExporters
-            .select(new ProcessesLiteral(clazz));
-
-        final AbstractEntityImExporter<?> imExporter;
-        if (instance.isUnsatisfied()) {
-            throw new UnexpectedErrorException(String.format(
-                "No EntityImExporter for entity type \"%s\" available.",
-                type));
-        } else if (instance.isAmbiguous()) {
-            throw new UnexpectedErrorException(String.format(
-                "Instance reference for EntityImExporter for entity "
-                    + "type \"%s\" is ambiguous.",
-                type));
-        } else {
-            imExporter = instance.get();
-        }
-
-        for (Exportable entity : entities) {
-
-            final String filename = String.format("%s.json", entity.getUuid());
-            final OutputStream outputStream;
-            try {
-                outputStream = ccmFiles.createOutputStream(String.format(
-                    "exports/%s/%s/%s",
-                    exportName,
-                    type,
-                    filename));
-                filesArrayBuilder.add(filename);
-            } catch (FileAccessException
-                     | InsufficientPermissionsException ex) {
-                throw new UnexpectedErrorException(ex);
-            }
-
-            final String exportedEntity;
-            try {
-                exportedEntity = imExporter.exportEntity(entity);
-            } catch (ExportException ex) {
-                throw new UnexpectedErrorException(ex);
-            }
-            try (final OutputStreamWriter writer = new OutputStreamWriter(
-                outputStream, StandardCharsets.UTF_8)) {
-
-                writer.write(exportedEntity);
-
-            } catch (IOException ex) {
-                throw new UnexpectedErrorException(ex);
-            }
-//            try (JsonWriter writer = Json.createWriter(outputStream)) {
-//                writer.writeObject(exportedEntity);
-//            }
-        }
-
-        return filesArrayBuilder;
     }
 
     /**
@@ -235,8 +184,8 @@ public class ImportExport {
      *
      * @see CcmFilesConfiguration#dataPath
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     public void importEntities(final String importName) {
-
         final String importsPath = String.format("imports/%s", importName);
 
         try {
@@ -253,15 +202,15 @@ public class ImportExport {
             throw new UnexpectedErrorException(ex);
         }
 
-        final List<AbstractEntityImExporter<?>> imExportersList
-                                                    = new ArrayList<>();
-        imExporters.forEach(imExporter -> imExportersList.add(imExporter));
-
         try {
             final EntityImExporterTreeManager treeManager
-                                                  = new EntityImExporterTreeManager();
+                = new EntityImExporterTreeManager();
             final List<EntityImExporterTreeNode> tree = treeManager
-                .generateTree(imExportersList);
+                .generateTree(
+                    imExporters
+                        .stream()
+                        .collect(Collectors.toList())
+                );
             final List<EntityImExporterTreeNode> orderedNodes = treeManager
                 .orderImExporters(tree);
 
@@ -332,15 +281,13 @@ public class ImportExport {
                                               type,
                                               fileName);
         try (final InputStream inputStream
-                                   = ccmFiles.createInputStream(filePath)) {
+            = ccmFiles.createInputStream(filePath)) {
 
             final String data = new BufferedReader(
                 new InputStreamReader(inputStream, StandardCharsets.UTF_8))
                 .lines()
                 .collect(Collectors.joining("\n"));
 
-//            final JsonReader reader = Json.createReader(inputStream);
-//            final JsonObject data = reader.readObject();
             imExporter.importEntity(data);
 
         } catch (IOException
@@ -372,6 +319,71 @@ public class ImportExport {
             .collect(Collectors.toList());
     }
 
+    @SuppressWarnings("unchecked")
+    private JsonArrayBuilder createExportedEntities(
+        final String exportName,
+        final String type,
+        final List<Exportable> entities) {
+
+        final Class<? extends Exportable> clazz;
+        try {
+            clazz = (Class<? extends Exportable>) Class.forName(type);
+        } catch (ClassNotFoundException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+
+        final Instance<AbstractEntityImExporter<?>> instance = imExporters
+            .select(new ProcessesLiteral(clazz));
+
+        final AbstractEntityImExporter<?> imExporter;
+        if (instance.isUnsatisfied()) {
+            throw new UnexpectedErrorException(String.format(
+                "No EntityImExporter for entity type \"%s\" available.",
+                type));
+        } else if (instance.isAmbiguous()) {
+            throw new UnexpectedErrorException(String.format(
+                "Instance reference for EntityImExporter for entity "
+                    + "type \"%s\" is ambiguous.",
+                type));
+        } else {
+            imExporter = instance.get();
+        }
+
+        final JsonArrayBuilder filesArrayBuilder = Json.createArrayBuilder();
+        for (Exportable entity : entities) {
+            final String filename = String.format("%s.json", entity.getUuid());
+            final OutputStream outputStream;
+            try {
+                outputStream = ccmFiles.createOutputStream(String.format(
+                    "exports/%s/%s/%s",
+                    exportName,
+                    type,
+                    filename));
+                filesArrayBuilder.add(filename);
+            } catch (FileAccessException
+                     | InsufficientPermissionsException ex) {
+                throw new UnexpectedErrorException(ex);
+            }
+
+            final String exportedEntity;
+            try {
+                exportedEntity = imExporter.exportEntity(entity);
+            } catch (ExportException ex) {
+                throw new UnexpectedErrorException(ex);
+            }
+            try (final OutputStreamWriter writer = new OutputStreamWriter(
+                outputStream, StandardCharsets.UTF_8)) {
+
+                writer.write(exportedEntity);
+
+            } catch (IOException ex) {
+                throw new UnexpectedErrorException(ex);
+            }
+        }
+
+        return filesArrayBuilder;
+    }
+
     private boolean isImportArchive(final String path) {
 
         final String manifestPath = String.format("imports/%s/ccm-export.json",
@@ -390,8 +402,9 @@ public class ImportExport {
 
     private ImportManifest createImportManifest(final String path) {
 
-        final String manifestPath = String.format("imports/%s/ccm-export.json",
-                                                  path);
+        final String manifestPath = String.format(
+            "imports/%s/ccm-export.json", path
+        );
 
         try (final InputStream inputStream = ccmFiles
             .createInputStream(manifestPath)) {
@@ -400,24 +413,33 @@ public class ImportExport {
             final JsonObject manifestJson = reader.readObject();
 
             if (!manifestJson.containsKey("created")) {
-                throw new IllegalArgumentException(String.format(
-                    "The manifest file \"%s\" is malformed. "
-                        + "Key \"created\" is missing.",
-                    manifestPath));
+                throw new IllegalArgumentException(
+                    String.format(
+                        "The manifest file \"%s\" is malformed. "
+                            + "Key \"created\" is missing.",
+                        manifestPath
+                    )
+                );
             }
 
             if (!manifestJson.containsKey("onServer")) {
-                throw new IllegalArgumentException(String.format(
-                    "The manifest file \"%s\" is malformed. "
-                        + "Key \"onServer\" is missing.",
-                    manifestPath));
+                throw new IllegalArgumentException(
+                    String.format(
+                        "The manifest file \"%s\" is malformed. "
+                            + "Key \"onServer\" is missing.",
+                        manifestPath
+                    )
+                );
             }
 
             if (!manifestJson.containsKey("types")) {
-                throw new IllegalArgumentException(String.format(
-                    "The manifest file \"%s\" is malformed. "
-                        + "Key \"types\" is missing.",
-                    manifestPath));
+                throw new IllegalArgumentException(
+                    String.format(
+                        "The manifest file \"%s\" is malformed. "
+                            + "Key \"types\" is missing.",
+                        manifestPath
+                    )
+                );
             }
 
             final LocalDateTime created = LocalDateTime
@@ -429,14 +451,16 @@ public class ImportExport {
 //                .collect(Collectors.toList());
             final JsonArray typesArray = manifestJson.getJsonArray("types");
             final List<String> types = new ArrayList<>();
-            for(int i = 0; i < typesArray.size(); i++) {
+            for (int i = 0; i < typesArray.size(); i++) {
                 types.add(typesArray.getString(i));
             }
 
             return new ImportManifest(
+                path,
                 Date.from(created.atZone(ZoneId.of("UTC")).toInstant()),
                 onServer,
-                types);
+                types
+            );
         } catch (IOException
                  | FileAccessException
                  | FileDoesNotExistException

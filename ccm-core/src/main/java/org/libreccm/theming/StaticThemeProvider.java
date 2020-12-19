@@ -81,6 +81,11 @@ public class StaticThemeProvider implements ThemeProvider {
     private ThemeFileInfoUtil themeFileInfoUtil;
 
     @Override
+    public String getName() {
+        return "StaticThemeProvider";
+    }
+    
+    @Override
     public List<ThemeInfo> getThemes() {
 
         LOGGER.debug("Retrieving static themes...");

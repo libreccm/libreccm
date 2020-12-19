@@ -23,47 +23,69 @@ import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 
 /**
  * Exporter/Importer for {@link TaskAssignment}s.
- * 
+ *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 @Processes(TaskAssignment.class)
-public class TaskAssignmentImExporter 
+public class TaskAssignmentImExporter
     extends AbstractEntityImExporter<TaskAssignment> {
 
     @Inject
     private EntityManager entityManager;
 
     @Override
-    protected Class<TaskAssignment> getEntityClass() {
-
+    public Class<TaskAssignment> getEntityClass() {
         return TaskAssignment.class;
     }
 
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     protected void saveImportedEntity(final TaskAssignment entity) {
-        
         entityManager.persist(entity);
-        
+
     }
 
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
-        
+
         final Set<Class<? extends Exportable>> classes = new HashSet<>();
         classes.add(AssignableTask.class);
-        
+
         return classes;
     }
+
+    @Override
+    protected TaskAssignment reloadEntity(final TaskAssignment entity) {
+        try {
+            return entityManager
+                .createNamedQuery(
+                    "TaskAssignment.findById", TaskAssignment.class
+                )
+                .setParameter(
+                    "assignmentId",
+                    Objects.requireNonNull(entity).getTaskAssignmentId()
+                ).getSingleResult();
+        } catch (NoResultException ex) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "TaskAssignment entity %s not found in database.",
+                    Objects.toString(entity)
+                )
+            );
+        }
+    }
+
 }

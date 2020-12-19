@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
+
+        <!--        <ui:param name="activePage" value="usersgroupsroles" />
+                <ui:param name="title" value="#{AdminMessages['usersgroupsroles.label']}" />
+        
+                <ui:define name="breadcrumb">
+                    <li class="breadcrumb-item active">
+        #{AdminMessages['usersgroupsroles.label']}
+    </li>
+</ui:define>-->
+
+        <ui:define name="main">
+            <div class="container-fluid mx-1">
+
+                <div class="row">
+                    <nav class="col-md-2 list-group">
+                        <a class="list-group-item list-group-item-action #{activePanel == 'overview' ? 'active' : ''}" 
+                           href="#{mvc.uri('UsersGroupsRolesController#getOverview')}">
+                            #{AdminMessages['usersgroupsroles.overview.label']}
+                        </a>
+                        <a class="list-group-item list-group-item-action #{activePanel == 'users' ? 'active' : ''}" 
+                           href="#{mvc.uri('UsersController#getUsers')}">
+                            #{AdminMessages['usersgroupsroles.users.label']}
+                        </a>
+                        <a class="list-group-item list-group-item-action #{activePanel == 'groups' ? 'active' : ''}" 
+                           href="#{mvc.uri('GroupsController#getGroups')}">
+                            #{AdminMessages['usersgroupsroles.groups.label']}
+                        </a>
+                        <a class="list-group-item list-group-item-action #{activePanel == 'roles' ? 'active' : ''}" 
+                           href="#{mvc.uri('RolesController#getRoles')}">
+                            #{AdminMessages['usersgroupsroles.roles.label']}
+                        </a>
+                    </nav>
+                    <div class="col-md-10">
+                        <h1>#{title}</h1>
+                        <ui:insert name="panel"></ui:insert>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

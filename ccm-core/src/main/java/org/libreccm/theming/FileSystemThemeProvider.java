@@ -18,8 +18,11 @@
  */
 package org.libreccm.theming;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.files.CcmFiles;
+import org.libreccm.files.CcmFilesNotConfiguredException;
 import org.libreccm.files.DirectoryNotEmptyException;
 import org.libreccm.files.FileAccessException;
 import org.libreccm.files.FileAlreadyExistsException;
@@ -53,6 +56,10 @@ import javax.inject.Inject;
 public class FileSystemThemeProvider implements ThemeProvider {
 
     private static final long serialVersionUID = 1L;
+    
+    private static final Logger LOGGER = LogManager.getLogger(
+        FileSystemThemeProvider.class
+    );
 
     private static final String BASE_PATH = "/themes";
     private static final String DRAFT_THEMES_PATH = BASE_PATH + "/draft";
@@ -71,10 +78,14 @@ public class FileSystemThemeProvider implements ThemeProvider {
     private ThemeFileInfoUtil themeFileInfoUtil;
 
     @Override
+    public String getName() {
+        return "FileSystemThemeProvider";
+    }
+    
+    @Override
     public List<ThemeInfo> getThemes() {
 
         try {
-
             if (!ccmFiles.isDirectory(BASE_PATH)
                     || !ccmFiles.isDirectory(DRAFT_THEMES_PATH)) {
 
@@ -92,8 +103,10 @@ public class FileSystemThemeProvider implements ThemeProvider {
         } catch (FileAccessException
                      | FileDoesNotExistException
                      | InsufficientPermissionsException ex) {
-
             throw new UnexpectedErrorException(ex);
+        } catch(CcmFilesNotConfiguredException ex) {
+            LOGGER.warn(ex);
+            return Collections.emptyList();
         }
     }
 
@@ -119,6 +132,9 @@ public class FileSystemThemeProvider implements ThemeProvider {
                      | InsufficientPermissionsException ex) {
 
             throw new UnexpectedErrorException(ex);
+        } catch(CcmFilesNotConfiguredException ex) {
+            LOGGER.warn(ex);
+            return Collections.emptyList();
         }
     }
 

@@ -23,6 +23,7 @@ import org.libreccm.imexport.Exportable;
 import org.libreccm.imexport.Processes;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
@@ -31,7 +32,7 @@ import javax.transaction.Transactional;
 
 /**
  * Exporter/Importer for {@link AssignableTask}s.
- * 
+ *
  * @author <a href="mailto:tosmers@uni-bremen.de">Tobias Osmers</a>
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  *
@@ -45,13 +46,12 @@ public class AssignableTaskImExporter
     private AssignableTaskRepository assignableTaskRepository;
 
     @Override
-    protected Class<AssignableTask> getEntityClass() {
+    public Class<AssignableTask> getEntityClass() {
         return AssignableTask.class;
     }
 
     @Override
     protected Set<Class<? extends Exportable>> getRequiredEntities() {
-
         final Set<Class<? extends Exportable>> entities = new HashSet<>();
         entities.add(Workflow.class);
 
@@ -61,8 +61,21 @@ public class AssignableTaskImExporter
     @Override
     @Transactional(Transactional.TxType.REQUIRED)
     protected void saveImportedEntity(final AssignableTask entity) {
-
         assignableTaskRepository.save(entity);
+    }
+
+    @Override
+    protected AssignableTask reloadEntity(final AssignableTask entity) {
+        return assignableTaskRepository
+            .findById(Objects.requireNonNull(entity).getTaskId())
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    String.format(
+                        "AssignableTask entity %s not found in database.",
+                        Objects.toString(entity)
+                    )
+                )
+            );
     }
 
 }

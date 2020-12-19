@@ -37,6 +37,12 @@ import javax.enterprise.context.RequestScoped;
 public interface ThemeProvider extends Serializable {
 
     /**
+     * A human readable name for the {@code ThemeProvider} implementation.
+     * @return 
+     */
+    String getName();
+    
+    /**
      * Provides a list of all themes provided by this theme provider. The list
      * should be ordered by the name of the theme.
      *
