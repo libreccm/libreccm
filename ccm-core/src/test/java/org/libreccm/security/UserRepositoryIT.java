@@ -35,8 +35,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.AfterClass;
 
-import static org.junit.Assert.*;
-
 import static org.libreccm.testutils.DependenciesHelpers.*;
 
 import org.jboss.arquillian.persistence.CleanupUsingScript;
@@ -54,6 +52,7 @@ import javax.persistence.PersistenceContext;
 
 import org.jboss.arquillian.persistence.TestExecutionPhase;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;

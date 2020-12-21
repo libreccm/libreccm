@@ -18,7 +18,8 @@
  */
 package org.libreccm.core;
 
-import static org.hamcrest.CoreMatchers.*;
+
+import static org.libreccm.testutils.DependenciesHelpers.getModuleDependencies;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.ShouldThrowException;
@@ -46,15 +47,17 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import static org.junit.Assert.*;
-
-import static org.libreccm.testutils.DependenciesHelpers.*;
-
 import org.jboss.arquillian.persistence.CleanupUsingScript;
 
 import java.util.Optional;
 
 import org.jboss.arquillian.persistence.TestExecutionPhase;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 /**
  * Tests for the {@link CcmObjectRepository} which is the foundation for many
@@ -111,6 +114,7 @@ public class CcmObjectRepositoryIT {
             )
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsWebInfResource("test-web.xml", "web.xml")
+            .addAsResource(EmptyAsset.INSTANCE, "META-INF/beans.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
 
