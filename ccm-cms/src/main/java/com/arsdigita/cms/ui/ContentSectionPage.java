@@ -50,7 +50,7 @@ import com.arsdigita.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.arsdigita.cms.CMSConfig;
+import org.librecms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.CmsConstants;

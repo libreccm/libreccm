@@ -69,7 +69,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.Arrays;
 import java.util.List;
 
-import org.arsdigita.cms.CMSConfig;
+import org.librecms.CMSConfig;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.cdi.utils.CdiUtil;

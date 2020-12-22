@@ -85,7 +85,7 @@ import org.librecms.contentsection.Folder;
 
 import java.util.List;
 
-import org.arsdigita.cms.CMSConfig;
+import org.librecms.CMSConfig;
 import org.libreccm.categorization.CategoryManager;
 import org.libreccm.core.CcmObject;
 import org.libreccm.core.UnexpectedErrorException;
