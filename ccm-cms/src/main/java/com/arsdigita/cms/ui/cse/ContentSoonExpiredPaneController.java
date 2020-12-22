@@ -20,7 +20,7 @@ package com.arsdigita.cms.ui.cse;
 
 import com.arsdigita.bebop.table.RowData;
 
-import org.arsdigita.cms.CMSConfig;
+import org.librecms.CMSConfig;
 import org.libreccm.auditing.CcmRevision;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.l10n.GlobalizationHelper;

@@ -20,7 +20,7 @@ import com.arsdigita.bebop.form.TextArea;
 import com.arsdigita.cms.ui.CMSDHTMLEditor;
 import com.arsdigita.globalization.GlobalizedMessage;
 
-import org.arsdigita.cms.CMSConfig;
+import org.librecms.CMSConfig;
 import org.libreccm.l10n.LocalizedString;
 import org.librecms.CmsConstants;
 

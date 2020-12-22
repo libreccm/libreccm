@@ -34,7 +34,7 @@ import com.arsdigita.cms.CMS;
 import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.util.Classes;
 
-import org.arsdigita.cms.CMSConfig;
+import org.librecms.CMSConfig;
 import org.libreccm.core.UnexpectedErrorException;
 import org.librecms.CmsConstants;
 import org.librecms.ui.authoring.ContentItemAuthoringStep;

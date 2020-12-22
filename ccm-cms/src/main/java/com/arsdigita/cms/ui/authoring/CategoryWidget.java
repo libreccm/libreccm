@@ -32,7 +32,7 @@ import org.libreccm.categorization.Category;
 import com.arsdigita.cms.CMS;
 import com.arsdigita.kernel.KernelConfig;
 
-import org.arsdigita.cms.CMSConfig;
+import org.librecms.CMSConfig;
 import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.contentsection.ContentSection;

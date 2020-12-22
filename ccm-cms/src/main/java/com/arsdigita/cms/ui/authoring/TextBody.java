@@ -33,7 +33,7 @@ import com.arsdigita.cms.ui.SecurityPropertyEditor;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.toolbox.ui.DomainObjectPropertySheet;
 
-import org.arsdigita.cms.CMSConfig;
+import org.librecms.CMSConfig;
 import org.libreccm.l10n.LocalizedString;
 import org.librecms.CmsConstants;
 
