@@ -52,7 +52,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
 /**
@@ -113,6 +113,7 @@ public class FolderManagerIT {
                            "META-INF/persistence.xml")
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsWebInfResource("test-web.xml", "web.xml")
+             .addAsResource(EmptyAsset.INSTANCE, "META-INF/beans.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
 

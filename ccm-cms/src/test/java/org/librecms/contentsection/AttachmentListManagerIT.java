@@ -53,7 +53,7 @@ import org.jboss.arquillian.persistence.TestExecutionPhase;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Tests for the {@link AttachmentListManager}.
@@ -120,6 +120,7 @@ public class AttachmentListManagerIT {
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
             .addAsWebInfResource("test-web.xml", "web.xml")
+            .addAsResource(EmptyAsset.INSTANCE, "META-INF/beans.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
 
