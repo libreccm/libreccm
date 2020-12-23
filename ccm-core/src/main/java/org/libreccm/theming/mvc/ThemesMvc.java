@@ -96,7 +96,7 @@ public class ThemesMvc {
 
         return String.format(
             "@themes/%s/%s/%s",
-            theme,
+            themeInfo.getName(),
             Objects.toString(themeVersion),
             themeTemplate.getPath()
         );

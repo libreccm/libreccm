@@ -91,8 +91,7 @@ public class ThemeManifest implements Serializable {
     @XmlElement(name = "default-template", namespace = THEMES_XML_NS)
     private String defaultTemplate;
 
-    @XmlElementWrapper(name = "mvcTemplates", namespace = THEMES_XML_NS)
-    @XmlElement(name = "template", namespace = THEME_MANIFEST_XML)
+    @XmlElement(name = "mvc-templates", namespace = THEMES_XML_NS)
     private Map<String, Map<String, ThemeTemplate>> mvcTemplates;
 
     public ThemeManifest() {
