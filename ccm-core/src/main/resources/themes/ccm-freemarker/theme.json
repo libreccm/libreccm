@@ -1,6 +1,84 @@
 {
     "name": "ccm-freemarker",
     "type": "freemarker",
-    
-    "default-template": "category-page.html.ftl"
+
+    "default-template": "category-page.html.ftl",
+
+    "mvc-templates": {
+        "applications": {
+            "login-form": {
+                "description": {
+                    "values": {
+                        "value": [
+                            {
+                                "lang": "en",
+                                "value": "Login Form"
+                            }
+                        ]
+                    }
+                },
+                "name": "Login Form",
+                "path": "login/login-form.html.ftl",
+                "title": {
+                    "values": {
+                        "value": [
+                            {
+                                "lang": "en",
+                                "value": "Login Form"
+                            }
+                        ]
+                    }
+                }
+            },
+            "login-recover-password": {
+                "description": {
+                    "values": {
+                        "value": [
+                            {
+                                "lang": "en",
+                                "value": "Recover lost passwords"
+                            }
+                        ]
+                    }
+                },
+                "name": "login-recover-password",
+                "path": "login/login-recover-password.html.ftl",
+                "title": {
+                    "values": {
+                        "value": [
+                            {
+                                "lang": "en",
+                                "value": "Recover password"
+                            }
+                        ]
+                    }
+                }
+            },
+            "login-password-recovered": {
+                "description": {
+                    "values": {
+                        "value": [
+                            {
+                                "lang": "en",
+                                "value": "Password recovered"
+                            }
+                        ]
+                    }
+                },
+                "name": "login-password-recovered",
+                "path": "login/login-password-recovered.html.ftl",
+                "title": {
+                    "values": {
+                        "value": [
+                            {
+                                "lang": "en",
+                                "value": "Password recovered"
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    }
 }
+

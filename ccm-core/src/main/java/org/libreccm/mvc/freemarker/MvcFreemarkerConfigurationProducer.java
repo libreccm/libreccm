@@ -29,6 +29,7 @@ import org.eclipse.krazo.ext.freemarker.DefaultConfigurationProducer;
 import org.libreccm.theming.Themes;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Specializes;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
@@ -41,6 +42,8 @@ import javax.ws.rs.Produces;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ApplicationScoped
+@Alternative
+@Specializes
 public class MvcFreemarkerConfigurationProducer 
     extends DefaultConfigurationProducer {
     
@@ -52,6 +55,7 @@ public class MvcFreemarkerConfigurationProducer
     
     @Produces
     @ViewEngineConfig
+    @Alternative
     @Specializes
     @Override
     public Configuration getConfiguration() {

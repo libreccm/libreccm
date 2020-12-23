@@ -60,7 +60,7 @@ public class LoginMessages extends AbstractMap<String, String>{
     @PostConstruct
     private void init() {
         messages = ResourceBundle.getBundle(
-            LoginConstants.LOGIN_BUNDLE,
+            LoginConstants.LOGIN_UI_BUNDLE,
             globalizationHelper.getNegotiatedLocale()
         );
     }

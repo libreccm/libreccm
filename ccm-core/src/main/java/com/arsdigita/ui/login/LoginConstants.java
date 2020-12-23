@@ -30,6 +30,9 @@ public interface LoginConstants {
     
     public static final String LOGIN_BUNDLE
                                = "com.arsdigita.ui.login.LoginResources";
+    
+    public static final String LOGIN_UI_BUNDLE
+                               = "org.libreccm.ui.LoginBundle";
 
     public static final GlobalizedMessage SUBMIT = LoginHelper.getMessage(
         "login.submit");
