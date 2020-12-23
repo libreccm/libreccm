@@ -19,7 +19,6 @@
 package org.libreccm.shortcuts;
 
 import static org.libreccm.testutils.DependenciesHelpers.getCcmCoreDependencies;
-import static org.libreccm.testutils.DependenciesHelpers.getModuleDependencies;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -52,7 +51,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  *
@@ -107,22 +106,23 @@ public class ShortcutRepositoryIT {
                 "LibreCCM-org.libreccm.shortcuts.ShortcutRepositoryTest-web.war"
             )
             .addPackage(org.libreccm.auditing.CcmRevision.class.getPackage())
-            .addPackage(org.libreccm.categorization.Categorization.class
-                .getPackage())
-            .addPackage(org.libreccm.configuration.Configuration.class
-                .getPackage())
+            .addPackage(
+                org.libreccm.categorization.Categorization.class.getPackage()
+            )
+            .addPackage(
+                org.libreccm.configuration.Configuration.class.getPackage()
+            )
             .addPackage(org.libreccm.core.CcmCore.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class
-                .getPackage())
+            .addPackage(
+                org.libreccm.jpa.EntityManagerProducer.class.getPackage()
+            )
+            .addPackage(org.libreccm.l10n.LocalizedString.class.getPackage())
             .addPackage(org.libreccm.security.Permission.class.getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
             .addClass(org.libreccm.imexport.Exportable.class)
             .addClass(org.libreccm.shortcuts.Shortcut.class)
             .addClass(org.libreccm.shortcuts.ShortcutRepository.class)
-            .addAsLibraries(getModuleDependencies())
             .addAsLibraries(getCcmCoreDependencies())
             .addAsResource(
                 "test-persistence.xml", "META-INF/persistence.xml"
