@@ -19,6 +19,7 @@
 package org.librecms.contentsection;
 
 import static org.libreccm.testutils.DependenciesHelpers.getCcmCoreDependencies;
+import static org.libreccm.testutils.DependenciesHelpers.getModuleDependencies;
 
 import org.apache.shiro.subject.ExecutionException;
 import org.apache.shiro.subject.Subject;
@@ -61,7 +62,8 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 
 /**
  * Tests for the {@link AssetRepository}.
@@ -117,16 +119,20 @@ public class AssetRepositoryIT {
     public static WebArchive createDeployment() {
         return ShrinkWrap
             .create(WebArchive.class,
-                    "LibreCCM-org.librecms.contentsection.AssetRepositoryTest.war")
+                    "LibreCCM-org.librecms.contentsection.AssetRepositoryTest.war"
+            )
             .addPackages(true, "com.arsdigita", "org.libreccm", "org.librecms")
             .addAsLibraries(getCcmCoreDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource(
                 "configs/org/librecms/contentsection/ContentItemManagerTest/log4j2.xml",
-                "log4j2.xml")
-            .addAsResource("test-persistence.xml",
-                           "META-INF/persistence.xml")
+                "log4j2.xml"
+            )
+            .addAsResource(
+                "test-persistence.xml", "META-INF/persistence.xml"
+            )
             .addAsWebInfResource("test-web.xml", "web.xml")
+            .addAsResource(EmptyAsset.INSTANCE, "META-INF/beans.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
 

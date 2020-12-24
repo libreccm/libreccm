@@ -839,13 +839,13 @@
             <dependency>
                 <groupId>org.wildfly.arquillian</groupId>
                 <artifactId>wildfly-arquillian-container-managed</artifactId>
-                <version>2.2.0.Final</version>
+                <version>3.0.1.Final</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.wildfly.arquillian</groupId>
                 <artifactId>wildfly-arquillian-container-remote</artifactId>
-                <version>2.2.0.Final</version>
+                <version>3.0.1.Final</version>
                 <scope>test</scope>
             </dependency>
 
@@ -864,7 +864,7 @@
             <dependency>
                 <groupId>org.jboss.logmanager</groupId>
                 <artifactId>jboss-logmanager</artifactId>
-                <version>2.1.16.Final</version>
+                <version>2.1.17.Final</version>
                 <scope>test</scope>
             </dependency>
             

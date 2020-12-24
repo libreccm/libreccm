@@ -41,7 +41,7 @@ import org.libreccm.categorization.Domain;
 import com.arsdigita.xml.Element;
 import com.arsdigita.xml.XML;
 
-import org.arsdigita.cms.CMSConfig;
+import org.librecms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.GlobalizationHelper;
 

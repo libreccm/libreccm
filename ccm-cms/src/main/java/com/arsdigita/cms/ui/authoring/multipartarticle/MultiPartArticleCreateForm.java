@@ -38,7 +38,7 @@ import com.arsdigita.globalization.GlobalizedMessage;
 
 import java.util.Date;
 
-import org.arsdigita.cms.CMSConfig;
+import org.librecms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItemRepository;

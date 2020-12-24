@@ -21,7 +21,7 @@ package com.arsdigita.cms.ui.lifecycle;
 import com.arsdigita.bebop.table.TableModel;
 import com.arsdigita.globalization.GlobalizedMessage;
 
-import org.arsdigita.cms.CMSConfig;
+import org.librecms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.CmsConstants;

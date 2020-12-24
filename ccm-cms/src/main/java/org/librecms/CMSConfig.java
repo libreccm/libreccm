@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.arsdigita.cms;
+package org.librecms;
 
 import com.arsdigita.bebop.form.DHTMLEditor;
 import com.arsdigita.cms.ui.authoring.ItemCategoryExtension;

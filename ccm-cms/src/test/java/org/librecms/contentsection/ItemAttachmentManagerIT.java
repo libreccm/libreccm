@@ -51,8 +51,7 @@ import org.jboss.arquillian.persistence.TestExecutionPhase;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Tests for the {@link ItemAttachmentManager}.
@@ -118,7 +117,7 @@ public class ItemAttachmentManagerIT {
         return ShrinkWrap
             .create(WebArchive.class,
                     "LibreCCM-org.librecms.assets.AssetManagerTest.war")
-           .addPackages(true, "com.arsdigita", "org.libreccm", "org.librecms")
+            .addPackages(true, "com.arsdigita", "org.libreccm", "org.librecms")
             .addAsLibraries(getCcmCoreDependencies())
             .addAsResource("configs/shiro.ini", "shiro.ini")
             .addAsResource(
@@ -127,6 +126,7 @@ public class ItemAttachmentManagerIT {
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
             .addAsWebInfResource("test-web.xml", "web.xml")
+            .addAsResource(EmptyAsset.INSTANCE, "META-INF/beans.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
 

@@ -60,8 +60,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Tests for the {@link AssetManager}.
@@ -127,9 +126,11 @@ public class AssetManagerIT {
             .addAsResource(
                 "configs/org/librecms/contentsection/ContentItemManagerTest/log4j2.xml",
                 "log4j2.xml")
-            .addAsResource("test-persistence.xml",
-                           "META-INF/persistence.xml")
+            .addAsResource(
+                "test-persistence.xml", "META-INF/persistence.xml"
+            )
             .addAsWebInfResource("test-web.xml", "web.xml")
+            .addAsResource(EmptyAsset.INSTANCE, "META-INF/beans.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
 
@@ -167,7 +168,7 @@ public class AssetManagerIT {
         "datasets/org/librecms/contentsection/AssetManagerTest/data.xml")
     @ShouldMatchDataSet(
         value
-            = "datasets/org/librecms/contentsection/AssetManagerTest/after-share.xml",
+        = "datasets/org/librecms/contentsection/AssetManagerTest/after-share.xml",
         excludeColumns = {"asset_id",
                           "categorization_id",
                           "id",

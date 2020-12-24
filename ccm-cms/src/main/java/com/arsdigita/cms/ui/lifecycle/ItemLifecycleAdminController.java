@@ -22,7 +22,7 @@ import com.arsdigita.cms.ui.ContentItemPage;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.arsdigita.cms.CMSConfig;
+import org.librecms.CMSConfig;
 import org.libreccm.categorization.Categorization;
 import org.libreccm.categorization.Category;
 import org.libreccm.configuration.ConfigurationManager;
