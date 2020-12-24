@@ -66,7 +66,9 @@ class ThemesTemplateLoader implements TemplateLoader {
      */
     @Override
     public Object findTemplateSource(final String path) throws IOException {
-        if (path.startsWith("@themes") || path.startsWith("/@themes")) {
+        if (path.startsWith("@themes") 
+            || path.startsWith("/@themes") 
+            || path.startsWith("WEB-INF/views/@themes")) {
             final String[] tokens;
             if (path.startsWith("/")) {
                 tokens = path.substring(1).split("/");

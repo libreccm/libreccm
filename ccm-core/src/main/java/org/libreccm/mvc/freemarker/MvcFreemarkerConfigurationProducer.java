@@ -28,12 +28,11 @@ import org.eclipse.krazo.engine.ViewEngineConfig;
 import org.eclipse.krazo.ext.freemarker.DefaultConfigurationProducer;
 import org.libreccm.theming.Themes;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Alternative;
+import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Specializes;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
-import javax.ws.rs.Produces;
+
 
 /**
  * Extends the default configuration for Freemarker of Eclipse Krazo to 
@@ -41,9 +40,10 @@ import javax.ws.rs.Produces;
  * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@ApplicationScoped
-@Alternative
-@Specializes
+//@ApplicationScoped
+//@Alternative
+//@Specializes
+//@Priority(3000)
 public class MvcFreemarkerConfigurationProducer 
     extends DefaultConfigurationProducer {
     
@@ -55,7 +55,7 @@ public class MvcFreemarkerConfigurationProducer
     
     @Produces
     @ViewEngineConfig
-    @Alternative
+//    @Alternative
     @Specializes
     @Override
     public Configuration getConfiguration() {
