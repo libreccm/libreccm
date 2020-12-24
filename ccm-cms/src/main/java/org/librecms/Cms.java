@@ -96,7 +96,7 @@ import java.util.Properties;
         )
     },
     configurations = {
-        org.arsdigita.cms.CMSConfig.class
+        org.librecms.CMSConfig.class
     },
     pageModelComponentModels = {
         @PageModelComponentModel(

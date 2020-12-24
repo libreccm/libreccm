@@ -36,7 +36,7 @@ import com.arsdigita.cms.ui.authoring.SelectedLanguageUtil;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.kernel.KernelConfig;
 
-import org.arsdigita.cms.CMSConfig;
+import org.librecms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItemRepository;

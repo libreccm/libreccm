@@ -41,6 +41,7 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -50,8 +51,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.libreccm.security.Shiro;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  *
@@ -111,13 +114,16 @@ public class ShortcutManagerIT {
             .addPackage(org.libreccm.categorization.Categorization.class
                 .getPackage())
             .addPackage(org.libreccm.cdi.utils.CdiUtil.class.getPackage())
-            .addPackage(org.libreccm.configuration.Configuration.class
-                .getPackage())
+            .addPackage(
+                org.libreccm.configuration.Configuration.class.getPackage()
+            )
             .addPackage(org.libreccm.core.CcmCore.class.getPackage())
-            .addPackage(org.libreccm.jpa.EntityManagerProducer.class
-                .getPackage())
-            .addPackage(org.libreccm.l10n.LocalizedString.class
-                .getPackage())
+            .addPackage(
+                org.libreccm.jpa.EntityManagerProducer.class.getPackage()
+            )
+            .addPackage(
+                org.libreccm.l10n.LocalizedString.class.getPackage()
+            )
             .addPackage(org.libreccm.security.Permission.class.getPackage())
             .addPackage(org.libreccm.web.CcmApplication.class.getPackage())
             .addPackage(org.libreccm.workflow.Workflow.class.getPackage())
@@ -132,6 +138,7 @@ public class ShortcutManagerIT {
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
             .addAsWebInfResource("test-web.xml", "web.xml")
+            .addAsResource(EmptyAsset.INSTANCE, "META-INF/beans.xml")
             .addAsResource("test-beans.xml", "META-INF/beans.xml");
     }
 

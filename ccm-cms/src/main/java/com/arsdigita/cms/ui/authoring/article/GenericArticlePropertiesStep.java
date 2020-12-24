@@ -31,7 +31,7 @@ import com.arsdigita.cms.ui.authoring.SimpleEditStep;
 import com.arsdigita.cms.ui.workflow.WorkflowLockedComponentAccess;
 import com.arsdigita.globalization.GlobalizedMessage;
 
-import org.arsdigita.cms.CMSConfig;
+import org.librecms.CMSConfig;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentItem;
 

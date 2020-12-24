@@ -63,7 +63,7 @@ import org.librecms.lifecycle.LifecycleDefinitionRepository;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Tests for the {@link ContentSectionManager}.
@@ -141,6 +141,7 @@ public class ContentSectionManagerIT {
             .addAsResource("test-persistence.xml",
                            "META-INF/persistence.xml")
             .addAsWebInfResource("test-web.xml", "WEB-INF/web.xml")
+            .addAsResource(EmptyAsset.INSTANCE, "META-INF/beans.xml")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "WEB-INF/beans.xml");
     }
 

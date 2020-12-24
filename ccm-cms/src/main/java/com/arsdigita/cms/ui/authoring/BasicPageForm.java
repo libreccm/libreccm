@@ -39,7 +39,7 @@ import com.arsdigita.cms.ItemSelectionModel;
 import com.arsdigita.globalization.GlobalizedMessage;
 import com.arsdigita.util.Assert;
 
-import org.arsdigita.cms.CMSConfig;
+import org.librecms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.workflow.Workflow;
 import org.librecms.CmsConstants;

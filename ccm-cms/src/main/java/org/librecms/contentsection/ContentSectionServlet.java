@@ -48,7 +48,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.arsdigita.cms.CMSConfig;
+import org.librecms.CMSConfig;
 import org.libreccm.cdi.utils.CdiUtil;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.PermissionChecker;

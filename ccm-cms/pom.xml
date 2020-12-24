@@ -79,12 +79,12 @@
         <dependency>
             <groupId>org.eclipse.krazo</groupId>
             <artifactId>krazo-core</artifactId>
-            <scope>provided</scope>
+            <!--<scope>provided</scope>-->
         </dependency>
         <dependency>
             <groupId>org.eclipse.krazo.ext</groupId>
             <artifactId>krazo-freemarker</artifactId>
-            <scope>provided</scope>
+            <!--<scope>provided</scope>-->
         </dependency>
         
         <dependency>
@@ -443,6 +443,7 @@
                                 </goals>
                                 <phase>pre-integration-test</phase>
                                 <configuration>
+                                    <javaOpts>-Xms64m -Xmx2048M -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=2048m</javaOpts>
                                     <stdout>System.out</stdout>
                                 </configuration>
                             </execution>
