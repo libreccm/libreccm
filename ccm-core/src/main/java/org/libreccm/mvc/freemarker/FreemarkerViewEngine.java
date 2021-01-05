@@ -19,16 +19,27 @@
 package org.libreccm.mvc.freemarker;
 
 import freemarker.template.Configuration;
+import freemarker.template.SimpleNumber;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import freemarker.template.TemplateMethodModelEx;
+import freemarker.template.TemplateModelException;
+import freemarker.template.TemplateScalarModel;
 import org.eclipse.krazo.engine.ViewEngineBase;
 import org.eclipse.krazo.engine.ViewEngineConfig;
+import org.libreccm.theming.ThemeInfo;
+import org.libreccm.theming.ThemeProvider;
+import org.libreccm.theming.freemarker.FreemarkerThemeProcessor;
+import org.libreccm.theming.utils.L10NUtils;
+import org.libreccm.theming.utils.SettingsUtils;
+import org.libreccm.theming.utils.TextUtils;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -60,9 +71,21 @@ public class FreemarkerViewEngine extends ViewEngineBase {
     @Inject
     @ViewEngineConfig
     private Configuration configuration;
-    
+
     @Inject
     private MvcContext mvc;
+
+    @Inject
+    private L10NUtils l10nUtils;
+
+    @Inject
+    private SettingsUtils settingsUtils;
+
+    @Inject
+    private TextUtils textUtils;
+
+    @Inject
+    private ThemeTemplateUtil themeTemplateUtil;
 
     @Override
     public boolean supports(String view) {
@@ -85,6 +108,23 @@ public class FreemarkerViewEngine extends ViewEngineBase {
             final Map<String, Object> model = new HashMap<>();
             model.put("mvc", mvc);
             model.put("request", context.getRequest(HttpServletRequest.class));
+
+            final Optional<TemplateInfo> templateInfo = themeTemplateUtil
+                .getTemplateInfo(context.getView());
+            final ThemeProvider themeProvider = themeTemplateUtil
+                .findThemeProvider(templateInfo.get().getThemeInfo());
+            if (templateInfo.isPresent()) {
+                final ThemeInfo themeInfo = templateInfo.get().getThemeInfo();
+                model.put("getSetting",
+                          new GetSettingMethod(themeInfo, themeProvider)
+                );
+                model.put("localize",
+                          new LocalizeMethod(themeInfo, themeProvider)
+                );
+            }
+            model.put("truncateText", new TruncateTextMethod());
+            
+            
 
             final Map<String, Object> namedBeans = beanManager
                 .getBeans(Object.class)
@@ -143,6 +183,114 @@ public class FreemarkerViewEngine extends ViewEngineBase {
 
         public Object getBeanInstance() {
             return beanInstance;
+        }
+
+    }
+
+    private class GetSettingMethod implements TemplateMethodModelEx {
+
+        private final ThemeInfo fromTheme;
+
+        private final ThemeProvider themeProvider;
+
+        public GetSettingMethod(final ThemeInfo fromTheme,
+                                final ThemeProvider themeProvider) {
+            this.fromTheme = fromTheme;
+            this.themeProvider = themeProvider;
+        }
+
+        @Override
+        public Object exec(final List arguments) throws TemplateModelException {
+
+            switch (arguments.size()) {
+                case 2: {
+                    final String filePath = ((TemplateScalarModel) arguments
+                                             .get(0))
+                        .getAsString();
+                    final String settingName = ((TemplateScalarModel) arguments
+                                                .get(0))
+                        .getAsString();
+
+                    return settingsUtils.getSetting(fromTheme,
+                                                    themeProvider,
+                                                    filePath,
+                                                    settingName);
+                }
+                case 3: {
+                    final String filePath
+                        = ((TemplateScalarModel) arguments.get(0))
+                            .getAsString();
+                    final String settingName
+                        = ((TemplateScalarModel) arguments.get(1))
+                            .getAsString();
+                    final String defaultValue
+                        = ((TemplateScalarModel) arguments.get(2))
+                            .getAsString();
+
+                    return settingsUtils.getSetting(fromTheme,
+                                                    themeProvider,
+                                                    filePath,
+                                                    settingName,
+                                                    defaultValue);
+                }
+                default:
+                    throw new TemplateModelException(
+                        "Illegal number of arguments.");
+            }
+        }
+
+    }
+
+    private class LocalizeMethod implements TemplateMethodModelEx {
+
+        private final ThemeInfo fromTheme;
+
+        private final ThemeProvider themeProvider;
+
+        public LocalizeMethod(final ThemeInfo fromTheme,
+                              final ThemeProvider themeProvider) {
+            this.fromTheme = fromTheme;
+            this.themeProvider = themeProvider;
+        }
+
+        @Override
+        public Object exec(final List arguments) throws TemplateModelException {
+
+            if (arguments.isEmpty()) {
+                throw new TemplateModelException("No string to localize.");
+            }
+
+            final String bundle;
+            if (arguments.size() > 1) {
+                bundle = ((TemplateScalarModel) arguments.get(1)).getAsString();
+            } else {
+                bundle = "theme-bundle";
+            }
+
+            final String key = ((TemplateScalarModel) arguments.get(0))
+                .getAsString();
+
+            return l10nUtils.getText(fromTheme, themeProvider, bundle, key);
+        }
+
+    }
+
+    private class TruncateTextMethod implements TemplateMethodModelEx {
+
+        @Override
+        public Object exec(final List arguments) throws TemplateModelException {
+
+            if (arguments.size() == 2) {
+                final String text = ((TemplateScalarModel) arguments.get(0))
+                    .getAsString();
+                final int length = ((SimpleNumber) arguments.get(1))
+                    .getAsNumber()
+                    .intValue();
+
+                return textUtils.truncateText(text, length);
+            } else {
+                throw new TemplateModelException("Illegal number of arguments.");
+            }
         }
 
     }

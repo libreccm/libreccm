@@ -2,17 +2,21 @@
 <html>
     <head>
         <title>Category page</title>
-        <link rel="stylesheet" href="${getContextPath()}/theming/ccm/style.css" />
-        </head>
+        <link rel="stylesheet" href="${themeUrl}/style.css" />
+    </head>
     <body>
+        <pre>
+            ${themeUrl}/style.css
+        </pre>
         <main>
             <h1>${LoginMessages['login.title']}</h1>
-            <# if (loginFailed)>
+            <#if (loginFailed)>
                 <div class="alert-error">
                     ${LoginMessages['login.errors.failed']}
                 </div>
             </#if>
-            <form action="${mvc.url('LoginController#processLogin')}"
+            <pre>${mvc.uri('LoginController#processLogin')}</pre>
+            <form action="${mvc.uri('LoginController#processLogin')}"
                   method="post">
                     <label for="login">${LoginMessages['login.screenname.label']}</label>
                     <input id="login" name="login" required="true" type="text" />
@@ -30,6 +34,6 @@
                     </button>
             </form>
         </main>
-        <#include "footer.html.ftl">
+        <#include "../footer.html.ftl">
     </body>
 </html>
