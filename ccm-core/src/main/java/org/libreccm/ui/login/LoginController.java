@@ -82,6 +82,7 @@ public class LoginController {
        models.put(
             "emailIsPrimaryIdentifier", isEmailPrimaryIdentifier()
         );
+       models.put("loginFailed", false);
        models.put("returnUrl", redirectUrl);
         return themesMvc.getMvcTemplate(uriInfo, "login-form");
     }

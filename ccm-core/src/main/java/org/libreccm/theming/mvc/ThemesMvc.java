@@ -33,6 +33,8 @@ import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.mvc.Models;
+import javax.servlet.ServletContext;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -44,6 +46,12 @@ import javax.ws.rs.core.UriInfo;
  */
 @RequestScoped
 public class ThemesMvc {
+
+    @Inject
+    private Models models;
+
+    @Inject
+    private ServletContext servletContext;
 
     @Inject
     private SiteRepository siteRepo;
@@ -77,7 +85,7 @@ public class ThemesMvc {
             );
         final ThemeTemplate themeTemplate;
         if (applicationTemplates.containsKey(application)) {
-            themeTemplate =  applicationTemplates.get(application);
+            themeTemplate = applicationTemplates.get(application);
         } else {
             themeTemplate = Optional.ofNullable(
                 applicationTemplates.get("@default")
@@ -94,8 +102,21 @@ public class ThemesMvc {
             );
         }
 
+        models.put("contextPath", servletContext.getContextPath());
+        models.put("themeName", themeInfo.getName());
+        models.put("themeVersion", themeInfo.getVersion());
+        models.put(
+            "themeUrl",
+            String.format(
+                "%s/@themes/%s/%s",
+                servletContext.getContextPath(),
+                themeInfo.getName(),
+                themeInfo.getVersion()
+            )
+        );
+
         return String.format(
-            "@themes/%s/%s/%s",
+            "/@themes/%s/%s/%s",
             themeInfo.getName(),
             Objects.toString(themeVersion),
             themeTemplate.getPath()
