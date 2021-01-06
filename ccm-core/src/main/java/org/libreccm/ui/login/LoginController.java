@@ -96,7 +96,7 @@ public class LoginController {
             models.put("loginFailed", false);
         }
         models.put("returnUrl", returnUrl);
-        return themesMvc.getMvcTemplate(uriInfo, "login-form");
+        return themesMvc.getMvcTemplate(uriInfo, "login", "loginForm");
     }
 
     @POST
@@ -141,7 +141,7 @@ public class LoginController {
     @GET
     @Path("/recover-password")
     public String getRecoverPasswordForm(@Context final UriInfo uriInfo) {
-        return themesMvc.getMvcTemplate(uriInfo, "login-recover-password");
+        return themesMvc.getMvcTemplate(uriInfo, "login", "recoverPassword");
     }
 
     @POST
@@ -160,7 +160,7 @@ public class LoginController {
             }
         }
 
-        return themesMvc.getMvcTemplate(uriInfo, "login-password-recovered");
+        return themesMvc.getMvcTemplate(uriInfo, "login", "passwordRecovered");
     }
 
     private boolean isEmailPrimaryIdentifier() {
