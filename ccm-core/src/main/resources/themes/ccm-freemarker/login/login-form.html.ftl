@@ -5,9 +5,6 @@
         <link rel="stylesheet" href="${themeUrl}/style.css" />
     </head>
     <body>
-        <pre>
-            ${themeUrl}/style.css
-        </pre>
         <main>
             <h1>${LoginMessages['login.title']}</h1>
             <#if (loginFailed)>
@@ -15,7 +12,6 @@
                     ${LoginMessages['login.errors.failed']}
                 </div>
             </#if>
-            <pre>${mvc.uri('LoginController#processLogin')}</pre>
             <form action="${mvc.uri('LoginController#processLogin')}"
                   method="post">
                     <label for="login">${LoginMessages['login.screenname.label']}</label>
@@ -28,6 +24,10 @@
                            name="password" 
                            required="true" 
                            type="password" />
+
+                    <input type="hidden" 
+                           name="returnUrl" 
+                           value="${returnUrl}" />
 
                     <button type="submit">
                         ${LoginMessages['login.submit']}
