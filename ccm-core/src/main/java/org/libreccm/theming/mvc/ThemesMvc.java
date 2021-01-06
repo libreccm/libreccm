@@ -18,6 +18,7 @@
  */
 package org.libreccm.theming.mvc;
 
+import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.sites.Site;
 import org.libreccm.sites.SiteRepository;
 import org.libreccm.theming.ThemeInfo;
@@ -61,7 +62,8 @@ public class ThemesMvc {
 
     public String getMvcTemplate(
         final UriInfo uriInfo,
-        final String application
+        final String application,
+        final String view
     ) {
         final Site site = getSite(uriInfo);
         final String theme = parseThemeParam(uriInfo);
@@ -72,35 +74,46 @@ public class ThemesMvc {
             themeVersion
         );
         final ThemeManifest manifest = themeInfo.getManifest();
-        final Map<String, ThemeTemplate> applicationTemplates = manifest
-            .getMvcTemplatesOfCategory("applications")
+        final Map<String, String> views = manifest.getViewsOfApplication(
+            application
+        );
+        final String viewTemplateName;
+        if (views.containsKey(view)) {
+            viewTemplateName = views.get(view);
+        } else {
+            final Map<String, String> defaultAppViews = manifest
+                .getViewsOfApplication(application);
+            if (defaultAppViews.containsKey("default")) {
+                viewTemplateName = defaultAppViews.get("default");
+            } else {
+                throw new WebApplicationException(
+                    String.format(
+                        "Theme \"%s\" does not provide a template for view "
+                            + "\"%s\" of application \"%s\", and there is no "
+                            + "default template configured.",
+                        themeInfo.getName(),
+                        view,
+                        application
+                    )
+                );
+            }
+        }
+
+        final ThemeTemplate themeTemplate = manifest
+            .getMvcTemplate(viewTemplateName)
             .orElseThrow(
                 () -> new WebApplicationException(
                     String.format(
-                        "Manifest of theme %s has no application templates.",
-                        themeInfo.getName()
-                    ),
-                    Response.Status.INTERNAL_SERVER_ERROR
-                )
-            );
-        final ThemeTemplate themeTemplate;
-        if (applicationTemplates.containsKey(application)) {
-            themeTemplate = applicationTemplates.get(application);
-        } else {
-            themeTemplate = Optional.ofNullable(
-                applicationTemplates.get("@default")
-            ).orElseThrow(
-                () -> new WebApplicationException(
-                    String.format(
-                        "Theme %s does not provide a template for application "
-                            + "%s and has not default template for "
-                            + "applications.",
-                        theme,
-                        application
+                        "Theme \"%s\" maps view \"%s\" of application \"%s\" "
+                            + "to template \"%s\" but not template with this "
+                            + "name was found in the theme.",
+                        themeInfo.getName(),
+                        view,
+                        application,
+                        viewTemplateName
                     )
                 )
             );
-        }
 
         models.put("contextPath", servletContext.getContextPath());
         models.put("themeName", themeInfo.getName());

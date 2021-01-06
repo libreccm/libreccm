@@ -92,11 +92,15 @@ public class ThemeManifest implements Serializable {
     private String defaultTemplate;
 
     @XmlElement(name = "mvc-templates", namespace = THEMES_XML_NS)
-    private Map<String, Map<String, ThemeTemplate>> mvcTemplates;
+    private Map<String, ThemeTemplate> mvcTemplates;
+
+    @XmlElement(name = "views", namespace = THEMES_XML_NS)
+    private Map<String, Map<String, String>> views;
 
     public ThemeManifest() {
         templates = new ArrayList<>();
         mvcTemplates = new HashMap<>();
+        views = new HashMap<>();
     }
 
     public String getName() {
@@ -163,63 +167,60 @@ public class ThemeManifest implements Serializable {
         this.defaultTemplate = defaultTemplate;
     }
 
-    public Map<String, Map<String, ThemeTemplate>> getMvcTemplates() {
+    public Map<String, ThemeTemplate> getMvcTemplates() {
         return Collections.unmodifiableMap(mvcTemplates);
     }
 
-    public Optional<Map<String, ThemeTemplate>> getMvcTemplatesOfCategory(
-        final String category
-    ) {
-        return Optional.ofNullable(mvcTemplates.get(category));
-    }
-
-    public void addMvcTemplatesCategory(final String category) {
-        mvcTemplates.put(category, new HashMap<>());
-    }
-
-    public void addMvcTemplatesCategory(
-        final String category, final Map<String, ThemeTemplate> templates
-    ) {
-        mvcTemplates.put(category, templates);
-    }
-
-    public Optional<ThemeTemplate> getMvcTemplate(
-        final String category, final String objectType
-    ) {
-        final Optional<Map<String, ThemeTemplate>> templatesInCat
-            = getMvcTemplatesOfCategory(category);
-
-        if (templatesInCat.isPresent()) {
-            return Optional.ofNullable(templatesInCat.get().get(objectType));
-        } else {
-            return Optional.empty();
-        }
+    public Optional<ThemeTemplate>  getMvcTemplate(final String name) {
+        return Optional.ofNullable(mvcTemplates.get(name));
     }
 
     public void addMvcTemplate(
-        final String category,
-        final String objectType,
-        final ThemeTemplate template
+        final String name, final ThemeTemplate template
     ) {
-        if (!mvcTemplates.containsKey(category)) {
-            addMvcTemplatesCategory(category);
-        }
-
-        mvcTemplates
-            .get(category)
-            .put(
-                objectType,
-                Objects.requireNonNull(
-                    template,
-                    "Template can't be null."
-                )
-            );
+        mvcTemplates.put(name, template);
     }
 
     protected void setMvcTemplates(
-        final Map<String, Map<String, ThemeTemplate>> mvcTemplates
+        final Map<String, ThemeTemplate> mvcTemplates
     ) {
         this.mvcTemplates = mvcTemplates;
+    }
+
+    public Map<String, Map<String, String>> getViews() {
+        return Collections.unmodifiableMap(views);
+    }
+
+    public Map<String, String> getViewsOfApplication(final String application) {
+        if (views.containsKey(application)) {
+            return views.get(application);
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+
+    public void addViewsOfApplication(
+        final String application, final Map<String, String> viewsOfApplication
+    ) {
+        views.put(application, viewsOfApplication);
+    }
+
+    public void addViewToApplication(
+        final String application, final String view, final String templateName
+    ) {
+        final Map<String, String> applicationViews;
+        if (views.containsKey(application)) {
+            applicationViews = views.get(application);
+        } else {
+            applicationViews = new HashMap<>();
+            views.put(application, applicationViews);
+        }
+
+        applicationViews.put(view, templateName);
+    }
+
+    protected void setViews(final Map<String, Map<String, String>> views) {
+        this.views = new HashMap<>(views);
     }
 
     @Override
@@ -233,6 +234,7 @@ public class ThemeManifest implements Serializable {
         hash = 83 * hash + Objects.hashCode(templates);
         hash = 83 * hash + Objects.hashCode(defaultTemplate);
         hash = 83 * hash + Objects.hashCode(mvcTemplates);
+        hash = 83 * hash + Objects.hashCode(views);
         return hash;
     }
 
@@ -272,7 +274,11 @@ public class ThemeManifest implements Serializable {
         if (!Objects.equals(defaultTemplate, other.getDefaultTemplate())) {
             return false;
         }
-        return mvcTemplates.equals(other.getMvcTemplates());
+        if (!Objects.equals(mvcTemplates, other.getMvcTemplates())) {
+            return false;
+        }
+
+        return Objects.equals(views, other.getViews());
     }
 
     public boolean canEqual(final Object obj) {
@@ -295,7 +301,8 @@ public class ThemeManifest implements Serializable {
                 + "description = \"%s\", "
                 + "templates = %s, "
                 + "defaultTemplate, "
-                + "mvcTemplates = %s%s"
+                + "mvcTemplates = %s,"
+                + "views = %s%s"
                 + " }",
             super.toString(),
             name,
@@ -306,6 +313,7 @@ public class ThemeManifest implements Serializable {
             Objects.toString(templates),
             defaultTemplate,
             Objects.toString(mvcTemplates),
+            Objects.toString(views),
             data
         );
 

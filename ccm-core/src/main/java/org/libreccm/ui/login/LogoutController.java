@@ -49,7 +49,7 @@ public class LogoutController {
     public String logout(@Context final UriInfo uriInfo) {
         subject.logout();
         
-        return themesMvc.getMvcTemplate(uriInfo, "logout");
+        return themesMvc.getMvcTemplate(uriInfo, "logout", "loggedout");
     }
     
 }
