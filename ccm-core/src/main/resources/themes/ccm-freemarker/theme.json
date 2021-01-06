@@ -77,6 +77,30 @@
                         ]
                     }
                 }
+            },
+            "logout": {
+                "description": {
+                    "values": {
+                        "value": [
+                            {
+                                "lang": "en",
+                                "value": "Logout successful"
+                            }
+                        ]
+                    }
+                },
+                "name": "loggedout",
+                "path": "logout/loggedout.html.ftl",
+                "title": {
+                    "values": {
+                        "value": [
+                            {
+                                "lang": "en",
+                                "value": "Logout succesful"
+                            }
+                        ]
+                    }
+                }
             }
         }
     }

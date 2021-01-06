@@ -118,7 +118,7 @@ public class LoginController {
             models.put("loginFailed", true);
             return getLoginForm(uriInfo, returnUrl);
         }
-
+        
         try {
             return Response.seeOther(
                 new URI(
