@@ -29,6 +29,8 @@ import org.libreccm.security.User;
 import org.libreccm.security.UserRepository;
 import org.libreccm.theming.mvc.ThemesMvc;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
@@ -36,13 +38,19 @@ import javax.inject.Inject;
 import javax.mail.MessagingException;
 import javax.mvc.Controller;
 import javax.mvc.Models;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.RedirectionException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 /**
@@ -53,48 +61,52 @@ import javax.ws.rs.core.UriInfo;
 @Path("/")
 @RequestScoped
 public class LoginController {
-    
+
     @Inject
     private ChallengeManager challengeManager;
-    
+
     @Inject
     private ConfigurationManager confManager;
-    
+
     @Inject
     private Models models;
-    
+
+    @Inject
+    private HttpServletRequest request;
+
     @Inject
     private Subject subject;
-    
+
     @Inject
     private ThemesMvc themesMvc;
-    
+
     @Inject
     private UserRepository userRepository;
-    
+
     @GET
     @Path("/")
     public String getLoginForm(
         @Context final UriInfo uriInfo,
-        @QueryParam("return_url") final String redirectUrl
-       
+        @QueryParam("returnUrl") @DefaultValue("") final String returnUrl
     ) {
-       models.put(
+        models.put(
             "emailIsPrimaryIdentifier", isEmailPrimaryIdentifier()
         );
-       models.put("loginFailed", false);
-       models.put("returnUrl", redirectUrl);
+        if (models.get("loginFailed") == null) {
+            models.put("loginFailed", false);
+        }
+        models.put("returnUrl", returnUrl);
         return themesMvc.getMvcTemplate(uriInfo, "login-form");
     }
-    
+
     @POST
     @Path("/")
-    public String processLogin(
+    public Object processLogin(
         @Context final UriInfo uriInfo,
         @FormParam("login") final String login,
         @FormParam("password") final String password,
         @FormParam("rememberMe") final String rememberMeValue,
-        @FormParam("redirectUrl") @DefaultValue("") final String redirectUrl
+        @FormParam("returnUrl") @DefaultValue("") final String returnUrl
     ) {
         final UsernamePasswordToken token = new UsernamePasswordToken(
             login, password
@@ -102,20 +114,36 @@ public class LoginController {
         token.setRememberMe("on".equals(rememberMeValue));
         try {
             subject.login(token);
-        } catch(AuthenticationException ex) {
+        } catch (AuthenticationException ex) {
             models.put("loginFailed", true);
-            return getLoginForm(uriInfo, redirectUrl);
+            return getLoginForm(uriInfo, returnUrl);
         }
-        
-        return String.format("redirect:%s", redirectUrl);
+
+        try {
+            return Response.seeOther(
+                new URI(
+                    request.getScheme(),
+                    "",
+                    request.getServerName(),
+                    request.getServerPort(),
+                    String.join(request.getContextPath(), returnUrl),
+                    "",
+                    ""
+                )
+            ).build();
+        } catch (URISyntaxException ex) {
+            throw new WebApplicationException(
+                Response.Status.INTERNAL_SERVER_ERROR
+            );
+        }
     }
-    
+
     @GET
     @Path("/recover-password")
     public String getRecoverPasswordForm(@Context final UriInfo uriInfo) {
         return themesMvc.getMvcTemplate(uriInfo, "login-recover-password");
     }
-    
+
     @POST
     @Path("/recover-password")
     public String recoverPassword(
@@ -125,20 +153,21 @@ public class LoginController {
         final Optional<User> user = userRepository.findByEmailAddress(email);
         if (user.isPresent()) {
             try {
-            challengeManager.sendPasswordRecover(user.get());
-            } catch(MessagingException ex) {
+                challengeManager.sendPasswordRecover(user.get());
+            } catch (MessagingException ex) {
                 models.put("failedToSendRecoverMessage", true);
                 return getRecoverPasswordForm(uriInfo);
             }
         }
-        
+
         return themesMvc.getMvcTemplate(uriInfo, "login-password-recovered");
-   }
-    
+    }
+
     private boolean isEmailPrimaryIdentifier() {
-         final KernelConfig kernelConfig = confManager.findConfiguration(
+        final KernelConfig kernelConfig = confManager.findConfiguration(
             KernelConfig.class
         );
         return kernelConfig.emailIsPrimaryIdentifier();
     }
+
 }
