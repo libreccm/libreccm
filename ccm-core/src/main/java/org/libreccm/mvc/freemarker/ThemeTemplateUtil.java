@@ -34,13 +34,15 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 /**
+ * Utility class for retreving a {@link TemplateInfo} instance for a template.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 class ThemeTemplateUtil {
 
-    private static final Logger LOGGER = LogManager.getLogger(ThemeTemplateUtil.class);
+    private static final Logger LOGGER = LogManager.getLogger(
+        ThemeTemplateUtil.class);
 
     @Inject
     private Instance<ThemeProvider> themeProviders;
@@ -48,11 +50,28 @@ class ThemeTemplateUtil {
     @Inject
     private Themes themes;
 
+    /**
+     * Checks if the provided path points to a template.
+     *
+     * @param templatePath The path of the template.
+     *
+     * @return {@code true} if the path points to a template, {@code false}
+     *         otherwise.
+     */
     public boolean isValidTemplatePath(final String templatePath) {
         return templatePath.startsWith("@themes")
                    || templatePath.startsWith("/@themes");
     }
 
+    /**
+     * Get the {@link TemplateInfo} for the template.
+     *
+     * @param templatePath The path of the template.
+     *
+     * @return An {@link Optional} with a {@link TemplateInfo} for the template.
+     *         If the template is not available, an empty {@link Optional} is
+     *         returned.
+     */
     public Optional<TemplateInfo> getTemplateInfo(final String templatePath) {
         if (!isValidTemplatePath(templatePath)) {
             throw new IllegalArgumentException(
@@ -74,6 +93,13 @@ class ThemeTemplateUtil {
         return getTemplateInfo(tokens);
     }
 
+    /**
+     * Find the {@link ThemeProvider} for a theme.
+     *
+     * @param forTheme The theme
+     *
+     * @return The {@link ThemeProvider} for the theme.
+     */
     public ThemeProvider findThemeProvider(final ThemeInfo forTheme) {
         final Instance<? extends ThemeProvider> provider = themeProviders
             .select(forTheme.getProvider());
@@ -92,6 +118,15 @@ class ThemeTemplateUtil {
         return provider.get();
     }
 
+    /**
+     * Retrieves the {@link TemplateInfo} for a template.
+     *
+     * @param tokens The tokens of the template path.
+     *
+     * @return An {@link Optional} with a {@link TemplateInfo} for the template.
+     *         If the template is not available, an empty {@link Optional} is
+     *         returned.
+     */
     private Optional<TemplateInfo> getTemplateInfo(final String[] tokens) {
         if (tokens.length >= 4) {
             final String themeName = tokens[1];
@@ -108,7 +143,7 @@ class ThemeTemplateUtil {
             final Optional<ThemeInfo> themeInfo = themes.getTheme(
                 themeName, themeVersion
             );
-            
+
             if (themeInfo.isPresent()) {
                 return Optional.of(new TemplateInfo(themeInfo.get(), filePath));
             } else {

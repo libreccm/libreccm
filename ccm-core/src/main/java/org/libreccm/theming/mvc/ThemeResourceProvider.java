@@ -21,7 +21,6 @@ package org.libreccm.theming.mvc;
 import org.libreccm.theming.ThemeFileInfo;
 import org.libreccm.theming.ThemeProvider;
 import org.libreccm.theming.ThemeVersion;
-import org.libreccm.theming.manager.Themes;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -38,6 +37,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 /**
+ * Provides access to the resources/assets of themes.
+ *
+ * @see ThemeResources
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -45,13 +47,30 @@ import javax.ws.rs.core.Response;
 @Path("/")
 public class ThemeResourceProvider {
 
+    /**
+     * Injection point for the available {@link ThemeProvider}s.
+     */
     @Inject
     @Any
     private Instance<ThemeProvider> providers;
 
-    @Inject
-    private Themes themes;
-
+    /**
+     * Serves a resources from a theme. This endpoint is mounted at
+     * {@code /@themes/{theme}/{themeVersion}/{path:.+}}. If the provided theme
+     * is not found, the provided theme is not available in the requested
+     * version, or if the theme does not provide the requested resource the
+     * endpoint will response with a 404 response. If the response is found, a
+     * response with the asset and the correct mime type is returned.
+     *
+     * @param themeName         The name of the theme providing the resource.
+     * @param themeVersionParam The version of the theme to use (either
+     *                          {@code LIVE} or {@code DRAFT}.
+     * @param pathParam         The path of the resource to serve.
+     *
+     * @return A response with the resource and the correct mime type, or a 404
+     *         response if the resource, the theme version or the theme is not
+     *         available.
+     */
     @GET
     @Path("/{theme}/{themeVersion}/{path:.+}")
     public Response getThemeFile(
@@ -123,8 +142,15 @@ public class ThemeResourceProvider {
         }
     }
 
+    /**
+     * Helper method for finding the provider of a theme.
+     *
+     * @param forTheme The theme.
+     *
+     * @return An {@link Optional} with the provider of the theme. If there is
+     *         no matching provider, an empty {@link Optional} is returned.
+     */
     private Optional<ThemeProvider> findProvider(final String forTheme) {
-
         final List<ThemeProvider> providersList = new ArrayList<>();
         providers
             .forEach(provider -> providersList.add(provider));

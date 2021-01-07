@@ -58,6 +58,22 @@ import javax.mvc.engine.ViewEngineException;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * Customized version of the Freemarker View Engine. This class is based of the
+ * View Engine from the Krazo project, but has been extended:
+ * <ul>
+ * <li>Named Beans are supported</li>
+ * <li>Freemarker template have access to the MvcContext under the name
+ * {@code mvc}, as in Facelet-based templates</li>
+ * <li>The current {@link HttpServletRequest} is made avaiable in Freemarker
+ * templates as {@link request}.</li>
+ * <li>The following utility functions are made available:
+ * <ul>
+ * <li>{@code getSetting}: retreives the value of a setting from the theme</li>
+ * <li>{@code localize}: retreives a localized value from the theme</li>
+ * <li>{@code truncateText}: Truncates text to a specific length.</li>
+ * </ul>
+ * </li>
+ * </ul>
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -123,8 +139,6 @@ public class FreemarkerViewEngine extends ViewEngineBase {
                 );
             }
             model.put("truncateText", new TruncateTextMethod());
-            
-            
 
             final Map<String, Object> namedBeans = beanManager
                 .getBeans(Object.class)
@@ -149,6 +163,13 @@ public class FreemarkerViewEngine extends ViewEngineBase {
         }
     }
 
+    /**
+     * Helper method for retrieving a an instance of a named bean using CDI.
+     *
+     * @param bean The bean to retrieve.
+     *
+     * @return An instance of the bean.
+     */
     @SuppressWarnings("rawtypes")
     private Optional<NamedBeanInstance> findBeanInstance(final Bean<?> bean) {
         final Context context = beanManager.getContext(bean.getScope());
@@ -166,10 +187,19 @@ public class FreemarkerViewEngine extends ViewEngineBase {
         }
     }
 
+    /**
+     * Helper class encapsulating the information about a named bean.
+     */
     private class NamedBeanInstance {
 
+        /**
+         * The name of the bean.
+         */
         private final String name;
 
+        /**
+         * The bean instance.
+         */
         private final Object beanInstance;
 
         public NamedBeanInstance(String name, Object beanInstance) {
@@ -187,6 +217,9 @@ public class FreemarkerViewEngine extends ViewEngineBase {
 
     }
 
+    /**
+     * Retrieves a setting from the theme using the {@link SettingsUtils}.
+     */
     private class GetSettingMethod implements TemplateMethodModelEx {
 
         private final ThemeInfo fromTheme;
@@ -241,6 +274,9 @@ public class FreemarkerViewEngine extends ViewEngineBase {
 
     }
 
+    /**
+     * Retrieves a localized value from the theme using the {@link L10NUtils}.
+     */
     private class LocalizeMethod implements TemplateMethodModelEx {
 
         private final ThemeInfo fromTheme;
@@ -275,6 +311,9 @@ public class FreemarkerViewEngine extends ViewEngineBase {
 
     }
 
+    /**
+     * Truncates text to a specific length.
+     */
     private class TruncateTextMethod implements TemplateMethodModelEx {
 
         @Override
