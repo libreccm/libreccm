@@ -21,13 +21,20 @@ package org.libreccm.mvc.freemarker;
 import org.libreccm.theming.ThemeInfo;
 
 /**
- *
+ * Encapulates the data of a template.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 class TemplateInfo {
 
+    /**
+     * Info about the theme providing the template.
+     */
     private final ThemeInfo themeInfo;
 
+    /**
+     * The path of the template,
+     */
     private final String filePath;
 
     public TemplateInfo(ThemeInfo themeInfo, String filePath) {

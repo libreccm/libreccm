@@ -18,7 +18,6 @@
  */
 package org.libreccm.theming.mvc;
 
-import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.sites.Site;
 import org.libreccm.sites.SiteRepository;
 import org.libreccm.theming.ThemeInfo;
@@ -30,7 +29,6 @@ import org.libreccm.theming.manifest.ThemeTemplate;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -42,6 +40,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 /**
+ * Main integration point for MVC application with the theme system.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -60,6 +59,16 @@ public class ThemesMvc {
     @Inject
     private Themes themes;
 
+    /**
+     * Get the template for a specific application and view from the current
+     * theme.
+     *
+     * @param uriInfo     URI is required for some tasks in inside the method.
+     * @param application The application for which the template is requested.
+     * @param view        The view for which the template is requested.
+     *
+     * @return The path of the template to use for the view of the application.
+     */
     public String getMvcTemplate(
         final UriInfo uriInfo,
         final String application,
@@ -136,6 +145,13 @@ public class ThemesMvc {
         );
     }
 
+    /**
+     * Helper method of retrieving the current site.
+     *
+     * @param uriInfo Used to extract the current site.
+     *
+     * @return The current site.
+     */
     private Site getSite(final UriInfo uriInfo) {
         Objects.requireNonNull(uriInfo);
 
@@ -154,6 +170,16 @@ public class ThemesMvc {
         return site;
     }
 
+    /**
+     * Helper method for retrieving a the theme to use.
+     *
+     * @param site         The current site.
+     * @param theme        The theme to retrieve.
+     * @param themeVersion The version of the theme to retrieve.
+     *
+     * @return A {@link ThemeInfo} object providing access to to the theme and
+     *         its resources.
+     */
     private ThemeInfo getTheme(
         final Site site,
         final String theme,
@@ -187,6 +213,15 @@ public class ThemesMvc {
         }
     }
 
+    /**
+     * Helper method for parsing the {@code theme} query parameter which can be
+     * used to override the default theme of a site.
+     *
+     * @param uriInfo Information about the current URI.
+     *
+     * @return The value of the {@link theme} query parameter if present, or
+     *         {@code --DEFAULT--} if the query parameter is not present.
+     */
     private String parseThemeParam(final UriInfo uriInfo) {
         if (uriInfo.getQueryParameters().containsKey("theme")) {
             return uriInfo.getQueryParameters().getFirst("theme");
@@ -195,6 +230,18 @@ public class ThemesMvc {
         }
     }
 
+    /**
+     * Helper method for parsing the {@code preview} query parameter. The
+     * {@code preview} query parameter allows it to test the draft version of a
+     * theme.
+     *
+     * @param uriInfo Information about the current URI.
+     *
+     * @return If the value of the parameter is {@code theme} or {@code all}
+     *         {@link ThemeVersion#DRAFT} is returned. If the query parameter is
+     *         not present or has another value, {@link ThemeVersion#LIVE} is
+     *         returned.
+     */
     private ThemeVersion parsePreviewParam(final UriInfo uriInfo) {
         if (uriInfo.getQueryParameters().containsKey("preview")) {
             final List<String> values = uriInfo

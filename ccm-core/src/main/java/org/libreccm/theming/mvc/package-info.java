@@ -16,28 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.libreccm.theming.mvc;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
 /**
- * JAX-RS application providing the resources/assets of a theme (images, CSS
- * files, etc) under the {@code /@themes} URL.
- *
- * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * Integration of the Theming System with Jakarta EE MVC.
  */
-@ApplicationPath("/@themes")
-public class ThemeResources extends Application {
-
-    @Override
-    public Set<Class<?>> getClasses() {
-        final Set<Class<?>> classes = new HashSet<>();
-        classes.add(ThemeResourceProvider.class);
-        return classes;
-    }
-
-}
+package org.libreccm.theming.mvc;

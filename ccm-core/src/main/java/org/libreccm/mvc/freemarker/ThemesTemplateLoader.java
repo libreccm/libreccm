@@ -19,7 +19,6 @@
 package org.libreccm.mvc.freemarker;
 
 import freemarker.cache.TemplateLoader;
-import org.libreccm.theming.ThemeInfo;
 import org.libreccm.theming.ThemeVersion;
 import org.libreccm.theming.Themes;
 
@@ -27,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Arrays;
 import java.util.Optional;
 
 /**
