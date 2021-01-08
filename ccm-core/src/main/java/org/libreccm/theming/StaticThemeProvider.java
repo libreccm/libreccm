@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -53,25 +54,31 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 
 /**
- * Implementation of {@link ThemeProvider} for serves themes stored in the 
+ * Implementation of {@link ThemeProvider} for serves themes stored in the
  * classpath.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 public class StaticThemeProvider implements ThemeProvider {
 
     private static final long serialVersionUID = 1L;
+
     private static final Logger LOGGER = LogManager.getLogger(
         StaticThemeProvider.class);
 
     private static final String THEMES_DIR = "/themes";
+
     private static final String THEMES_PACKAGE = "themes";
+
     private static final String THEME_MANIFEST_JSON_PATH = THEMES_DIR
                                                                + "/%s/theme.json";
+
     private static final String THEME_MANIFEST_XML_PATH = THEMES_DIR
                                                               + "/%s/theme.xml";
+
     private static final String THEME_MANIFEST_JSON = "theme.json";
+
     private static final String THEME_MANIFEST_XML = "theme.xml";
 
     @Inject
@@ -84,7 +91,7 @@ public class StaticThemeProvider implements ThemeProvider {
     public String getName() {
         return "StaticThemeProvider";
     }
-    
+
     @Override
     public List<ThemeInfo> getThemes() {
 
@@ -472,18 +479,26 @@ public class StaticThemeProvider implements ThemeProvider {
 
         final String fileName = path.get(0);
 
-        final Optional<JsonObject> fileData = currentDirectory
+        final Optional<JsonObject> fileDataResult = currentDirectory
             .stream()
             .map(value -> (JsonObject) value)
             .filter(value -> filterFileData(value, fileName))
             .findAny();
         if (path.size() == 1) {
-            return fileData;
+            return fileDataResult;
         } else {
-
-            if (fileData.get().getBoolean("isDirectory")) {
-                return findFile(path.subList(1, path.size()),
-                                fileData.get().getJsonArray("files"));
+            final JsonObject fileData = fileDataResult
+                .orElseThrow(
+                    () -> new NoSuchElementException(
+                        String.format(
+                            "File %s not found.", path
+                        )
+                    )
+                );
+            if (fileData.getBoolean("isDirectory")) {
+                return findFile(
+                    path.subList(1, path.size()), fileData.getJsonArray("files")
+                );
             } else {
                 return Optional.empty();
             }
