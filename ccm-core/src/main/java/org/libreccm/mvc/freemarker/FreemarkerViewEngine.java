@@ -29,7 +29,6 @@ import org.eclipse.krazo.engine.ViewEngineBase;
 import org.eclipse.krazo.engine.ViewEngineConfig;
 import org.libreccm.theming.ThemeInfo;
 import org.libreccm.theming.ThemeProvider;
-import org.libreccm.theming.freemarker.FreemarkerThemeProcessor;
 import org.libreccm.theming.utils.L10NUtils;
 import org.libreccm.theming.utils.SettingsUtils;
 import org.libreccm.theming.utils.TextUtils;
@@ -291,7 +290,6 @@ public class FreemarkerViewEngine extends ViewEngineBase {
 
         @Override
         public Object exec(final List arguments) throws TemplateModelException {
-
             if (arguments.isEmpty()) {
                 throw new TemplateModelException("No string to localize.");
             }
@@ -318,7 +316,6 @@ public class FreemarkerViewEngine extends ViewEngineBase {
 
         @Override
         public Object exec(final List arguments) throws TemplateModelException {
-
             if (arguments.size() == 2) {
                 final String text = ((TemplateScalarModel) arguments.get(0))
                     .getAsString();

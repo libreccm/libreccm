@@ -1,6 +1,17 @@
 {
     "files": [
         {
+            "name": "images",
+            "isDirectory": true,
+            "files": [
+                {
+                    "name": "libreccm.png",
+                    "isDirectory": false,
+                    "mimeType": "image/png"
+                }
+            ]
+        },
+        {
             "name": "login",
             "isDirectory": true,
             "files": [
