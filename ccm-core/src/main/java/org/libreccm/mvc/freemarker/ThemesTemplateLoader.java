@@ -19,7 +19,6 @@
 package org.libreccm.mvc.freemarker;
 
 import freemarker.cache.TemplateLoader;
-import org.libreccm.theming.ThemeInfo;
 import org.libreccm.theming.ThemeVersion;
 import org.libreccm.theming.Themes;
 
@@ -27,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -39,8 +37,13 @@ class ThemesTemplateLoader implements TemplateLoader {
 
     private final Themes themes;
 
-    public ThemesTemplateLoader(final Themes themes) {
+    private final ThemeTemplateUtil themeTemplateUtil;
+
+    public ThemesTemplateLoader(
+        final Themes themes, final ThemeTemplateUtil themeTemplateUtil
+    ) {
         this.themes = themes;
+        this.themeTemplateUtil = themeTemplateUtil;
     }
 
     /**
@@ -53,73 +56,37 @@ class ThemesTemplateLoader implements TemplateLoader {
      * of the theme from which the template is loaded. {@code $version} is the
      * version of the theme to use. This token is converted to
      * {@link ThemeVersion}. Valid values are therefore {@code DRAFT} and
-     * {@code LIVE}. The remainder of the path is the path to the file inside the
-     * theme.
+     * {@code LIVE}. The remainder of the path is the path to the file inside
+     * the theme.
      *
      * @param path The path of the file. The path must include the theme and its
      *             version.
      *
      * @return An {@link InputStream} for the template if the template was found
-     * in the theme. Otherwise {@code null} is returned.
+     *         in the theme. Otherwise {@code null} is returned.
      *
      * @throws IOException
      */
     @Override
     public Object findTemplateSource(final String path) throws IOException {
-        if (path.startsWith("@themes") || path.startsWith("/@themes")) {
-            final String[] tokens;
-            if (path.startsWith("/")) {
-                tokens = path.substring(1).split("/");
+        if (themeTemplateUtil.isValidTemplatePath(path)) {
+            final Optional<TemplateInfo> templateInfo = themeTemplateUtil
+                .getTemplateInfo(path);
+
+            if (templateInfo.isPresent()) {
+                final Optional<InputStream> source = themes.getFileFromTheme(
+                    templateInfo.get().getThemeInfo(),
+                    templateInfo.get().getFilePath()
+                );
+
+                if (source.isPresent()) {
+                    return source.get();
+                } else {
+                    return null;
+                }
             } else {
-                tokens = path.split("/");
+                return null;
             }
-            return findTemplateSource(tokens);
-        } else {
-            return null;
-        }
-    }
-
-    private InputStream findTemplateSource(final String[] tokens) {
-        if (tokens.length >= 4) {
-            final String themeName = tokens[1];
-            final ThemeVersion themeVersion = ThemeVersion
-                .valueOf(tokens[2]);
-            final String filePath = String.join(
-                "/",
-                Arrays.copyOfRange(
-                    tokens, 3, tokens.length, String[].class
-                )
-            );
-
-            return findTemplateSource(themeName, themeVersion, filePath);
-        } else {
-            return null;
-        }
-    }
-
-    private InputStream findTemplateSource(
-        final String themeName,
-        final ThemeVersion themeVersion,
-        final String filePath
-    ) {
-        final Optional<ThemeInfo> themeInfo = themes.getTheme(
-            themeName, themeVersion
-        );
-        if (themeInfo.isPresent()) {
-            return findTemplateSource(themeInfo.get(), filePath);
-        } else {
-            return null;
-        }
-    }
-
-    private InputStream findTemplateSource(
-        final ThemeInfo themeInfo, final String filePath
-    ) {
-        final Optional<InputStream> source = themes.getFileFromTheme(
-            themeInfo, filePath
-        );
-        if (source.isPresent()) {
-            return source.get();
         } else {
             return null;
         }

@@ -18,7 +18,8 @@
  */
 package org.libreccm.theming.manifest;
 
-import static org.libreccm.theming.ThemeConstants.*;
+import static org.libreccm.theming.ThemeConstants.THEME_MANIFEST_JSON;
+import static org.libreccm.theming.ThemeConstants.THEME_MANIFEST_XML;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -60,8 +61,6 @@ public class ThemeManifestUtil implements Serializable {
      * @return The parsed manifest file.
      */
     public ThemeManifest loadManifest(final Path path) {
-
-//        final String pathStr = path.toString().toLowerCase(Locale.ROOT);
         final BufferedReader reader;
         try {
             reader = Files.newBufferedReader(path, Charset.forName("UTF-8"));
@@ -70,34 +69,11 @@ public class ThemeManifestUtil implements Serializable {
         }
 
         return parseManifest(reader, path.toString());
-
-//        final ObjectMapper mapper;
-//        if (pathStr.endsWith(THEME_MANIFEST_JSON)) {
-//            mapper = new ObjectMapper();
-//        } else if (pathStr.endsWith(THEME_MANIFEST_XML)) {
-//            final JacksonXmlModule xmlModule = new JacksonXmlModule();
-//            mapper = new XmlMapper(xmlModule);
-//        } else {
-//            throw new IllegalArgumentException(String
-//                .format("The provided path \"%s\" does not point to a theme "
-//                            + "manifest file.",
-//                        path.toString()));
-//        }
-//
-//        mapper.registerModule(new JaxbAnnotationModule());
-//
-//        final ThemeManifest manifest;
-//        try {
-//            manifest = mapper.readValue(reader, ThemeManifest.class);
-//        } catch (IOException ex) {
-//            throw new UnexpectedErrorException(ex);
-//        }
-//        return manifest;
     }
 
-    public ThemeManifest loadManifest(final InputStream inputStream,
-                                      final String fileName) {
-
+    public ThemeManifest loadManifest(
+        final InputStream inputStream, final String fileName
+    ) {
         final InputStreamReader reader;
         try {
             reader = new InputStreamReader(inputStream, "UTF-8");
@@ -106,34 +82,11 @@ public class ThemeManifestUtil implements Serializable {
         }
 
         return parseManifest(reader, fileName);
-
-//        final ObjectMapper mapper;
-//        if (fileName.endsWith(THEME_MANIFEST_JSON)) {
-//            mapper = new ObjectMapper();
-//        } else if (fileName.endsWith(THEME_MANIFEST_XML)) {
-//            final JacksonXmlModule xmlModule = new JacksonXmlModule();
-//            mapper = new XmlMapper(xmlModule);
-//        } else {
-//            throw new IllegalArgumentException(String
-//                .format("The provided path \"%s\" does not point to a theme "
-//                            + "manifest file.",
-//                        fileName));
-//        }
-//
-//        mapper.registerModule(new JaxbAnnotationModule());
-//
-//        final ThemeManifest manifest;
-//        try {
-//            manifest = mapper.readValue(reader, ThemeManifest.class);
-//        } catch (IOException ex) {
-//            throw new UnexpectedErrorException(ex);
-//        }
-//        return manifest;
     }
 
-    public String serializeManifest(final ThemeManifest manifest,
-                                    final String format) {
-
+    public String serializeManifest(
+        final ThemeManifest manifest, final String format
+    ) {
         final ObjectMapper mapper;
 
         switch (format) {

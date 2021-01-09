@@ -5,6 +5,11 @@
                            http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
        bean-discovery-mode="all">
        
+<!--        <alternatives>
+            <class>org.libreccm.mvc.freemarker.MvcFreemarkerConfigurationProducer</class>
+            <class>org.eclipse.krazo.ext.freemarker.DefaultConfigurationProducer</class>
+        </alternatives>-->
+    
         <interceptors>
             <class>org.libreccm.security.AuthorizationInterceptor</class>
         </interceptors>

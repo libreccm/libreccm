@@ -1,6 +1,143 @@
 {
     "name": "ccm-freemarker",
     "type": "freemarker",
-    
-    "default-template": "category-page.html.ftl"
+
+    "default-template": "category-page.html.ftl",
+
+    "mvc-templates": {
+        "category-page": {
+            "description": {
+                "values": {
+                    "value": [
+                        {
+                            "lang": "en",
+                            "value": "Category Page Template"
+                        }
+                    ]
+                }
+            },
+            "name": "Category Page",
+            "path": "categoryPage.html.ftl",
+            "title": {
+                "values": {
+                    "value": [
+                        {
+                            "lang": "en",
+                            "value": "Category Page"
+                        }
+                    ]
+                }
+            }
+        },
+        "login-form": {
+            "description": {
+                "values": {
+                    "value": [
+                        {
+                            "lang": "en",
+                            "value": "Login Form"
+                        }
+                    ]
+                }
+            },
+            "name": "Login Form",
+            "path": "login/login-form.html.ftl",
+            "title": {
+                "values": {
+                    "value": [
+                        {
+                            "lang": "en",
+                            "value": "Login Form"
+                        }
+                    ]
+                }
+            }
+        },
+        "login-recover-password": {
+            "description": {
+                "values": {
+                    "value": [
+                        {
+                            "lang": "en",
+                            "value": "Recover lost passwords"
+                        }
+                    ]
+                }
+            },
+            "name": "login-recover-password",
+            "path": "login/login-recover-password.html.ftl",
+            "title": {
+                "values": {
+                    "value": [
+                        {
+                            "lang": "en",
+                            "value": "Recover password"
+                        }
+                    ]
+                }
+            }
+        },
+        "login-password-recovered": {
+            "description": {
+                "values": {
+                    "value": [
+                        {
+                            "lang": "en",
+                            "value": "Password recovered"
+                        }
+                    ]
+                }
+            },
+            "name": "login-password-recovered",
+            "path": "login/login-password-recovered.html.ftl",
+            "title": {
+                "values": {
+                    "value": [
+                        {
+                            "lang": "en",
+                            "value": "Password recovered"
+                        }
+                    ]
+                }
+            }
+        },
+        "loggedout": {
+            "description": {
+                "values": {
+                    "value": [
+                        {
+                            "lang": "en",
+                            "value": "Logout successful"
+                        }
+                    ]
+                }
+            },
+            "name": "loggedout",
+            "path": "logout/loggedout.html.ftl",
+            "title": {
+                "values": {
+                    "value": [
+                        {
+                            "lang": "en",
+                            "value": "Logout succesful"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "views": {
+        "default": {
+            "default": "category-page"
+        },
+        "login": {
+            "loginForm": "login-form",
+            "passwordRecovered": "login-password-recovered",
+            "recoverPassword": "login-recover-password"
+        },
+        "logout": {
+            "loggedout": "loggedout"
+        }
+    }
 }
+
