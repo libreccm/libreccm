@@ -245,6 +245,14 @@
                             <artifactId>ccm-cms</artifactId>
                             <type>jar</type>
                             <includes>
+                                <include>assets/</include>
+                            </includes>
+                        </overlay>
+                        <overlay>
+                            <groupId>org.librecms</groupId>
+                            <artifactId>ccm-cms</artifactId>
+                            <type>jar</type>
+                            <includes>
                                 <include>templates/</include>
                             </includes>
                         </overlay>

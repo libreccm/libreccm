@@ -37,23 +37,3 @@ $pre-scrollable-max-height: 21.25rem;
 
 // Navbar default colors have insufficient contrast
 $navbar-dark-color: #fff;
-
-table.users-table,
-table.groups-table,
-table.roles-table {
-    tbody {
-        td.action-col {
-            width: 8em;
-        }
-    }
-}
-
-table.group-members,
-table.group-roles,
-table.role-members {
-    tbody {
-        td.action-col {
-            width: 8em;
-        }
-    }
-}
