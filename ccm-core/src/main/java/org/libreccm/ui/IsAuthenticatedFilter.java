@@ -58,7 +58,7 @@ public class IsAuthenticatedFilter implements ContainerRequestFilter {
                 Response.temporaryRedirect(
                     URI.create(
                         String.format(
-                            "/%s/ccm/register?return_url=%s",
+                            "/%s/@login?returnUrl=%s",
                             contextPath,
                             returnUrl
                         )

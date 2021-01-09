@@ -53,7 +53,9 @@ class KrazoTemplateLoader implements TemplateLoader {
 
     @Override
     public Object findTemplateSource(final String name) throws IOException {
-        if (name.startsWith("@themes") || name.startsWith("/@themes")) {
+        if (name.startsWith("@themes")
+                || name.startsWith("/@themes")
+                || name.startsWith("WEB-INF/views/@themes")) {
             return null;
         } else {
             // Freemarker drops "/"

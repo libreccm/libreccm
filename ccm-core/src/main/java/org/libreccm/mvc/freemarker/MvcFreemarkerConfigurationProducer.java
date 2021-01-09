@@ -28,28 +28,33 @@ import org.eclipse.krazo.engine.ViewEngineConfig;
 import org.eclipse.krazo.ext.freemarker.DefaultConfigurationProducer;
 import org.libreccm.theming.Themes;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Specializes;
 import javax.inject.Inject;
+import javax.mvc.Models;
 import javax.servlet.ServletContext;
-import javax.ws.rs.Produces;
 
 /**
- * Extends the default configuration for Freemarker of Eclipse Krazo to 
- * support Freemarker templates in CCM themes.
- * 
+ * Extends the default configuration for Freemarker of Eclipse Krazo to support
+ * Freemarker templates in CCM themes.
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@ApplicationScoped
-public class MvcFreemarkerConfigurationProducer 
+public class MvcFreemarkerConfigurationProducer
     extends DefaultConfigurationProducer {
-    
+
+    @Inject
+    private Models models;
+
     @Inject
     private ServletContext servletContext;
-    
+
     @Inject
     private Themes themes;
     
+    @Inject
+    private ThemeTemplateUtil themeTemplateUtil;
+
     @Produces
     @ViewEngineConfig
     @Specializes
@@ -58,7 +63,7 @@ public class MvcFreemarkerConfigurationProducer
         final Configuration configuration = new Configuration(
             Configuration.VERSION_2_3_30
         );
-        
+
         configuration.setDefaultEncoding("UTF-8");
         configuration.setTemplateExceptionHandler(
             TemplateExceptionHandler.RETHROW_HANDLER
@@ -70,7 +75,7 @@ public class MvcFreemarkerConfigurationProducer
             new MultiTemplateLoader(
                 new TemplateLoader[]{
                     new KrazoTemplateLoader(servletContext),
-                    new ThemesTemplateLoader(themes),
+                    new ThemesTemplateLoader(themes, themeTemplateUtil),
                     // For loading Freemarker macro libraries from WEB-INF 
                     // resources
                     new WebappTemplateLoader(
@@ -82,8 +87,8 @@ public class MvcFreemarkerConfigurationProducer
                 }
             )
         );
-        
+
         return configuration;
     }
-    
+
 }

@@ -1,0 +1,81 @@
+{
+    "files": [
+        {
+            "name": "images",
+            "isDirectory": true,
+            "files": [
+                {
+                    "name": "libreccm.png",
+                    "isDirectory": false,
+                    "mimeType": "image/png"
+                }
+            ]
+        },
+        {
+            "name": "login",
+            "isDirectory": true,
+            "files": [
+                {
+                    "name": "login-form.html.ftl",
+                    "isDirectory": false,
+                    "mimeType": "text/plain"
+                },
+                {
+                    "name": "login-password-recovered.html.ftl",
+                    "isDirectory": false,
+                    "mimeType": "text/plain"
+                }, {
+                    "name": "login-recover-password.html.ftl",
+                    "isDirectory": false,
+                    "mimeType": "text/plain"
+                }
+            ]
+        },
+        {
+            "name": "texts",
+            "isDirectory": true,
+            "files": [
+                {
+                    "name": "labels.properties",
+                    "isDirectory": false,
+                    "mimeType": "text/plain"
+                }
+            ]
+        },
+        {
+            "name": "category-page.html.ftl",
+            "isDirectory": false,
+            "mimeType": "text/plain"
+        },
+        {
+            "name": "footer.html.ftl",
+            "isDirectory": false,
+            "mimeType": "text/plain"
+        },
+        {
+            "name": "settings.properties",
+            "isDirectory": false,
+            "mimeType": "text/plain"
+        },
+        {
+            "name": "style.css",
+            "isDirectory": false,
+            "mimeType": "text/css"
+        }, 
+        {
+            "name": "theme-bundle.properties",
+            "isDirectory": false,
+            "mimeType": "text/plain"
+        },
+        {
+            "name": "theme-index.json",
+            "isDirectory": false,
+            "mimeType": "application/json"
+        },
+        {
+            "name": "theme.json",
+            "isDirectory": false,
+            "mimeType": "application/json"
+        }
+    ]
+}
