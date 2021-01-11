@@ -7,12 +7,17 @@ package org.librecms.ui;
 
 import org.libreccm.security.AuthorizationRequired;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.mvc.Controller;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 /**
@@ -26,17 +31,35 @@ public class ContentSectionsController {
 
     @Inject
     private HttpServletRequest request;
+    
+    @Inject
+    private ServletContext servletContext;
 
     @GET
     @Path("/")
     @AuthorizationRequired
     public Response getRoot() {
-        return Response
-            .status(Response.Status.MOVED_PERMANENTLY)
-            .entity(
-                String.format("%s/@content-sections/list", request
-                              .getContextPath())
+        try {
+            return Response.seeOther(
+                new URI(
+                    request.getScheme(),
+                    "",
+                    request.getServerName(),
+                    request.getServerPort(),
+                    String.format(
+                        "%s/@content-sections/list",
+                        request.getContextPath()
+                    ),
+                    "",
+                    ""
+                )
             ).build();
+        } catch (URISyntaxException ex) {
+            throw new WebApplicationException(ex);
+        }
+//        return String.format(
+//            "redirect:/%s/@content-sections/list", request.getContextPath()
+//        );
     }
 
     @GET
@@ -57,7 +80,7 @@ public class ContentSectionsController {
     @Path("/search")
     @AuthorizationRequired
     public String getSearch() {
-        return "org/librecms/ui/content-sections/pages.xhtml";
+        return "org/librecms/ui/content-sections/search.xhtml";
     }
 
 }

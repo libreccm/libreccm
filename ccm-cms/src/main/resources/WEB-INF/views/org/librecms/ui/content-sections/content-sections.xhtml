@@ -28,21 +28,21 @@
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
                             <a class="nav-link #{activePage == 'contentSections'} ? 'active' : ''}"
-                               href="#{mvc.uri('ContentSectionsController#getContentSections')}">
+                               href="#{mvc.basePath}/list">
                                 <bootstrap:svgIcon icon="bookshelf" />
                                 <span>#{CmsAdminMessages['contentsections.list.nav.link.title']}</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link #{activePage == 'pages'} ? 'active' : ''}"
-                               href="#{mvc.uri('ContentSectionsController#getPages')}">
+                               href="#{mvc.basePath}/pages">
                                 <bootstrap:svgIcon icon="diagram-3" />
                                 <span>#{CmsAdminMessages['contentsections.pages.nav.link.title']}</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link #{activePage == 'search'} ? 'active' : ''}"
-                               href="#{mvc.uri('ContentSectionsController#getSearch')}">
+                               href="#{mvc.basePath}/search">
                                 <bootstrap:svgIcon icon="search" />
                                 <span>#{CmsAdminMessages['contentsections.search.nav.link.title']}</span>
                             </a>
