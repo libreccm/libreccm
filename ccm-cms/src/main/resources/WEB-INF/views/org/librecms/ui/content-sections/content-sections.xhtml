@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
       >
     <head>
         <title>#{title} - LibreCMS Content Sections</title>
@@ -12,10 +12,52 @@
     </head>
     <body>
         <header>
-            
+            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                    >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link #{activePage == 'contentSections'} ? 'active' : ''}"
+                               href="#{mvc.uri('ContentSectionsController#getContentSections')}">
+                                <bootstrap:svgIcon icon="bookshelf" />
+                                <span>#{CmsAdminMessages['contentsections.list.nav.link.title']}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link #{activePage == 'pages'} ? 'active' : ''}"
+                               href="#{mvc.uri('ContentSectionsController#getPages')}">
+                                <bootstrap:svgIcon icon="diagram-3" />
+                                <span>#{CmsAdminMessages['contentsections.pages.nav.link.title']}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link #{activePage == 'search'} ? 'active' : ''}"
+                               href="#{mvc.uri('ContentSectionsController#getSearch')}">
+                                <bootstrap:svgIcon icon="search" />
+                                <span>#{CmsAdminMessages['contentsections.search.nav.link.title']}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <ui:insert name="breadcrumb"></ui:insert>
+                </ol>
+            </nav>
         </header>
         <main>
-            <p><em>Content Sections Placeholder</em></p>
+            <ui:insert name="main"></ui:insert>
         </main>
         <script src="#{request.contextPath}/assets/@content-sections/cms-admin.js"></script>
     </body>

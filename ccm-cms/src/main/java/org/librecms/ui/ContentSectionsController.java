@@ -6,13 +6,14 @@
 package org.librecms.ui;
 
 import org.libreccm.security.AuthorizationRequired;
-import org.libreccm.security.RequiresPrivilege;
-import org.librecms.CmsConstants;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.mvc.Controller;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -22,12 +23,41 @@ import javax.ws.rs.Path;
 @Controller
 @Path("/")
 public class ContentSectionsController {
-    
+
+    @Inject
+    private HttpServletRequest request;
+
     @GET
     @Path("/")
     @AuthorizationRequired
-    public String getContentSections() {
-        return "org/librecms/ui/content-sections.xhtml";
+    public Response getRoot() {
+        return Response
+            .status(Response.Status.MOVED_PERMANENTLY)
+            .entity(
+                String.format("%s/@content-sections/list", request
+                              .getContextPath())
+            ).build();
     }
-    
+
+    @GET
+    @Path("/list")
+    @AuthorizationRequired
+    public String getContentSections() {
+        return "org/librecms/ui/content-sections/list.xhtml";
+    }
+
+    @GET
+    @Path("/pages")
+    @AuthorizationRequired
+    public String getPages() {
+        return "org/librecms/ui/content-sections/pages.xhtml";
+    }
+
+    @GET
+    @Path("/search")
+    @AuthorizationRequired
+    public String getSearch() {
+        return "org/librecms/ui/content-sections/pages.xhtml";
+    }
+
 }

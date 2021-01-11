@@ -29,6 +29,7 @@ public class CmsConstants {
     public static final String DB_SCHEMA = "CCM_CMS";
 
     public static final String CMS_BUNDLE = "org.librecms.CmsResources";
+    public static final String CMS_ADMIN_BUNDLE = "org.librecms.CmsAdminMessages";
     public static final String CMS_FOLDER_BUNDLE
                                    = "com.arsdigita.cms.ui.folder.CMSFolderResources";
 
