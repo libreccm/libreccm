@@ -20,7 +20,7 @@
             <div class="container-fluid">
                 <h1>#{AdminMessages['themes.label']}</h1>
 
-                <bootstrap:modalForm actionTarget="#{mvc.uri('ThemesController#createTheme')}"
+                <bootstrap:modalForm actionTarget="#{mvc.basePath}/themes/new"
                                      buttonIcon="plus-circle"
                                      buttonText="#{AdminMessages['themes.create_new_theme']}"
                                      buttonTextClass="text-right"
@@ -116,7 +116,7 @@
                                 <td>
                                     <c:choose>
                                         <c:when test="#{theme.publishable and theme.published }">
-                                            <form action="#{mvc.uri('ThemesController#publishTheme', {'themeName': theme.name})}">
+                                            <form action="#{mvc.basePath}/themes/#{theme.name}/publish">
                                                 <button class="btn btn-primary"
                                                         type="button">
                                                     #{AdminMessages['themes.table.actions.republish']}
@@ -124,7 +124,7 @@
                                             </form>
                                         </c:when>
                                         <c:when test="#{theme.publishable}">
-                                            <form action="#{mvc.uri('ThemesController#publishTheme', {'themeName': theme.name})}">
+                                            <form action="#{mvc.basePath}/themes/#{theme.name}/publish">
                                                 <button class="btn btn-primary"
                                                         type="button">
                                                     #{AdminMessages['themes.table.actions.publish']}
@@ -135,7 +135,7 @@
                                 </td>
                                 <td>
                                     <c:if test="#{theme.published and theme.publishable}">
-                                        <libreccm:deleteDialog actionTarget="#{mvc.uri('ThemesController#unpublishTheme', {'themeName': theme.name})}"
+                                        <libreccm:deleteDialog actionTarget="#{mvc-basePath}/themes/#{theme.name}/unpublish"
                                                                buttonText="#{AdminMessages['themes.table.actions.unpublish']}"
                                                                cancelLabel="#{AdminMessages['themes.table.actions.unpublish.cancel']}"
                                                                confirmLabel="#{AdminMessages['themes.table.actions.unpublish.confirm']}"
@@ -147,7 +147,7 @@
                                 </td>
                                 <td>
                                     <c:if test="#{theme.editable and !theme.published}">
-                                        <libreccm:deleteDialog actionTarget="#{mvc.uri('ThemesController#deleteTheme', {'themeName': theme.name})}"
+                                        <libreccm:deleteDialog actionTarget="#{mvc.basePath}/themes/#{theme.name}/delete"
                                                                buttonText="#{AdminMessages['themes.table.actions.delete']}"
                                                                cancelLabel="#{AdminMessages['themes.table.actions.delete.cancel']}"
                                                                confirmLabel="#{AdminMessages['themes.table.actions.delete.confirm']}"

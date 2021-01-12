@@ -29,8 +29,8 @@
                     <ul class="navbar-nav mr-auto">
                         <c:forEach items="#{AdminPagesModel.adminPages}" var="page">
                             <li class="nav-item">
-                                <a class="nav-link #{activePage == page.uriIdentifier?'active':''}" 
-                                   href="#{mvc.uri(page.uriIdentifier)}">
+                                <a class="nav-link #{activePage == page.pageUri?'active':''}" 
+                                   href="#{mvc.basePath}#{page.pageUri}">
                                     <svg class="bi"
                                          width="1em"
                                          height="1em"

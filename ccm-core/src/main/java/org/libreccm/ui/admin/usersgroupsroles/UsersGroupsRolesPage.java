@@ -53,11 +53,8 @@ public class UsersGroupsRolesPage implements AdminPage {
     }
 
     @Override
-    public String getUriIdentifier() {
-        return String.format(
-            "%s#getOverview",
-            UsersGroupsRolesController.class.getSimpleName()
-        );
+    public String getPageUri() {
+        return "/users-groups-roles";
     }
 
     @Override

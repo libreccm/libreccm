@@ -24,7 +24,7 @@
                 <div class="mb-2">
                     <div class="text-right">
                         <a class="btn btn-secondary"
-                           href="#{mvc.uri('SitesController#createNewSite')}">
+                           href="#{mvc.basePath}/sites/new">
                             <bootstrap:svgIcon icon="plus-circle" />
                             <span>#{AdminMessages['sites.add_site']}</span>
                         </a>
@@ -58,7 +58,7 @@
                                 </td>
                                 <td>
                                     <a class="btn btn-info"
-                                       href="#{mvc.uri('SitesController#getSite', {'siteIdentifier': site.identifier })}">
+                                       href="#{mvc.basePath}/sites/#{site.identifier}/details">
                                         <bootstrap:svgIcon icon="pen" />
                                         <span>
                                             #{AdminMessages['sites.table.edit']}
@@ -66,7 +66,7 @@
                                     </a>
                                 </td>
                                 <td>
-                                    <libreccm:deleteDialog actionTarget="#{mvc.uri('SitesController#deleteSite', {'identifier': site.identifier })}" 
+                                    <libreccm:deleteDialog actionTarget="#{mvc.basePath}/sites/#{site.identifier}/delete" 
                                                            buttonText="#{AdminMessages['sites.table.delete']}"
                                                            cancelLabel="#{AdminMessages['sites.delete_dialog.cancel']}"
                                                            confirmLabel="#{AdminMessages['sites.delete_dialog.confirm']}"

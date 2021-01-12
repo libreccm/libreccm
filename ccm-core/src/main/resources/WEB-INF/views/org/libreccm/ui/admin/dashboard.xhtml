@@ -30,10 +30,10 @@
                                     <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg##{page.icon}" />
                                 </svg>
                                 <div class="card-body"
-                                     id="admin-page-#{page.uriIdentifier}-body">
+                                     id="admin-page-#{page.pageUri}-body">
                                     <h2 class="card-title">
                                         <a class="stretched-link"
-                                           href="#{mvc.uri(page.uriIdentifier)}">
+                                           href="#{mvc.basePath}#{page.pageUri}">
                                             #{page.label}
                                         </a>
                                     </h2>

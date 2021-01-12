@@ -13,7 +13,7 @@
 
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="#{mvc.uri('SitesController#getSites')}">
+                <a href="#{mvc.basePath}/sites">
                     #{AdminMessages['sites.label']}
                 </a>
             </li>
@@ -53,7 +53,7 @@
 
                 <div class="mb-4">
                     <a class="btn btn-primary"
-                       href="#{mvc.uri('SitesController#editSite', {'siteIdentifier': SiteDetailsModel.identifier } )}">
+                       href="#{mvc.basePath}/sites/#{SiteDetailsModel.identifier}/edit">
                         <bootstrap:svgIcon icon="pen" />
                         <span>#{AdminMessages['site.details.edit']}</span>
                     </a>

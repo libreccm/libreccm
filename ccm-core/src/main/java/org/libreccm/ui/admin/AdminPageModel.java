@@ -29,7 +29,7 @@ import java.util.Comparator;
  */
 public class AdminPageModel implements Comparable<AdminPageModel> {
 
-    private String uriIdentifier;
+    private String pageUri;
 
     private String label;
 
@@ -39,12 +39,12 @@ public class AdminPageModel implements Comparable<AdminPageModel> {
 
     private long position;
 
-    public String getUriIdentifier() {
-        return uriIdentifier;
+    public String getPageUri() {
+        return pageUri;
     }
 
-    protected void setUriIdentifier(final String uriIdentifier) {
-        this.uriIdentifier = uriIdentifier;
+    protected void setPageUri(final String pageUri) {
+        this.pageUri = pageUri;
     }
 
     public String getLabel() {

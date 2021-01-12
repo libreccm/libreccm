@@ -38,16 +38,11 @@ public interface AdminPage {
     Set<Class<?>> getControllerClasses();
 
     /**
-     * A identifier to use by {@link MvcContext#uri(java.lang.String)} to
-     * generate the URI of the page. The identifier has the same format as used
-     * in JavaDoc:
-     * <pre>
-     *     ControllerSimpleClassName#methodName
-     * </pre>
+     * The URI fragment of the page behind {@code /@admin}.
      *
-     * @return The identifier to use for generating the URL of the page
+     * @return The URI fragment of the page behind {@code /@admin}.
      */
-    String getUriIdentifier();
+    String getPageUri();
 
     /**
      * Gets the resourcebundle which provides the label of the admin page.

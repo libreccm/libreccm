@@ -58,11 +58,8 @@ public class ApplicationsPage implements AdminPage {
     }
 
     @Override
-    public String getUriIdentifier() {
-        return String.format(
-            "%s#getApplicationTypes",
-            ApplicationsController.class.getSimpleName()
-        );
+    public String getPageUri() {
+        return "/applications";
     }
 
     @Override

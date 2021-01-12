@@ -44,10 +44,8 @@ public class ConfigurationPage implements AdminPage {
     }
 
     @Override
-    public String getUriIdentifier() {
-        return String.format(
-            "%s#getSettings", ConfigurationController.class.getSimpleName()
-        );
+    public String getPageUri() {
+        return "/configuration";
     }
 
     @Override

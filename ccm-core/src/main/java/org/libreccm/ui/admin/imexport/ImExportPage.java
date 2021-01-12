@@ -41,10 +41,8 @@ public class ImExportPage implements AdminPage {
     }
 
     @Override
-    public String getUriIdentifier() {
-         return String.format(
-            "%s#getImExportDashboard", ImExportController.class.getSimpleName()
-        );
+    public String getPageUri() {
+        return "/imexport";
     }
 
     @Override

@@ -42,10 +42,8 @@ public class SitesPage implements AdminPage {
     }
 
     @Override
-    public String getUriIdentifier() {
-        return String.format(
-            "%s#getSites", SitesController.class.getSimpleName()
-        );
+    public String getPageUri() {
+        return "/sites";
     }
 
     @Override

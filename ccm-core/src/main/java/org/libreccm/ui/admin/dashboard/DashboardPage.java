@@ -42,10 +42,8 @@ public class DashboardPage implements AdminPage {
     }
 
     @Override
-    public String getUriIdentifier() {
-        return String.format(
-            "%s#getDashboard", DashboardController.class.getSimpleName()
-        );
+    public String getPageUri() {
+        return "/";
     }
 
     @Override

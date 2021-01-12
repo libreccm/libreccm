@@ -11,7 +11,7 @@
 
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="#{mvc.uri('SitesController#getSites')}">
+                <a href="#{mvc.basePath}/sites">
                     #{AdminMessages['sites.label']}
                 </a>
             </li>
@@ -23,7 +23,7 @@
                 </c:when>
                 <c:otherwise>
                     <li class="breadcrumb-item">
-                        <a href="#{mvc.uri('SitesController#getSite', {'siteIdentifier': SiteDetailsModel.identifier })}">
+                        <a href="#{mvc.basePath}/sites/#{SiteDetailsModel.identifier}/details">
                             #{SiteDetailsModel.domain}
                         </a>
                     </li>
@@ -47,7 +47,7 @@
                     </c:choose>
                 </h1>
 
-                <form action="#{SiteDetailsModel.new ? mvc.uri('SiteFormController#createSite') : mvc.uri('SiteFormController#updateSite', {'siteIdentifier': SiteDetailsModel.identifier })}"
+                <form action="#{SiteDetailsModel.new ? mvc.basePath += '/sites/new' : mvc.basePath += '/sites' += SiteDetailsModel.identifier += '/edit'}"
                       method="post">
                     <bootstrap:formGroupText help="#{AdminMessages['sites.form.domain.help']}"
                                              inputId="domain"
@@ -66,7 +66,7 @@
                                                name="defaultTheme"
                                                options="#{SiteDetailsModel.availableThemes}" />
                     <a class="btn btn-warning"
-                       href="#{SiteDetailsModel.new ? mvc.uri('SitesController#getSites') : mvc.uri('SitesController#getSite', { 'siteIdentifier': SiteDetailsModel.identifier })}">
+                       href="#{SiteDetailsModel.new ? mvc.basePath += '/sites' : mvc.basePath += '/sites/' += SiteDetailsModel.identifier += '/details'}">
                         #{AdminMessages['sites.form.buttons.cancel']}
                     </a>
                     <button class="btn btn-success" type="submit">

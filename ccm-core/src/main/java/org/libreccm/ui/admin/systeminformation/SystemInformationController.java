@@ -23,9 +23,7 @@ import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.RequiresPrivilege;
 
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import javax.mvc.Controller;
-import javax.mvc.MvcContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 

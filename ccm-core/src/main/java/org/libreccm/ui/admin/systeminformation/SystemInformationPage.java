@@ -42,11 +42,8 @@ public class SystemInformationPage implements AdminPage {
     }
 
     @Override
-    public String getUriIdentifier() {
-        return String.format(
-            "%s#getSystemInformation", 
-            SystemInformationController.class.getSimpleName()
-        );
+    public String getPageUri() {
+        return "/systeminformation";
     }
 
     @Override
