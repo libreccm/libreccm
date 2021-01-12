@@ -48,9 +48,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
 /**
- * Controller for the user details view and the {@code GET} requests to the 
- * user edit form.
- * 
+ * Controller for the user details view and the {@code GET} requests to the user
+ * edit form.
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -223,10 +223,7 @@ public class UsersController {
             final User user = result.get();
             user.setBanned(true);
             userRepository.save(user);
-            return String.format(
-                //"redirect:%s", mvc.uri("UsersController#getUsers")
-                "redirect:users-groups-roles/users"
-            );
+            return "redirect:users-groups-roles/users";
         } else {
             userDetailsModel.addMessage(
                 new Message(
@@ -326,14 +323,9 @@ public class UsersController {
     ) {
         if (!confirmed) {
             return String.format(
-                "redirect:%s",
-                mvc.uri(
-                    String.format(
-                        "UsersController#getUserDetails",
-                        "{ userIdentifier: %s}",
-                        userIdentifierParam
-                    )
-                )
+                "redirect:%s/users-groups-roles/users/%s",
+                mvc.getBasePath(),
+                userIdentifierParam
             );
         }
 
@@ -361,27 +353,17 @@ public class UsersController {
             final User user = result.get();
             if (user.getEmailAddresses().size() <= emailId) {
                 return String.format(
-                    "redirect:%s",
-                    mvc.uri(
-                        String.format(
-                            "UsersController#getUserDetails",
-                            "{ userIdentifier: %s}",
-                            userIdentifierParam
-                        )
-                    )
+                    "redirect:%s/users-groups-roles/users/%s",
+                    mvc.getBasePath(),
+                    userIdentifierParam
                 );
             }
             user.getEmailAddresses().remove(emailId);
             userRepository.save(user);
             return String.format(
-                "redirect:%s",
-                mvc.uri(
-                    String.format(
-                        "UsersController#getUserDetails",
-                        "{ userIdentifier: %s}",
-                        userIdentifierParam
-                    )
-                )
+                "redirect:%s/users-groups-roles/users/%s",
+                mvc.getBasePath(),
+                userIdentifierParam
             );
         } else {
             userDetailsModel.addMessage(
