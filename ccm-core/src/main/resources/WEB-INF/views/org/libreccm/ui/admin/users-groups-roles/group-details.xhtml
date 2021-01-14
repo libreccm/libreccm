@@ -1,9 +1,9 @@
 <!DOCTYPE html [<!ENTITY times '&#215;'>]>
-<html xmlns="http://www.w3.org/1999/xhtml" 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:xlink="http://www.w3.org/1999/xlink">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/users-groups-roles.xhtml">
         <ui:param name="activePage" value="usersgroupsroles" />
         <ui:param name="activePanel" value="groups" />
@@ -12,12 +12,12 @@
 
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="#{mvc.uri('UsersGroupsRolesController#getOverview')}">
+                <a href="#{mvc.basePath}/users-groups-roles">
                     #{AdminMessages['usersgroupsroles.label']}
                 </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="#{mvc.uri('GroupsController#getGroups')}">
+                <a href="#{mvc.basePath}/users-groups-roles/groups">
                     #{AdminMessages['usersgroupsroles.groups.label']}
                 </a>
             </li>
@@ -42,13 +42,8 @@
                 </div>
             </dl>
             <a class="btn btn-primary" 
-               href="#{mvc.uri('GroupsController#editGroup', {'groupIdentifier': GroupDetailsModel.groupName })}">
-                <svg class="bi"
-                     width="1em"
-                     height="1em"
-                     fill="currentColor">
-                    <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
-                </svg>
+               href="#{mvc.basePath}/users-groups-roles/groups/#{GroupDetailsModel.groupName}/edit">
+                <bootstrap:svgIcon icon="pen" />
                 <span>
                     #{AdminMessages['usersgroupsroles.groups.group_details.edit_group']}
                 </span>
@@ -62,12 +57,7 @@
                         data-toggle="modal"
                         data-target="#group-members-dialog"
                         type="button">
-                    <svg class="bi"
-                         width="1em"
-                         height="1em"
-                         fill="currentColor">
-                        <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
-                    </svg>
+                    <bootstrap:svgIcon icon="pen" />
                     <span>#{AdminMessages['usersgroupsroles.groups.group_details.members.edit']}</span>
                 </button>
                 <div aria-labelledby="group-members-dialog-title"
@@ -77,7 +67,7 @@
                      id="group-members-dialog" 
                      tabindex="-1">
                     <div class="modal-dialog">
-                        <form action="#{mvc.uri('GroupMembersRolesController#updateGroupMemberships', {'groupIdentifier': GroupDetailsModel.groupName})}" 
+                        <form action="#{mvc.basePath}/users-groups-roles/groups/#{GroupDetailsModel.groupName}/members" 
                               class="modal-content" 
                               method="post">
                             <div class="modal-header">
@@ -129,7 +119,7 @@
                         <c:forEach items="#{GroupDetailsModel.members}" 
                                    var="member">
                             <li class="list-group-item">
-                                <a href="#{mvc.uri('UsersController#getUserDetails', { 'userIdentifier': member.userName })}">
+                                <a href="#{mvc.basePath}/users-groups-roles/users/#{member.userName}/details">
                                     #{member.userName}
                                 </a>
                             </li>
@@ -151,12 +141,7 @@
                         data-toggle="modal"
                         data-target="#group-roles-dialog"
                         type="button">
-                    <svg class="bi"
-                         width="1em"
-                         height="1em"
-                         fill="currentColor">
-                        <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
-                    </svg>
+                    <bootstrap:svgIcon icon="pen" />
                     <span>#{AdminMessages['usersgroupsroles.groups.group_details.roles.edit']}</span>
                 </button>
                 <div aria-labelledby="group-roles-dialog-title"
@@ -166,7 +151,7 @@
                      id="group-roles-dialog"
                      tabindex="-1">
                     <div class="modal-dialog">
-                        <form action="#{mvc.uri('GroupMembersRolesController#updateRoleMemberships', {'groupIdentifier': GroupDetailsModel.groupName })}"
+                        <form action="#{mvc.basePath}/users-groups-roles/groups/#{GroupDetailsModel.groupName}/members"
                               class="modal-content"
                               method="post">
                             <div class="modal-header">
@@ -218,7 +203,7 @@
                         <c:forEach items="#{GroupDetailsModel.roles}" 
                                    var="role">
                             <li class="list-group-item">
-                            <a href="#{mvc.uri('RolesController#getRoleDetails', {'roleIdentifier': role.roleName})}">
+                            <a href="#{mvc.basePath}/users-groups-roles/roles#{role.roleName}/details">
                                 #{role.roleName}
                             </a>
                             </li>

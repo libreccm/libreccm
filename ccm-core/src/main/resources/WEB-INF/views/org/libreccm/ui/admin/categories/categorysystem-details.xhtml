@@ -260,7 +260,7 @@
                                                  id="categorysystem-owner-#{owner.uuid}-remove"
                                                  tabindex="-1">
                                                 <div class="modal-dialog">
-                                                    <form action="#{mvc.uri('CategorySystemsController#removeOwner', { 'categorySystemIdentifier': CategorySystemDetailsModel.identifier, 'applicationUuid': owner.uuid })}"
+                                                    <form action="#{mvc.basePath}/categorymanager/categorysystems/#{CategorySystemDetailsModel.identifier}/owners/#{owner.uuid}/remove"
                                                           class="modal-content"
                                                           method="post">
                                                         <div class="modal-header">
@@ -308,7 +308,7 @@
                 <div class="mb-2">
                     <div class="text-right">
                         <a class="btn btn-secondary"
-                           href="#{mvc.basePath}/categorymanager/categories/#{CategorySystemsIdentifier.rootIdentifier}/subcategories/new">
+                           href="#{mvc.basePath}/categorymanager/categories/#{CategorySystemDetailsModel.rootIdentifier}/subcategories/new">
                             <bootstrap:svgIcon icon="plus-circle" />
                             <span>#{AdminMessages['categorysystems.details.categories.add']}</span>
                         </a>
@@ -382,7 +382,7 @@
                                         </td>
                                         <td>
                                             <c:if test="#{category.categoryOrder != 0}">
-                                                <form action="#{mvc.basePath}/categorymanager/#{CategorySystemDetailsModel.rootIdentifier}/subcategories/#{category.identifier}/reorder"
+                                                <form action="#{mvc.basePath}/categorymanager/categories/#{CategorySystemDetailsModel.rootIdentifier}/subcategories/#{category.identifier}/reorder"
                                                       method="post">
                                                     <input name="direction"
                                                            type="hidden"
@@ -397,7 +397,7 @@
                                         </td>
                                         <td>
                                             <c:if test="#{category.categoryOrder lt CategorySystemDetailsModel.categories.size()}">
-                                                <form action="#{mvc.basePath}/categorymanager/categories/#{CategorySystemDetailsModel.rootIdentifier}/subcategories/#{category.identifier/reorder}"
+                                                <form action="#{mvc.basePath}/categorymanager/categories/#{CategorySystemDetailsModel.rootIdentifier}/subcategories/#{category.identifier}/reorder"
                                                       method="post">
                                                     <input name="direction" 
                                                            value="INCREASE" 

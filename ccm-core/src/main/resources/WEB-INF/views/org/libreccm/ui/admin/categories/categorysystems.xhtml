@@ -27,7 +27,7 @@
 
                 <div class="text-right mb-2">
                     <a class="btn btn-secondary"
-                       href="#{mvc.uri('CategorySystemsController#newCategorySystem')}">
+                       href="#{mvc.basePath}/categorymanager/categorysystems/new">
                         <bootstrap:svgIcon icon="plus-circle" />
                         <span>#{AdminMessages['categorysystems.add']}</span>
                     </a>
@@ -54,7 +54,7 @@
                                 <td>#{categorySystem.released}</td>
                                 <td>
                                     <a class="btn btn-info"
-                                       href="#{mvc.uri('CategorySystemsController#getCategorySystemDetails', { 'categorySystemIdentifier': categorySystem.identifier })}">
+                                       href="#{mvc.basePath}/categorymanager/categorysystems/#{categorySystem.identifier}/details">
                                         <bootstrap:svgIcon icon="pen"/>
                                         #{AdminMessages['categorysystems.table.actions.edit']}
                                     </a>
@@ -71,7 +71,7 @@
                                          id="confirm-delete-#{categorySystem.identifier}"
                                          tabindex="-1">
                                         <div class="modal-dialog">
-                                            <form action="#{mvc.uri('CategorySystemsController#deleteCategorySystem', {'categorySystemIdentifier': categorySystem.identifier })}"
+                                            <form action="#{mvc.basePath}/categorymanager/categorysystems/#{categorySystem.identifier}/delete"
                                                   class="modal-content"
                                                   method="post">
                                                 <div class="modal-header">

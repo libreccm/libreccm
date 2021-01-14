@@ -11,17 +11,17 @@
 
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="#{mvc.uri('UsersGroupsRolesController#getOverview')}">
+                <a href="#{mvc.basePath}/users-groups-roles">
                     #{AdminMessages['usersgroupsroles.label']}
                 </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="#{mvc.uri('UsersController#getUsers')}">
+                <a href="#{mvc.basePath}/users-groups-roles/users">
                     #{AdminMessages['usersgroupsroles.users.label']}
                 </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="#{mvn.uri('UsersController#getUserDetails', { 'userIdentfier': user.name })}">
+                <a href="#{mvc.basePath}/users-groups-roles/users/#{user.name}">
                     #{UserDetailsModel.name}
                 </a>
             </li>
@@ -41,7 +41,7 @@
                     #{AdminMessages[message]}
                 </div>
             </c:forEach>
-            <form action="#{EmailFormModel.new ? mvc.uri('EmailFormController#saveEmailAddress', {'userIdentifier': EmailFormModel.userIdentifier, 'emailIdentifier': 'new' }) : mvc.uri('EmailFormController#saveEmailAddress', { 'userIdentifier': EmailFormController.userIdentifier, 'emailIdentifier': EmailFormModel.emailId })}"
+            <form action="#{EmailFormModel.new ? mvc.basePath += '/users-groups-roles/users/' += EmailFormModel.userIdentifier += '/email-addresses/new/save' : mvc.basePath += '/users-groups-roles/users/' += EmailFormModel.userIdentifier += '/email-addresses/' += EmailFormModel.emailId += '/save'}"
                   method="post">
                 <div class="form-group">
                     <label for="address">

@@ -44,7 +44,7 @@
                     #{AdminMessages['categories.label']}
                 </h1>
 
-                <form action="#{CategoryDetailsModel.new ? mvc.uri('CategoryFormController#createCategory', {'parentCategoryIdentifier': CategoryDetailsModel.parentCategory.identifier }) : mvc.uri('CategoryFormController#updateCategory', {'categoryIdentifier': CategoryDetailsModel.identifier })}" 
+                <form action="#{CategoryDetailsModel.new ? mvc.basePath += '/categorymanager/categories/' += CategoryDetailsModel.parentCategory.identifier += 'new' : mvc.basePath += '/catgorymanager/categories/' += CategoryDetailsModel.identifier += '/edit'}" 
                       method="post">
                     <bootstrap:formGroupText help="#{AdminMessages['categories.form.name.help']}" 
                                              inputId="name" 
@@ -72,7 +72,7 @@
                                          name="abstractCategory"
                                          value="#{CategoryDetailsModel.new ? false : CategoryDetailsModel.abstractCategory}" />
                     <a class="btn btn-warning" 
-                       href="#{mvc.uri('CategoriesController#getCategory', {'categoryIdentifier': CategoryDetailsModel.identifier })}">
+                       href="#{mvc.basePath}/categorymanager/categories/#{CategoryDetailsModel.identifier}">
                         #{AdminMessages['categories.form.buttons.cancel']}
                     </a>
                     <button class="btn btn-success" type="submit">

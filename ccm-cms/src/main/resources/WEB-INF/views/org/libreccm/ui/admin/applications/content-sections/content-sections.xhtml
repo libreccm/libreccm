@@ -25,7 +25,7 @@
                 <h1>#{ContentSectionAdminMessages['application_title']}</h1>
 
                 <div class="mb-2">
-                    <bootstrap:modalForm actionTarget="#{mvc.uri('ContentSectionApplicationController#addContentSection')}"
+                    <bootstrap:modalForm actionTarget="#{mvc.basePath}/applications/content-sections/add"
                                          buttonIcon="plus-circle"
                                          buttonText="#{ContentSectionAdminMessages['contentsections.ui.admin.instances.add']}"
                                          buttonTextClass="text-right"
@@ -66,7 +66,7 @@
                             <tr>
                                 <td>#{section.label}</td>
                                 <td class="text-center">
-                                    <bootstrap:modalForm actionTarget="#{mvc.uri('ContentSectionApplicationController#updateContentSection', { 'sectionId': section.sectionId })}"
+                                    <bootstrap:modalForm actionTarget="#{mvc.basePath}/applications/content-sections/#{section.sectionId}/update"
                                                          buttonIcon="plus-circle"
                                                          buttonText="#{ContentSectionAdminMessages['contentsections.ui.admin.instances.edit']}"
                                                          buttonTextClass="text-right"
@@ -96,7 +96,7 @@
                                     </bootstrap:modalForm>
                                 </td>
                                 <td class="text-center">
-                                    <libreccm:deleteDialog actionTarget="#{mvc.uri('ContentSectionApplicationController#deleteContentSection', { 'sectionId': section.sectionId })}"
+                                    <libreccm:deleteDialog actionTarget="#{mvc.basePath}/applications/content-sections/#{section.sectionId}/delete"
                                                            buttonText="#{ContentSectionAdminMessages['contentsections.ui.admin.instances.delete_dialog.button_text']}" 
                                                            cancelLabel="#{ContentSectionAdminMessages['contentsections.ui.admin.instances.delete_dialog.cancel']}"
                                                            confirmLabel="#{ContentSectionAdminMessages['contentsections.ui.admin.instances.delete_dialog.confirm']}"

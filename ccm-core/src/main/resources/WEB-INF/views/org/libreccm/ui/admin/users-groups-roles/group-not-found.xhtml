@@ -11,12 +11,12 @@
 
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="#{mvc.uri('UsersGroupsRolesController#getOverview')}">
+                <a href="#{mvc.basePath}/users-groups-roles">
                     #{AdminMessages['usersgroupsroles.label']}
                 </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="#{mvc.uri('UsersController#getGroups')}">
+                <a href="#{mvc.basePath}/users-groups-roles/groups">
                     #{AdminMessages['usersgroupsroles.groups.label']}
                 </a>
             </li>

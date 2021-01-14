@@ -11,17 +11,17 @@
 
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="#{mvc.uri('UsersGroupsRolesController#getOverview')}">
+                <a href="#{mvc.basePath}/users-groups-roles">
                     #{AdminMessages['usersgroupsroles.label']}
                 </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="#{mvc.uri('GroupsController#getGroups')}">
+                <a href="#{mvc.basePath}/users-groups-roles/roles">
                     #{AdminMessages['usersgroupsroles.roles.label']}
                 </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="#{mvn.uri('GroupsController#getGroupDetails', { 'roleIdentfier': RoleDetailsModel.roleName })}">
+                <a href="#{mvc.basePath}/users-groups-roles/roles/#{RoleDetailsModel.roleName}">
                     #{RoleDetailsModel.roleName}
                 </a>
             </li>
@@ -37,7 +37,7 @@
                 </div>
             </c:forEach>
             
-            <form action="#{RoleDetailsModel.newRole ? mvc.uri('RoleFormController#createRole') : mvc.uri('RoleFormController#updateRole', {'roleIdentifier' : RoleDetailsModel.roleName })}"
+            <form action="#{RoleDetailsModel.newRole ? mvc.basePath += '/users-groups-roles/roles/new' : mvc.basePath += '/users-groups-roles/roles/' += RoleDetailsModel.roleName += '/edit'}">
                   method="post">
                 <div class="form-group">
                     <label for="rolename">
@@ -57,7 +57,7 @@
                     </small>
                 </div>
                 <a class="btn btn-warning" 
-                   href="#{mvc.uri('RolesController#getRoles')}">
+                   href="#{mvc.basePath}/users-groups-roles/roles">
                     #{AdminMessages['usersgroupsroles.roles.form.buttons.cancel']}
                 </a>
                 <button class="btn btn-success" type="submit">

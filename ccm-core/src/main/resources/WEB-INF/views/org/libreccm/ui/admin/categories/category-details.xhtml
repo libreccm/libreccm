@@ -49,14 +49,14 @@
                         <dt>#{AdminMessages['categories.details.path']}</dt>
                         <dd>
                             <c:if test="#{CategoryDetailsModel.categoryPath.domain != null}">
-                                <a href="#{mvc.uri('CategorySystemsController#getCategorySystemDetails', {'categorySystemIdentifier': CategoryDetailsModel.categoryPath.domain.identifier})}">
+                                <a href="#{mvc.basePath}/categorymanager/categorysystems/#{CategoryDetailsModel.categoryPath.domain.identifier}/details">
                                     #{CategoryDetailsModel.categoryPath.domain.domainKey}
                                 </a>
                             </c:if>
                             <c:forEach items="#{CategoryDetailsModel.categoryPath.categories}" 
                                        var="category" >
                                 <span>/</span>
-                                <a href="#{mvc.uri('CategoriesController#getCategory', {'categoryIdentifier': category.identifier})}">
+                                <a href="#{mvc.basePath}/categorymanager/categories/#{category.identifier}">
                                     #{category.name}
                                 </a>
                             </c:forEach>
@@ -105,7 +105,7 @@
 
                 <div class="mb-4">
                     <a class="btn btn-primary"
-                       href="#{mvc.uri('CategoriesController#editCategory', {'categoryIdentifier': CategoryDetailsModel.identifier } )}">
+                       href="#{mvc.basePath}/categorymanager/categories/#{CategoryDetailsModel.identifier}/edit">
                         <bootstrap:svgIcon icon="pen" />
                         <span>#{AdminMessages['categories.details.edit']}</span>
                     </a>
@@ -182,7 +182,7 @@
                 <div class="mb-2">
                     <div class="text-right">
                         <a class="btn btn-secondary"
-                           href="#{mvc.uri('CategoriesController#newSubCategory', {'categoryIdentifier': CategoryDetailsModel.identifier})}">
+                           href="#{mvc.basePath}/categorymanager/categories/#{CategoryDetailsModel.identifier}/subcategories/new">
                             <bootstrap:svgIcon icon="plus-circle" />
                             <span>#{AdminMessages['categories.details.subcategories.add']}</span>
                         </a>
@@ -218,7 +218,7 @@
                                            var="category">
                                     <tr>
                                         <td>
-                                            <a href="#{mvc.uri('CategoriesController#getCategory', { 'categoryIdentifier': category.identifier})}">
+                                            <a href="#{mvc.basePath}/categorymanager/categories/#{category.identifier}">
                                                 #{category.name}
                                             </a>
                                         </td>
@@ -254,7 +254,7 @@
                                         </td>
                                         <td>
                                             <c:if test="#{category.categoryOrder != 1}">
-                                                <form action="#{mvc.uri('CategoriesController#reorderSubCategory', {'categoryIdentifier': CategoryDetailsModel.identifier, 'subCategoryIdentifier': category.identifier})}"
+                                                <form action="#{mvc.basePath}/categorymanager/categories/#{CategoryDetailsModel.identifier}/subcategories/#{category.identifier}/reorder"
                                                       method="post">
                                                     <input name="direction" 
                                                            value="DECREASE"
@@ -269,7 +269,7 @@
                                         </td>
                                         <td>
                                             <c:if test="#{category.categoryOrder lt CategoryDetailsModel.subCategories.size()}">
-                                                <form action="#{mvc.uri('CategoriesController#reorderSubCategory', {'categoryIdentifier': CategoryDetailsModel.identifier, 'subCategoryIdentifier': category.identifier})}"
+                                                <form action="#{mvc.basePath}/categorymanager/categories/#{CategoryDetailsModel.identifier}/subcategories/#{category.identifier}/reorder"
                                                       method="post">
                                                     <input name="direction" 
                                                            value="INCREASE"
@@ -284,7 +284,7 @@
                                         </td>
                                         <td>
                                             <libreccm:deleteDialog 
-                                                actionTarget="#{mvc.uri('CategoriesController#removeSubCategory', {'categoryIdentifier': category.identifier})}"
+                                                actionTarget="#{mvc.basePath}/categorymanager/categories/#{category.identifier}/subcategories/remove"
                                                 buttonText="#{AdminMeesages['categories.details.subcategories.delete']}"
                                                 buttonTextClass="text-center"
                                                 cancelLabel="#{AdminMessages['categories.details.subcategories.delete.cancel']}"

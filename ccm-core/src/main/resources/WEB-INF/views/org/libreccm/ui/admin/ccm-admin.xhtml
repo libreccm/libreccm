@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
       >
     <head>
         <title>#{title} - LibreCCM Admin</title>
@@ -31,12 +30,7 @@
                             <li class="nav-item">
                                 <a class="nav-link #{activePage == page.pageUri?'active':''}" 
                                    href="#{mvc.basePath}#{page.pageUri}">
-                                    <svg class="bi"
-                                         width="1em"
-                                         height="1em"
-                                         fill="currentColor">
-                                        <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg##{page.icon}" />
-                                    </svg>
+                                    <bootstrap:svgIcon icon="${page.icon}"/>
                                     <span>#{page.label}</span>
                                 </a>
                             </li>
@@ -47,7 +41,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
-                        <a href="#{mvc.uri('DashboardController#getDashboard')}">
+                        <a href="#{mvc.basePath}/">
                             #{AdminMessages['breadcrumbs.start']}
                         </a>
                     </li>

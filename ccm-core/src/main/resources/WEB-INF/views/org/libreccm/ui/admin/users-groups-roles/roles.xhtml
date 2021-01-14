@@ -1,9 +1,8 @@
 <!DOCTYPE html [<!ENTITY times '&#215;'>]>
 <html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:xlink="http://www.w3.org/1999/xlink">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/users-groups-roles.xhtml">
         <ui:param name="activePage" value="usersgroupsroles" />
         <ui:param name="activePanel" value="roles" />
@@ -12,7 +11,7 @@
 
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="#{mvc.uri('UsersGroupsRolesController#getOverview')}">
+                <a href="#{mvc.basePath}/users-groups-roles">
                     #{AdminMessages['usersgroupsroles.label']}
                 </a>
             </li>
@@ -28,13 +27,8 @@
                 </div>
                 <div class="col-sm-3 text-right">
                     <a class="btn btn-secondary"
-                       href="#{mvc.uri('RolesController#newRole')}">
-                        <svg class="bi"
-                             width="1em"
-                             height="1em"
-                             fill="currentColor">
-                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#plus-circle" />
-                        </svg>
+                       href="#{mvc.basePath}/users-groups-roles/roles/new">
+                        <bootstrap:svgIcon icon="plus-circle" />
                         <span>#{AdminMessages['usersgroupsroles.roles.add']}</span>
                     </a>
                 </div>
@@ -53,13 +47,8 @@
                             <td>#{role.name}</td>
                             <td class="text-center action-col">
                                 <a class="btn btn-info"
-                                   href="#{mvc.uri('RolesController#getRoleDetails', { 'roleIdentifier': role.name })}">
-                                    <svg class="bi"
-                                         width="1em"
-                                         height="1em"
-                                         fill="currentColor">
-                                        <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#eye" />
-                                    </svg>
+                                   href="#{mvc.basePath}/users-groups-roles/roles/#{role.name}/details">
+                                    <bootstrap:svgIcon icon="eye" />
                                     <span>
                                         #{AdminMessages['usersgroupsroles.roles.detailslink.label']}
                                     </span>
@@ -70,12 +59,7 @@
                                         data-toggle="modal"
                                         data-target="#confirm-delete-#{role.name}"
                                         href="#">
-                                    <svg class="bi"
-                                         width="1em"
-                                         height="1em"
-                                         fill="currentColor">
-                                        <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#x-circle" />
-                                    </svg>
+                                    <bootstrap:svgIcon icon="x-circle" />
                                     <span>
                                         #{AdminMessages['usersgroupsroles.roles.delete.button.label']}
                                     </span>
@@ -84,7 +68,7 @@
                                      id="confirm-delete-#{role.name}"
                                      tabindex="-1">
                                     <div class="modal-dialog">
-                                        <form action="#{mvc.uri('RolesController#deleteRole', { 'roleIdentifier': role.name })}"
+                                        <form action="#{mvc.basePath}/users-groups-roles/roles/#{role.name}/delete"
                                               class="modal-content"
                                               method="post">
                                             <div class="modal-header">
@@ -105,16 +89,16 @@
                                                        value="true" />
                                             </div>
                                             <div class="modal-footer">
-                                                    <button class="btn btn-secondary"
-                                                            data-dismiss="modal"
-                                                            type="button">
-                                                        #{AdminMessages['usersgroupsroles.roles.delete.confirm.cancel']}
-                                                    </button>
-                                                    <button class="btn btn-danger" 
-                                                            type="submit">
-                                                        #{AdminMessages['usersgroupsroles.roles.delete.confirm.yes']}
-                                                    </button>
-                                                </div>
+                                                <button class="btn btn-secondary"
+                                                        data-dismiss="modal"
+                                                        type="button">
+                                                    #{AdminMessages['usersgroupsroles.roles.delete.confirm.cancel']}
+                                                </button>
+                                                <button class="btn btn-danger" 
+                                                        type="submit">
+                                                    #{AdminMessages['usersgroupsroles.roles.delete.confirm.yes']}
+                                                </button>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>
