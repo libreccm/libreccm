@@ -1,9 +1,8 @@
 <!DOCTYPE html [<!ENTITY times '&#215;'>]>
 <html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:xlink="http://www.w3.org/1999/xlink">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
 
         <ui:param name="activePage" value="configuration" />
@@ -11,7 +10,8 @@
 
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="#{mvc.uri('ConfigurationController#getSettings')}">
+                
+                <a href="#{mvc.basePath}/configuration">
                     #{AdminMessages['configuration.label']}
                 </a>
             </li>
@@ -70,12 +70,7 @@
                                                 data-target="#setting-info-#{setting.name}"
                                                 title="#{AdminMessages.getMessage('configuration.settings.table.actions.info.help', [setting.label])}"
                                                 type="button">
-                                            <svg class="bi"
-                                                 width="1em"
-                                                 height="1em"
-                                                 fill="currentColor">
-                                                <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#info-circle" />
-                                            </svg>
+                                            <bootstrap:svgIcon icon="info-circle" />
                                             #{AdminMessages['configuration.settings.table.actions.info']}
                                         </button>
                                         <div aria-hidden="true"
@@ -117,12 +112,7 @@
                                             data-toggle="modal"
                                             data-target="#setting-#{setting.name}-edit-dialog"
                                             type="button">
-                                        <svg class="bi"
-                                             width="1em"
-                                             height="1em"
-                                             fill="currentColor">
-                                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#pen" />
-                                        </svg>
+                                        <bootstrap:svgIcon icon="pen" />
                                         #{AdminMessages['configuration.settings.table.actions.edit']}
                                     </button>
                                     <div aria-hidden="true"
@@ -132,7 +122,7 @@
                                          id="setting-#{setting.name}-edit-dialog"
                                          tabindex="-1">
                                         <div class="modal-dialog">
-                                            <form action="#{mvc.uri('SettingsController#updateSettingValue', {'configurationClass': configurationClass, 'settingName': setting.name})}"
+                                            <form action="#{mvc.basePath}/configuration/#{configurationClass}/#{settingName}"
                                                   class="modal-content"
                                                   method="post">
                                                 <div class="modal-header">
@@ -340,12 +330,7 @@
                                             data-target="#setting-#{setting.name}-reset-dialog"
                                             title="#{AdminMessages.getMessage('configuration.settings.table.actions.reset.help', [setting.label, setting.defaultValue])}"
                                             type="button">
-                                        <svg class="bi"
-                                             width="1em"
-                                             height="1em"
-                                             fill="currentColor">
-                                            <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#x-circle" />
-                                        </svg>
+                                        <bootstrap:svgIcon icon="x-circle" />
                                         #{AdminMessages['configuration.settings.table.actions.reset']}
                                     </button>
                                     <div aria-hidden="true"
@@ -355,7 +340,7 @@
                                          id="setting-#{setting.name}-reset-dialog"
                                          tabindex="-1">
                                         <div class="modal-dialog">
-                                            <form action="#{mvc.uri('SettingsController#resetSettingValue', {'configurationClass': configurationClass, 'settingName': setting.name })}"
+                                            <form action="#{mvc.basePath}/configuration/#{configurationClass}/#{setting.name}/reset"
                                                   class="modal-content"
                                                   method="post">
                                                 <div class="modal-header">

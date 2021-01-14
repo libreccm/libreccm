@@ -21,7 +21,7 @@
                     <c:forEach items="#{configurationClasses}" 
                                var="confClass">
                         <a class="list-group-item list-group-item-action"
-                           href="#{mvc.uri('SettingsController#showSettings', { 'configurationClass': confClass.name })}">
+                           href="#{mvc.basePath}/configuration/#{confClass.name}">
                             <h2 class="h3 mb-1">
                                 #{confClass.title}
                             </h2>
