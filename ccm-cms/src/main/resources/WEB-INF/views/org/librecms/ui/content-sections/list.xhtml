@@ -5,21 +5,54 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/librecms/ui/content-sections/content-sections.xhtml">
-        
+
         <ui:param name="activePage" value="contentSections" />
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
                 #{CmsAdminMessages['contentsections.list.label']}
             </li>
         </ui:define>
-        
+
         <ui:define name="main">
             <div class="container">
                 <h1>#{CmsAdminMessages['contentsections.list.label']}</h1>
-                <p>
-                    Content Sections List Placeholder
-                </p>
-                <pre>MVC base path: #{mvc.basePath}</pre>
+
+                <div class="text-right mb-2">
+                    <a class="btn btn-secondary"
+                       href="#{mvc.basePath}/new">
+                        <bootstrap:svgIcon icon="plus-circle" />
+                        <span>#{CmsAdminMessages['contentsections.list.add']}</span>
+                    </a>
+                </div>
+                <table class="table table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>
+                                #{CmsAdminMessages['contentsections.list.table.headers.label']}
+                            </th>
+                            <th class="text-center">#{CmsAdminMessages['contentsections.list.table.headers.actions']}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="#{ContentSectionsTableModel.contentSections}"
+                                   var="section">
+                            <tr>
+                                <td>
+                                    <a href="#{mvc.basePath}/#{section.label}/contentitems">
+                                        #{section.label}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a class="btn btn-info"
+                                       href="#{mvc.basePath}/#{section.label}/details">
+                                        <bootstrap:svgIcon icon="eye"/>
+                                        #{CmsAdminMessages['contentsections.list.table.actions.show_details']}
+                                    </a>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
             </div>
         </ui:define>
     </ui:composition>

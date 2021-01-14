@@ -6,6 +6,7 @@
 package org.librecms.ui;
 
 import org.libreccm.security.AuthorizationRequired;
+import org.librecms.contentsection.ContentSectionRepository;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -16,6 +17,7 @@ import javax.mvc.Controller;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -30,8 +32,11 @@ import javax.ws.rs.core.Response;
 public class ContentSectionsController {
 
     @Inject
+    private ContentSectionRepository sectionRepo;
+
+    @Inject
     private HttpServletRequest request;
-    
+
     @Inject
     private ServletContext servletContext;
 
@@ -81,6 +86,22 @@ public class ContentSectionsController {
     @AuthorizationRequired
     public String getSearch() {
         return "org/librecms/ui/content-sections/search.xhtml";
+    }
+
+    @GET
+    @Path("/{sectionIdentifier}/details")
+    public String getContentSectionDetails() {
+        throw new WebApplicationException(
+            Response.status(Response.Status.NOT_FOUND).build()
+        );
+    }
+    
+    @POST
+    @Path("/new")
+    public String createContentSection() {
+        throw new WebApplicationException(
+            Response.status(Response.Status.NOT_FOUND).build()
+        );
     }
 
 }
