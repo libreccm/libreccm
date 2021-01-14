@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:xlink="http://www.w3.org/1999/xlink">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/libreccm/ui/admin/ccm-admin.xhtml">
 
         <ui:param name="activePage" value="imexport" />
@@ -23,16 +22,12 @@
                         <div aria-describedby="import-card-body"
                              class="card pt-2"
                              id="import-card">
-                            <svg aria-hidden="true"
-                                 class="card-img-top"
-                                 fill="currentColor">
-                                <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#download" />
-                            </svg>
+                            <bootstrap:svgIcon icon="download" />
                             <div class="card-body"
                                  id="import-card-body">
                                 <h2 class="card-title">
                                     <a class="stretched-link"
-                                       href="#{mvc.uri('ImExportController#importEntities')}">
+                                       href="#{mvc.basePath}/imexport/import">
                                         #{AdminMessages['import.label']}
                                     </a>
                                 </h2>
@@ -47,16 +42,12 @@
                         <div aria-describedby="export-card-body"
                              class="card pt-2"
                              id="export-card">
-                            <svg aria-hidden="true"
-                                 class="card-img-top"
-                                 fill="currentColor">
-                                <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#download" />
-                            </svg>
+                            <bootstrap:svgIcon icon="download" />
                             <div class="card-body"
                                  id="export-card-body">
                                 <h2 class="card-title">
                                     <a class="stretched-link"
-                                       href="#{mvc.uri('ImExportController#exportEntities')}">
+                                       href="#{mvc.basePath}/imexport/export">
                                         #{AdminMessages['export.label']}
                                     </a>
                                 </h2>

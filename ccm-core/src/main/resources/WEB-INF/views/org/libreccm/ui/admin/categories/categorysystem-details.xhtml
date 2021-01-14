@@ -86,7 +86,7 @@
                     </a>
                 </div>
 
-                <libreccm:localizedStringEditor addMethod="CategorySystemsController#addTitle"
+                <libreccm:localizedStringEditor addMethod="#{mvc.basePath}/categorymanager/categorysystems/#{CategorySystemDetailsModel.identifier}/title/add"
                                                 addButtonLabel="#{AdminMessages['categorysystems.details.title.add']}"
                                                 addDialogCancelLabel="#{AdminMessages['categorysystems.details.title.add.dialog.close']}"
                                                 addDialogLocaleSelectHelp="#{AdminMessages['categorysystems.details.title.add.dialog.locale.help']}"
@@ -101,7 +101,7 @@
                                                 editDialogTitle="#{AdminMessages['categorysystems.details.title.table.actions.edit.dialog.title']}"
                                                 editDialogValueHelp="#{AdminMessages['categorysystems.details.title.edit.dialog.value.help']}"
                                                 editDialogValueLabel="#{AdminMessages['categorysystems.details.title.edit.dialog.value.label']}"
-                                                editMethod="CategorySystemsController#editTitle"
+                                                editMethod="#{mvc.basePath}/categorymanager/categorysystems/#{CategorySystemDetailsModel.identifier}/title/edit"
                                                 editorId="categorysystem-title"
                                                 emptyText="#{AdminMessages['categorysystems.details.title.none']}"
                                                 hasUnusedLocales="#{CategorySystemDetailsModel.hasUnusedTitleLocales()}"
@@ -111,7 +111,7 @@
                                                 removeDialogSubmitLabel="#{AdminMessages['categorysystems.details.title.remove.dialog.submit']}"
                                                 removeDialogText="#{AdminMessages['categorysystems.details.title.remove.dialog.message']}"
                                                 removeDialogTitle="#{AdminMessages['categorysystems.details.title.table.actions.remove.dialog.title']}"
-                                                removeMethod="CategorySystemsController#removeTitle"
+                                                removeMethod="#{mvc.basePath}/categorymanager/categorysystems/#{CategorySystemDetailsModel.identifier}/title/remove"
                                                 tableActionsHeading="#{AdminMessages['categorysystems.details.title.table.headings.actions']}"
                                                 tableLocaleHeading="#{AdminMessages['categorysystems.details.title.table.headings.locale']}"
                                                 tableValueHeading="#{AdminMessages['categorysystems.details.title.table.headings.value']}"
@@ -119,7 +119,7 @@
                                                 unusedLocales="#{CategorySystemDetailsModel.unusedTitleLocales}"
                                                 values="#{CategorySystemDetailsModel.title}" />
 
-                <libreccm:localizedStringEditor addMethod="CategorySystemsController#addDescription"
+                <libreccm:localizedStringEditor addMethod="#{mvc.basePath}/categorymanager/categorysystems/#{CategorySystemDetailsModel.identifier}/description/add"
                                                 addButtonLabel="#{AdminMessages['categorysystems.details.description.add']}"
                                                 addDialogCancelLabel="#{AdminMessages['categorysystems.details.description.add.dialog.close']}"
                                                 addDialogLocaleSelectHelp="#{AdminMessages['categorysystems.details.description.add.dialog.locale.help']}"
@@ -134,7 +134,7 @@
                                                 editDialogTitle="#{AdminMessages['categorysystems.details.description.table.actions.edit.dialog.title']}"
                                                 editDialogValueHelp="#{AdminMessages['categorysystems.details.description.edit.dialog.value.help']}"
                                                 editDialogValueLabel="#{AdminMessages['categorysystems.details.description.edit.dialog.value.label']}"
-                                                editMethod="CategorySystemsController#editDescription"
+                                                editMethod="#{mvc.basePath}/categorymanager/categorysystems/#{CategorySystemDetailsModel.identifier}/description/edit"
                                                 editorId="categorysystem-description"
                                                 emptyText="#{AdminMessages['categorysystems.details.description.none']}"
                                                 hasUnusedLocales="#{CategorySystemDetailsModel.hasUnusedDescriptionLocales()}"
@@ -144,7 +144,7 @@
                                                 removeDialogSubmitLabel="#{AdminMessages['categorysystems.details.description.remove.dialog.submit']}"
                                                 removeDialogText="#{AdminMessages['categorysystems.details.description.remove.dialog.message']}"
                                                 removeDialogTitle="#{AdminMessages['categorysystems.details.description.table.actions.remove.dialog.title']}"
-                                                removeMethod="CategorySystemsController#removeDescription"
+                                                removeMethod="#{mvc.basePath}/categorymanager/categorysystems/#{CategorySystemDetailsModel.identifier}/description/remove"
                                                 tableActionsHeading="#{AdminMessages['categorysystems.details.description.table.headings.actions']}"
                                                 tableLocaleHeading="#{AdminMessages['categorysystems.details.description.table.headings.locale']}"
                                                 tableValueHeading="#{AdminMessages['categorysystems.details.description.table.headings.value']}"

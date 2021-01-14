@@ -12,7 +12,7 @@
 
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="#{mvc.uri('ImExportController#getImExportDashboard')}">
+                <a href="#{mvc.basePath}/imexport">
                     #{AdminMessages['imexport.label']}
                 </a>
             </li>
@@ -26,7 +26,7 @@
             <div class="container">
                 <h1>#{AdminMessages['imexport.export.label']}</h1>
 
-                <form action="#{mvc.uri('ImExportController#exportEntities')}"
+                <form action="#{mvc.basePath}/imexport/export"
                       aria-describedby="export-help"
                       method="post">
                     <p id="export-help">#{AdminMessages['imexport.export.help']}</p>
@@ -53,7 +53,7 @@
                         required="treu" />
 
                     <a class="btn btn-warning"
-                       href="#{mvc.uri('ImExportController#getImExportDashboard')}">
+                       href="#{mvc.basePath}/imexport">
                         #{AdminMessages['imexport.export.cancel']}
                     </a>
                     <button class="btn btn-success" type="submit">

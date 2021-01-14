@@ -47,6 +47,11 @@ public class ContentSectionApplicationController
     @Inject
     private ContentSectionRepository sectionRepository;
 
+    @Override
+    public String getControllerLink() {
+        return "applications/content-sections";
+    }
+    
     @GET
     @Path("/")
     @AuthorizationRequired

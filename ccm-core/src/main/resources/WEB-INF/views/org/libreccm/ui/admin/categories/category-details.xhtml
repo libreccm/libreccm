@@ -110,7 +110,7 @@
                     </a>
                 </div>
 
-                <libreccm:localizedStringEditor addMethod="CategoriesController#addTitle"
+                <libreccm:localizedStringEditor addMethod="#{mvc.basePath}/categorymanager/categories/#{CategoryDetailsModel.identifier}/title/add"
                                                 addButtonLabel="#{AdminMessages['categories.details.title.add']}"
                                                 addDialogCancelLabel="#{AdminMessages['categories.details.title.add.dialog.close']}"
                                                 addDialogLocaleSelectHelp="#{AdminMessages['categories.details.title.add.dialog.locale.help']}"
@@ -125,7 +125,7 @@
                                                 editDialogTitle="#{AdminMessages['categories.details.title.table.actions.edit.dialog.title']}"
                                                 editDialogValueHelp="#{AdminMessages['categories.details.title.edit.dialog.value.help']}"
                                                 editDialogValueLabel="#{AdminMessages['categories.details.title.edit.dialog.value.label']}"
-                                                editMethod="CategoriesController#editTitle"
+                                                editMethod="#{mvc.basePath}/categorymanager/categories/#{CategoryDetailsModel.identifier}/title/edit"
                                                 editorId="category-title"
                                                 emptyText="#{AdminMessages['categories.details.title.none']}"
                                                 hasUnusedLocales="#{CategoryDetailsModel.hasUnusedTitleLocales()}"
@@ -143,7 +143,7 @@
                                                 unusedLocales="#{CategoryDetailsModel.unusedTitleLocales}"
                                                 values="#{CategoryDetailsModel.title}" />
 
-                <libreccm:localizedStringEditor addMethod="CategoriesController#addDescription"
+                <libreccm:localizedStringEditor addMethod="#{mvc.basePath}/categorymanager/categories/#{CategoryDetailsModel.identifier}/description/add"
                                                 addButtonLabel="#{AdminMessages['categories.details.description.add']}"
                                                 addDialogCancelLabel="#{AdminMessages['categories.details.description.add.dialog.close']}"
                                                 addDialogLocaleSelectHelp="#{AdminMessages['categories.details.description.add.dialog.locale.help']}"
@@ -158,7 +158,7 @@
                                                 editDialogTitle="#{AdminMessages['categories.details.description.table.actions.edit.dialog.title']}"
                                                 editDialogValueHelp="#{AdminMessages['categories.details.description.edit.dialog.value.help']}"
                                                 editDialogValueLabel="#{AdminMessages['categories.details.description.edit.dialog.value.label']}"
-                                                editMethod="CategoriesController#editDescription"
+                                                editMethod="#{mvc.basePath}/categorymanager/categories/#{CategoryDetailsModel.identifier}/description/edit"
                                                 editorId="category-description"
                                                 emptyText="#{AdminMessages['categories.details.description.none']}"
                                                 hasUnusedLocales="#{CategoryDetailsModel.hasUnusedDescriptionLocales()}"
@@ -168,7 +168,7 @@
                                                 removeDialogSubmitLabel="#{AdminMessages['categories.details.description.remove.dialog.submit']}"
                                                 removeDialogText="#{AdminMessages['categories.details.description.remove.dialog.message']}"
                                                 removeDialogTitle="#{AdminMessages['categories.details.description.table.actions.remove.dialog.title']}"
-                                                removeMethod="CategoriesController#removeDescription"
+                                                removeMethod="#{mvc.basePath}/categorymanager/categories/#{CategoryDetailsModel.identifier}/description/remove"
                                                 tableActionsHeading="#{AdminMessages['categories.details.description.table.headings.actions']}"
                                                 tableLocaleHeading="#{AdminMessages['categories.details.description.table.headings.locale']}"
                                                 tableValueHeading="#{AdminMessages['categories.details.description.table.headings.value']}"

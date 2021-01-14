@@ -40,4 +40,9 @@ public class DefaultApplicationController implements ApplicationController {
         return "";
     }
 
+    @Override
+    public String getControllerLink() {
+        return "application";
+    }
+
 }

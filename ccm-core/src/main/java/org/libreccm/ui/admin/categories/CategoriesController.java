@@ -448,7 +448,7 @@ public class CategoriesController {
      * @return Redirect to the details page of the category.
      */
     @POST
-    @Path("/{identifier}/title/{locale}/edit")
+    @Path("/{identifier}/title/edit/{locale}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String editTitle(
@@ -505,7 +505,7 @@ public class CategoriesController {
      * @return Redirect to the details page of the category.
      */
     @POST
-    @Path("/{identifier}/title/{locale}/remove")
+    @Path("/{identifier}/title/remove/{locale}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeTitle(
@@ -621,7 +621,7 @@ public class CategoriesController {
      * @return Redirect to the details page of the category.
      */
     @POST
-    @Path("/{identifier}/description/{locale}/edit")
+    @Path("/{identifier}/description/edit/{locale}")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
@@ -679,7 +679,7 @@ public class CategoriesController {
      * @return Redirect to the details page of the category.
      */
     @POST
-    @Path("/{identifier}/description/{locale}/remove")
+    @Path("/{identifier}/description/remove/{locale}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeDescription(

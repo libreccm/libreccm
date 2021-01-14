@@ -28,4 +28,6 @@ public interface ApplicationController {
     
     String getApplication();
     
+    String getControllerLink();
+    
 }

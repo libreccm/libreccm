@@ -13,7 +13,9 @@
 
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
-                #{AdminMessages['applications.label']}
+                <a href="#{mvc.basePath}/applications">
+                    #{AdminMessages['applications.label']}
+                </a>
             </li>
             <li class="breadcrumb-item active">
                 #{ShortcutAdminMessages['application_title']}
@@ -25,7 +27,7 @@
                 <h1>#{ShortcutAdminMessages['application_title']}</h1>
 
                 <div class="mb-2">
-                    <bootstrap:modalForm actionTarget="#{mvc.uri('ShortcutsApplicationController#addShortcut')}"
+                    <bootstrap:modalForm actionTarget="#{mvc.basePath}/applications/shortcuts/add"
                                          buttonIcon="plus-circle"
                                          buttonText="#{ShortcutAdminMessages['shortcuts.ui.admin.add_shortcut']}"
                                          buttonTextClass="text-right"
@@ -69,7 +71,7 @@
                                 <td>#{shortcut.urlKey}</td>
                                 <td>#{shortcut.redirect}</td>
                                 <td>
-                                    <bootstrap:modalForm actionTarget="#{mvc.uri('ShortcutsApplicationController#updateShortcut', { 'shortcutId': shortcut.shortcutId })}"
+                                    <bootstrap:modalForm actionTarget="#{mvc.basePath}/applications/shortcuts/#{shortcut.shortcutId}/edit"
                                                          buttonIcon="pen"
                                                          buttonText="#{ShortcutAdminMessages['shortcuts.ui.admin.shortcuts_table.edit']}"
                                                          buttonTextClass="text-center"
@@ -102,7 +104,7 @@
                                     </bootstrap:modalForm>
                                 </td>
                                 <td>
-                                    <libreccm:deleteDialog actionTarget="#{mvc.uri('ShortcutsApplicationController#removeShortcut', { 'shortcutId': shortcut.shortcutId })}" 
+                                    <libreccm:deleteDialog actionTarget="#{mvc.basePath}/applications/shortcuts/#{shortcut.shortcutId}/remove" 
                                                            buttonText="#{ShortcutAdminMessages['shortcuts.ui.admin.shortcuts_table.delete']}"
                                                            cancelLabel="#{ShortcutAdminMessages['shortcuts.ui.admin.delete_dialog.cancel']}"
                                                            confirmLabel="#{ShortcutAdminMessages['shortcuts.ui.admin.delete_dialog.confirm']}" 

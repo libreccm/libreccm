@@ -24,7 +24,7 @@
                                 <h2>
                                     <c:choose>
                                         <c:when test="#{type.controllerLink != null}">
-                                            <a href="#{mvc.uri(type.controllerLink)}">#{type.title}</a>
+                                            <a href="#{mvc.basePath}/#{type.controllerLink}">#{type.title}</a>
                                         </c:when>
                                         <c:otherwise>
                                             <span>#{type.title}</span>

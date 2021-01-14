@@ -354,7 +354,7 @@ public class CategorySystemsController {
      * @return Redirect to the details page of the category system.
      */
     @POST
-    @Path("/{identifier}/title/${locale}/edit")
+    @Path("/{identifier}/title/edit/{locale}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String editTitle(
@@ -414,18 +414,18 @@ public class CategorySystemsController {
      *
      * @param categorySystemIdentifier Identifier of the category system.
      * @param localeParam              The locale of the title.
+     * @param confirmed                Has the deletion been confirmed?
      *
      * @return Redirect to the details page of the category system.
      */
     @POST
-    @Path("/{identifier}/title/${locale}/remove")
+    @Path("/{identifier}/title/remove/{locale}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeTitle(
         @PathParam("identifier") final String categorySystemIdentifier,
         @PathParam("locale") final String localeParam,
-        @FormParam("confirmed")
-        final String confirmed
+        @FormParam("confirmed") final String confirmed
     ) {
 
         final Identifier identifier = identifierParser.parseIdentifier(
@@ -553,7 +553,7 @@ public class CategorySystemsController {
      */
     @POST
     @Path(
-        "categorysystems/{identifier}/description/${locale}/edit"
+        "categorysystems/{identifier}/description/edit/{locale}"
     )
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
@@ -619,7 +619,7 @@ public class CategorySystemsController {
      */
     @POST
     @Path(
-        "categorysystems/{identifier}/description/${locale}/remove")
+        "categorysystems/{identifier}/description/remove/{locale}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeDescription(
@@ -770,7 +770,7 @@ public class CategorySystemsController {
      *
      * @param categorySystemIdentifier Identifier of teh category system.
      * @param applicationUuid          UUID of the owner to remove.
-     * @param confirmed Was the deletion confirmed by the user?
+     * @param confirmed                Was the deletion confirmed by the user?
      *
      * @return Redirect to the details page of the category system.
      */

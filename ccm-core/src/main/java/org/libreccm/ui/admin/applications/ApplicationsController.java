@@ -32,6 +32,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.mvc.Controller;
 import javax.mvc.Models;
@@ -48,6 +50,10 @@ import javax.ws.rs.Path;
 @Controller
 @Path("/applications")
 public class ApplicationsController {
+
+    @Inject
+    @Any
+    private Instance<ApplicationController> applicationControllers;
 
     @Inject
     private ApplicationManager appManager;
@@ -115,17 +121,24 @@ public class ApplicationsController {
         final Class<? extends ApplicationController> controllerClass
             = applicationType.applicationController();
 
-        if (!DefaultApplicationController.class.isAssignableFrom(
-            controllerClass
-        )) {
-            item.setControllerLink(
-                String.format(
-                    "%s#getApplication",
-                    controllerClass.getSimpleName())
-            );
+        final Instance<? extends ApplicationController> controllerInstance
+            = applicationControllers.select(controllerClass);
+
+        if (hasControllerLink(controllerClass, controllerInstance)) {
+            final ApplicationController controller = controllerInstance.get();
+            item.setControllerLink(controller.getControllerLink());
         }
 
         return item;
+    }
+
+    private boolean hasControllerLink(
+        final Class<? extends ApplicationController> controllerClass,
+        final Instance<? extends ApplicationController> controllerInstance
+    ) {
+        return !DefaultApplicationController.class
+            .isAssignableFrom(controllerClass)
+                   && controllerInstance.isResolvable();
     }
 
 }

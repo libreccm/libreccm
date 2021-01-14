@@ -6,7 +6,7 @@
     <cc:interface shortDescription="A editor component for localized strings.">
         <cc:attribute name="addMethod"
                       required="true"
-                      shortDescription="Name of the endpoiint to which the POST request from the add form is send. The URL must contain a path parameter named identifier. Two values are submitted: locale and value."
+                      shortDescription="URL of the endpoint for adding localized string values."
                       type="String" />
         <cc:attribute name="addButtonLabel" 
                       default="Add" 
@@ -76,7 +76,7 @@
                       type="String" />
         <cc:attribute name="editMethod"
                       required="true"
-                      shortDescription="Name of the endpoiint to which the POST request from the edit form is send. The URL must contain a path parameter named identifier, and a path parameter named locale. The new value is submitted as form parameter with the name value."
+                      shortDescription="URL of the endpoint for editing/updating a value. The value of the locale to update is added after the provided URL, eg. /de for updating the german value."
                       type="String" />
         <cc:attribute name="hasUnusedLocales" 
                       required="true" 
@@ -127,7 +127,7 @@
                       type="String" />
         <cc:attribute name="removeMethod"
                       required="true"
-                      shortDescription="Name of the endpoint to which the POST request from the remove form is send. The URL must contain a path parameter named identifier, and a path parameter named locale."
+                      shortDescription="URL of the endpoint for remvoving a value. The locale of the value to remove is added to the end of the URL. Eg. /de for removing the value for the locale de."
                       type="String" />
         <cc:attribute name="tableActionsHeading"
                       default="Actions"
@@ -207,7 +207,7 @@
                          id="#{cc.attrs.editorId}-dialog"
                          tabindex="-1">
                         <div class="modal-dialog">
-                            <form action="#{mvc.uri(cc.attrs.addMethod, { 'identifier': cc.attrs.objectIdentifier})}"
+                            <form action="#{cc.attrs.addMethod}"
                                   class="modal-content"
                                   method="post">
                                 <div class="modal-header">
@@ -346,7 +346,7 @@
                                              tabindex="-1">
                                             <div class="modal-dialog">
                                                 <form accept-charset="UTF-8"
-                                                      action="#{mvc.uri(cc.attrs.editMethod, { 'identifier': cc.attrs.objectIdentifier, 'locale': entry.key })}"
+                                                      action="#{cc.attrs.editMethod}/#{entry.key}"
                                                       class="modal-content"
                                                       method="post">
                                                     <div class="modal-header">
@@ -444,7 +444,7 @@
                                              id="#{cc.attrs.editorId}-#{entry.key}-remove-dialog"
                                              tabindex="-1">
                                             <div class="modal-dialog">
-                                                <form action="#{mvc.uri(cc.attrs.removeMethod, {'identifier': cc.attrs.objectIdentifier, 'locale': entry.key})}"
+                                                <form action="#{cc.attrs.removeMethod}/#{entry.key}"
                                                       class="modal-content"
                                                       method="post">
                                                     <div class="modal-header">

@@ -64,6 +64,11 @@ public class ShortcutsApplicationController implements ApplicationController {
 
         return "org/libreccm/ui/admin/applications/shortcuts/shortcuts.xhtml";
     }
+    
+    @Override
+    public String getControllerLink() {
+        return "applications/shortcuts";
+    }
 
     @POST
     @Path("/add")
