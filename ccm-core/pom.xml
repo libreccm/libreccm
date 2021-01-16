@@ -900,6 +900,7 @@
                         <artifactId>wildfly-maven-plugin</artifactId>
                         <configuration>
                             <skip>false</skip>
+                            <version>21.0.2.Final</version>
                         </configuration>
                         <executions>
                             <execution>
