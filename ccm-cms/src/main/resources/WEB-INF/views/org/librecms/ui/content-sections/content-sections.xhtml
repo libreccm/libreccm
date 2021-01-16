@@ -33,13 +33,15 @@
                                 <span>#{CmsAdminMessages['contentsections.list.nav.link.title']}</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link #{activePage == 'pages'} ? 'active' : ''}"
-                               href="#{mvc.basePath}/pages">
-                                <bootstrap:svgIcon icon="diagram-3" />
-                                <span>#{CmsAdminMessages['contentsections.pages.nav.link.title']}</span>
-                            </a>
-                        </li>
+                        <c:if test="#{UserInfo.admin}">
+                            <li class="nav-item">
+                                <a class="nav-link #{activePage == 'pages'} ? 'active' : ''}"
+                                   href="#{mvc.basePath}/pages">
+                                    <bootstrap:svgIcon icon="diagram-3" />
+                                    <span>#{CmsAdminMessages['contentsections.pages.nav.link.title']}</span>
+                                </a>
+                            </li>
+                        </c:if>
                         <li class="nav-item">
                             <a class="nav-link #{activePage == 'search'} ? 'active' : ''}"
                                href="#{mvc.basePath}/search">

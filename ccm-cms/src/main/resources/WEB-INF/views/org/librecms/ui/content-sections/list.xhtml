@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
 <html xmlns="http://www.w3.org/1999/xhtml" 
       xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
@@ -17,13 +17,75 @@
             <div class="container">
                 <h1>#{CmsAdminMessages['contentsections.list.label']}</h1>
 
-                <div class="text-right mb-2">
-                    <a class="btn btn-secondary"
-                       href="#{mvc.basePath}/new">
-                        <bootstrap:svgIcon icon="plus-circle" />
-                        <span>#{CmsAdminMessages['contentsections.list.add']}</span>
-                    </a>
-                </div>
+                <c:if test="#{UserInfo.admin}">
+                    <div class="text-right mb-2">
+                        <!--                        <a class="btn btn-secondary"
+                                                   href="#{mvc.basePath}/new">
+                                                    <bootstrap:svgIcon icon="plus-circle" />
+                                                    <span>#{CmsAdminMessages['contentsections.list.add']}</span>
+                                                </a>-->
+                        <button class="btn btn-secondary"
+                                data-toggle="modal"
+                                data-target="#new-content-section-dialog"
+                                type="button">
+                            <bootstrap:svgIcon icon="plus-circle" />
+                            <span>#{CmsAdminMessages['contentsections.list.add']}</span>
+                        </button>
+                    </div>
+                    <div aria-hidden="true"
+                         aria-labelledby="new-content-section-dialog-title"
+                         class="modal fade"
+                         id="new-content-section-dialog"
+                         tabindex="-1">
+                        <div class="modal-dialog">
+                            <form action="#{mvc.basePath}/new"
+                                  class="modal-content"
+                                  method="post">
+                                <div class="modal-header">
+                                    <h2 class="modal-title"
+                                        id="new-content-section-dialog-title">
+                                        #{CmsAdminMessages['contentsections.new_dialog.title']}
+                                    </h2>
+                                    <button aria-label="#{CmsAdminMessages['contentsections.new_dialog.close']}"
+                                            class="close"
+                                            data-dismiss="modal"
+                                            type="button">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="contentsection-name">
+                                            #{CmsAdminMessages['contentsections.new_dialog.name.label']}
+                                        </label>
+                                        <input aria-describedby="contentsection-name-help"
+                                               class="form-control" 
+                                               id="content-section-name"
+                                               name="contentSectionName"
+                                               pattern="^([a-z0-9-_]*)$"
+                                               type="text" 
+                                               value="" />
+                                        <small class="form-text text-muted"
+                                               id="contentsection-name-help">
+                                            #{CmsAdminMessages['contentsections.new_dialog.name.help']}
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-danger"
+                                            data-dismiss="modal"
+                                            type="button">
+                                        #{CmsAdminMessages['contentsections.new_dialog.close']}
+                                    </button>
+                                    <button class="btn btn-success" 
+                                            type="submit">
+                                        #{CmsAdminMessages['contentsections.new_dialog.save']}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </c:if>
                 <table class="table table-hover">
                     <thead class="thead-light">
                         <tr>
