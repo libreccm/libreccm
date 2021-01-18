@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" 
       xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/librecms/ui/content-sections/content-sections.xhtml">
 
@@ -19,11 +19,6 @@
 
                 <c:if test="#{UserInfo.admin}">
                     <div class="text-right mb-2">
-                        <!--                        <a class="btn btn-secondary"
-                                                   href="#{mvc.basePath}/new">
-                                                    <bootstrap:svgIcon icon="plus-circle" />
-                                                    <span>#{CmsAdminMessages['contentsections.list.add']}</span>
-                                                </a>-->
                         <button class="btn btn-secondary"
                                 data-toggle="modal"
                                 data-target="#new-content-section-dialog"
@@ -61,7 +56,7 @@
                                         <input aria-describedby="contentsection-name-help"
                                                class="form-control" 
                                                id="content-section-name"
-                                               name="contentSectionName"
+                                               name="sectionName"
                                                pattern="^([a-z0-9-_]*)$"
                                                type="text" 
                                                value="" />
@@ -86,13 +81,14 @@
                         </div>
                     </div>
                 </c:if>
-                <table class="table table-hover">
+                <table class="table table-hover contentsections-table">
                     <thead class="thead-light">
                         <tr>
                             <th>
                                 #{CmsAdminMessages['contentsections.list.table.headers.label']}
                             </th>
-                            <th class="text-center">#{CmsAdminMessages['contentsections.list.table.headers.actions']}</th>
+                            <th class="action-col text-center" 
+                                colspan="2">#{CmsAdminMessages['contentsections.list.table.headers.actions']}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -100,16 +96,82 @@
                                    var="section">
                             <tr>
                                 <td>
-                                    <a href="#{mvc.basePath}/#{section.label}/contentitems">
+                                    <a href="#{mvc.basePath}/#{section.label}/items">
                                         #{section.label}
                                     </a>
                                 </td>
-                                <td>
-                                    <a class="btn btn-info"
-                                       href="#{mvc.basePath}/#{section.label}/details">
-                                        <bootstrap:svgIcon icon="eye"/>
-                                        #{CmsAdminMessages['contentsections.list.table.actions.show_details']}
-                                    </a>
+                                <td class="action-col">
+                                    <button class="btn btn-secondary"
+                                            data-toggle="modal"
+                                            data-target="#content-section-#{section.label}-edit-dialog"
+                                            type="button">
+                                        <bootstrap:svgIcon icon="plus-circle" />
+                                        <span>#{CmsAdminMessages['contentsections.list.table.actions.edit']}</span>
+                                    </button>
+                                    <div aria-hidden="true"
+                                         aria-labelledby="content-section-#{section.label}-edit-dialog-title"
+                                         class="modal fade"
+                                         id="content-section-#{section.label}-edit-dialog"
+                                         tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <form action="#{mvc.basePath}/#{section.label}/rename"
+                                                  class="modal-content"
+                                                  method="post">
+                                                <div class="modal-header">
+                                                    <h2 class="modal-title"
+                                                        id="content-section-#{section.label}-edit-dialog-title">
+                                                        #{CmsAdminMessages['contentsections.edit_dialog.title']}
+                                                    </h2>
+                                                    <button aria-label="#{CmsAdminMessages['contentsections.edit_dialog.close']}"
+                                                            class="close"
+                                                            data-dismiss="modal"
+                                                            type="button">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="form-group">
+                                                        <label for="contentsection-name">
+                                                            #{CmsAdminMessages['contentsections.edit_dialog.name.label']}
+                                                        </label>
+                                                        <input aria-describedby="contentsection-#{section.label}-name-help"
+                                                               class="form-control" 
+                                                               id="content-section-#{section.label}-name"
+                                                               name="sectionName"
+                                                               pattern="^([a-z0-9-_]*)$"
+                                                               type="text" 
+                                                               value="#{section.label}" />
+                                                        <small class="form-text text-muted"
+                                                               id="contentsection-name-help">
+                                                            #{CmsAdminMessages['contentsections.edit_dialog.name.help']}
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-danger"
+                                                            data-dismiss="modal"
+                                                            type="button">
+                                                        #{CmsAdminMessages['contentsections.edit_dialog.close']}
+                                                    </button>
+                                                    <button class="btn btn-success" 
+                                                            type="submit">
+                                                        #{CmsAdminMessages['contentsections.edit_dialog.save']}
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="action-col">
+                                    <c:if test="#{section.deletable}">
+                                        <libreccm:deleteDialog actionTarget="#{mvc.basePath}/#{section.label}/delete"
+                                                               buttonText="#{CmsAdminMessages['contentsections.list.table.actions.delete']}"
+                                                               cancelLabel="#{CmsAdminMessages['contentsections.delete_dialog.close']}"
+                                                               confirmLabel="#{CmsAdminMessages['contentsections.delete_dialog.confirm']}"
+                                                               dialogId="delete-content-section-#{section.label}-dialog"
+                                                               dialogTitle="#{CmsAdminMessages.getMessage('contentsections.delete_dialog.title', [section.label])}"
+                                                               message="#{CmsAdminMessages.getMessage('contentsections.delete_dialog.message', [section.label])}" />
+                                    </c:if>
                                 </td>
                             </tr>
                         </c:forEach>

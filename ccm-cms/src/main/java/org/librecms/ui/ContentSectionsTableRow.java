@@ -31,6 +31,8 @@ public class ContentSectionsTableRow implements
 
     private String label;
 
+    private boolean deletable;
+
     public long getSectionId() {
         return sectionId;
     }
@@ -47,13 +49,21 @@ public class ContentSectionsTableRow implements
         this.label = label;
     }
 
+    public boolean isDeletable() {
+        return deletable;
+    }
+
+    public void setDeletable(boolean deletable) {
+        this.deletable = deletable;
+    }
+
     @Override
     public int compareTo(final ContentSectionsTableRow other) {
         int result;
         result = Objects.compare(
             label, other.getLabel(), String::compareTo
         );
-            
+
         if (result == 0) {
             result = Objects.compare(
                 sectionId, other.getSectionId(), Long::compareTo

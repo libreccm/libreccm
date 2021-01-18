@@ -39,7 +39,12 @@ import javax.transaction.Transactional;
 public class ContentSectionsTableModel {
 
     @Inject
+    private ContentSectionsController controller;
+    
+    @Inject
     private ContentSectionRepository sectionRepo;
+    
+    
 
     @AuthorizationRequired
     @Transactional
@@ -59,6 +64,7 @@ public class ContentSectionsTableModel {
 
         row.setSectionId(section.getObjectId());
         row.setLabel(section.getLabel());
+        row.setDeletable(controller.canDelete(section));
 
         return row;
     }

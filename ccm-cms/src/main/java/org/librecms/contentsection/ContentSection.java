@@ -62,12 +62,14 @@ import static org.librecms.CmsConstants.*;
 @NamedQueries({
     @NamedQuery(
         name = "ContentSection.findById",
-        query = "SELECT S FROM ContentSection s WHERE s.objectId = :objectId")
-    ,
+        query = "SELECT s FROM ContentSection s WHERE s.objectId = :objectId"),
+    @NamedQuery(
+        name = "ContentSection.findByUuid",
+        query = "SELECT s FROM ContentSection s WHERE s.uuid = :uuid"
+    ),
     @NamedQuery(
         name = "ContentSection.findByLabel",
-        query = "SELECT s FROM ContentSection s WHERE s.label = :label")
-    ,
+        query = "SELECT s FROM ContentSection s WHERE s.label = :label"),
     @NamedQuery(
         name = "ContentSection.findUsableContentTypes",
         query = "SELECT t FROM ContentType t "
@@ -77,8 +79,7 @@ import static org.librecms.CmsConstants.*;
                     + "WHERE p.grantedPrivilege = '"
                     + TypePrivileges.USE_TYPE + "' "
                     + "AND p.grantee in :roles) "
-                    + "OR true = :isSysAdmin)")
-    ,
+                    + "OR true = :isSysAdmin)"),
     @NamedQuery(
         name = "ContentSection.countUsableContentTypes",
         query = "SELECT COUNT(t) FROM ContentType t "
@@ -88,8 +89,7 @@ import static org.librecms.CmsConstants.*;
                     + "WHERE p.grantedPrivilege = '"
                     + TypePrivileges.USE_TYPE + "' "
                     + "AND p.grantee IN :roles) "
-                    + "OR true = :isSysAdmin)")
-    ,
+                    + "OR true = :isSysAdmin)"),
     @NamedQuery(
         name = "ContentSection.hasUsableContentTypes",
         query = "SELECT (CASE WHEN COUNT(t) > 0 THEN true ELSE false END)"
@@ -100,8 +100,7 @@ import static org.librecms.CmsConstants.*;
                     + "WHERE p.grantedPrivilege = '"
                     + TypePrivileges.USE_TYPE + "' "
                     + "AND p.grantee IN :roles) "
-                    + "OR true = :isSysAdmin)")
-    ,
+                    + "OR true = :isSysAdmin)"),
     @NamedQuery(
         name = "ContentSection.findPermissions",
         query = "SELECT p FROM Permission p "
@@ -117,19 +116,26 @@ import static org.librecms.CmsConstants.*;
 //    creator = ContentSectionCreator.class,
 //    servlet = ContentSectionServlet.class,
 //    instanceForm = ApplicationInstanceForm.class)
-public class ContentSection 
-    extends CcmApplication 
+public class ContentSection
+    extends CcmApplication
     implements Serializable, Exportable {
 
     private static final long serialVersionUID = -671718122153931727L;
 
     protected static final String ROOT = "root";
+
     protected static final String ASSETS = "assets";
+
     protected static final String ALERT_RECIPIENT = "alert_recipient";
+
     protected static final String AUTHOR = "author";
+
     protected static final String EDITOR = "editor";
+
     protected static final String MANAGER = "manager";
+
     protected static final String PUBLISHER = "publisher";
+
     protected static final String CONTENT_READER = "content_reader";
 
     @Column(name = "LABEL", length = 512)

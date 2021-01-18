@@ -37,3 +37,11 @@ $pre-scrollable-max-height: 21.25rem;
 
 // Navbar default colors have insufficient contrast
 $navbar-dark-color: #fff;
+
+table.contentsections-table {
+    tbody {
+        td.action-col {
+            width: 11em;
+        }
+    }
+}

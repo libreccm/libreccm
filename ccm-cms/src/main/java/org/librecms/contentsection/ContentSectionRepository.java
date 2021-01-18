@@ -41,6 +41,22 @@ public class ContentSectionRepository
 
     private static final long serialVersionUID = 4616599498399330865L;
 
+    public Optional<ContentSection> findByUuid(final String uuid) {
+        try {
+            return Optional.of(
+                getEntityManager()
+                    .createNamedQuery(
+                        "ContentSection.findByUuid",
+                        ContentSection.class
+                    )
+                    .setParameter("uuid", uuid)
+                    .getSingleResult()
+            );
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
+    }
+
     public Optional<ContentSection> findByLabel(final String label) {
         if (label == null || label.isEmpty()) {
             throw new IllegalArgumentException(

@@ -55,6 +55,8 @@ import org.librecms.contentsection.privileges.TypePrivileges;
 import org.librecms.dispatcher.ItemResolver;
 
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.enterprise.inject.Instance;
 
@@ -76,6 +78,9 @@ public class ContentSectionManager {
 
     @Inject
     private CategoryRepository categoryRepo;
+
+    @Inject
+    private FolderRepository folderRepository;
 
     @Inject
     private RoleRepository roleRepo;
@@ -462,7 +467,7 @@ public class ContentSectionManager {
         try {
             @SuppressWarnings("unchecked")
             final Class<ItemResolver> itemResolverClazz
-                                          = (Class<ItemResolver>) Class.
+                = (Class<ItemResolver>) Class.
                     forName(section.getItemResolverClass());
 
             final Instance<ItemResolver> instance = itemResolvers.select(
@@ -662,6 +667,43 @@ public class ContentSectionManager {
         }
 
         typeRepo.delete(contentType.get());
+    }
+
+    @AuthorizationRequired
+    @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void deleteContentSection(final ContentSection section) {
+        Objects.requireNonNull(section);
+
+         try {
+            for (final ContentType type : section.getContentTypes()) {
+                @SuppressWarnings("unchecked")
+                final Class<? extends ContentItem> clazz
+                    = (Class<? extends ContentItem>) Class.forName(
+                        type.getContentItemClass()
+                    );
+                removeContentTypeFromSection(clazz, section);
+            }
+        } catch (ClassNotFoundException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+         for (final LifecycleDefinition lifecycle : section
+            .getLifecycleDefinitions()) {
+            removeLifecycleDefinitionFromContentSection(
+                lifecycle, section
+            );
+        }
+        for (final Role role : section.getRoles()) {
+            removeRoleFromContentSection(section, role);
+        }
+        for (final Workflow workflow : section.getWorkflowTemplates()) {
+            removeWorkflowTemplateFromContentSection(workflow, section);
+        }
+        
+        folderRepository.delete(section.getRootAssetsFolder());
+        folderRepository.delete(section.getRootDocumentsFolder());
+        
+        sectionRepo.delete(section);
     }
 
 }
