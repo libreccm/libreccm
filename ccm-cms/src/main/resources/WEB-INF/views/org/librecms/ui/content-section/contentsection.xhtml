@@ -5,7 +5,7 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       >
     <head>
-        <title>#{title} - LibreCMS Content Sections</title>
+        <title>Content Section #{ContentSectionModel.sectionName} #{title} - LibreCMS</title>
         <link href="#{request.contextPath}/assets/@content-sections/cms-admin.css" 
               rel="stylesheet"/>
     </head>
@@ -26,26 +26,10 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
-                            <a class="nav-link #{activePage == 'contentSections'} ? 'active' : ''}"
-                               href="#{mvc.basePath}/list">
-                                <bootstrap:svgIcon icon="bookshelf" />
-                                <span>#{CmsAdminMessages['contentsections.list.nav.link.title']}</span>
-                            </a>
-                        </li>
-                        <c:if test="#{UserInfo.admin}">
-                            <li class="nav-item">
-                                <a class="nav-link #{activePage == 'pages'} ? 'active' : ''}"
-                                   href="#{mvc.basePath}/pages">
-                                    <bootstrap:svgIcon icon="diagram-3" />
-                                    <span>#{CmsAdminMessages['contentsections.pages.nav.link.title']}</span>
-                                </a>
-                            </li>
-                        </c:if>
-                        <li class="nav-item">
-                            <a class="nav-link #{activePage == 'search'} ? 'active' : ''}"
-                               href="#{mvc.basePath}/search">
-                                <bootstrap:svgIcon icon="search" />
-                                <span>#{CmsAdminMessages['contentsections.search.nav.link.title']}</span>
+                            <a class="nav-link #{activePage == 'folderBrowser' ? 'active' : ''}"
+                               href='#{mvc.basePath}/#{ContentSectionModel.sectionName}/folderbrowser'>
+                                <bootstrap:svgIcon icon="folder2-open" />
+                                <span>#{CmsAdminMessages['folderbrowser.title']}</span>
                             </a>
                         </li>
                     </ul>
@@ -53,6 +37,14 @@
             </nav>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="#{mvc.basePath}/contentsections/list">
+                            #{CmsAdminMessages['contentsections.list.label']}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        #{ContentSectionModel.sectionName}
+                    </li>
                     <ui:insert name="breadcrumb"></ui:insert>
                 </ol>
             </nav>

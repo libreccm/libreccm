@@ -26,6 +26,7 @@ public class CmsUi extends Application {
         
         classes.add(IsAuthenticatedFilter.class);
         classes.add(ContentSectionsController.class);
+        classes.add(ContentSectionController.class);
         
         return classes;
     }
