@@ -54,11 +54,14 @@ import java.util.Optional;
 import org.librecms.contentsection.privileges.TypePrivileges;
 import org.librecms.dispatcher.ItemResolver;
 
+import java.util.Collections;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Instance;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.Root;
 
 import static org.librecms.contentsection.ContentSection.*;
 
@@ -675,34 +678,89 @@ public class ContentSectionManager {
     public void deleteContentSection(final ContentSection section) {
         Objects.requireNonNull(section);
 
-         try {
-            for (final ContentType type : section.getContentTypes()) {
-                @SuppressWarnings("unchecked")
-                final Class<? extends ContentItem> clazz
-                    = (Class<? extends ContentItem>) Class.forName(
-                        type.getContentItemClass()
-                    );
-                removeContentTypeFromSection(clazz, section);
-            }
-        } catch (ClassNotFoundException ex) {
-            throw new UnexpectedErrorException(ex);
-        }
-         for (final LifecycleDefinition lifecycle : section
-            .getLifecycleDefinitions()) {
-            removeLifecycleDefinitionFromContentSection(
-                lifecycle, section
+        final CriteriaBuilder criteriaBuilder = entityManager
+            .getCriteriaBuilder();
+
+        if (!section.getContentTypes().isEmpty()) {
+            final CriteriaDelete<ContentType> contentTypeDelete
+                = criteriaBuilder
+                    .createCriteriaDelete(ContentType.class);
+            final Root<ContentType> contentTypeRoot = contentTypeDelete.from(
+                ContentType.class
             );
+            contentTypeDelete.where(
+                criteriaBuilder.equal(
+                    contentTypeRoot.get("contentSection"),
+                    section
+                )
+            );
+            entityManager.createQuery(contentTypeDelete).executeUpdate();
         }
-        for (final Role role : section.getRoles()) {
-            removeRoleFromContentSection(section, role);
+
+        if (!section.getLifecycleDefinitions().isEmpty()) {
+            final CriteriaDelete<LifecycleDefinition> lifecycleDelete
+                = criteriaBuilder
+                    .createCriteriaDelete(LifecycleDefinition.class);
+            final Root<LifecycleDefinition> lifecycleRoot = lifecycleDelete
+                .from(LifecycleDefinition.class);
+            lifecycleDelete.where(
+                criteriaBuilder
+                    .in(lifecycleRoot.get("definitionId"))
+                    .value(
+                        section
+                            .getLifecycleDefinitions()
+                            .stream()
+                            .map(LifecycleDefinition::getDefinitionId)
+                            .collect(Collectors.toSet())
+                    )
+            );
+            entityManager.createQuery(lifecycleDelete).executeUpdate();
         }
-        for (final Workflow workflow : section.getWorkflowTemplates()) {
-            removeWorkflowTemplateFromContentSection(workflow, section);
+
+        section.setRoles(Collections.emptyList());
+        sectionRepo.save(section);
+
+        if (!section.getWorkflowTemplates().isEmpty()) {
+            final CriteriaDelete<Workflow> workflowDelete = criteriaBuilder
+                .createCriteriaDelete(Workflow.class);
+            final Root<Workflow> workflowRoot = workflowDelete.from(
+                Workflow.class);
+            workflowDelete.where(
+                criteriaBuilder
+                    .in(workflowRoot.get("workflowId"))
+                    .value(
+                        section
+                            .getWorkflowTemplates()
+                            .stream()
+                            .map(Workflow::getWorkflowId)
+                            .collect(Collectors.toSet())
+                    )
+            );
+            entityManager.createQuery(workflowDelete).executeUpdate();
         }
-        
-        folderRepository.delete(section.getRootAssetsFolder());
-        folderRepository.delete(section.getRootDocumentsFolder());
-        
+
+        final Folder rootAssetsFolder = section.getRootAssetsFolder();
+        final Folder rootDocumentsFolder = section.getRootDocumentsFolder();
+
+        section.setRootAssetsFolder(null);
+        section.setRootDocumentFolder(null);
+        sectionRepo.save(section);
+
+        folderRepository.delete(rootAssetsFolder);
+        folderRepository.delete(rootDocumentsFolder);
+
+        if (!section.getPermissions().isEmpty()) {
+            final CriteriaDelete<Permission> permissionsDelete = criteriaBuilder
+                .createCriteriaDelete(Permission.class);
+            final Root<Permission> permissionRoot = permissionsDelete.from(
+                Permission.class
+            );
+            permissionsDelete.where(
+                criteriaBuilder.equal(permissionRoot.get("object"), section)
+            );
+            entityManager.createQuery(permissionsDelete).executeUpdate();
+        }
+
         sectionRepo.delete(section);
     }
 

@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.libreccm.categorization.Category;
 import org.libreccm.core.AbstractEntityRepository;
 import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.Permission;
 import org.libreccm.security.RequiresPrivilege;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
@@ -30,10 +31,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 /**
@@ -225,8 +230,8 @@ public class FolderRepository extends AbstractEntityRepository<Long, Folder> {
     @Override
     public void save(
         @RequiresPrivilege(ItemPrivileges.CREATE_NEW)
-        final Folder folder) {
-
+        final Folder folder
+    ) {
         super.save(folder);
     }
 
@@ -235,7 +240,30 @@ public class FolderRepository extends AbstractEntityRepository<Long, Folder> {
     @Override
     public void delete(
         @RequiresPrivilege(ItemPrivileges.CREATE_NEW)
-        final Folder folder) {
+        final Folder folder
+    ) {
+        final CriteriaBuilder criteriaBuilder = getEntityManager()
+            .getCriteriaBuilder();
+        final CriteriaDelete<Permission> permissionsDelete = criteriaBuilder
+            .createCriteriaDelete(Permission.class);
+        final Root<Permission> permissionRoot = permissionsDelete.from(
+            Permission.class
+        );
+        permissionsDelete.where(
+            criteriaBuilder.equal(permissionRoot.get("object"), folder)
+        );
+//        permissionsDelete.where(
+//            criteriaBuilder
+//                .in(permissionRoot.get("permissionId"))
+//                .value(
+//                    folder
+//                        .getPermissions()
+//                        .stream()
+//                        .map(Permission::getPermissionId)
+//                        .collect(Collectors.toSet())
+//                )
+//        );
+        getEntityManager().createQuery(permissionsDelete).executeUpdate();
 
         super.delete(folder);
     }
