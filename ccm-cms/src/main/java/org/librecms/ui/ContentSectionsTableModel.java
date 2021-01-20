@@ -39,7 +39,7 @@ import javax.transaction.Transactional;
 public class ContentSectionsTableModel {
 
     @Inject
-    private ContentSectionsController controller;
+    private CmsController controller;
     
     @Inject
     private ContentSectionRepository sectionRepo;

@@ -17,18 +17,19 @@ import javax.ws.rs.core.Application;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@ApplicationPath("/@content-sections")
-public class CmsUi extends Application {
+@ApplicationPath("/@contentsections")
+public class ContentSectionApplication extends Application {
 
     @Override
     public Set<Class<?>> getClasses() {
         final Set<Class<?>> classes = new HashSet<>();
         
         classes.add(IsAuthenticatedFilter.class);
-        classes.add(ContentSectionsController.class);
         classes.add(ContentSectionController.class);
         
         return classes;
     }
-
+    
+    
+    
 }

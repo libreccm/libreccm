@@ -4,7 +4,7 @@
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <ui:composition template="/WEB-INF/views/org/librecms/ui/content-sections/content-sections.xhtml">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/cms/cms.xhtml">
 
         <ui:param name="activePage" value="contentSections" />
         <ui:define name="breadcrumb">
@@ -33,7 +33,7 @@
                          id="new-content-section-dialog"
                          tabindex="-1">
                         <div class="modal-dialog">
-                            <form action="#{mvc.basePath}/new"
+                            <form action="#{mvc.basePath}/contentsections/new"
                                   class="modal-content"
                                   method="post">
                                 <div class="modal-header">
@@ -96,7 +96,7 @@
                                    var="section">
                             <tr>
                                 <td>
-                                    <a href="#{mvc.basePath}/#{section.label}/folderbrowser">
+                                    <a href="#{request.contextPath}/@contentsections/#{section.label}/folderbrowser">
                                         #{section.label}
                                     </a>
                                 </td>
@@ -114,7 +114,7 @@
                                          id="content-section-#{section.label}-edit-dialog"
                                          tabindex="-1">
                                         <div class="modal-dialog">
-                                            <form action="#{mvc.basePath}/#{section.label}/rename"
+                                            <form action="#{mvc.basePath}/contentsections/#{section.label}/rename"
                                                   class="modal-content"
                                                   method="post">
                                                 <div class="modal-header">
@@ -164,7 +164,7 @@
                                 </td>
                                 <td class="action-col">
                                     <c:if test="#{section.deletable}">
-                                        <libreccm:deleteDialog actionTarget="#{mvc.basePath}/#{section.label}/delete"
+                                        <libreccm:deleteDialog actionTarget="#{mvc.basePath}/contentsections/#{section.label}/delete"
                                                                buttonText="#{CmsAdminMessages['contentsections.list.table.actions.delete']}"
                                                                cancelLabel="#{CmsAdminMessages['contentsections.delete_dialog.close']}"
                                                                confirmLabel="#{CmsAdminMessages['contentsections.delete_dialog.confirm']}"

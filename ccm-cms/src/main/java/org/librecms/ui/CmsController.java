@@ -40,7 +40,7 @@ import javax.ws.rs.core.Response;
 @RequestScoped
 @Controller
 @Path("/")
-public class ContentSectionsController {
+public class CmsController {
 
     @Inject
     private ContentSectionRepository sectionRepo;
@@ -69,7 +69,7 @@ public class ContentSectionsController {
                     request.getServerName(),
                     request.getServerPort(),
                     String.format(
-                        "%s/@content-sections/list",
+                        "%s/@cms/contentsections/",
                         request.getContextPath()
                     ),
                     "",
@@ -79,42 +79,17 @@ public class ContentSectionsController {
         } catch (URISyntaxException ex) {
             throw new WebApplicationException(ex);
         }
-//        return String.format(
-//            "redirect:/%s/@content-sections/list", request.getContextPath()
-//        );
     }
 
     @GET
-    @Path("/list")
+    @Path("/contentsections/")
     @AuthorizationRequired
     public String getContentSections() {
-        return "org/librecms/ui/content-sections/list.xhtml";
-    }
-
-    @GET
-    @Path("/pages")
-    @AuthorizationRequired
-    public String getPages() {
-        return "org/librecms/ui/content-sections/pages.xhtml";
-    }
-
-    @GET
-    @Path("/search")
-    @AuthorizationRequired
-    public String getSearch() {
-        return "org/librecms/ui/content-sections/search.xhtml";
-    }
-
-    @GET
-    @Path("/{sectionIdentifier}/details")
-    public String getContentSectionDetails() {
-        throw new WebApplicationException(
-            Response.status(Response.Status.NOT_FOUND).build()
-        );
+        return "org/librecms/ui/cms/contentsections-list.xhtml";
     }
 
     @POST
-    @Path("/new")
+    @Path("/contentsections/new")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
@@ -123,11 +98,11 @@ public class ContentSectionsController {
     ) {
         sectionManager.createContentSection(sectionName);
 
-        return "redirect:/list";
+        return "redirect:/contentsections/";
     }
 
     @POST
-    @Path("/{sectionIdentifier}/rename")
+    @Path("/contentsections/{sectionIdentifier}/rename")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
@@ -139,11 +114,11 @@ public class ContentSectionsController {
 
         sectionManager.renameContentSection(section, sectionName);
 
-        return "redirect:list";
+        return "redirect:/contentsections/";
     }
 
     @POST
-    @Path("/{sectionIdentifier}/delete")
+    @Path("/contentsections/{sectionIdentifier}/delete")
     @AuthorizationRequired
     @RequiresPrivilege(CoreConstants.PRIVILEGE_ADMIN)
     @Transactional(Transactional.TxType.REQUIRED)
@@ -167,7 +142,21 @@ public class ContentSectionsController {
             sectionManager.deleteContentSection(section);
         }
 
-        return "redirect:/list";
+        return "redirect:/contentsections/";
+    }
+
+    @GET
+    @Path("/pages")
+    @AuthorizationRequired
+    public String getPages() {
+        return "org/librecms/ui/cms/pages.xhtml";
+    }
+
+    @GET
+    @Path("/search")
+    @AuthorizationRequired
+    public String getSearch() {
+        return "org/librecms/ui/cms/search.xhtml";
     }
 
     private ContentSection findContentSection(final String identifierParam) {
