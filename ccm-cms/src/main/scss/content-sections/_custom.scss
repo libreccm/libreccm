@@ -1,16 +1,16 @@
 $grid-breakpoints: (
-    xs: 0,
-    sm: 36rem,
-    md: 48rem,
-    lg: 62rem,
-    xl: 75rem
+xs: 0,
+sm: 36rem,
+md: 48rem,
+lg: 62rem,
+xl: 75rem
 );
 
 $container-max-widths: (
-    sm: 33.75rem,
-    md: 45rem,
-    lg: 60rem,
-    xl: 71.25rem
+sm: 33.75rem,
+md: 45rem,
+lg: 60rem,
+xl: 71.25rem
 );
 
 $grid-gutter-width: 1.875rem;
@@ -37,6 +37,37 @@ $pre-scrollable-max-height: 21.25rem;
 
 // Navbar default colors have insufficient contrast
 $navbar-dark-color: #fff;
+
+nav.folderbrowser {
+    & > ul.nav {
+        margin-left: 1em;
+        margin-right: 1em;
+
+        ul.nav {
+            margin-left: 1.5em;
+        }
+    }
+    
+    button.subfolders-toggler[aria-expanded="false"]::before {
+        display: inline-block;
+        content: "";
+        background-image: url("data:image/svg+xml,<svg viewBox='0 0 16 16' fill='%23333' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M12.14 8.753l-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z' clip-rule='evenodd'/></svg>");
+        background-repeat: no-repeat;
+        background-size: 1em 1em;
+        width: 1em;
+        height: 1em;
+    }
+    
+    button.subfolders-toggler[aria-expanded="true"]::before {
+        display: inline-block;
+        content: "";
+        background-image: url("data:image/svg+xml,<svg viewBox='0 0 16 16' fill='%23333' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z' clip-rule='evenodd'/></svg>");
+        background-repeat: no-repeat;
+        background-size: 1em 1em;
+        width: 1em;
+        height: 1em;
+    }
+}
 
 table.contentsections-table {
     tbody {
