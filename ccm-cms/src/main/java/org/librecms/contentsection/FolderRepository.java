@@ -22,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.categorization.Category;
 import org.libreccm.core.AbstractEntityRepository;
+import org.libreccm.core.CcmObject;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.Permission;
 import org.libreccm.security.RequiresPrivilege;
@@ -31,7 +32,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -223,6 +223,70 @@ public class FolderRepository extends AbstractEntityRepository<Long, Folder> {
         query.setParameter("parent", parent);
 
         return query.getResultList();
+    }
+
+    public List<CcmObject> findObjectsInFolder(final Folder folder) {
+        return findObjectsInFolder(folder, "");
+    }
+
+    public List<CcmObject> findObjectsInFolder(
+        final Folder folder,
+        final String term
+    ) {
+        return getEntityManager()
+            .createNamedQuery("Folder.findObjects", CcmObject.class)
+            .setParameter(
+                "folder",
+                Objects.requireNonNull(
+                    folder,
+                    "Can't retrieve objects from null."
+                )
+            )
+            .setParameter("term", term)
+            .getResultList();
+    }
+
+    public List<CcmObject> findObjectsInFolder(
+        final Folder folder,
+        final int firstResult,
+        final int maxResults
+    ) {
+        return findObjectsInFolder(
+            folder, firstResult, maxResults, ""
+        );
+    }
+
+    public List<CcmObject> findObjectsInFolder(
+        final Folder folder,
+        final int firstResult,
+        final int maxResults,
+        final String term
+    ) {
+        return getEntityManager()
+            .createNamedQuery("Folder.findObjects", CcmObject.class)
+            .setParameter(
+                "folder",
+                Objects.requireNonNull(
+                    folder,
+                    "Can't retrieve objects from null."
+                )
+            )
+            .setParameter("term", "")
+            .setFirstResult(firstResult)
+            .setMaxResults(maxResults)
+            .getResultList();
+    }
+
+    public long countObjectsInFolder(final Folder folder) {
+        return countObjectsInFolder(folder, "");
+    }
+    
+    public long countObjectsInFolder(final Folder folder, final String term) {
+        return getEntityManager()
+            .createNamedQuery("Folder.countObjects", Long.class)
+            .setParameter("folder", folder)
+            .setParameter("term", term)
+            .getSingleResult();
     }
 
     @AuthorizationRequired

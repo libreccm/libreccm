@@ -5,9 +5,10 @@
  */
 package org.librecms.ui;
 
-import org.librecms.contentsection.ContentSection;
+import java.util.ArrayList;
 
-import java.util.Objects;
+import java.util.Collections;
+import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 
@@ -17,15 +18,45 @@ import javax.enterprise.context.RequestScoped;
  */
 @RequestScoped
 public class FolderBrowserModel {
-    
-    private ContentSection section;
-    
-    protected void setSection(final ContentSection section) {
-        this.section = Objects.requireNonNull(
-            section, "Parameter section can't be null"
-        );
+
+    private long count;
+
+    private int firstResult;
+
+    private int maxResults;
+
+    private List<FolderBrowserRowModel> rows;
+
+    public long getCount() {
+        return count;
     }
-    
-    
-    
+
+    public void setCount(final long count) {
+        this.count = count;
+    }
+
+    public int getFirstResult() {
+        return firstResult;
+    }
+
+    protected void setFirstResult(final int firstResult) {
+        this.firstResult = firstResult;
+    }
+
+    public int getMaxResults() {
+        return maxResults;
+    }
+
+    protected void setMaxResults(final int maxResults) {
+        this.maxResults = maxResults;
+    }
+
+    public List<FolderBrowserRowModel> getRows() {
+        return Collections.unmodifiableList(rows);
+    }
+
+    protected void setRows(final List<FolderBrowserRowModel> rows) {
+        this.rows = new ArrayList<>(rows);
+    }
+
 }
