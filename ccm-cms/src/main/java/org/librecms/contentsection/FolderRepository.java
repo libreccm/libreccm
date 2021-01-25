@@ -277,10 +277,39 @@ public class FolderRepository extends AbstractEntityRepository<Long, Folder> {
             .getResultList();
     }
 
+    public List<DocumentFolderEntry> getDocumentFolderEntries(
+        final Folder folder,
+        final int firstResult,
+        final int maxResults,
+        final String term
+    ) {
+        return getEntityManager()
+            .createNamedQuery(
+                "Folder.getDocumentFolderEntries", DocumentFolderEntry.class
+            )
+            .setParameter(
+                "folderId", Objects.requireNonNull(folder).getObjectId()
+            )
+            .setFirstResult(firstResult)
+            .setMaxResults(maxResults)
+            .getResultList();
+    }
+
+    public long countDocumentFolderEntries(
+        final Folder folder,
+        final String term
+    ) {
+        return getEntityManager()
+            .createNamedQuery("Folder.countDocumentFolderEntries", Long.class)
+            .setParameter(
+                "folderId", Objects.requireNonNull(folder).getObjectId()
+            ).getSingleResult();
+    }
+
     public long countObjectsInFolder(final Folder folder) {
         return countObjectsInFolder(folder, "");
     }
-    
+
     public long countObjectsInFolder(final Folder folder, final String term) {
         return getEntityManager()
             .createNamedQuery("Folder.countObjects", Long.class)

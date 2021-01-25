@@ -11,13 +11,15 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Named;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-public class FolderBrowserModel {
+@Named("DocumentFolderModel")
+public class DocumentFolderModel {
 
     private long count;
 
@@ -25,7 +27,7 @@ public class FolderBrowserModel {
 
     private int maxResults;
 
-    private List<FolderBrowserRowModel> rows;
+    private List<DocumentFolderRowModel> rows;
 
     public long getCount() {
         return count;
@@ -51,11 +53,11 @@ public class FolderBrowserModel {
         this.maxResults = maxResults;
     }
 
-    public List<FolderBrowserRowModel> getRows() {
+    public List<DocumentFolderRowModel> getRows() {
         return Collections.unmodifiableList(rows);
     }
 
-    protected void setRows(final List<FolderBrowserRowModel> rows) {
+    protected void setRows(final List<DocumentFolderRowModel> rows) {
         this.rows = new ArrayList<>(rows);
     }
 

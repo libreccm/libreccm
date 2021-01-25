@@ -1,0 +1,256 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/content-section/contentsection.xhtml">
+
+        <ui:param name="activePage" value="folderBrowser" />
+        <ui:param name="title" value="#{CmsAdminMessages['contentsection.documentfolder.title']}" />
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                #{CmsAdminMessages['contentsections.list.label']}
+            </li>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container-fluid">
+                <h1>#{CmsAdminMessages.getMessage("contentsection.documentfolder.heading", [ContentSectionModel.sectionName])}</h1>
+
+                <div class="row">
+                    <nav class="col-sm-3 documentfolder">
+                        <!--                        <ul class="nav flex-column border">
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="#">Folder 1</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <div class="d-flex">
+                                                            <button class="btn btn-light pr-0 subfolders-toggler"
+                                                                    data-toggle="collapse"
+                                                                    data-target="#folder-2-subfolders"
+                                                                    aria-expanded="false"
+                                                                    aria-controls="folder-2-subfolders"
+                                                                    type="button">
+                                                                <bootstrap:svgIcon icon="caret-right-fill" />
+                                                                <span class="sr-only">
+                        #{CmsAdminMessages['contentsection.documentfolder.foldersnav.subfolders.expand']}
+                    </span>
+                </button>
+                <a class="nav-link pl-0" href="#">Folder 2</a>
+            </div>
+            <ul class="nav flex-column collapse"
+                id="folder-2-subfolders">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Folder 2-1</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Folder 2-2</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Folder 2-3</a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Folder 3</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Folder 4</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Folder 5</a>
+        </li>
+    </ul>-->
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <a class="" href="#">Folder 1</a>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="d-flex">
+                                    <button class="btn btn-light p-0 subfolders-toggler"
+                                            data-toggle="collapse"
+                                            data-target="#folder-2-subfolders"
+                                            aria-expanded="false"
+                                            aria-controls="folder-2-subfolders"
+                                            type="button">
+                                        <!--<bootstrap:svgIcon icon="caret-right-fill" />-->
+                                        <span class="sr-only">
+                                            #{CmsAdminMessages['contentsection.documentfolder.foldersnav.subfolders.expand']}
+                                        </span>
+                                    </button>
+                                    <a class="pl-0" href="#">Folder 2</a>
+                                </div>
+                                <ul class="border-0 collapse list-group "
+                                    id="folder-2-subfolders">
+                                    <li class="border-0 list-group-item">
+                                        <a class="" href="#">Folder 2-1</a>
+                                    </li>
+                                    <li class="border-0 list-group-item">
+                                        <a class="" href="#">Folder 2-2</a>
+                                    </li>
+                                    <li class="border-0 list-group-item">
+                                        <a class="" href="#">Folder 2-3</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="list-group-item">
+                                <a class="" href="#">Folder 3</a>
+                            </li>
+                            <li class="list-group-item">
+                                <a class="" href="#">Folder 4</a>
+                            </li>
+                            <li class="list-group-item">
+                                <a class="" href="#">Folder 5</a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <div class="col-sm-9">
+                        <table class="table table-hover documentfolder">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>
+                                        #{CmsAdminMessages['contentsection.documentfolder.headers.name.label']}
+                                    </th>
+                                    <th>
+                                        #{CmsAdminMessages['contentsection.documentfolder.headers.languages.label']}
+                                    </th>
+                                    <th>
+                                        #{CmsAdminMessages['contentsection.documentfolder.headers.title.label']}
+                                    </th>
+                                    <th>
+                                        #{CmsAdminMessages['contentsection.documentfolder.headers.type.label']}
+                                    </th>
+                                    <th>
+                                        #{CmsAdminMessages['contentsection.documentfolder.headers.creationdate.label']}
+                                    </th>
+                                    <th>
+                                        #{CmsAdminMessages['contentsection.documentfolder.headers.lastedit.label']}
+                                    </th>
+                                    <th>
+                                        #{CmsAdminMessages['contentsection.documentfolder.headers.actions.label']}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach items="#{DocumentFolderModel.rows}"
+                                           var="row">  
+                                    <tr>
+                                        <td><a href="#">#{row.name}</a></td>
+                                        <td>
+                                            #{row.languagesAsString}
+                                        </td>
+                                        <td>#{row.title}</td>
+                                        <td>#{row.type}</td>
+                                        <td>#{row.created}</td>
+                                        <td>
+                                            <span>#{row.lastEdited}</span>
+                                            <c:if test="#{row.lastEdited != null}">
+                                                <c:choose>
+                                                    <c:when test="#{row.lastEditPublished}">
+                                                        <span aria-describedby="#{row.name}-publication-state-desc">
+                                                            <bootstrap:svgIcon icon="eye" />
+                                                        </span>
+                                                        <span class="sr-only" id="#{row.name}-publication-state-desc">#{CmsAdminMessages['contentsection.documentfolder.cols.lastedit.published']}</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span aria-describedby="#{row.name}-publication-state-desc">
+                                                            <bootstrap:svgIcon icon="eye-slash" />
+                                                        </span>
+                                                        <span class="sr-only" id="#{row.name}-publication-state-desc">#{CmsAdminMessages['contentsection.documentfolder.cols.lastedit.unpublished']}</span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:if>
+                                        </td>
+                                        <td>
+                                            <c:if test="#{row.deletable}">
+
+                                            </c:if>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+<!--                                <tr>
+                                    <td><a href="#">folder-1</a></td>
+                                    <td></td>
+                                    <td>Folder 1</td>
+                                    <td>Ordner</td>
+                                    <td>2021-01-20 08:59</td>
+                                    <td>2021-01-20 08:59</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#">an-item</a></td>
+                                    <td>de, en</td>
+                                    <td>An item</td>
+                                    <td>Article</td>
+                                    <td>2021-01-20 09:03</td>
+                                    <td>
+                                        <span>2021-01-20 10:11</span>
+                                        <span aria-describedby="an-item-publication-state-desc">
+                                            <bootstrap:svgIcon icon="eye" />
+                                        </span>
+                                        <span class="sr-only" id="an-item-publication-state-desc">#{CmsAdminMessages['contentsection.documentfolder.cols.lastedit.published']}</span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-danger" 
+                                                type="button">
+                                            <bootstrap:svgIcon icon="x-circle" />
+                                            <span>#{CmsAdminMessages['contentsection.documentfolder.actions.delete.button.label']}</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#">unpublished-item</a></td>
+                                    <td>de, en</td>
+                                    <td>Unppublished item item</td>
+                                    <td>Article</td>
+                                    <td>2021-01-20 10:31</td>
+                                    <td>
+                                        <span>2021-01-20 10:34</span> 
+                                        <span aria-describedby="unpublished-item-publication-state-desc">
+                                            <bootstrap:svgIcon icon="eye-slash" />
+                                        </span>
+                                        <span class="sr-only" id="unpublished-item-publication-state-desc">#{CmsAdminMessages['contentsection.documentfolder.cols.lastedit.unpublished']}</span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-danger" 
+                                                type="button">
+                                            <bootstrap:svgIcon icon="x-circle" />
+                                            <span>#{CmsAdminMessages['contentsection.documentfolder.actions.delete.button.label']}</span>
+                                        </button>
+                                    </td>
+                                </tr>-->
+                            </tbody>
+                        </table>
+                        <nav aria-label="#{CmsAdminMessages['contentsection.documentfolder.pagination.label']}">
+                            <ul class="justify-content-center pagination">
+                                <li class="page-item disabled" tabindex="-1" aria-disabled="true">
+                                    <a class="page-link" href="#">
+                                        <bootstrap:svgIcon icon="caret-left" />
+                                        <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.pagination.previous_page']}</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="page-link" href="#">1</a>
+                                </li>
+                                <li>
+                                    <a class="page-link" href="#">2</a>
+                                </li>
+                                <li>
+                                    <a class="page-link" href="#">3</a>
+                                </li>
+                                <li>
+                                    <a class="page-link" href="#">
+                                        <bootstrap:svgIcon icon="caret-right" />
+                                        <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.pagination.next_page']}</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

@@ -34,7 +34,7 @@
             <property name="wildfly.jpa.hibernate.search.module" 
                       value="org.hibernate.search.orm:main" />
             
-            <!--<property name="hibernate.show_sql" value="true" />
+<!--            <property name="hibernate.show_sql" value="true" />
             <property name="format_sql" value="true" />
             <property name="use_sql_comments" value="true" />-->
 

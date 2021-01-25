@@ -26,18 +26,25 @@ import javax.persistence.Table;
 import org.libreccm.categorization.Category;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.persistence.Column;
+import javax.persistence.ColumnResult;
+import javax.persistence.ConstructorResult;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinTable;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.SqlResultSetMapping;
+import javax.persistence.SqlResultSetMappings;
 
 import static org.librecms.CmsConstants.*;
 
@@ -52,27 +59,23 @@ import static org.librecms.CmsConstants.*;
         name = "Folder.rootFolders",
         query = "SELECT f FROM Folder f "
                     + "WHERE f.parentCategory IS NULL "
-                    + "  AND f.type = :type")
-    ,
+                    + "  AND f.type = :type"),
     @NamedQuery(
         name = "Folder.findByName",
-        query = "SELECT f FROM Folder f WHERE f.name = :name")
-    ,
+        query = "SELECT f FROM Folder f WHERE f.name = :name"),
     @NamedQuery(
         name = "Folder.findSubFolders",
         query = "SELECT f "
                     + "FROM Folder f"
                     + " WHERE f.parentCategory = :parent "
                     + "ORDER BY f.name"
-    )
-    ,
+    ),
     @NamedQuery(
         name = "Folder.countSubFolders",
         query = "SELECT COUNT(f) "
                     + "FROM Folder f "
                     + "WHERE f.parentCategory = :parent"
-    )
-    ,
+    ),
 //    @NamedQuery(
 //        name = "Folder.findItems",
 //        query = "SELECT c.categorizedObject "
@@ -104,66 +107,136 @@ import static org.librecms.CmsConstants.*;
                     + "FROM ContentItem i JOIN i.categories c "
                     + "WHERE c.category = :folder "
                     + "AND i.version = org.librecms.contentsection.ContentItemVersion.LIVE"
-    )
-    ,
+    ),
     @NamedQuery(
         name = "Folder.findObjects",
-        query = "SELECT o FROM CcmObject o "
-                    + "WHERE o IN (SELECT f FROM Folder f "
-                    + "WHERE f.parentCategory = :folder "
-                    + "AND LOWER(f.name) LIKE :term) "
-                    + "OR o IN (SELECT i FROM ContentItem i JOIN i.categories c "
-                + "WHERE c.category = :folder "
-                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-                    + "AND i.version = "
-                    + "org.librecms.contentsection.ContentItemVersion.DRAFT "
-                    + "AND (LOWER(i.displayName) LIKE LOWER(CONCAT('%', :term)) "
-                    //                    + "OR LOWER(i.name.values) LIKE LOWER(:term)"
-                    + ")) "
-                    + "ORDER BY o.displayName"
-    //        query = "SELECT o FROM CcmObject o "
-    //                    + "WHERE o IN (SELECT f FROM Folder f "
-    //                    + "WHERE f.parentCategory = :parent "
-    //                    + "AND lower(f.name) LIKE :term) "
-    //                    + "OR o IN (SELECT c.categorizedObject "
-    //                    + "FROM Categorization c "
-    //                    + "WHERE c.category = :folder "
-    //                    + "AND TYPE(c.categorizedObject) IN ContentItem "
-    //                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-    //                    + "AND c.version = "
-    //                    + "org.librecms.contentsection.ContentItemVersion.DRAFT"
-    //                    + "AND (LOWER(c.categorizedObject.displayName) LIKE :term "
-    //                    + "OR LOWER(c.categorizedObject.name.value) LIKE :term)) "
-    //                    + "ORDER BY o.displayName"
-    )
-    ,
+        query
+        = "SELECT o FROM CcmObject o WHERE TYPE(O) IN (ContentItem, Folder) AND o IN (SELECT f FROM Category f WHERE TYPE(f) IN (Folder) AND f.parentCategory = :folder AND LOWER(f.name) LIKE LOWER(CONCAT('%', :term))) OR o IN (SELECT i FROM ContentItem i JOIN i.categories c WHERE TYPE(i) IN (ContentItem) AND c.category = :folder AND c.type = '"
+          + CATEGORIZATION_TYPE_FOLDER
+              + "' AND i.version = org.librecms.contentsection.ContentItemVersion.DRAFT AND (LOWER(i.displayName) LIKE LOWER(CONCAT('%', :term)))) ORDER BY o.displayName"
+    ),
     @NamedQuery(
         name = "Folder.countObjects",
-        query = "SELECT COUNT(o) FROM CcmObject o "
-                    + "WHERE o IN (SELECT f FROM Folder f "
-                    + "WHERE f.parentCategory = :folder "
-                    + "AND LOWER(f.name) LIKE :term) "
-                    + "OR o IN (SELECT i FROM ContentItem i JOIN i.categories c "
-                + "WHERE c.category = :folder "
-                    + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-                    + "AND i.version = "
-                    + "org.librecms.contentsection.ContentItemVersion.DRAFT "
-                    + "AND (LOWER(i.displayName) LIKE LOWER(CONCAT('%', :term)) "
-                    //                    + "OR LOWER(i.name.values) LIKE LOWER(:term)"
-                    + "))"
-    //            query = "SELECT COUNT(o) FROM CcmObject o "
-    //                        + "WHERE o IN (SELECT f FROM Folder f "
-    //                        + "WHERE f.parentCategory = :parent "
-    //                        + "AND lower(f.name) LIKE :term) "
-    //                        + "OR o IN (SELECT c.categorizedObject AS co "
-    //                        + "FROM Categorization c "
-    //                        + "WHERE c.category = :folder "
-    //    //                    + "AND TYPE(co) IN ContentItem "
-    //                        + "AND c.type = '" + CATEGORIZATION_TYPE_FOLDER + "' "
-    //                        + "AND co.version = "
-    //                        + "org.librecms.contentsection.ContentItemVersion.DRAFT "
-    //                        + "AND ((LOWER(co.displayName) LIKE :term "
-    //                        + "OR LOWER(co.name.value) LIKE :term)))"
+        query
+        = "SELECT COUNT(o) FROM CcmObject o WHERE TYPE(O) IN (ContentItem, Folder) AND o IN (SELECT f FROM Category f WHERE TYPE(f) IN (Folder) AND f.parentCategory = :folder AND LOWER(f.name) LIKE LOWER(CONCAT('%', :term))) OR o IN (SELECT i FROM ContentItem i JOIN i.categories c WHERE TYPE(i) IN (ContentItem) AND c.category = :folder AND c.type = '"
+          + CATEGORIZATION_TYPE_FOLDER
+              + "' AND i.version = org.librecms.contentsection.ContentItemVersion.DRAFT AND (LOWER(i.displayName) LIKE LOWER(CONCAT('%', :term))))"
+    )
+})
+@NamedNativeQueries({
+    @NamedNativeQuery(
+        name = "Folder.countDocumentFolderEntries",
+        query = "SELECT ("
+                    + "("
+                    + "SELECT COUNT(*) "
+                    + "FROM ccm_core.ccm_objects "
+                    + "JOIN ccm_cms.content_items "
+                    + "ON ccm_objects.object_id = content_items.object_id "
+                    + "JOIN ccm_core.categorizations "
+                    + "    ON ccm_objects.object_id "
+                    + "        = categorizations.object_id "
+                    + "WHERE categorizations.category_id = :folderId "
+                    + "AND content_items.version = 'DRAFT'"
+                    + ") "
+                    + "+ "
+                    + "("
+                    + "SELECT COUNT(*) "
+                    + "FROM ccm_core.categories "
+                    + "JOIN ccm_core.ccm_objects "
+                    + "    ON categories.object_id = ccm_objects.object_id "
+                    + "JOIN ccm_cms.folders "
+                    + "    ON categories.object_id = folders.object_id "
+                    + "WHERE categories.parent_category_id = :folderId "
+                    + "AND folders.type = 'DOCUMENTS_FOLDER'"
+                    + ") AS entries_count",
+        resultSetMapping = "Folder.countDocumentFolderEntries"
+    ),
+    @NamedNativeQuery(
+        name = "Folder.getDocumentFolderEntries",
+        query
+        = "SELECT ccm_objects.object_id AS entry_id, "
+              + "    ccm_objects.uuid AS entry_uuid, "
+              + "    ccm_objects.display_name AS display_name, "
+              + "    content_types.content_item_class AS item_class, "
+              + "    content_items.creation_date AS creation_date, "
+              + "    content_items.last_modified AS last_modified, "
+              + "    content_items.\"version\" AS version, "
+              + "    false AS is_folder "
+              + "FROM ccm_cms.content_items "
+              + "JOIN ccm_core.ccm_objects "
+              + "    ON ccm_cms.content_items.object_id "
+              + "        = ccm_core.ccm_objects.object_id "
+              + "JOIN ccm_core.categorizations "
+              + "    ON ccm_objects.object_id "
+              + "        = ccm_core.categorizations.object_id "
+              + "JOIN ccm_cms.content_types "
+              + "    ON content_items.content_type_id "
+              + "        = content_types.object_id "
+              + "WHERE categorizations.category_id = :folderId "
+              + "AND content_items.\"version\" ='DRAFT' "
+              + "UNION "
+              + "SELECT categories.object_id AS entry_id, "
+              + "    ccm_objects.uuid AS entry_uuid, "
+              + "    categories.\"name\" AS display_name, "
+              + "    null AS item_class, "
+              + "    null AS creation_date, "
+              + "    null AS last_modified, "
+              + "    null AS version, "
+              + "    true as is_folder "
+              + "FROM ccm_core.categories "
+              + "JOIN ccm_core.ccm_objects "
+              + "    ON categories.object_id = ccm_objects.object_id "
+              + "JOIN ccm_cms.folders "
+              + "    ON categories.object_id = folders.object_id "
+              + "WHERE categories.parent_category_id = :folderId "
+              + "AND folders.\"type\" = 'DOCUMENTS_FOLDER'",
+        resultSetMapping = "Folder.DocumentFolderEntry"
+    )
+})
+@SqlResultSetMappings({
+    @SqlResultSetMapping(
+        name = "Folder.countDocumentFolderEntries",
+        columns = {
+            @ColumnResult(name = "entries_count", type = long.class)
+        }
+    ),
+    @SqlResultSetMapping(
+        name = "Folder.DocumentFolderEntry",
+        classes = {
+            @ConstructorResult(
+                columns = {
+                    @ColumnResult(name = "entry_id", type = long.class),
+                    @ColumnResult(name = "entry_uuid"),
+                    @ColumnResult(name = "display_name"),
+                    @ColumnResult(name = "item_class"),
+                    @ColumnResult(name = "creation_date"),
+                    @ColumnResult(name = "last_modified"),
+                    @ColumnResult(name = "version"),
+                    @ColumnResult(name = "is_folder", type = boolean.class)
+                },
+                targetClass = DocumentFolderEntry.class
+            ),}
+    //        entities = {
+    //            @EntityResult(
+    //                entityClass = DocumentFolderEntry.class,
+    //                fields = {
+    //                    @FieldResult(column = "entry_id", name = "entryId"),
+    //                    @FieldResult(column = "entry_uuid", name = "entryUuid"),
+    //                    @FieldResult(column = "display_name", name = "displayName"),
+    //                    @FieldResult(column = "item_class", name = "itemClass"),
+    //                    @FieldResult(
+    //                        column = "creation_date",
+    //                        name = "creation_date"
+    //                    ),
+    //                    @FieldResult(
+    //                        column = "last_modified",
+    //                        name = "lastModified"
+    //                    ),
+    //                    @FieldResult(column = "version", name = "version"),
+    //                    @FieldResult(column = "is_folder", name = "folder")
+    //                }
+    //            )
+    //        }
     )
 })
 public class Folder extends Category implements Serializable {

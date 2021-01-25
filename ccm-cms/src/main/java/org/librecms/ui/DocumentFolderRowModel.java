@@ -12,7 +12,7 @@ import java.util.SortedSet;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class FolderBrowserRowModel {
+public class DocumentFolderRowModel {
 
     private String created;
 
@@ -60,6 +60,10 @@ public class FolderBrowserRowModel {
 
     public SortedSet<String> getLanguages() {
         return Collections.unmodifiableSortedSet(languages);
+    }
+    
+    public String getLanguagesAsString() {
+        return String.join(", ", languages);
     }
 
     protected void setLanguages(final SortedSet<String> languages) {

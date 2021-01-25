@@ -8,6 +8,7 @@ package org.librecms.ui;
 import org.librecms.contentsection.ContentSection;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
@@ -29,7 +30,10 @@ public class ContentSectionModel {
     }
     
     public String getSectionName() {
-        return section.getLabel();
+        return Optional
+            .ofNullable(section)
+            .map(ContentSection::getLabel)
+            .orElse("");
     }
     
 }

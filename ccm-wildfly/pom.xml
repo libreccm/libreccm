@@ -19,7 +19,7 @@
     <groupId>org.libreccm</groupId>
     <artifactId>ccm-wildfly</artifactId>
     <version>7.0.0-SNAPSHOT</version>
-    <name>CCM Wildfly Integration</name>
+    <name>LibreCCM Wildfly Integration</name>
     <description>
         Wildfly specific stuff for CCM.
     </description>

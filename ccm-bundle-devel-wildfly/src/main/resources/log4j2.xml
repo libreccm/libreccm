@@ -107,5 +107,7 @@
         <Logger name="org.libreccm.ui.admin.applications.ApplicationsPage"
                 level="debug">
         </Logger>
+        <Logger name="org.librecms.ui.ContentSectionController" level="debug">
+        </Logger>
     </Loggers>
 </Configuration>
