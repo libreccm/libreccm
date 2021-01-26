@@ -148,6 +148,7 @@ import static org.librecms.CmsConstants.*;
                     + "    ON categories.object_id = folders.object_id "
                     + "WHERE categories.parent_category_id = :folderId "
                     + "AND folders.type = 'DOCUMENTS_FOLDER'"
+                    + ") "
                     + ") AS entries_count",
         resultSetMapping = "Folder.countDocumentFolderEntries"
     ),
