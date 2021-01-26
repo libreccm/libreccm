@@ -52,6 +52,14 @@ public class DocumentFolderModel {
     protected void setMaxResults(final int maxResults) {
         this.maxResults = maxResults;
     }
+    
+    public long getNumberOfPages() {
+        return (long) Math.ceil((double) count / maxResults);
+    }
+    
+    public long getCurrentPage() {
+        return (long) Math.ceil((double) firstResult / maxResults ) + 1;
+    }
 
     public List<DocumentFolderRowModel> getRows() {
         return Collections.unmodifiableList(rows);

@@ -18,7 +18,7 @@ public class DocumentFolderRowModel {
 
     private boolean deletable;
 
-    private boolean isFolder;
+    private boolean folder;
 
     private SortedSet<String> languages;
 
@@ -50,12 +50,12 @@ public class DocumentFolderRowModel {
         this.deletable = deletable;
     }
 
-    public boolean isIsFolder() {
-        return isFolder;
+    public boolean isFolder() {
+        return folder;
     }
 
-    protected void setIsFolder(final boolean isFolder) {
-        this.isFolder = isFolder;
+    protected void setFolder(final boolean folder) {
+        this.folder = folder;
     }
 
     public SortedSet<String> getLanguages() {

@@ -150,15 +150,12 @@ public class ContentSectionController {
                 ItemPrivileges.EDIT, section.getRootDocumentsFolder()
             )) {
                 contentSectionModel.setSection(section);
-                LOGGER.info("Checked in permisisons in {} ms.", System
-                            .currentTimeMillis() - permissionCheckStart);
+                LOGGER.info(
+                    "Checked in permisisons in {} ms.",
+                    System.currentTimeMillis() - permissionCheckStart
+                );
 
                 final long objectsStart = System.currentTimeMillis();
-//                final List<CcmObject> objects = folderRepo
-//                    .findObjectsInFolder(
-//                        section.getRootDocumentsFolder(), firstResult,
-//                        maxResults
-//                    );
                 final List<DocumentFolderEntry> folderEntries = folderRepo
                     .getDocumentFolderEntries(
                         section.getRootDocumentsFolder(),
@@ -166,11 +163,11 @@ public class ContentSectionController {
                         maxResults,
                         ""
                     );
-                LOGGER.info("Retrieved objects in {} ms", System
-                            .currentTimeMillis() - objectsStart);
+                LOGGER.info(
+                    "Retrieved objects in {} ms",
+                    System.currentTimeMillis() - objectsStart
+                );
                 documentFolderModel.setCount(
-                    //                    folderRepo
-                    //                        .countObjectsInFolder(section.getRootDocumentsFolder())
                     folderRepo.countDocumentFolderEntries(
                         section.getRootDocumentsFolder(), ""
                     )
@@ -183,12 +180,6 @@ public class ContentSectionController {
                 );
 
                 final long rowsStart = System.currentTimeMillis();
-//                documentFolderModel.setRows(
-//                    objects
-//                        .stream()
-//                        .map(object -> buildRowModel(section, object))
-//                        .collect(Collectors.toList())
-//                );
                 documentFolderModel.setRows(
                     folderEntries
                         .stream()
@@ -320,7 +311,7 @@ public class ContentSectionController {
                     .folderIsDeletable(folder)
                     == FolderManager.FolderIsDeletable.YES
             );
-            row.setIsFolder(true);
+            row.setFolder(true);
             row.setLanguages(Collections.emptySortedSet());
             row.setLastEditPublished(false);
             row.setLastEdited("");
@@ -348,7 +339,7 @@ public class ContentSectionController {
                 )
             );
             row.setDeletable(!itemManager.isLive(contentItem));
-            row.setIsFolder(false);
+            row.setFolder(false);
             row.setLanguages(
                 new TreeSet<>(
                     itemL10NManager
