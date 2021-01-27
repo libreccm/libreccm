@@ -19,6 +19,8 @@ public class DocumentFolderRowModel {
     private boolean deletable;
 
     private boolean folder;
+    
+    private String folderPath;
 
     private SortedSet<String> languages;
 
@@ -52,6 +54,14 @@ public class DocumentFolderRowModel {
 
     public boolean isFolder() {
         return folder;
+    }
+    
+    public String getFolderPath() {
+        return folderPath;
+    }
+    
+    protected void setFolderPath(final String folderPath) {
+        this.folderPath = folderPath;
     }
 
     protected void setFolder(final boolean folder) {

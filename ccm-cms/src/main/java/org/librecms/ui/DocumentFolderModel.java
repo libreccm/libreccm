@@ -29,6 +29,8 @@ public class DocumentFolderModel {
 
     private List<DocumentFolderRowModel> rows;
 
+    private List<DocumentFolderBreadcrumbModel> breadcrumbs;
+
     public long getCount() {
         return count;
     }
@@ -41,6 +43,7 @@ public class DocumentFolderModel {
         return firstResult;
     }
 
+
     protected void setFirstResult(final int firstResult) {
         this.firstResult = firstResult;
     }
@@ -52,13 +55,13 @@ public class DocumentFolderModel {
     protected void setMaxResults(final int maxResults) {
         this.maxResults = maxResults;
     }
-    
+
     public long getNumberOfPages() {
         return (long) Math.ceil((double) count / maxResults);
     }
-    
+
     public long getCurrentPage() {
-        return (long) Math.ceil((double) firstResult / maxResults ) + 1;
+        return (long) Math.ceil((double) firstResult / maxResults) + 1;
     }
 
     public List<DocumentFolderRowModel> getRows() {
@@ -67,6 +70,17 @@ public class DocumentFolderModel {
 
     protected void setRows(final List<DocumentFolderRowModel> rows) {
         this.rows = new ArrayList<>(rows);
+    }
+    
+    
+    public List<DocumentFolderBreadcrumbModel> getBreadcrumbs() {
+        return Collections.unmodifiableList(breadcrumbs);
+    }
+
+    public void setBreadcrumbs(
+        final List<DocumentFolderBreadcrumbModel> breadcrumbs
+    ) {
+        this.breadcrumbs = new ArrayList<>(breadcrumbs);
     }
 
 }

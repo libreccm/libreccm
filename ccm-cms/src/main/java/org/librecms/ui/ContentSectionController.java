@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.api.Identifier;
 import org.libreccm.api.IdentifierParser;
-import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.PermissionChecker;
@@ -26,12 +25,15 @@ import org.librecms.contentsection.DocumentFolderEntry;
 import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.FolderManager;
 import org.librecms.contentsection.FolderRepository;
+import org.librecms.contentsection.FolderType;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 import org.librecms.contenttypes.Article;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -111,11 +113,13 @@ public class ContentSectionController {
     private PermissionChecker permissionChecker;
 
     @GET
-    @Path("/document-folders")
+    @Path("/document-folders{folderPath:(/.+)?}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String listItems(
         @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @PathParam("folderPath") final String folderPath,
+        @QueryParam("filterTerm") @DefaultValue("") final String filterTerm,
         @QueryParam("firstResult") @DefaultValue("0") final int firstResult,
         @QueryParam("maxResults") @DefaultValue("20") final int maxResults
     ) {
@@ -155,22 +159,60 @@ public class ContentSectionController {
                     System.currentTimeMillis() - permissionCheckStart
                 );
 
+                final Folder folder;
+                if (folderPath.isBlank()) {
+                    folder = section.getRootDocumentsFolder();
+                    documentFolderModel.setBreadcrumbs(Collections.emptyList());
+                } else {
+                    final Optional<Folder> folderResult = folderRepo
+                        .findByPath(section,
+                                    folderPath,
+                                    FolderType.DOCUMENTS_FOLDER
+                        );
+                    if (folderResult.isPresent()) {
+                        folder = folderResult.get();
+                        final List<DocumentFolderBreadcrumbModel> breadcrumbs
+                            = new ArrayList<>();
+                        final List<String> tokens = Arrays
+                            .stream(folderPath.split("/"))
+                            .filter(token -> !token.isEmpty())
+                            .collect(Collectors.toList());
+                        for (final String token : tokens) {
+                            final String path = breadcrumbs
+                                .stream()
+                                .map(DocumentFolderBreadcrumbModel::getPathToken)
+                                .collect(Collectors.joining("/"));
+                            final DocumentFolderBreadcrumbModel breadcrumb
+                                = new DocumentFolderBreadcrumbModel();
+                            breadcrumb.setPath(path);
+                            breadcrumb.setPathToken(token);
+                            breadcrumbs.add(breadcrumb);
+                        }
+                        breadcrumbs
+                            .get(breadcrumbs.size() - 1)
+                            .setCurrentFolder(true);
+                        documentFolderModel.setBreadcrumbs(breadcrumbs);
+                    } else {
+                        models.put("contentSection", section.getLabel());
+                        models.put("folderPath", folderPath);
+                        return "org/librecms/ui/content-section/document-folder-not-found.xhtml";
+                    }
+                }
+
                 final long objectsStart = System.currentTimeMillis();
                 final List<DocumentFolderEntry> folderEntries = folderRepo
                     .getDocumentFolderEntries(
-                        section.getRootDocumentsFolder(),
+                        folder,
                         firstResult,
                         maxResults,
-                        ""
+                        filterTerm
                     );
                 LOGGER.info(
                     "Retrieved objects in {} ms",
                     System.currentTimeMillis() - objectsStart
                 );
                 documentFolderModel.setCount(
-                    folderRepo.countDocumentFolderEntries(
-                        section.getRootDocumentsFolder(), ""
-                    )
+                    folderRepo.countDocumentFolderEntries(folder, filterTerm)
                 );
                 documentFolderModel.setFirstResult(firstResult);
                 documentFolderModel.setMaxResults(maxResults);
@@ -179,6 +221,8 @@ public class ContentSectionController {
                     System.currentTimeMillis() - objectsStart
                 );
 
+                contentSectionModel.setFolders(buildFolderTree(section, folder));
+
                 final long rowsStart = System.currentTimeMillis();
                 documentFolderModel.setRows(
                     folderEntries
@@ -186,8 +230,10 @@ public class ContentSectionController {
                         .map(entry -> buildRowModel(section, entry))
                         .collect(Collectors.toList())
                 );
-                LOGGER.info("Build rows in {} ms.", System.currentTimeMillis()
-                                                        - rowsStart);
+                LOGGER.info(
+                    "Build rows in {} ms.",
+                    System.currentTimeMillis() - rowsStart
+                );
 
                 return "org/librecms/ui/content-section/document-folder.xhtml";
             } else {
@@ -294,6 +340,60 @@ public class ContentSectionController {
         }
     }
 
+    private List<FolderTreeNode> buildFolderTree(
+        final ContentSection section, final Folder currentFolder
+    ) {
+        final Folder root = section.getRootDocumentsFolder();
+        final String currentFolderPath = folderManager
+            .getFolderPath(currentFolder)
+            .substring(
+                folderManager
+                    .getFolderPath(section.getRootDocumentsFolder())
+                    .length() - 1
+            );
+
+        return root
+            .getSubFolders()
+            .stream()
+            .sorted()
+            .map(folder -> buildFolderTreeNode(section, currentFolderPath,
+                                               folder))
+            .collect(Collectors.toList());
+    }
+
+    private FolderTreeNode buildFolderTreeNode(
+        final ContentSection section,
+        final String currentFolderPath,
+        final Folder folder
+    ) {
+        final String folderPath = folderManager
+            .getFolderPath(folder)
+            .substring(
+                folderManager
+                    .getFolderPath(section.getRootDocumentsFolder())
+                    .length() - 1
+            );
+
+        final FolderTreeNode node = new FolderTreeNode();
+        node.setFolderId(folder.getObjectId());
+        node.setUuid(folder.getUuid());
+        node.setName(folder.getName());
+        node.setOpen(currentFolderPath.startsWith(folderPath));
+        node.setSelected(currentFolderPath.equals(folderPath));
+        node.setSubFolders(
+            folder
+                .getSubFolders()
+                .stream()
+                .sorted()
+                .map(subFolder -> buildFolderTreeNode(section,
+                                                      currentFolderPath,
+                                                      subFolder))
+                .collect(Collectors.toList())
+        );
+
+        return node;
+    }
+
     private DocumentFolderRowModel buildRowModel(
         final ContentSection section, final DocumentFolderEntry entry
     ) {
@@ -312,6 +412,15 @@ public class ContentSectionController {
                     == FolderManager.FolderIsDeletable.YES
             );
             row.setFolder(true);
+            row.setFolderPath(
+                folderManager
+                    .getFolderPath(folder)
+                    .substring(
+                        folderManager
+                            .getFolderPath(section.getRootDocumentsFolder())
+                            .length()
+                    )
+            );
             row.setLanguages(Collections.emptySortedSet());
             row.setLastEditPublished(false);
             row.setLastEdited("");

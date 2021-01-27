@@ -2,73 +2,138 @@
 <html xmlns="http://www.w3.org/1999/xhtml" 
       xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:cms="http://xmlns.jcp.org/jsf/composite/components/cms"
       xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/librecms/ui/content-section/contentsection.xhtml">
 
-        <ui:param name="activePage" value="folderBrowser" />
+        <ui:param name="activePage" value="documentFolders" />
         <ui:param name="title" value="#{CmsAdminMessages['contentsection.documentfolder.title']}" />
         <ui:define name="breadcrumb">
-            <li class="breadcrumb-item">
-                #{CmsAdminMessages['contentsections.list.label']}
-            </li>
+            <c:choose>
+                <c:when test="#{DocumentFolderModel.breadcrumbs.isEmpty()}">
+                    <li aria-current="page" class="breadcrumb-item">
+                        #{CmsAdminMessages['contentsection.documentfolder.title']}
+                    </li>
+                </c:when>
+                <c:otherwise>
+                    <li class="breadcrumb-item">
+                        <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/document-folders">
+                            #{CmsAdminMessages['contentsection.documentfolder.title']}
+                        </a>
+                    </li>
+                </c:otherwise>
+            </c:choose>
+            <c:forEach items="#{DocumentFolderModel.breadcrumbs}" 
+                       var="breadcrumb">
+                <c:choose>
+                    <c:when test="#{breadcrumb.currentFolder}">
+                        <li class="breadcrumb-item #{breadcrumb.currentFolder ? 'active' : ''}">
+                            #{breadcrumb.pathToken}
+                        </li>
+                    </c:when>
+                    <c:otherwise>
+                        <li class="breadcrumb-item">
+                            <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/document-folders/#{breadcrumb.path}">#{breadcrumb.pathToken}</a>
+                        </li>
+                    </c:otherwise>
+                </c:choose>
+
+            </c:forEach>
         </ui:define>
 
         <ui:define name="main">
             <div class="container-fluid">
                 <h1>#{CmsAdminMessages.getMessage("contentsection.documentfolder.heading", [ContentSectionModel.sectionName])}</h1>
 
-
                 <div class="row">
-                    <nav class="col-sm-3 documentfolder">
+                    <nav class="col-sm-3 documentfolder foldertree">
                         <ul class="list-group">
-                            <li class="list-group-item">
-                                <a class="" href="#">Folder 1</a>
-                            </li>
-                            <li class="list-group-item">
-                                <div class="d-flex">
-                                    <button class="btn btn-light p-0 subfolders-toggler"
-                                            data-toggle="collapse"
-                                            data-target="#folder-2-subfolders"
-                                            aria-expanded="false"
-                                            aria-controls="folder-2-subfolders"
-                                            type="button">
-                                        <!--<bootstrap:svgIcon icon="caret-right-fill" />-->
-                                        <span class="sr-only">
-                                            #{CmsAdminMessages['contentsection.documentfolder.foldersnav.subfolders.expand']}
-                                        </span>
-                                    </button>
-                                    <a class="pl-0" href="#">Folder 2</a>
-                                </div>
-                                <ul class="border-0 collapse list-group "
-                                    id="folder-2-subfolders">
-                                    <li class="border-0 list-group-item">
-                                        <a class="" href="#">Folder 2-1</a>
-                                    </li>
-                                    <li class="border-0 list-group-item">
-                                        <a class="" href="#">Folder 2-2</a>
-                                    </li>
-                                    <li class="border-0 list-group-item">
-                                        <a class="" href="#">Folder 2-3</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="list-group-item">
-                                <a class="" href="#">Folder 3</a>
-                            </li>
-                            <li class="list-group-item">
-                                <a class="" href="#">Folder 4</a>
-                            </li>
-                            <li class="list-group-item">
-                                <a class="" href="#">Folder 5</a>
-                            </li>
+                            <c:forEach items="#{ContentSectionModel.folders}"
+                                       var="folder">
+                                <cms:treeNode basePath="#{mvc.basePath}/#{ContentSectionModel.sectionName}/document-folders"
+                                              collapsed="#{!folder.open}"
+                                              name="#{folder.name}"
+                                              path="#{folder.path}"
+                                              selected="#{folder.selected}"
+                                              subFolders="#{folder.subFolders}" />
+                            </c:forEach>
+                            <!--                            <li class="list-group-item">
+                                                            <a class="" href="#">Folder 1</a>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="d-flex">
+                                                                <button class="btn btn-light p-0 subfolders-toggler"
+                                                                        data-toggle="collapse"
+                                                                        data-target="#folder-2-subfolders"
+                                                                        aria-expanded="false"
+                                                                        aria-controls="folder-2-subfolders"
+                                                                        type="button">
+                                                                    <bootstrap:svgIcon icon="caret-right-fill" />
+                                                                    <span class="sr-only">
+                            #{CmsAdminMessages['contentsection.documentfolder.foldersnav.subfolders.expand']}
+                        </span>
+                    </button>
+                    <a class="pl-0" href="#">Folder 2</a>
+                </div>
+                <ul class="border-0 collapse list-group "
+                    id="folder-2-subfolders">
+                    <li class="border-0 list-group-item">
+                        <a class="" href="#">Folder 2-1</a>
+                    </li>
+                    <li class="border-0 list-group-item">
+                        <a class="" href="#">Folder 2-2</a>
+                    </li>
+                    <li class="border-0 list-group-item">
+                        <a class="" href="#">Folder 2-3</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="list-group-item">
+                <a class="" href="#">Folder 3</a>
+            </li>
+            <li class="list-group-item">
+                <a class="" href="#">Folder 4</a>
+            </li>
+            <li class="list-group-item">
+                <a class="" href="#">Folder 5</a>
+            </li>-->
                         </ul>
                     </nav>
                     <div class="col-sm-9">
-                        <div class="d-flex">
+                        <div class="d-flex justify-content-between mb-2">
+                            <form action="#" class="form-inline mr-2" method="GET">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <label class="mr-2" for="document-folder-filter">
+                                            <span>#{CmsAdminMessages['contentsection.documentfolder.filter.label']}</span>
+                                        </label>
+                                    </div>
+                                    <input id="documentfolder-filter" 
+                                           name="filterTerm" 
+                                           type="text" />
+                                    <div class="input-group-append">
+                                        <button class="btn btn-secondary" 
+                                                type="submit">
+                                            <bootstrap:svgIcon icon="search" />
+                                            <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.filter.submit']}</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                             <p>
-                                ${CmsAdminMessages.getMessage("contentsection.documentfolder.pageof", [DocumentFolderModel.currentPage, DocumentFolderModel.numberOfPages, DocumentFolderModel.maxResults, DocumentFolderModel.count])}
+                                ${CmsAdminMessages.getMessage("contentsection.documentfolder.pageof", [DocumentFolderModel.currentPage, DocumentFolderModel.numberOfPages])}
                             </p>
+                            <div>
+                                <button class="btn btn-primary" title="#{CmsAdminMessages['contentsection.documentfolder.add_subfolder']}">
+                                    <bootstrap:svgIcon icon="folder-plus" />
+                                    <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.add_subfolder']}</span>
+                                </button>
+                                <button class="btn btn-primary" title="#{CmsAdminMessages['contentsection.documentfolder.add_document']}">
+                                    <bootstrap:svgIcon icon="file-earmark-plus" />
+                                    <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.add_document']}</span>
+                                </button>
+                            </div>
                         </div>
                         <table class="table table-hover documentfolder">
                             <thead class="thead-light">
@@ -100,7 +165,16 @@
                                 <c:forEach items="#{DocumentFolderModel.rows}"
                                            var="row">  
                                     <tr>
-                                        <td><a href="#">#{row.name}</a></td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="#{row.folder}">
+                                                    <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/document-folders/#{row.folderPath}">#{row.name}</a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a href="#">#{row.name}</a>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
                                         <td>
                                             #{row.languagesAsString}
                                         </td>

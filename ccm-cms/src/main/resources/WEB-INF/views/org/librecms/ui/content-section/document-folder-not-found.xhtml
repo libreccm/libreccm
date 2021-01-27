@@ -6,21 +6,22 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/librecms/ui/content-section/contentsection.xhtml">
 
-        <ui:param name="activePage" value="folderBrowser" />
-        <ui:param name="title" value="Test data generator" />
+        <ui:param name="activePage" value="documentFolders" />
+        <ui:param name="title" value="#{CmsAdminMessages['contentsection.documentfolder.title']}" />
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
-                #{CmsAdminMessages['contentsections.list.label']}
+                #{CmsAdminMessages['contentsection.documentfolder.title']}
             </li>
         </ui:define>
 
         <ui:define name="main">
             <div class="container">
-                <div class="alert alert-info" role="alert">
-                    #{testdataMessage}
+                <div class="alert alert-warning">
+                    #{CmsAdminMessages.getMessage("contentsections.documentfolder.not_found", [contentSection, folderPath])}
                 </div>
             </div>
         </ui:define>
+
     </ui:composition>
 </html>
 
