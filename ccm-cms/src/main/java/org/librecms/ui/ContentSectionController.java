@@ -221,7 +221,10 @@ public class ContentSectionController {
                     System.currentTimeMillis() - objectsStart
                 );
 
-                contentSectionModel.setFolders(buildFolderTree(section, folder));
+                final List<FolderTreeNode> folderTree = buildFolderTree(
+                    section, folder
+                );
+                contentSectionModel.setFolders(folderTree);
 
                 final long rowsStart = System.currentTimeMillis();
                 documentFolderModel.setRows(
@@ -355,7 +358,10 @@ public class ContentSectionController {
         return root
             .getSubFolders()
             .stream()
-            .sorted()
+            .sorted(
+                (folder1, folder2)
+                -> folder1.getName().compareTo(folder2.getName())
+            )
             .map(folder -> buildFolderTreeNode(section, currentFolderPath,
                                                folder))
             .collect(Collectors.toList());
@@ -378,16 +384,22 @@ public class ContentSectionController {
         node.setFolderId(folder.getObjectId());
         node.setUuid(folder.getUuid());
         node.setName(folder.getName());
+        node.setPath(folderPath);
         node.setOpen(currentFolderPath.startsWith(folderPath));
         node.setSelected(currentFolderPath.equals(folderPath));
         node.setSubFolders(
             folder
                 .getSubFolders()
                 .stream()
-                .sorted()
-                .map(subFolder -> buildFolderTreeNode(section,
-                                                      currentFolderPath,
-                                                      subFolder))
+                .sorted(
+                    (folder1, folder2)
+                    -> folder1.getName().compareTo(folder2.getName())
+                )
+                .map(
+                    subFolder -> buildFolderTreeNode(
+                        section, currentFolderPath, subFolder
+                    )
+                )
                 .collect(Collectors.toList())
         );
 

@@ -1,0 +1,46 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:cms="http://xmlns.jcp.org/jsf/composite/components/cms"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition>
+        <c:choose>
+            <c:when test="#{not empty folder.subFolders}"> 
+                <li class="folder-tree-node list-group-item">
+                    <div class="d-flex">
+                        <button class="btn btn-light p-0 subfolders-toggler"
+                                data-toggle="collapse"
+                                data-target="##{folder.name}-subfolders"
+                                aria-expanded="false"
+                                aria-controls="##{folder.name}-subfolders"
+                                type="button">
+                            <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.foldersnav.subfolders.expand']}
+                            </span>
+                        </button>
+                        <a class="pl-0" 
+                           href="#{basePath}#{folder.path}">#{folder.name}</a>
+                    </div>
+                    <ul class="border-0 #{!folder.open ? 'collapse' : 'collapse.show'} list-group"
+                        id="#{folder.name}-subfolders">
+                        <c:forEach items="#{folder.subFolders}"
+                                   var="subFolder">
+                            <ui:include src="document-folder-tree-node.xhtml">
+                                <ui:param name="basePath" value="#{basePath}" />
+                                <ui:param name="folder" value="#{subFolder}" />
+                            </ui:include>
+                        </c:forEach>
+                    </ul>
+
+                </li>
+            </c:when>
+            <c:otherwise>
+                <li class="folder-tree-node list-group-item">
+                    <a href="#{basePath}#{folder.path}">#{folder.name}</a>
+                </li>
+            </c:otherwise>
+        </c:choose>
+    </ui:composition>
+</html>
+

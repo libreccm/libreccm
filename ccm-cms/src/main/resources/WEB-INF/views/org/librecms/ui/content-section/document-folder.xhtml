@@ -51,12 +51,20 @@
                         <ul class="list-group">
                             <c:forEach items="#{ContentSectionModel.folders}"
                                        var="folder">
-                                <cms:treeNode basePath="#{mvc.basePath}/#{ContentSectionModel.sectionName}/document-folders"
+                                <ui:include src="document-folder-tree-node.xhtml">
+                                    <ui:param name="basePath" 
+                                              value="#{mvc.basePath}/#{ContentSectionModel.sectionName}/document-folders" />
+                                    <ui:param name="folder" value="#{folder}" />
+                                </ui:include>
+                                            
+<!--                                <cms:folderTreeNode basePath="#{mvc.basePath}/#{ContentSectionModel.sectionName}/document-folders"
                                               collapsed="#{!folder.open}"
                                               name="#{folder.name}"
                                               path="#{folder.path}"
                                               selected="#{folder.selected}"
-                                              subFolders="#{folder.subFolders}" />
+                                              subFolders="#{folder.subFolders[index]}" />-->
+<!--                                <cms:folderTreeNode basePath="#{mvc.basePath}/#{ContentSectionModel.sectionName}/document-folders"
+                                                    folder="#{folder}" />-->
                             </c:forEach>
                             <!--                            <li class="list-group-item">
                                                             <a class="" href="#">Folder 1</a>
