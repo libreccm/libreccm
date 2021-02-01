@@ -114,7 +114,22 @@ public class DocumentFolderController {
     private PermissionChecker permissionChecker;
 
     @GET
-    @Path("/{folderPath:(/.+)?}")
+    @Path("/")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String listItems(
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @QueryParam("filterTerm") @DefaultValue("") final String filterTerm,
+        @QueryParam("firstResult") @DefaultValue("0") final int firstResult,
+        @QueryParam("maxResults") @DefaultValue("20") final int maxResults
+    ) {
+        return listItems(
+            sectionIdentifier, "", filterTerm, firstResult, maxResults
+        );
+    }
+    
+    @GET
+    @Path("/{folderPath:(.+)?}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String listItems(

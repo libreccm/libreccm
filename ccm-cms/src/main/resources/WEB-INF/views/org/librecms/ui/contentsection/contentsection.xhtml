@@ -27,9 +27,30 @@
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
                             <a class="nav-link #{activePage == 'documentFolders' ? 'active' : ''}"
-                               href='#{mvc.basePath}/#{ContentSectionModel.sectionName}/document-folders'>
+                               href='#{mvc.basePath}/#{ContentSectionModel.sectionName}/documentfolders'>
                                 <bootstrap:svgIcon icon="folder2-open" />
-                                <span>#{CmsAdminMessages['contentsection.documentfolder.title']}</span>
+                                <span>#{CmsAdminMessages['contentsection.documentfolders.title']}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link #{activePage == 'assetFolders' ? 'active' : ''}"
+                               href='#{mvc.basePath}/#{ContentSectionModel.sectionName}/assetfolders'>
+                                <bootstrap:svgIcon icon="collection" />
+                                <span>#{CmsAdminMessages['contentsection.assetfolders.title']}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link #{activePage == 'categories' ? 'active' : ''}"
+                               href='#{mvc.basePath}/#{ContentSectionModel.sectionName}/categories'>
+                                <bootstrap:svgIcon icon="diagram-3-fill" />
+                                <span>#{CmsAdminMessages['contentsection.categories.title']}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link #{activePage == 'configuration' ? 'active' : ''}"
+                               href='#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration'>
+                                <bootstrap:svgIcon icon="gear-fill" />
+                                <span>#{CmsAdminMessages['contentsection.configuration.title']}</span>
                             </a>
                         </li>
                     </ul>

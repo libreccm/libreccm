@@ -7,17 +7,17 @@
     <ui:composition template="/WEB-INF/views/org/librecms/ui/content-section/contentsection.xhtml">
 
         <ui:param name="activePage" value="documentFolders" />
-        <ui:param name="title" value="#{CmsAdminMessages['contentsection.documentfolder.title']}" />
+        <ui:param name="title" value="#{CmsAdminMessages['contentsection.documentfolders.title']}" />
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
-                #{CmsAdminMessages['contentsection.documentfolder.title']}
+                #{CmsAdminMessages['contentsection.documentfolders.title']}
             </li>
         </ui:define>
 
         <ui:define name="main">
             <div class="container">
                 <div class="alert alert-warning">
-                    #{CmsAdminMessages.getMessage("contentsections.documentfolder.not_found", [contentSection, folderPath])}
+                    #{CmsAdminMessages.getMessage("contentsections.documentfolders.not_found", [contentSection, folderPath])}
                 </div>
             </div>
         </ui:define>
