@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.librecms.ui;
+package org.librecms.ui.contentsections;
 
 import org.libreccm.ui.IsAuthenticatedFilter;
 
@@ -25,7 +25,7 @@ public class ContentSectionApplication extends Application {
         final Set<Class<?>> classes = new HashSet<>();
         
         classes.add(IsAuthenticatedFilter.class);
-        classes.add(ContentSectionController.class);
+        classes.add(DocumentFolderController.class);
         
         return classes;
     }

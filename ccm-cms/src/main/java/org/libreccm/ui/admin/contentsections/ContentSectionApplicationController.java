@@ -34,7 +34,7 @@ import javax.ws.rs.PathParam;
  */
 @RequestScoped
 @Controller
-@Path("/applications/content-sections")
+@Path("/applications/contentsections")
 public class ContentSectionApplicationController
     implements ApplicationController {
 
@@ -49,7 +49,7 @@ public class ContentSectionApplicationController
 
     @Override
     public String getControllerLink() {
-        return "applications/content-sections";
+        return "applications/contentsections";
     }
     
     @GET
@@ -71,7 +71,7 @@ public class ContentSectionApplicationController
                 .collect(Collectors.toList())
         );
 
-        return "org/libreccm/ui/admin/applications/content-sections/content-sections.xhtml";
+        return "org/libreccm/ui/admin/applications/contentsections/contentsections.xhtml";
     }
 
     @POST
@@ -84,7 +84,7 @@ public class ContentSectionApplicationController
     ) {
         sectionManager.createContentSection(label);
 
-        return "redirect:applications/content-sections";
+        return "redirect:applications/contentsections";
     }
 
     @POST
@@ -103,7 +103,7 @@ public class ContentSectionApplicationController
             sectionManager.renameContentSection(result.get(), label);
         }
 
-        return "redirect:applications/content-sections";
+        return "redirect:applications/contentsections";
     }
 
     @POST
@@ -122,7 +122,7 @@ public class ContentSectionApplicationController
             sectionRepository.delete(result.get());
         }
 
-        return "redirect:applications/content-sections";
+        return "redirect:applications/contentsections";
     }
 
     private ContentSectionTableRow buildContentSectionTableRow(

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.librecms.ui;
+package org.librecms.ui.contentsections;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,17 +54,18 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
+import org.librecms.ui.CmsAdminMessages;
+
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 @Controller
-@Path("/{sectionIdentifier}")
-public class ContentSectionController {
+@Path("/{sectionIdentifier}/documentfolders")
+public class DocumentFolderController {
 
-    private static final Logger LOGGER = LogManager.getLogger(
-        ContentSectionController.class
+    private static final Logger LOGGER = LogManager.getLogger(DocumentFolderController.class
     );
 
     @Inject
@@ -113,7 +114,7 @@ public class ContentSectionController {
     private PermissionChecker permissionChecker;
 
     @GET
-    @Path("/document-folders{folderPath:(/.+)?}")
+    @Path("/{folderPath:(/.+)?}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String listItems(
@@ -195,7 +196,7 @@ public class ContentSectionController {
                     } else {
                         models.put("contentSection", section.getLabel());
                         models.put("folderPath", folderPath);
-                        return "org/librecms/ui/content-section/document-folder-not-found.xhtml";
+                        return "org/librecms/ui/contentsection/documentfolder/documentfolder-not-found.xhtml";
                     }
                 }
 
@@ -238,14 +239,14 @@ public class ContentSectionController {
                     System.currentTimeMillis() - rowsStart
                 );
 
-                return "org/librecms/ui/content-section/document-folder.xhtml";
+                return "org/librecms/ui/contentsection/documentfolder/documentfolder.xhtml";
             } else {
                 models.put("sectionidentifier", sectionIdentifier);
-                return "org/librecms/ui/content-section/access-denied.xhtml";
+                return "org/librecms/ui/contentsection/access-denied.xhtml";
             }
         } else {
             models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/content-section/contentsection-not-found.xhtml";
+            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
         }
 
     }
@@ -326,20 +327,20 @@ public class ContentSectionController {
                     models.put(
                         "testdataMessage", "Test data created successfully."
                     );
-                    return "org/librecms/ui/content-section/testdata.xhtml";
+                    return "org/librecms/ui/contentsection/documentfolder/testdata.xhtml";
                 } else {
                     models.put(
                         "testdataMessage", "Test data was already created..."
                     );
-                    return "org/librecms/ui/content-section/testdata.xhtml";
+                    return "org/librecms/ui/contentsection/documentfolder/testdata.xhtml";
                 }
             } else {
                 models.put("sectionidentifier", sectionIdentifier);
-                return "org/librecms/ui/content-section/access-denied.xhtml";
+                return "org/librecms/ui/contentsection/access-denied.xhtml";
             }
         } else {
             models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/content-section/contentsection-not-found.xhtml";
+            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
         }
     }
 
