@@ -5,7 +5,7 @@
       xmlns:cms="http://xmlns.jcp.org/jsf/composite/components/cms"
       xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <ui:composition template="/WEB-INF/views/org/librecms/ui/content-section/contentsection.xhtml">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/contentsection.xhtml">
 
         <ui:param name="activePage" value="documentFolders" />
         <ui:param name="title" value="#{CmsAdminMessages['contentsection.documentfolders.title']}" />
@@ -49,30 +49,34 @@
                 <div class="row">
                     <div class="col-sm-3">
                         <form action="#"
-                              class="form-inline mb-3" 
+                              class="mb-3" 
                               method="get">
-                            <div class="form-group">
-                                <label class="sr-only"
-                                       for="documentfolders-searchbox">
-                                    #{CmsAdminMessages['contentsection.documentfolders.searchbox.label']}
-                                </label>
-                                <div class="input-group">
-                                    <input class="form-control" 
-                                           id="documentfolders-searchbox"
-                                           name="term"
-                                           type="text" />
-                                    <div class="input-group-append">
-                                        <button class="btn btn-primary" 
-                                                type="submit">
-                                            <bootstrap:svgIcon icon="search" />
-                                            <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolders.searchbox.submit']}</span>
-                                    </div>
+
+                            <label class="sr-only"
+                                   for="documentfolders-searchbox">
+                                #{CmsAdminMessages['contentsection.documentfolders.searchbox.label']}
+                            </label>
+                            <div class="input-group">
+                                <input class="form-control" 
+                                       id="documentfolders-searchbox"
+                                       name="term"
+                                       type="text" />
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" 
+                                            type="submit">
+                                        <bootstrap:svgIcon icon="search" />
+                                        <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolders.searchbox.submit']}</span>
                                     </button>
                                 </div>
                             </div>
 
                         </form> 
                         <nav class="documentfolder foldertree">
+                            <h2>
+                                <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documentfolders">
+                                    #{CmsAdminMessages["contentsection.documentfolders.root.title"]}
+                                </a>
+                            </h2>
                             <ul class="list-group">
                                 <c:forEach items="#{ContentSectionModel.folders}"
                                            var="folder">
@@ -81,56 +85,7 @@
                                                   value="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documentfolders" />
                                         <ui:param name="folder" value="#{folder}" />
                                     </ui:include>
-
-<!--                                <cms:folderTreeNode basePath="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documentfolders"
-  collapsed="#{!folder.open}"
-  name="#{folder.name}"
-  path="#{folder.path}"
-  selected="#{folder.selected}"
-  subFolders="#{folder.subFolders[index]}" />-->
-<!--                                <cms:folderTreeNode basePath="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documentfolders"
-        folder="#{folder}" />-->
                                 </c:forEach>
-                                <!--                            <li class="list-group-item">
-                                                                <a class="" href="#">Folder 1</a>
-                                                            </li>
-                                                            <li class="list-group-item">
-                                                                <div class="d-flex">
-                                                                    <button class="btn btn-light p-0 subfolders-toggler"
-                                                                            data-toggle="collapse"
-                                                                            data-target="#folder-2-subfolders"
-                                                                            aria-expanded="false"
-                                                                            aria-controls="folder-2-subfolders"
-                                                                            type="button">
-                                                                        <bootstrap:svgIcon icon="caret-right-fill" />
-                                                                        <span class="sr-only">
-                                #{CmsAdminMessages['contentsection.documentfolder.foldersnav.subfolders.expand']}
-                            </span>
-                        </button>
-                        <a class="pl-0" href="#">Folder 2</a>
-                    </div>
-                    <ul class="border-0 collapse list-group "
-                        id="folder-2-subfolders">
-                        <li class="border-0 list-group-item">
-                            <a class="" href="#">Folder 2-1</a>
-                        </li>
-                        <li class="border-0 list-group-item">
-                            <a class="" href="#">Folder 2-2</a>
-                        </li>
-                        <li class="border-0 list-group-item">
-                            <a class="" href="#">Folder 2-3</a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="list-group-item">
-                    <a class="" href="#">Folder 3</a>
-                </li>
-                <li class="list-group-item">
-                    <a class="" href="#">Folder 4</a>
-                </li>
-                <li class="list-group-item">
-                    <a class="" href="#">Folder 5</a>
-                </li>-->
                             </ul>
                         </nav>
                     </div>
@@ -149,7 +104,7 @@
                                     <div class="input-group-append">
                                         <button class="btn btn-secondary" 
                                                 type="submit">
-                                            <bootstrap:svgIcon icon="search" />
+                                            <bootstrap:svgIcon icon="filter" />
                                             <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.filter.submit']}</span>
                                         </button>
                                     </div>
@@ -159,10 +114,66 @@
                                 ${CmsAdminMessages.getMessage("contentsection.documentfolder.pageof", [DocumentFolderModel.currentPage, DocumentFolderModel.numberOfPages])}
                             </p>
                             <div>
-                                <button class="btn btn-primary" title="#{CmsAdminMessages['contentsection.documentfolder.add_subfolder']}">
+                                <button class="btn btn-primary" 
+                                        data-toggle="modal"
+                                        data-target="#new-subfolder-dialog"
+                                        title="#{CmsAdminMessages['contentsection.documentfolder.add_subfolder']}">
                                     <bootstrap:svgIcon icon="folder-plus" />
                                     <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.add_subfolder']}</span>
                                 </button>
+                                <div aria-hidden="true"
+                                     aria-labelledby="new-subfolder-dialog-title"
+                                     class="modal fade"
+                                     id="new-subfolder-dialog"
+                                     tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documentfolders/#{DocumentFolderModel.path}"
+                                              class="modal-content"
+                                              method="post">
+                                            <div class="modal-header">
+                                                <h2 class="modal-title"
+                                                    id="new-subfolder-dialog-title">
+                                                    #{CmsAdminMessages['contentsection.documentfolder.new_subfolder_dialog.title']}
+                                                </h2>
+                                                <button aria-label="#{CmsAdminMessages['contentsection.documentfolder.new_subfolder_dialog.close']}"
+                                                        class="close"
+                                                        data-dismiss="modal"
+                                                        type="button">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label for="new-subfolder-name">
+                                                        #{CmsAdminMessages['contentsection.documentfolder.new_subfolder.name.label']}
+                                                    </label>
+                                                    <input aria-describedby="new-subfolder-name-help"
+                                                           class="form-control"
+                                                           id="new-subfolder-name"
+                                                           name="folderName"
+                                                           pattern="^([a-zA-Z0-9-_]*)$"
+                                                           type="text"
+                                                           value="" />
+                                                    <small class="form-text text-muted"
+                                                           id="new-subfolder-name-help">
+                                                        #{CmsAdminMessages['contentsection.documentfolder.new_subfolder.name.help']}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-danger"
+                                                        data-dismiss="modal"
+                                                        type="button">
+                                                    #{CmsAdminMessages['contentsection.documentfolder.new_subfolder_dialog.close']}
+                                                </button>
+                                                <button class="btn btn-success"
+                                                        type="submit">
+                                                    #{CmsAdminMessages['contentsection.documentfolder.new_subfolder_dialog.submit']}
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                                 <button class="btn btn-primary" title="#{CmsAdminMessages['contentsection.documentfolder.add_document']}">
                                     <bootstrap:svgIcon icon="file-earmark-plus" />
                                     <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.add_document']}</span>

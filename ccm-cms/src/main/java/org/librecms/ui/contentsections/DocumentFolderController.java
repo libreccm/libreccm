@@ -5,6 +5,8 @@
  */
 package org.librecms.ui.contentsections;
 
+import com.arsdigita.cms.ui.folder.FolderPath;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.api.Identifier;
@@ -56,6 +58,9 @@ import javax.ws.rs.QueryParam;
 
 import org.librecms.ui.CmsAdminMessages;
 
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -65,7 +70,8 @@ import org.librecms.ui.CmsAdminMessages;
 @Path("/{sectionIdentifier}/documentfolders")
 public class DocumentFolderController {
 
-    private static final Logger LOGGER = LogManager.getLogger(DocumentFolderController.class
+    private static final Logger LOGGER = LogManager.getLogger(
+        DocumentFolderController.class
     );
 
     @Inject
@@ -127,7 +133,7 @@ public class DocumentFolderController {
             sectionIdentifier, "", filterTerm, firstResult, maxResults
         );
     }
-    
+
     @GET
     @Path("/{folderPath:(.+)?}")
     @AuthorizationRequired
@@ -254,6 +260,13 @@ public class DocumentFolderController {
                     System.currentTimeMillis() - rowsStart
                 );
 
+                documentFolderModel.setPath(folderPath);
+                documentFolderModel.setCanCreateSubFolders(
+                    permissionChecker.isPermitted(
+                        ItemPrivileges.CREATE_NEW, folder
+                    )
+                );
+
                 return "org/librecms/ui/contentsection/documentfolder/documentfolder.xhtml";
             } else {
                 models.put("sectionidentifier", sectionIdentifier);
@@ -353,6 +366,89 @@ public class DocumentFolderController {
                 models.put("sectionidentifier", sectionIdentifier);
                 return "org/librecms/ui/contentsection/access-denied.xhtml";
             }
+        } else {
+            models.put("sectionIdentifier", sectionIdentifier);
+            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+        }
+    }
+
+    @POST
+    @Path("/")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String newSubFolder(
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @FormParam("folderName") final String folderName
+    ) {
+        return newSubFolder(
+            sectionIdentifier, "", folderName
+        );
+    }
+
+    @POST
+    @Path("/{parentFolderPath:(.+)?}")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String newSubFolder(
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @PathParam("parentFolderPath") final String parentFolderPath,
+        @FormParam("folderName") final String folderName
+    ) {
+        final Identifier identifier = identifierParser.parseIdentifier(
+            sectionIdentifier
+        );
+        final Optional<ContentSection> sectionResult;
+        switch (identifier.getType()) {
+            case ID:
+                sectionResult = sectionRepo.findById(
+                    Long.parseLong(identifier.getIdentifier())
+                );
+                break;
+            case UUID:
+                sectionResult = sectionRepo.findByUuid(identifier
+                    .getIdentifier());
+                break;
+            default:
+                sectionResult = sectionRepo.findByLabel(identifier
+                    .getIdentifier());
+                break;
+        }
+
+        if (sectionResult.isPresent()) {
+            final ContentSection section = sectionResult.get();
+
+            final Folder parentFolder;
+            if (parentFolderPath.isEmpty()) {
+                parentFolder = section.getRootDocumentsFolder();
+            } else {
+                final Optional<Folder> parentFolderResult = folderRepo
+                    .findByPath(section, parentFolderPath,
+                                FolderType.DOCUMENTS_FOLDER);
+                if (parentFolderResult.isPresent()) {
+                    parentFolder = parentFolderResult.get();
+                } else {
+                    models.put("contentSection", section.getLabel());
+                    models.put("folderPath", parentFolderPath);
+                    return "org/librecms/ui/contentsection/documentfolder/documentfolder-not-found.xhtml";
+                }
+            }
+
+            if (permissionChecker.isPermitted(
+                ItemPrivileges.CREATE_NEW, parentFolder
+            )) {
+                folderManager.createFolder(folderName, parentFolder);
+
+                return String.format(
+                    "redirect:/%s/documentfolders/%s",
+                    sectionIdentifier,
+                    parentFolderPath
+                );
+            } else {
+                models.put("sectionidentifier", sectionIdentifier);
+                models.put("folderPath", parentFolderPath);
+                return "org/librecms/ui/contentsection/access-denied.xhtml";
+            }
+
         } else {
             models.put("sectionIdentifier", sectionIdentifier);
             return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";

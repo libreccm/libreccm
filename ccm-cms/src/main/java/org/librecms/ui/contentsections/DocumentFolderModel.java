@@ -31,6 +31,11 @@ public class DocumentFolderModel {
 
     private List<DocumentFolderBreadcrumbModel> breadcrumbs;
 
+    private String path;
+    
+    private boolean canCreateSubFolders;
+
+
     public long getCount() {
         return count;
     }
@@ -42,7 +47,6 @@ public class DocumentFolderModel {
     public int getFirstResult() {
         return firstResult;
     }
-
 
     protected void setFirstResult(final int firstResult) {
         this.firstResult = firstResult;
@@ -71,8 +75,7 @@ public class DocumentFolderModel {
     protected void setRows(final List<DocumentFolderRowModel> rows) {
         this.rows = new ArrayList<>(rows);
     }
-    
-    
+
     public List<DocumentFolderBreadcrumbModel> getBreadcrumbs() {
         return Collections.unmodifiableList(breadcrumbs);
     }
@@ -81,6 +84,22 @@ public class DocumentFolderModel {
         final List<DocumentFolderBreadcrumbModel> breadcrumbs
     ) {
         this.breadcrumbs = new ArrayList<>(breadcrumbs);
+    }
+
+    public String getPath() {
+        return path;
+    }
+    
+    protected void setPath(final String path) {
+        this.path = path;
+    }
+    
+    public boolean isCanCreateSubFolders() {
+        return canCreateSubFolders;
+    }
+
+    protected void setCanCreateSubFolders(final boolean canCreateSubFolders) {
+        this.canCreateSubFolders = canCreateSubFolders;
     }
 
 }
