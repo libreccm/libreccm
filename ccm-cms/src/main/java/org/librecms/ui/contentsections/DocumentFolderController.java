@@ -5,7 +5,6 @@
  */
 package org.librecms.ui.contentsections;
 
-import com.arsdigita.cms.ui.folder.FolderPath;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -193,6 +192,13 @@ public class DocumentFolderController {
                         );
                     if (folderResult.isPresent()) {
                         folder = folderResult.get();
+                        if (!permissionChecker.isPermitted(
+                            ItemPrivileges.EDIT, folder
+                        )) {
+                            models.put("sectionidentifier", sectionIdentifier);
+                            models.put("folderPath", folderPath);
+                            return "org/librecms/ui/contentsection/access-denied.xhtml";
+                        }
                         final List<DocumentFolderBreadcrumbModel> breadcrumbs
                             = new ArrayList<>();
                         final List<String> tokens = Arrays
@@ -416,6 +422,14 @@ public class DocumentFolderController {
 
         if (sectionResult.isPresent()) {
             final ContentSection section = sectionResult.get();
+            
+            if (!permissionChecker.isPermitted(
+                ItemPrivileges.EDIT, section.getRootDocumentsFolder()
+            )) {
+                models.put("sectionidentifier", sectionIdentifier);
+                models.put("folderPath", parentFolderPath);
+                return "org/librecms/ui/contentsection/access-denied.xhtml";
+            }
 
             final Folder parentFolder;
             if (parentFolderPath.isEmpty()) {
@@ -454,6 +468,8 @@ public class DocumentFolderController {
             return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
         }
     }
+    
+
 
     private List<FolderTreeNode> buildFolderTree(
         final ContentSection section, final Folder currentFolder
@@ -635,135 +651,4 @@ public class DocumentFolderController {
         return row;
     }
 
-//    private DocumentFolderRowModel buildRowModel(
-//        final ContentSection section, final CcmObject object
-//    ) {
-//        Objects.requireNonNull(section);
-//        Objects.requireNonNull(object);
-//        if (object instanceof ContentItem) {
-//            return buildRowModel(section, (ContentItem) object);
-//        } else if (object instanceof Folder) {
-//            return buildRowModel(section, (Folder) object);
-//        } else {
-//            final DocumentFolderRowModel row = new DocumentFolderRowModel();
-//
-//            row.setCreated("");
-//            row.setDeletable(false);
-//            row.setIsFolder(false);
-//            row.setLanguages(Collections.emptySortedSet());
-//            row.setLastEditPublished(false);
-//            row.setLastEdited("");
-//            row.setName(object.getDisplayName());
-//            row.setTitle("");
-//            row.setType(object.getClass().getSimpleName());
-//
-//            return row;
-//        }
-//    }
-//
-//    private DocumentFolderRowModel buildRowModel(
-//        final ContentSection section, final ContentItem contentItem
-//    ) {
-//        Objects.requireNonNull(section);
-//        Objects.requireNonNull(contentItem);
-//
-//        final DocumentFolderRowModel row = new DocumentFolderRowModel();
-//        row.setCreated(
-//            DateTimeFormatter.ISO_DATE.format(
-//                LocalDate.ofInstant(
-//                    contentItem.getCreationDate().toInstant(),
-//                    ZoneId.systemDefault()
-//                )
-//            )
-//        );
-//        row.setDeletable(!itemManager.isLive(contentItem));
-//        row.setIsFolder(false);
-//        row.setLanguages(
-//            new TreeSet<>(
-//                itemL10NManager
-//                    .availableLanguages(contentItem)
-//                    .stream()
-//                    .map(Locale::toString)
-//                    .collect(Collectors.toSet())
-//            )
-//        );
-//        if (itemManager.isLive(contentItem)) {
-//            final LocalDate draftLastModified = LocalDate.ofInstant(
-//                contentItem.getLastModified().toInstant(),
-//                ZoneId.systemDefault()
-//            );
-//            final LocalDate liveLastModified = LocalDate.ofInstant(
-//                itemManager
-//                    .getLiveVersion(contentItem, contentItem.getClass())
-//                    .map(ContentItem::getLastModified)
-//                    .map(Date::toInstant)
-//                    .get(),
-//                ZoneId.systemDefault()
-//            );
-//            row.setLastEditPublished(
-//                liveLastModified.isBefore(draftLastModified)
-//            );
-//
-//        } else {
-//            row.setLastEditPublished(false);
-//        }
-//
-//        row.setLastEdited(
-//            DateTimeFormatter.ISO_DATE.format(
-//                LocalDate.ofInstant(
-//                    contentItem.getLastModified().toInstant(),
-//                    ZoneId.systemDefault()
-//                )
-//            )
-//        );
-//        row.setName(contentItem.getDisplayName());
-//        row.setNoneCmsObject(false);
-//        row.setTitle(
-//            globalizationHelper.getValueFromLocalizedString(
-//                contentItem.getTitle()
-//            )
-//        );
-//        row.setType(
-//            contentTypeRepo
-//                .findByContentSectionAndClass(section, contentItem.getClass())
-//                .map(ContentType::getLabel)
-//                .map(
-//                    label -> globalizationHelper.getValueFromLocalizedString(
-//                        label
-//                    )
-//                ).orElse("?")
-//        );
-//
-//        return row;
-//    }
-//
-//    private DocumentFolderRowModel buildRowModel(
-//        final ContentSection section, final Folder folder
-//    ) {
-//        Objects.requireNonNull(section);
-//        Objects.requireNonNull(folder);
-//
-//        final DocumentFolderRowModel row = new DocumentFolderRowModel();
-//        row.setCreated("");
-//        row.setDeletable(
-//            folderManager.folderIsDeletable(folder)
-//                == FolderManager.FolderIsDeletable.YES
-//        );
-//        row.setIsFolder(true);
-//        row.setLanguages(Collections.emptySortedSet());
-//        row.setLastEditPublished(false);
-//        row.setLastEdited("");
-//        row.setName(folder.getDisplayName());
-//        row.setNoneCmsObject(false);
-//        row.setTitle(
-//            globalizationHelper.getValueFromLocalizedString(folder.getTitle())
-//        );
-//        row.setType(
-//            globalizationHelper.getLocalizedTextsUtil(
-//                "org.librecms.CmsAdminMessages"
-//            ).getText("contentsection.documentfolder.types.folder")
-//        );
-//
-//        return row;
-//    }
 }
