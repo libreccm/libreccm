@@ -34,7 +34,8 @@ public class DocumentFolderModel {
     private String path;
     
     private boolean canCreateSubFolders;
-
+    
+    private boolean canCreateItems;
 
     public long getCount() {
         return count;
@@ -102,4 +103,12 @@ public class DocumentFolderModel {
         this.canCreateSubFolders = canCreateSubFolders;
     }
 
+    
+     public boolean isCanCreateItems() {
+        return canCreateItems;
+    }
+
+    protected void setCanCreateItems(final boolean canCreateItems) {
+        this.canCreateItems = canCreateItems;
+    }
 }

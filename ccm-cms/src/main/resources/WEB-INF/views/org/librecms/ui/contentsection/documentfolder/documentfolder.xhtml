@@ -114,70 +114,94 @@
                                 ${CmsAdminMessages.getMessage("contentsection.documentfolder.pageof", [DocumentFolderModel.currentPage, DocumentFolderModel.numberOfPages])}
                             </p>
                             <div>
-                                <button class="btn btn-primary" 
-                                        data-toggle="modal"
-                                        data-target="#new-subfolder-dialog"
-                                        title="#{CmsAdminMessages['contentsection.documentfolder.add_subfolder']}">
-                                    <bootstrap:svgIcon icon="folder-plus" />
-                                    <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.add_subfolder']}</span>
-                                </button>
-                                <div aria-hidden="true"
-                                     aria-labelledby="new-subfolder-dialog-title"
-                                     class="modal fade"
-                                     id="new-subfolder-dialog"
-                                     tabindex="-1">
-                                    <div class="modal-dialog">
-                                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documentfolders/#{DocumentFolderModel.path}"
-                                              class="modal-content"
-                                              method="post">
-                                            <div class="modal-header">
-                                                <h2 class="modal-title"
-                                                    id="new-subfolder-dialog-title">
-                                                    #{CmsAdminMessages['contentsection.documentfolder.new_subfolder_dialog.title']}
-                                                </h2>
-                                                <button aria-label="#{CmsAdminMessages['contentsection.documentfolder.new_subfolder_dialog.close']}"
-                                                        class="close"
-                                                        data-dismiss="modal"
-                                                        type="button">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
+                                <c:choose>
+                                    <c:when test="#{DocumentFolderModel.canCreateSubFolders}">
+                                        <button class="btn btn-primary" 
+                                                data-toggle="modal"
+                                                data-target="#new-subfolder-dialog"
+                                                title="#{CmsAdminMessages['contentsection.documentfolder.add_subfolder']}">
+                                            <bootstrap:svgIcon icon="folder-plus" />
+                                            <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.add_subfolder']}</span>
+                                        </button>
+                                        <div aria-hidden="true"
+                                             aria-labelledby="new-subfolder-dialog-title"
+                                             class="modal fade"
+                                             id="new-subfolder-dialog"
+                                             tabindex="-1">
+                                            <div class="modal-dialog">
+                                                <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documentfolders/#{DocumentFolderModel.path}"
+                                                      class="modal-content"
+                                                      method="post">
+                                                    <div class="modal-header">
+                                                        <h2 class="modal-title"
+                                                            id="new-subfolder-dialog-title">
+                                                            #{CmsAdminMessages['contentsection.documentfolder.new_subfolder_dialog.title']}
+                                                        </h2>
+                                                        <button aria-label="#{CmsAdminMessages['contentsection.documentfolder.new_subfolder_dialog.close']}"
+                                                                class="close"
+                                                                data-dismiss="modal"
+                                                                type="button">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="form-group">
+                                                            <label for="new-subfolder-name">
+                                                                #{CmsAdminMessages['contentsection.documentfolder.new_subfolder.name.label']}
+                                                            </label>
+                                                            <input aria-describedby="new-subfolder-name-help"
+                                                                   class="form-control"
+                                                                   id="new-subfolder-name"
+                                                                   name="folderName"
+                                                                   pattern="^([a-zA-Z0-9-_]*)$"
+                                                                   type="text"
+                                                                   value="" />
+                                                            <small class="form-text text-muted"
+                                                                   id="new-subfolder-name-help">
+                                                                #{CmsAdminMessages['contentsection.documentfolder.new_subfolder.name.help']}
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btn btn-danger"
+                                                                data-dismiss="modal"
+                                                                type="button">
+                                                            #{CmsAdminMessages['contentsection.documentfolder.new_subfolder_dialog.close']}
+                                                        </button>
+                                                        <button class="btn btn-success"
+                                                                type="submit">
+                                                            #{CmsAdminMessages['contentsection.documentfolder.new_subfolder_dialog.submit']}
+                                                        </button>
+                                                    </div>
+                                                </form>
                                             </div>
-                                            <div class="modal-body">
-                                                <div class="form-group">
-                                                    <label for="new-subfolder-name">
-                                                        #{CmsAdminMessages['contentsection.documentfolder.new_subfolder.name.label']}
-                                                    </label>
-                                                    <input aria-describedby="new-subfolder-name-help"
-                                                           class="form-control"
-                                                           id="new-subfolder-name"
-                                                           name="folderName"
-                                                           pattern="^([a-zA-Z0-9-_]*)$"
-                                                           type="text"
-                                                           value="" />
-                                                    <small class="form-text text-muted"
-                                                           id="new-subfolder-name-help">
-                                                        #{CmsAdminMessages['contentsection.documentfolder.new_subfolder.name.help']}
-                                                    </small>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button class="btn btn-danger"
-                                                        data-dismiss="modal"
-                                                        type="button">
-                                                    #{CmsAdminMessages['contentsection.documentfolder.new_subfolder_dialog.close']}
-                                                </button>
-                                                <button class="btn btn-success"
-                                                        type="submit">
-                                                    #{CmsAdminMessages['contentsection.documentfolder.new_subfolder_dialog.submit']}
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <button class="btn btn-primary" title="#{CmsAdminMessages['contentsection.documentfolder.add_document']}">
-                                    <bootstrap:svgIcon icon="file-earmark-plus" />
-                                    <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.add_document']}</span>
-                                </button>
+                                        </div>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <button class="btn btn-primary"
+                                                disabled="disabled"
+                                                title="#{CmsAdminMessages['contentsection.documentfolder.add_subfolder']}">
+                                            <bootstrap:svgIcon icon="folder-plus" />
+                                            <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.add_subfolder']}</span>
+                                        </button>
+                                    </c:otherwise>
+                                </c:choose>
+                                <c:choose>
+                                    <c:when test="#{DocumentFolderModel.canCreateItems}">
+                                        <button class="btn btn-primary" title="#{CmsAdminMessages['contentsection.documentfolder.add_document']}">
+                                            <bootstrap:svgIcon icon="file-earmark-plus" />
+                                            <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.add_document']}</span>
+                                        </button>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <button class="btn btn-primary"
+                                                disabled="disabled"
+                                                title="#{CmsAdminMessages['contentsection.documentfolder.add_document']}">
+                                            <bootstrap:svgIcon icon="file-earmark-plus" />
+                                            <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.add_document']}</span>
+                                        </button>
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
                         </div>
                         <table class="table table-hover documentfolder">
@@ -201,22 +225,25 @@
                                     <th>
                                         #{CmsAdminMessages['contentsection.documentfolder.headers.lastedit.label']}
                                     </th>
-                                    <th>
+                                    <th class="text-center" colspan="3">
                                         #{CmsAdminMessages['contentsection.documentfolder.headers.actions.label']}
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <c:forEach items="#{DocumentFolderModel.rows}"
-                                           var="row">  
+                                           var="row">
                                     <tr>
                                         <td>
                                             <c:choose>
-                                                <c:when test="#{row.folder}">
+                                                <c:when test="#{row.folder and (row.permissions.grantedEdit or row.permissions.grantedPreview)}">
                                                     <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documentfolders/#{row.folderPath}">#{row.name}</a>
                                                 </c:when>
-                                                <c:otherwise>
+                                                <c:when test="#{row.permissions.grantedApprove or row.permissions.grantedCategorize or row.permissions.grantedEdit or row.permissions.grantedPreview or row.permissions.grantedPublish}">
                                                     <a href="#">#{row.name}</a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span>#{row.name}</span>
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
@@ -248,10 +275,30 @@
                                             </c:if>
                                         </td>
                                         <td>
+                                            <c:if test="#{row.folder and row.permissions.grantedEdit}">
+                                                <button class="btn btn-info"
+                                                        title="#{CmsAdminMessages['contentsection.documentfolder.actions.rename_folder.button.label']}">
+                                                    <bootstrap:svgIcon icon="pen" />
+                                                    <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.actions.rename_folder.button.label']}</span>
+                                                </button>
+                                            </c:if>
+
+                                        </td>
+                                        <td>
+                                            <c:if test="#{row.permissions.grantedAdminister}">
+                                                <button class="btn btn-info"
+                                                        title="#{CmsAdminMessages['contentsection.documentfolder.actions.edit_permissions.button.label']}">
+                                                    <bootstrap:svgIcon icon="shield" />
+                                                    <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.actions.edit_permissions.button.label']}</span>
+                                                </button>
+                                            </c:if>
+                                        </td>
+                                        <td>
                                             <c:if test="#{row.deletable}">
-                                                <button class="btn btn-danger">
+                                                <button class="btn btn-danger"
+                                                        title="#{CmsAdminMessages['contentsection.documentfolder.actions.delete.button.label']}">
                                                     <bootstrap:svgIcon icon="x-circle" />
-                                                    <span>${CmsAdminMessages['contentsection.documentfolder.actions.delete.button.label']}</span>
+                                                    <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.actions.delete.button.label']}</span>
                                                 </button>
                                             </c:if>
                                         </td>

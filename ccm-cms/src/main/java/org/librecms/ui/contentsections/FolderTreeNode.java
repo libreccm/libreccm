@@ -5,6 +5,7 @@
  */
 package org.librecms.ui.contentsections;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -12,20 +13,22 @@ import java.util.List;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class FolderTreeNode {
-    
+
     private long folderId;
-    
+
     private String uuid;
-    
+
     private String name;
-    
+
     private String path;
-    
+
     private List<FolderTreeNode> subFolders;
-    
+
     private boolean open;
-    
+
     private boolean selected;
+
+    private ItemPermissionsModel permissions;
 
     public long getFolderId() {
         return folderId;
@@ -60,7 +63,7 @@ public class FolderTreeNode {
     }
 
     public List<FolderTreeNode> getSubFolders() {
-        return subFolders;
+        return Collections.unmodifiableList(subFolders);
     }
 
     public void setSubFolders(final List<FolderTreeNode> subFolders) {
@@ -82,7 +85,15 @@ public class FolderTreeNode {
     public void setSelected(final boolean selected) {
         this.selected = selected;
     }
-    
-    
-    
+
+    public ItemPermissionsModel getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(
+        final ItemPermissionsModel permissions
+    ) {
+        this.permissions = permissions;
+    }
+
 }

@@ -19,8 +19,16 @@
                             <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.foldersnav.subfolders.expand']}
                             </span>
                         </button>
-                        <a class="pl-0" 
-                           href="#{basePath}#{folder.path}">#{folder.name}</a>
+                        <c:choose>
+                            <c:when test="#{folder.permissions.grantedEdit}">
+                                <a class="pl-0" 
+                                   href="#{basePath}#{folder.path}">#{folder.name}</a>
+                            </c:when> 
+                            <c:otherwise>
+                                <span>#{folder.name}</span>
+                            </c:otherwise>
+                        </c:choose>
+
                     </div>
                     <ul class="border-0 #{!folder.open ? 'collapse' : 'collapse.show'} list-group"
                         id="#{folder.name}-subfolders">
