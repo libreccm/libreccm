@@ -32,10 +32,18 @@ public class DocumentFolderModel {
     private List<DocumentFolderBreadcrumbModel> breadcrumbs;
 
     private String path;
-    
+
     private boolean canCreateSubFolders;
-    
+
     private boolean canCreateItems;
+
+    private boolean canAdminister;
+
+    private List<GrantedPrivilegeModel> currentUserPermissions;
+
+    private List<PrivilegesGrantedToRoleModel> grantedPermissions;
+
+    private List<String> privileges;
 
     public long getCount() {
         return count;
@@ -90,11 +98,11 @@ public class DocumentFolderModel {
     public String getPath() {
         return path;
     }
-    
+
     protected void setPath(final String path) {
         this.path = path;
     }
-    
+
     public boolean isCanCreateSubFolders() {
         return canCreateSubFolders;
     }
@@ -103,12 +111,48 @@ public class DocumentFolderModel {
         this.canCreateSubFolders = canCreateSubFolders;
     }
 
-    
-     public boolean isCanCreateItems() {
+    public boolean isCanCreateItems() {
         return canCreateItems;
     }
 
     protected void setCanCreateItems(final boolean canCreateItems) {
         this.canCreateItems = canCreateItems;
     }
+
+    public boolean isCanAdminister() {
+        return canAdminister;
+    }
+
+    public void setCanAdminister(boolean canAdminister) {
+        this.canAdminister = canAdminister;
+    }
+
+    public List<PrivilegesGrantedToRoleModel> getGrantedPermissions() {
+        return Collections.unmodifiableList(grantedPermissions);
+    }
+
+    public void setGrantedPermissions(
+        final List<PrivilegesGrantedToRoleModel> grantedPermissions
+    ) {
+        this.grantedPermissions = grantedPermissions;
+    }
+
+    public List<String> getPrivileges() {
+        return Collections.unmodifiableList(privileges);
+    }
+
+    public void setPrivileges(final List<String> privileges) {
+        this.privileges = privileges;
+    }
+
+    public List<GrantedPrivilegeModel> getCurrentUserPermissions() {
+        return Collections.unmodifiableList(currentUserPermissions);
+    }
+
+    public void setCurrentUserPermissions(
+        final List<GrantedPrivilegeModel> currentUserPermissions
+    ) {
+        this.currentUserPermissions = new ArrayList<>(currentUserPermissions);
+    }
+
 }

@@ -11,7 +11,10 @@ import org.libreccm.api.Identifier;
 import org.libreccm.api.IdentifierParser;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.Permission;
 import org.libreccm.security.PermissionChecker;
+import org.libreccm.security.PermissionManager;
+import org.libreccm.security.Role;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemL10NManager;
 import org.librecms.contentsection.ContentItemManager;
@@ -116,6 +119,9 @@ public class DocumentFolderController {
 
     @Inject
     private PermissionChecker permissionChecker;
+
+    @Inject
+    private PermissionManager permissionManager;
 
     @GET
     @Path("/")
@@ -227,6 +233,20 @@ public class DocumentFolderController {
             permissionChecker.isPermitted(
                 ItemPrivileges.CREATE_NEW, folder
             )
+        );
+        documentFolderModel.setCanAdminister(
+            permissionChecker.isPermitted(
+                ItemPrivileges.ADMINISTER, folder
+            )
+        );
+        documentFolderModel.setGrantedPermissions(
+            buildPermissionsMatrix(section, folder)
+        );
+        documentFolderModel.setPrivileges(
+            permissionManager.listDefiniedPrivileges(ItemPrivileges.class)
+        );
+        documentFolderModel.setCurrentUserPermissions(
+            buildCurrentUserPermissions(folder)
         );
 
         return "org/librecms/ui/contentsection/documentfolder/documentfolder.xhtml";
@@ -627,7 +647,6 @@ public class DocumentFolderController {
                     ).orElse("?")
             );
             row.setPermissions(buildItemPermissionsModel(contentItem));
-
         }
 
         return row;
@@ -693,7 +712,7 @@ public class DocumentFolderController {
     private ItemPermissionsModel buildItemPermissionsModel(
         final ContentItem item
     ) {
-final ItemPermissionsModel model = new ItemPermissionsModel();
+        final ItemPermissionsModel model = new ItemPermissionsModel();
         model.setGrantedAdminister(
             permissionChecker.isPermitted(
                 ItemPrivileges.ADMINISTER, item
@@ -747,4 +766,80 @@ final ItemPermissionsModel model = new ItemPermissionsModel();
         return model;
     }
 
+    private List<PrivilegesGrantedToRoleModel> buildPermissionsMatrix(
+        final ContentSection section, final Folder folder
+    ) {
+        return section
+            .getRoles()
+            .stream()
+            .map(role -> buildPrivilegesGrantedToRoleModel(role, folder))
+            .collect(Collectors.toList());
+    }
+
+    private PrivilegesGrantedToRoleModel buildPrivilegesGrantedToRoleModel(
+        final Role role, final Folder folder
+    ) {
+        final List<GrantedPrivilegeModel> grantedPrivilges = permissionManager
+            .listDefiniedPrivileges(ItemPrivileges.class)
+            .stream()
+            .map(
+                privilege -> buildGrantedPrivilegeModel(
+                    role,
+                    folder,
+                    privilege,
+                    permissionManager.findPermissionsForRoleAndObject(
+                        role, folder
+                    )
+                )
+            )
+            .collect(Collectors.toList());
+        
+        final PrivilegesGrantedToRoleModel model = new PrivilegesGrantedToRoleModel();
+        model.setGrantedPrivileges(grantedPrivilges);
+        model.setGrantee(role.getName());
+        
+        return model;
+    }
+
+    private GrantedPrivilegeModel buildGrantedPrivilegeModel(
+        final Role role,
+        final Folder folder,
+        final String privilege,
+        final List<Permission> permissions
+    ) {
+        final GrantedPrivilegeModel model = new GrantedPrivilegeModel();
+        model.setGranted(permissionChecker.isPermitted(privilege, folder, role));
+        model.setInherited(
+            model.isGranted()
+                && permissions
+                .stream()
+                .anyMatch(
+                    permission
+                    -> permission.getGrantee().equals(role)
+                           && permission.getGrantedPrivilege().equals(privilege)
+                )
+        );
+        model.setPrivilege(privilege);
+
+        return model;
+    }
+    
+    private List<GrantedPrivilegeModel> buildCurrentUserPermissions(
+        final Folder folder
+    )  {
+        return permissionManager
+            .listDefiniedPrivileges(ItemPrivileges.class)
+            .stream()
+            .map(privilege -> buildCurrentUserPermission(folder, privilege))
+            .collect(Collectors.toList());
+    }
+
+    private GrantedPrivilegeModel buildCurrentUserPermission(
+        final Folder folder, final String privilege
+    )  {
+        final GrantedPrivilegeModel model = new GrantedPrivilegeModel();
+        model.setPrivilege(privilege);
+        model.setGranted(permissionChecker.isPermitted(privilege, folder));
+        return model;
+    }
 }

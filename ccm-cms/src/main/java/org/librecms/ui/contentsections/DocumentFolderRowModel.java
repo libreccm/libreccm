@@ -19,7 +19,7 @@ public class DocumentFolderRowModel {
     private boolean deletable;
 
     private boolean folder;
-    
+
     private String folderPath;
 
     private SortedSet<String> languages;
@@ -35,7 +35,7 @@ public class DocumentFolderRowModel {
     private String title;
 
     private String type;
-    
+
     private ItemPermissionsModel permissions;
 
     public String getCreated() {
@@ -57,11 +57,11 @@ public class DocumentFolderRowModel {
     public boolean isFolder() {
         return folder;
     }
-    
+
     public String getFolderPath() {
         return folderPath;
     }
-    
+
     protected void setFolderPath(final String folderPath) {
         this.folderPath = folderPath;
     }
@@ -73,7 +73,7 @@ public class DocumentFolderRowModel {
     public SortedSet<String> getLanguages() {
         return Collections.unmodifiableSortedSet(languages);
     }
-    
+
     public String getLanguagesAsString() {
         return String.join(", ", languages);
     }
@@ -133,11 +133,11 @@ public class DocumentFolderRowModel {
     public ItemPermissionsModel getPermissions() {
         return permissions;
     }
-    
+
     protected void setPermissions(
         final ItemPermissionsModel permissions
     ) {
         this.permissions = permissions;
     }
-    
+
 }

@@ -287,10 +287,48 @@
                                         <td>
                                             <c:if test="#{row.permissions.grantedAdminister}">
                                                 <button class="btn btn-info"
+                                                        data-toggle="modal"
+                                                        data-target="#edit-permissions-item-#{row.name}"
                                                         title="#{CmsAdminMessages['contentsection.documentfolder.actions.edit_permissions.button.label']}">
                                                     <bootstrap:svgIcon icon="shield" />
                                                     <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.actions.edit_permissions.button.label']}</span>
                                                 </button>
+                                                <div aria-hidden="true"
+                                                     aria-labelledby="edit-permisisons-item-#{row.name}-title"
+                                                     id="edit-permissions-item-#{row.name}"
+                                                     class="modal fade"
+                                                     tabindex="-1">
+                                                    <div class="modal-dialog">
+                                                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documentfolders/#{DocumentFolderModel.path}/#{row.name}"
+                                                              class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h2 class="modal-title"
+                                                                    id="edit-permissions-item-#{row.name}-title">
+                                                                    <c:choose>
+                                                                        <c:when test="#{row.folder}">
+                                                                            #{CmsAdminMessages.getMessage('contentsection.documentfolder.edit_permissions_dialog.title.folder', [row.name])}
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            #{CmsAdminMessages.getMessage('contentsection.documentfolder.edit_permissions_dialog.title.item', [row.name])}
+                                                                        </c:otherwise>
+                                                                    </c:choose>
+                                                                    <button aria-label="Close"
+                                                                            class="#{CmsAdminMessages['contentsection.documentfolder.edit_permissions_dialog.close']}"
+                                                                            data-dismiss="modal" 
+                                                                            type="button" >
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </h2>
+                                                            </div>
+                                                            <div class="modal-body">
+
+                                                            </div>
+                                                            <div class="modal-footer">
+
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
                                             </c:if>
                                         </td>
                                         <td>
@@ -357,6 +395,94 @@
                                 </c:choose>
                             </ul>
                         </nav>
+
+                        <h2>#{CmsAdminMessages['contentsection.documentfolder.your_permissions.title']}</h2>
+                        <table class="table table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <c:forEach items="#{DocumentFolderModel.privileges}"
+                                               var="privilege">
+                                        <th class="text-center">
+                                            <code>#{CmsAdminMessages['item_permissions.'.concat(privilege)]}</code>
+                                        </th>
+                                    </c:forEach>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <c:forEach items="#{DocumentFolderModel.currentUserPermissions}"
+                                               var="granted">
+                                        <td class="text-center">
+                                            <c:choose>
+                                                <c:when test="#{granted.granted}">
+                                                    <div class="text-success">
+                                                        <bootstrap:svgIcon icon="check" />
+                                                        <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.permissions.granted']}</span>
+                                                    </div>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <div class="text-danger">
+                                                        <bootstrap:svgIcon icon="x" />
+                                                        <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.permissions.denied']}</span>
+                                                    </div>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                    </c:forEach>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <c:if test="#{DocumentFolderModel.canAdminister}">
+                            <h2>#{CmsAdminMessages['contentsection.documentfolder.permissions.title']}</h2>
+                            <table class="table table-hover permissions-table">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th class="">
+                                            #{CmsAdminMessages['contentsection.documentfolder.permissions.role.header']}
+                                        </th>
+                                        <c:forEach items="#{DocumentFolderModel.privileges}"
+                                                   var="privilege">
+                                            <th class="text-center">
+                                                <code>#{CmsAdminMessages['item_permissions.'.concat(privilege)]}</code>
+                                            </th>
+                                        </c:forEach>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach items="#{DocumentFolderModel.grantedPermissions}"
+                                               var="permissions">
+                                        <tr>
+                                            <td>#{permissions.grantee}</td>
+                                            <c:forEach items="#{permissions.grantedPrivileges}"
+                                                       var="granted">
+                                                <td class="text-center">
+                                                    <c:choose>
+                                                        <c:when test="#{granted.inherited}">
+                                                            <div class="text-success">
+                                                                <bootstrap:svgIcon icon="check" />
+                                                                <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.permissions.inherited']}</span>
+                                                            </div>
+                                                        </c:when>
+                                                        <c:when test="#{granted.granted}">
+                                                            <div class="text-secondary">
+                                                                <bootstrap:svgIcon icon="check" />
+                                                                <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.permissions.granted']}</span>
+                                                            </div>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <div class="text-danger">
+                                                                <bootstrap:svgIcon icon="x" />
+                                                                <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.permissions.denied']}</span>
+                                                            </div>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
+                                            </c:forEach>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </c:if>
                     </div>
                 </div>
             </div>

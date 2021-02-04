@@ -18,7 +18,15 @@
  */
 package org.librecms.contentsection.privileges;
 
+import org.libreccm.workflow.Workflow;
 import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.Folder;
+import org.librecms.contentsection.rs.ContentItems;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Constants for privileges allowing actions on the items of a content section.
