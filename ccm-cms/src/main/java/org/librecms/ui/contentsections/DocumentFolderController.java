@@ -15,6 +15,7 @@ import org.libreccm.security.Permission;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.PermissionManager;
 import org.libreccm.security.Role;
+import org.libreccm.security.RoleRepository;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemL10NManager;
 import org.librecms.contentsection.ContentItemManager;
@@ -76,9 +77,6 @@ public class DocumentFolderController {
     );
 
     @Inject
-    private CmsAdminMessages cmsAdminMessages;
-
-    @Inject
     private ContentItemManager itemManager;
 
     @Inject
@@ -89,9 +87,6 @@ public class DocumentFolderController {
 
     @Inject
     private ContentSectionModel contentSectionModel;
-
-    @Inject
-    private ContentTypeManager contentTypeManager;
 
     @Inject
     private ContentTypeRepository contentTypeRepo;
@@ -122,6 +117,9 @@ public class DocumentFolderController {
 
     @Inject
     private PermissionManager permissionManager;
+
+    @Inject
+    private RoleRepository roleRepo;
 
     @GET
     @Path("/")
@@ -169,6 +167,8 @@ public class DocumentFolderController {
             models.put("sectionidentifier", sectionIdentifier);
             return "org/librecms/ui/contentsection/access-denied.xhtml";
         }
+
+        contentSectionModel.setSection(section);
 
         final Folder folder;
         if (folderPath.isEmpty()) {
@@ -414,6 +414,107 @@ public class DocumentFolderController {
             "redirect:/%s/documentfolders/%s",
             sectionIdentifier,
             parentFolderPath
+        );
+    }
+
+    @POST
+    @Path("/@permissions/{role}/")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String updatePermissions(
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @PathParam("role") final String roleParam,
+        @FormParam("permissions") final List<String> permissions
+    ) {
+        return updatePermissions(
+            sectionIdentifier, "", roleParam, permissions
+        );
+    }
+
+    @POST
+    @Path("/@permissions/{role}/{folderPath:(.+)?}")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String updatePermissions(
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @PathParam("folderPath") final String folderPath,
+        @PathParam("role") final String roleParam,
+        @FormParam("permissions") final List<String> permissions
+    ) {
+        final Optional<ContentSection> sectionResult = retrieveContentSection(
+            sectionIdentifier
+        );
+        if (!sectionResult.isPresent()) {
+            models.put("sectionIdentifier", sectionIdentifier);
+            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+        }
+
+        final ContentSection section = sectionResult.get();
+        if (!permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, section.getRootDocumentsFolder()
+        )) {
+            models.put("sectionidentifier", sectionIdentifier);
+            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        }
+
+        final Folder folder;
+        if (folderPath.isEmpty()) {
+            folder = section.getRootDocumentsFolder();
+            documentFolderModel.setBreadcrumbs(Collections.emptyList());
+        } else {
+            final Optional<Folder> folderResult = folderRepo
+                .findByPath(
+                    section,
+                    folderPath,
+                    FolderType.DOCUMENTS_FOLDER
+                );
+            if (folderResult.isPresent()) {
+                folder = folderResult.get();
+
+                documentFolderModel.setBreadcrumbs(buildBreadcrumbs(folderPath));
+            } else {
+                models.put("contentSection", section.getLabel());
+                models.put("folderPath", folderPath);
+                return "org/librecms/ui/contentsection/documentfolder/documentfolder-not-found.xhtml";
+            }
+        }
+
+        if (!permissionChecker.isPermitted(ItemPrivileges.ADMINISTER, folder)) {
+            models.put("sectionidentifier", sectionIdentifier);
+            models.put("folderPath", folderPath);
+            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        }
+
+        final Optional<Role> roleResult = roleRepo.findByName(roleParam);
+        if (!roleResult.isPresent()) {
+            models.put("role", roleParam);
+        }
+        final Role role = roleResult.get();
+
+        final List<String> privileges = permissionManager
+            .listDefiniedPrivileges(ItemPrivileges.class);
+
+        privileges
+            .stream()
+            .filter(privilege -> permissions.contains(privilege))
+            .forEach(
+                privilege -> permissionManager.grantPrivilege(
+                    privilege, role, folder
+                )
+            );
+        privileges
+            .stream()
+            .filter(privilege -> !permissions.contains(privilege))
+            .forEach(
+                privilege -> permissionManager.revokePrivilege(
+                    privilege, role, folder
+                )
+            );
+
+        return String.format(
+            "redirect:/%s/documentfolders/%s",
+            sectionIdentifier,
+            folderPath
         );
     }
 
@@ -793,11 +894,12 @@ public class DocumentFolderController {
                 )
             )
             .collect(Collectors.toList());
-        
-        final PrivilegesGrantedToRoleModel model = new PrivilegesGrantedToRoleModel();
+
+        final PrivilegesGrantedToRoleModel model
+            = new PrivilegesGrantedToRoleModel();
         model.setGrantedPrivileges(grantedPrivilges);
         model.setGrantee(role.getName());
-        
+
         return model;
     }
 
@@ -817,16 +919,18 @@ public class DocumentFolderController {
                     permission
                     -> permission.getGrantee().equals(role)
                            && permission.getGrantedPrivilege().equals(privilege)
+                           && permission.getObject().equals(folder)
+                           && permission.getInheritedFrom() != null
                 )
         );
         model.setPrivilege(privilege);
 
         return model;
     }
-    
+
     private List<GrantedPrivilegeModel> buildCurrentUserPermissions(
         final Folder folder
-    )  {
+    ) {
         return permissionManager
             .listDefiniedPrivileges(ItemPrivileges.class)
             .stream()
@@ -836,10 +940,11 @@ public class DocumentFolderController {
 
     private GrantedPrivilegeModel buildCurrentUserPermission(
         final Folder folder, final String privilege
-    )  {
+    ) {
         final GrantedPrivilegeModel model = new GrantedPrivilegeModel();
         model.setPrivilege(privilege);
         model.setGranted(permissionChecker.isPermitted(privilege, folder));
         return model;
     }
+
 }
