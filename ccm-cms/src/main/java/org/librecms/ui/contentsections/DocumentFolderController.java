@@ -23,7 +23,6 @@ import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.ContentType;
-import org.librecms.contentsection.ContentTypeManager;
 import org.librecms.contentsection.ContentTypeRepository;
 import org.librecms.contentsection.DocumentFolderEntry;
 import org.librecms.contentsection.Folder;
@@ -58,7 +57,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import org.librecms.ui.CmsAdminMessages;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -515,6 +513,70 @@ public class DocumentFolderController {
             "redirect:/%s/documentfolders/%s",
             sectionIdentifier,
             folderPath
+        );
+    }
+
+    @POST
+    @Path("/@rename/{folderPath:(.+)?}")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String renameFolder(
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @PathParam("folderPath") final String folderPath,
+        @FormParam("folderName") final String folderName
+    ) {
+        final Optional<ContentSection> sectionResult = retrieveContentSection(
+            sectionIdentifier
+        );
+        if (!sectionResult.isPresent()) {
+            models.put("sectionIdentifier", sectionIdentifier);
+            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+        }
+
+        final ContentSection section = sectionResult.get();
+        if (!permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, section.getRootDocumentsFolder()
+        )) {
+            models.put("sectionidentifier", sectionIdentifier);
+            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        }
+
+        final Folder folder;
+        final Optional<Folder> folderResult = folderRepo
+            .findByPath(
+                section,
+                folderPath,
+                FolderType.DOCUMENTS_FOLDER
+            );
+        if (folderResult.isPresent()) {
+            folder = folderResult.get();
+
+            documentFolderModel.setBreadcrumbs(buildBreadcrumbs(folderPath));
+        } else {
+            models.put("contentSection", section.getLabel());
+            models.put("folderPath", folderPath);
+            return "org/librecms/ui/contentsection/documentfolder/documentfolder-not-found.xhtml";
+        }
+
+        if (!permissionChecker.isPermitted(ItemPrivileges.EDIT, folder)) {
+            models.put("sectionidentifier", sectionIdentifier);
+            models.put("folderPath", folderPath);
+            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        }
+
+        folder.setName(folderName);
+        folderRepo.save(folder);
+
+        final String[] folderPathTokens = folderPath.split("/");
+        final String returnFolderPath = String.join(
+            "/", 
+            Arrays.copyOf(folderPathTokens, folderPathTokens.length - 1)
+        );
+        
+        return String.format(
+            "redirect:/%s/documentfolders/%s",
+            sectionIdentifier,
+            returnFolderPath
         );
     }
 
