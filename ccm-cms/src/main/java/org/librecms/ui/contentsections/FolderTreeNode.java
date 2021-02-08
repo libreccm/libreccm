@@ -11,8 +11,10 @@ import java.util.List;
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ * @param <T>
+ * @param <P>
  */
-public class FolderTreeNode {
+public class FolderTreeNode<T extends FolderTreeNode, P extends PermissionsModel> {
 
     private long folderId;
 
@@ -22,13 +24,13 @@ public class FolderTreeNode {
 
     private String path;
 
-    private List<FolderTreeNode> subFolders;
+    private List<T> subFolders;
 
     private boolean open;
 
     private boolean selected;
 
-    private ItemPermissionsModel permissions;
+    private P permissions;
 
     public long getFolderId() {
         return folderId;
@@ -62,11 +64,11 @@ public class FolderTreeNode {
         this.path = path;
     }
 
-    public List<FolderTreeNode> getSubFolders() {
+    public List<T> getSubFolders() {
         return Collections.unmodifiableList(subFolders);
     }
 
-    public void setSubFolders(final List<FolderTreeNode> subFolders) {
+    public void setSubFolders(final List<T> subFolders) {
         this.subFolders = subFolders;
     }
 
@@ -86,13 +88,11 @@ public class FolderTreeNode {
         this.selected = selected;
     }
 
-    public ItemPermissionsModel getPermissions() {
+    public P getPermissions() {
         return permissions;
     }
 
-    public void setPermissions(
-        final ItemPermissionsModel permissions
-    ) {
+    public void setPermissions(final P permissions) {
         this.permissions = permissions;
     }
 

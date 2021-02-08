@@ -6,7 +6,6 @@
 package org.librecms.ui.contentsections;
 
 import java.util.ArrayList;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -18,8 +17,8 @@ import javax.inject.Named;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Named("DocumentFolderModel")
-public class DocumentFolderModel {
+@Named("AssetFolderModel")
+public class AssetFolderModel {
 
     private long count;
 
@@ -27,7 +26,7 @@ public class DocumentFolderModel {
 
     private int maxResults;
 
-    private List<DocumentFolderRowModel> rows;
+    private List<AssetFolderRowModel> rows;
 
     private List<FolderBreadcrumbsModel> breadcrumbs;
 
@@ -35,9 +34,7 @@ public class DocumentFolderModel {
 
     private boolean canCreateSubFolders;
 
-    private boolean canCreateItems;
-
-    private boolean canAdminister;
+    private boolean canCreateAssets;
 
     private List<GrantedPrivilegeModel> currentUserPermissions;
 
@@ -57,7 +54,7 @@ public class DocumentFolderModel {
         return firstResult;
     }
 
-    protected void setFirstResult(final int firstResult) {
+    public void setFirstResult(final int firstResult) {
         this.firstResult = firstResult;
     }
 
@@ -65,23 +62,15 @@ public class DocumentFolderModel {
         return maxResults;
     }
 
-    protected void setMaxResults(final int maxResults) {
+    public void setMaxResults(final int maxResults) {
         this.maxResults = maxResults;
     }
 
-    public long getNumberOfPages() {
-        return (long) Math.ceil((double) count / maxResults);
-    }
-
-    public long getCurrentPage() {
-        return (long) Math.ceil((double) firstResult / maxResults) + 1;
-    }
-
-    public List<DocumentFolderRowModel> getRows() {
+    public List<AssetFolderRowModel> getRows() {
         return Collections.unmodifiableList(rows);
     }
 
-    protected void setRows(final List<DocumentFolderRowModel> rows) {
+    public void setRows(final List<AssetFolderRowModel> rows) {
         this.rows = new ArrayList<>(rows);
     }
 
@@ -99,7 +88,7 @@ public class DocumentFolderModel {
         return path;
     }
 
-    protected void setPath(final String path) {
+    public void setPath(final String path) {
         this.path = path;
     }
 
@@ -107,42 +96,16 @@ public class DocumentFolderModel {
         return canCreateSubFolders;
     }
 
-    protected void setCanCreateSubFolders(final boolean canCreateSubFolders) {
+    public void setCanCreateSubFolders(final boolean canCreateSubFolders) {
         this.canCreateSubFolders = canCreateSubFolders;
     }
 
-    public boolean isCanCreateItems() {
-        return canCreateItems;
+    public boolean isCanCreateAssets() {
+        return canCreateAssets;
     }
 
-    protected void setCanCreateItems(final boolean canCreateItems) {
-        this.canCreateItems = canCreateItems;
-    }
-
-    public boolean isCanAdminister() {
-        return canAdminister;
-    }
-
-    public void setCanAdminister(boolean canAdminister) {
-        this.canAdminister = canAdminister;
-    }
-
-    public List<PrivilegesGrantedToRoleModel> getGrantedPermissions() {
-        return Collections.unmodifiableList(grantedPermissions);
-    }
-
-    public void setGrantedPermissions(
-        final List<PrivilegesGrantedToRoleModel> grantedPermissions
-    ) {
-        this.grantedPermissions = grantedPermissions;
-    }
-
-    public List<String> getPrivileges() {
-        return Collections.unmodifiableList(privileges);
-    }
-
-    public void setPrivileges(final List<String> privileges) {
-        this.privileges = privileges;
+    public void setCanCreateAssets(final boolean canCreateAssets) {
+        this.canCreateAssets = canCreateAssets;
     }
 
     public List<GrantedPrivilegeModel> getCurrentUserPermissions() {
@@ -153,6 +116,24 @@ public class DocumentFolderModel {
         final List<GrantedPrivilegeModel> currentUserPermissions
     ) {
         this.currentUserPermissions = new ArrayList<>(currentUserPermissions);
+    }
+
+    public List<PrivilegesGrantedToRoleModel> getGrantedPermissions() {
+        return Collections.unmodifiableList(grantedPermissions);
+    }
+
+    public void setGrantedPermissions(
+        final List<PrivilegesGrantedToRoleModel> grantedPermissions
+    ) {
+        this.grantedPermissions = new ArrayList<>(grantedPermissions);
+    }
+
+    public List<String> getPrivileges() {
+        return Collections.unmodifiableList(privileges);
+    }
+
+    public void setPrivileges(final List<String> privileges) {
+        this.privileges = new ArrayList<>(privileges);
     }
 
 }

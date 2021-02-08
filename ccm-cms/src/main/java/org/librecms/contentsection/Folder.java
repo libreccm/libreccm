@@ -26,7 +26,6 @@ import javax.persistence.Table;
 import org.libreccm.categorization.Category;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -125,6 +124,61 @@ import static org.librecms.CmsConstants.*;
 })
 @NamedNativeQueries({
     @NamedNativeQuery(
+        name = "Folder.countAssetFolderEntries",
+        query = "SELECT ("
+                    + "("
+                    + "SELECT COUNT(*) "
+                    + "FROM ccm_core.ccm_objects "
+                    + "JOIN ccm_cms.assets "
+                    + "ON ccm_objects.object_id = assets.object_id "
+                    + "JOIN ccm_core.categorizations "
+                    + "    ON ccm_objects.object_id "
+                    + "        = categorizations.object_id "
+                    + "WHERE categorizations.category_id = :folderId "
+                    + ") "
+                    + "+ "
+                    + "("
+                    + "SELECT COUNT(*) "
+                    + "FROM ccm_core.categories "
+                    + "JOIN ccm_core.ccm_objects "
+                    + "    ON categories.object_id = ccm_objects.object_id "
+                    + "JOIN ccm_cms.folders "
+                    + "    ON categories.object_id = folders.object_id "
+                    + "WHERE categories.parent_category_id = :folderId "
+                    + "AND folders.type = 'ASSETS_FOLDER'"
+                    + ") "
+                    + ") AS entries_count",
+        resultSetMapping = "Folder.countAssetFolderEntries"
+    ),
+    @NamedNativeQuery(
+        name = "Folder.getAssetFolderEntries",
+        query = "SELECT ccm_objects.object_id AS entry_id, "
+                    + "    ccm_objects.uuid AS entry_uuid, "
+                    + "    ccm_objects.display_name AS display_name, "
+                    + "    false AS is_folder "
+                    + "FROM ccm_cms.assets "
+                    + "JOIN ccm_core.ccm_objects "
+                    + "    ON ccm_cms.assets.object_id "
+                    + "        = ccm_core.ccm_objects.object_id "
+                    + "JOIN ccm_core.categorizations "
+                    + "    ON ccm_objects.object_id "
+                    + "        = ccm_core.categorizations.object_id "
+                    + "WHERE categorizations.category_id = :folderId "
+                    + "UNION "
+                    + "SELECT categories.object_id AS entry_id, "
+                    + "    ccm_objects.uuid AS entry_uuid, "
+                    + "    categories.\"name\" AS display_name, "
+                    + "    true as is_folder "
+                    + "FROM ccm_core.categories "
+                    + "JOIN ccm_core.ccm_objects "
+                    + "    ON categories.object_id = ccm_objects.object_id "
+                    + "JOIN ccm_cms.folders "
+                    + "    ON categories.object_id = folders.object_id "
+                    + "WHERE categories.parent_category_id = :folderId "
+                    + "AND folders.\"type\" = 'ASSETS_FOLDER'",
+        resultSetMapping = "Folder.DocumentFolderEntry"
+    ),
+    @NamedNativeQuery(
         name = "Folder.countDocumentFolderEntries",
         query = "SELECT ("
                     + "("
@@ -202,6 +256,26 @@ import static org.librecms.CmsConstants.*;
         }
     ),
     @SqlResultSetMapping(
+        name = "Folder.countAssetFolderEntries",
+        columns = {
+            @ColumnResult(name = "entries_count", type = long.class)
+        }
+    ),
+    @SqlResultSetMapping(
+        name = "Folder.getAssetFolderEntries",
+        classes = {
+            @ConstructorResult(
+                columns = {
+                    @ColumnResult(name = "entry_id", type = long.class),
+                    @ColumnResult(name = "entry_uuid"),
+                    @ColumnResult(name = "display_name"),
+                    @ColumnResult(name = "is_folder", type = boolean.class)
+                },
+                targetClass = AssetFolderEntry.class
+            )
+        }
+    ),
+    @SqlResultSetMapping(
         name = "Folder.DocumentFolderEntry",
         classes = {
             @ConstructorResult(
@@ -216,28 +290,8 @@ import static org.librecms.CmsConstants.*;
                     @ColumnResult(name = "is_folder", type = boolean.class)
                 },
                 targetClass = DocumentFolderEntry.class
-            ),}
-    //        entities = {
-    //            @EntityResult(
-    //                entityClass = DocumentFolderEntry.class,
-    //                fields = {
-    //                    @FieldResult(column = "entry_id", name = "entryId"),
-    //                    @FieldResult(column = "entry_uuid", name = "entryUuid"),
-    //                    @FieldResult(column = "display_name", name = "displayName"),
-    //                    @FieldResult(column = "item_class", name = "itemClass"),
-    //                    @FieldResult(
-    //                        column = "creation_date",
-    //                        name = "creation_date"
-    //                    ),
-    //                    @FieldResult(
-    //                        column = "last_modified",
-    //                        name = "lastModified"
-    //                    ),
-    //                    @FieldResult(column = "version", name = "version"),
-    //                    @FieldResult(column = "is_folder", name = "folder")
-    //                }
-    //            )
-    //        }
+            )
+        }
     )
 })
 public class Folder extends Category implements Serializable {
@@ -245,7 +299,6 @@ public class Folder extends Category implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "CONTENT_SECTION_ID")
     @JoinTable(name = "FOLDER_CONTENT_SECTION_MAP", schema = DB_SCHEMA,
                inverseJoinColumns = {
                    @JoinColumn(name = "CONTENT_SECTION_ID")},
@@ -291,14 +344,6 @@ public class Folder extends Category implements Serializable {
                 .collect(Collectors.toList()));
     }
 
-//    public Folder getParentFolder() {
-//        final Category parent = getParentCategory();
-//        if (parent == null) {
-//            return null;
-//        } else {
-//            return (Folder) getParentCategory();
-//        }
-//    }
     @Override
     public int hashCode() {
         int hash = super.hashCode();
@@ -330,9 +375,13 @@ public class Folder extends Category implements Serializable {
 
     @Override
     public String toString(final String data) {
-        return super.toString(String.format(", type = %s%s",
-                                            type,
-                                            data));
+        return super.toString(
+            String.format(
+                ", type = %s%s",
+                type,
+                data
+            )
+        );
     }
 
 }

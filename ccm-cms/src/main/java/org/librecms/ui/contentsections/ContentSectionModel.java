@@ -23,30 +23,44 @@ import javax.inject.Named;
 @RequestScoped
 @Named("ContentSectionModel")
 public class ContentSectionModel {
-    
+
     private ContentSection section;
-    
-    private List<FolderTreeNode> folders;
-    
+
+    private List<AssetFolderTreeNode> assetFolders;
+
+    private List<DocumentFolderTreeNode> documentFolders;
+
     protected void setSection(final ContentSection section) {
         this.section = Objects.requireNonNull(
             section, "Parameter section can't be null"
         );
     }
-    
+
     public String getSectionName() {
         return Optional
             .ofNullable(section)
             .map(ContentSection::getLabel)
             .orElse("");
     }
-    
-    public List<FolderTreeNode> getFolders() {
-        return Collections.unmodifiableList(folders);
+
+    public List<AssetFolderTreeNode> getAssetFolders() {
+        return Collections.unmodifiableList(assetFolders);
     }
-    
-    protected void setFolders(final List<FolderTreeNode> folders) {
-        this.folders = new ArrayList<>(folders);
+
+    protected void setAssetFolders(
+        final List<AssetFolderTreeNode> assetFolders
+    ) {
+        this.assetFolders = new ArrayList<>(assetFolders);
     }
-    
+
+    public List<DocumentFolderTreeNode> getDocumentFolders() {
+        return Collections.unmodifiableList(documentFolders);
+    }
+
+    protected void setDocumentFolders(
+        final List<DocumentFolderTreeNode> documentFolders
+    ) {
+        this.documentFolders = new ArrayList<>(documentFolders);
+    }
+
 }

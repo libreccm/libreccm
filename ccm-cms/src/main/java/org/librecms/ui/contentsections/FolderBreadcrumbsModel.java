@@ -9,7 +9,7 @@ package org.librecms.ui.contentsections;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class DocumentFolderBreadcrumbModel {
+public class FolderBreadcrumbsModel {
     
     private String pathToken;
     

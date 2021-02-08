@@ -24,8 +24,9 @@ public class ContentSectionApplication extends Application {
     public Set<Class<?>> getClasses() {
         final Set<Class<?>> classes = new HashSet<>();
         
-        classes.add(IsAuthenticatedFilter.class);
+        classes.add(AssetFolderController.class);
         classes.add(DocumentFolderController.class);
+        classes.add(IsAuthenticatedFilter.class);
         
         return classes;
     }

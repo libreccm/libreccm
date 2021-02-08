@@ -9,7 +9,7 @@ package org.librecms.ui.contentsections;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class ItemPermissionsModel {
+public class DocumentPermissionsModel implements PermissionsModel {
 
     private boolean grantedAdminister;
 

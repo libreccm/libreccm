@@ -36,7 +36,7 @@ public class DocumentFolderRowModel {
 
     private String type;
 
-    private ItemPermissionsModel permissions;
+    private DocumentPermissionsModel permissions;
 
     public String getCreated() {
         return created;
@@ -130,12 +130,12 @@ public class DocumentFolderRowModel {
         this.type = type;
     }
 
-    public ItemPermissionsModel getPermissions() {
+    public DocumentPermissionsModel getPermissions() {
         return permissions;
     }
 
     protected void setPermissions(
-        final ItemPermissionsModel permissions
+        final DocumentPermissionsModel permissions
     ) {
         this.permissions = permissions;
     }

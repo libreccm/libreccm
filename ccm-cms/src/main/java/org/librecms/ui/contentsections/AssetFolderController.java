@@ -15,34 +15,24 @@ import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.PermissionManager;
 import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
-import org.librecms.contentsection.ContentItem;
-import org.librecms.contentsection.ContentItemL10NManager;
-import org.librecms.contentsection.ContentItemManager;
-import org.librecms.contentsection.ContentItemRepository;
+import org.librecms.contentsection.Asset;
+import org.librecms.contentsection.AssetFolderEntry;
+import org.librecms.contentsection.AssetManager;
+import org.librecms.contentsection.AssetRepository;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
-import org.librecms.contentsection.ContentType;
-import org.librecms.contentsection.ContentTypeRepository;
-import org.librecms.contentsection.DocumentFolderEntry;
 import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.FolderManager;
 import org.librecms.contentsection.FolderRepository;
 import org.librecms.contentsection.FolderType;
-import org.librecms.contentsection.privileges.ItemPrivileges;
-import org.librecms.contenttypes.Article;
+import org.librecms.contentsection.privileges.AssetPrivileges;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -51,13 +41,12 @@ import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.transaction.Transactional;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
-
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
 
 /**
  *
@@ -65,30 +54,32 @@ import javax.ws.rs.POST;
  */
 @RequestScoped
 @Controller
-@Path("/{sectionIdentifier}/documentfolders")
-public class DocumentFolderController {
-
-    private static final Logger LOGGER = LogManager.getLogger(
-        DocumentFolderController.class
-    );
+@Path("/{sectionIdentifier}/assetfolders")
+public class AssetFolderController {
 
     @Inject
-    private ContentItemManager itemManager;
+    private AssetFolderModel assetFolderModel;
 
     @Inject
-    private ContentItemRepository itemRepo;
+    private AssetFolderTree assetFolderTree;
 
     @Inject
-    private ContentItemL10NManager itemL10NManager;
+    private AssetPermissions assetPermissions;
+
+    @Inject
+    private AssetManager assetManager;
+
+    @Inject
+    private AssetRepository assetRepo;
 
     @Inject
     private ContentSectionModel contentSectionModel;
 
     @Inject
-    private ContentTypeRepository contentTypeRepo;
+    private ContentSectionRepository sectionRepo;
 
     @Inject
-    private DocumentFolderModel documentFolderModel;
+    private CurrentUserAssetPermissions currentUserPermissions;
 
     @Inject
     private FolderManager folderManager;
@@ -100,34 +91,26 @@ public class DocumentFolderController {
     private GlobalizationHelper globalizationHelper;
 
     @Inject
-    private Models models;
-
-    @Inject
-    private ContentSectionRepository sectionRepo;
+    private GrantedAssetPrivileges grantedPrivileges;
 
     @Inject
     private IdentifierParser identifierParser;
+
+    @Inject
+    private Models models;
 
     @Inject
     private PermissionChecker permissionChecker;
 
     @Inject
     private PermissionManager permissionManager;
-
+    
     @Inject
     private RoleRepository roleRepo;
 
-    @Inject
-    private DocumentPermissions documentPermissions;
-
-    @Inject
-    private DocumentFolderTree documentFolderTree;
-
-    @Inject
-    private GrantedItemPrivileges grantedPrivileges;
-
-    @Inject
-    private CurrentUserDocumentPermissions currentUserPermissions;
+    private static final Logger LOGGER = LogManager.getLogger(
+        AssetFolderController.class
+    );
 
     @GET
     @Path("/")
@@ -155,12 +138,8 @@ public class DocumentFolderController {
         @QueryParam("firstResult") @DefaultValue("0") final int firstResult,
         @QueryParam("maxResults") @DefaultValue("20") final int maxResults
     ) {
-        final long start = System.currentTimeMillis();
         final Optional<ContentSection> sectionResult = retrieveContentSection(
             sectionIdentifier
-        );
-        LOGGER.info("Retrieved content section in {} ms",
-                    System.currentTimeMillis() - start
         );
 
         if (!sectionResult.isPresent()) {
@@ -170,7 +149,7 @@ public class DocumentFolderController {
 
         final ContentSection section = sectionResult.get();
         if (!permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, section.getRootDocumentsFolder()
+            AssetPrivileges.EDIT, section.getRootAssetsFolder()
         )) {
             models.put("sectionidentifier", sectionIdentifier);
             return "org/librecms/ui/contentsection/access-denied.xhtml";
@@ -180,176 +159,69 @@ public class DocumentFolderController {
 
         final Folder folder;
         if (folderPath.isEmpty()) {
-            folder = section.getRootDocumentsFolder();
-            documentFolderModel.setBreadcrumbs(Collections.emptyList());
+            folder = section.getRootAssetsFolder();
+            assetFolderModel.setBreadcrumbs(Collections.emptyList());
         } else {
             final Optional<Folder> folderResult = folderRepo
                 .findByPath(
                     section,
                     folderPath,
-                    FolderType.DOCUMENTS_FOLDER
+                    FolderType.ASSETS_FOLDER
                 );
             if (folderResult.isPresent()) {
                 folder = folderResult.get();
 
-                documentFolderModel.setBreadcrumbs(buildBreadcrumbs(folderPath));
+                assetFolderModel.setBreadcrumbs(buildBreadcrumbs(folderPath));
             } else {
                 models.put("contentSection", section.getLabel());
                 models.put("folderPath", folderPath);
-                return "org/librecms/ui/contentsection/documentfolder/documentfolder-not-found.xhtml";
+                return "org/librecms/ui/contentsection/assetfolder/asssetfolder-not-found.xhtml";
             }
         }
 
-        if (!permissionChecker.isPermitted(ItemPrivileges.EDIT, folder)) {
+        if (!permissionChecker.isPermitted(AssetPrivileges.EDIT, folder)) {
             models.put("sectionidentifier", sectionIdentifier);
             models.put("folderPath", folderPath);
             return "org/librecms/ui/contentsection/access-denied.xhtml";
         }
 
-        final List<DocumentFolderEntry> folderEntries = folderRepo
-            .getDocumentFolderEntries(
-                folder,
-                firstResult,
-                maxResults,
-                filterTerm
-            );
-        documentFolderModel.setCount(
-            folderRepo.countDocumentFolderEntries(folder, filterTerm)
+        final List<AssetFolderEntry> folderEntries = folderRepo
+            .getAssetFolderEntries(folder, firstResult, maxResults, filterTerm);
+        assetFolderModel.setCount(
+            folderRepo.countAssetFolderEntries(folder, filterTerm)
         );
-        documentFolderModel.setFirstResult(firstResult);
-        documentFolderModel.setMaxResults(maxResults);
+        assetFolderModel.setFirstResult(firstResult);
+        assetFolderModel.setMaxResults(maxResults);
 
-        contentSectionModel.setDocumentFolders(
-            documentFolderTree.buildFolderTree(section, folder)
+        contentSectionModel.setAssetFolders(
+            assetFolderTree.buildFolderTree(section, folder)
         );
 
-        documentFolderModel.setRows(
+        assetFolderModel.setRows(
             folderEntries
                 .stream()
                 .map(entry -> buildRowModel(section, entry))
                 .collect(Collectors.toList())
         );
 
-        documentFolderModel.setPath(folderPath);
-        documentFolderModel.setCanCreateSubFolders(
-            permissionChecker.isPermitted(
-                ItemPrivileges.CREATE_NEW, folder
-            )
+        assetFolderModel.setPath(folderPath);
+        assetFolderModel.setCanCreateSubFolders(
+            permissionChecker.isPermitted(AssetPrivileges.CREATE_NEW, folder)
         );
-        documentFolderModel.setCanCreateItems(
-            permissionChecker.isPermitted(
-                ItemPrivileges.CREATE_NEW, folder
-            )
+        assetFolderModel.setCanCreateAssets(
+            permissionChecker.isPermitted(AssetPrivileges.CREATE_NEW, folder)
         );
-        documentFolderModel.setCanAdminister(
-            permissionChecker.isPermitted(
-                ItemPrivileges.ADMINISTER, folder
-            )
-        );
-        documentFolderModel.setGrantedPermissions(
+        assetFolderModel.setGrantedPermissions(
             grantedPrivileges.buildPermissionsMatrix(section, folder)
         );
-        documentFolderModel.setPrivileges(
-            permissionManager.listDefiniedPrivileges(ItemPrivileges.class)
+        assetFolderModel.setPrivileges(
+            permissionManager.listDefiniedPrivileges(AssetPrivileges.class)
         );
-        documentFolderModel.setCurrentUserPermissions(
+        assetFolderModel.setCurrentUserPermissions(
             currentUserPermissions.buildCurrentUserPermissions(folder)
         );
 
-        return "org/librecms/ui/contentsection/documentfolder/documentfolder.xhtml";
-    }
-
-    @GET
-    @Path("/create-testdata")
-    @AuthorizationRequired
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String createTestData(
-        @PathParam("sectionIdentifier") final String sectionIdentifier
-    ) {
-        final Identifier identifier = identifierParser.parseIdentifier(
-            sectionIdentifier
-        );
-        final Optional<ContentSection> sectionResult;
-        switch (identifier.getType()) {
-            case ID:
-                sectionResult = sectionRepo.findById(
-                    Long.parseLong(identifier.getIdentifier())
-                );
-                break;
-            case UUID:
-                sectionResult = sectionRepo.findByUuid(identifier
-                    .getIdentifier());
-                break;
-            default:
-                sectionResult = sectionRepo.findByLabel(identifier
-                    .getIdentifier());
-                break;
-        }
-
-        if (sectionResult.isPresent()) {
-            final ContentSection section = sectionResult.get();
-
-            if (permissionChecker.isPermitted(
-                ItemPrivileges.EDIT, section.getRootDocumentsFolder()
-            )) {
-                if (section.getRootDocumentsFolder().getObjects().isEmpty()) {
-                    folderManager.createFolder(
-                        "folder-1", section.getRootDocumentsFolder()
-                    );
-                    final Folder folder2 = folderManager.createFolder(
-                        "folder-2", section.getRootDocumentsFolder()
-                    );
-                    folderManager.createFolder(
-                        "folder-3", section.getRootDocumentsFolder()
-                    );
-
-                    final Article article = itemManager.createContentItem(
-                        "test-article",
-                        section,
-                        section.getRootDocumentsFolder(),
-                        Article.class,
-                        Locale.ENGLISH
-                    );
-                    article.getTitle().addValue(Locale.ENGLISH, "Article 1");
-                    article.getTitle().addValue(Locale.GERMAN, "Artikel 1");
-                    itemRepo.save(article);
-
-                    final Folder folder2a = folderManager.createFolder(
-                        "folder-2a", folder2
-                    );
-
-                    final Article article2 = itemManager.createContentItem(
-                        "test-article-in-folder-2",
-                        section,
-                        folder2,
-                        Article.class,
-                        Locale.ENGLISH
-                    );
-                    article2.getTitle().addValue(
-                        Locale.ENGLISH, "Article in Folder 2"
-                    );
-                    article2.getTitle().addValue(
-                        Locale.GERMAN, "Artikel in Ordner 2"
-                    );
-
-                    models.put(
-                        "testdataMessage", "Test data created successfully."
-                    );
-                    return "org/librecms/ui/contentsection/documentfolder/testdata.xhtml";
-                } else {
-                    models.put(
-                        "testdataMessage", "Test data was already created..."
-                    );
-                    return "org/librecms/ui/contentsection/documentfolder/testdata.xhtml";
-                }
-            } else {
-                models.put("sectionidentifier", sectionIdentifier);
-                return "org/librecms/ui/contentsection/access-denied.xhtml";
-            }
-        } else {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
-        }
+        return "org/librecms/ui/contentsection/assetfolder/assetfolder.xhtml";
     }
 
     @POST
@@ -385,7 +257,7 @@ public class DocumentFolderController {
 
         final ContentSection section = sectionResult.get();
         if (!permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, section.getRootDocumentsFolder()
+            AssetPrivileges.EDIT, section.getRootAssetsFolder()
         )) {
             models.put("sectionidentifier", sectionIdentifier);
             return "org/librecms/ui/contentsection/access-denied.xhtml";
@@ -393,25 +265,25 @@ public class DocumentFolderController {
 
         final Folder parentFolder;
         if (parentFolderPath.isEmpty()) {
-            parentFolder = section.getRootDocumentsFolder();
+            parentFolder = section.getRootAssetsFolder();
         } else {
             final Optional<Folder> parentFolderResult = folderRepo
                 .findByPath(
                     section,
                     parentFolderPath,
-                    FolderType.DOCUMENTS_FOLDER
+                    FolderType.ASSETS_FOLDER
                 );
             if (parentFolderResult.isPresent()) {
                 parentFolder = parentFolderResult.get();
             } else {
                 models.put("contentSection", section.getLabel());
                 models.put("folderPath", parentFolderPath);
-                return "org/librecms/ui/contentsection/documentfolder/documentfolder-not-found.xhtml";
+                return "org/librecms/ui/contentsection/assetfolder/assetfolder-not-found.xhtml";
             }
         }
 
         if (!permissionChecker.isPermitted(
-            ItemPrivileges.CREATE_NEW, parentFolder
+            AssetPrivileges.CREATE_NEW, parentFolder
         )) {
             models.put("sectionidentifier", sectionIdentifier);
             models.put("folderPath", parentFolderPath);
@@ -421,7 +293,7 @@ public class DocumentFolderController {
         folderManager.createFolder(folderName, parentFolder);
 
         return String.format(
-            "redirect:/%s/documentfolders/%s",
+            "redirect:/%s/assetfolders/%s",
             sectionIdentifier,
             parentFolderPath
         );
@@ -461,7 +333,7 @@ public class DocumentFolderController {
 
         final ContentSection section = sectionResult.get();
         if (!permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, section.getRootDocumentsFolder()
+            AssetPrivileges.EDIT, section.getRootAssetsFolder()
         )) {
             models.put("sectionidentifier", sectionIdentifier);
             return "org/librecms/ui/contentsection/access-denied.xhtml";
@@ -469,27 +341,27 @@ public class DocumentFolderController {
 
         final Folder folder;
         if (folderPath.isEmpty()) {
-            folder = section.getRootDocumentsFolder();
-            documentFolderModel.setBreadcrumbs(Collections.emptyList());
+            folder = section.getRootAssetsFolder();
+            assetFolderModel.setBreadcrumbs(Collections.emptyList());
         } else {
             final Optional<Folder> folderResult = folderRepo
                 .findByPath(
                     section,
                     folderPath,
-                    FolderType.DOCUMENTS_FOLDER
+                    FolderType.ASSETS_FOLDER
                 );
             if (folderResult.isPresent()) {
                 folder = folderResult.get();
 
-                documentFolderModel.setBreadcrumbs(buildBreadcrumbs(folderPath));
+                assetFolderModel.setBreadcrumbs(buildBreadcrumbs(folderPath));
             } else {
                 models.put("contentSection", section.getLabel());
                 models.put("folderPath", folderPath);
-                return "org/librecms/ui/contentsection/documentfolder/documentfolder-not-found.xhtml";
+                return "org/librecms/ui/contentsection/assestfolder/assetfolder-not-found.xhtml";
             }
         }
 
-        if (!permissionChecker.isPermitted(ItemPrivileges.ADMINISTER, folder)) {
+        if (!permissionChecker.isPermitted(AssetPrivileges.EDIT, folder)) {
             models.put("sectionidentifier", sectionIdentifier);
             models.put("folderPath", folderPath);
             return "org/librecms/ui/contentsection/access-denied.xhtml";
@@ -502,7 +374,7 @@ public class DocumentFolderController {
         final Role role = roleResult.get();
 
         final List<String> privileges = permissionManager
-            .listDefiniedPrivileges(ItemPrivileges.class);
+            .listDefiniedPrivileges(AssetPrivileges.class);
 
         privileges
             .stream()
@@ -522,7 +394,7 @@ public class DocumentFolderController {
             );
 
         return String.format(
-            "redirect:/%s/documentfolders/%s",
+            "redirect:/%s/assetfolders/%s",
             sectionIdentifier,
             folderPath
         );
@@ -547,7 +419,7 @@ public class DocumentFolderController {
 
         final ContentSection section = sectionResult.get();
         if (!permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, section.getRootDocumentsFolder()
+            AssetPrivileges.EDIT, section.getRootAssetsFolder()
         )) {
             models.put("sectionidentifier", sectionIdentifier);
             return "org/librecms/ui/contentsection/access-denied.xhtml";
@@ -558,19 +430,19 @@ public class DocumentFolderController {
             .findByPath(
                 section,
                 folderPath,
-                FolderType.DOCUMENTS_FOLDER
+                FolderType.ASSETS_FOLDER
             );
         if (folderResult.isPresent()) {
             folder = folderResult.get();
 
-            documentFolderModel.setBreadcrumbs(buildBreadcrumbs(folderPath));
+            assetFolderModel.setBreadcrumbs(buildBreadcrumbs(folderPath));
         } else {
             models.put("contentSection", section.getLabel());
             models.put("folderPath", folderPath);
-            return "org/librecms/ui/contentsection/documentfolder/documentfolder-not-found.xhtml";
+            return "org/librecms/ui/contentsection/assetfolder/assetfolder-not-found.xhtml";
         }
 
-        if (!permissionChecker.isPermitted(ItemPrivileges.EDIT, folder)) {
+        if (!permissionChecker.isPermitted(AssetPrivileges.EDIT, folder)) {
             models.put("sectionidentifier", sectionIdentifier);
             models.put("folderPath", folderPath);
             return "org/librecms/ui/contentsection/access-denied.xhtml";
@@ -586,7 +458,7 @@ public class DocumentFolderController {
         );
 
         return String.format(
-            "redirect:/%s/documentfolders/%s",
+            "redirect:/%s/assetfolders/%s",
             sectionIdentifier,
             returnFolderPath
         );
@@ -644,21 +516,19 @@ public class DocumentFolderController {
         return breadcrumbs;
     }
 
-    private DocumentFolderRowModel buildRowModel(
-        final ContentSection section, final DocumentFolderEntry entry
+    private AssetFolderRowModel buildRowModel(
+        final ContentSection section, final AssetFolderEntry entry
     ) {
         Objects.requireNonNull(section);
         Objects.requireNonNull(entry);
 
-        final DocumentFolderRowModel row = new DocumentFolderRowModel();
+        final AssetFolderRowModel row = new AssetFolderRowModel();
         if (entry.isFolder()) {
             final Folder folder = folderRepo
                 .findById(entry.getEntryId())
                 .get();
-            row.setCreated("");
             row.setDeletable(
-                folderManager
-                    .folderIsDeletable(folder)
+                folderManager.folderIsDeletable(folder)
                     == FolderManager.FolderIsDeletable.YES
             );
             row.setFolder(true);
@@ -667,13 +537,10 @@ public class DocumentFolderController {
                     .getFolderPath(folder)
                     .substring(
                         folderManager
-                            .getFolderPath(section.getRootDocumentsFolder())
+                            .getFolderPath(section.getRootAssetsFolder())
                             .length()
                     )
             );
-            row.setLanguages(Collections.emptySortedSet());
-            row.setLastEditPublished(false);
-            row.setLastEdited("");
             row.setName(entry.getDisplayName());
             row.setTitle(
                 globalizationHelper.getValueFromLocalizedString(
@@ -683,84 +550,27 @@ public class DocumentFolderController {
             row.setType(
                 globalizationHelper.getLocalizedTextsUtil(
                     "org.librecms.CmsAdminMessages"
-                ).getText("contentsection.documentfolder.types.folder")
+                ).getText("contentsection.assetfolder.types.folder")
             );
             row.setPermissions(
-                documentPermissions.buildDocumentPermissionsModel(folder)
+                assetPermissions.buildAssetPermissionsModel(folder)
             );
         } else {
-            final ContentItem contentItem = itemRepo
+            final Asset asset = assetRepo
                 .findById(entry.getEntryId())
                 .get();
-            row.setCreated(
-                DateTimeFormatter.ISO_DATE.format(
-                    LocalDate.ofInstant(
-                        contentItem.getCreationDate().toInstant(),
-                        ZoneId.systemDefault()
-                    )
-                )
-            );
-            row.setDeletable(!itemManager.isLive(contentItem));
+            row.setDeletable(!assetManager.isAssetInUse(asset));
             row.setFolder(false);
-            row.setLanguages(
-                new TreeSet<>(
-                    itemL10NManager
-                        .availableLanguages(contentItem)
-                        .stream()
-                        .map(Locale::toString)
-                        .collect(Collectors.toSet())
-                )
-            );
-            if (itemManager.isLive(contentItem)) {
-                final LocalDate draftLastModified = LocalDate.ofInstant(
-                    contentItem.getLastModified().toInstant(),
-                    ZoneId.systemDefault()
-                );
-                final LocalDate liveLastModified = LocalDate.ofInstant(
-                    itemManager
-                        .getLiveVersion(contentItem, contentItem.getClass())
-                        .map(ContentItem::getLastModified)
-                        .map(Date::toInstant)
-                        .get(),
-                    ZoneId.systemDefault()
-                );
-                row.setLastEditPublished(
-                    liveLastModified.isBefore(draftLastModified)
-                );
-            } else {
-                row.setLastEditPublished(false);
-            }
-
-            row.setLastEdited(
-                DateTimeFormatter.ISO_DATE.format(
-                    LocalDate.ofInstant(
-                        contentItem.getLastModified().toInstant(),
-                        ZoneId.systemDefault()
-                    )
-                )
-            );
             row.setName(entry.getDisplayName());
             row.setNoneCmsObject(false);
             row.setTitle(
                 globalizationHelper.getValueFromLocalizedString(
-                    contentItem.getTitle()
+                    asset.getTitle()
                 )
             );
-            row.setType(
-                contentTypeRepo
-                    .findByContentSectionAndClass(
-                        section, contentItem.getClass()
-                    )
-                    .map(ContentType::getLabel)
-                    .map(
-                        label -> globalizationHelper
-                            .getValueFromLocalizedString(
-                                label
-                            )
-                    ).orElse("?")
-            );
+            row.setType(asset.getClass().getName());
             row.setPermissions(
-                documentPermissions.buildDocumentPermissionsModel(contentItem)
+                assetPermissions.buildAssetPermissionsModel(asset)
             );
         }
 

@@ -12,45 +12,32 @@ import java.util.Objects;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class DocumentFolderEntry {
-    
+public class AssetFolderEntry {
+
     private long entryId;
-    
+
     private String entryUuid;
-    
+
     private String displayName;
-    
-    private String itemClass;
-    
-    private Date creationDate;
-    
-    private Date lastModified;
-    
-    private String version;
-    
+
     private boolean folder;
-    
-    public DocumentFolderEntry() {
-        
+
+    public AssetFolderEntry() {
+
     }
-    
-    public DocumentFolderEntry(
+
+    public AssetFolderEntry(
         final long entryId,
         final String entryUuid,
         final String displayName,
-        final String itemClass,
         final Date creationDate,
         final Date lastModified,
         final String version,
         final boolean folder
     ) {
         this.entryId = entryId;
-        this.entryUuid = entryUuid;;
+        this.entryUuid = entryUuid;
         this.displayName = displayName;
-        this.itemClass = itemClass;
-        this.creationDate = creationDate;
-        this.lastModified = lastModified;
-        this.version = version;
         this.folder = folder;
     }
 
@@ -78,38 +65,6 @@ public class DocumentFolderEntry {
         this.displayName = displayName;
     }
 
-    public String getItemClass() {
-        return itemClass;
-    }
-
-    public void setItemClass(final String itemClass) {
-        this.itemClass = itemClass;
-    }
-
-    public Date getCreationDate() {
-        return new Date(creationDate.getTime());
-    }
-
-    public void setCreationDate(final Date creationDate) {
-        this.creationDate = new Date(creationDate.getTime());
-    }
-
-    public Date getLastModified() {
-        return new Date(lastModified.getTime());
-    }
-
-    public void setLastModified(final Date lastModified) {
-        this.lastModified = new Date(lastModified.getTime());
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(final String version) {
-        this.version = version;
-    }
-
     public boolean isFolder() {
         return folder;
     }
@@ -124,10 +79,6 @@ public class DocumentFolderEntry {
         hash = 29 * hash + (int) (entryId ^ (entryId >>> 32));
         hash = 29 * hash + Objects.hashCode(entryUuid);
         hash = 29 * hash + Objects.hashCode(displayName);
-        hash = 29 * hash + Objects.hashCode(itemClass);
-        hash = 29 * hash + Objects.hashCode(creationDate);
-        hash = 29 * hash + Objects.hashCode(lastModified);
-        hash = 29 * hash + Objects.hashCode(version);
         hash = 29 * hash + (folder ? 1 : 0);
         return hash;
     }
@@ -140,10 +91,10 @@ public class DocumentFolderEntry {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof DocumentFolderEntry)) {
+        if (!(obj instanceof AssetFolderEntry)) {
             return false;
         }
-        final DocumentFolderEntry other = (DocumentFolderEntry) obj;
+        final AssetFolderEntry other = (AssetFolderEntry) obj;
         if (!other.canEqual(this)) {
             return false;
         }
@@ -156,17 +107,11 @@ public class DocumentFolderEntry {
         if (!Objects.equals(entryUuid, other.getEntryUuid())) {
             return false;
         }
-        if (!Objects.equals(itemClass, other.getItemClass())) {
-            return false;
-        }
-        if (!Objects.equals(displayName, other.getDisplayName())) {
-            return false;
-        }
-        return Objects.equals(version, other.getVersion());
+        return Objects.equals(displayName, other.getDisplayName());
     }
-    
+
     public boolean canEqual(final Object obj) {
-        return obj instanceof DocumentFolderEntry;
+        return obj instanceof AssetFolderEntry;
     }
-    
+
 }
