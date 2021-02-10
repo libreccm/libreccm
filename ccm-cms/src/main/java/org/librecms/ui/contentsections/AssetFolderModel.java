@@ -66,6 +66,14 @@ public class AssetFolderModel {
         this.maxResults = maxResults;
     }
 
+    public long getNumberOfPages() {
+        return (long) Math.ceil((double) count / maxResults);
+    }
+
+    public long getCurrentPage() {
+        return (long) Math.ceil((double) firstResult / maxResults) + 1;
+    }
+
     public List<AssetFolderRowModel> getRows() {
         return Collections.unmodifiableList(rows);
     }

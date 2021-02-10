@@ -176,7 +176,7 @@ import static org.librecms.CmsConstants.*;
                     + "    ON categories.object_id = folders.object_id "
                     + "WHERE categories.parent_category_id = :folderId "
                     + "AND folders.\"type\" = 'ASSETS_FOLDER'",
-        resultSetMapping = "Folder.DocumentFolderEntry"
+        resultSetMapping = "Folder.AssetFolderEntry"
     ),
     @NamedNativeQuery(
         name = "Folder.countDocumentFolderEntries",
@@ -262,7 +262,7 @@ import static org.librecms.CmsConstants.*;
         }
     ),
     @SqlResultSetMapping(
-        name = "Folder.getAssetFolderEntries",
+        name = "Folder.AssetFolderEntry",
         classes = {
             @ConstructorResult(
                 columns = {

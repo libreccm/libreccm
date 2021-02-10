@@ -16,7 +16,7 @@
                                 aria-expanded="false"
                                 aria-controls="##{folder.name}-subfolders"
                                 type="button">
-                            <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.foldersnav.subfolders.expand']}
+                            <span class="sr-only">#{CmsAdminMessages['contentsection.assetfolder.foldersnav.subfolders.expand']}
                             </span>
                         </button>
                         <c:choose>
@@ -33,7 +33,7 @@
                         id="#{folder.name}-subfolders">
                         <c:forEach items="#{folder.subFolders}"
                                    var="subFolder">
-                            <ui:include src="document-folder-tree-node.xhtml">
+                            <ui:include src="asset-folder-tree-node.xhtml">
                                 <ui:param name="basePath" value="#{basePath}" />
                                 <ui:param name="folder" value="#{subFolder}" />
                             </ui:include>
@@ -49,4 +49,3 @@
         </c:choose>
     </ui:composition>
 </html>
-

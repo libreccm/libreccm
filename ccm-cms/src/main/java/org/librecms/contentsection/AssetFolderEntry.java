@@ -30,9 +30,6 @@ public class AssetFolderEntry {
         final long entryId,
         final String entryUuid,
         final String displayName,
-        final Date creationDate,
-        final Date lastModified,
-        final String version,
         final boolean folder
     ) {
         this.entryId = entryId;
