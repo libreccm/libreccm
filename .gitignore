@@ -12,3 +12,4 @@ target
 .tscache
 *.vscode
 /ccm-core/nbproject/
+/ccm-cms/nbproject/
