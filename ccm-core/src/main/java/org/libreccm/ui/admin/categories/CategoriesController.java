@@ -273,7 +273,6 @@ public class CategoriesController {
         final Identifier targetIdentifier = identifierParser.parseIdentifier(
             targetIdentifierParam
         );
-
         final Optional<Category> targetResult;
         switch (targetIdentifier.getType()) {
             case ID:
@@ -287,7 +286,7 @@ public class CategoriesController {
                 );
                 break;
         }
-        if (!categoryResult.isPresent()) {
+        if (!targetResult.isPresent()) {
             categoryDetailsModel.addMessage(
                 new Message(
                     adminMessages.getMessage(
