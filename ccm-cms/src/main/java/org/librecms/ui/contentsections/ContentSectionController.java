@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -49,6 +50,16 @@ public class ContentSectionController {
         } catch (URISyntaxException ex) {
             throw new WebApplicationException(ex);
         }
+    }
+    
+    @GET
+    @Path("/{sectionIdentifier}")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String redirectToDocumentFolders(
+        @PathParam("sectionIdentifier") final String sectionIdentifier
+    ) {
+        return String.format("redirect:/%s/documentfolders", sectionIdentifier);
     }
 
 }
