@@ -58,6 +58,9 @@ public class CategoriesController {
     private CategorySystemModel categorySystemModel;
 
     @Inject
+    private ContentSectionModel sectionModel;
+    
+    @Inject
     private ContentSectionRepository sectionRepo;
 
     @Inject
@@ -83,6 +86,7 @@ public class CategoriesController {
             return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
 
         final List<DomainListEntryModel> domains = section
             .getDomains()

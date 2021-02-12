@@ -1,0 +1,51 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:cms="http://xmlns.jcp.org/jsf/composite/components/cms"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/contentsection.xhtml">
+
+        <ui:param name="activePage" value="categorySystems" />
+        <ui:param name="title" value="#{CmsAdminMessages['contentsection.documentfolders.title']}" />
+
+        <ui:define name="breadcrumb">
+            <li aria-current="page" class="breadcrumb-item">
+                #{CmsAdminMessages['contentsection.categories.title']}
+            </li>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container">
+                <h1>#{CmsAdminMessages.getMessage("contentsection.categories.heading", [ContentSectionModel.sectionName])}</h1>
+
+                <table class="table table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>
+                                #{CmsAdminMessages['contentsection.categories.categorysystems.list.heading.context']}
+                            </th>
+                            <th>
+                                #{CmsAdminMessages['contentsection.categories.categorysystems.list.heading.domainKey']}
+                            </th>
+                            <th>
+                                #{CmsAdminMessages['contentsection.categories.categorysystems.list.heading.title']}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="#{categorySystems}" 
+                                   var="categorySystem">
+                            <tr>
+                                <td>#{categorySystem.context}</td>
+                                <td>#{categorySystem.domainKey}</td>
+                                <td>#{categorySystem.title}</td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>
