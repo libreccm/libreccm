@@ -59,7 +59,7 @@ public class CategoriesController {
 
     @Inject
     private ContentSectionModel sectionModel;
-    
+
     @Inject
     private ContentSectionRepository sectionRepo;
 
@@ -100,14 +100,29 @@ public class CategoriesController {
     }
 
     @GET
-    @Path("/{key}/categories")
+    @Path("/{context}")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String showCategorySystemRoot(
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @PathParam("context") final String context
+    ) {
+        return String.format(
+            "redirect:/%s/categorysystems/%s/categories",
+            sectionIdentifier,
+            context
+        );
+    }
+
+    @GET
+    @Path("/{context}/categories")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String showCategorySystem(
         @PathParam("sectionIdentifier") final String sectionIdentifier,
-        @PathParam("key") final String domainKey
+        @PathParam("context") final String context
     ) {
-        return showCategorySystem(sectionIdentifier, domainKey, "");
+        return showCategorySystem(sectionIdentifier, context, "");
     }
 
     @GET
@@ -126,6 +141,7 @@ public class CategoriesController {
             return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
 
         final Optional<DomainOwnership> domainResult = section
             .getDomains()
@@ -153,7 +169,15 @@ public class CategoriesController {
             );
 
         final Domain domain = domainResult.get().getDomain();
-        categorySystemModel.setCategoryTree(buildCategoryTree(domain));
+        final String activePath;
+        if (categoryPath.isEmpty()) {
+            activePath = "/";
+        } else {
+            activePath = categoryPath;
+        }
+        categorySystemModel.setCategoryTree(
+            buildCategoryTree(domain, activePath)
+        );
 
         final Category category;
         if (categoryPath.isEmpty()) {
@@ -173,71 +197,6 @@ public class CategoriesController {
         categorySystemModel.setSelectedCategory(buildCategoryModel(category));
 
         return "org/librecms/ui/contentsection/categorysystems/categorysystem.xhtml";
-    }
-
-    @POST
-    @Path("/{context}/categories/{categoryPath:(.+)?}")
-    @AuthorizationRequired
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String renameCategory(
-        @PathParam("sectionIdentifier") final String sectionIdentifier,
-        @PathParam("context") final String context,
-        @PathParam("categoryPath") final String categoryPath,
-        @FormParam("categoryName") final String categoryName
-    ) {
-//        final Optional<ContentSection> sectionResult = retrieveContentSection(
-//            sectionIdentifier);
-//        if (!sectionResult.isPresent()) {
-//            models.put("sectionIdentifier", sectionIdentifier);
-//            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
-//        }
-//        final ContentSection section = sectionResult.get();
-//
-//        final Optional<DomainOwnership> domainResult = section
-//            .getDomains()
-//            .stream()
-//            .filter(domain -> domain.getContext().equals(context))
-//            .findAny();
-//        if (!domainResult.isPresent()) {
-//            models.put("sectionIdentifier", sectionIdentifier);
-//            models.put("context", context);
-//            return "org/librecms/ui/contentsection/categorysystems/categorysystem-not-found.xhtml";
-//        }
-//        final Domain domain = domainResult.get().getDomain();
-        if (categoryPath.isEmpty()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            models.put("context", context);
-            models.put("categoryPath", categoryPath);
-            return "org/librecms/ui/contentsection/categorysystems/category-not-found.xhtml";
-        }
-//        final Category category;
-//        final Optional<Category> categoryResult = categoryRepo
-//            .findByPath(domain, categoryPath);
-//        if (!categoryResult.isPresent()) {
-//            models.put("sectionIdentifier", sectionIdentifier);
-//            models.put("context", context);
-//            models.put("categoryPath", categoryPath);
-//            return "org/librecms/ui/contentsection/categorysystems/category-not-found.xhtml";
-//        }
-//        category = categoryResult.get();
-
-        final RetrieveResult<Category> result = retrieveCategory(
-            sectionIdentifier, context, categoryPath
-        );
-        if (result.isSuccessful()) {
-            final Category category = result.getResult();
-            category.setName(categoryName);
-            categoryRepo.save(category);
-
-            return String.format(
-                "redirect:/%s/categorysystems/%s/categories/%s",
-                sectionIdentifier,
-                context,
-                categoryPath
-            );
-        } else {
-            return result.getResponseTemplate();
-        }
     }
 
     @POST
@@ -485,10 +444,12 @@ public class CategoriesController {
     @Path("/{context}/categories/{categoryPath:(.+)?}/@attributes")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String updateAttributes(
+    public String updateCategory(
         @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("context") final String context,
         @PathParam("categoryPath") final String categoryPath,
+        @FormParam("categoryName") final String categoryName,
+        @FormParam("uniqueId") final String uniqueId,
         @FormParam("isEnabled") final String isEnabled,
         @FormParam("isVisible") final String isVisible,
         @FormParam("isAbstract") final String isAbstract
@@ -498,15 +459,19 @@ public class CategoriesController {
         );
         if (result.isSuccessful()) {
             final Category category = result.getResult();
+            category.setName(categoryName);
+            category.setUniqueId(uniqueId);
             category.setEnabled(Objects.equals("true", isEnabled));
             category.setVisible(Objects.equals("true", isVisible));
             category.setAbstractCategory(Objects.equals("true", isAbstract));
             categoryRepo.save(category);
+
             return String.format(
-                "redirect:/%s/categorysystems/%s/categories/%s",
+                "redirect:/%s/categorysystems/%s/categories/%s/%s",
                 sectionIdentifier,
                 context,
-                categoryPath
+                categoryManager.getCategoryPath(category.getParentCategory()),
+                categoryName
             );
         } else {
             return result.getResponseTemplate();
@@ -602,6 +567,7 @@ public class CategoriesController {
         @PathParam("context") final String context,
         @PathParam("categoryPath") final String categoryPath,
         @FormParam("categoryName") final String categoryName,
+        @FormParam("uniqueId") final String uniqueId,
         @FormParam("isEnabled") final String isEnabled,
         @FormParam("isVisible") final String isVisible,
         @FormParam("isAbstract") final String isAbstract
@@ -613,6 +579,7 @@ public class CategoriesController {
             final Category category = result.getResult();
             final Category subCategory = new Category();
             subCategory.setName(categoryName);
+            subCategory.setUniqueId(uniqueId);
             subCategory.setEnabled(Objects.equals("true", isEnabled));
             subCategory.setVisible(Objects.equals("true", isVisible));
             subCategory.setAbstractCategory(Objects.equals("true", isAbstract));
@@ -935,27 +902,39 @@ public class CategoriesController {
         return model;
     }
 
-    private CategoryTreeNodeModel buildCategoryTree(final Domain domain) {
-        return buildCategoryTreeNode(domain.getRoot());
+    private CategoryTreeNodeModel buildCategoryTree(
+        final Domain domain, final String activePath
+    ) {
+        return buildCategoryTreeNode(domain.getRoot(), activePath);
     }
 
     private CategoryTreeNodeModel buildCategoryTreeNode(
-        final Category category
+        final Category category, final String activePath
     ) {
         final CategoryTreeNodeModel model = new CategoryTreeNodeModel();
-        model.setTitle(
-            globalizationHelper.getValueFromLocalizedString(
-                category.getTitle()
-            )
-        );
-        model.setPath(categoryManager.getCategoryPath(category));
+        model.setUuid(category.getUuid());
+        if (category.getTitle().getValues().isEmpty()) {
+            model.setTitle(category.getName());
+        } else {
+            model.setTitle(
+                globalizationHelper.getValueFromLocalizedString(
+                    category.getTitle()
+                )
+            );
+        }
+        final String path = categoryManager.getCategoryPath(category);
+        model.setActive(activePath.equals(path));
+        model.setPath(path);
         if (!category.getSubCategories().isEmpty()) {
             model.setSubCategories(
                 category
                     .getSubCategories()
                     .stream()
-                    .map(this::buildCategoryTreeNode)
-                    .collect(Collectors.toList())
+                    .map(
+                        subCategory -> buildCategoryTreeNode(
+                            subCategory, activePath
+                        )
+                    ).collect(Collectors.toList())
             );
         }
 
@@ -995,6 +974,7 @@ public class CategoriesController {
             )
         );
         model.setUniqueId(category.getUniqueId());
+        model.setUuid(category.getUuid());
         model.setVisible(category.isVisible());
         return model;
     }
@@ -1018,6 +998,7 @@ public class CategoriesController {
             )
         );
         model.setUniqueId(category.getUniqueId());
+        model.setUuid(category.getUuid());
         model.setVisible(category.isVisible());
         return model;
     }

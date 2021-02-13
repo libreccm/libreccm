@@ -17,6 +17,8 @@ public class CategoryModel {
     
     private long categoryId;
     
+    private String uuid;
+    
     private String uniqueId;
     
     private String name;
@@ -50,6 +52,14 @@ public class CategoryModel {
 
     public void setCategoryId(final long categoryId) {
         this.categoryId = categoryId;
+    }
+    
+    public String getUuid() {
+        return uuid;
+    }
+    
+    public void setUuid(final String uuid) {
+        this.uuid = uuid;
     }
 
     public String getUniqueId() {

@@ -1,0 +1,123 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:cms="http://xmlns.jcp.org/jsf/composite/components/cms"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/contentsection.xhtml">
+
+        <ui:param name="activePage" value="categorySystems" />
+        <ui:param name="title" 
+                  value="#{CmsAdminMessages['contentsection.categories.title']}" />
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#{mvc.basePath}/categorysystems">
+                    #{CmsAdminMessages['contentsection.categories.title']}
+                </a>
+            </li>
+            <li aria-current="page" class="breadcrumb-item">
+                #{CategorySystemModel.selectedCategorySystem.context}
+            </li>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container-fluid">
+                <h1>#{CmsAdminMessages.getMessage("contentsection.categories.category.heading", [ContentSectionModel.sectionName, CategorySystemModel.selectedCategorySystem.context, CategorySystemModel.selectedCategory.path])}</h1>
+
+                <div class="row">
+                    <div class="col-sm-3">
+                        <nav>
+                            <h2>#{CmsAdminMessages['contentsection.categorysytems.list.heading']}</h2>
+                            <ul class="list-group">
+                                <c:forEach items="#{CategorySystemModel.categorySystems}"
+                                           var="categorySystem">
+                                    <li class="list-group-item #{CategorySystemModel.selectedCategorySystem.context.equals(categorySystem.context) ? 'active' : ''}" 
+                                        aria-current="#{CategorySystemModel.selectedCategorySystem.context.equals(categorySystem.context) ? 'true' : ''}">
+                                        <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems/#{categorySystem.context}/categories">
+                                            #{categorySystem.context}
+                                        </a>
+                                    </li>
+                                </c:forEach>
+                            </ul>
+                        </nav>
+                        <h2>#{CmsAdminMessages['contentsection.categorysystems.categorytree.heading']}</h2>
+                        <nav class="categorytree">
+                            <ul class="list-group">
+                                <ui:include src="category-tree-node.xhtml">
+                                    <ui:param name="basePath"
+                                              value="#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems/#{CategorySystemModel.selectedCategorySystem.context}/categories" />
+                                    <ui:param name="category" 
+                                              value="#{CategorySystemModel.categoryTree}" />
+                                </ui:include>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="col-sm-9">
+                        <h2>#{CmsAdminMessages.getMessage("contentsection.categorysystems.category.properties.heading", [CategorySystemModel.selectedCategory.name])}</h2>
+                        <dl>
+                            <div>
+                                <dt>#{CmsAdminMessages['contentsection.categorysystems.category.properties.id']}</dt>
+                                <dd>#{CategorySystemModel.selectedCategory.id}</dd>
+                            </div>
+                            <div>
+                                <dt>#{CmsAdminMessages['contentsection.categorysystems.category.properties.uuid']}</dt>
+                                <dd>#{CategorySystemModel.selectedCategory.uuid}</dd>
+                            </div>
+                            <div>
+                                <dt>#{CmsAdminMessages['contentsection.categorysystems.category.properties.uniqueId']}</dt>
+                                <dd>#{CategorySystemModel.selectedCategory.uniqueId}</dd>
+                            </div>
+                            <div>
+                                <dt>#{CmsAdminMessages['contentsection.categorysystems.category.properties.name']}</dt>
+                                <dd>#{CategorySystemModel.selectedCategory.name}</dd>
+                            </div>
+                            <div>
+                                <dt>#{CmsAdminMessages['contentsection.categorysystems.category.properties.enabled']}</dt>
+                                <dd>
+                                    <c:choose>
+                                        <c:when test="#{CategorySystemModel.selectedCategory.enabled}">
+                                            #{CmsAdminMessages['contentsection.categorysystems.category.properties.enabled.yes']}
+                                        </c:when>
+                                        <c:otherwise>
+                                            #{CmsAdminMessages['contentsection.categorysystems.category.properties.enabled.no']}
+                                        </c:otherwise>
+                                    </c:choose>
+                                </dd>
+                            </div>
+                            <div>
+                                <dt>#{CmsAdminMessages['contentsection.categorysystems.category.properties.visible']}</dt>
+                                <dd>
+                                    <c:choose>
+                                        <c:when test="#{CategorySystemModel.selectedCategory.visible}">
+                                            #{CmsAdminMessages['contentsection.categorysystems.category.properties.visible.yes']}
+                                        </c:when>
+                                        <c:otherwise>
+                                            #{CmsAdminMessages['contentsection.categorysystems.category.properties.visible.no']}
+                                        </c:otherwise>
+                                    </c:choose>
+                                </dd>
+                            </div>
+                            <div>
+                                <dt>#{CmsAdminMessages['contentsection.categorysystems.category.properties.abstract_category']}</dt>
+                                <dd>
+                                    <c:choose>
+                                        <c:when test="#{CategorySystemModel.selectedCategory.abstractCategory}">
+                                            #{CmsAdminMessages['contentsection.categorysystems.category.properties.abstract_category.yes']}
+                                        </c:when>
+                                        <c:otherwise>
+                                            #{CmsAdminMessages['contentsection.categorysystems.category.properties.abstract_category.no']}
+                                        </c:otherwise>
+                                    </c:choose>
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+
+
+    </ui:composition>
+</html>

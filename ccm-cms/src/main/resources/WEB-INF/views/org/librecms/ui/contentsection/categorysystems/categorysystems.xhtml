@@ -8,7 +8,8 @@
     <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/contentsection.xhtml">
 
         <ui:param name="activePage" value="categorySystems" />
-        <ui:param name="title" value="#{CmsAdminMessages['contentsection.documentfolders.title']}" />
+        <ui:param name="title" 
+                  value="#{CmsAdminMessages['contentsection.categories.title']}" />
 
         <ui:define name="breadcrumb">
             <li aria-current="page" class="breadcrumb-item">
@@ -38,7 +39,9 @@
                         <c:forEach items="#{categorySystems}" 
                                    var="categorySystem">
                             <tr>
-                                <td>#{categorySystem.context}</td>
+                                <td>
+                                    <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems/#{categorySystem.context}/categories">#{categorySystem.context}</a>
+                                </td>
                                 <td>#{categorySystem.domainKey}</td>
                                 <td>#{categorySystem.title}</td>
                             </tr>

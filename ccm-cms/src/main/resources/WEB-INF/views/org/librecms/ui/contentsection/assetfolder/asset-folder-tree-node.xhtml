@@ -13,7 +13,7 @@
                         <button class="btn btn-light p-0 subfolders-toggler"
                                 data-toggle="collapse"
                                 data-target="##{folder.name}-subfolders"
-                                aria-expanded="false"
+                                aria-expanded="#{folder.open ? 'true' : 'false'}"
                                 aria-controls="##{folder.name}-subfolders"
                                 type="button">
                             <span class="sr-only">#{CmsAdminMessages['contentsection.assetfolder.foldersnav.subfolders.expand']}

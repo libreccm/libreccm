@@ -38,7 +38,15 @@ $pre-scrollable-max-height: 21.25rem;
 // Navbar default colors have insufficient contrast
 $navbar-dark-color: #fff;
 
-nav.foldertree {
+nav ul .list-group-item.active a {
+    color: #fff;
+}
+
+nav ul .list-group-item.active ul .list-group-item a {
+    color: #007bff;
+}
+
+nav.foldertree,nav.categorytree {
     & > ul.nav {
         margin-left: 1em;
         margin-right: 1em;
@@ -47,7 +55,8 @@ nav.foldertree {
             margin-left: 1.5em;
         }
     }
-    
+
+    button.subcategories-toggler[aria-expanded="false"]::before,
     button.subfolders-toggler[aria-expanded="false"]::before {
         display: inline-block;
         content: "";
@@ -57,7 +66,8 @@ nav.foldertree {
         width: 1em;
         height: 1em;
     }
-    
+
+    button.subcategories-toggler[aria-expanded="true"]::before,
     button.subfolders-toggler[aria-expanded="true"]::before {
         display: inline-block;
         content: "";

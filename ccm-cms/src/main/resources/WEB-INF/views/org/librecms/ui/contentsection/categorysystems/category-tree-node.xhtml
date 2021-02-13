@@ -1,0 +1,44 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:cms="http://xmlns.jcp.org/jsf/composite/components/cms"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition>
+        <c:choose>
+            <c:when test="#{not empty category.subCategories}">
+                <li class="categorytree-node list-group-item" 
+                    aria-current="#{category.active ? 'true' : ''}">
+                    <div class="d-flex">
+                        <button class="btn btn-light p-0 subcategories-toggler"
+                                data-toggle="collapse"
+                                data-target="#subcategories-#{category.uuid}"
+                                aria-expanded="#{category.active ? 'true' : 'false'}"
+                                aria-controls="#subcategories-#{category.uuid}"
+                                type="button">
+                            <span class="sr-only">#{CmsAdminMessages['contentsection.categorysystems.categories.tree.expand']}</span>
+                        </button>
+                        <a class="pl-0"
+                           href="#{basePath}#{category.path}">#{category.title}</a>
+                    </div>
+                    <ul class="border-0 #{!category.active ? 'collapse' : 'collapse show'} list-group"
+                        id="subcategories-#{category.uuid}">
+                        <c:forEach items="#{category.subCategories}"
+                                   var="subCategory">
+                            <ui:include src="category-tree-node.xhtml">
+                                <ui:param name="basePath" value="#{basePath}" />
+                                <ui:param name="category" value="#{subCategory}" />
+                            </ui:include>
+                        </c:forEach>
+                    </ul>
+                </li>
+            </c:when>
+            <c:otherwise>
+                <li class="categorytree-node list-group-item #{category.active ? 'active' : ''}">
+                    <a href="#{basePath}#{category.path}">#{category.title}</a>
+                </li>
+            </c:otherwise>
+        </c:choose>
+    </ui:composition>
+</html>

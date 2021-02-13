@@ -16,6 +16,10 @@ import java.util.List;
  */
 public class CategoryTreeNodeModel {
 
+    private String uuid;
+    
+    private boolean active;
+    
     private String path;
 
     private String title;
@@ -51,5 +55,22 @@ public class CategoryTreeNodeModel {
     ) {
         this.subCategories = new ArrayList<>(subCategories);
     }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(final String uuid) {
+        this.uuid = uuid;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(final boolean active) {
+        this.active = active;
+    }
+    
 
 }
