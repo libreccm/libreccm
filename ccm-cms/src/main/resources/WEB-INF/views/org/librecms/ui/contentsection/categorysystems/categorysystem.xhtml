@@ -58,7 +58,7 @@
                         <dl>
                             <div>
                                 <dt>#{CmsAdminMessages['contentsection.categorysystems.category.properties.id']}</dt>
-                                <dd>#{CategorySystemModel.selectedCategory.id}</dd>
+                                <dd>#{CategorySystemModel.selectedCategory.categoryId}</dd>
                             </div>
                             <div>
                                 <dt>#{CmsAdminMessages['contentsection.categorysystems.category.properties.uuid']}</dt>
@@ -112,7 +112,147 @@
                                 </dd>
                             </div>
                         </dl>
-                    </div>
+
+                        <div class="mb-4">
+                            <button class="btn btn-primary"
+                                    data-toggle="modal"
+                                    data-target="#category-properties"
+                                    type="button">
+                                <bootstrap:svgIcon icon="pen" />
+                                <span>#{CmsAdminMessages['contentsecton.categorysystems.category.properties.edit']}</span>
+                            </button>
+                            <div aria-hidden="true"
+                                 aria-labelledby="category-properties-title"
+                                 class="modal fade" 
+                                 id="category-properties"
+                                 tabindex="-1">
+                                <div class="modal-dialog">
+                                    <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems/#{CategorySystemModel.selectedCategorySystem.context}/categories#{CategorySystemModel.selectedCategory.path}/@properties"
+                                        class="modal-content"
+                                        method="post">
+                                        <div class="modal-header">
+                                            <h3 class="modal-title"
+                                                id="category-properties-title">#{CmsAdminMessages.getMessage("contentsecton.categorysystems.category.properties.edit.dialog.title", [CategorySystemModel.selectedCategory.path])}</h3>
+                                            <button aria-label="#{CmsAdminMessages['contentsecton.categorysystems.category.properties.edit.dialog.cancel']}"
+                                                    data-dismiss="modal" 
+                                                    class="close"
+                                                    type="button">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <bootstrap:formGroupText help="#{CmsAdminMessages['contentsecton.categorysystems.category.properties.edit.dialog.name.help']}"
+                                                                     inputId="categoryName"
+                                                                     label="#{CmsAdminMessages['contentsecton.categorysystems.category.properties.edit.dialog.name.label']}"
+                                                                     name="categoryName"
+                                                                     pattern="[\\w-.]*"
+                                                                     required="true"
+                                                                     value="#{CategorySystemModel.selectedCategory.name}" />
+                                            <bootstrap:formGroupText help="#{CmsAdminMessages['contentsecton.categorysystems.category.properties.edit.dialog.unique_id.help']}"
+                                                                     inputId="uniqueId"
+                                                                     label="#{CmsAdminMessages['contentsecton.categorysystems.category.properties.edit.dialog.unique_id.label']}"
+                                                                     name="uniqueId"
+                                                                     pattern="[\\w-.]*"
+                                                                     required="true"
+                                                                     value="#{CategorySystemModel.selectedCategory.uniqueId}" />
+                                            <bootstrap:formCheck label="#{CmsAdminMessages['contentsecton.categorysystems.category.properties.edit.dialog.enabled.label']}"
+                                                                 inputId="isEnabled"
+                                                                 name="isEnabled"
+                                                                 value="#{CategorySystemModel.selectedCategory.enabled}" />
+                                            <bootstrap:formCheck label="#{CmsAdminMessages['contentsecton.categorysystems.category.properties.edit.dialog.visible.label']}"
+                                                                 inputId="isvisible"
+                                                                 name="isVisible"
+                                                                 value="#{CategorySystemModel.selectedCategory.visible}" />
+                                            <bootstrap:formCheck label="#{CmsAdminMessages['contentsecton.categorysystems.category.properties.edit.dialog.abstract_category.label']}"
+                                                                 inputId="isAbstract"
+                                                                 name="isAbstract"
+                                                                 value="#{CategorySystemModel.selectedCategory.abstractCategory}" />
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-danger"
+                                                    data-dismiss="modal"
+                                                    type="button">
+                                                #{CmsAdminMessages['contentsecton.categorysystems.category.properties.edit.dialog.cancel']}
+                                            </button>
+                                            <button class="btn btn-success"
+                                                    type="submit">
+                                                #{CmsAdminMessages['contentsecton.categorysystems.category.properties.edit.dialog.save']}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h2>#{CmsAdminMessages.getMessage("contentsection.categorysystems.category.titles.heading", [CategorySystemModel.selectedCategory.name])}</h2>
+                        <libreccm:localizedStringEditor addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems/#{CategorySystemModel.selectedCategorySystem.context}/categories#{CategorySystemModel.selectedCategory.path}/@title/add"
+                                                        addButtonLabel="#{CmsAdminMessages['contentsection.categorysystems.category.titles.add.label']}"
+                                                        addDialogCancelLabel="#{CmsAdminMessages['contentsection.categorysystems.category.titles.add.cancel']}"
+                                                        addDialogLocaleSelectHelp="#{CmsAdminMessages['contentsection.categorysystems.category.titles.add.locale.help']}"
+                                                        addDialogLocaleSelectLabel="#{CmsAdminMessages['contentsection.categorysystems.category.titles.add.locale.label']}"
+                                                        addDialogSubmitLabel="#{CmsAdminMessages['contentsection.categorysystems.category.titles.add.submit']}"
+                                                        addDialogTitle="#{CmsAdminMessages['contentsection.categorysystems.category.titles.add.add.title']}"
+                                                        addDialogValueHelp="#{CmsAdminMessages['contentsection.categorysystems.category.titles.add.value.help']}"
+                                                        addDialogValueLabel="#{CmsAdminMessages['contentsection.categorysystems.category.titles.add.value.label']}"
+                                                        editButtonLabel="#{CmsAdminMessages['contentsection.categorysystems.category.titles.edit.label']}"
+                                                        editDialogCancelLabel="#{CmsAdminMessages['contentsection.categorysystems.category.titles.edit.cancel']}"
+                                                        editDialogSubmitLabel="#{CmsAdminMessages['contentsection.categorysystems.category.titles.edit.submit']}"
+                                                        editDialogTitle="#{CmsAdminMessages['contentsection.categorysystems.category.titles.edit.title']}" 
+                                                        editDialogValueHelp="#{CmsAdminMessages['contentsection.categorysystems.category.titles.edit.value.help']}"
+                                                        editDialogValueLabel="#{CmsAdminMessages['contentsection.categorysystems.category.titles.edit.value.label']}"
+                                                        editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems/#{CategorySystemModel.selectedCategorySystem.context}/categories#{CategorySystemModel.selectedCategory.path}/@title/edit"
+                                                        editorId="category-title"
+                                                        emptyText="#{CmsAdminMessages['contentsection.categorysystems.category.titles.none']}"
+                                                        hasUnusedLocales="#{CategorySystemModel.selectedCategory.hasUnusedTitleLocales}"
+                                                        objectIdentifier="#{CategorySystemModel.selectedCategory.path}"
+                                                        removeButtonLabel="#{CmsAdminMessages['contentsection.categorysystems.category.titles.delete.label']}"
+                                                        removeDialogCancelLabel="#{CmsAdminMessages['contentsection.categorysystems.category.titles.delete.cancel']}"
+                                                        removeDialogSubmitLabel="#{CmsAdminMessages['contentsection.categorysystems.category.titles.delete.submit']}"
+                                                        removeDialogText="#{CmsAdminMessages['contentsection.categorysystems.category.titles.delete.text']}"
+                                                        removeDialogTitle="#{CmsAdminMessages['contentsection.categorysystems.category.titles.delete.title']}"
+                                                        removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems/#{CategorySystemModel.selectedCategorySystem.context}/categories#{CategorySystemModel.selectedCategory.path}/@title/remove"
+                                                        tableActionsHeading="#{CmsAdminMessages['contentsection.categorysystems.category.titles.actions.heading']}"
+                                                        tableLocaleHeading="#{CmsAdminMessages['contentsection.categorysystems.category.titles.locale.heading']}"
+                                                        tableValueHeading="#{CmsAdminMessages['contentsection.categorysystems.category.titles.value.heading']}"
+                                                        title="#{CmsAdminMessages['contentsection.categorysystems.category.titles.locale.title']}"
+                                                        unusedLocales="#{CategorySystemModel.selectedCategory.unusedTitleLocales}"
+                                                        values="#{CategorySystemModel.selectedCategory.localizedTitles}" />
+                        
+                        <h2>#{CmsAdminMessages.getMessage("contentsection.categorysystems.category.descriptions.heading", [CategorySystemModel.selectedCategory.name])}</h2>
+                        <libreccm:localizedStringEditor addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems/#{CategorySystemModel.selectedCategorySystem.context}/categories#{CategorySystemModel.selectedCategory.path}/@title/add"
+                                                        addButtonLabel="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.add.label']}"
+                                                        addDialogCancelLabel="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.add.cancel']}"
+                                                        addDialogLocaleSelectHelp="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.add.locale.help']}"
+                                                        addDialogLocaleSelectLabel="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.add.locale.label']}"
+                                                        addDialogSubmitLabel="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.add.submit']}"
+                                                        addDialogTitle="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.add.add.title']}"
+                                                        addDialogValueHelp="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.add.value.help']}"
+                                                        addDialogValueLabel="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.add.value.label']}"
+                                                        editButtonLabel="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.edit.label']}"
+                                                        editDialogCancelLabel="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.edit.cancel']}"
+                                                        editDialogSubmitLabel="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.edit.submit']}"
+                                                        editDialogTitle="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.edit.title']}" 
+                                                        editDialogValueHelp="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.edit.value.help']}"
+                                                        editDialogValueLabel="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.edit.value.label']}"
+                                                        editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems/#{CategorySystemModel.selectedCategorySystem.context}/categories#{CategorySystemModel.selectedCategory.path}/@title/edit"
+                                                        editorId="category-title"
+                                                        emptyText="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.none']}"
+                                                        hasUnusedLocales="#{CategorySystemModel.selectedCategory.hasUnusedTitleLocales}"
+                                                        objectIdentifier="#{CategorySystemModel.selectedCategory.path}"
+                                                        removeButtonLabel="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.delete.label']}"
+                                                        removeDialogCancelLabel="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.delete.cancel']}"
+                                                        removeDialogSubmitLabel="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.delete.submit']}"
+                                                        removeDialogText="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.delete.text']}"
+                                                        removeDialogTitle="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.delete.title']}"
+                                                        removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems/#{CategorySystemModel.selectedCategorySystem.context}/categories#{CategorySystemModel.selectedCategory.path}/@title/remove"
+                                                        tableActionsHeading="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.actions.heading']}"
+                                                        tableLocaleHeading="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.locale.heading']}"
+                                                        tableValueHeading="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.value.heading']}"
+                                                        title="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.locale.title']}"
+                                                        unusedLocales="#{CategorySystemModel.selectedCategory.unusedTitleLocales}"
+                                                        values="#{CategorySystemModel.selectedCategory.localizedTitles}" />
+                                                        
+                  </div>
                 </div>
             </div>
         </ui:define>

@@ -7,43 +7,61 @@ package org.librecms.ui.contentsections;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class CategoryModel {
-    
+
     private long categoryId;
-    
+
     private String uuid;
-    
+
     private String uniqueId;
-    
+
     private String name;
-    
+
     private String path;
-    
+
     private String title;
     
+    private Map<String, String> localizedTitles;
+
     private String description;
     
+    private Map<String, String> localizedDescriptions;
+
     private boolean enabled;
-    
+
     private boolean visible;
-    
+
     private boolean abstractCategory;
-    
+
     private List<CategoryModel> subCategories;
-    
+
     private List<CategorizedObjectModel> objects;
-    
+
     private long categoryOrder;
+
+    private boolean hasUnusedTitleLocales;
     
+    private boolean hasUnusedDescriptionLocales;
+    
+    private List<String> unusedTitleLocales;
+    
+    private List<String> unusedDescriptionLocales;
+    
+    
+
     public CategoryModel() {
         subCategories = new ArrayList<>();
         objects = new ArrayList<>();
+        localizedTitles = new HashMap<>();
+        localizedDescriptions = new HashMap<>();
     }
 
     public long getCategoryId() {
@@ -53,11 +71,11 @@ public class CategoryModel {
     public void setCategoryId(final long categoryId) {
         this.categoryId = categoryId;
     }
-    
+
     public String getUuid() {
         return uuid;
     }
-    
+
     public void setUuid(final String uuid) {
         this.uuid = uuid;
     }
@@ -149,7 +167,56 @@ public class CategoryModel {
     public void setCategoryOrder(final long categoryOrder) {
         this.categoryOrder = categoryOrder;
     }
-    
-    
-    
+
+    public boolean isHasUnusedTitleLocales() {
+        return hasUnusedTitleLocales;
+    }
+
+    public void setHasUnusedTitleLocales(final boolean hasUnusedTitleLocales) {
+        this.hasUnusedTitleLocales = hasUnusedTitleLocales;
+    }
+
+    public Map<String, String> getLocalizedTitles() {
+        return localizedTitles;
+    }
+
+    public void setLocalizedTitles(Map<String, String> localizedTitles) {
+        this.localizedTitles = localizedTitles;
+    }
+
+    public Map<String, String> getLocalizedDescriptions() {
+        return localizedDescriptions;
+    }
+
+    public void setLocalizedDescriptions(
+                                         Map<String, String> localizedDescriptions) {
+        this.localizedDescriptions = localizedDescriptions;
+    }
+
+    public boolean isHasUnusedDescriptionLocales() {
+        return hasUnusedDescriptionLocales;
+    }
+
+    public void setHasUnusedDescriptionLocales(
+                                               boolean hasUnusedDescriptionLocales) {
+        this.hasUnusedDescriptionLocales = hasUnusedDescriptionLocales;
+    }
+
+    public List<String> getUnusedTitleLocales() {
+        return unusedTitleLocales;
+    }
+
+    public void setUnusedTitleLocales(List<String> unusedTitleLocales) {
+        this.unusedTitleLocales = unusedTitleLocales;
+    }
+
+    public List<String> getUnusedDescriptionLocales() {
+        return unusedDescriptionLocales;
+    }
+
+    public void setUnusedDescriptionLocales(
+                                            List<String> unusedDescriptionLocales) {
+        this.unusedDescriptionLocales = unusedDescriptionLocales;
+    }
+
 }

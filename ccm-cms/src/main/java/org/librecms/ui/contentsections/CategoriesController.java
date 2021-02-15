@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -173,7 +174,7 @@ public class CategoriesController {
         if (categoryPath.isEmpty()) {
             activePath = "/";
         } else {
-            activePath = categoryPath;
+            activePath = String.format("/%s", categoryPath);
         }
         categorySystemModel.setCategoryTree(
             buildCategoryTree(domain, activePath)
@@ -295,7 +296,7 @@ public class CategoriesController {
     }
 
     @POST
-    @Path("/{context}/categories/{categoryPath:(.+)?}/@title/edit/{locale}")
+    @Path("/{context}/categories/{categoryPath:(.+)?}/@title/locale")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String editTitle(
@@ -441,7 +442,7 @@ public class CategoriesController {
     }
 
     @POST
-    @Path("/{context}/categories/{categoryPath:(.+)?}/@attributes")
+    @Path("/{context}/categories/{categoryPath:(.+)?}/@properties")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String updateCategory(
@@ -923,7 +924,7 @@ public class CategoriesController {
             );
         }
         final String path = categoryManager.getCategoryPath(category);
-        model.setActive(activePath.equals(path));
+        model.setActive(activePath.startsWith(path));
         model.setPath(path);
         if (!category.getSubCategories().isEmpty()) {
             model.setSubCategories(
@@ -976,6 +977,57 @@ public class CategoriesController {
         model.setUniqueId(category.getUniqueId());
         model.setUuid(category.getUuid());
         model.setVisible(category.isVisible());
+
+        final List<Locale> availableLocales = globalizationHelper
+            .getAvailableLocales();
+        model.setLocalizedTitles(
+            category
+            .getTitle()
+            .getValues()
+            .entrySet()
+            .stream()
+            .collect(
+                Collectors.toMap(
+                    entry -> entry.getKey().toString(),
+                    entry -> entry.getValue()
+                )
+            )
+        );
+        final Set<Locale> titleLocales = category
+            .getTitle()
+            .getAvailableLocales();
+        model.setUnusedTitleLocales(
+            availableLocales
+            .stream()
+            .filter(locale -> !titleLocales.contains(locale))
+            .map(Locale::toString)
+            .collect(Collectors.toList())
+        );
+        
+        model.setLocalizedDescriptions(
+            category
+            .getDescription()
+            .getValues()
+            .entrySet()
+            .stream()
+            .collect(
+                Collectors.toMap(
+                    entry -> entry.getKey().toString(),
+                    entry -> entry.getValue()
+                )
+            )
+        );
+        final Set<Locale> descriptionLocales = category
+            .getDescription()
+            .getAvailableLocales();
+        model.setUnusedDescriptionLocales(
+            availableLocales
+            .stream()
+            .filter(locale -> !descriptionLocales.contains(locale))
+            .map(Locale::toString)
+            .collect(Collectors.toList())
+        );
+        
         return model;
     }
 
