@@ -28,11 +28,11 @@ public class CategoryModel {
     private String path;
 
     private String title;
-    
+
     private Map<String, String> localizedTitles;
 
     private String description;
-    
+
     private Map<String, String> localizedDescriptions;
 
     private boolean enabled;
@@ -47,15 +47,9 @@ public class CategoryModel {
 
     private long categoryOrder;
 
-    private boolean hasUnusedTitleLocales;
-    
-    private boolean hasUnusedDescriptionLocales;
-    
     private List<String> unusedTitleLocales;
-    
+
     private List<String> unusedDescriptionLocales;
-    
-    
 
     public CategoryModel() {
         subCategories = new ArrayList<>();
@@ -169,54 +163,49 @@ public class CategoryModel {
     }
 
     public boolean isHasUnusedTitleLocales() {
-        return hasUnusedTitleLocales;
-    }
-
-    public void setHasUnusedTitleLocales(final boolean hasUnusedTitleLocales) {
-        this.hasUnusedTitleLocales = hasUnusedTitleLocales;
+        return !unusedTitleLocales.isEmpty();
     }
 
     public Map<String, String> getLocalizedTitles() {
-        return localizedTitles;
+        return Collections.unmodifiableMap(localizedTitles);
     }
 
-    public void setLocalizedTitles(Map<String, String> localizedTitles) {
-        this.localizedTitles = localizedTitles;
+    public void setLocalizedTitles(final Map<String, String> localizedTitles) {
+        this.localizedTitles = new HashMap<>(localizedTitles);
     }
 
     public Map<String, String> getLocalizedDescriptions() {
-        return localizedDescriptions;
+        return Collections.unmodifiableMap(localizedDescriptions);
     }
 
     public void setLocalizedDescriptions(
-                                         Map<String, String> localizedDescriptions) {
-        this.localizedDescriptions = localizedDescriptions;
+        final Map<String, String> localizedDescriptions
+    ) {
+        this.localizedDescriptions = new HashMap<>(localizedDescriptions);
     }
 
     public boolean isHasUnusedDescriptionLocales() {
-        return hasUnusedDescriptionLocales;
-    }
-
-    public void setHasUnusedDescriptionLocales(
-                                               boolean hasUnusedDescriptionLocales) {
-        this.hasUnusedDescriptionLocales = hasUnusedDescriptionLocales;
+        return !unusedDescriptionLocales.isEmpty();
     }
 
     public List<String> getUnusedTitleLocales() {
-        return unusedTitleLocales;
+        return Collections.unmodifiableList(unusedTitleLocales);
     }
 
-    public void setUnusedTitleLocales(List<String> unusedTitleLocales) {
-        this.unusedTitleLocales = unusedTitleLocales;
+    public void setUnusedTitleLocales(final List<String> unusedTitleLocales) {
+        this.unusedTitleLocales = new ArrayList<>(unusedTitleLocales);
     }
 
     public List<String> getUnusedDescriptionLocales() {
-        return unusedDescriptionLocales;
+        return Collections.unmodifiableList(unusedDescriptionLocales);
     }
 
     public void setUnusedDescriptionLocales(
-                                            List<String> unusedDescriptionLocales) {
-        this.unusedDescriptionLocales = unusedDescriptionLocales;
+        final List<String> unusedDescriptionLocales
+    ) {
+        this.unusedDescriptionLocales = new ArrayList<>(
+            unusedDescriptionLocales
+        );
     }
 
 }

@@ -296,7 +296,7 @@ public class CategoriesController {
     }
 
     @POST
-    @Path("/{context}/categories/{categoryPath:(.+)?}/@title/locale")
+    @Path("/{context}/categories/{categoryPath:(.+)?}/@title/edit")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String editTitle(

@@ -128,8 +128,8 @@
                                  tabindex="-1">
                                 <div class="modal-dialog">
                                     <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems/#{CategorySystemModel.selectedCategorySystem.context}/categories#{CategorySystemModel.selectedCategory.path}/@properties"
-                                        class="modal-content"
-                                        method="post">
+                                          class="modal-content"
+                                          method="post">
                                         <div class="modal-header">
                                             <h3 class="modal-title"
                                                 id="category-properties-title">#{CmsAdminMessages.getMessage("contentsecton.categorysystems.category.properties.edit.dialog.title", [CategorySystemModel.selectedCategory.path])}</h3>
@@ -184,7 +184,15 @@
                             </div>
                         </div>
 
-                        <h2>#{CmsAdminMessages.getMessage("contentsection.categorysystems.category.titles.heading", [CategorySystemModel.selectedCategory.name])}</h2>
+                        <!--<h2>#{CmsAdminMessages.getMessage("contentsection.categorysystems.category.titles.heading", [CategorySystemModel.selectedCategory.name])}</h2>-->
+                        <ul>
+                            <c:forEach items="#{CategorySystemModel.selectedCategory.unusedTitleLocales}" var="locale">
+                                <li>
+                                    <code>#{locale}</code>
+                                </li>
+                            </c:forEach>
+                        </ul>
+                        <pre>#{CategorySystemModel.selectedCategory.hasUnusedTitleLocales}</pre>
                         <libreccm:localizedStringEditor addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems/#{CategorySystemModel.selectedCategorySystem.context}/categories#{CategorySystemModel.selectedCategory.path}/@title/add"
                                                         addButtonLabel="#{CmsAdminMessages['contentsection.categorysystems.category.titles.add.label']}"
                                                         addDialogCancelLabel="#{CmsAdminMessages['contentsection.categorysystems.category.titles.add.cancel']}"
@@ -204,6 +212,7 @@
                                                         editorId="category-title"
                                                         emptyText="#{CmsAdminMessages['contentsection.categorysystems.category.titles.none']}"
                                                         hasUnusedLocales="#{CategorySystemModel.selectedCategory.hasUnusedTitleLocales}"
+                                                        headingLevel="2"
                                                         objectIdentifier="#{CategorySystemModel.selectedCategory.path}"
                                                         removeButtonLabel="#{CmsAdminMessages['contentsection.categorysystems.category.titles.delete.label']}"
                                                         removeDialogCancelLabel="#{CmsAdminMessages['contentsection.categorysystems.category.titles.delete.cancel']}"
@@ -217,9 +226,9 @@
                                                         title="#{CmsAdminMessages['contentsection.categorysystems.category.titles.locale.title']}"
                                                         unusedLocales="#{CategorySystemModel.selectedCategory.unusedTitleLocales}"
                                                         values="#{CategorySystemModel.selectedCategory.localizedTitles}" />
-                        
-                        <h2>#{CmsAdminMessages.getMessage("contentsection.categorysystems.category.descriptions.heading", [CategorySystemModel.selectedCategory.name])}</h2>
-                        <libreccm:localizedStringEditor addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems/#{CategorySystemModel.selectedCategorySystem.context}/categories#{CategorySystemModel.selectedCategory.path}/@title/add"
+
+<!--<h2>#{CmsAdminMessages.getMessage("contentsection.categorysystems.category.descriptions.heading", [CategorySystemModel.selectedCategory.name])}</h2>-->
+                        <libreccm:localizedStringEditor addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems/#{CategorySystemModel.selectedCategorySystem.context}/categories#{CategorySystemModel.selectedCategory.path}/@description/add"
                                                         addButtonLabel="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.add.label']}"
                                                         addDialogCancelLabel="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.add.cancel']}"
                                                         addDialogLocaleSelectHelp="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.add.locale.help']}"
@@ -234,25 +243,26 @@
                                                         editDialogTitle="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.edit.title']}" 
                                                         editDialogValueHelp="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.edit.value.help']}"
                                                         editDialogValueLabel="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.edit.value.label']}"
-                                                        editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems/#{CategorySystemModel.selectedCategorySystem.context}/categories#{CategorySystemModel.selectedCategory.path}/@title/edit"
-                                                        editorId="category-title"
+                                                        editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems/#{CategorySystemModel.selectedCategorySystem.context}/categories#{CategorySystemModel.selectedCategory.path}/@description/edit"
+                                                        editorId="category-description"
                                                         emptyText="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.none']}"
-                                                        hasUnusedLocales="#{CategorySystemModel.selectedCategory.hasUnusedTitleLocales}"
+                                                        hasUnusedLocales="#{CategorySystemModel.selectedCategory.hasUnusedDescriptionLocales}"
+                                                        headingLevel="2"
                                                         objectIdentifier="#{CategorySystemModel.selectedCategory.path}"
                                                         removeButtonLabel="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.delete.label']}"
                                                         removeDialogCancelLabel="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.delete.cancel']}"
                                                         removeDialogSubmitLabel="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.delete.submit']}"
                                                         removeDialogText="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.delete.text']}"
                                                         removeDialogTitle="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.delete.title']}"
-                                                        removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems/#{CategorySystemModel.selectedCategorySystem.context}/categories#{CategorySystemModel.selectedCategory.path}/@title/remove"
+                                                        removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems/#{CategorySystemModel.selectedCategorySystem.context}/categories#{CategorySystemModel.selectedCategory.path}/@description/remove"
                                                         tableActionsHeading="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.actions.heading']}"
                                                         tableLocaleHeading="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.locale.heading']}"
                                                         tableValueHeading="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.value.heading']}"
-                                                        title="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.locale.title']}"
-                                                        unusedLocales="#{CategorySystemModel.selectedCategory.unusedTitleLocales}"
-                                                        values="#{CategorySystemModel.selectedCategory.localizedTitles}" />
-                                                        
-                  </div>
+                                                        title="#{CmsAdminMessages['contentsection.categorysystems.category.descriptions.title']}"
+                                                        unusedLocales="#{CategorySystemModel.selectedCategory.unusedDescriptionLocales}"
+                                                        values="#{CategorySystemModel.selectedCategory.localizedDescriptions}" />
+
+                    </div>
                 </div>
             </div>
         </ui:define>
