@@ -220,46 +220,16 @@ public class CategoriesController {
     public String addTitle(
         @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("context") final String context,
-        @PathParam("categoryPath") final String categoryPath,
+        @PathParam("categoryPath") final String categoryPathParam,
         @FormParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
-//        final Optional<ContentSection> sectionResult = retrieveContentSection(
-//            sectionIdentifier);
-//        if (!sectionResult.isPresent()) {
-//            models.put("sectionIdentifier", sectionIdentifier);
-//            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
-//        }
-//        final ContentSection section = sectionResult.get();
-//
-//        final Optional<DomainOwnership> domainResult = section
-//            .getDomains()
-//            .stream()
-//            .filter(domain -> domain.getContext().equals(context))
-//            .findAny();
-//        if (!domainResult.isPresent()) {
-//            models.put("sectionIdentifier", sectionIdentifier);
-//            models.put("context", context);
-//            return "org/librecms/ui/contentsection/categorysystems/categorysystem-not-found.xhtml";
-//        }
-//        final Domain domain = domainResult.get().getDomain();
-//        if (categoryPath.isEmpty()) {
-//            models.put("sectionIdentifier", sectionIdentifier);
-//            models.put("context", context);
-//            models.put("categoryPath", categoryPath);
-//            return "org/librecms/ui/contentsection/categorysystems/category-not-found.xhtml";
-//        }
-//        final Category category;
-//        final Optional<Category> categoryResult = categoryRepo
-//            .findByPath(domain, categoryPath);
-//        if (!categoryResult.isPresent()) {
-//            models.put("sectionIdentifier", sectionIdentifier);
-//            models.put("context", context);
-//            models.put("categoryPath", categoryPath);
-//            return "org/librecms/ui/contentsection/categorysystems/category-not-found.xhtml";
-//        }
-//        category = categoryResult.get();
-
+        final String categoryPath;
+        if (categoryPathParam == null || categoryPathParam.isEmpty()) {
+            categoryPath = "/";
+        } else {
+            categoryPath = categoryPathParam;
+        }
         final RetrieveResult<Category> result = retrieveCategory(
             sectionIdentifier, context, categoryPath
         );
@@ -273,7 +243,7 @@ public class CategoriesController {
                 "redirect:/%s/categorysystems/%s/categories/%s",
                 sectionIdentifier,
                 context,
-                categoryPath
+                categoryPathParam
             );
         } else {
             return result.getResponseTemplate();
@@ -296,52 +266,22 @@ public class CategoriesController {
     }
 
     @POST
-    @Path("/{context}/categories/{categoryPath:(.+)?}/@title/edit")
+    @Path("/{context}/categories/{categoryPath:(.+)?}/@title/edit/{locale}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String editTitle(
         @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("context") final String context,
-        @PathParam("categoryPath") final String categoryPath,
+        @PathParam("categoryPath") final String categoryPathParam,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
-//        final Optional<ContentSection> sectionResult = retrieveContentSection(
-//            sectionIdentifier);
-//        if (!sectionResult.isPresent()) {
-//            models.put("sectionIdentifier", sectionIdentifier);
-//            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
-//        }
-//        final ContentSection section = sectionResult.get();
-//
-//        final Optional<DomainOwnership> domainResult = section
-//            .getDomains()
-//            .stream()
-//            .filter(domain -> domain.getContext().equals(context))
-//            .findAny();
-//        if (!domainResult.isPresent()) {
-//            models.put("sectionIdentifier", sectionIdentifier);
-//            models.put("context", context);
-//            return "org/librecms/ui/contentsection/categorysystems/categorysystem-not-found.xhtml";
-//        }
-//        final Domain domain = domainResult.get().getDomain();
-//        if (categoryPath.isEmpty()) {
-//            models.put("sectionIdentifier", sectionIdentifier);
-//            models.put("context", context);
-//            models.put("categoryPath", categoryPath);
-//            return "org/librecms/ui/contentsection/categorysystems/category-not-found.xhtml";
-//        }
-//        final Category category;
-//        final Optional<Category> categoryResult = categoryRepo
-//            .findByPath(domain, categoryPath);
-//        if (!categoryResult.isPresent()) {
-//            models.put("sectionIdentifier", sectionIdentifier);
-//            models.put("context", context);
-//            models.put("categoryPath", categoryPath);
-//            return "org/librecms/ui/contentsection/categorysystems/category-not-found.xhtml";
-//        }
-//        category = categoryResult.get();
-
+        final String categoryPath;
+        if (categoryPathParam == null || categoryPathParam.isEmpty()) {
+            categoryPath = "/";
+        } else {
+            categoryPath = categoryPathParam;
+        }
         final RetrieveResult<Category> result = retrieveCategory(
             sectionIdentifier, context, categoryPath
         );
@@ -355,7 +295,7 @@ public class CategoriesController {
                 "redirect:/%s/categorysystems/%s/categories/%s",
                 sectionIdentifier,
                 context,
-                categoryPath
+                categoryPathParam
             );
         } else {
             return result.getResponseTemplate();
@@ -382,46 +322,16 @@ public class CategoriesController {
     public String removeTitle(
         @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("context") final String context,
-        @PathParam("categoryPath") final String categoryPath,
+        @PathParam("categoryPath") final String categoryPathParam,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
-//        final Optional<ContentSection> sectionResult = retrieveContentSection(
-//            sectionIdentifier);
-//        if (!sectionResult.isPresent()) {
-//            models.put("sectionIdentifier", sectionIdentifier);
-//            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
-//        }
-//        final ContentSection section = sectionResult.get();
-//
-//        final Optional<DomainOwnership> domainResult = section
-//            .getDomains()
-//            .stream()
-//            .filter(domain -> domain.getContext().equals(context))
-//            .findAny();
-//        if (!domainResult.isPresent()) {
-//            models.put("sectionIdentifier", sectionIdentifier);
-//            models.put("context", context);
-//            return "org/librecms/ui/contentsection/categorysystems/categorysystem-not-found.xhtml";
-//        }
-//        final Domain domain = domainResult.get().getDomain();
-//        if (categoryPath.isEmpty()) {
-//            models.put("sectionIdentifier", sectionIdentifier);
-//            models.put("context", context);
-//            models.put("categoryPath", categoryPath);
-//            return "org/librecms/ui/contentsection/categorysystems/category-not-found.xhtml";
-//        }
-//        final Category category;
-//        final Optional<Category> categoryResult = categoryRepo
-//            .findByPath(domain, categoryPath);
-//        if (!categoryResult.isPresent()) {
-//            models.put("sectionIdentifier", sectionIdentifier);
-//            models.put("context", context);
-//            models.put("categoryPath", categoryPath);
-//            return "org/librecms/ui/contentsection/categorysystems/category-not-found.xhtml";
-//        }
-//        category = categoryResult.get();
-
+        final String categoryPath;
+        if (categoryPathParam == null || categoryPathParam.isEmpty()) {
+            categoryPath = "/";
+        } else {
+            categoryPath = categoryPathParam;
+        }
         final RetrieveResult<Category> result = retrieveCategory(
             sectionIdentifier, context, categoryPath
         );
@@ -434,7 +344,166 @@ public class CategoriesController {
                 "redirect:/%s/categorysystems/%s/categories/%s",
                 sectionIdentifier,
                 context,
-                categoryPath
+                categoryPathParam
+            );
+        } else {
+            return result.getResponseTemplate();
+        }
+    }
+
+    @POST
+    @Path("/{context}/categories/@description/add")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String addDescription(
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @PathParam("context") final String context,
+        @FormParam("locale") final String localeParam,
+        @FormParam("value") final String value
+    ) {
+        return addDescription(
+            sectionIdentifier, context, "", localeParam, value
+        );
+    }
+
+    @POST
+    @Path("/{context}/categories/{categoryPath:(.+)?}/@description/add")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String addDescription(
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @PathParam("context") final String context,
+        @PathParam("categoryPath") final String categoryPathParam,
+        @FormParam("locale") final String localeParam,
+        @FormParam("value") final String value
+    ) {
+        final String categoryPath;
+        if (categoryPathParam == null || categoryPathParam.isEmpty()) {
+            categoryPath = "/";
+        } else {
+            categoryPath = categoryPathParam;
+        }
+        final RetrieveResult<Category> result = retrieveCategory(
+            sectionIdentifier, context, categoryPath
+        );
+        if (result.isSuccessful()) {
+            final Category category = result.getResult();
+            final Locale locale = new Locale(localeParam);
+            category.getDescription().addValue(locale, value);
+            categoryRepo.save(category);
+
+            return String.format(
+                "redirect:/%s/categorysystems/%s/categories/%s",
+                sectionIdentifier,
+                context,
+                categoryPathParam
+            );
+        } else {
+            return result.getResponseTemplate();
+        }
+    }
+
+    @POST
+    @Path("/{context}/categories/@description/edit/{locale}")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String editDescription(
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @PathParam("context") final String context,
+        @PathParam("locale") final String localeParam,
+        @FormParam("value") final String value
+    ) {
+        return editDescription(
+            sectionIdentifier, context, "", localeParam, value
+        );
+    }
+
+    @POST
+    @Path(
+        "/{context}/categories/{categoryPath:(.+)?}/@description/edit/{locale}"
+    )
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String editDescription(
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @PathParam("context") final String context,
+        @PathParam("categoryPath") final String categoryPathParam,
+        @PathParam("locale") final String localeParam,
+        @FormParam("value") final String value
+    ) {
+        final String categoryPath;
+        if (categoryPathParam == null || categoryPathParam.isEmpty()) {
+            categoryPath = "/";
+        } else {
+            categoryPath = categoryPathParam;
+        }
+        final RetrieveResult<Category> result = retrieveCategory(
+            sectionIdentifier, context, categoryPath
+        );
+        if (result.isSuccessful()) {
+            final Category category = result.getResult();
+            final Locale locale = new Locale(localeParam);
+            category.getDescription().addValue(locale, value);
+            categoryRepo.save(category);
+
+            return String.format(
+                "redirect:/%s/categorysystems/%s/categories/%s",
+                sectionIdentifier,
+                context,
+                categoryPathParam
+            );
+        } else {
+            return result.getResponseTemplate();
+        }
+    }
+
+    @POST
+    @Path("/{context}/categories/@description/remove/{locale}")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String removeDescription(
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @PathParam("context") final String context,
+        @PathParam("locale") final String localeParam,
+        @FormParam("value") final String value
+    ) {
+        return removeDescription(
+            sectionIdentifier, context, "", localeParam, value
+        );
+    }
+
+    @POST
+    @Path(
+        "/{context}/categories/{categoryPath:(.+)?}/@description/remove/{locale}"
+    )
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String removeDescription(
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @PathParam("context") final String context,
+        @PathParam("categoryPath") final String categoryPathParam,
+        @PathParam("locale") final String localeParam,
+        @FormParam("value") final String value
+    ) {
+        final String categoryPath;
+        if (categoryPathParam == null || categoryPathParam.isEmpty()) {
+            categoryPath = "/";
+        } else {
+            categoryPath = categoryPathParam;
+        }
+        final RetrieveResult<Category> result = retrieveCategory(
+            sectionIdentifier, context, categoryPath
+        );
+        if (result.isSuccessful()) {
+            final Category category = result.getResult();
+            final Locale locale = new Locale(localeParam);
+            category.getDescription().removeValue(locale);
+            categoryRepo.save(category);
+            return String.format(
+                "redirect:/%s/categorysystems/%s/categories/%s",
+                sectionIdentifier,
+                context,
+                categoryPathParam
             );
         } else {
             return result.getResponseTemplate();
@@ -961,7 +1030,12 @@ public class CategoriesController {
                 .map(this::buildCategorizedObjectModel)
                 .collect(Collectors.toList())
         );
-        model.setPath(categoryManager.getCategoryPath(category));
+        final String categoryPath = categoryManager.getCategoryPath(category);
+        if ("/".equals(categoryPath)) {
+            model.setPath("");
+        } else {
+            model.setPath(categoryPath);
+        }
         model.setSubCategories(
             category
                 .getSubCategories()
@@ -982,52 +1056,52 @@ public class CategoriesController {
             .getAvailableLocales();
         model.setLocalizedTitles(
             category
-            .getTitle()
-            .getValues()
-            .entrySet()
-            .stream()
-            .collect(
-                Collectors.toMap(
-                    entry -> entry.getKey().toString(),
-                    entry -> entry.getValue()
+                .getTitle()
+                .getValues()
+                .entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> entry.getValue()
+                    )
                 )
-            )
         );
         final Set<Locale> titleLocales = category
             .getTitle()
             .getAvailableLocales();
         model.setUnusedTitleLocales(
             availableLocales
-            .stream()
-            .filter(locale -> !titleLocales.contains(locale))
-            .map(Locale::toString)
-            .collect(Collectors.toList())
+                .stream()
+                .filter(locale -> !titleLocales.contains(locale))
+                .map(Locale::toString)
+                .collect(Collectors.toList())
         );
-        
+
         model.setLocalizedDescriptions(
             category
-            .getDescription()
-            .getValues()
-            .entrySet()
-            .stream()
-            .collect(
-                Collectors.toMap(
-                    entry -> entry.getKey().toString(),
-                    entry -> entry.getValue()
+                .getDescription()
+                .getValues()
+                .entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> entry.getValue()
+                    )
                 )
-            )
         );
         final Set<Locale> descriptionLocales = category
             .getDescription()
             .getAvailableLocales();
         model.setUnusedDescriptionLocales(
             availableLocales
-            .stream()
-            .filter(locale -> !descriptionLocales.contains(locale))
-            .map(Locale::toString)
-            .collect(Collectors.toList())
+                .stream()
+                .filter(locale -> !descriptionLocales.contains(locale))
+                .map(Locale::toString)
+                .collect(Collectors.toList())
         );
-        
+
         return model;
     }
 
