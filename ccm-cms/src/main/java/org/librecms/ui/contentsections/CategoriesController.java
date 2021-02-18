@@ -629,6 +629,31 @@ public class CategoriesController {
     }
 
     @POST
+    @Path("/{context}/categories/@subcategories")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String addSubcategory(
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @PathParam("context") final String context,
+        @FormParam("categoryName") final String categoryName,
+        @FormParam("uniqueId") final String uniqueId,
+        @FormParam("isEnabled") final String isEnabled,
+        @FormParam("isVisible") final String isVisible,
+        @FormParam("isAbstract") final String isAbstract
+    ) {
+        return addSubcategory(
+            sectionIdentifier,
+            context, 
+            "/",
+            categoryName,
+            uniqueId,
+            isEnabled,
+            isVisible,
+            isAbstract
+        );
+    }
+
+    @POST
     @Path("/{context}/categories/{categoryPath:(.+)?}/@subcategories")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
@@ -650,9 +675,10 @@ public class CategoriesController {
             final Category subCategory = new Category();
             subCategory.setName(categoryName);
             subCategory.setUniqueId(uniqueId);
-            subCategory.setEnabled(Objects.equals("true", isEnabled));
-            subCategory.setVisible(Objects.equals("true", isVisible));
-            subCategory.setAbstractCategory(Objects.equals("true", isAbstract));
+            subCategory.setEnabled(Objects.equals("on", isEnabled));
+            subCategory.setVisible(Objects.equals("on", isVisible));
+            subCategory.setAbstractCategory(Objects.equals("on", isAbstract));
+            categoryRepo.save(subCategory);
             categoryManager.addSubCategoryToCategory(subCategory, category);
             return String.format(
                 "redirect:/%s/categorysystems/%s/categories/%s",
@@ -803,7 +829,7 @@ public class CategoriesController {
                     // Nothing
                     break;
             }
-
+            
             return String.format(
                 "redirect:/%s/categorysystems/%s/categories/%s",
                 sectionIdentifier,

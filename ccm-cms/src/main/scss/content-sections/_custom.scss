@@ -90,3 +90,13 @@ table.contentsections-table {
 table.permissions-table td.permissions-col {
     font-size: 2em;
 }
+
+table.contentsections.categories-table {
+    td.actions-order-col {
+        width: 1em;
+    }
+    
+    td.actions-delete-col {
+        width: 9em;
+    }
+}
