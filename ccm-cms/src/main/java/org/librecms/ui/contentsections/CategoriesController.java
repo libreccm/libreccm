@@ -830,11 +830,19 @@ public class CategoriesController {
                     break;
             }
             
+            final String parentCategoryPath = categoryManager
+                .getCategoryPath(parentCategory);
+            final String pathFragment;
+            if ("/".equals(parentCategoryPath)) {
+                pathFragment = "";
+            } else {
+                pathFragment = parentCategoryPath;
+            }
             return String.format(
-                "redirect:/%s/categorysystems/%s/categories/%s",
+                "redirect:/%s/categorysystems/%s/categories/%s#subcategories-section",
                 sectionIdentifier,
                 context,
-                categoryManager.getCategoryPath(parentCategory)
+                pathFragment
             );
         } else {
             return result.getResponseTemplate();

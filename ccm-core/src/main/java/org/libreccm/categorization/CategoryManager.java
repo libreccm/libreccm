@@ -789,6 +789,8 @@ public class CategoryManager implements Serializable {
             categoryRepo.save(subCategory);
             categoryRepo.save(nextCategory);
         });
+
+        fixSubCategoryOrder(parentCategory);
     }
 
     /**
@@ -864,6 +866,30 @@ public class CategoryManager implements Serializable {
             categoryRepo.save(subCategory);
             categoryRepo.save(prevCategory);
         });
+
+        fixSubCategoryOrder(parentCategory);
+    }
+
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void fixSubCategoryOrder(final Category category) {
+        Objects.requireNonNull(category);
+
+        long order = 1;
+        final List<Category> subCategories = new ArrayList<>(
+            category.getSubCategories()
+        );
+        subCategories.sort(
+            (c1, c2) -> {
+            return Long.compare(c1.getCategoryOrder(), c2.getCategoryOrder());
+        });
+        for (final Category subCategory : subCategories) {
+            subCategory.setCategoryOrder(order);
+            shiro.getSystemUser().execute(() -> {
+                categoryRepo.save(subCategory);
+            });
+            order++;
+        }
     }
 
     /**
@@ -878,22 +904,22 @@ public class CategoryManager implements Serializable {
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public List<Category> getCategoriesInPath(final Category ofCategory) {
-        
+
         Objects.requireNonNull(ofCategory);
-        
+
         List<Category> categories = new ArrayList<>();
-        
+
         Category current = categoryRepo.findById(ofCategory.getObjectId())
             .orElseThrow(() -> new IllegalArgumentException(String.format(
             "No category with ID %d in the database. Where did that ID come from?",
             ofCategory.getObjectId())));
-        
-        while(current.getParentCategory() != null) {
+
+        while (current.getParentCategory() != null) {
             categories.add(current);
             current = current.getParentCategory();
         }
         Collections.reverse(categories);
-        
+
         return categories;
     }
 
