@@ -1,0 +1,90 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:cms="http://xmlns.jcp.org/jsf/composite/components/cms"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/contentsection.xhtml">
+
+        <ui:param name="activePage" value="configuration" />
+        <ui:param name="title" 
+                  value="#{CmsAdminMessages['contentsection.configuration.roles.title']}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration">
+                    #{CmsAdminMessages['contentsection.configuration.title']}
+                </a>
+            </li>
+            <li aria-current="page" class="breadcrumb-item">
+                #{CmsAdminMessages['contentsection.configuration.roles.title']}
+            </li>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container">
+                <ui:include src="configuration-tabs.xhtml">
+                    <ui:param name="activeConfPage" value="roles" />
+                </ui:include>
+                <h1>#{CmsAdminMessages['contentsection.configuration.roles.title']}</h1>
+
+                <div class="mb-2">
+                    <div class="text-right">
+                        <button class="btn btn-primary"
+                                data-toggle="modal"
+                                data-target="#add-role-dialog"
+                                type="button">
+                            <bootstrap:svgIcon icon="plus-circle" />
+                            <span>#{CmsAdminMessages['contentsection.configuration.roles.add']}</span>
+                        </button>
+                    </div>
+                    <!-- Dialog for adding role -->
+                </div>
+                <table class="contentsection-roles-table table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">
+                                #{CmsAdminMessages['contentsection.configuration.roles.table.name']}
+                            </th>
+                            <th scope="col">
+                                #{CmsAdminMessages['contentsection.configuration.roles.table.description']}
+                            </th>
+                            <th class="text-center" colspan="2">
+                                #{CmsAdminMessages['contentsection.configuration.roles.table.actions']}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="#{roles}" 
+                                   var="role">
+                            <tr>
+                                <td>#{role.name}</td>
+                                <td>#{role.description}</td>
+                                <td class="actions-details-col">
+                                    <a class="btn btn-info" 
+                                       href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/roles/#{role.name}">
+                                        <bootstrap:svgIcon icon="eye" />
+                                        <span>
+                                            #{CmsAdminMessages['contentsection.configuration.roles.table.actions.details']}
+                                        </span>
+                                    </a>
+                                </td>
+                                <td class="actions-delete-col">
+                                    <button class="btn btn-info"
+                                            type="button">
+                                        <bootstrap:svgIcon icon="x-circle" />
+                                        <span>
+                                            #{CmsAdminMessages['contentsection.configuration.roles.table.actions.delete']}
+                                        </span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>
+

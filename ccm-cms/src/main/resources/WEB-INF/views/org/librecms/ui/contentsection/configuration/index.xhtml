@@ -1,0 +1,122 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:cms="http://xmlns.jcp.org/jsf/composite/components/cms"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/contentsection.xhtml">
+
+        <ui:param name="activePage" value="configuration" />
+        <ui:param name="title" 
+                  value="#{CmsAdminMessages['contentsection.configuration.title']}" />
+
+        <ui:define name="breadcrumb">
+            <li aria-current="page" class="breadcrumb-item">
+                #{CmsAdminMessages['contentsection.configuration.title']}
+            </li>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container">
+                <h1>#{CmsAdminMessages.getMessage('contentsection.configuration.heading', [ContentSectionModel.sectionName])}</h1>
+                <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+                    <div class="col mb-6">
+                        <div aria-describedby="configuration-roles-body"
+                             class="card pt-2"
+                             id="configuration-roles">
+                            <svg aria-hidden="true"
+                                 class="card-img-top"
+                                 fill="currentColor">
+                                <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#people-fill" />
+                            </svg>
+                        </div>
+                        <div class="card-body"
+                             id="configuration-roles-body">
+                            <h2 class="card-title">
+                                <a class="stretched-link"
+                                   href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/roles">
+                                    #{CmsAdminMessages['contentsection.configuration.roles.title']}
+                                </a>
+                            </h2>
+                            <p class="card-text">
+                                #{CmsAdminMessages['contentsection.configuration.roles.description']}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col mb-4">
+                        <div aria-describedby="configuration-contenttypes-body"
+                             class="card pt-2"
+                             id="configuration-contenttypes">
+                            <svg aria-hidden="true"
+                                 class="card-img-top"
+                                 fill="currentColor">
+                                <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#puzzle-fill" />
+                            </svg>
+                        </div>
+                        <div class="card-body"
+                             id="configuration-contenttypes-body">
+                            <h2 class="card-title">
+                                <a class="stretched-link"
+                                   href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/contenttypes">
+                                    #{CmsAdminMessages['contentsection.configuration.contenttypes.title']}
+                                </a>
+                            </h2>
+                            <p class="card-text">
+                                #{CmsAdminMessages['contentsection.configuration.contenttypes.description']}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col mb-4">
+                        <div aria-describedby="configuration-lifecycles-body"
+                             class="card pt-2"
+                             id="configuration-lifecycles">
+                            <svg aria-hidden="true"
+                                 class="card-img-top"
+                                 fill="currentColor">
+                                <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#arrow-repeat" />
+                            </svg>
+                        </div>
+                        <div class="card-body"
+                             id="configuration-lifecycles-body">
+                            <h2 class="card-title">
+                                <a class="stretched-link"
+                                   href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/lifecycles">
+                                    #{CmsAdminMessages['contentsection.configuration.lifecycles.title']}
+                                </a>
+                            </h2>
+                            <p class="card-text">
+                                #{CmsAdminMessages['contentsection.configuration.lifecycles.description']}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col mb-4">
+                        <div aria-describedby="configuration-workflows-body"
+                             class="card pt-2"
+                             id="configuration-workflows">
+                            <svg aria-hidden="true"
+                                 class="card-img-top"
+                                 fill="currentColor">
+                                <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#list-check" />
+                            </svg>
+                        </div>
+                        <div class="card-body"
+                             id="configuration-workflows-body">
+                            <h2 class="card-title">
+                                <a class="stretched-link"
+                                   href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/workflows">
+                                    #{CmsAdminMessages['contentsection.configuration.workflows.title']}
+                                </a>
+                            </h2>
+                            <p class="card-text">
+                                #{CmsAdminMessages['contentsection.configuration.workflows.description']}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

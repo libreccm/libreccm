@@ -23,17 +23,16 @@ public class ContentSectionApplication extends Application {
     @Override
     public Set<Class<?>> getClasses() {
         final Set<Class<?>> classes = new HashSet<>();
-        
+
         classes.add(AssetFolderController.class);
         classes.add(CategoriesController.class);
+        classes.add(ConfigurationController.class);
+        classes.add(ConfigurationRolesController.class);
         classes.add(ContentSectionController.class);
         classes.add(DocumentFolderController.class);
         classes.add(IsAuthenticatedFilter.class);
-        
-        
+
         return classes;
     }
-    
-    
-    
+
 }

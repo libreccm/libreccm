@@ -1,0 +1,36 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:cms="http://xmlns.jcp.org/jsf/composite/components/cms"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link #{activeConfPage == 'roles' ? 'active' : ''}"
+                   href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/roles">
+                    #{CmsAdminMessages['contentsection.configuration.roles.title']}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link #{activeConfPage == 'contenttypes' ? 'active' : ''}"
+                   href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/contenttypes">
+                    #{CmsAdminMessages['contentsection.configuration.contenttypes.title']}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link #{activeConfPage == 'lifecycles' ? 'active' : ''}"
+                   href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/lifecycles">
+                    #{CmsAdminMessages['contentsection.configuration.lifecycles.title']}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link #{activeConfPage == 'workflows' ? 'active' : ''}"
+                   href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/workflows">
+                    #{CmsAdminMessages['contentsection.configuration.workflows.title']}
+                </a>
+            </li>
+        </ul>
+    </ui:composition>
+</html>

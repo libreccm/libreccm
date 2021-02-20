@@ -1,0 +1,56 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:cms="http://xmlns.jcp.org/jsf/composite/components/cms"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/contentsection.xhtml">
+
+        <ui:param name="activePage" value="configuration" />
+        <ui:param name="title" 
+                  value="#{CmsAdminMessages['contentsection.configuration.roles.title']}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration">
+                    #{CmsAdminMessages['contentsection.configuration.title']}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/roles">
+                    #{CmsAdminMessages['contentsection.configuration.roles.title']}
+                </a>
+            </li>
+            <li aria-current="page" class="breadcrumb-item">
+                #{CmsAdminMessages['contentsection.configuration.roles.breadcrumbs']} #{SelectedRoleModel.name}
+            </li>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container">
+                <ui:include src="configuration-tabs.xhtml">
+                    <ui:param name="activeConfPage" value="roles" />
+                </ui:include>
+                <h1>#{CmsAdminMessages.getMessage('contentsection.configuration.roles.role_details.title', [SelectedRoleModel.name])}</h1>
+                <dl>
+                    <div>
+                        <dt>#{CmsAdminMessages['contentsection.configuration.roles.role_details.name']}</dt>
+                        <dd>#{SelectedRoleModel.name}</dd>
+                    </div>
+                </dl>
+                <libreccm:localizedStringEditor
+                    addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/roles/#{SelectedRoleModel.name}/description/add"
+                    editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/roles/#{SelectedRoleModel.name}/description/edit"
+                    editorId="role-description"
+                    hasUnusedLocales="#{SelectedRoleModel.hasUnusedDescriptionLocales}"
+                    objectIdentifier="#{SelectedRoleModel.name}"
+                    removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/roles/#{SelectedRoleModel.name}/description/remove"
+                    title="#{CmsAdminMessages['contentsection.configuration.roles.role_details.description.title']}"
+                    unusedLocales="#{SelectedRoleModel.unusedDescriptionLocales}"
+                    values="#{SelectedRoleModel.description}"
+                    />
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>
