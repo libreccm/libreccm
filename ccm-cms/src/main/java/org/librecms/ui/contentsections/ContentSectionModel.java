@@ -5,7 +5,9 @@
  */
 package org.librecms.ui.contentsections;
 
+import org.libreccm.security.PermissionChecker;
 import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,6 +16,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 /**
@@ -23,6 +26,9 @@ import javax.inject.Named;
 @RequestScoped
 @Named("ContentSectionModel")
 public class ContentSectionModel {
+
+    @Inject
+    private PermissionChecker permissionChecker;
 
     private ContentSection section;
 
@@ -61,6 +67,36 @@ public class ContentSectionModel {
         final List<DocumentFolderTreeNode> documentFolders
     ) {
         this.documentFolders = new ArrayList<>(documentFolders);
+    }
+
+    public boolean getCanAdministerCategories() {
+        return permissionChecker.isPermitted(
+            AdminPrivileges.ADMINISTER_CATEGORIES, section
+        );
+    }
+
+    public boolean getCanAdministerContentTypes() {
+        return permissionChecker.isPermitted(
+            AdminPrivileges.ADMINISTER_CATEGORIES, section
+        );
+    }
+
+    public boolean getCanAdministerLifecycles() {
+        return permissionChecker.isPermitted(
+            AdminPrivileges.ADMINISTER_LIFECYLES, section
+        );
+    }
+
+    public boolean getCanAdministerRoles() {
+        return permissionChecker.isPermitted(
+            AdminPrivileges.ADMINISTER_ROLES, section
+        );
+    }
+
+    public boolean getCanAdministerWorkflows() {
+        return permissionChecker.isPermitted(
+            AdminPrivileges.ADMINISTER_WORKFLOW, section
+        );
     }
 
 }

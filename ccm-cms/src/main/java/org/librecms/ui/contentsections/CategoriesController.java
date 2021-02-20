@@ -17,8 +17,10 @@ import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.PermissionChecker;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
+import org.librecms.contentsection.privileges.AdminPrivileges;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -72,6 +74,9 @@ public class CategoriesController {
 
     @Inject
     private Models models;
+
+    @Inject
+    private PermissionChecker permissionChecker;
 
     @GET
     @Path("/")
@@ -549,7 +554,8 @@ public class CategoriesController {
     }
 
     @GET
-    @Path("/{context}/categories/{categoryPath:(.+)?}/@index-element/{indexElementUuid}")
+    @Path(
+        "/{context}/categories/{categoryPath:(.+)?}/@index-element/{indexElementUuid}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String setIndexElement(
@@ -643,7 +649,7 @@ public class CategoriesController {
     ) {
         return addSubcategory(
             sectionIdentifier,
-            context, 
+            context,
             "/",
             categoryName,
             uniqueId,
@@ -829,7 +835,7 @@ public class CategoriesController {
                     // Nothing
                     break;
             }
-            
+
             final String parentCategoryPath = categoryManager
                 .getCategoryPath(parentCategory);
             final String pathFragment;
@@ -940,6 +946,7 @@ public class CategoriesController {
                     .getIdentifier());
                 break;
         }
+
         return sectionResult;
     }
 
@@ -957,6 +964,13 @@ public class CategoriesController {
             );
         }
         final ContentSection section = sectionResult.get();
+        if (permissionChecker.isPermitted(
+            AdminPrivileges.ADMINISTER_CATEGORIES, section
+        )) {
+            return RetrieveResult.failed(
+                "org/librecms/ui/contentsection/access-denied.xhtml"
+            );
+        }
 
         final Optional<DomainOwnership> domainResult = section
             .getDomains()

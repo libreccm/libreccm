@@ -39,20 +39,24 @@
                                 <span>#{CmsAdminMessages['contentsection.assetfolders.title']}</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link #{activePage == 'categorySystems' ? 'active' : ''}"
-                               href='#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems'>
-                                <bootstrap:svgIcon icon="diagram-3-fill" />
-                                <span>#{CmsAdminMessages['contentsection.categories.title']}</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link #{activePage == 'configuration' ? 'active' : ''}"
-                               href='#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration'>
-                                <bootstrap:svgIcon icon="gear-fill" />
-                                <span>#{CmsAdminMessages['contentsection.configuration.title']}</span>
-                            </a>
-                        </li>
+                        <c:if test="#{ContentSectionModel.canAdministerCategories}">
+                            <li class="nav-item">
+                                <a class="nav-link #{activePage == 'categorySystems' ? 'active' : ''}"
+                                   href='#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems'>
+                                    <bootstrap:svgIcon icon="diagram-3-fill" />
+                                    <span>#{CmsAdminMessages['contentsection.categories.title']}</span>
+                                </a>
+                            </li>
+                        </c:if>
+                        <c:if test="#{ContentSectionModel.canAdministerContentTypes or ContentSectionModel.canAdministerLifecycles or ContentSectionModel.canAdministerRoles or ContentSectionModel.canAdministerWorkflows}">
+                            <li class="nav-item">
+                                <a class="nav-link #{activePage == 'configuration' ? 'active' : ''}"
+                                   href='#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration'>
+                                    <bootstrap:svgIcon icon="gear-fill" />
+                                    <span>#{CmsAdminMessages['contentsection.configuration.title']}</span>
+                                </a>
+                            </li>
+                        </c:if>
                     </ul>
                 </div>
             </nav>
