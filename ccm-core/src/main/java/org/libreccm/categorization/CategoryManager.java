@@ -714,6 +714,8 @@ public class CategoryManager implements Serializable {
             categoryRepo.save(parentCategory);
             categoryRepo.save(subCategory);
         });
+        
+        fixSubCategoryOrder(parentCategory);
     }
 
     /**

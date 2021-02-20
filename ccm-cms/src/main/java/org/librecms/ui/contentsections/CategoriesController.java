@@ -548,8 +548,8 @@ public class CategoriesController {
         }
     }
 
-    @POST
-    @Path("/{context}/categories/{categoryPath:(.+)?}/@index-element")
+    @GET
+    @Path("/{context}/categories/{categoryPath:(.+)?}/@index-element/{indexElementUuid}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String setIndexElement(
@@ -592,7 +592,7 @@ public class CategoriesController {
                 return "org/librecms/ui/contentsection/categorysystems/categorization-not-found.xhtml";
             }
             return String.format(
-                "redirect:/%s/categorysystems/%s/categories/%s",
+                "redirect:/%s/categorysystems/%s/categories/%s#objects-sections",
                 sectionIdentifier,
                 context,
                 categoryPath
@@ -602,7 +602,7 @@ public class CategoriesController {
         }
     }
 
-    @POST
+    @GET
     @Path("/{context}/categories/{categoryPath:(.+)?}/@index-element/reset")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
@@ -618,7 +618,7 @@ public class CategoriesController {
             final Category category = result.getResult();
             categoryManager.resetIndexObject(category);
             return String.format(
-                "redirect:/%s/categorysystems/%s/categories/%s",
+                "redirect:/%s/categorysystems/%s/categories/%s#objects-sections",
                 sectionIdentifier,
                 context,
                 categoryPath
@@ -851,7 +851,7 @@ public class CategoriesController {
 
     @POST
     @Path(
-        "/{context}/categories/{categoryPath:(.+)?}/objects/{objectIdentifier}/@order")
+        "/{context}/categories/{categoryPath:(.+)?}/@objects/{objectIdentifier}/order")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String orderObjects(
@@ -898,7 +898,7 @@ public class CategoriesController {
                     }
                 } catch (ObjectNotAssignedToCategoryException ex) {
                     return String.format(
-                        "redirect:/%s/categorysystems/%s/categories/%s",
+                        "redirect:/%s/categorysystems/%s/categories/%s#objects-sections",
                         sectionIdentifier,
                         context,
                         categoryManager.getCategoryPath(category)
@@ -1168,6 +1168,8 @@ public class CategoriesController {
     ) {
         final CcmObject object = categorization.getCategorizedObject();
         final CategorizedObjectModel model = new CategorizedObjectModel();
+        model.setObjectId(object.getObjectId());
+        model.setObjectUuid(object.getUuid());
         model.setDisplayName(object.getDisplayName());
         model.setIndexObject(categorization.isIndexObject());
         model.setObjectOrder(categorization.getObjectOrder());

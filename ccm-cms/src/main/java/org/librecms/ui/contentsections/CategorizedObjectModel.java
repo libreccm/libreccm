@@ -11,6 +11,10 @@ package org.librecms.ui.contentsections;
  */
 public class CategorizedObjectModel {
 
+    private long objectId;
+
+    private String objectUuid;
+
     private String displayName;
 
     private String title;
@@ -20,6 +24,22 @@ public class CategorizedObjectModel {
     private boolean indexObject;
 
     private long objectOrder;
+
+    public long getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(final long objectId) {
+        this.objectId = objectId;
+    }
+
+    public String getObjectUuid() {
+        return objectUuid;
+    }
+
+    public void setObjectUuid(final String objectUuid) {
+        this.objectUuid = objectUuid;
+    }
 
     public String getDisplayName() {
         return displayName;

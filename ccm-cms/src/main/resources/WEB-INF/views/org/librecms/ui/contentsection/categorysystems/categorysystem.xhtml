@@ -437,6 +437,121 @@
                                 </table>
                             </c:otherwise>
                         </c:choose>
+
+                        <h2 id="objects-sections">#{CmsAdminMessages['contentsections.categorystems.category.objects.heading']}</h2>
+                        <c:choose>
+                            <c:when test="#{CategorySystemModel.selectedCategory.objects.isEmpty()}">
+                                <p>
+                                    #{CmsAdminMessages['contentsections.categorystems.category.objects.none']}
+                                </p>
+                            </c:when>
+                            <c:otherwise>
+                                <table class="categories-table contentsections table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">
+                                                #{CmsAdminMessages['contentsections.categorystems.category.objects.name']}
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th scope="col">
+                                                #{CmsAdminMessages['contentsections.categorystems.category.objects.title']}
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th scope="col">
+                                                #{CmsAdminMessages['contentsections.categorystems.category.objects.type']}
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th scope="col">
+                                                #{CmsAdminMessages['contentsections.categorystems.category.objects.index']}
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="3">
+                                                #{CmsAdminMessages['contentsections.categorystems.category.objects.actions']}
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <c:forEach items="#{CategorySystemModel.selectedCategory.objects}"
+                                                   var="object">
+                                            <tr>
+                                                <td>
+                                                    #{object.displayName}
+                                                </td>
+                                                <td>
+                                                    #{object.title}
+                                                </td>
+                                                <td>
+                                                    #{object.type}
+                                                </td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="#{object.indexObject}">
+                                                            #{CmsAdminMessages['contentsections.categorystems.category.objects.index.yes']}
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            #{CmsAdminMessages['contentsections.categorystems.category.objects.no']}
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
+                                                <td class="actions-order-col">
+                                                    <c:if test="#{object.objectOrder != 1}">
+                                                        <form action="#" 
+                                                              method="post">
+                                                            <input name="direction"
+                                                                   value="DECREASE"
+                                                                   type="hidden" />
+                                                            <button class="btn btn-info"
+                                                                    type="submit">
+                                                                <bootstrap:svgIcon icon="caret-up-fill" />
+                                                                <span class="sr-only">#{CmsAdminMessages['contentsections.categorystems.category.objects.reorder.decrease']}</span>
+                                                            </button>
+                                                        </form>
+                                                    </c:if>
+                                                </td>
+                                                <td class="actions-order-col">
+                                                    <c:if test="#{object.objectOrder lt CategorySystemModel.selectedCategory.objects.size()}">
+                                                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems/#{CategorySystemModel.selectedCategorySystem.context}/@objects/#{object.objectId}/order" 
+                                                              method="post">
+                                                            <input name="direction"
+                                                                   value="INCREASE"
+                                                                   type="hidden" />
+                                                            <button class="btn btn-info"
+                                                                    type="submit">
+                                                                <bootstrap:svgIcon icon="caret-up-fill" />
+                                                                <span class="sr-only">#{CmsAdminMessages['contentsections.categorystems.category.objects.reorder.increase']}</span>
+                                                            </button>
+                                                        </form>
+                                                    </c:if>
+                                                </td>
+                                                <td class="actions-setindex-col">
+                                                    <c:choose>
+                                                        <c:when test="#{object.indexObject}">
+                                                            <a class="btn btn-danger"
+                                                               href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems/#{CategorySystemModel.selectedCategorySystem.context}/@index-element/#{object.objectUuid}">
+                                                                <bootstrap:svgIcon icon="bookmark-x" />
+                                                                <span>#{CmsAdminMessages['contentsections.categorystems.category.objects.index_object.reset']}</span>
+                                                            </a>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                             <a class="btn btn-info"
+                                                                href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/categorysystems/#{CategorySystemModel.selectedCategorySystem.context}/@index-element/reset">
+                                                                <bootstrap:svgIcon icon="bookmark-star" />
+                                                                <span>#{CmsAdminMessages['contentsections.categorystems.category.objects.index_object.set']}</span>
+                                                            </a>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
+                                    </tbody>
+                                </table>
+                            </c:otherwise>
+                        </c:choose>
+
                     </div>
                 </div>
             </div>
