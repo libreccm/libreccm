@@ -38,8 +38,16 @@
                             <bootstrap:svgIcon icon="plus-circle" />
                             <span>#{CmsAdminMessages['contentsection.configuration.roles.add']}</span>
                         </button>
+                        <button class="btn btn-primary"
+                                data-toggle="modal"
+                                data-target="#create-role-dialog"
+                                type="button">
+                            <bootstrap:svgIcon icon="plus-circle" />
+                            <span>#{CmsAdminMessages['contentsection.configuration.roles.create']}</span>
+                        </button>
                     </div>
-                    <!-- Dialog for adding role -->
+                    <!-- Dialog for adding existing role -->
+                    <!-- Dialog for creating role -->
                 </div>
                 <table class="contentsection-roles-table table table-hover">
                     <thead>
@@ -50,7 +58,7 @@
                             <th scope="col">
                                 #{CmsAdminMessages['contentsection.configuration.roles.table.description']}
                             </th>
-                            <th class="text-center" colspan="2">
+                            <th class="text-center" colspan="3">
                                 #{CmsAdminMessages['contentsection.configuration.roles.table.actions']}
                             </th>
                         </tr>
@@ -71,7 +79,16 @@
                                     </a>
                                 </td>
                                 <td class="actions-delete-col">
-                                    <button class="btn btn-info"
+                                    <button class="btn btn-warning"
+                                            type="button">
+                                        <bootstrap:svgIcon icon="x-circle" />
+                                        <span>
+                                            #{CmsAdminMessages['contentsection.configuration.roles.table.actions.remove']}
+                                        </span>
+                                    </button>
+                                </td>
+                                <td class="actions-delete-col">
+                                    <button class="btn btn-danger"
                                             type="button">
                                         <bootstrap:svgIcon icon="x-circle" />
                                         <span>

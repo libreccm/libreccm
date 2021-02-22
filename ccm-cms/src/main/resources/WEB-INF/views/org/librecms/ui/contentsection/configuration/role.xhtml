@@ -36,7 +36,14 @@
                 <dl>
                     <div>
                         <dt>#{CmsAdminMessages['contentsection.configuration.roles.role_details.name']}</dt>
-                        <dd>#{SelectedRoleModel.name}</dd>
+                        <dd>
+                            #{SelectedRoleModel.name}
+                            <button class="btn btn-info btn-sm"
+                                    type="button">
+                                <bootstrap:svgIcon icon="pen" />
+                                <span class="sr-only">#{CmsAdminMessages['contentsection.configuration.roles.role_details.name.edit']}</span>
+                            </button>
+                        </dd>
                     </div>
                 </dl>
                 <libreccm:localizedStringEditor
@@ -50,6 +57,65 @@
                     unusedLocales="#{SelectedRoleModel.unusedDescriptionLocales}"
                     values="#{SelectedRoleModel.description}"
                     />
+
+                <h2>#{CmsAdminMessages['contentsection.configuration.roles.role_details.permissions']}</h2>
+                <div class="mb-2">
+                    <div class="text-right">
+                        <button class="btn btn-primary"
+                                data-toggle="modal"
+                                data-target="#modify-permissions-dialog"
+                                type="button">
+                            <bootstrap:svgIcon icon="plus-circle" />
+                            <span>#{CmsAdminMessages['contentsection.configuration.role_details.permissions.modify']}</span>
+                        </button>
+                    </div>
+                </div>
+                <ul>
+                    <c:forEach items="#{SelectedRoleModel.permissions}"
+                               var="permission">
+                        <li>
+                            #{permission}
+                        </li>
+                    </c:forEach>
+                </ul>
+                
+                <h2>#{CmsAdminMessages['contentsection.configuration.roles.role_details.members']}</h2>
+                <div class="mb-2">
+                    <div class="text-right">
+                        <button class="btn btn-primary"
+                                data-toggle="modal"
+                                data-target="#add-member-dialog"
+                                type="button">
+                            <bootstrap:svgIcon icon="plus-circle" />
+                            <span>#{CmsAdminMessages['contentsection.configuration.role_details.members.add']}</span>
+                        </button>
+                    </div>
+                </div>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#{CmsAdminMessages['contentsection.configuration.role_details.members.cols.name']}</th>
+                            <th>#{CmsAdminMessages['contentsection.configuration.role_details.members.cols.actions']}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="#{SelectedRoleModel.members}"
+                                   var="member">
+                            <tr>
+                                <td>#{member.memberName}</td>
+                                <td>
+                                    <libreccm:deleteDialog actionTarget="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/roles/#{SelectedRoleModel.name}/members/#{member.memberUuid}"
+                                                           buttonText="#{CmsAdminMessages['contentsection.configuration.role_details.members.actions.remove']}"
+                                                           cancelLabel="#{CmsAdminMessages['contentsection.configuration.role_details.members.actions.remove.cancel']}"
+                                                           confirmLabel="#{CmsAdminMessages['contentsection.configuration.role_details.members.actions.remove.confirm']}"
+                                                           dialogId="remove-member-dialog"
+                                                           dialogTitle="#{CmsAdminMessages['contentsection.configuration.role_details.members.actions.remove.title']}"
+                                                           message="#{CmsAdminMessages.getMessage('contentsection.configuration.role_details.members.actions.remove.message', [member.memberName, SelectedRoleModel.name])}" />
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
             </div>
         </ui:define>
     </ui:composition>
