@@ -10,21 +10,17 @@
         <ui:param name="title" value="#{CmsAdminMessages['contentsection.not_found.title']}" />
         <ui:define name="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration">
-                    #{CmsAdminMessages['contentsection.configuration.title']}
-                </a>
-            </li>
-            <li aria-current="page" class="breadcrumb-item">
-                #{CmsAdminMessages['contentsection.configuration.roles.title']}
+                #{CmsAdminMessages['contentsections.list.label']}
             </li>
         </ui:define>
 
         <ui:define name="main">
             <div class="container">
                 <div class="alert alert-danger" role="alert">
-                    #{CmsAdminMessages.getMessage('contentsection.not_found', [sectionIdentifier])}
+                    #{CmsAdminMessages.getMessage('contentsection.role.not_found', [roleIdentifier])}
                 </div>
             </div>
         </ui:define>
     </ui:composition>
 </html>
+

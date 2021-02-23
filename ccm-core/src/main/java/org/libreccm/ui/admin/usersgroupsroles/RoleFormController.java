@@ -97,7 +97,7 @@ public class RoleFormController {
                 )
             );
         }
-        if (!roleName.matches("[a-zA-Z0-9_-]")) {
+        if (!roleName.matches("[a-zA-Z0-9_-]*")) {
             errors.add(
                 adminMessages.get(
                     "usersgroupsroles.roles.form.errors.name_invalid"

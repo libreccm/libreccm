@@ -7,9 +7,14 @@
         <cc:attribute name="actionTarget"
                       required="true"
                       shortDescription="URL to POST request is send." />
+        <cc:attribute name="buttonClass"
+                      default="danger"
+                      required="false"
+                      shortDescription="Class for the button. Defaults to danger."
+                      type="String" />
         <cc:attribute name="buttonText"
                       required="true"
-                      shortDescription="Text of the button toggleing the modal form."
+                      shortDescription="Text of the button toggling the modal form."
                       type="String" />
         <cc:attribute name="buttonTextClass"
                       default=""
@@ -45,7 +50,7 @@
     <cc:implementation>
         <div class="#{cc.attrs.buttonTextClass}">
             <button
-                class="btn btn-danger"
+                class="btn btn-#{cc.attrs.buttonClass}"
                 data-target="##{cc.attrs.dialogId}"
                 data-toggle="modal"
                 type="button">
@@ -112,7 +117,7 @@
                                 type="button" >
                             #{cc.attrs.cancelLabel}
                         </button>
-                        <button type="submit" class="btn btn-danger">
+                        <button type="submit" class="btn btn-#{cc.attrs.buttonClass}">
                             #{cc.attrs.confirmLabel}
                         </button>
                     </div>

@@ -29,6 +29,14 @@
                 </ui:include>
                 <h1>#{CmsAdminMessages['contentsection.configuration.roles.title']}</h1>
 
+                <c:if test="#{not empty errors}">
+                    <c:forEach items="#{errors}" var="error">
+                        <div class="alert alert-danger" role="alert">
+                            #{error}
+                        </div>
+                    </c:forEach>
+                </c:if>
+
                 <div class="mb-2">
                     <div class="text-right">
                         <button class="btn btn-primary"
@@ -46,8 +54,114 @@
                             <span>#{CmsAdminMessages['contentsection.configuration.roles.create']}</span>
                         </button>
                     </div>
+                    
+                    <div aria-hidden="true"
+                         aria-labelledby="add-role-dialog-title"
+                         class="modal fade"
+                         id="add-role-dialog"
+                         tabindex="-1">
+                        <div class="modal-dialog">
+                            <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/roles/@add"
+                                  class="modal-content"
+                                  method="post">
+                                <div class="modal-header">
+                                     <h3 class="modal-title"
+                                        id="add-role-dialog-title">
+                                        #{CmsAdminMessages.getMessage('contentsection.configuration.roles.add.dialog.title', [ContentSectionModel.sectionName])}
+                                    </h3>
+                                    <button aria-label="#{CmsAdminMessages['contentsection.configuration.roles.add.dialog.cancel']}" 
+                                            class="close" 
+                                            data-dismiss="modal"
+                                            type="button">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <c:forEach items="#{otherRoles}" 
+                                               var="role">
+                                        <div class="form-check">
+                                            <input class="form-check-input"
+                                                   id="add-role-dialog-role-#{role.name}"
+                                                   name="rolesToAdd"
+                                                   type="checkbox"
+                                                   value="#{role.uuid}" />
+                                            <label class="form-check-label"
+                                                   for="add-role-dialog-role-#{role.name}">
+                                                #{role.name}
+                                            </label>
+                                        </div>
+                                    </c:forEach>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-warning" 
+                                            data-dismiss="modal"
+                                            type="button">
+                                        #{CmsAdminMessages['contentsection.configuration.roles.add.dialog.cancel']}
+                                    </button>
+                                    <button class="btn btn-primary" 
+                                            type="submit" >
+                                        #{CmsAdminMessages['contentsection.configuration.roles.add.dialog.submit']}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
                     <!-- Dialog for adding existing role -->
-                    <!-- Dialog for creating role -->
+                    <div aria-hidden="true" 
+                         aria-lablledby="create-role-dialog-title"
+                         class="modal fade"
+                         id="create-role-dialog"
+                         tabindex="-1">
+                        <div class="modal-dialog">
+                            <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/roles/@new"
+                                  class="modal-content"
+                                  method="post">
+                                <div class="modal-header">
+                                    <h3 class="modal-title"
+                                        id="create-role-dialog-title">
+                                        #{CmsAdminMessages.getMessage('contentsection.configuration.roles.create.dialog.title', [ContentSectionModel.sectionName])}
+                                    </h3>
+                                    <button aria-label="#{CmsAdminMessages['contentsection.configuration.roles.create.dialog.cancel']}" 
+                                            class="close" 
+                                            data-dismiss="modal"
+                                            type="button">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="rolename">
+                                            #{CmsAdminMessages['contentsection.configuration.roles.create.dialog.rolename.label']}
+                                        </label>
+                                        <input aria-described-by="rolename-help"
+                                               class="form-control" 
+                                               id="rolename" 
+                                               name="roleName" 
+                                               pattern="[a-zA-Z0-9_-]*"
+                                               required="required"
+                                               value="#{roleName}"
+                                               type="text" />
+                                        <small class="form-text text-muted"
+                                               id="rolename-help">
+                                            #{CmsAdminMessages['contentsection.configuration.roles.create.dialog.rolename.help']}
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-warning" 
+                                            data-dismiss="modal"
+                                            type="button">
+                                        #{CmsAdminMessages['contentsection.configuration.roles.create.dialog.cancel']}
+                                    </button>
+                                    <button class="btn btn-primary" 
+                                            type="submit" >
+                                        #{CmsAdminMessages['contentsection.configuration.roles.create.dialog.submit']}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
                 <table class="contentsection-roles-table table table-hover">
                     <thead>
@@ -79,22 +193,39 @@
                                     </a>
                                 </td>
                                 <td class="actions-delete-col">
-                                    <button class="btn btn-warning"
+                                    <libreccm:deleteDialog actionTarget="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/roles/UUID-#{role.uuid}/@remove"
+                                                           buttonClass="warning"
+                                                           buttonText="#{CmsAdminMessages['contentsection.configuration.roles.table.actions.remove']}"
+                                                           cancelLabel="#{CmsAdminMessages['contentsection.configuration.roles.table.actions.remove.cancel']}"
+                                                           confirmLabel="#{CmsAdminMessages['contentsection.configuration.roles.table.actions.remove.submit']}"
+                                                           dialogId="role-#{role.uuid}-remove"
+                                                           dialogTitle="#{CmsAdminMessages['contentsection.configuration.roles.table.actions.remove.title']}"
+                                                           message="#{CmsAdminMessages.getMessage('contentsection.configuration.roles.table.actions.remove.message',[role.name, ContentSectionModel.sectionName])}"
+                                                           />
+<!--                                    <button class="btn btn-warning"
                                             type="button">
                                         <bootstrap:svgIcon icon="x-circle" />
                                         <span>
                                             #{CmsAdminMessages['contentsection.configuration.roles.table.actions.remove']}
                                         </span>
-                                    </button>
+                                    </button>-->
                                 </td>
                                 <td class="actions-delete-col">
-                                    <button class="btn btn-danger"
+                                     <libreccm:deleteDialog actionTarget="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/roles/UUID-#{role.uuid}/@delete"
+                                                           buttonText="#{CmsAdminMessages['contentsection.configuration.roles.table.actions.delete']}"
+                                                           cancelLabel="#{CmsAdminMessages['contentsection.configuration.roles.table.actions.delete.cancel']}"
+                                                           confirmLabel="#{CmsAdminMessages['contentsection.configuration.roles.table.actions.delete.submit']}"
+                                                           dialogId="role-#{role.uuid}-delete"
+                                                           dialogTitle="#{CmsAdminMessages['contentsection.configuration.roles.table.actions.delete.title']}"
+                                                           message="#{CmsAdminMessages.getMessage('contentsection.configuration.roles.table.actions.delete.message',[role.name, ContentSectionModel.sectionName])}"
+                                                           />
+<!--                                    <button class="btn btn-danger"
                                             type="button">
                                         <bootstrap:svgIcon icon="x-circle" />
                                         <span>
                                             #{CmsAdminMessages['contentsection.configuration.roles.table.actions.delete']}
                                         </span>
-                                    </button>
+                                    </button>-->
                                 </td>
                             </tr>
                         </c:forEach>
