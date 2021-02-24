@@ -5,13 +5,19 @@
  */
 package org.librecms.ui.contentsections;
 
+import org.libreccm.security.Party;
+import org.libreccm.security.PartyRepository;
+import org.libreccm.ui.admin.usersgroupsroles.RolePartyFormEntry;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 /**
@@ -22,20 +28,29 @@ import javax.inject.Named;
 @Named("SelectedRoleModel")
 public class SelectedRoleModel {
 
+    @Inject
+    private PartyRepository partyRepository;
+
     private String name;
 
     private Map<String, String> description;
 
-    
-    
     private List<String> unusedDescriptionLocales;
 
     private List<RoleMembershipModel> members;
 
+    public List<RolePartyFormEntry> getRolePartyFormEnties() {
+        return partyRepository
+            .findAll()
+            .stream()
+            .map(this::buildRolePartyFormEntry)
+            .collect(Collectors.toList());
+    }
+
     /**
      * Permissions of the role for the content section.
      */
-    private List<String> permissions;
+    private List<RoleSectionPermissionModel> permissions;
 
     public String getName() {
         return name;
@@ -61,11 +76,12 @@ public class SelectedRoleModel {
         this.members = new ArrayList<>(members);
     }
 
-    public List<String> getPermissions() {
+    public List<RoleSectionPermissionModel> getPermissions() {
         return Collections.unmodifiableList(permissions);
     }
 
-    public void setPermissions(final List<String> permissions) {
+    public void setPermissions(
+        final List<RoleSectionPermissionModel> permissions) {
         this.permissions = new ArrayList<>(permissions);
     }
 
@@ -83,5 +99,21 @@ public class SelectedRoleModel {
     public boolean getHasUnusedDescriptionLocales() {
         return !unusedDescriptionLocales.isEmpty();
     }
-    
+
+    private RolePartyFormEntry buildRolePartyFormEntry(final Party party) {
+        final RolePartyFormEntry entry = new RolePartyFormEntry();
+        entry.setPartyId(party.getPartyId());
+        entry.setPartyUuid(party.getUuid());
+        entry.setPartyName(party.getName());
+        entry.setMember(
+            members
+                .stream()
+                .anyMatch(
+                    membership -> membership.getMemberUuid().equals(party
+                        .getUuid())
+                )
+        );
+        return entry;
+    }
+
 }

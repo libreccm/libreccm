@@ -10,9 +10,13 @@ import org.libreccm.api.IdentifierParser;
 import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.Party;
+import org.libreccm.security.PartyRepository;
 import org.libreccm.security.Permission;
 import org.libreccm.security.PermissionChecker;
+import org.libreccm.security.PermissionManager;
 import org.libreccm.security.Role;
+import org.libreccm.security.RoleManager;
 import org.libreccm.security.RoleMembership;
 import org.libreccm.security.RoleRepository;
 
@@ -32,6 +36,8 @@ import org.librecms.contentsection.ContentSectionManager;
 import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.privileges.AdminPrivileges;
+import org.librecms.contentsection.privileges.AssetPrivileges;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 import org.librecms.ui.CmsAdminMessages;
 
 import java.util.ArrayList;
@@ -40,7 +46,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 
@@ -75,7 +80,16 @@ public class ConfigurationRolesController {
     private Models models;
 
     @Inject
+    private PartyRepository partyRepository;
+
+    @Inject
     private PermissionChecker permissionChecker;
+
+    @Inject
+    private PermissionManager permissionManager;
+
+    @Inject
+    private RoleManager roleManager;
 
     @Inject
     private RoleRepository roleRepo;
@@ -238,18 +252,7 @@ public class ConfigurationRolesController {
                 .collect(Collectors.toList())
         );
         selectedRoleModel.setName(role.getName());
-        selectedRoleModel.setPermissions(
-            role
-                .getPermissions()
-                .stream()
-                .filter(
-                    permission -> onlyContentSectionPermissions(
-                        permission, section
-                    )
-                )
-                .map(permission -> permission.getGrantedPrivilege())
-                .collect(Collectors.toList())
-        );
+        selectedRoleModel.setPermissions(buildRolePermissions(role, section));
         final Set<Locale> descriptionLocales = role
             .getDescription()
             .getAvailableLocales();
@@ -264,6 +267,495 @@ public class ConfigurationRolesController {
         );
 
         return "org/librecms/ui/contentsection/configuration/role.xhtml";
+    }
+
+    @POST
+    @Path("/{roleName}/@rename")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String renameRole(
+        @PathParam("sectionIdentifier") final String sectionIdentifierParam,
+        @PathParam("roleName") final String roleName,
+        @FormParam("roleName") final String newRoleName
+    ) {
+        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
+            sectionIdentifierParam
+        );
+
+        final Optional<ContentSection> sectionResult;
+        switch (sectionIdentifier.getType()) {
+            case ID:
+                sectionResult = sectionRepo.findById(
+                    Long.parseLong(
+                        sectionIdentifier.getIdentifier()
+                    )
+                );
+                break;
+            case UUID:
+                sectionResult = sectionRepo.findByUuid(
+                    sectionIdentifier.getIdentifier()
+                );
+                break;
+            default:
+                sectionResult = sectionRepo.findByLabel(
+                    sectionIdentifier.getIdentifier()
+                );
+                break;
+        }
+
+        if (!sectionResult.isPresent()) {
+            models.put("sectionIdentifier", sectionIdentifier);
+            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+        }
+        final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
+
+        if (!permissionChecker.isPermitted(
+            AdminPrivileges.ADMINISTER_ROLES, section
+        )) {
+            models.put("sectionIdentifier", sectionIdentifier);
+            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        }
+
+        final Optional<Role> result = section
+            .getRoles()
+            .stream()
+            .filter(role -> roleName.equals(role.getName()))
+            .findAny();
+
+        if (!result.isPresent()) {
+            models.put("sectionIdentifier", sectionIdentifier);
+            models.put("roleName", roleName);
+            return "org/librecms/ui/contentsection/configuration/role-not-found.xhtml";
+        }
+
+        final Role role = result.get();
+        role.setName(newRoleName);
+        roleRepo.save(role);
+
+        return String.format(
+            "redirect:%s/configuration/roles/%s",
+            sectionIdentifierParam,
+            newRoleName
+        );
+    }
+
+    @POST
+    @Path("/{roleName}/@permissions")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String updateRolePermissions(
+        @PathParam("sectionIdentifier") final String sectionIdentifierParam,
+        @PathParam("roleName") final String roleName,
+        @FormParam("grantedPermissions") final List<String> grantedPermissions
+    ) {
+        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
+            sectionIdentifierParam
+        );
+
+        final Optional<ContentSection> sectionResult;
+        switch (sectionIdentifier.getType()) {
+            case ID:
+                sectionResult = sectionRepo.findById(
+                    Long.parseLong(
+                        sectionIdentifier.getIdentifier()
+                    )
+                );
+                break;
+            case UUID:
+                sectionResult = sectionRepo.findByUuid(
+                    sectionIdentifier.getIdentifier()
+                );
+                break;
+            default:
+                sectionResult = sectionRepo.findByLabel(
+                    sectionIdentifier.getIdentifier()
+                );
+                break;
+        }
+
+        if (!sectionResult.isPresent()) {
+            models.put("sectionIdentifier", sectionIdentifier);
+            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+        }
+        final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
+
+        if (!permissionChecker.isPermitted(
+            AdminPrivileges.ADMINISTER_ROLES, section
+        )) {
+            models.put("sectionIdentifier", sectionIdentifier);
+            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        }
+
+        final Optional<Role> result = section
+            .getRoles()
+            .stream()
+            .filter(role -> roleName.equals(role.getName()))
+            .findAny();
+
+        if (!result.isPresent()) {
+            models.put("sectionIdentifier", sectionIdentifier);
+            models.put("roleName", roleName);
+            return "org/librecms/ui/contentsection/configuration/role-not-found.xhtml";
+        }
+
+        final Role role = result.get();
+
+        for (final String privilege : permissionManager.listDefiniedPrivileges(
+            AdminPrivileges.class
+        )) {
+            if (grantedPermissions.contains(privilege)) {
+                permissionManager.grantPrivilege(privilege, role, section);
+            } else {
+                permissionManager.revokePrivilege(privilege, role, section);
+            }
+        }
+
+        final Folder documentsFolder = section.getRootDocumentsFolder();
+        for (final String privilege : permissionManager.listDefiniedPrivileges(
+            ItemPrivileges.class
+        )) {
+            if (grantedPermissions.contains(privilege)) {
+                permissionManager.grantPrivilege(
+                    privilege, role, documentsFolder
+                );
+            } else {
+                permissionManager.revokePrivilege(
+                    privilege, role, documentsFolder
+                );
+            }
+        }
+
+        final Folder assetsFolder = section.getRootAssetsFolder();
+        for (final String privilege : permissionManager.listDefiniedPrivileges(
+            AssetPrivileges.class
+        )) {
+            if (grantedPermissions.contains(privilege)) {
+                permissionManager.grantPrivilege(
+                    privilege, role, assetsFolder
+                );
+            } else {
+                permissionManager.revokePrivilege(
+                    privilege, role, assetsFolder
+                );
+            }
+        }
+
+        return String.format(
+            "redirect:%s/configuration/roles/%s",
+            sectionIdentifierParam,
+            roleName
+        );
+    }
+
+    @POST
+    @Path("/{roleName}/@members")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String updateRoleMembers(
+        @PathParam("sectionIdentifier") final String sectionIdentifierParam,
+        @PathParam("roleName") final String roleName,
+        @FormParam("roleMembers") final List<String> roleMembersParam
+    ) {
+        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
+            sectionIdentifierParam
+        );
+
+        final Optional<ContentSection> sectionResult;
+        switch (sectionIdentifier.getType()) {
+            case ID:
+                sectionResult = sectionRepo.findById(
+                    Long.parseLong(
+                        sectionIdentifier.getIdentifier()
+                    )
+                );
+                break;
+            case UUID:
+                sectionResult = sectionRepo.findByUuid(
+                    sectionIdentifier.getIdentifier()
+                );
+                break;
+            default:
+                sectionResult = sectionRepo.findByLabel(
+                    sectionIdentifier.getIdentifier()
+                );
+                break;
+        }
+
+        if (!sectionResult.isPresent()) {
+            models.put("sectionIdentifier", sectionIdentifier);
+            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+        }
+        final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
+
+        if (!permissionChecker.isPermitted(
+            AdminPrivileges.ADMINISTER_ROLES, section
+        )) {
+            models.put("sectionIdentifier", sectionIdentifier);
+            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        }
+
+        final Optional<Role> result = section
+            .getRoles()
+            .stream()
+            .filter(role -> roleName.equals(role.getName()))
+            .findAny();
+
+        if (!result.isPresent()) {
+            models.put("sectionIdentifier", sectionIdentifier);
+            models.put("roleName", roleName);
+            return "org/librecms/ui/contentsection/configuration/role-not-found.xhtml";
+        }
+
+        final Role role = result.get();
+
+        // Check for new members
+        final List<String> newMemberNames = roleMembersParam
+            .stream()
+            .filter(memberName -> !hasMember(role, memberName))
+            .collect(Collectors.toList());
+
+        // Check for removed members
+        final List<String> removedMemberNames = role
+            .getMemberships()
+            .stream()
+            .map(membership -> membership.getMember().getName())
+            .filter(memberName -> !roleMembersParam.contains(memberName))
+            .collect(Collectors.toList());
+
+        for (final String newMemberName : newMemberNames) {
+            addNewMember(role, newMemberName);
+        }
+
+        for (final String removedMemberName : removedMemberNames) {
+            removeMember(role, removedMemberName);
+        }
+
+        return String.format(
+            "redirect:%s/configuration/roles/%s",
+            sectionIdentifierParam,
+            roleName
+        );
+    }
+
+    @POST
+    @Path("/{roleName}/description/@add")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String addDescription(
+        @PathParam("sectionIdentifier") final String sectionIdentifierParam,
+        @PathParam("roleName") final String roleName,
+        @FormParam("locale") final String localeParam,
+        @FormParam("value") final String value
+    ) {
+        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
+            sectionIdentifierParam
+        );
+
+        final Optional<ContentSection> sectionResult;
+        switch (sectionIdentifier.getType()) {
+            case ID:
+                sectionResult = sectionRepo.findById(
+                    Long.parseLong(
+                        sectionIdentifier.getIdentifier()
+                    )
+                );
+                break;
+            case UUID:
+                sectionResult = sectionRepo.findByUuid(
+                    sectionIdentifier.getIdentifier()
+                );
+                break;
+            default:
+                sectionResult = sectionRepo.findByLabel(
+                    sectionIdentifier.getIdentifier()
+                );
+                break;
+        }
+
+        if (!sectionResult.isPresent()) {
+            models.put("sectionIdentifier", sectionIdentifier);
+            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+        }
+        final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
+
+        if (!permissionChecker.isPermitted(
+            AdminPrivileges.ADMINISTER_ROLES, section
+        )) {
+            models.put("sectionIdentifier", sectionIdentifier);
+            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        }
+
+        final Optional<Role> result = section
+            .getRoles()
+            .stream()
+            .filter(role -> roleName.equals(role.getName()))
+            .findAny();
+
+        if (!result.isPresent()) {
+            models.put("sectionIdentifier", sectionIdentifier);
+            models.put("roleName", roleName);
+            return "org/librecms/ui/contentsection/configuration/role-not-found.xhtml";
+        }
+
+        final Role role = result.get();
+        final Locale locale = new Locale(localeParam);
+        role.getDescription().addValue(locale, value);
+        roleRepo.save(role);
+
+        return String.format(
+            "redirect:%s/configuration/roles/%s",
+            sectionIdentifierParam,
+            roleName
+        );
+    }
+
+    @POST
+    @Path("/{roleName}/description/@edit/{locale}")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String editDescription(
+        @PathParam("sectionIdentifier") final String sectionIdentifierParam,
+        @PathParam("roleName") final String roleName,
+        @PathParam("locale") final String localeParam,
+        @FormParam("value") final String value
+    ) {
+        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
+            sectionIdentifierParam
+        );
+
+        final Optional<ContentSection> sectionResult;
+        switch (sectionIdentifier.getType()) {
+            case ID:
+                sectionResult = sectionRepo.findById(
+                    Long.parseLong(
+                        sectionIdentifier.getIdentifier()
+                    )
+                );
+                break;
+            case UUID:
+                sectionResult = sectionRepo.findByUuid(
+                    sectionIdentifier.getIdentifier()
+                );
+                break;
+            default:
+                sectionResult = sectionRepo.findByLabel(
+                    sectionIdentifier.getIdentifier()
+                );
+                break;
+        }
+
+        if (!sectionResult.isPresent()) {
+            models.put("sectionIdentifier", sectionIdentifier);
+            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+        }
+        final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
+
+        if (!permissionChecker.isPermitted(
+            AdminPrivileges.ADMINISTER_ROLES, section
+        )) {
+            models.put("sectionIdentifier", sectionIdentifier);
+            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        }
+
+        final Optional<Role> result = section
+            .getRoles()
+            .stream()
+            .filter(role -> roleName.equals(role.getName()))
+            .findAny();
+
+        if (!result.isPresent()) {
+            models.put("sectionIdentifier", sectionIdentifier);
+            models.put("roleName", roleName);
+            return "org/librecms/ui/contentsection/configuration/role-not-found.xhtml";
+        }
+
+        final Role role = result.get();
+        final Locale locale = new Locale(localeParam);
+        role.getDescription().addValue(locale, value);
+        roleRepo.save(role);
+
+        return String.format(
+            "redirect:%s/configuration/roles/%s",
+            sectionIdentifierParam,
+            roleName
+        );
+    }
+
+    @POST
+    @Path("/{roleName}/description/@remove/{locale}")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String removeDescription(
+        @PathParam("sectionIdentifier") final String sectionIdentifierParam,
+        @PathParam("roleName") final String roleName,
+        @PathParam("locale") final String localeParam,
+        @FormParam("value") final String value
+    ) {
+        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
+            sectionIdentifierParam
+        );
+
+        final Optional<ContentSection> sectionResult;
+        switch (sectionIdentifier.getType()) {
+            case ID:
+                sectionResult = sectionRepo.findById(
+                    Long.parseLong(
+                        sectionIdentifier.getIdentifier()
+                    )
+                );
+                break;
+            case UUID:
+                sectionResult = sectionRepo.findByUuid(
+                    sectionIdentifier.getIdentifier()
+                );
+                break;
+            default:
+                sectionResult = sectionRepo.findByLabel(
+                    sectionIdentifier.getIdentifier()
+                );
+                break;
+        }
+
+        if (!sectionResult.isPresent()) {
+            models.put("sectionIdentifier", sectionIdentifier);
+            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+        }
+        final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
+
+        if (!permissionChecker.isPermitted(
+            AdminPrivileges.ADMINISTER_ROLES, section
+        )) {
+            models.put("sectionIdentifier", sectionIdentifier);
+            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        }
+
+        final Optional<Role> result = section
+            .getRoles()
+            .stream()
+            .filter(role -> roleName.equals(role.getName()))
+            .findAny();
+
+        if (!result.isPresent()) {
+            models.put("sectionIdentifier", sectionIdentifier);
+            models.put("roleName", roleName);
+            return "org/librecms/ui/contentsection/configuration/role-not-found.xhtml";
+        }
+
+        final Role role = result.get();
+        final Locale locale = new Locale(localeParam);
+        role.getDescription().removeValue(locale);
+
+        return String.format(
+            "redirect:%s/configuration/roles/%s",
+            sectionIdentifierParam,
+            roleName
+        );
     }
 
     @POST
@@ -601,6 +1093,96 @@ public class ConfigurationRolesController {
         return section.equals(object)
                    || rootDocumentsFolder.equals(object)
                    || rootAssetsFolder.equals(object);
+    }
+
+    private List<RoleSectionPermissionModel> buildRolePermissions(
+        final Role role, final ContentSection section
+    ) {
+
+        final List<RoleSectionPermissionModel> adminPermissions
+            = permissionManager
+                .listDefiniedPrivileges(AdminPrivileges.class)
+                .stream()
+                .map(
+                    privilege -> buildRoleSectionPermissionModel(
+                        role, privilege, section
+                    )
+                ).collect(Collectors.toList());
+        final List<RoleSectionPermissionModel> itemPermissions
+            = permissionManager
+                .listDefiniedPrivileges(ItemPrivileges.class)
+                .stream()
+                .map(
+                    privilege -> buildRoleSectionPermissionModel(
+                        role, privilege, section.getRootDocumentsFolder()
+                    )
+                ).collect(Collectors.toList());
+        final List<RoleSectionPermissionModel> assetPermissions
+            = permissionManager
+                .listDefiniedPrivileges(AssetPrivileges.class)
+                .stream()
+                .map(
+                    privilege -> buildRoleSectionPermissionModel(
+                        role, privilege, section.getRootAssetsFolder()
+                    )
+                ).collect(Collectors.toList());
+        final List<RoleSectionPermissionModel> permissions = new ArrayList<>();
+        permissions.addAll(adminPermissions);
+        permissions.addAll(itemPermissions);
+        permissions.addAll(assetPermissions);
+        return permissions;
+    }
+
+    private RoleSectionPermissionModel buildRoleSectionPermissionModel(
+        final Role role, final String privilege, final ContentSection section
+    ) {
+        final RoleSectionPermissionModel model
+            = new RoleSectionPermissionModel();
+        model.setPrivilege(privilege);
+        model.setGranted(
+            permissionChecker.isPermitted(privilege, section, role)
+        );
+        return model;
+    }
+
+    private RoleSectionPermissionModel buildRoleSectionPermissionModel(
+        final Role role, final String privilege, final Folder folder
+    ) {
+        final RoleSectionPermissionModel model
+            = new RoleSectionPermissionModel();
+        model.setPrivilege(privilege);
+        model.setGranted(
+            permissionChecker.isPermitted(privilege, folder, role)
+        );
+        return model;
+    }
+
+    private boolean hasMember(final Role role, final String memberName) {
+        return role
+            .getMemberships()
+            .stream()
+            .map(membership -> membership.getMember().getName())
+            .anyMatch(name -> name.equals(memberName));
+    }
+
+    private void addNewMember(final Role role, final String newMemberName) {
+        final Optional<Party> result = partyRepository.findByName(
+            newMemberName
+        );
+        if (result.isPresent()) {
+            final Party party = result.get();
+            roleManager.assignRoleToParty(role, party);
+        }
+    }
+
+    private void removeMember(final Role role, final String removedMemberName) {
+        final Optional<Party> result = partyRepository.findByName(
+            removedMemberName
+        );
+        if (result.isPresent()) {
+            final Party party = result.get();
+            roleManager.removeRoleFromParty(role, party);
+        }
     }
 
 }
