@@ -22,26 +22,26 @@ import javax.ws.rs.PathParam;
  */
 @RequestScoped
 @Controller
-@Path("/{sectionIdentifier}/configuration/lifecycles")
-public class ConfigurationLifecyclesController {
+@Path("/{sectionIdentifier}/configuration/workflows")
+public class ConfigurationWorkflowController {
 
     @GET
     @Path("/")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String listLifecycleDefinitions(
+    public String listWorkflowDefinitions(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam
     ) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     @GET
-    @Path("/{lifecycleIdentifier}")
+    @Path("/{workflowIdentifier}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String showLifecycleDefinition(
+    public String showWorkflowDefinition(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
-        @PathParam("lifecycleIdentifier") final String lifecycleIdentiferParam
+        @PathParam("workflowIdentifier") final String workflowIdentiferParam
     ) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
@@ -49,7 +49,7 @@ public class ConfigurationLifecyclesController {
     @POST
     @Path("/@add")
     @AuthorizationRequired
-    public String addLifecycleDefinition(
+    public String addWorkflowDefinition(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @FormParam("label") final String label
     ) {
@@ -57,23 +57,23 @@ public class ConfigurationLifecyclesController {
     }
 
     @POST
-    @Path("/{lifecycleIdentifier}/@delete")
+    @Path("/{workflowIdentifier}/@delete")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String deleteLifecycleDefinition(
+    public String deleteWorkflowDefinition(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
-        @PathParam("lifecycleIdentifier") final String lifecycleIdentiferParam
+        @PathParam("workflowIdentifier") final String workflowIdentiferParam
     ) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     @POST
-    @Path("/{lifecycleIdentifier}/label/@add")
+    @Path("/{workflowIdentifier}/label/@add")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String addLifecycleDefinitionLabel(
+    public String addWorkflowDefinitionLabel(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
-        @PathParam("lifecycleIdentifier") final String lifecycleIdentiferParam,
+        @PathParam("workflowIdentifier") final String workflowIdentiferParam,
         @FormParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
@@ -81,12 +81,12 @@ public class ConfigurationLifecyclesController {
     }
 
     @POST
-    @Path("/{lifecycleIdentifier}/label/@edit/{locale}")
+    @Path("/{workflowIdentifier}/label/@edit/{locale}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String editLifecycleDefinitionLabel(
+    public String editWorkflowDefinitionLabel(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
-        @PathParam("lifecycleIdentifier") final String lifecycleIdentiferParam,
+        @PathParam("workflowIdentifier") final String workflowIdentiferParam,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
@@ -94,12 +94,12 @@ public class ConfigurationLifecyclesController {
     }
 
     @POST
-    @Path("/{lifecycleIdentifier}/label/@remove/{locale}")
+    @Path("/{workflowIdentifier}/label/@remove/{locale}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String removeLifecycleDefinitionLabel(
+    public String removeWorkflowDefinitionLabel(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
-        @PathParam("lifecycleIdentifier") final String lifecycleIdentiferParam,
+        @PathParam("workflowIdentifier") final String workflowIdentiferParam,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
@@ -107,12 +107,12 @@ public class ConfigurationLifecyclesController {
     }
 
     @POST
-    @Path("/{lifecycleIdentifier}/description/@add")
+    @Path("/{workflowIdentifier}/description/@add")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String addLifecycleDefinitionDescription(
+    public String addWorkflowDefinitionDescription(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
-        @PathParam("lifecycleIdentifier") final String lifecycleIdentiferParam,
+        @PathParam("workflowIdentifier") final String workflowIdentiferParam,
         @FormParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
@@ -120,12 +120,12 @@ public class ConfigurationLifecyclesController {
     }
 
     @POST
-    @Path("/{lifecycleIdentifier}/description/@edit/{locale}")
+    @Path("/{workflowIdentifier}/description/@edit/{locale}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String editLifecycleDefinitionDescription(
+    public String editWorkflowDefinitionDescription(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
-        @PathParam("lifecycleIdentifier") final String lifecycleIdentiferParam,
+        @PathParam("workflowIdentifier") final String workflowIdentiferParam,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
@@ -133,12 +133,12 @@ public class ConfigurationLifecyclesController {
     }
 
     @POST
-    @Path("/{lifecycleIdentifier}/description/@remove/{locale}")
+    @Path("/{workflowIdentifier}/description/@remove/{locale}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String removeLifecycleDefinitionDescription(
+    public String removeWorkflowDefinitionDescription(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
-        @PathParam("lifecycleIdentifier") final String lifecycleIdentiferParam,
+        @PathParam("workflowIdentifier") final String workflowIdentiferParam,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
@@ -146,53 +146,37 @@ public class ConfigurationLifecyclesController {
     }
 
     @POST
-    @Path("/{lifecycleIdentifier}/phases/@add")
+    @Path("/{workflowIdentifier}/tasks/@add")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String addPhase(
+    public String addTask(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
-        @PathParam("lifecycleIdentifier") final String lifecycleIdentiferParam,
-        @FormParam("label") final String label,
-        @FormParam("defaultDelay") final long defaultDelay,
-        @FormParam("defaultDuration") final long defaultDuration
+        @PathParam("workflowIdentifier") final String workflowIdentiferParam,
+        @FormParam("label") final String label
     ) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     @POST
-    @Path("/{lifecycleIdentifier}/phases/{phaseIdentifier}/@edit")
+    @Path("/{workflowIdentifier}/tasks/{taskIdentifier}/@remove")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String editPhase(
+    public String removeTask(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
-        @PathParam("lifecycleIdentifier") final String lifecycleIdentiferParam,
-        @PathParam("phaseIdentifier") final String phaseIdentifierParam,
-        @FormParam("defaultDelay") final long defaultDelay,
-        @FormParam("defaultDuration") final long defaultDuration
+        @PathParam("workflowIdentifier") final String workflowIdentiferParam,
+        @PathParam("taskIdentifier") final String taskIdentifierParam
     ) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     @POST
-    @Path("/{lifecycleIdentifier}/phases/{phaseIdentifier}/@remove")
+    @Path("/{workflowIdentifier}/tasks/{taskIdentifier}/label/@add")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String removePhase(
+    public String addTaskLabel(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
-        @PathParam("lifecycleIdentifier") final String lifecycleIdentiferParam,
-        @PathParam("phaseIdentifier") final String phaseIdentifierParam
-    ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
-    }
-
-    @POST
-    @Path("/{lifecycleIdentifier}/phases/{phaseIdentifier}/label/@add")
-    @AuthorizationRequired
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String addPhaseLabel(
-        @PathParam("sectionIdentifier") final String sectionIdentifierParam,
-        @PathParam("lifecycleIdentifier") final String lifecycleIdentiferParam,
-        @PathParam("phaseIdentifier") final String phaseIdentifierParam,
+        @PathParam("workflowIdentifier") final String workflowIdentiferParam,
+        @PathParam("taskIdentifier") final String taskIdentifierParam,
         @FormParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
@@ -200,13 +184,13 @@ public class ConfigurationLifecyclesController {
     }
 
     @POST
-    @Path("/{lifecycleIdentifier}/phases/{phaseIdentifier}/label/@edit/{locale}")
+    @Path("/{workflowIdentifier}/tasks/{taskIdentifier}/label/@edit/{locale}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String editPhaseLabel(
+    public String editTaskLabel(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
-        @PathParam("lifecycleIdentifier") final String lifecycleIdentiferParam,
-        @PathParam("phaseIdentifier") final String phaseIdentifierParam,
+        @PathParam("workflowIdentifier") final String workflowIdentiferParam,
+        @PathParam("taskIdentifier") final String taskIdentifierParam,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
@@ -215,26 +199,26 @@ public class ConfigurationLifecyclesController {
 
     @POST
     @Path(
-        "/{lifecycleIdentifier}/phases/{phaseIdentifier}/label/@remove/{locale}")
+        "/{workflowIdentifier}/tasks/{taskIdentifier}/label/@remove/{locale}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String removePhaseLabel(
+    public String removeTaskLabel(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
-        @PathParam("lifecycleIdentifier") final String lifecycleIdentiferParam,
-        @PathParam("phaseIdentifier") final String phaseIdentifierParam,
+        @PathParam("workflowIdentifier") final String workflowIdentiferParam,
+        @PathParam("taskIdentifier") final String taskIdentifierParam,
         @PathParam("locale") final String localeParam
     ) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     @POST
-    @Path("/{lifecycleIdentifier}/phases/{phaseIdentifier}/description/@add")
+    @Path("/{workflowIdentifier}/tasks/{taskIdentifier}/description/@add")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String addPhaseDescription(
+    public String addTaskDescription(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
-        @PathParam("lifecycleIdentifier") final String lifecycleIdentiferParam,
-        @PathParam("phaseIdentifier") final String phaseIdentifierParam,
+        @PathParam("workflowIdentifier") final String workflowIdentiferParam,
+        @PathParam("taskIdentifier") final String taskIdentifierParam,
         @FormParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
@@ -243,13 +227,13 @@ public class ConfigurationLifecyclesController {
 
     @POST
     @Path(
-        "/{lifecycleIdentifier}/phases/{phaseIdentifier}/description/@edit/{locale}")
+        "/{workflowIdentifier}/tasks/{taskIdentifier}/description/@edit/{locale}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String editPhaseDescription(
+    public String editTaskDescription(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
-        @PathParam("lifecycleIdentifier") final String lifecycleIdentiferParam,
-        @PathParam("phaseIdentifier") final String phaseIdentifierParam,
+        @PathParam("workflowIdentifier") final String workflowIdentiferParam,
+        @PathParam("taskIdentifier") final String taskIdentifierParam,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
@@ -258,14 +242,42 @@ public class ConfigurationLifecyclesController {
 
     @POST
     @Path(
-        "/{lifecycleIdentifier}/phases/{phaseIdentifier}/description/@remove/{locale}")
+        "/{workflowIdentifier}/tasks/{taskIdentifier}/description/@remove/{locale}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String removePhaseDescription(
+    public String removeTaskDescription(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
-        @PathParam("lifecycleIdentifier") final String lifecycleIdentiferParam,
-        @PathParam("phaseIdentifier") final String phaseIdentifierParam,
+        @PathParam("workflowIdentifier") final String workflowIdentiferParam,
+        @PathParam("taskIdentifier") final String taskIdentifierParam,
         @PathParam("locale") final String localeParam
+    ) {
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    @POST
+    @Path(
+        "/{workflowIdentifier}/tasks/{taskIdentifier}/blockingTasks/@add")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String addBlockingTask(
+        @PathParam("sectionIdentifier") final String sectionIdentifierParam,
+        @PathParam("workflowIdentifier") final String workflowIdentiferParam,
+        @PathParam("taskIdentifier") final String taskIdentifierParam,
+        @FormParam("blockingTask") final String blockingTaskParam
+    ) {
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    @POST
+    @Path(
+        "/{workflowIdentifier}/tasks/{taskIdentifier}/blockingTasks/{blockingTaskIdentifier}/@remove")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String removeBlockingTask(
+        @PathParam("sectionIdentifier") final String sectionIdentifierParam,
+        @PathParam("workflowIdentifier") final String workflowIdentiferParam,
+        @PathParam("taskIdentifier") final String taskIdentifierParam,
+        @PathParam("blockingTaskIdentifier") final String blockingTaskParam
     ) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }

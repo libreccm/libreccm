@@ -100,7 +100,7 @@ public class Workflow implements Identifiable, Serializable, Exportable {
     private String uuid;
 
     /**
-     * Indicates that this {@code Workflow} can be assigned to an object.
+     * Indicates that this {@code Workflow} can't be assigned to an object.
      */
     @Column(name = "abstract_workflow")
     private boolean abstractWorkflow;
