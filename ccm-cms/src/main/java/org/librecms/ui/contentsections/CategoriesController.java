@@ -251,7 +251,7 @@ public class CategoriesController {
                 categoryPathParam
             );
         } else {
-            return result.getResponseTemplate();
+            return result.getFailedResponseTemplate();
         }
     }
 
@@ -303,7 +303,7 @@ public class CategoriesController {
                 categoryPathParam
             );
         } else {
-            return result.getResponseTemplate();
+            return result.getFailedResponseTemplate();
         }
     }
 
@@ -352,7 +352,7 @@ public class CategoriesController {
                 categoryPathParam
             );
         } else {
-            return result.getResponseTemplate();
+            return result.getFailedResponseTemplate();
         }
     }
 
@@ -404,7 +404,7 @@ public class CategoriesController {
                 categoryPathParam
             );
         } else {
-            return result.getResponseTemplate();
+            return result.getFailedResponseTemplate();
         }
     }
 
@@ -458,7 +458,7 @@ public class CategoriesController {
                 categoryPathParam
             );
         } else {
-            return result.getResponseTemplate();
+            return result.getFailedResponseTemplate();
         }
     }
 
@@ -511,7 +511,7 @@ public class CategoriesController {
                 categoryPathParam
             );
         } else {
-            return result.getResponseTemplate();
+            return result.getFailedResponseTemplate();
         }
     }
 
@@ -549,7 +549,7 @@ public class CategoriesController {
                 categoryName
             );
         } else {
-            return result.getResponseTemplate();
+            return result.getFailedResponseTemplate();
         }
     }
 
@@ -604,7 +604,7 @@ public class CategoriesController {
                 categoryPath
             );
         } else {
-            return result.getResponseTemplate();
+            return result.getFailedResponseTemplate();
         }
     }
 
@@ -630,7 +630,7 @@ public class CategoriesController {
                 categoryPath
             );
         } else {
-            return result.getResponseTemplate();
+            return result.getFailedResponseTemplate();
         }
     }
 
@@ -693,7 +693,7 @@ public class CategoriesController {
                 categoryPath
             );
         } else {
-            return result.getResponseTemplate();
+            return result.getFailedResponseTemplate();
         }
     }
 
@@ -730,7 +730,7 @@ public class CategoriesController {
                 categoryManager.getCategoryPath(parentCategory)
             );
         } else {
-            return result.getResponseTemplate();
+            return result.getFailedResponseTemplate();
         }
     }
 
@@ -790,7 +790,7 @@ public class CategoriesController {
                 categoryManager.getCategoryPath(target)
             );
         } else {
-            return result.getResponseTemplate();
+            return result.getFailedResponseTemplate();
         }
     }
 
@@ -851,7 +851,7 @@ public class CategoriesController {
                 pathFragment
             );
         } else {
-            return result.getResponseTemplate();
+            return result.getFailedResponseTemplate();
         }
     }
 
@@ -919,7 +919,7 @@ public class CategoriesController {
                 categoryManager.getCategoryPath(category)
             );
         } else {
-            return result.getResponseTemplate();
+            return result.getFailedResponseTemplate();
         }
     }
 
