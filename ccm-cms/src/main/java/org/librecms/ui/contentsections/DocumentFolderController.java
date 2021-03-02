@@ -85,6 +85,9 @@ public class DocumentFolderController {
     private ContentSectionModel contentSectionModel;
 
     @Inject
+    private ContentSectionsUi sectionsUi;
+
+    @Inject
     private ContentTypeRepository contentTypeRepo;
 
     @Inject
@@ -101,9 +104,6 @@ public class DocumentFolderController {
 
     @Inject
     private Models models;
-
-    @Inject
-    private ContentSectionRepository sectionRepo;
 
     @Inject
     private IdentifierParser identifierParser;
@@ -128,6 +128,9 @@ public class DocumentFolderController {
 
     @Inject
     private CurrentUserDocumentPermissions currentUserPermissions;
+
+    @Inject
+    private ItemPermissionChecker itemPermissionChecker;
 
     @GET
     @Path("/")
@@ -156,24 +159,21 @@ public class DocumentFolderController {
         @QueryParam("maxResults") @DefaultValue("20") final int maxResults
     ) {
         final long start = System.currentTimeMillis();
-        final Optional<ContentSection> sectionResult = retrieveContentSection(
-            sectionIdentifier
-        );
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifier);
         LOGGER.info("Retrieved content section in {} ms",
                     System.currentTimeMillis() - start
         );
 
         if (!sectionResult.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifier);
         }
 
         final ContentSection section = sectionResult.get();
-        if (!permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, section.getRootDocumentsFolder()
-        )) {
-            models.put("sectionidentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!itemPermissionChecker.canEditItems(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionidentifier", sectionIdentifier
+            );
         }
 
         contentSectionModel.setSection(section);
@@ -194,16 +194,15 @@ public class DocumentFolderController {
 
                 documentFolderModel.setBreadcrumbs(buildBreadcrumbs(folderPath));
             } else {
-                models.put("contentSection", section.getLabel());
-                models.put("folderPath", folderPath);
-                return "org/librecms/ui/contentsection/documentfolder/documentfolder-not-found.xhtml";
+                return showDocumentFolderNotFound(section, folderPath);
             }
         }
 
-        if (!permissionChecker.isPermitted(ItemPrivileges.EDIT, folder)) {
-            models.put("sectionidentifier", sectionIdentifier);
-            models.put("folderPath", folderPath);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!itemPermissionChecker.canEditItems(folder)) {
+            return sectionsUi.showAccessDenied(
+                "sectionidentifier", sectionIdentifier,
+                "folderPath", folderPath
+            );
         }
 
         final List<DocumentFolderEntry> folderEntries = folderRepo
@@ -232,19 +231,13 @@ public class DocumentFolderController {
 
         documentFolderModel.setPath(folderPath);
         documentFolderModel.setCanCreateSubFolders(
-            permissionChecker.isPermitted(
-                ItemPrivileges.CREATE_NEW, folder
-            )
+            itemPermissionChecker.canCreateNewItems(folder)
         );
         documentFolderModel.setCanCreateItems(
-            permissionChecker.isPermitted(
-                ItemPrivileges.CREATE_NEW, folder
-            )
+            itemPermissionChecker.canCreateNewItems(folder)
         );
         documentFolderModel.setCanAdminister(
-            permissionChecker.isPermitted(
-                ItemPrivileges.ADMINISTER, folder
-            )
+            itemPermissionChecker.canAdministerItems(folder)
         );
         documentFolderModel.setGrantedPermissions(
             grantedPrivileges.buildPermissionsMatrix(section, folder)
@@ -266,32 +259,12 @@ public class DocumentFolderController {
     public String createTestData(
         @PathParam("sectionIdentifier") final String sectionIdentifier
     ) {
-        final Identifier identifier = identifierParser.parseIdentifier(
-            sectionIdentifier
-        );
-        final Optional<ContentSection> sectionResult;
-        switch (identifier.getType()) {
-            case ID:
-                sectionResult = sectionRepo.findById(
-                    Long.parseLong(identifier.getIdentifier())
-                );
-                break;
-            case UUID:
-                sectionResult = sectionRepo.findByUuid(identifier
-                    .getIdentifier());
-                break;
-            default:
-                sectionResult = sectionRepo.findByLabel(identifier
-                    .getIdentifier());
-                break;
-        }
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifier);
 
         if (sectionResult.isPresent()) {
             final ContentSection section = sectionResult.get();
-
-            if (permissionChecker.isPermitted(
-                ItemPrivileges.EDIT, section.getRootDocumentsFolder()
-            )) {
+            if (itemPermissionChecker.canEditItems(section)) {
                 if (section.getRootDocumentsFolder().getObjects().isEmpty()) {
                     folderManager.createFolder(
                         "folder-1", section.getRootDocumentsFolder()
@@ -343,12 +316,12 @@ public class DocumentFolderController {
                     return "org/librecms/ui/contentsection/documentfolder/testdata.xhtml";
                 }
             } else {
-                models.put("sectionidentifier", sectionIdentifier);
-                return "org/librecms/ui/contentsection/access-denied.xhtml";
+                return sectionsUi.showAccessDenied(
+                    "sectionidentifier", sectionIdentifier
+                );
             }
         } else {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifier);
         }
     }
 
@@ -374,21 +347,17 @@ public class DocumentFolderController {
         @PathParam("parentFolderPath") final String parentFolderPath,
         @FormParam("folderName") final String folderName
     ) {
-        final Optional<ContentSection> sectionResult = retrieveContentSection(
-            sectionIdentifier
-        );
-
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifier);
         if (!sectionResult.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifier);
         }
 
         final ContentSection section = sectionResult.get();
-        if (!permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, section.getRootDocumentsFolder()
-        )) {
-            models.put("sectionidentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!itemPermissionChecker.canEditItems(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifier
+            );
         }
 
         final Folder parentFolder;
@@ -404,18 +373,15 @@ public class DocumentFolderController {
             if (parentFolderResult.isPresent()) {
                 parentFolder = parentFolderResult.get();
             } else {
-                models.put("contentSection", section.getLabel());
-                models.put("folderPath", parentFolderPath);
-                return "org/librecms/ui/contentsection/documentfolder/documentfolder-not-found.xhtml";
+                return showDocumentFolderNotFound(section, folderName);
             }
         }
 
-        if (!permissionChecker.isPermitted(
-            ItemPrivileges.CREATE_NEW, parentFolder
-        )) {
-            models.put("sectionidentifier", sectionIdentifier);
-            models.put("folderPath", parentFolderPath);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!itemPermissionChecker.canCreateNewItems(parentFolder)) {
+            return sectionsUi.showAccessDenied(
+                "sectionidentifier", sectionIdentifier,
+                "folderPath", parentFolderPath
+            );
         }
 
         folderManager.createFolder(folderName, parentFolder);
@@ -451,20 +417,15 @@ public class DocumentFolderController {
         @PathParam("role") final String roleParam,
         @FormParam("permissions") final List<String> permissions
     ) {
-        final Optional<ContentSection> sectionResult = retrieveContentSection(
-            sectionIdentifier
-        );
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifier);
         if (!sectionResult.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifier);
         }
 
         final ContentSection section = sectionResult.get();
-        if (!permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, section.getRootDocumentsFolder()
-        )) {
-            models.put("sectionidentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!itemPermissionChecker.canEditItems(section)) {
+            sectionsUi.showAccessDenied("sectionidentifier", sectionIdentifier);
         }
 
         final Folder folder;
@@ -483,16 +444,15 @@ public class DocumentFolderController {
 
                 documentFolderModel.setBreadcrumbs(buildBreadcrumbs(folderPath));
             } else {
-                models.put("contentSection", section.getLabel());
-                models.put("folderPath", folderPath);
-                return "org/librecms/ui/contentsection/documentfolder/documentfolder-not-found.xhtml";
+                return showDocumentFolderNotFound(section, folderPath);
             }
         }
 
-        if (!permissionChecker.isPermitted(ItemPrivileges.ADMINISTER, folder)) {
-            models.put("sectionidentifier", sectionIdentifier);
-            models.put("folderPath", folderPath);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!itemPermissionChecker.canAdministerItems(folder)) {
+            return sectionsUi.showAccessDenied(
+                "sectionidentifier", sectionIdentifier,
+                "folderPath", folderPath
+            );
         }
 
         final Optional<Role> roleResult = roleRepo.findByName(roleParam);
@@ -537,20 +497,17 @@ public class DocumentFolderController {
         @PathParam("folderPath") final String folderPath,
         @FormParam("folderName") final String folderName
     ) {
-        final Optional<ContentSection> sectionResult = retrieveContentSection(
-            sectionIdentifier
-        );
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifier);
         if (!sectionResult.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifier);
         }
 
         final ContentSection section = sectionResult.get();
-        if (!permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, section.getRootDocumentsFolder()
-        )) {
-            models.put("sectionidentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!itemPermissionChecker.canEditItems(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionidentifier", sectionIdentifier
+            );
         }
 
         final Folder folder;
@@ -565,15 +522,14 @@ public class DocumentFolderController {
 
             documentFolderModel.setBreadcrumbs(buildBreadcrumbs(folderPath));
         } else {
-            models.put("contentSection", section.getLabel());
-            models.put("folderPath", folderPath);
-            return "org/librecms/ui/contentsection/documentfolder/documentfolder-not-found.xhtml";
+            return showDocumentFolderNotFound(section, folderPath);
         }
 
-        if (!permissionChecker.isPermitted(ItemPrivileges.EDIT, folder)) {
-            models.put("sectionidentifier", sectionIdentifier);
-            models.put("folderPath", folderPath);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!itemPermissionChecker.canEditItems(folder)) {
+            return sectionsUi.showAccessDenied(
+                "sectionidentifier", sectionIdentifier,
+                "folderPath", folderPath
+            );
         }
 
         folder.setName(folderName);
@@ -590,32 +546,6 @@ public class DocumentFolderController {
             sectionIdentifier,
             returnFolderPath
         );
-    }
-
-    private Optional<ContentSection> retrieveContentSection(
-        final String sectionIdentifier
-    ) {
-        final Identifier identifier = identifierParser.parseIdentifier(
-            sectionIdentifier
-        );
-
-        final Optional<ContentSection> sectionResult;
-        switch (identifier.getType()) {
-            case ID:
-                sectionResult = sectionRepo.findById(
-                    Long.parseLong(identifier.getIdentifier())
-                );
-                break;
-            case UUID:
-                sectionResult = sectionRepo.findByUuid(identifier
-                    .getIdentifier());
-                break;
-            default:
-                sectionResult = sectionRepo.findByLabel(identifier
-                    .getIdentifier());
-                break;
-        }
-        return sectionResult;
     }
 
     private List<FolderBreadcrumbsModel> buildBreadcrumbs(
@@ -765,6 +695,14 @@ public class DocumentFolderController {
         }
 
         return row;
+    }
+
+    private String showDocumentFolderNotFound(
+        final ContentSection section, final String folderPath
+    ) {
+        models.put("contentSection", section.getLabel());
+        models.put("folderPath", folderPath);
+        return "org/librecms/ui/contentsection/documentfolder/documentfolder-not-found.xhtml";
     }
 
 }

@@ -7,11 +7,12 @@ package org.librecms.ui.contentsections;
 
 import org.libreccm.api.Identifier;
 import org.libreccm.api.IdentifierParser;
+import org.libreccm.security.PermissionChecker;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
@@ -33,11 +34,16 @@ class ContentSectionsUi {
 
     private Models models;
 
+    private PermissionChecker permissionChecker;
+
     public Optional<ContentSection> findContentSection(
         final String identifierParam
     ) {
         final Identifier sectionIdentifier = identifierParser.parseIdentifier(
-            identifierParam
+            Objects.requireNonNull(
+                identifierParam,
+                "Can't retrieve a ContentSection for identifier null."
+            )
         );
 
         switch (sectionIdentifier.getType()) {
@@ -82,42 +88,41 @@ class ContentSectionsUi {
         return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
     }
 
-    public RetrieveResult<ContentSection> retrieveContentSection(
-        final String identifierParam
-    ) {
-        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
-            identifierParam
-        );
-
-        final Optional<ContentSection> sectionResult;
-        switch (sectionIdentifier.getType()) {
-            case ID:
-                sectionResult = sectionRepo.findById(
-                    Long.parseLong(
-                        sectionIdentifier.getIdentifier()
-                    )
-                );
-                break;
-            case UUID:
-                sectionResult = sectionRepo.findByUuid(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-            default:
-                sectionResult = sectionRepo.findByLabel(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-        }
-
-        if (sectionResult.isPresent()) {
-            return RetrieveResult.successful(sectionResult.get());
-        } else {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return RetrieveResult.failed(
-                "org/librecms/ui/contentsection/contentsection-not-found.xhtml"
-            );
-        }
-    }
-
+//    public RetrieveResult<ContentSection> retrieveContentSection(
+//        final String identifierParam
+//    ) {
+//        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
+//            identifierParam
+//        );
+//
+//        final Optional<ContentSection> sectionResult;
+//        switch (sectionIdentifier.getType()) {
+//            case ID:
+//                sectionResult = sectionRepo.findById(
+//                    Long.parseLong(
+//                        sectionIdentifier.getIdentifier()
+//                    )
+//                );
+//                break;
+//            case UUID:
+//                sectionResult = sectionRepo.findByUuid(
+//                    sectionIdentifier.getIdentifier()
+//                );
+//                break;
+//            default:
+//                sectionResult = sectionRepo.findByLabel(
+//                    sectionIdentifier.getIdentifier()
+//                );
+//                break;
+//        }
+//
+//        if (sectionResult.isPresent()) {
+//            return RetrieveResult.successful(sectionResult.get());
+//        } else {
+//            models.put("sectionIdentifier", sectionIdentifier);
+//            return RetrieveResult.failed(
+//                "org/librecms/ui/contentsection/contentsection-not-found.xhtml"
+//            );
+//        }
+//    }
 }

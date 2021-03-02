@@ -105,8 +105,7 @@ public class ConfigurationController {
                    || permissionChecker.isPermitted(
                 AdminPrivileges.ADMINISTER_ROLES, section
             )
-                   || permissionChecker.isPermitted(
-                AdminPrivileges.ADMINISTER_WORKFLOW, section
+                   || permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_WORKFLOWS, section
             );
     }
 

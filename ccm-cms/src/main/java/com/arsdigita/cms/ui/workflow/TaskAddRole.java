@@ -164,8 +164,7 @@ class TaskAddRole extends CMSForm {
             final PermissionChecker permissionChecker = cdiUtil.findBean(
                 PermissionChecker.class);
 
-            if (!permissionChecker.isPermitted(
-                AdminPrivileges.ADMINISTER_WORKFLOW)) {
+            if (!permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_WORKFLOWS)) {
                 throw new FormProcessException(
                     new GlobalizedMessage(
                         "cms.ui.workflow.insufficient_privileges",

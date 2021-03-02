@@ -190,8 +190,7 @@ public class ContentSectionPage extends CMSPage implements ActionListener {
                     m_tabbedPane.setTabVisible(
                         state,
                         m_workflowPane,
-                        permissionChecker.isPermitted(
-                            AdminPrivileges.ADMINISTER_WORKFLOW));
+                        permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_WORKFLOWS));
                     m_tabbedPane.setTabVisible(
                         state,
                         m_categoryPane,

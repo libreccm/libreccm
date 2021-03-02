@@ -128,7 +128,7 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
     protected class AdminVisible extends VisibilityComponent {
 
         public AdminVisible(final Component child) {
-            super(child, AdminPrivileges.ADMINISTER_WORKFLOW);
+            super(child, AdminPrivileges.ADMINISTER_WORKFLOWS);
         }
 
     }
@@ -184,7 +184,7 @@ abstract class BaseWorkflowItemPane extends BaseItemPane {
         TaskDeleteForm() {
             super(new Label(gz("cms.ui.workflow.task.delete_prompt")));
 
-            addSecurityListener(AdminPrivileges.ADMINISTER_WORKFLOW);
+            addSecurityListener(AdminPrivileges.ADMINISTER_WORKFLOWS);
         }
 
         @Override

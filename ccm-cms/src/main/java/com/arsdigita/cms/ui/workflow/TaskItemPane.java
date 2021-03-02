@@ -119,14 +119,13 @@ final class TaskItemPane extends BaseItemPane {
         final PermissionChecker permissionChecker = cdiUtil.findBean(
             PermissionChecker.class);
 
-        return permissionChecker.isPermitted(
-            AdminPrivileges.ADMINISTER_WORKFLOW);
+        return permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_WORKFLOWS);
     }
 
     private class AdminVisible extends VisibilityComponent {
 
         public AdminVisible(final Component child) {
-            super(child, AdminPrivileges.ADMINISTER_WORKFLOW);
+            super(child, AdminPrivileges.ADMINISTER_WORKFLOWS);
         }
 
     }

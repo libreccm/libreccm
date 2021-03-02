@@ -20,7 +20,7 @@ public class AssetFolderTree
     extends AbstractFolderTree<AssetFolderTreeNode, AssetPermissionsModel> {
 
     @Inject
-    private AssetPermissions assetPermissions;
+    private AssetPermissionsModelProvider assetPermissions;
 
     @Override
     public AssetFolderTreeNode newFolderTreeNode() {

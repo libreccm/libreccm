@@ -5,8 +5,6 @@
  */
 package org.librecms.ui.contentsections;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.PermissionChecker;
@@ -18,7 +16,6 @@ import org.librecms.contentsection.AssetFolderEntry;
 import org.librecms.contentsection.AssetManager;
 import org.librecms.contentsection.AssetRepository;
 import org.librecms.contentsection.ContentSection;
-import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.FolderManager;
 import org.librecms.contentsection.FolderRepository;
@@ -46,7 +43,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -63,7 +59,10 @@ public class AssetFolderController {
     private AssetFolderTree assetFolderTree;
 
     @Inject
-    private AssetPermissions assetPermissions;
+    private AssetPermissionsModelProvider assetPermissions;
+
+    @Inject
+    private AssetPermissionsChecker assetPermissionsChecker;
 
     @Inject
     private AssetManager assetManager;
@@ -73,9 +72,6 @@ public class AssetFolderController {
 
     @Inject
     private ContentSectionModel contentSectionModel;
-
-    @Inject
-    private ContentSectionRepository sectionRepo;
 
     @Inject
     private ContentSectionsUi sectionsUi;
@@ -99,17 +95,10 @@ public class AssetFolderController {
     private Models models;
 
     @Inject
-    private PermissionChecker permissionChecker;
-
-    @Inject
     private PermissionManager permissionManager;
 
     @Inject
     private RoleRepository roleRepo;
-
-    private static final Logger LOGGER = LogManager.getLogger(
-        AssetFolderController.class
-    );
 
     @GET
     @Path("/")
@@ -145,9 +134,7 @@ public class AssetFolderController {
         }
         final ContentSection section = sectionResult.get();
 
-        if (!permissionChecker.isPermitted(
-            AssetPrivileges.EDIT, section.getRootAssetsFolder()
-        )) {
+        if (!assetPermissionsChecker.canEditAssets(section)) {
             sectionsUi.showAccessDenied("sectionIdentifier", sectionIdentifier);
         }
 
@@ -172,7 +159,7 @@ public class AssetFolderController {
             }
         }
 
-        if (!permissionChecker.isPermitted(AssetPrivileges.EDIT, folder)) {
+        if (!assetPermissionsChecker.canEditAssets(folder)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifier,
                 "folderPath", folderPath
@@ -200,10 +187,10 @@ public class AssetFolderController {
 
         assetFolderModel.setPath(folderPath);
         assetFolderModel.setCanCreateSubFolders(
-            permissionChecker.isPermitted(AssetPrivileges.CREATE_NEW, folder)
+            assetPermissionsChecker.canCreateAssets(folder)
         );
         assetFolderModel.setCanCreateAssets(
-            permissionChecker.isPermitted(AssetPrivileges.CREATE_NEW, folder)
+            assetPermissionsChecker.canCreateAssets(folder)
         );
         assetFolderModel.setGrantedPermissions(
             grantedPrivileges.buildPermissionsMatrix(section, folder)
@@ -240,19 +227,17 @@ public class AssetFolderController {
         @PathParam("parentFolderPath") final String parentFolderPath,
         @FormParam("folderName") final String folderName
     ) {
-        final RetrieveResult<ContentSection> sectionResult = sectionsUi
-            .retrieveContentSection(sectionIdentifier);
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifier);
 
         final ContentSection section;
-        if (sectionResult.isSuccessful()) {
-            section = sectionResult.getResult();
+        if (sectionResult.isPresent()) {
+            section = sectionResult.get();
         } else {
-            return sectionResult.getFailedResponseTemplate();
+            return sectionsUi.showContentSectionNotFound(sectionIdentifier);
         }
 
-        if (!permissionChecker.isPermitted(
-            AssetPrivileges.EDIT, section.getRootAssetsFolder()
-        )) {
+        if (!assetPermissionsChecker.canEditAssets(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifier
             );
@@ -277,9 +262,7 @@ public class AssetFolderController {
             }
         }
 
-        if (!permissionChecker.isPermitted(
-            AssetPrivileges.CREATE_NEW, parentFolder
-        )) {
+        if (!assetPermissionsChecker.canEditAssets(parentFolder)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifier,
                 "folderPath", parentFolderPath
@@ -320,17 +303,15 @@ public class AssetFolderController {
         @FormParam("permissions") final List<String> permissions
     ) {
 
-        final RetrieveResult<ContentSection> sectionResult = sectionsUi
-            .retrieveContentSection(sectionIdentifier);
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifier);
         final ContentSection section;
-        if (sectionResult.isSuccessful()) {
-            section = sectionResult.getResult();
+        if (sectionResult.isPresent()) {
+            section = sectionResult.get();
         } else {
-            return sectionResult.getFailedResponseTemplate();
+            return sectionsUi.showContentSectionNotFound(sectionIdentifier);
         }
-        if (!permissionChecker.isPermitted(
-            AssetPrivileges.EDIT, section.getRootAssetsFolder()
-        )) {
+        if (!assetPermissionsChecker.canEditAssets(section)) {
             models.put("sectionidentifier", sectionIdentifier);
             return "org/librecms/ui/contentsection/access-denied.xhtml";
         }
@@ -357,7 +338,7 @@ public class AssetFolderController {
             }
         }
 
-        if (!permissionChecker.isPermitted(AssetPrivileges.EDIT, folder)) {
+        if (!assetPermissionsChecker.canEditAssets(folder)) {
             models.put("sectionidentifier", sectionIdentifier);
             models.put("folderPath", folderPath);
             return "org/librecms/ui/contentsection/access-denied.xhtml";
@@ -405,17 +386,15 @@ public class AssetFolderController {
         @PathParam("folderPath") final String folderPath,
         @FormParam("folderName") final String folderName
     ) {
-        final RetrieveResult<ContentSection> sectionResult = sectionsUi
-            .retrieveContentSection(sectionIdentifier);
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifier);
         final ContentSection section;
-        if (sectionResult.isSuccessful()) {
-            section = sectionResult.getResult();
+        if (sectionResult.isPresent()) {
+            section = sectionResult.get();
         } else {
-            return sectionResult.getFailedResponseTemplate();
+            return sectionsUi.showContentSectionNotFound(sectionIdentifier);
         }
-        if (!permissionChecker.isPermitted(
-            AssetPrivileges.EDIT, section.getRootAssetsFolder()
-        )) {
+        if (!assetPermissionsChecker.canEditAssets(section)) {
             models.put("sectionidentifier", sectionIdentifier);
             return "org/librecms/ui/contentsection/access-denied.xhtml";
         }
@@ -437,7 +416,7 @@ public class AssetFolderController {
             return "org/librecms/ui/contentsection/assetfolder/assetfolder-not-found.xhtml";
         }
 
-        if (!permissionChecker.isPermitted(AssetPrivileges.EDIT, folder)) {
+        if (!assetPermissionsChecker.canEditAssets(folder)) {
             models.put("sectionidentifier", sectionIdentifier);
             models.put("folderPath", folderPath);
             return "org/librecms/ui/contentsection/access-denied.xhtml";
@@ -459,31 +438,6 @@ public class AssetFolderController {
         );
     }
 
-//    private Optional<ContentSection> retrieveContentSection(
-//        final String sectionIdentifier
-//    ) {
-//        final Identifier identifier = identifierParser.parseIdentifier(
-//            sectionIdentifier
-//        );
-//
-//        final Optional<ContentSection> sectionResult;
-//        switch (identifier.getType()) {
-//            case ID:
-//                sectionResult = sectionRepo.findById(
-//                    Long.parseLong(identifier.getIdentifier())
-//                );
-//                break;
-//            case UUID:
-//                sectionResult = sectionRepo.findByUuid(identifier
-//                    .getIdentifier());
-//                break;
-//            default:
-//                sectionResult = sectionRepo.findByLabel(identifier
-//                    .getIdentifier());
-//                break;
-//        }
-//        return sectionResult;
-//    }
     private String showAssetFolderNotFound(
         final ContentSection section, final String folderPath
     ) {

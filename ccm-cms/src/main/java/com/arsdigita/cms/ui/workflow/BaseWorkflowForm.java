@@ -49,7 +49,7 @@ class BaseWorkflowForm extends BaseForm {
         addAction(new Finish());
         addAction(new Cancel());
 
-        addSecurityListener(AdminPrivileges.ADMINISTER_WORKFLOW);
+        addSecurityListener(AdminPrivileges.ADMINISTER_WORKFLOWS);
         addValidationListener(new ValidationListener());
     }
 

@@ -5,10 +5,8 @@
  */
 package org.librecms.ui.contentsections;
 
-import org.libreccm.security.PermissionChecker;
 import org.librecms.contentsection.Asset;
 import org.librecms.contentsection.Folder;
-import org.librecms.contentsection.privileges.AssetPrivileges;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -18,29 +16,29 @@ import javax.inject.Inject;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Dependent
-class AssetPermissions {
+class AssetPermissionsModelProvider {
 
     @Inject
-    private PermissionChecker permissionChecker;
+    private AssetPermissionsChecker permissionChecker;
 
     public AssetPermissionsModel buildAssetPermissionsModel(
         final Folder folder
     ) {
         final AssetPermissionsModel model = new AssetPermissionsModel();
         model.setGrantedCreateNew(
-            permissionChecker.isPermitted(AssetPrivileges.CREATE_NEW, folder)
+            permissionChecker.canCreateAssets(folder)
         );
         model.setGrantedDelete(
-            permissionChecker.isPermitted(AssetPrivileges.DELETE, folder)
+            permissionChecker.canDeleteAssets(folder)
         );
         model.setGrantedEdit(
-            permissionChecker.isPermitted(AssetPrivileges.EDIT, folder)
+            permissionChecker.canEditAssets(folder)
         );
         model.setGrantedUse(
-            permissionChecker.isPermitted(AssetPrivileges.USE, folder)
+            permissionChecker.canUseAssets(folder)
         );
         model.setGrantedView(
-            permissionChecker.isPermitted(AssetPrivileges.VIEW, folder)
+            permissionChecker.canViewAssets(folder)
         );
 
         return model;
@@ -51,19 +49,19 @@ class AssetPermissions {
     ) {
         final AssetPermissionsModel model = new AssetPermissionsModel();
         model.setGrantedCreateNew(
-            permissionChecker.isPermitted(AssetPrivileges.CREATE_NEW, asset)
+            permissionChecker.canCreateAssets(asset)
         );
         model.setGrantedDelete(
-            permissionChecker.isPermitted(AssetPrivileges.DELETE, asset)
+            permissionChecker.canDeleteAssets(asset)
         );
         model.setGrantedEdit(
-            permissionChecker.isPermitted(AssetPrivileges.EDIT, asset)
+            permissionChecker.canEditAssets(asset)
         );
         model.setGrantedUse(
-            permissionChecker.isPermitted(AssetPrivileges.USE, asset)
+            permissionChecker.canUseAssets(asset)
         );
         model.setGrantedView(
-            permissionChecker.isPermitted(AssetPrivileges.VIEW, asset)
+            permissionChecker.canViewAssets(asset)
         );
 
         return model;

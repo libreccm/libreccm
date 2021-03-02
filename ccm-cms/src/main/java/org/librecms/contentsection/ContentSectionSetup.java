@@ -201,7 +201,7 @@ public class ContentSectionSetup extends AbstractCcmApplicationSetup {
         grantPermissions(manager,
                          section,
                          AdminPrivileges.ADMINISTER_ROLES,
-                         AdminPrivileges.ADMINISTER_WORKFLOW,
+                         AdminPrivileges.ADMINISTER_WORKFLOWS,
                          AdminPrivileges.ADMINISTER_LIFECYLES,
                          AdminPrivileges.ADMINISTER_CATEGORIES,
                          AdminPrivileges.ADMINISTER_CONTENT_TYPES);

@@ -56,7 +56,7 @@ public final class WorkflowAdminPane extends BaseAdminPane {
                                          getDeleteLink()));
 
         addAction(new VisibilityComponent(
-            getAddLink(), AdminPrivileges.ADMINISTER_WORKFLOW));
+            getAddLink(), AdminPrivileges.ADMINISTER_WORKFLOWS));
     }
 
     private class DeleteForm extends BaseDeleteForm {
@@ -64,7 +64,7 @@ public final class WorkflowAdminPane extends BaseAdminPane {
         DeleteForm() {
             super(gz("cms.ui.workflow.delete_prompt"));
 
-            addSecurityListener(AdminPrivileges.ADMINISTER_WORKFLOW);
+            addSecurityListener(AdminPrivileges.ADMINISTER_WORKFLOWS);
         }
 
         @Override

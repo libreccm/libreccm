@@ -94,8 +94,7 @@ public class ContentSectionModel {
     }
 
     public boolean getCanAdministerWorkflows() {
-        return permissionChecker.isPermitted(
-            AdminPrivileges.ADMINISTER_WORKFLOW, section
+        return permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_WORKFLOWS, section
         );
     }
 

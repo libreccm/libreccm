@@ -186,7 +186,7 @@ public class ContentSectionManager {
         addRoleToContentSection(section,
                                 MANAGER,
                                 AdminPrivileges.ADMINISTER_ROLES,
-                                AdminPrivileges.ADMINISTER_WORKFLOW,
+                                AdminPrivileges.ADMINISTER_WORKFLOWS,
                                 AdminPrivileges.ADMINISTER_LIFECYLES,
                                 AdminPrivileges.ADMINISTER_CATEGORIES,
                                 AdminPrivileges.ADMINISTER_CONTENT_TYPES,
@@ -424,7 +424,7 @@ public class ContentSectionManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void addWorkflowTemplateToContentSection(
         final Workflow template,
-        @RequiresPrivilege(AdminPrivileges.ADMINISTER_WORKFLOW)
+        @RequiresPrivilege(AdminPrivileges.ADMINISTER_WORKFLOWS)
         final ContentSection section) {
 
         Objects.requireNonNull(template);
@@ -451,7 +451,7 @@ public class ContentSectionManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void removeWorkflowTemplateFromContentSection(
         final Workflow template,
-        @RequiresPrivilege(AdminPrivileges.ADMINISTER_WORKFLOW)
+        @RequiresPrivilege(AdminPrivileges.ADMINISTER_WORKFLOWS)
         final ContentSection section) {
 
         section.removeWorkflowTemplate(template);

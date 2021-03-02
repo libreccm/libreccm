@@ -71,7 +71,7 @@ public final class AdminPrivileges {
      * 
      * @see ContentSection#workflowTemplates
      */
-    public static final String ADMINISTER_WORKFLOW = "administer_workflow";
+    public static final String ADMINISTER_WORKFLOWS = "administer_workflows";
 
     private AdminPrivileges() {
         //Nothing
