@@ -54,6 +54,9 @@ import javax.ws.rs.PathParam;
 public class ConfigurationDocumentTypesController {
 
     @Inject
+    private AdminPermissionsChecker adminPermissionsChecker;
+
+    @Inject
     private CmsAdminMessages cmsAdminMessages;
 
     @Inject
@@ -63,7 +66,7 @@ public class ConfigurationDocumentTypesController {
     private ContentSectionManager sectionManager;
 
     @Inject
-    private ContentSectionRepository sectionRepo;
+    private ContentSectionsUi sectionsUi;
 
     @Inject
     private ContentTypeManager typeManager;
@@ -99,43 +102,17 @@ public class ConfigurationDocumentTypesController {
     public String listDocumentTypes(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam
     ) {
-        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
-            sectionIdentifierParam
-        );
-
-        final Optional<ContentSection> sectionResult;
-        switch (sectionIdentifier.getType()) {
-            case ID:
-                sectionResult = sectionRepo.findById(
-                    Long.parseLong(
-                        sectionIdentifier.getIdentifier()
-                    )
-                );
-                break;
-            case UUID:
-                sectionResult = sectionRepo.findByUuid(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-            default:
-                sectionResult = sectionRepo.findByLabel(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-        }
-
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
         if (!sectionResult.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-
-        if (!permissionChecker.isPermitted(
-            AdminPrivileges.ADMINISTER_CONTENT_TYPES, section
-        )) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!adminPermissionsChecker.canAdministerContentTypes(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
         }
 
         documentTypesModel.setAssignedTypes(
@@ -201,43 +178,17 @@ public class ConfigurationDocumentTypesController {
         @FormParam("defaultLifecycleUuid") final String defaultLifecycleUuid,
         @FormParam("defaultWorkflowUuid") final String defaultWorkflowUuid
     ) {
-        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
-            sectionIdentifierParam
-        );
-
-        final Optional<ContentSection> sectionResult;
-        switch (sectionIdentifier.getType()) {
-            case ID:
-                sectionResult = sectionRepo.findById(
-                    Long.parseLong(
-                        sectionIdentifier.getIdentifier()
-                    )
-                );
-                break;
-            case UUID:
-                sectionResult = sectionRepo.findByUuid(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-            default:
-                sectionResult = sectionRepo.findByLabel(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-        }
-
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
         if (!sectionResult.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-
-        if (!permissionChecker.isPermitted(
-            AdminPrivileges.ADMINISTER_CONTENT_TYPES, section
-        )) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!adminPermissionsChecker.canAdministerContentTypes(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
         }
 
         final Optional<ContentTypeInfo> typeInfo = typesManager
@@ -309,113 +260,6 @@ public class ConfigurationDocumentTypesController {
         );
     }
 
-//    @GET
-//    @Path("/{documentType}")
-//    public String showDocumentType(
-//        @PathParam("sectionIdentifier") final String sectionIdentifierParam,
-//        @PathParam("documentType") final String documentTypeParam
-//    ) {
-//        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
-//            sectionIdentifierParam
-//        );
-//
-//        final Optional<ContentSection> sectionResult;
-//        switch (sectionIdentifier.getType()) {
-//            case ID:
-//                sectionResult = sectionRepo.findById(
-//                    Long.parseLong(
-//                        sectionIdentifier.getIdentifier()
-//                    )
-//                );
-//                break;
-//            case UUID:
-//                sectionResult = sectionRepo.findByUuid(
-//                    sectionIdentifier.getIdentifier()
-//                );
-//                break;
-//            default:
-//                sectionResult = sectionRepo.findByLabel(
-//                    sectionIdentifier.getIdentifier()
-//                );
-//                break;
-//        }
-//
-//        if (!sectionResult.isPresent()) {
-//            models.put("sectionIdentifier", sectionIdentifier);
-//            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
-//        }
-//        final ContentSection section = sectionResult.get();
-//        sectionModel.setSection(section);
-//
-//        if (!permissionChecker.isPermitted(
-//            AdminPrivileges.ADMINISTER_CONTENT_TYPES, section
-//        )) {
-//            models.put("sectionIdentifier", sectionIdentifier);
-//            return "org/librecms/ui/contentsection/access-denied.xhtml";
-//        }
-//
-//        final Optional<ContentType> typeResult = section
-//            .getContentTypes()
-//            .stream()
-//            .filter(type -> type.getContentItemClass().equals(documentTypeParam))
-//            .findAny();
-//
-//        if (!typeResult.isPresent()) {
-//            return "org/librecms/ui/contentsection/configuration/documenttype-not-found.xhtml";
-//        }
-//
-//        final ContentType type = typeResult.get();
-//
-//        documentTypeModel.setContentItemClass(sectionIdentifierParam);
-//        documentTypeModel.setDescriptions(
-//            type
-//                .getDescription()
-//                .getValues()
-//                .entrySet()
-//                .stream()
-//                .collect(Collectors.toMap(
-//                    entry -> entry.getKey().toString(),
-//                    entry -> entry.getValue()
-//                ))
-//        );
-//        documentTypeModel.setLabels(
-//            type
-//                .getLabel()
-//                .getValues()
-//                .entrySet()
-//                .stream()
-//                .collect(Collectors.toMap(
-//                    entry -> entry.getKey().toString(),
-//                    entry -> entry.getValue()
-//                ))
-//        );
-//
-//        final LifecycleDefinition defaultLifecycle = type.getDefaultLifecycle();
-//        documentTypeModel.setLifecycles(
-//            section
-//                .getLifecycleDefinitions()
-//                .stream()
-//                .map(
-//                    def -> buildLifecycleModel(
-//                        def, def.equals(defaultLifecycle)
-//                    )
-//                ).collect(Collectors.toList())
-//        );
-//
-//        final Workflow defaultWorkflow = type.getDefaultWorkflow();
-//        documentTypeModel.setWorkflows(
-//            section
-//                .getWorkflowTemplates()
-//                .stream()
-//                .map(
-//                    template -> buildWorkflowModel(
-//                        template, template.equals(defaultWorkflow)
-//                    )
-//                ).collect(Collectors.toList())
-//        );
-//
-//        return "org/librecms/ui/contentsection/configuration/documenttype.xhtml";
-//    }
     @POST
     @Path("/{documentType}")
     @AuthorizationRequired
@@ -427,43 +271,17 @@ public class ConfigurationDocumentTypesController {
         @FormParam("defaultWorkflowUuid") final String defaultWorkflowUuid,
         @FormParam("roleUuids") final Set<String> roleUuids
     ) {
-        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
-            sectionIdentifierParam
-        );
-
-        final Optional<ContentSection> sectionResult;
-        switch (sectionIdentifier.getType()) {
-            case ID:
-                sectionResult = sectionRepo.findById(
-                    Long.parseLong(
-                        sectionIdentifier.getIdentifier()
-                    )
-                );
-                break;
-            case UUID:
-                sectionResult = sectionRepo.findByUuid(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-            default:
-                sectionResult = sectionRepo.findByLabel(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-        }
-
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
         if (!sectionResult.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-
-        if (!permissionChecker.isPermitted(
-            AdminPrivileges.ADMINISTER_CONTENT_TYPES, section
-        )) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!adminPermissionsChecker.canAdministerContentTypes(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
         }
 
         final Optional<ContentType> typeResult = section
@@ -625,43 +443,17 @@ public class ConfigurationDocumentTypesController {
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @PathParam("documentType") final String documentTypeParam
     ) {
-        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
-            sectionIdentifierParam
-        );
-
-        final Optional<ContentSection> sectionResult;
-        switch (sectionIdentifier.getType()) {
-            case ID:
-                sectionResult = sectionRepo.findById(
-                    Long.parseLong(
-                        sectionIdentifier.getIdentifier()
-                    )
-                );
-                break;
-            case UUID:
-                sectionResult = sectionRepo.findByUuid(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-            default:
-                sectionResult = sectionRepo.findByLabel(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-        }
-
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
         if (!sectionResult.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-
-        if (!permissionChecker.isPermitted(
-            AdminPrivileges.ADMINISTER_CONTENT_TYPES, section
-        )) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!adminPermissionsChecker.canAdministerContentTypes(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
         }
 
         final Optional<ContentType> typeResult = section
@@ -743,9 +535,9 @@ public class ConfigurationDocumentTypesController {
         model.setDescription(descUtil.getText(typeInfo.getDescriptionKey()));
         model.setMode(
             Optional
-            .ofNullable(type.getMode())
-            .map(ContentTypeMode::toString)
-            .orElse("")
+                .ofNullable(type.getMode())
+                .map(ContentTypeMode::toString)
+                .orElse("")
         );
 
         model.setPermissions(

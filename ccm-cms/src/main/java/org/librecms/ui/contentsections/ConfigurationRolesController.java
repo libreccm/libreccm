@@ -7,12 +7,10 @@ package org.librecms.ui.contentsections;
 
 import org.libreccm.api.Identifier;
 import org.libreccm.api.IdentifierParser;
-import org.libreccm.core.CcmObject;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.Party;
 import org.libreccm.security.PartyRepository;
-import org.libreccm.security.Permission;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.PermissionManager;
 import org.libreccm.security.Role;
@@ -33,7 +31,6 @@ import javax.ws.rs.PathParam;
 
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionManager;
-import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.contentsection.privileges.AssetPrivileges;
@@ -59,6 +56,9 @@ import javax.ws.rs.POST;
 public class ConfigurationRolesController {
 
     @Inject
+    private AdminPermissionsChecker adminPermissionsChecker;
+
+    @Inject
     private CmsAdminMessages messages;
 
     @Inject
@@ -67,8 +67,10 @@ public class ConfigurationRolesController {
     @Inject
     private ContentSectionModel sectionModel;
 
+//    @Inject
+//    private ContentSectionRepository sectionRepo;
     @Inject
-    private ContentSectionRepository sectionRepo;
+    private ContentSectionsUi sectionsUi;
 
     @Inject
     private GlobalizationHelper globalizationHelper;
@@ -104,43 +106,19 @@ public class ConfigurationRolesController {
     public String listRoles(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam
     ) {
-        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
-            sectionIdentifierParam
-        );
-
-        final Optional<ContentSection> sectionResult;
-        switch (sectionIdentifier.getType()) {
-            case ID:
-                sectionResult = sectionRepo.findById(
-                    Long.parseLong(
-                        sectionIdentifier.getIdentifier()
-                    )
-                );
-                break;
-            case UUID:
-                sectionResult = sectionRepo.findByUuid(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-            default:
-                sectionResult = sectionRepo.findByLabel(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-        }
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
 
         if (!sectionResult.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
 
-        if (!permissionChecker.isPermitted(
-            AdminPrivileges.ADMINISTER_ROLES, section
-        )) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!adminPermissionsChecker.canAdministerRoles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
         }
 
         final List<Role> sectionRoles = section.getRoles();
@@ -179,43 +157,18 @@ public class ConfigurationRolesController {
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @PathParam("roleName") final String roleName
     ) {
-        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
-            sectionIdentifierParam
-        );
-
-        final Optional<ContentSection> sectionResult;
-        switch (sectionIdentifier.getType()) {
-            case ID:
-                sectionResult = sectionRepo.findById(
-                    Long.parseLong(
-                        sectionIdentifier.getIdentifier()
-                    )
-                );
-                break;
-            case UUID:
-                sectionResult = sectionRepo.findByUuid(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-            default:
-                sectionResult = sectionRepo.findByLabel(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-        }
-
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
         if (!sectionResult.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
 
-        if (!permissionChecker.isPermitted(
-            AdminPrivileges.ADMINISTER_ROLES, section
-        )) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!adminPermissionsChecker.canAdministerRoles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
         }
 
         final Optional<Role> result = section
@@ -225,9 +178,7 @@ public class ConfigurationRolesController {
             .findAny();
 
         if (!result.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            models.put("roleName", roleName);
-            return "org/librecms/ui/contentsection/configuration/role-not-found.xhtml";
+            return showRoleNotFound(section, roleName);
         }
 
         final Role role = result.get();
@@ -278,43 +229,18 @@ public class ConfigurationRolesController {
         @PathParam("roleName") final String roleName,
         @FormParam("roleName") final String newRoleName
     ) {
-        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
-            sectionIdentifierParam
-        );
-
-        final Optional<ContentSection> sectionResult;
-        switch (sectionIdentifier.getType()) {
-            case ID:
-                sectionResult = sectionRepo.findById(
-                    Long.parseLong(
-                        sectionIdentifier.getIdentifier()
-                    )
-                );
-                break;
-            case UUID:
-                sectionResult = sectionRepo.findByUuid(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-            default:
-                sectionResult = sectionRepo.findByLabel(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-        }
-
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
         if (!sectionResult.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
 
-        if (!permissionChecker.isPermitted(
-            AdminPrivileges.ADMINISTER_ROLES, section
-        )) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!adminPermissionsChecker.canAdministerRoles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
         }
 
         final Optional<Role> result = section
@@ -324,9 +250,7 @@ public class ConfigurationRolesController {
             .findAny();
 
         if (!result.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            models.put("roleName", roleName);
-            return "org/librecms/ui/contentsection/configuration/role-not-found.xhtml";
+            return showRoleNotFound(section, roleName);
         }
 
         final Role role = result.get();
@@ -349,43 +273,18 @@ public class ConfigurationRolesController {
         @PathParam("roleName") final String roleName,
         @FormParam("grantedPermissions") final List<String> grantedPermissions
     ) {
-        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
-            sectionIdentifierParam
-        );
-
-        final Optional<ContentSection> sectionResult;
-        switch (sectionIdentifier.getType()) {
-            case ID:
-                sectionResult = sectionRepo.findById(
-                    Long.parseLong(
-                        sectionIdentifier.getIdentifier()
-                    )
-                );
-                break;
-            case UUID:
-                sectionResult = sectionRepo.findByUuid(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-            default:
-                sectionResult = sectionRepo.findByLabel(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-        }
-
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
         if (!sectionResult.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
 
-        if (!permissionChecker.isPermitted(
-            AdminPrivileges.ADMINISTER_ROLES, section
-        )) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!adminPermissionsChecker.canAdministerRoles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
         }
 
         final Optional<Role> result = section
@@ -395,9 +294,7 @@ public class ConfigurationRolesController {
             .findAny();
 
         if (!result.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            models.put("roleName", roleName);
-            return "org/librecms/ui/contentsection/configuration/role-not-found.xhtml";
+            return showRoleNotFound(section, roleName);
         }
 
         final Role role = result.get();
@@ -458,43 +355,18 @@ public class ConfigurationRolesController {
         @PathParam("roleName") final String roleName,
         @FormParam("roleMembers") final List<String> roleMembersParam
     ) {
-        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
-            sectionIdentifierParam
-        );
-
-        final Optional<ContentSection> sectionResult;
-        switch (sectionIdentifier.getType()) {
-            case ID:
-                sectionResult = sectionRepo.findById(
-                    Long.parseLong(
-                        sectionIdentifier.getIdentifier()
-                    )
-                );
-                break;
-            case UUID:
-                sectionResult = sectionRepo.findByUuid(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-            default:
-                sectionResult = sectionRepo.findByLabel(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-        }
-
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
         if (!sectionResult.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
 
-        if (!permissionChecker.isPermitted(
-            AdminPrivileges.ADMINISTER_ROLES, section
-        )) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!adminPermissionsChecker.canAdministerRoles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
         }
 
         final Optional<Role> result = section
@@ -504,9 +376,7 @@ public class ConfigurationRolesController {
             .findAny();
 
         if (!result.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            models.put("roleName", roleName);
-            return "org/librecms/ui/contentsection/configuration/role-not-found.xhtml";
+            return showRoleNotFound(section, roleName);
         }
 
         final Role role = result.get();
@@ -550,43 +420,18 @@ public class ConfigurationRolesController {
         @FormParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
-        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
-            sectionIdentifierParam
-        );
-
-        final Optional<ContentSection> sectionResult;
-        switch (sectionIdentifier.getType()) {
-            case ID:
-                sectionResult = sectionRepo.findById(
-                    Long.parseLong(
-                        sectionIdentifier.getIdentifier()
-                    )
-                );
-                break;
-            case UUID:
-                sectionResult = sectionRepo.findByUuid(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-            default:
-                sectionResult = sectionRepo.findByLabel(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-        }
-
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
         if (!sectionResult.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
 
-        if (!permissionChecker.isPermitted(
-            AdminPrivileges.ADMINISTER_ROLES, section
-        )) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!adminPermissionsChecker.canAdministerRoles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
         }
 
         final Optional<Role> result = section
@@ -596,9 +441,7 @@ public class ConfigurationRolesController {
             .findAny();
 
         if (!result.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            models.put("roleName", roleName);
-            return "org/librecms/ui/contentsection/configuration/role-not-found.xhtml";
+            return showRoleNotFound(section, roleName);
         }
 
         final Role role = result.get();
@@ -623,43 +466,18 @@ public class ConfigurationRolesController {
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
-        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
-            sectionIdentifierParam
-        );
-
-        final Optional<ContentSection> sectionResult;
-        switch (sectionIdentifier.getType()) {
-            case ID:
-                sectionResult = sectionRepo.findById(
-                    Long.parseLong(
-                        sectionIdentifier.getIdentifier()
-                    )
-                );
-                break;
-            case UUID:
-                sectionResult = sectionRepo.findByUuid(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-            default:
-                sectionResult = sectionRepo.findByLabel(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-        }
-
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
         if (!sectionResult.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
 
-        if (!permissionChecker.isPermitted(
-            AdminPrivileges.ADMINISTER_ROLES, section
-        )) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!adminPermissionsChecker.canAdministerRoles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
         }
 
         final Optional<Role> result = section
@@ -669,9 +487,7 @@ public class ConfigurationRolesController {
             .findAny();
 
         if (!result.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            models.put("roleName", roleName);
-            return "org/librecms/ui/contentsection/configuration/role-not-found.xhtml";
+            return showRoleNotFound(section, roleName);
         }
 
         final Role role = result.get();
@@ -696,43 +512,18 @@ public class ConfigurationRolesController {
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
-        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
-            sectionIdentifierParam
-        );
-
-        final Optional<ContentSection> sectionResult;
-        switch (sectionIdentifier.getType()) {
-            case ID:
-                sectionResult = sectionRepo.findById(
-                    Long.parseLong(
-                        sectionIdentifier.getIdentifier()
-                    )
-                );
-                break;
-            case UUID:
-                sectionResult = sectionRepo.findByUuid(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-            default:
-                sectionResult = sectionRepo.findByLabel(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-        }
-
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
         if (!sectionResult.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
 
-        if (!permissionChecker.isPermitted(
-            AdminPrivileges.ADMINISTER_ROLES, section
-        )) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!adminPermissionsChecker.canAdministerRoles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
         }
 
         final Optional<Role> result = section
@@ -742,9 +533,7 @@ public class ConfigurationRolesController {
             .findAny();
 
         if (!result.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            models.put("roleName", roleName);
-            return "org/librecms/ui/contentsection/configuration/role-not-found.xhtml";
+            return showRoleNotFound(section, roleName);
         }
 
         final Role role = result.get();
@@ -766,43 +555,18 @@ public class ConfigurationRolesController {
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @FormParam("roleName") final String roleName
     ) {
-        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
-            sectionIdentifierParam
-        );
-
-        final Optional<ContentSection> sectionResult;
-        switch (sectionIdentifier.getType()) {
-            case ID:
-                sectionResult = sectionRepo.findById(
-                    Long.parseLong(
-                        sectionIdentifier.getIdentifier()
-                    )
-                );
-                break;
-            case UUID:
-                sectionResult = sectionRepo.findByUuid(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-            default:
-                sectionResult = sectionRepo.findByLabel(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-        }
-
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
         if (!sectionResult.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
 
-        if (!permissionChecker.isPermitted(
-            AdminPrivileges.ADMINISTER_ROLES, section
-        )) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!adminPermissionsChecker.canAdministerRoles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
         }
 
         final List<String> errors = new ArrayList<>();
@@ -841,43 +605,18 @@ public class ConfigurationRolesController {
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @FormParam("rolesToAdd") final List<String> rolesToAdd
     ) {
-        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
-            sectionIdentifierParam
-        );
-
-        final Optional<ContentSection> sectionResult;
-        switch (sectionIdentifier.getType()) {
-            case ID:
-                sectionResult = sectionRepo.findById(
-                    Long.parseLong(
-                        sectionIdentifier.getIdentifier()
-                    )
-                );
-                break;
-            case UUID:
-                sectionResult = sectionRepo.findByUuid(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-            default:
-                sectionResult = sectionRepo.findByLabel(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-        }
-
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
         if (!sectionResult.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
 
-        if (!permissionChecker.isPermitted(
-            AdminPrivileges.ADMINISTER_ROLES, section
-        )) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!adminPermissionsChecker.canAdministerRoles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
         }
 
         for (final String roleUuid : rolesToAdd) {
@@ -903,71 +642,24 @@ public class ConfigurationRolesController {
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @PathParam("roleIdentifier") final String roleIdentifierParam
     ) {
-        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
-            sectionIdentifierParam
-        );
 
-        final Optional<ContentSection> sectionResult;
-        switch (sectionIdentifier.getType()) {
-            case ID:
-                sectionResult = sectionRepo.findById(
-                    Long.parseLong(
-                        sectionIdentifier.getIdentifier()
-                    )
-                );
-                break;
-            case UUID:
-                sectionResult = sectionRepo.findByUuid(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-            default:
-                sectionResult = sectionRepo.findByLabel(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-        }
-
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
         if (!sectionResult.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
 
-        if (!permissionChecker.isPermitted(
-            AdminPrivileges.ADMINISTER_ROLES, section
-        )) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!adminPermissionsChecker.canAdministerRoles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
         }
-
-        final Identifier roleIdentifier = identifierParser.parseIdentifier(
-            roleIdentifierParam
-        );
-
-        final Optional<Role> roleResult;
-        switch (roleIdentifier.getType()) {
-            case ID:
-                roleResult = roleRepo.findById(
-                    Long.parseLong(roleIdentifier.getIdentifier())
-                );
-                break;
-            case UUID:
-                roleResult = roleRepo.findByUuid(
-                    roleIdentifier.getIdentifier()
-                );
-                break;
-            default:
-                roleResult = roleRepo.findByName(
-                    roleIdentifier.getIdentifier()
-                );
-                break;
-        }
-
+      
+        final Optional<Role> roleResult = findRole(roleIdentifierParam);
         if (!roleResult.isPresent()) {
-            models.put("roleIdentifier", roleIdentifierParam);
-            return "org/librecms/ui/contentsection/configuration/role-not-found.xhtml";
+            return showRoleNotFound(section, roleIdentifierParam);
         }
         final Role role = roleResult.get();
         sectionManager.removeRoleFromContentSection(section, role);
@@ -985,71 +677,23 @@ public class ConfigurationRolesController {
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @PathParam("roleIdentifier") final String roleIdentifierParam
     ) {
-        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
-            sectionIdentifierParam
-        );
-
-        final Optional<ContentSection> sectionResult;
-        switch (sectionIdentifier.getType()) {
-            case ID:
-                sectionResult = sectionRepo.findById(
-                    Long.parseLong(
-                        sectionIdentifier.getIdentifier()
-                    )
-                );
-                break;
-            case UUID:
-                sectionResult = sectionRepo.findByUuid(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-            default:
-                sectionResult = sectionRepo.findByLabel(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-        }
-
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
         if (!sectionResult.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
 
-        if (!permissionChecker.isPermitted(
-            AdminPrivileges.ADMINISTER_ROLES, section
-        )) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+        if (!adminPermissionsChecker.canAdministerRoles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
         }
 
-        final Identifier roleIdentifier = identifierParser.parseIdentifier(
-            roleIdentifierParam
-        );
-
-        final Optional<Role> roleResult;
-        switch (roleIdentifier.getType()) {
-            case ID:
-                roleResult = roleRepo.findById(
-                    Long.parseLong(roleIdentifier.getIdentifier())
-                );
-                break;
-            case UUID:
-                roleResult = roleRepo.findByUuid(
-                    roleIdentifier.getIdentifier()
-                );
-                break;
-            default:
-                roleResult = roleRepo.findByName(
-                    roleIdentifier.getIdentifier()
-                );
-                break;
-        }
-
+        final Optional<Role> roleResult = findRole(roleIdentifierParam);
         if (!roleResult.isPresent()) {
-            models.put("roleIdentifier", roleIdentifierParam);
-            return "org/librecms/ui/contentsection/configuration/role-not-found.xhtml";
+            return showRoleNotFound(section, roleIdentifierParam);
         }
         final Role role = roleResult.get();
         sectionManager.removeRoleFromContentSection(section, role);
@@ -1058,6 +702,34 @@ public class ConfigurationRolesController {
         return String.format(
             "redirect:/%s/configuration/roles", sectionIdentifierParam
         );
+    }
+
+    private Optional<Role> findRole(final String roleIdentifierParam) {
+        final Identifier roleIdentifier = identifierParser.parseIdentifier(
+            roleIdentifierParam
+        );
+        switch (roleIdentifier.getType()) {
+            case ID:
+                return roleRepo.findById(
+                    Long.parseLong(roleIdentifier.getIdentifier())
+                );
+            case UUID:
+                return roleRepo.findByUuid(
+                    roleIdentifier.getIdentifier()
+                );
+            default:
+                return roleRepo.findByName(
+                    roleIdentifier.getIdentifier()
+                );
+        }
+    }
+
+    private String showRoleNotFound(
+        final ContentSection section, final String roleName
+    ) {
+        models.put("sectionIdentifier", section.getLabel());
+        models.put("roleName", roleName);
+        return "org/librecms/ui/contentsection/configuration/role-not-found.xhtml";
     }
 
     private RoleListItemModel buildRoleListModel(final Role role) {
@@ -1081,18 +753,6 @@ public class ConfigurationRolesController {
         model.setMemberUuid(membership.getMember().getUuid());
 
         return model;
-    }
-
-    private boolean onlyContentSectionPermissions(
-        final Permission permission, final ContentSection section
-    ) {
-        final Folder rootDocumentsFolder = section.getRootDocumentsFolder();
-        final Folder rootAssetsFolder = section.getRootAssetsFolder();
-
-        final CcmObject object = permission.getObject();
-        return section.equals(object)
-                   || rootDocumentsFolder.equals(object)
-                   || rootAssetsFolder.equals(object);
     }
 
     private List<RoleSectionPermissionModel> buildRolePermissions(

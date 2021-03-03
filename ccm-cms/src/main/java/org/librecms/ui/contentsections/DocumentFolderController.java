@@ -7,7 +7,6 @@ package org.librecms.ui.contentsections;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.libreccm.api.Identifier;
 import org.libreccm.api.IdentifierParser;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.AuthorizationRequired;
@@ -20,7 +19,6 @@ import org.librecms.contentsection.ContentItemL10NManager;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
-import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.ContentType;
 import org.librecms.contentsection.ContentTypeRepository;
 import org.librecms.contentsection.DocumentFolderEntry;
@@ -104,12 +102,6 @@ public class DocumentFolderController {
 
     @Inject
     private Models models;
-
-    @Inject
-    private IdentifierParser identifierParser;
-
-    @Inject
-    private PermissionChecker permissionChecker;
 
     @Inject
     private PermissionManager permissionManager;

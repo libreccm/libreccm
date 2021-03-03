@@ -7,7 +7,6 @@ package org.librecms.ui.contentsections;
 
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.AuthorizationRequired;
-import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.PermissionManager;
 import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
@@ -256,9 +255,7 @@ public class AssetFolderController {
             if (parentFolderResult.isPresent()) {
                 parentFolder = parentFolderResult.get();
             } else {
-                models.put("contentSection", section.getLabel());
-                models.put("folderPath", parentFolderPath);
-                return "org/librecms/ui/contentsection/assetfolder/assetfolder-not-found.xhtml";
+                return showAssetFolderNotFound(section, folderName);
             }
         }
 
@@ -312,8 +309,9 @@ public class AssetFolderController {
             return sectionsUi.showContentSectionNotFound(sectionIdentifier);
         }
         if (!assetPermissionsChecker.canEditAssets(section)) {
-            models.put("sectionidentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+            return sectionsUi.showAccessDenied(
+                "sectionidentifier", sectionIdentifier
+            );
         }
 
         final Folder folder;
@@ -332,16 +330,15 @@ public class AssetFolderController {
 
                 assetFolderModel.setBreadcrumbs(buildBreadcrumbs(folderPath));
             } else {
-                models.put("contentSection", section.getLabel());
-                models.put("folderPath", folderPath);
-                return "org/librecms/ui/contentsection/assestfolder/assetfolder-not-found.xhtml";
+                return showAssetFolderNotFound(section, folderPath);
             }
         }
 
         if (!assetPermissionsChecker.canEditAssets(folder)) {
-            models.put("sectionidentifier", sectionIdentifier);
-            models.put("folderPath", folderPath);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+            return sectionsUi.showAccessDenied(
+                "sectionidentifier", sectionIdentifier,
+                "folderPath", folderPath
+            );
         }
 
         final Optional<Role> roleResult = roleRepo.findByName(roleParam);
@@ -395,8 +392,9 @@ public class AssetFolderController {
             return sectionsUi.showContentSectionNotFound(sectionIdentifier);
         }
         if (!assetPermissionsChecker.canEditAssets(section)) {
-            models.put("sectionidentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+            return sectionsUi.showAccessDenied(
+                "sectionidentifier", sectionIdentifier
+            );
         }
 
         final Folder folder;
@@ -411,15 +409,14 @@ public class AssetFolderController {
 
             assetFolderModel.setBreadcrumbs(buildBreadcrumbs(folderPath));
         } else {
-            models.put("contentSection", section.getLabel());
-            models.put("folderPath", folderPath);
-            return "org/librecms/ui/contentsection/assetfolder/assetfolder-not-found.xhtml";
+            return showAssetFolderNotFound(section, folderPath);
         }
 
         if (!assetPermissionsChecker.canEditAssets(folder)) {
-            models.put("sectionidentifier", sectionIdentifier);
-            models.put("folderPath", folderPath);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+            return sectionsUi.showAccessDenied(
+                "sectionidentifier", sectionIdentifier,
+                "folderPath", folderPath
+            );
         }
 
         folder.setName(folderName);

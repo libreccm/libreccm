@@ -40,6 +40,9 @@ public class ConfigurationController {
     private ContentSectionRepository sectionRepo;
 
     @Inject
+    private ContentSectionsUi sectionsUi;
+
+    @Inject
     private IdentifierParser identifierParser;
 
     @Inject
@@ -55,43 +58,19 @@ public class ConfigurationController {
     public String showConfigurationIndexPage(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam
     ) {
-        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
-            sectionIdentifierParam
-        );
-
-        final Optional<ContentSection> sectionResult;
-        switch (sectionIdentifier.getType()) {
-            case ID:
-                sectionResult = sectionRepo.findById(
-                    Long.parseLong(
-                        sectionIdentifier.getIdentifier()
-                    )
-                );
-                break;
-            case UUID:
-                sectionResult = sectionRepo.findByUuid(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-            default:
-                sectionResult = sectionRepo.findByLabel(
-                    sectionIdentifier.getIdentifier()
-                );
-                break;
-        }
-
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
         if (!sectionResult.isPresent()) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
+            return sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
 
         if (!hasRequiredPermission(section)) {
-            models.put("sectionIdentifier", sectionIdentifier);
-            return "org/librecms/ui/contentsection/access-denied.xhtml";
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
         }
-
         return "org/librecms/ui/contentsection/configuration/index.xhtml";
     }
 
@@ -105,7 +84,8 @@ public class ConfigurationController {
                    || permissionChecker.isPermitted(
                 AdminPrivileges.ADMINISTER_ROLES, section
             )
-                   || permissionChecker.isPermitted(AdminPrivileges.ADMINISTER_WORKFLOWS, section
+                   || permissionChecker.isPermitted(
+                AdminPrivileges.ADMINISTER_WORKFLOWS, section
             );
     }
 
