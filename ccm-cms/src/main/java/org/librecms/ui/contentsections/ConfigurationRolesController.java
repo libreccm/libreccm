@@ -122,7 +122,6 @@ public class ConfigurationRolesController {
         }
 
         final List<Role> sectionRoles = section.getRoles();
-
         final Set<Role> otherRoles = roleRepo
             .findAll()
             .stream()
@@ -509,8 +508,7 @@ public class ConfigurationRolesController {
     public String removeDescription(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @PathParam("roleName") final String roleName,
-        @PathParam("locale") final String localeParam,
-        @FormParam("value") final String value
+        @PathParam("locale") final String localeParam
     ) {
         final Optional<ContentSection> sectionResult = sectionsUi
             .findContentSection(sectionIdentifierParam);
