@@ -19,16 +19,36 @@ import javax.inject.Named;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Named("SelectedLifecycleDefinitionModel")
-public class SelectedLifecycleDefinitionModel {
-
+@Named("SelectedWorkflowTaskTemplateModel")
+public class SelectedWorkflowTaskTemplateModel {
+    
+    private long taskId;
+    
     private String uuid;
     
     private Map<String, String> label;
-
+    
     private Map<String, String> description;
+    
+    private List<WorkflowTaskTemplateListModel> blockedTasks;
 
-    private List<PhaseDefinitionModel> phaseDefinitions;
+    private List<WorkflowTaskTemplateListModel> blockingTasks;
+    
+      public long getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(final long taskId) {
+        this.taskId = taskId;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(final String uuid) {
+        this.uuid = uuid;
+    }
 
     public Map<String, String> getLabel() {
         return Collections.unmodifiableMap(label);
@@ -46,22 +66,25 @@ public class SelectedLifecycleDefinitionModel {
         this.description = new HashMap<>(description);
     }
 
-    public List<PhaseDefinitionModel> getPhaseDefinitions() {
-        return Collections.unmodifiableList(phaseDefinitions);
+    public List<WorkflowTaskTemplateListModel> getBlockedTasks() {
+        return Collections.unmodifiableList(blockedTasks);
     }
 
-    public void setPhaseDefinitions(
-        final List<PhaseDefinitionModel> phaseDefinitions
+    public void setBlockedTasks(
+        final List<WorkflowTaskTemplateListModel> blockedTasks
     ) {
-        this.phaseDefinitions = new ArrayList<>(phaseDefinitions);
+        this.blockedTasks = new ArrayList<>(blockedTasks);
     }
 
-    public String getUuid() {
-        return uuid;
+    public List< WorkflowTaskTemplateListModel> getBlockingTasks() {
+        return Collections.unmodifiableList(blockingTasks);
     }
 
-    public void setUuid(final String uuid) {
-        this.uuid = uuid;
+    public void setBlockingTasks(
+        final List<WorkflowTaskTemplateListModel> blockingTasks
+    ) {
+        this.blockingTasks = new ArrayList<>(blockingTasks);
     }
 
+    
 }

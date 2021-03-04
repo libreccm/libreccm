@@ -5,10 +5,28 @@
  */
 package org.librecms.ui.contentsections;
 
+import org.libreccm.api.Identifier;
+import org.libreccm.api.IdentifierParser;
+import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.workflow.CircularTaskDependencyException;
+import org.libreccm.workflow.Task;
+import org.libreccm.workflow.TaskManager;
+import org.libreccm.workflow.TaskRepository;
+import org.libreccm.workflow.Workflow;
+import org.libreccm.workflow.WorkflowManager;
+import org.libreccm.workflow.WorkflowRepository;
+import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.ContentSectionManager;
+
+import java.util.Locale;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.mvc.Controller;
+import javax.mvc.Models;
 import javax.transaction.Transactional;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -25,124 +43,439 @@ import javax.ws.rs.PathParam;
 @Path("/{sectionIdentifier}/configuration/workflows")
 public class ConfigurationWorkflowController {
 
+    @Inject
+    private AdminPermissionsChecker adminPermissionsChecker;
+
+    @Inject
+    private ContentSectionManager sectionManager;
+
+    @Inject
+    private ContentSectionsUi sectionsUi;
+
+    @Inject
+    private GlobalizationHelper globalizationHelper;
+
+    @Inject
+    private IdentifierParser identifierParser;
+
+    @Inject
+    private Models models;
+
+    @Inject
+    private WorkflowManager workflowManager;
+
+    @Inject
+    private WorkflowRepository workflowRepo;
+
+    @Inject
+    private SelectedWorkflowTemplateModel selectedWorkflowTemplateModel;
+
+    @Inject
+    private SelectedWorkflowTaskTemplateModel selectedWorkflowTaskTemplateModel;
+
+    @Inject
+    private TaskManager taskManager;
+
+    @Inject
+    private TaskRepository taskRepo;
+
     @GET
     @Path("/")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String listWorkflowDefinitions(
+    public String listWorkflowTemplates(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam
     ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            return sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        models.put(
+            "workflowTemplates",
+            section
+                .getWorkflowTemplates()
+                .stream()
+                .map(this::buildWorkflowTemplateListModel)
+                .collect(Collectors.toList())
+        );
+        return "org/librecms/ui/contentsection/configuration/workflows.xhtml";
     }
 
     @GET
     @Path("/{workflowIdentifier}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String showWorkflowDefinition(
+    public String showWorkflowTemplate(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @PathParam("workflowIdentifier") final String workflowIdentiferParam
     ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            return sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Optional<Workflow> workflowResult = findWorkflowTemplate(
+            section, workflowIdentiferParam
+        );
+        if (!workflowResult.isPresent()) {
+            return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
+        }
+        final Workflow workflow = workflowResult.get();
+        selectedWorkflowTemplateModel.setDescription(
+            workflow
+                .getDescription()
+                .getValues()
+                .entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> entry.getValue()
+                    )
+                )
+        );
+        selectedWorkflowTemplateModel.setName(
+            workflow
+                .getName()
+                .getValues()
+                .entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> entry.getValue()
+                    )
+                )
+        );
+        selectedWorkflowTemplateModel.setTasks(
+            workflow
+                .getTasks()
+                .stream()
+                .map(this::buildWorkflowTaskTemplateListModel)
+                .collect(Collectors.toList())
+        );
+        selectedWorkflowTemplateModel.setUuid(workflow.getUuid());
+        selectedWorkflowTemplateModel.setWorkflowId(workflow.getWorkflowId());
+
+        return "org/librecms/ui/contentsection/configuration/workflow.xhtml";
     }
 
     @POST
     @Path("/@add")
     @AuthorizationRequired
-    public String addWorkflowDefinition(
+    public String addWorkflowTemplate(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @FormParam("label") final String label
     ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Workflow template = new Workflow();
+        template.setAbstractWorkflow(true);
+        template.getName().addValue(
+            globalizationHelper.getNegotiatedLocale(), label
+        );
+        sectionManager.addWorkflowTemplateToContentSection(template, section);
+
+        return String.format(
+            "redirect:/%s/configuration/workflows", sectionIdentifierParam
+        );
     }
 
     @POST
     @Path("/{workflowIdentifier}/@delete")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String deleteWorkflowDefinition(
+    public String deleteWorkflowTemplate(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @PathParam("workflowIdentifier") final String workflowIdentiferParam
     ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Optional<Workflow> workflowResult = findWorkflowTemplate(
+            section, workflowIdentiferParam
+        );
+        if (!workflowResult.isPresent()) {
+            return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
+        }
+        final Workflow workflow = workflowResult.get();
+        sectionManager.removeWorkflowTemplateFromContentSection(
+            workflow, section
+        );
+        workflowRepo.delete(workflow);
+
+        return String.format(
+            "redirect:/%s/configuration/workflows", sectionIdentifierParam
+        );
     }
 
     @POST
     @Path("/{workflowIdentifier}/label/@add")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String addWorkflowDefinitionLabel(
+    public String addWorkflowTemplateName(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @PathParam("workflowIdentifier") final String workflowIdentiferParam,
         @FormParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Optional<Workflow> workflowResult = findWorkflowTemplate(
+            section, workflowIdentiferParam
+        );
+        if (!workflowResult.isPresent()) {
+            return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
+        }
+        final Workflow workflow = workflowResult.get();
+        workflow.getName().addValue(new Locale(localeParam), value);
+        workflowRepo.save(workflow);
+
+        return String.format(
+            "redirect:/%s/configuration/workflows/%s",
+            sectionIdentifierParam,
+            workflowIdentiferParam
+        );
     }
 
     @POST
     @Path("/{workflowIdentifier}/label/@edit/{locale}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String editWorkflowDefinitionLabel(
+    public String editWorkflowTemplateName(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @PathParam("workflowIdentifier") final String workflowIdentiferParam,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Optional<Workflow> workflowResult = findWorkflowTemplate(
+            section, workflowIdentiferParam
+        );
+        if (!workflowResult.isPresent()) {
+            return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
+        }
+        final Workflow workflow = workflowResult.get();
+        workflow.getName().addValue(new Locale(localeParam), value);
+        workflowRepo.save(workflow);
+
+        return String.format(
+            "redirect:/%s/configuration/workflows/%s",
+            sectionIdentifierParam,
+            workflowIdentiferParam
+        );
     }
 
     @POST
     @Path("/{workflowIdentifier}/label/@remove/{locale}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String removeWorkflowDefinitionLabel(
+    public String removeWorkflowTemplateName(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @PathParam("workflowIdentifier") final String workflowIdentiferParam,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Optional<Workflow> workflowResult = findWorkflowTemplate(
+            section, workflowIdentiferParam
+        );
+        if (!workflowResult.isPresent()) {
+            return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
+        }
+        final Workflow workflow = workflowResult.get();
+        workflow.getName().removeValue(new Locale(localeParam));
+        workflowRepo.save(workflow);
+
+        return String.format(
+            "redirect:/%s/configuration/workflows/%s",
+            sectionIdentifierParam,
+            workflowIdentiferParam
+        );
     }
 
     @POST
     @Path("/{workflowIdentifier}/description/@add")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String addWorkflowDefinitionDescription(
+    public String addWorkflowTemplateDescription(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @PathParam("workflowIdentifier") final String workflowIdentiferParam,
         @FormParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Optional<Workflow> workflowResult = findWorkflowTemplate(
+            section, workflowIdentiferParam
+        );
+        if (!workflowResult.isPresent()) {
+            return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
+        }
+        final Workflow workflow = workflowResult.get();
+        workflow.getDescription().addValue(new Locale(localeParam), value);
+        workflowRepo.save(workflow);
+
+        return String.format(
+            "redirect:/%s/configuration/workflows/%s",
+            sectionIdentifierParam,
+            workflowIdentiferParam
+        );
     }
 
     @POST
     @Path("/{workflowIdentifier}/description/@edit/{locale}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String editWorkflowDefinitionDescription(
+    public String editWorkflowTemplateDescription(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @PathParam("workflowIdentifier") final String workflowIdentiferParam,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Optional<Workflow> workflowResult = findWorkflowTemplate(
+            section, workflowIdentiferParam
+        );
+        if (!workflowResult.isPresent()) {
+            return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
+        }
+        final Workflow workflow = workflowResult.get();
+        workflow.getDescription().addValue(new Locale(localeParam), value);
+        workflowRepo.save(workflow);
+
+        return String.format(
+            "redirect:/%s/configuration/workflows/%s",
+            sectionIdentifierParam,
+            workflowIdentiferParam
+        );
     }
 
     @POST
     @Path("/{workflowIdentifier}/description/@remove/{locale}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String removeWorkflowDefinitionDescription(
+    public String removeWorkflowTemplateDescription(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @PathParam("workflowIdentifier") final String workflowIdentiferParam,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Optional<Workflow> workflowResult = findWorkflowTemplate(
+            section, workflowIdentiferParam
+        );
+        if (!workflowResult.isPresent()) {
+            return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
+        }
+        final Workflow workflow = workflowResult.get();
+        workflow.getDescription().removeValue(new Locale(localeParam));
+        workflowRepo.save(workflow);
+
+        return String.format(
+            "redirect:/%s/configuration/workflows/%s",
+            sectionIdentifierParam,
+            workflowIdentiferParam
+        );
     }
 
     @POST
@@ -154,7 +487,36 @@ public class ConfigurationWorkflowController {
         @PathParam("workflowIdentifier") final String workflowIdentiferParam,
         @FormParam("label") final String label
     ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Optional<Workflow> workflowResult = findWorkflowTemplate(
+            section, workflowIdentiferParam
+        );
+        if (!workflowResult.isPresent()) {
+            return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
+        }
+        final Workflow workflow = workflowResult.get();
+        final Task task = new Task();
+        task.getLabel().addValue(
+            globalizationHelper.getNegotiatedLocale(), label
+        );
+        taskManager.addTask(workflow, task);
+
+        return String.format(
+            "redirect:/%s/configuration/workflows/%s",
+            sectionIdentifierParam,
+            workflowIdentiferParam
+        );
     }
 
     @POST
@@ -166,7 +528,42 @@ public class ConfigurationWorkflowController {
         @PathParam("workflowIdentifier") final String workflowIdentiferParam,
         @PathParam("taskIdentifier") final String taskIdentifierParam
     ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Optional<Workflow> workflowResult = findWorkflowTemplate(
+            section, workflowIdentiferParam
+        );
+        if (!workflowResult.isPresent()) {
+            return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
+        }
+        final Workflow workflow = workflowResult.get();
+        final Optional<Task> taskResult = findTaskTemplate(
+            workflow, taskIdentifierParam
+        );
+        if (!taskResult.isPresent()) {
+            return showWorkflowTaskTemplateNotFound(
+                section, workflowIdentiferParam, taskIdentifierParam
+            );
+        }
+        final Task task = taskResult.get();
+        taskManager.removeTask(workflow, task);
+        taskRepo.delete(task);
+
+        return String.format(
+            "redirect:/%s/configuration/workflows/%s",
+            sectionIdentifierParam,
+            workflowIdentiferParam
+        );
     }
 
     @POST
@@ -180,7 +577,43 @@ public class ConfigurationWorkflowController {
         @FormParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Optional<Workflow> workflowResult = findWorkflowTemplate(
+            section, workflowIdentiferParam
+        );
+        if (!workflowResult.isPresent()) {
+            return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
+        }
+        final Workflow workflow = workflowResult.get();
+        final Optional<Task> taskResult = findTaskTemplate(
+            workflow, taskIdentifierParam
+        );
+        if (!taskResult.isPresent()) {
+            return showWorkflowTaskTemplateNotFound(
+                section, workflowIdentiferParam, taskIdentifierParam
+            );
+        }
+        final Task task = taskResult.get();
+        task.getLabel().addValue(new Locale(localeParam), value);
+        taskRepo.save(task);
+
+        return String.format(
+            "redirect:/%s/configuration/workflows/%s/tasks/%s",
+            sectionIdentifierParam,
+            workflowIdentiferParam,
+            taskIdentifierParam
+        );
     }
 
     @POST
@@ -194,7 +627,43 @@ public class ConfigurationWorkflowController {
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Optional<Workflow> workflowResult = findWorkflowTemplate(
+            section, workflowIdentiferParam
+        );
+        if (!workflowResult.isPresent()) {
+            return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
+        }
+        final Workflow workflow = workflowResult.get();
+        final Optional<Task> taskResult = findTaskTemplate(
+            workflow, taskIdentifierParam
+        );
+        if (!taskResult.isPresent()) {
+            return showWorkflowTaskTemplateNotFound(
+                section, workflowIdentiferParam, taskIdentifierParam
+            );
+        }
+        final Task task = taskResult.get();
+        task.getLabel().addValue(new Locale(localeParam), value);
+        taskRepo.save(task);
+
+        return String.format(
+            "redirect:/%s/configuration/workflows/%s/tasks/%s",
+            sectionIdentifierParam,
+            workflowIdentiferParam,
+            taskIdentifierParam
+        );
     }
 
     @POST
@@ -208,7 +677,43 @@ public class ConfigurationWorkflowController {
         @PathParam("taskIdentifier") final String taskIdentifierParam,
         @PathParam("locale") final String localeParam
     ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Optional<Workflow> workflowResult = findWorkflowTemplate(
+            section, workflowIdentiferParam
+        );
+        if (!workflowResult.isPresent()) {
+            return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
+        }
+        final Workflow workflow = workflowResult.get();
+        final Optional<Task> taskResult = findTaskTemplate(
+            workflow, taskIdentifierParam
+        );
+        if (!taskResult.isPresent()) {
+            return showWorkflowTaskTemplateNotFound(
+                section, workflowIdentiferParam, taskIdentifierParam
+            );
+        }
+        final Task task = taskResult.get();
+        task.getLabel().removeValue(new Locale(localeParam));
+        taskRepo.save(task);
+
+        return String.format(
+            "redirect:/%s/configuration/workflows/%s/tasks/%s",
+            sectionIdentifierParam,
+            workflowIdentiferParam,
+            taskIdentifierParam
+        );
     }
 
     @POST
@@ -222,7 +727,43 @@ public class ConfigurationWorkflowController {
         @FormParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Optional<Workflow> workflowResult = findWorkflowTemplate(
+            section, workflowIdentiferParam
+        );
+        if (!workflowResult.isPresent()) {
+            return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
+        }
+        final Workflow workflow = workflowResult.get();
+        final Optional<Task> taskResult = findTaskTemplate(
+            workflow, taskIdentifierParam
+        );
+        if (!taskResult.isPresent()) {
+            return showWorkflowTaskTemplateNotFound(
+                section, workflowIdentiferParam, taskIdentifierParam
+            );
+        }
+        final Task task = taskResult.get();
+        task.getDescription().addValue(new Locale(localeParam), value);
+        taskRepo.save(task);
+
+        return String.format(
+            "redirect:/%s/configuration/workflows/%s/tasks/%s",
+            sectionIdentifierParam,
+            workflowIdentiferParam,
+            taskIdentifierParam
+        );
     }
 
     @POST
@@ -237,7 +778,43 @@ public class ConfigurationWorkflowController {
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Optional<Workflow> workflowResult = findWorkflowTemplate(
+            section, workflowIdentiferParam
+        );
+        if (!workflowResult.isPresent()) {
+            return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
+        }
+        final Workflow workflow = workflowResult.get();
+        final Optional<Task> taskResult = findTaskTemplate(
+            workflow, taskIdentifierParam
+        );
+        if (!taskResult.isPresent()) {
+            return showWorkflowTaskTemplateNotFound(
+                section, workflowIdentiferParam, taskIdentifierParam
+            );
+        }
+        final Task task = taskResult.get();
+        task.getDescription().addValue(new Locale(localeParam), value);
+        taskRepo.save(task);
+
+        return String.format(
+            "redirect:/%s/configuration/workflows/%s/tasks/%s",
+            sectionIdentifierParam,
+            workflowIdentiferParam,
+            taskIdentifierParam
+        );
     }
 
     @POST
@@ -251,7 +828,43 @@ public class ConfigurationWorkflowController {
         @PathParam("taskIdentifier") final String taskIdentifierParam,
         @PathParam("locale") final String localeParam
     ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Optional<Workflow> workflowResult = findWorkflowTemplate(
+            section, workflowIdentiferParam
+        );
+        if (!workflowResult.isPresent()) {
+            return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
+        }
+        final Workflow workflow = workflowResult.get();
+        final Optional<Task> taskResult = findTaskTemplate(
+            workflow, taskIdentifierParam
+        );
+        if (!taskResult.isPresent()) {
+            return showWorkflowTaskTemplateNotFound(
+                section, workflowIdentiferParam, taskIdentifierParam
+            );
+        }
+        final Task task = taskResult.get();
+        task.getDescription().removeValue(new Locale(localeParam));
+        taskRepo.save(task);
+
+        return String.format(
+            "redirect:/%s/configuration/workflows/%s/tasks/%s",
+            sectionIdentifierParam,
+            workflowIdentiferParam,
+            taskIdentifierParam
+        );
     }
 
     @POST
@@ -265,7 +878,60 @@ public class ConfigurationWorkflowController {
         @PathParam("taskIdentifier") final String taskIdentifierParam,
         @FormParam("blockingTask") final String blockingTaskParam
     ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Optional<Workflow> workflowResult = findWorkflowTemplate(
+            section, workflowIdentiferParam
+        );
+        if (!workflowResult.isPresent()) {
+            return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
+        }
+        final Workflow workflow = workflowResult.get();
+        final Optional<Task> taskResult = findTaskTemplate(
+            workflow, taskIdentifierParam
+        );
+        if (!taskResult.isPresent()) {
+            return showWorkflowTaskTemplateNotFound(
+                section, workflowIdentiferParam, taskIdentifierParam
+            );
+        }
+        final Optional<Task> blockingTaskResult = findTaskTemplate(
+            workflow, blockingTaskParam
+        );
+        if (!blockingTaskResult.isPresent()) {
+            return showWorkflowTaskTemplateNotFound(
+                section, workflowIdentiferParam, blockingTaskParam
+            );
+        }
+
+        final Task task = taskResult.get();
+        final Task blockingTask = blockingTaskResult.get();
+        try {
+            taskManager.addDependentTask(blockingTask, task);
+        } catch (CircularTaskDependencyException ex) {
+            models.put("sectionIdentifier", section.getLabel());
+            models.put("workflowTemplateIdentifier", workflowIdentiferParam);
+            models.put("blockedTaskIdentifier", taskIdentifierParam);
+            models.put("blockingTaskIdentifier", blockingTaskParam);
+            return "org/librecms/ui/contentsection/configuration/workflowtask-circular-dependency.xhtml";
+        }
+
+        return String.format(
+            "redirect:/%s/configuration/workflows/%s/tasks/%s",
+            sectionIdentifierParam,
+            workflowIdentiferParam,
+            taskIdentifierParam
+        );
     }
 
     @POST
@@ -279,7 +945,183 @@ public class ConfigurationWorkflowController {
         @PathParam("taskIdentifier") final String taskIdentifierParam,
         @PathParam("blockingTaskIdentifier") final String blockingTaskParam
     ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Optional<Workflow> workflowResult = findWorkflowTemplate(
+            section, workflowIdentiferParam
+        );
+        if (!workflowResult.isPresent()) {
+            return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
+        }
+        final Workflow workflow = workflowResult.get();
+        final Optional<Task> taskResult = findTaskTemplate(
+            workflow, taskIdentifierParam
+        );
+        if (!taskResult.isPresent()) {
+            return showWorkflowTaskTemplateNotFound(
+                section, workflowIdentiferParam, taskIdentifierParam
+            );
+        }
+        final Optional<Task> blockingTaskResult = findTaskTemplate(
+            workflow, blockingTaskParam
+        );
+        if (!blockingTaskResult.isPresent()) {
+            return showWorkflowTaskTemplateNotFound(
+                section, workflowIdentiferParam, blockingTaskParam
+            );
+        }
+
+        final Task task = taskResult.get();
+        final Task blockingTask = blockingTaskResult.get();
+        taskManager.removeDependentTask(blockingTask, task);
+
+        return String.format(
+            "redirect:/%s/configuration/workflows/%s/tasks/%s",
+            sectionIdentifierParam,
+            workflowIdentiferParam,
+            taskIdentifierParam
+        );
+    }
+
+    private Optional<Workflow> findWorkflowTemplate(
+        final ContentSection section, final String templateIdentifierParam
+    ) {
+        final Identifier identifier = identifierParser.parseIdentifier(
+            templateIdentifierParam
+        );
+        switch (identifier.getType()) {
+            case ID:
+                return section
+                    .getWorkflowTemplates()
+                    .stream()
+                    .filter(
+                        template -> template.isAbstractWorkflow()
+                    )
+                    .filter(
+                        template -> template.getWorkflowId() == Long.parseLong(
+                        identifier.getIdentifier())
+                    ).findAny();
+            default:
+                return section
+                    .getWorkflowTemplates()
+                    .stream()
+                    .filter(
+                        template -> template.isAbstractWorkflow()
+                    )
+                    .filter(
+                        template -> template.getUuid().equals(identifier
+                            .getIdentifier())
+                    ).findAny();
+        }
+    }
+
+    private String showWorkflowTemplateNotFound(
+        final ContentSection section,
+        final String templateIdentifier
+    ) {
+        models.put("sectionIdentifier", section.getLabel());
+        models.put("workflowTemplateIdentifier", templateIdentifier);
+        return "org/librecms/ui/contentsection/configuration/workflow-not-found.xhtml";
+    }
+
+    private Optional<Task> findTaskTemplate(
+        final Workflow workflow,
+        final String taskTemplateIdentifierParam
+    ) {
+        final Identifier identifier = identifierParser.parseIdentifier(
+            taskTemplateIdentifierParam
+        );
+        switch (identifier.getType()) {
+            case ID:
+                return workflow
+                    .getTasks()
+                    .stream()
+                    .filter(
+                        template -> template.getTaskId() == Long.parseLong(
+                        identifier.getIdentifier()
+                    )
+                    ).findAny();
+            default:
+                return workflow
+                    .getTasks()
+                    .stream()
+                    .filter(
+                        template -> template.getUuid().equals(identifier
+                            .getIdentifier())
+                    ).findAny();
+        }
+    }
+
+    private String showWorkflowTaskTemplateNotFound(
+        final ContentSection section,
+        final String workflowTemplateIdentifier,
+        final String taskTemplateIdentifier
+    ) {
+        models.put("sectionIdentifier", section.getLabel());
+        models.put("workflowTemplateIdentifier", workflowTemplateIdentifier);
+        models.put("workflowTaskTemplateIdentifier", taskTemplateIdentifier);
+        return "org/librecms/ui/contentsection/configuration/workflowtask-not-found.xhtml";
+    }
+
+    private WorkflowTemplateListModel buildWorkflowTemplateListModel(
+        final Workflow workflow
+    ) {
+        final WorkflowTemplateListModel model = new WorkflowTemplateListModel();
+        model.setDescription(
+            globalizationHelper.getValueFromLocalizedString(
+                workflow.getDescription()
+            )
+        );
+        model.setName(
+            globalizationHelper.getValueFromLocalizedString(workflow.getName())
+        );
+        model.setUuid(workflow.getUuid());
+        model.setWorkflowId(workflow.getWorkflowId());
+        return model;
+    }
+
+    private WorkflowTaskTemplateListModel buildWorkflowTaskTemplateListModel(
+        final Task task
+    ) {
+        final WorkflowTaskTemplateListModel model
+            = new WorkflowTaskTemplateListModel();
+        model.setBlockedTasks(
+            task
+                .getBlockedTasks()
+                .stream()
+                .map(this::buildWorkflowTaskTemplateListModel)
+                .collect(Collectors.toList())
+        );
+        model.setBlockingTasks(
+            task
+                .getBlockingTasks()
+                .stream()
+                .map(this::buildWorkflowTaskTemplateListModel)
+                .collect(Collectors.toList())
+        );
+        model.setDescription(
+            globalizationHelper.getValueFromLocalizedString(
+                task.getDescription()
+            )
+        );
+        model.setLabel(
+            globalizationHelper.getValueFromLocalizedString(
+                task.getLabel()
+            )
+        );
+        model.setTaskId(task.getTaskId());
+        model.setUuid(task.getUuid());
+        return model;
     }
 
 }

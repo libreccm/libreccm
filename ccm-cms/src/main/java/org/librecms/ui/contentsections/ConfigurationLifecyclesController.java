@@ -70,7 +70,10 @@ public class ConfigurationLifecyclesController {
     private PhaseDefinititionRepository phaseDefinititionRepo;
 
     @Inject
-    private SelectedLifecycleDefinitionModel selectedDefinitionModel;
+    private SelectedLifecycleDefinitionModel selectedLifecycleDefModel;
+
+    @Inject
+    private SelectedPhaseDefinitionModel selectedPhaseDefModel;
 
     @GET
     @Path("/")
@@ -130,8 +133,8 @@ public class ConfigurationLifecyclesController {
             );
         }
         final LifecycleDefinition definition = definitionResult.get();
-        selectedDefinitionModel.setUuid(definition.getUuid());
-        selectedDefinitionModel.setLabel(
+        selectedLifecycleDefModel.setUuid(definition.getUuid());
+        selectedLifecycleDefModel.setLabel(
             definition
                 .getLabel()
                 .getValues()
@@ -144,7 +147,7 @@ public class ConfigurationLifecyclesController {
                     )
                 )
         );
-        selectedDefinitionModel.setDescription(
+        selectedLifecycleDefModel.setDescription(
             definition
                 .getDescription()
                 .getValues()
@@ -157,7 +160,7 @@ public class ConfigurationLifecyclesController {
                     )
                 )
         );
-        selectedDefinitionModel.setPhaseDefinitions(
+        selectedLifecycleDefModel.setPhaseDefinitions(
             definition
                 .getPhaseDefinitions()
                 .stream()
@@ -523,6 +526,79 @@ public class ConfigurationLifecyclesController {
         );
     }
 
+    @GET
+    @Path("/{lifecycleIdentifier}/phases/{phaseIdentifier}")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String showPhase(
+        @PathParam("sectionIdentifier") final String sectionIdentifierParam,
+        @PathParam("lifecycleIdentifier") final String lifecycleIdentiferParam,
+        @PathParam("phaseIdentifier") final String phaseIdentifierParam
+    ) {
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Optional<LifecycleDefinition> definitionResult
+            = findLifecycleDefinition(section, sectionIdentifierParam);
+        if (!definitionResult.isPresent()) {
+            return showLifecycleDefinitionNotFound(
+                section, sectionIdentifierParam
+            );
+        }
+        final LifecycleDefinition definition = definitionResult.get();
+        final Optional<PhaseDefinition> phaseDefinitionResult
+            = findPhaseDefinition(definition, sectionIdentifierParam);
+        if (!phaseDefinitionResult.isPresent()) {
+            return showPhaseDefinitionNotFound(
+                section,
+                sectionIdentifierParam,
+                phaseIdentifierParam
+            );
+        }
+        final PhaseDefinition phaseDefinition = phaseDefinitionResult.get();
+        selectedPhaseDefModel.setDefaultDelay(phaseDefinition.getDefaultDelay());
+        selectedPhaseDefModel.setDefaultDuration(
+            phaseDefinition.getDefaultDuration()
+        );
+        selectedPhaseDefModel.setDefinitionId(phaseDefinition.getDefinitionId());
+        selectedPhaseDefModel.setDescription(
+            phaseDefinition
+                .getDescription()
+                .getValues()
+                .entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> entry.getValue()
+                    )
+                )
+        );
+        selectedPhaseDefModel.setLabel(
+            phaseDefinition
+                .getLabel()
+                .getValues()
+                .entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> entry.getValue()
+                    )
+                )
+        );
+        return "org/librecms/ui/contentsection/configuration/lifecycle-phase.xhtml";
+    }
+
     @POST
     @Path("/{lifecycleIdentifier}/phases/{phaseIdentifier}/@edit")
     @AuthorizationRequired
@@ -570,9 +646,10 @@ public class ConfigurationLifecyclesController {
         phaseDefinititionRepo.save(phaseDefinition);
 
         return String.format(
-            "redirect:/%s/configuration/lifecycles/%s",
+            "redirect:/%s/configuration/lifecycles/%s/phases/%s",
             sectionIdentifierParam,
-            lifecycleIdentiferParam
+            lifecycleIdentiferParam,
+            phaseIdentifierParam
         );
     }
 
@@ -619,9 +696,10 @@ public class ConfigurationLifecyclesController {
         phaseDefinititionRepo.delete(phaseDefinition);
 
         return String.format(
-            "redirect:/%s/configuration/lifecycles/%s",
+            "redirect:/%s/configuration/lifecycles/%s/phases/%s",
             sectionIdentifierParam,
-            lifecycleIdentiferParam
+            lifecycleIdentiferParam,
+            phaseIdentifierParam
         );
     }
 
@@ -670,9 +748,10 @@ public class ConfigurationLifecyclesController {
         phaseDefinititionRepo.save(phaseDefinition);
 
         return String.format(
-            "redirect:/%s/configuration/lifecycles/%s",
+            "redirect:/%s/configuration/lifecycles/%s/phases/%s",
             sectionIdentifierParam,
-            lifecycleIdentiferParam
+            lifecycleIdentiferParam,
+            phaseIdentifierParam
         );
     }
 
@@ -721,9 +800,10 @@ public class ConfigurationLifecyclesController {
         phaseDefinititionRepo.save(phaseDefinition);
 
         return String.format(
-            "redirect:/%s/configuration/lifecycles/%s",
+            "redirect:/%s/configuration/lifecycles/%s/phases/%s",
             sectionIdentifierParam,
-            lifecycleIdentiferParam
+            lifecycleIdentiferParam,
+            phaseIdentifierParam
         );
     }
 
@@ -772,9 +852,10 @@ public class ConfigurationLifecyclesController {
         phaseDefinititionRepo.save(phaseDefinition);
 
         return String.format(
-            "redirect:/%s/configuration/lifecycles/%s",
+            "redirect:/%s/configuration/lifecycles/%s/phases/%s",
             sectionIdentifierParam,
-            lifecycleIdentiferParam
+            lifecycleIdentiferParam,
+            phaseIdentifierParam
         );
     }
 
@@ -825,9 +906,10 @@ public class ConfigurationLifecyclesController {
         phaseDefinititionRepo.save(phaseDefinition);
 
         return String.format(
-            "redirect:/%s/configuration/lifecycles/%s",
+            "redirect:/%s/configuration/lifecycles/%s/phases/%s",
             sectionIdentifierParam,
-            lifecycleIdentiferParam
+            lifecycleIdentiferParam,
+            phaseIdentifierParam
         );
     }
 
@@ -879,9 +961,10 @@ public class ConfigurationLifecyclesController {
         phaseDefinititionRepo.save(phaseDefinition);
 
         return String.format(
-            "redirect:/%s/configuration/lifecycles/%s",
+            "redirect:/%s/configuration/lifecycles/%s/phases/%s",
             sectionIdentifierParam,
-            lifecycleIdentiferParam
+            lifecycleIdentiferParam,
+            phaseIdentifierParam
         );
     }
 
@@ -930,9 +1013,10 @@ public class ConfigurationLifecyclesController {
         phaseDefinititionRepo.save(phaseDefinition);
 
         return String.format(
-            "redirect:/%s/configuration/lifecycles/%s",
+            "redirect:/%s/configuration/lifecycles/%s/phases/%s",
             sectionIdentifierParam,
-            lifecycleIdentiferParam
+            lifecycleIdentiferParam,
+            phaseIdentifierParam
         );
     }
 

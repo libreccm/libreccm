@@ -5,10 +5,8 @@
  */
 package org.librecms.ui.contentsections;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
@@ -19,16 +17,26 @@ import javax.inject.Named;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Named("SelectedLifecycleDefinitionModel")
-public class SelectedLifecycleDefinitionModel {
+@Named("SelectedPhaseDefinitionModel")
+public class SelectedPhaseDefinitionModel {
 
-    private String uuid;
-    
+    private long definitionId;
+
     private Map<String, String> label;
 
     private Map<String, String> description;
 
-    private List<PhaseDefinitionModel> phaseDefinitions;
+    private long defaultDelay;
+
+    private long defaultDuration;
+
+    public long getDefinitionId() {
+        return definitionId;
+    }
+
+    public void setDefinitionId(final long definitionId) {
+        this.definitionId = definitionId;
+    }
 
     public Map<String, String> getLabel() {
         return Collections.unmodifiableMap(label);
@@ -46,22 +54,20 @@ public class SelectedLifecycleDefinitionModel {
         this.description = new HashMap<>(description);
     }
 
-    public List<PhaseDefinitionModel> getPhaseDefinitions() {
-        return Collections.unmodifiableList(phaseDefinitions);
+    public long getDefaultDelay() {
+        return defaultDelay;
     }
 
-    public void setPhaseDefinitions(
-        final List<PhaseDefinitionModel> phaseDefinitions
-    ) {
-        this.phaseDefinitions = new ArrayList<>(phaseDefinitions);
+    public void setDefaultDelay(final long defaultDelay) {
+        this.defaultDelay = defaultDelay;
     }
 
-    public String getUuid() {
-        return uuid;
+    public long getDefaultDuration() {
+        return defaultDuration;
     }
 
-    public void setUuid(final String uuid) {
-        this.uuid = uuid;
+    public void setDefaultDuration(final long defaultDuration) {
+        this.defaultDuration = defaultDuration;
     }
 
 }
