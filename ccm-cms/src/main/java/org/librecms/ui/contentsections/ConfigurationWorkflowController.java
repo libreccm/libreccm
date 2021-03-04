@@ -1099,6 +1099,7 @@ public class ConfigurationWorkflowController {
             task
                 .getBlockedTasks()
                 .stream()
+                .map(dependency -> dependency.getBlockedTask())
                 .map(this::buildWorkflowTaskTemplateListModel)
                 .collect(Collectors.toList())
         );
@@ -1106,6 +1107,7 @@ public class ConfigurationWorkflowController {
             task
                 .getBlockingTasks()
                 .stream()
+                .map(dependency -> dependency.getBlockingTask())
                 .map(this::buildWorkflowTaskTemplateListModel)
                 .collect(Collectors.toList())
         );
