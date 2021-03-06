@@ -52,6 +52,9 @@ public class ConfigurationWorkflowController {
     private ContentSectionManager sectionManager;
 
     @Inject
+    private ContentSectionModel sectionModel;
+
+    @Inject
     private ContentSectionsUi sectionsUi;
 
     @Inject
@@ -94,6 +97,7 @@ public class ConfigurationWorkflowController {
             return sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -125,6 +129,7 @@ public class ConfigurationWorkflowController {
             return sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -212,6 +217,7 @@ public class ConfigurationWorkflowController {
     @POST
     @Path("/@add")
     @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
     public String addWorkflowTemplate(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @FormParam("label") final String label
@@ -222,6 +228,7 @@ public class ConfigurationWorkflowController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -233,6 +240,7 @@ public class ConfigurationWorkflowController {
         template.getName().addValue(
             globalizationHelper.getNegotiatedLocale(), label
         );
+        workflowRepo.save(template);
         sectionManager.addWorkflowTemplateToContentSection(template, section);
 
         return String.format(
@@ -254,6 +262,7 @@ public class ConfigurationWorkflowController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -293,6 +302,7 @@ public class ConfigurationWorkflowController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -332,6 +342,7 @@ public class ConfigurationWorkflowController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -372,6 +383,7 @@ public class ConfigurationWorkflowController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -411,6 +423,7 @@ public class ConfigurationWorkflowController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -450,6 +463,7 @@ public class ConfigurationWorkflowController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -489,6 +503,7 @@ public class ConfigurationWorkflowController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -513,7 +528,7 @@ public class ConfigurationWorkflowController {
     }
 
     @GET
-    @Path("/{workflowIdentifier}/tasks")
+    @Path("/{workflowIdentifier}/tasks/{taskIdentifier}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String showTask(
@@ -527,6 +542,7 @@ public class ConfigurationWorkflowController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -673,6 +689,7 @@ public class ConfigurationWorkflowController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -690,6 +707,8 @@ public class ConfigurationWorkflowController {
         task.getLabel().addValue(
             globalizationHelper.getNegotiatedLocale(), label
         );
+
+        taskRepo.save(task);
         taskManager.addTask(workflow, task);
 
         return String.format(
@@ -714,6 +733,7 @@ public class ConfigurationWorkflowController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -763,6 +783,7 @@ public class ConfigurationWorkflowController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -813,6 +834,7 @@ public class ConfigurationWorkflowController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -863,6 +885,7 @@ public class ConfigurationWorkflowController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -913,6 +936,7 @@ public class ConfigurationWorkflowController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -964,6 +988,7 @@ public class ConfigurationWorkflowController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -1014,6 +1039,7 @@ public class ConfigurationWorkflowController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -1064,6 +1090,7 @@ public class ConfigurationWorkflowController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -1103,7 +1130,7 @@ public class ConfigurationWorkflowController {
             models.put("workflowTemplateIdentifier", workflowIdentiferParam);
             models.put("blockedTaskIdentifier", taskIdentifierParam);
             models.put("blockingTaskIdentifier", blockingTaskParam);
-           
+
             return "org/librecms/ui/contentsection/configuration/workflow-task-circular-dependency.xhtml";
         }
 
@@ -1132,6 +1159,7 @@ public class ConfigurationWorkflowController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -1251,7 +1279,7 @@ public class ConfigurationWorkflowController {
         models.put("sectionIdentifier", section.getLabel());
         models.put("workflowTemplateIdentifier", workflowTemplateIdentifier);
         models.put("workflowTaskTemplateIdentifier", taskTemplateIdentifier);
-        return "org/librecms/ui/contentsection/configuration/workflowtask-not-found.xhtml";
+        return "org/librecms/ui/contentsection/configuration/workflow-task-not-found.xhtml";
     }
 
     private WorkflowTemplateListModel buildWorkflowTemplateListModel(
@@ -1276,22 +1304,6 @@ public class ConfigurationWorkflowController {
     ) {
         final WorkflowTaskTemplateListModel model
             = new WorkflowTaskTemplateListModel();
-        model.setBlockedTasks(
-            task
-                .getBlockedTasks()
-                .stream()
-                .map(dependency -> dependency.getBlockedTask())
-                .map(this::buildWorkflowTaskTemplateListModel)
-                .collect(Collectors.toList())
-        );
-        model.setBlockingTasks(
-            task
-                .getBlockingTasks()
-                .stream()
-                .map(dependency -> dependency.getBlockingTask())
-                .map(this::buildWorkflowTaskTemplateListModel)
-                .collect(Collectors.toList())
-        );
         model.setDescription(
             globalizationHelper.getValueFromLocalizedString(
                 task.getDescription()

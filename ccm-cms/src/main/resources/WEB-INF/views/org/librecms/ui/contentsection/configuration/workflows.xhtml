@@ -75,7 +75,8 @@
                                         help="#{CmsAdminMessages['contentsection.configuration.workflows.add.dialog.label.help']}"
                                         inputId="add-workflow-dialog-label"
                                         label="#{CmsAdminMessages['contentsection.configuration.workflows.add.dialog.label.label']}"
-                                        name="label" />
+                                        name="label" 
+                                        required="true" />
                                 </div>
                                 <div class="modal-footer">
                                     <button class="btn btn-warning" 
@@ -92,7 +93,7 @@
                         </div>
                     </div>
                 </div>
-                <table class="table table-hover">
+                <table class="table table-hover workflows-table">
                     <thead>
                         <tr>
                             <th scope="col">
@@ -112,7 +113,7 @@
                                         #{workflowTemplate.name}
                                     </a>
                                 </td>
-                                <td>
+                                <td class="info-col">
                                     <button 
                                         class="btn btn-info"
                                         data-toggle="modal"
@@ -132,7 +133,7 @@
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h2 id="workflow-#{workflowTemplate.uuid}-info-dialog-title">
-                                                        #{CmsAdminMessages.getMessage('contentsection.configuration.workflows.info.dialog.title', workflowTemplate.name)}
+                                                        #{CmsAdminMessages.getMessage('contentsection.configuration.workflows.info.dialog.title', [workflowTemplate.name])}
                                                     </h2>
                                                     <button aria-label="#{CmsAdminMessages['contentsection.configuration.workflows.info.dialog.close']}" 
                                                             class="close" 
@@ -157,7 +158,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>
+                                <td class="del-col">
                                     <libreccm:deleteDialog
                                         actionTarget="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/workflows/UUID-#{workflowTemplate.uuid}/@delete"
                                         buttonText="#{CmsAdminMessages['contentsection.configuration.workflows.delete_button.label']}"

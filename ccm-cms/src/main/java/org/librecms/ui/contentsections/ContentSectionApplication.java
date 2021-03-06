@@ -28,7 +28,9 @@ public class ContentSectionApplication extends Application {
         classes.add(CategoriesController.class);
         classes.add(ConfigurationController.class);
         classes.add(ConfigurationDocumentTypesController.class);
+        classes.add(ConfigurationLifecyclesController.class);
         classes.add(ConfigurationRolesController.class);
+        classes.add(ConfigurationWorkflowController.class);
         classes.add(ContentSectionController.class);
         classes.add(DocumentFolderController.class);
         classes.add(IsAuthenticatedFilter.class);

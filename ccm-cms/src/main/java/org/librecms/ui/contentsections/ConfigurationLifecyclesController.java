@@ -48,6 +48,9 @@ public class ConfigurationLifecyclesController {
 
     @Inject
     private ContentSectionManager sectionManager;
+    
+    @Inject
+    private ContentSectionModel sectionModel;
 
     @Inject
     private ContentSectionsUi sectionsUi;
@@ -60,7 +63,7 @@ public class ConfigurationLifecyclesController {
 
     @Inject
     private LifecycleManager lifecycleManager;
-
+    
     @Inject
     private LifecycleDefinitionRepository definitionRepo;
 
@@ -89,6 +92,7 @@ public class ConfigurationLifecyclesController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -120,6 +124,7 @@ public class ConfigurationLifecyclesController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -127,10 +132,10 @@ public class ConfigurationLifecyclesController {
         }
 
         final Optional<LifecycleDefinition> definitionResult
-            = findLifecycleDefinition(section, sectionIdentifierParam);
+            = findLifecycleDefinition(section, lifecycleIdentiferParam);
         if (!definitionResult.isPresent()) {
             return showLifecycleDefinitionNotFound(
-                section, sectionIdentifierParam
+                section, lifecycleIdentiferParam
             );
         }
         final LifecycleDefinition definition = definitionResult.get();
@@ -204,6 +209,7 @@ public class ConfigurationLifecyclesController {
     @POST
     @Path("/@add")
     @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
     public String addLifecycleDefinition(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @FormParam("label") final String label
@@ -214,6 +220,7 @@ public class ConfigurationLifecyclesController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -224,6 +231,7 @@ public class ConfigurationLifecyclesController {
         definition
             .getLabel()
             .addValue(globalizationHelper.getNegotiatedLocale(), label);
+        definitionRepo.save(definition);
         sectionManager.addLifecycleDefinitionToContentSection(
             definition, section
         );
@@ -247,6 +255,7 @@ public class ConfigurationLifecyclesController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -254,7 +263,7 @@ public class ConfigurationLifecyclesController {
         }
 
         final Optional<LifecycleDefinition> definitionResult
-            = findLifecycleDefinition(section, sectionIdentifierParam);
+            = findLifecycleDefinition(section, lifecycleIdentiferParam);
         if (!definitionResult.isPresent()) {
             return showLifecycleDefinitionNotFound(
                 section, sectionIdentifierParam
@@ -287,6 +296,7 @@ public class ConfigurationLifecyclesController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -294,7 +304,7 @@ public class ConfigurationLifecyclesController {
         }
 
         final Optional<LifecycleDefinition> definitionResult
-            = findLifecycleDefinition(section, sectionIdentifierParam);
+            = findLifecycleDefinition(section, lifecycleIdentiferParam);
         if (!definitionResult.isPresent()) {
             return showLifecycleDefinitionNotFound(
                 section, sectionIdentifierParam
@@ -327,6 +337,7 @@ public class ConfigurationLifecyclesController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -334,7 +345,7 @@ public class ConfigurationLifecyclesController {
         }
 
         final Optional<LifecycleDefinition> definitionResult
-            = findLifecycleDefinition(section, sectionIdentifierParam);
+            = findLifecycleDefinition(section, lifecycleIdentiferParam);
         if (!definitionResult.isPresent()) {
             return showLifecycleDefinitionNotFound(
                 section, sectionIdentifierParam
@@ -366,6 +377,7 @@ public class ConfigurationLifecyclesController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -373,7 +385,7 @@ public class ConfigurationLifecyclesController {
         }
 
         final Optional<LifecycleDefinition> definitionResult
-            = findLifecycleDefinition(section, sectionIdentifierParam);
+            = findLifecycleDefinition(section, lifecycleIdentiferParam);
         if (!definitionResult.isPresent()) {
             return showLifecycleDefinitionNotFound(
                 section, sectionIdentifierParam
@@ -406,6 +418,7 @@ public class ConfigurationLifecyclesController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -413,7 +426,7 @@ public class ConfigurationLifecyclesController {
         }
 
         final Optional<LifecycleDefinition> definitionResult
-            = findLifecycleDefinition(section, sectionIdentifierParam);
+            = findLifecycleDefinition(section, lifecycleIdentiferParam);
         if (!definitionResult.isPresent()) {
             return showLifecycleDefinitionNotFound(
                 section, sectionIdentifierParam
@@ -446,6 +459,7 @@ public class ConfigurationLifecyclesController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -453,7 +467,7 @@ public class ConfigurationLifecyclesController {
         }
 
         final Optional<LifecycleDefinition> definitionResult
-            = findLifecycleDefinition(section, sectionIdentifierParam);
+            = findLifecycleDefinition(section, lifecycleIdentiferParam);
         if (!definitionResult.isPresent()) {
             return showLifecycleDefinitionNotFound(
                 section, sectionIdentifierParam
@@ -485,6 +499,7 @@ public class ConfigurationLifecyclesController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -492,7 +507,7 @@ public class ConfigurationLifecyclesController {
         }
 
         final Optional<LifecycleDefinition> definitionResult
-            = findLifecycleDefinition(section, sectionIdentifierParam);
+            = findLifecycleDefinition(section, lifecycleIdentiferParam);
         if (!definitionResult.isPresent()) {
             return showLifecycleDefinitionNotFound(
                 section, sectionIdentifierParam
@@ -530,6 +545,7 @@ public class ConfigurationLifecyclesController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -537,7 +553,7 @@ public class ConfigurationLifecyclesController {
         }
 
         final Optional<LifecycleDefinition> definitionResult
-            = findLifecycleDefinition(section, sectionIdentifierParam);
+            = findLifecycleDefinition(section, lifecycleIdentiferParam);
         if (!definitionResult.isPresent()) {
             return showLifecycleDefinitionNotFound(
                 section, sectionIdentifierParam
@@ -562,6 +578,8 @@ public class ConfigurationLifecyclesController {
         phaseDefinition
             .getLabel()
             .addValue(globalizationHelper.getNegotiatedLocale(), label);
+        
+        phaseDefinititionRepo.save(phaseDefinition);
         lifecycleManager.addPhaseDefinition(definition, phaseDefinition);
 
         return String.format(
@@ -586,6 +604,7 @@ public class ConfigurationLifecyclesController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -593,7 +612,7 @@ public class ConfigurationLifecyclesController {
         }
 
         final Optional<LifecycleDefinition> definitionResult
-            = findLifecycleDefinition(section, sectionIdentifierParam);
+            = findLifecycleDefinition(section, lifecycleIdentiferParam);
         if (!definitionResult.isPresent()) {
             return showLifecycleDefinitionNotFound(
                 section, sectionIdentifierParam
@@ -608,7 +627,7 @@ public class ConfigurationLifecyclesController {
         selectedLifecycleDefModel.setUuid(definition.getUuid());
 
         final Optional<PhaseDefinition> phaseDefinitionResult
-            = findPhaseDefinition(definition, sectionIdentifierParam);
+            = findPhaseDefinition(definition, phaseIdentifierParam);
         if (!phaseDefinitionResult.isPresent()) {
             return showPhaseDefinitionNotFound(
                 section,
@@ -707,6 +726,7 @@ public class ConfigurationLifecyclesController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -714,7 +734,7 @@ public class ConfigurationLifecyclesController {
         }
 
         final Optional<LifecycleDefinition> definitionResult
-            = findLifecycleDefinition(section, sectionIdentifierParam);
+            = findLifecycleDefinition(section, lifecycleIdentiferParam);
         if (!definitionResult.isPresent()) {
             return showLifecycleDefinitionNotFound(
                 section, sectionIdentifierParam
@@ -722,7 +742,7 @@ public class ConfigurationLifecyclesController {
         }
         final LifecycleDefinition definition = definitionResult.get();
         final Optional<PhaseDefinition> phaseDefinitionResult
-            = findPhaseDefinition(definition, sectionIdentifierParam);
+            = findPhaseDefinition(definition, phaseIdentifierParam);
         if (!phaseDefinitionResult.isPresent()) {
             return showPhaseDefinitionNotFound(
                 section,
@@ -769,6 +789,7 @@ public class ConfigurationLifecyclesController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -776,7 +797,7 @@ public class ConfigurationLifecyclesController {
         }
 
         final Optional<LifecycleDefinition> definitionResult
-            = findLifecycleDefinition(section, sectionIdentifierParam);
+            = findLifecycleDefinition(section, lifecycleIdentiferParam);
         if (!definitionResult.isPresent()) {
             return showLifecycleDefinitionNotFound(
                 section, sectionIdentifierParam
@@ -784,7 +805,7 @@ public class ConfigurationLifecyclesController {
         }
         final LifecycleDefinition definition = definitionResult.get();
         final Optional<PhaseDefinition> phaseDefinitionResult
-            = findPhaseDefinition(definition, sectionIdentifierParam);
+            = findPhaseDefinition(definition, phaseIdentifierParam);
         if (!phaseDefinitionResult.isPresent()) {
             return showPhaseDefinitionNotFound(
                 section,
@@ -797,10 +818,9 @@ public class ConfigurationLifecyclesController {
         phaseDefinititionRepo.delete(phaseDefinition);
 
         return String.format(
-            "redirect:/%s/configuration/lifecycles/%s/phases/%s",
+            "redirect:/%s/configuration/lifecycles/%s",
             sectionIdentifierParam,
-            lifecycleIdentiferParam,
-            phaseIdentifierParam
+            lifecycleIdentiferParam
         );
     }
 
@@ -821,6 +841,7 @@ public class ConfigurationLifecyclesController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -828,7 +849,7 @@ public class ConfigurationLifecyclesController {
         }
 
         final Optional<LifecycleDefinition> definitionResult
-            = findLifecycleDefinition(section, sectionIdentifierParam);
+            = findLifecycleDefinition(section, lifecycleIdentiferParam);
         if (!definitionResult.isPresent()) {
             return showLifecycleDefinitionNotFound(
                 section, sectionIdentifierParam
@@ -836,7 +857,7 @@ public class ConfigurationLifecyclesController {
         }
         final LifecycleDefinition definition = definitionResult.get();
         final Optional<PhaseDefinition> phaseDefinitionResult
-            = findPhaseDefinition(definition, sectionIdentifierParam);
+            = findPhaseDefinition(definition, phaseIdentifierParam);
         if (!phaseDefinitionResult.isPresent()) {
             return showPhaseDefinitionNotFound(
                 section,
@@ -873,6 +894,7 @@ public class ConfigurationLifecyclesController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -880,7 +902,7 @@ public class ConfigurationLifecyclesController {
         }
 
         final Optional<LifecycleDefinition> definitionResult
-            = findLifecycleDefinition(section, sectionIdentifierParam);
+            = findLifecycleDefinition(section, lifecycleIdentiferParam);
         if (!definitionResult.isPresent()) {
             return showLifecycleDefinitionNotFound(
                 section, sectionIdentifierParam
@@ -888,7 +910,7 @@ public class ConfigurationLifecyclesController {
         }
         final LifecycleDefinition definition = definitionResult.get();
         final Optional<PhaseDefinition> phaseDefinitionResult
-            = findPhaseDefinition(definition, sectionIdentifierParam);
+            = findPhaseDefinition(definition, phaseIdentifierParam);
         if (!phaseDefinitionResult.isPresent()) {
             return showPhaseDefinitionNotFound(
                 section,
@@ -910,7 +932,8 @@ public class ConfigurationLifecyclesController {
 
     @POST
     @Path(
-        "/{lifecycleIdentifier}/phases/{phaseIdentifier}/label/@remove/{locale}")
+        "/{lifecycleIdentifier}/phases/{phaseIdentifier}/label/@remove/{locale}"
+    )
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String removePhaseLabel(
@@ -925,6 +948,7 @@ public class ConfigurationLifecyclesController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -932,7 +956,7 @@ public class ConfigurationLifecyclesController {
         }
 
         final Optional<LifecycleDefinition> definitionResult
-            = findLifecycleDefinition(section, sectionIdentifierParam);
+            = findLifecycleDefinition(section, lifecycleIdentiferParam);
         if (!definitionResult.isPresent()) {
             return showLifecycleDefinitionNotFound(
                 section, sectionIdentifierParam
@@ -940,7 +964,7 @@ public class ConfigurationLifecyclesController {
         }
         final LifecycleDefinition definition = definitionResult.get();
         final Optional<PhaseDefinition> phaseDefinitionResult
-            = findPhaseDefinition(definition, sectionIdentifierParam);
+            = findPhaseDefinition(definition, phaseIdentifierParam);
         if (!phaseDefinitionResult.isPresent()) {
             return showPhaseDefinitionNotFound(
                 section,
@@ -977,6 +1001,7 @@ public class ConfigurationLifecyclesController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -984,7 +1009,7 @@ public class ConfigurationLifecyclesController {
         }
 
         final Optional<LifecycleDefinition> definitionResult
-            = findLifecycleDefinition(section, sectionIdentifierParam);
+            = findLifecycleDefinition(section, lifecycleIdentiferParam);
         if (!definitionResult.isPresent()) {
             return showLifecycleDefinitionNotFound(
                 section, sectionIdentifierParam
@@ -992,7 +1017,7 @@ public class ConfigurationLifecyclesController {
         }
         final LifecycleDefinition definition = definitionResult.get();
         final Optional<PhaseDefinition> phaseDefinitionResult
-            = findPhaseDefinition(definition, sectionIdentifierParam);
+            = findPhaseDefinition(definition, phaseIdentifierParam);
         if (!phaseDefinitionResult.isPresent()) {
             return showPhaseDefinitionNotFound(
                 section,
@@ -1016,7 +1041,8 @@ public class ConfigurationLifecyclesController {
 
     @POST
     @Path(
-        "/{lifecycleIdentifier}/phases/{phaseIdentifier}/description/@edit/{locale}")
+        "/{lifecycleIdentifier}/phases/{phaseIdentifier}/description/@edit/{locale}"
+    )
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String editPhaseDescription(
@@ -1032,6 +1058,7 @@ public class ConfigurationLifecyclesController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -1039,7 +1066,7 @@ public class ConfigurationLifecyclesController {
         }
 
         final Optional<LifecycleDefinition> definitionResult
-            = findLifecycleDefinition(section, sectionIdentifierParam);
+            = findLifecycleDefinition(section, lifecycleIdentiferParam);
         if (!definitionResult.isPresent()) {
             return showLifecycleDefinitionNotFound(
                 section, sectionIdentifierParam
@@ -1047,7 +1074,7 @@ public class ConfigurationLifecyclesController {
         }
         final LifecycleDefinition definition = definitionResult.get();
         final Optional<PhaseDefinition> phaseDefinitionResult
-            = findPhaseDefinition(definition, sectionIdentifierParam);
+            = findPhaseDefinition(definition, phaseIdentifierParam);
         if (!phaseDefinitionResult.isPresent()) {
             return showPhaseDefinitionNotFound(
                 section,
@@ -1071,7 +1098,8 @@ public class ConfigurationLifecyclesController {
 
     @POST
     @Path(
-        "/{lifecycleIdentifier}/phases/{phaseIdentifier}/description/@remove/{locale}")
+        "/{lifecycleIdentifier}/phases/{phaseIdentifier}/description/@remove/{locale}"
+    )
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String removePhaseDescription(
@@ -1086,6 +1114,7 @@ public class ConfigurationLifecyclesController {
             sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
         }
         final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
         if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
@@ -1093,7 +1122,7 @@ public class ConfigurationLifecyclesController {
         }
 
         final Optional<LifecycleDefinition> definitionResult
-            = findLifecycleDefinition(section, sectionIdentifierParam);
+            = findLifecycleDefinition(section, lifecycleIdentiferParam);
         if (!definitionResult.isPresent()) {
             return showLifecycleDefinitionNotFound(
                 section, sectionIdentifierParam
@@ -1101,7 +1130,7 @@ public class ConfigurationLifecyclesController {
         }
         final LifecycleDefinition definition = definitionResult.get();
         final Optional<PhaseDefinition> phaseDefinitionResult
-            = findPhaseDefinition(definition, sectionIdentifierParam);
+            = findPhaseDefinition(definition, phaseIdentifierParam);
         if (!phaseDefinitionResult.isPresent()) {
             return showPhaseDefinitionNotFound(
                 section,
@@ -1207,7 +1236,7 @@ public class ConfigurationLifecyclesController {
             .stream()
             .filter(
                 definition -> definition.getDefinitionId() == Long
-                .parseLong(phaseDefinitionIdentifierParam)
+                .parseLong(phaseDefinitionIdentifierParam.substring(3))
             ).findAny();
     }
 

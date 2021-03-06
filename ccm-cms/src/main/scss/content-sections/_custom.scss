@@ -114,3 +114,15 @@ table.contentsection-roles-table {
         width: 11em;
     }
 }
+
+table.lifecycles-table,
+table.workflows-table,
+table.workflow-tasks-table {
+    td.info-col {
+        width: 3em;
+    }
+    
+    td.del-col {
+        width: 9em;
+    }
+}

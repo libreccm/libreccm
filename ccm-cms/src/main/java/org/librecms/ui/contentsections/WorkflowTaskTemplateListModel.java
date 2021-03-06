@@ -25,10 +25,6 @@ public class WorkflowTaskTemplateListModel {
 
     private String description;
 
-    private List<WorkflowTaskTemplateListModel> blockedTasks;
-
-    private List<WorkflowTaskTemplateListModel> blockingTasks;
-
     public long getTaskId() {
         return taskId;
     }
@@ -43,26 +39,6 @@ public class WorkflowTaskTemplateListModel {
 
     public void setUuid(final String uuid) {
         this.uuid = uuid;
-    }
-
-    public List<WorkflowTaskTemplateListModel> getBlockedTasks() {
-        return Collections.unmodifiableList(blockedTasks);
-    }
-
-    public void setBlockedTasks(
-        final List<WorkflowTaskTemplateListModel> blockedTasks
-    ) {
-        this.blockedTasks = new ArrayList<>(blockedTasks);
-    }
-
-    public List< WorkflowTaskTemplateListModel> getBlockingTasks() {
-        return Collections.unmodifiableList(blockingTasks);
-    }
-
-    public void setBlockingTasks(
-        final List<WorkflowTaskTemplateListModel> blockingTasks
-    ) {
-        this.blockingTasks = new ArrayList<>(blockingTasks);
     }
 
     public String getLabel() {

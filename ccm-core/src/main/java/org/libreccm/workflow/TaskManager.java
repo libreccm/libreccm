@@ -141,6 +141,7 @@ public class TaskManager implements Serializable {
         }
 
         final TaskDependency dependency = new TaskDependency();
+        dependency.setUuid(UUID.randomUUID().toString());
         dependency.setBlockedTask(blockedTask);
         dependency.setBlockingTask(blockingTask);
         

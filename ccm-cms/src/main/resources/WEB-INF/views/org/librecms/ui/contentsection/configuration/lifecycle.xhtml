@@ -92,7 +92,7 @@
                     editDialogValueLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.lifecycle_details.description.edit.value.description']}"
                     editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/lifecycles/UUID-#{SelectedLifecycleDefinitionModel.uuid}/description/@edit"
                     editorId="lifecycle-description"
-                    hasUnusedLocales="#{SelectedLifecycleDefinitionModel.hasUnusedLabelLocales}"
+                    hasUnusedLocales="#{SelectedLifecycleDefinitionModel.hasUnusedDescriptionLocales}"
                     objectIdentifier="UUID-#{SelectedLifecycleDefinitionModel.uuid}"
                     removeButtonLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.lifecycle_details.description.remove.button']}"
                     removeDialogCancelLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.lifecycle_details.description.remove.cancel']}"
@@ -101,7 +101,7 @@
                     removeDialogTitle="#{CmsAdminMessages['contentsection.configuration.lifecycles.lifecycle_details.description.remove.title']}"
                     removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/lifecycles/UUID-#{SelectedLifecycleDefinitionModel.uuid}/description/@remove"
                     title="#{CmsAdminMessages['contentsection.configuration.lifecycles.lifecycle_details.description.title']}"
-                    unusedLocales="#{SelectedLifecycleDefinitionModel.unusedLabelLocales}"
+                    unusedLocales="#{SelectedÜ.unusedDescriptionLocales}"
                     useTextarea="true"
                     values="#{SelectedLifecycleDefinitionModel.description}"
                     />
@@ -110,7 +110,7 @@
 
                 <div class="mb-2">
                     <div class="text-right">
-                        <button class="btn btn-primary"
+                        <button class="btn btn-secondary"
                                 data-toggle="modal"
                                 data-target="#add-phase-dialog"
                                 type="button">
@@ -147,7 +147,7 @@
                                         label="#{CmsAdminMessages['contentsection.configuration.lifecycle.phases.add.dialog.label.label']}"
                                         name="label"
                                         />
-                                    <fieldset class="form-group row">
+                                    <fieldset>
                                         <legend>#{CmsAdminMessages['contentsection.configuration.lifecycle.phases.add.dialog.default_delay.label']}</legend>
                                         <small class="text-muted">#{CmsAdminMessages['contentsection.configuration.lifecycle.phases.add.dialog.default_delay.help']}</small>
                                         <bootstrap:formGroupNumber
@@ -239,8 +239,16 @@
                                         #{phaseDef.label}
                                     </a>
                                 </td>
-                                <td>#{phaseDef.defaultDelay}</td>
-                                <td>#{phaseDef.defaultDuration}</td>
+                                <td>
+                                    #{phaseDef.defaultDelay.days} #{CmsAdminMessages['contentsection.configuration.lifecycle.phases.duration.days']} 
+                                    #{phaseDef.defaultDelay.hours} #{CmsAdminMessages['contentsection.configuration.lifecycle.phases.duration.hours']} 
+                                    #{phaseDef.defaultDelay.minutes} #{CmsAdminMessages['contentsection.configuration.lifecycle.phases.duration.minutes']} 
+                                </td>
+                                <td>
+                                    #{phaseDef.defaultDuration.days} #{CmsAdminMessages['contentsection.configuration.lifecycle.phases.duration.days']} 
+                                    #{phaseDef.defaultDuration.hours} #{CmsAdminMessages['contentsection.configuration.lifecycle.phases.duration.hours']} 
+                                    #{phaseDef.defaultDuration.minutes} #{CmsAdminMessages['contentsection.configuration.lifecycle.phases.duration.minutes']} 
+                                </td>
                                 <td>
                                     <button class="btn btn-info"
                                             data-toggle="modal"
