@@ -23,12 +23,18 @@ import javax.inject.Named;
 public class SelectedLifecycleDefinitionModel {
 
     private String uuid;
-    
+
+    private String displayLabel;
+
     private Map<String, String> label;
 
-    private Map<String, String> description;
+    private List<String> unusedLabelLocales;
 
+    private Map<String, String> description;
+    
     private List<PhaseDefinitionModel> phaseDefinitions;
+
+    private List<String> unusedDescriptionLocales;
 
     public Map<String, String> getLabel() {
         return Collections.unmodifiableMap(label);
@@ -62,6 +68,41 @@ public class SelectedLifecycleDefinitionModel {
 
     public void setUuid(final String uuid) {
         this.uuid = uuid;
+    }
+
+    public String getDisplayLabel() {
+        return displayLabel;
+    }
+
+    public void setDisplayLabel(final String displayLabel) {
+        this.displayLabel = displayLabel;
+    }
+
+    public List<String> getUnusedLabelLocales() {
+        return Collections.unmodifiableList(unusedLabelLocales);
+    }
+
+    public void setUnusedLabelLocales(final List<String> unusedLabelLocales) {
+        this.unusedLabelLocales = new ArrayList<>(unusedLabelLocales);
+    }
+
+    public boolean getHasUnusedLabelLocales() {
+        return !unusedLabelLocales.isEmpty();
+    }
+    
+    public List<String> getUnusedDescriptionLocales() {
+        return Collections.unmodifiableList(unusedDescriptionLocales);
+    }
+
+    public void setUnusedDescriptionLocales(
+        final List<String> unusedDescriptionLocales
+    ) {
+        this.unusedDescriptionLocales
+            = new ArrayList<>(unusedDescriptionLocales);
+    }
+    
+    public boolean getHasUnusedDescriptionLocales() {
+        return !unusedDescriptionLocales.isEmpty();
     }
 
 }

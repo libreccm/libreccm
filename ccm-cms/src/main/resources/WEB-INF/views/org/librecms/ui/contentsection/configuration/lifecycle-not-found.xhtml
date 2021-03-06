@@ -1,0 +1,27 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/content-section/contentsection.xhtml">
+
+        <ui:param name="activePage" value="folderBrowser" />
+        <ui:param name="title" value="#{CmsAdminMessages['contentsection.lifecycle.not_found.title']}" />
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                #{CmsAdminMessages['contentsections.list.label']}
+            </li>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container">
+                <div class="alert alert-danger" role="alert">
+                    #{CmsAdminMessages.getMessage('contentsection.lifecycle.not_found', [sectionIdentifier, definitionIdentifier])}
+                </div>
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>
+
+

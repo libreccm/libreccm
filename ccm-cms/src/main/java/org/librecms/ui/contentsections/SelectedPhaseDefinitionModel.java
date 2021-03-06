@@ -5,8 +5,10 @@
  */
 package org.librecms.ui.contentsections;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
@@ -21,14 +23,20 @@ import javax.inject.Named;
 public class SelectedPhaseDefinitionModel {
 
     private long definitionId;
-
+    
     private Map<String, String> label;
+    
+    private String displayLabel;
+
+    private List<String> unusedLabelLocales;
 
     private Map<String, String> description;
 
-    private long defaultDelay;
+    private List<String> unusedDescriptionLocales;
 
-    private long defaultDuration;
+    private Duration defaultDelay;
+
+    private Duration defaultDuration;
 
     public long getDefinitionId() {
         return definitionId;
@@ -54,20 +62,55 @@ public class SelectedPhaseDefinitionModel {
         this.description = new HashMap<>(description);
     }
 
-    public long getDefaultDelay() {
+    public Duration getDefaultDelay() {
         return defaultDelay;
     }
 
-    public void setDefaultDelay(final long defaultDelay) {
+    public void setDefaultDelay(final Duration defaultDelay) {
         this.defaultDelay = defaultDelay;
     }
 
-    public long getDefaultDuration() {
+    public Duration getDefaultDuration() {
         return defaultDuration;
     }
 
-    public void setDefaultDuration(final long defaultDuration) {
+    public void setDefaultDuration(final Duration defaultDuration) {
         this.defaultDuration = defaultDuration;
     }
 
+    public List<String> getUnusedLabelLocales() {
+        return Collections.unmodifiableList(unusedLabelLocales);
+    }
+
+    public void setUnusedLabelLocales(final List<String> unusedLabelLocales) {
+        this.unusedLabelLocales = new ArrayList<>(unusedLabelLocales);
+    }
+
+    public List<String> getUnusedDescriptionLocales() {
+        return Collections.unmodifiableList(unusedDescriptionLocales);
+    }
+
+    public void setUnusedDescriptionLocales(
+        final List<String> unusedDescriptionLocales
+    ) {
+        this.unusedDescriptionLocales = new ArrayList<>(unusedDescriptionLocales);
+    }
+    
+    public boolean getHasUnusedLabelLocales() {
+        return !unusedLabelLocales.isEmpty();
+    }
+    
+    public boolean getHasUnusedDescriptionLocales() {
+        return !unusedDescriptionLocales.isEmpty();
+    }
+
+    public String getDisplayLabel() {
+        return displayLabel;
+    }
+
+    public void setDisplayLabel(final String displayLabel) {
+        this.displayLabel = displayLabel;
+    }
+
+    
 }

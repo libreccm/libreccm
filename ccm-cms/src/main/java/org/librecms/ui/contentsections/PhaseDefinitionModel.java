@@ -5,10 +5,6 @@
  */
 package org.librecms.ui.contentsections;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -16,18 +12,14 @@ import java.util.Map;
 public class PhaseDefinitionModel {
 
     private long definitionId;
+    
+    private String label;
 
-    private String displayLabel;
+    private String description;
 
-    private Map<String, String> label;
+    private Duration defaultDelay;
 
-    private String displayDescription;
-
-    private Map<String, String> description;
-
-    private long defaultDelay;
-
-    private long defaultDuration;
+    private Duration defaultDuration;
 
     public long getDefinitionId() {
         return definitionId;
@@ -37,51 +29,35 @@ public class PhaseDefinitionModel {
         this.definitionId = definitionId;
     }
 
-    public String getDisplayLabel() {
-        return displayLabel;
+    public String getLabel() {
+        return label;
     }
 
-    public void setDisplayLabel(final String displayLabel) {
-        this.displayLabel = displayLabel;
+    public void setLabel(final String label) {
+        this.label = label;
     }
 
-    public Map<String, String> getLabel() {
-        return Collections.unmodifiableMap(label);
+    public String getDescription() {
+        return description;
     }
 
-    public void setLabel(final Map<String, String> label) {
-        this.label = new HashMap<>(label);
+    public void setDescription(final String description) {
+        this.description = description;
     }
 
-    public String getDisplayDescription() {
-        return displayDescription;
-    }
-
-    public void setDisplayDescription(final String displayDescription) {
-        this.displayDescription = displayDescription;
-    }
-
-    public Map<String, String> getDescription() {
-        return Collections.unmodifiableMap(description);
-    }
-
-    public void setDescription(final Map<String, String> description) {
-        this.description = new HashMap<>(description);
-    }
-
-    public long getDefaultDelay() {
+    public Duration getDefaultDelay() {
         return defaultDelay;
     }
 
-    public void setDefaultDelay(final long defaultDelay) {
+    public void setDefaultDelay(final Duration defaultDelay) {
         this.defaultDelay = defaultDelay;
     }
 
-    public long getDefaultDuration() {
+    public Duration getDefaultDuration() {
         return defaultDuration;
     }
 
-    public void setDefaultDuration(final long defaultDuration) {
+    public void setDefaultDuration(final Duration defaultDuration) {
         this.defaultDuration = defaultDuration;
     }
 

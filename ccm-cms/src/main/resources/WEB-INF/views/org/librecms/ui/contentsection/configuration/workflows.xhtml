@@ -1,0 +1,178 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:cms="http://xmlns.jcp.org/jsf/composite/components/cms"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/contentsection.xhtml">
+
+        <ui:param name="activePage" value="configuration" />
+        <ui:param name="title" 
+                  value="#{CmsAdminMessages['contentsection.configuration.workflows.title']}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration">
+                    #{CmsAdminMessages['contentsection.configuration.title']}
+                </a>
+            </li>
+            <li aria-current="page" class="breadcrumb-item">
+                #{CmsAdminMessages['contentsection.configuration.workflows.title']}
+            </li>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container">
+                <ui:include src="configuration-tabs.xhtml">
+                    <ui:param name="activeConfPage" value="workflows" />
+                </ui:include>
+
+                <h1>#{CmsAdminMessages['contentsection.configuration.workflows.title']}</h1>
+                
+                <c:if test="#{not empty errors}">
+                    <c:forEach items="#{errors}" var="error">
+                        <div class="alert alert-danger" role="alert">
+                            #{error}
+                        </div>
+                    </c:forEach>
+                </c:if>
+                
+                <div class="mb-2">
+                    <div class="text-right">
+                        <button class="btn btn-primary"
+                                data-toggle="modal"
+                                data-target="#add-workflow-dialog"
+                                type="button">
+                            <bootstrap:svgIcon icon="plus-circle" />
+                            <span>#{CmsAdminMessages['contentsection.configuration.workflows.add']}</span>
+                        </button>
+                    </div>
+
+                    <div aria-hidden="true"
+                         aria-labelledby="add-workflow-dialog-title"
+                         class="modal fade"
+                         id="add-workflow-dialog"
+                         tabindex="-1">
+                        <div class="modal-dialog">
+                            <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/workflows/@add"
+                                  class="modal-content"
+                                  method="post">
+                                <div class="modal-header">
+                                    <h2 class="modal-title"
+                                        id="add-workflow-dialog-title">
+                                        #{CmsAdminMessages.getMessage('contentsection.configuration.workflows.add.dialog.title', [ContentSectionModel.sectionName])}
+                                    </h2>
+                                    <button aria-label="#{CmsAdminMessages['contentsection.configuration.workflows.add.dialog.close']}"
+                                            class="close"
+                                            data-dismiss="modal"
+                                            type="button">
+                                        <bootstrap:svgIcon icon="x" />
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <bootstrap:formGroupText 
+                                        help="#{CmsAdminMessages['contentsection.configuration.workflows.add.dialog.label.help']}"
+                                        inputId="add-workflow-dialog-label"
+                                        label="#{CmsAdminMessages['contentsection.configuration.workflows.add.dialog.label.label']}"
+                                        name="label" />
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-warning" 
+                                            data-dismiss="modal"
+                                            type="button">
+                                        #{CmsAdminMessages['contentsection.configuration.workflows.add.dialog.close']}
+                                    </button>
+                                    <button class="btn btn-primary" 
+                                            type="submit" >
+                                        #{CmsAdminMessages['contentsection.configuration.workflows.add.dialog.submit']}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">
+                                #{CmsAdminMessages['contentsection.configuration.workflows.table.cols.name']}
+                            </th>
+                            <th colspan="2">
+                                #{CmsAdminMessages['contentsection.configuration.workflows.table.cols.actions']}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="#{workflowTemplates}"
+                                   var="workflowTemplate">
+                            <tr>
+                                <td>
+                                    <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/workflows/UUID-#{workflowTemplate.uuid}">
+                                        #{workflowTemplate.name}
+                                    </a>
+                                </td>
+                                <td>
+                                    <button 
+                                        class="btn btn-info"
+                                        data-toggle="modal"
+                                        data-target="#workflow-#{workflowTemplate.uuid}-info-dialog"
+                                        type="button">
+                                        <bootstrap:svgIcon icon="info-circle" />
+                                        <span class="sr-only">
+                                            #{CmsAdminMessages['contentsection.configuration.workflows.table.info_button.label']}
+                                        </span>
+                                    </button>
+                                    <div aria-hidden="true"
+                                         aria-labelledby="workflow-#{workflowTemplate.uuid}-info-dialog-title"
+                                         class="modal fade"
+                                         id="workflow-#{workflowTemplate.uuid}-info-dialog"
+                                         tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h2 id="workflow-#{workflowTemplate.uuid}-info-dialog-title">
+                                                        #{CmsAdminMessages.getMessage('contentsection.configuration.workflows.info.dialog.title', workflowTemplate.name)}
+                                                    </h2>
+                                                    <button aria-label="#{CmsAdminMessages['contentsection.configuration.workflows.info.dialog.close']}" 
+                                                            class="close" 
+                                                            data-dismiss="modal"
+                                                            type="button">
+                                                        <bootstrap:svgIcon icon="x" />
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>
+                                                        #{workflowTemplate.description}
+                                                    </p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-warning" 
+                                                            data-dismiss="modal"
+                                                            type="button">
+                                                        #{CmsAdminMessages['contentsection.configuration.workflows.info.dialog.close']}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <libreccm:deleteDialog
+                                        actionTarget="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/workflows/UUID-#{workflowTemplate.uuid}/@delete"
+                                        buttonText="#{CmsAdminMessages['contentsection.configuration.workflows.delete_button.label']}"
+                                        cancelLabel="#{CmsAdminMessages['contentsection.configuration.workflows.delete_dialog.cancel']}"
+                                        confirmLabel="#{CmsAdminMessages['contentsection.configuration.workflows.delete_dialog.confirm']}"
+                                        dialogId="workflows-#{workflowTemplate.uuid}-delete-dialog"
+                                        dialogTitle="#{CmsAdminMessages['contentsection.configuration.workflows.delete_dialog.title']}"
+                                        message="#{CmsAdminMessages.getMessage('contentsection.configuration.workflows.delete_dialog.message', [ContentSectionModel.sectionName, workflowTemplate.name])}"
+                                        />
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>

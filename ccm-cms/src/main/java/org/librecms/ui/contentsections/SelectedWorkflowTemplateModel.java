@@ -21,15 +21,21 @@ import javax.inject.Named;
 @RequestScoped
 @Named("SelectedWorkflowTemplateModel")
 public class SelectedWorkflowTemplateModel {
-    
+
     private long workflowId;
-    
+
     private String uuid;
     
+    private String displayName;
+
     private Map<String, String> name;
-    
+
+    private List<String> unusedNameLocales;
+
     private Map<String, String> description;
-    
+
+    private List<String> unusedDescriptionLocales;
+
     private List<WorkflowTaskTemplateListModel> tasks;
 
     public long getWorkflowId() {
@@ -71,7 +77,41 @@ public class SelectedWorkflowTemplateModel {
     public void setTasks(final List<WorkflowTaskTemplateListModel> tasks) {
         this.tasks = new ArrayList<>(tasks);
     }
+
+    public List<String> getUnusedNameLocales() {
+        return Collections.unmodifiableList(unusedNameLocales);
+    }
+
+    public void setUnusedNameLocales(final List<String> unusedNameLocales) {
+        this.unusedNameLocales = new ArrayList<>(unusedNameLocales);
+    }
+
+    public List<String> getUnusedDescriptionLocales() {
+        return Collections.unmodifiableList(unusedDescriptionLocales);
+    }
+
+    public void setUnusedDescriptionLocales(
+        final List<String> unusedDescriptionLocales
+    ) {
+        this.unusedDescriptionLocales
+            = new ArrayList<>(unusedDescriptionLocales);
+    }
     
+    public boolean getHasUnusedNameLocales() {
+        return !unusedNameLocales.isEmpty();
+    }
     
+    public boolean getHasUnusedDescriptionLocales() {
+        return !unusedDescriptionLocales.isEmpty();
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(final String displayName) {
+        this.displayName = displayName;
+    }
+
     
 }

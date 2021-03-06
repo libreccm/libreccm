@@ -1,0 +1,203 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:cms="http://xmlns.jcp.org/jsf/composite/components/cms"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/contentsection.xhtml">
+
+        <ui:param name="activePage" value="configuration" />
+        <ui:param name="title" 
+                  value="#{CmsAdminMessages['contentsection.configuration.lifecycles.title']}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration">
+                    #{CmsAdminMessages['contentsection.configuration.title']}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/lifecycles">
+                    #{CmsAdminMessages['contentsection.configuration.lifecycles.title']}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/lifecycles/UUID-#{SelectedLifecycleDefinitionModel.uuid}">
+                    #{SelectedLifecycleDefinitionModel.displayLabel}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                #{CmsAdminMessages['contentsection.configuration.lifecycles.phases.title']}
+            </li>
+            <li aria-current="page" class="breadcrumb-item">
+                #{SelectedPhaseDefinitionModel.displayLabel}
+            </li>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container">
+                <ui:include src="configuration-tabs.xhtml">
+                    <ui:param name="activeConfPage" value="lifecycles" />
+                </ui:include>
+
+                <c:if test="#{not empty errors}">
+                    <c:forEach items="#{errors}" var="error">
+                        <div class="alert alert-danger" role="alert">
+                            #{error}
+                        </div>
+                    </c:forEach>
+                </c:if>
+
+                <h1>#{CmsAdminMessages.getMessage('contentsection.configuration.lifecycle.phase_details.title', [SelectedLifecycleDefinitionModel.displayLabel ,SelectedPhaseDefinitionModel.displayLabel])}</h1>
+
+                <h2>#{CmsAdminMessages['contentsection.configuration.lifecycle.phase_details.properties']}</h2>
+                <dl>
+                    <div>
+                        <dt>
+                            #{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.default_delay.label']}
+                        </dt>
+                        <dd>
+                            #{SelectedPhaseDefinitionModel.defaultDelay}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>
+                            #{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.default_duration.label']}
+                        </dt>
+                        <dd>
+                            #{SelectedPhaseDefinitionModel.defaultDuration}
+                        </dd>
+                    </div>
+                </dl>
+                <button class="btn btn-primary"
+                        data-target="#edit-phase-properties-dialog"
+                        data-toggle="modal"
+                        type="button">
+                    <bootstrap:svgIcon icon="pen" />
+                    <span class="sr-only">
+                        #{CmsAdminMessages['contentsection.configuration.lifecycle.phase_details.properties.edit']}
+                    </span>
+                </button>
+                <div aria-hidden="true"
+                     aria-labelledby="edit-phase-properties-dialog-title"
+                     class="modal fade"
+                     id="edit-phase-properties-dialog"
+                     tabindex="-1">
+                    <div class="modal-dialog">
+                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/lifecycles/UUID-#{SelectedLifecycleDefinitionModel.uuid}/phases/ID-#{SelectedPhaseDefinitionModel.definitionId}/@edit"
+                              class="modal-content"
+                              method="post">
+                            <div class="modal-header">
+                                <h3 class="modal-title"
+                                    id="edit-phase-properties-dialog-title"
+                                    >
+                                    #{CmsAdminMessages.getMessage('contentsection.configuration.lifecycle.phase_details.properties.edit.title', [SelectedLifecycleDefinitionModel.displayLabel, SelectedPhaseDefinitionModel.displayLabel])}
+                                </h3>
+                                <button aria-label="#{CmsAdminMessages['contentsection.configuration.lifecycle.phase_details.properties.edit.close']}"
+                                        class="close"
+                                        data-dismiss="modal"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="x" />
+                                </button>
+                            </div>
+                            <div class="modal-content">
+                                <bootstrap:formGroupNumber
+                                    help="#{CmsAdminMessages['contentsection.configuration.lifecycle.phases.add.dialog.default_delay.help']}"
+                                    inputId="add-phase-dialog-default-delay"
+                                    label="#{CmsAdminMessages['contentsection.configuration.lifecycle.phases.add.dialog.default_delay.label']}"
+                                    name="defaultDelay"
+                                    value="#{SelectedPhaseDefinitionModel.defaultDelay}"
+                                    />
+                                <bootstrap:formGroupNumber
+                                    help="#{CmsAdminMessages['contentsection.configuration.lifecycle.phases.add.dialog.default_duration.help']}"
+                                    inputId="add-phase-dialog-default-duration"
+                                    label="#{CmsAdminMessages['contentsection.configuration.lifecycle.phases.add.dialog.default_duration.label']}"
+                                    name="defaultDuration"
+                                    value="#{SelectedPhaseDefinitionModel.defaultDuration}"
+                                    />
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-warning"
+                                        data-dismiss="modal"
+                                        type="button">
+                                    #{CmsAdminMessages['contentsection.configuration.lifecycle.phase_details.properties.edit.close']}
+                                </button>
+                                <button class="btn btn-success"
+                                        type="submit">
+                                    #{CmsAdminMessages['contentsection.configuration.lifecycle.phase_details.properties.edit.submit']}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+
+                <libreccm:localizedStringEditor
+                    addButtonLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.label.add.button']}"
+                    addDialogCancelLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.label.add.cancel']}"
+                    addDialogLocaleSelectHelp="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.label.add.locale.help']}"
+                    addDialogLocaleSelectLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.label.add.locale.label']}"
+                    addDialogSubmitLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.label.locale.add.submit']}"
+                    addDialogTitle="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.label.add.title']}"
+                    addDialogValueHelp="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.label.add.value.help']}"
+                    addDialogValueLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.label.add.value.label']}"
+                    addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/lifecycles/UUID-#{SelectedLifecycleDefinitionModel.uuid}/phases/ID-#{SelectedPhaseDefinitionModel.definitionId}/label/@add"
+                    editButtonLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.label.edit.button']}"
+                    editDialogCancelLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.label.edit.cancel']}"
+                    editDialogSubmitLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.label.edit.submit']}"
+                    editDialogTitle="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.label.edit.title']}"
+                    editDialogValueHelp="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.label.edit.value.help']}"
+                    editDialogValueLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.label.edit.value.label']}"
+                    editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/lifecycles/UUID-#{SelectedLifecycleDefinitionModel.uuid}/phases/ID-#{SelectedPhaseDefinitionModel.definitionId}/label/@edit"
+                    editorId="lifecycle-label"
+                    hasUnusedLocales="#{SelectedLifecycleDefinitionModel.hasUnusedLabelLocales}"
+                    objectIdentifier="ID-#{SelectedPhaseDefinitionModel.definitionId}"
+                    removeButtonLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.label.remove.button']}"
+                    removeDialogCancelLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.label.remove.cancel']}"
+                    removeDialogSubmitLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.label.remove.submit']}"
+                    removeDialogText="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.label.remove.text']}"
+                    removeDialogTitle="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.label.remove.title']}"
+                    removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/lifecycles/UUID-#{SelectedLifecycleDefinitionModel.uuid}/phases/ID-#{SelectedPhaseDefinitionModel.definitionId}/label/@remove"
+                    title="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.label.title']}"
+                    unusedLocales="#{SelectedLifecycleDefinitionModel.unusedLabelLocales}"
+                    values="#{SelectedLifecycleDefinitionModel.label}"
+                    />
+
+                <libreccm:localizedStringEditor
+                    addButtonLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.description.add.button']}"
+                    addDialogCancelLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.description.add.cancel']}"
+                    addDialogLocaleSelectHelp="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.description.add.locale.help']}"
+                    addDialogLocaleSelectLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.description.add.locale.description']}"
+                    addDialogSubmitLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.description.locale.add.submit']}"
+                    addDialogTitle="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.description.add.title']}"
+                    addDialogValueHelp="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.description.add.value.help']}"
+                    addDialogValueLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.description.add.value.description']}"
+                    addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/lifecycles/UUID-#{SelectedLifecycleDefinitionModel.uuid}/phases/ID-#{SelectedPhaseDefinitionModel.definitionId}/description/@add"
+                    editButtonLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.description.edit.button']}"
+                    editDialogCancelLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.description.edit.cancel']}"
+                    editDialogSubmitLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.description.edit.submit']}"
+                    editDialogTitle="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.description.edit.title']}"
+                    editDialogValueHelp="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.description.edit.value.help']}"
+                    editDialogValueLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.description.edit.value.description']}"
+                    editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/lifecycles/UUID-#{SelectedLifecycleDefinitionModel.uuid}/phases/ID-#{SelectedPhaseDefinitionModel.definitionId}/description/@edit"
+                    editorId="lifecycle-description"
+                    hasUnusedLocales="#{SelectedLifecycleDefinitionModel.hasUnusedLabelLocales}"
+                    objectIdentifier="ID-#{SelectedPhaseDefinitionModel.definitionId}"
+                    removeButtonLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.description.remove.button']}"
+                    removeDialogCancelLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.description.remove.cancel']}"
+                    removeDialogSubmitLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.description.remove.submit']}"
+                    removeDialogText="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.description.remove.text']}"
+                    removeDialogTitle="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.description.remove.title']}"
+                    removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/lifecycles/UUID-#{SelectedLifecycleDefinitionModel.uuid}/phases/ID-#{SelectedPhaseDefinitionModel.definitionId}/description/@remove"
+                    title="#{CmsAdminMessages['contentsection.configuration.lifecycles.phase_details.description.title']}"
+                    unusedLocales="#{SelectedLifecycleDefinitionModel.unusedLabelLocales}"
+                    values="#{SelectedLifecycleDefinitionModel.description}"
+                    />
+
+            </div>
+
+        </ui:define>
+
+    </ui:composition>
+</html>

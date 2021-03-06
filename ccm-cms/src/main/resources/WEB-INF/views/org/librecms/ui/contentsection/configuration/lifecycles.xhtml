@@ -1,0 +1,179 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:cms="http://xmlns.jcp.org/jsf/composite/components/cms"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/contentsection.xhtml">
+
+        <ui:param name="activePage" value="configuration" />
+        <ui:param name="title" 
+                  value="#{CmsAdminMessages['contentsection.configuration.lifecycles.title']}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration">
+                    #{CmsAdminMessages['contentsection.configuration.title']}
+                </a>
+            </li>
+            <li aria-current="page" class="breadcrumb-item">
+                #{CmsAdminMessages['contentsection.configuration.lifecycles.title']}
+            </li>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container">
+                <ui:include src="configuration-tabs.xhtml">
+                    <ui:param name="activeConfPage" value="lifecycles" />
+                </ui:include>
+
+                <h1>#{CmsAdminMessages['contentsection.configuration.lifecycles.title']}</h1>
+                
+                <c:if test="#{not empty errors}">
+                    <c:forEach items="#{errors}" var="error">
+                        <div class="alert alert-danger" role="alert">
+                            #{error}
+                        </div>
+                    </c:forEach>
+                </c:if>
+
+                <div class="mb-2">
+                    <div class="text-right">
+                        <button class="btn btn-primary"
+                                data-toggle="modal"
+                                data-target="#add-lifecycle-dialog"
+                                type="button">
+                            <bootstrap:svgIcon icon="plus-circle" />
+                            <span>#{CmsAdminMessages['contentsection.configuration.lifecycles.add']}</span>
+                        </button>
+                    </div>
+
+                    <div aria-hidden="true"
+                         aria-labelledby="add-lifecycle-dialog-title"
+                         class="modal fade"
+                         id="add-lifecycle-dialog"
+                         tabindex="-1">
+                        <div class="modal-dialog">
+                            <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/lifecycles/@add"
+                                  class="modal-content"
+                                  method="post">
+                                <div class="modal-header">
+                                    <h2 class="modal-title"
+                                        id="add-lifecycle-dialog-title">
+                                        #{CmsAdminMessages.getMessage('contentsection.configuration.lifecycles.add.dialog.title', [ContentSectionModel.sectionName])}
+                                    </h2>
+                                    <button aria-label="#{CmsAdminMessages['contentsection.configuration.lifecycles.add.dialog.close']}"
+                                            class="close"
+                                            data-dismiss="modal"
+                                            type="button">
+                                        <bootstrap:svgIcon icon="x" />
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <bootstrap:formGroupText 
+                                        help="#{CmsAdminMessages['contentsection.configuration.lifecycles.add.dialog.label.help']}"
+                                        inputId="add-lifecycle-dialog-label"
+                                        label="#{CmsAdminMessages['contentsection.configuration.lifecycles.add.dialog.label.label']}"
+                                        name="label" />
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-warning" 
+                                            data-dismiss="modal"
+                                            type="button">
+                                        #{CmsAdminMessages['contentsection.configuration.lifecycles.add.dialog.close']}
+                                    </button>
+                                    <button class="btn btn-primary" 
+                                            type="submit" >
+                                        #{CmsAdminMessages['contentsection.configuration.lifecycles.add.dialog.submit']}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">
+                                #{CmsAdminMessages['contentsection.configuration.lifecycles.table.cols.label']}
+                            </th>
+                            <th colspan="2">
+                                #{CmsAdminMessages['contentsection.configuration.lifecycles.table.cols.actions']}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="#{lifecycleDefinitions}"
+                                   var="lifecycleDef">
+                            <tr>
+                                <td>
+                                    <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/lifecycles/UUID-#{lifecycleDef.uuid}">
+                                        #{lifecycleDef.label}
+                                    </a>
+                                </td>
+                                <td>
+                                    <button 
+                                        class="btn btn-info"
+                                        data-toggle="modal"
+                                        data-target="#lifecycle-#{lifecycleDef.uuid}-info-dialog"
+                                        type="button">
+                                        <bootstrap:svgIcon icon="info-circle" />
+                                        <span class="sr-only">
+                                            #{CmsAdminMessages['contentsection.configuration.lifecycles.table.info_button.label']}
+                                        </span>
+                                    </button>
+                                    <div aria-hidden="true"
+                                         aria-labelledby="lifecycle-#{lifecycleDef.uuid}-info-dialog-title"
+                                         class="modal fade"
+                                         id="lifecycle-#{lifecycleDef.uuid}-info-dialog"
+                                         tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h2 id="lifecycle-#{lifecycleDef.uuid}-info-dialog-title">
+                                                        #{CmsAdminMessages.getMessage('contentsection.configuration.lifecycles.info.dialog.title', lifecycleDef.label)}
+                                                    </h2>
+                                                    <button aria-label="#{CmsAdminMessages['contentsection.configuration.lifecycles.info.dialog.close']}" 
+                                                            class="close" 
+                                                            data-dismiss="modal"
+                                                            type="button">
+                                                        <bootstrap:svgIcon icon="x" />
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>
+                                                        #{lifecycleDef.description}
+                                                    </p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-warning" 
+                                                            data-dismiss="modal"
+                                                            type="button">
+                                                        #{CmsAdminMessages['contentsection.configuration.lifecycles.info.dialog.close']}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <libreccm:deleteDialog
+                                        actionTarget="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/lifecycles/UUID-#{lifecycleDef.uuid}/@delete"
+                                        buttonText="#{CmsAdminMessages['contentsection.configuration.lifecycles.delete_button.label']}"
+                                        cancelLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.delete_dialog.cancel']}"
+                                        confirmLabel="#{CmsAdminMessages['contentsection.configuration.lifecycles.delete_dialog.confirm']}"
+                                        dialogId="lifecycles-#{lifecycleDef.uuid}-delete-dialog"
+                                        dialogTitle="#{CmsAdminMessages['contentsection.configuration.lifecycles.delete_dialog.title']}"
+                                        message="#{CmsAdminMessages.getMessage('contentsection.configuration.lifecycles.delete_dialog.message', [ContentSectionModel.sectionName, lifecycleDef.label])}"
+                                        />
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

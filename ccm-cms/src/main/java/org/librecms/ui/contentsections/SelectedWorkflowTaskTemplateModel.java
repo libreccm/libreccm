@@ -21,20 +21,28 @@ import javax.inject.Named;
 @RequestScoped
 @Named("SelectedWorkflowTaskTemplateModel")
 public class SelectedWorkflowTaskTemplateModel {
-    
+
     private long taskId;
-    
+
     private String uuid;
-    
+
+    private String displayLabel;
+
     private Map<String, String> label;
-    
+
+    private List<String> unusedLabelLocales;
+
     private Map<String, String> description;
-    
+
+    private List<String> unusedDescriptionLocales;
+
     private List<WorkflowTaskTemplateListModel> blockedTasks;
 
     private List<WorkflowTaskTemplateListModel> blockingTasks;
-    
-      public long getTaskId() {
+
+    private Map<String, String> noneBlockingTasks;
+
+    public long getTaskId() {
         return taskId;
     }
 
@@ -86,5 +94,49 @@ public class SelectedWorkflowTaskTemplateModel {
         this.blockingTasks = new ArrayList<>(blockingTasks);
     }
 
-    
+    public List<String> getUnusedLabelLocales() {
+        return Collections.unmodifiableList(unusedLabelLocales);
+    }
+
+    public void setUnusedLabelLocales(final List<String> unusedLabelLocales) {
+        this.unusedLabelLocales = new ArrayList<>(unusedLabelLocales);
+    }
+
+    public List<String> getUnusedDescriptionLocales() {
+        return Collections.unmodifiableList(unusedDescriptionLocales);
+    }
+
+    public void setUnusedDescriptionLocales(
+        final List<String> unusedDescriptionLocales
+    ) {
+        this.unusedDescriptionLocales
+            = new ArrayList<>(unusedDescriptionLocales);
+    }
+
+    public boolean getHasUnusedLabelLocales() {
+        return !unusedLabelLocales.isEmpty();
+    }
+
+    public boolean getHasUnusedDescriptionLocales() {
+        return !unusedDescriptionLocales.isEmpty();
+    }
+
+    public String getDisplayLabel() {
+        return displayLabel;
+    }
+
+    public void setDisplayLabel(final String displayLabel) {
+        this.displayLabel = displayLabel;
+    }
+
+    public Map<String, String> getNoneBlockingTasks() {
+        return Collections.unmodifiableMap(noneBlockingTasks);
+    }
+
+    public void setNoneBlockingTasks(
+        final Map<String, String> noneBlockingTasks
+    ) {
+        this.noneBlockingTasks = new HashMap<>(noneBlockingTasks);
+    }
+
 }

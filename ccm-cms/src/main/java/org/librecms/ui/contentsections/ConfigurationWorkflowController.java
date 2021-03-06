@@ -19,8 +19,10 @@ import org.libreccm.workflow.WorkflowRepository;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionManager;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -136,6 +138,14 @@ public class ConfigurationWorkflowController {
             return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
         }
         final Workflow workflow = workflowResult.get();
+        selectedWorkflowTemplateModel.setDisplayName(
+            globalizationHelper.getValueFromLocalizedString(
+                workflow.getName()
+            )
+        );
+
+        final List<Locale> availableLocales = globalizationHelper
+            .getAvailableLocales();
         selectedWorkflowTemplateModel.setDescription(
             workflow
                 .getDescription()
@@ -149,6 +159,18 @@ public class ConfigurationWorkflowController {
                     )
                 )
         );
+        final Set<Locale> descriptionLocales = workflow
+            .getDescription()
+            .getAvailableLocales();
+        selectedWorkflowTemplateModel
+            .setUnusedDescriptionLocales(
+                availableLocales
+                    .stream()
+                    .filter(locale -> !descriptionLocales.contains(locale))
+                    .map(Locale::toString)
+                    .collect(Collectors.toList())
+            );
+
         selectedWorkflowTemplateModel.setName(
             workflow
                 .getName()
@@ -162,6 +184,18 @@ public class ConfigurationWorkflowController {
                     )
                 )
         );
+        final Set<Locale> nameLocales = workflow
+            .getName()
+            .getAvailableLocales();
+        selectedWorkflowTemplateModel
+            .setUnusedNameLocales(
+                availableLocales
+                    .stream()
+                    .filter(locale -> !nameLocales.contains(locale))
+                    .map(Locale::toString)
+                    .collect(Collectors.toList())
+            );
+
         selectedWorkflowTemplateModel.setTasks(
             workflow
                 .getTasks()
@@ -476,6 +510,152 @@ public class ConfigurationWorkflowController {
             sectionIdentifierParam,
             workflowIdentiferParam
         );
+    }
+
+    @GET
+    @Path("/{workflowIdentifier}/tasks")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String showTask(
+        @PathParam("sectionIdentifier") final String sectionIdentifierParam,
+        @PathParam("workflowIdentifier") final String workflowIdentiferParam,
+        @PathParam("taskIdentifier") final String taskIdentifierParam
+    ) {
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Optional<Workflow> workflowResult = findWorkflowTemplate(
+            section, workflowIdentiferParam
+        );
+        if (!workflowResult.isPresent()) {
+            return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
+        }
+        final Workflow workflow = workflowResult.get();
+        final Optional<Task> taskResult = findTaskTemplate(
+            workflow, taskIdentifierParam
+        );
+        if (!taskResult.isPresent()) {
+            return showWorkflowTaskTemplateNotFound(
+                section, workflowIdentiferParam, taskIdentifierParam
+            );
+        }
+        final Task task = taskResult.get();
+        selectedWorkflowTaskTemplateModel.setTaskId(task.getTaskId());
+        selectedWorkflowTaskTemplateModel.setUuid(task.getUuid());
+        selectedWorkflowTaskTemplateModel.setDisplayLabel(
+            globalizationHelper.getValueFromLocalizedString(
+                task.getLabel()
+            )
+        );
+
+        selectedWorkflowTemplateModel.setUuid(workflow.getUuid());
+        selectedWorkflowTemplateModel.setDisplayName(
+            globalizationHelper.getValueFromLocalizedString(
+                workflow.getName()
+            )
+        );
+
+        final List<Locale> availableLocales = globalizationHelper
+            .getAvailableLocales();
+
+        selectedWorkflowTaskTemplateModel.setLabel(
+            task
+                .getLabel()
+                .getValues()
+                .entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> entry.getValue()
+                    )
+                )
+        );
+        final Set<Locale> labelLocales = task.getLabel().getAvailableLocales();
+        selectedWorkflowTaskTemplateModel
+            .setUnusedLabelLocales(
+                availableLocales
+                    .stream()
+                    .filter(locale -> !labelLocales.contains(locale))
+                    .map(Locale::toString)
+                    .collect(Collectors.toList())
+            );
+
+        selectedWorkflowTaskTemplateModel.setDescription(
+            task
+                .getDescription()
+                .getValues()
+                .entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> entry.getValue()
+                    )
+                )
+        );
+        final Set<Locale> descriptionLocales = task
+            .getDescription()
+            .getAvailableLocales();
+        selectedWorkflowTaskTemplateModel.setUnusedDescriptionLocales(
+            availableLocales
+                .stream()
+                .filter(locale -> !descriptionLocales.contains(locale))
+                .map(Locale::toString)
+                .collect(Collectors.toList())
+        );
+
+        selectedWorkflowTaskTemplateModel.setBlockedTasks(
+            task
+                .getBlockedTasks()
+                .stream()
+                .map(dependency -> dependency.getBlockedTask())
+                .map(this::buildWorkflowTaskTemplateListModel)
+                .collect(Collectors.toList())
+        );
+        final List<Task> blockingTasks = task
+            .getBlockingTasks()
+            .stream()
+            .map(dependency -> dependency.getBlockingTask())
+            .collect(Collectors.toList());
+        selectedWorkflowTaskTemplateModel.setBlockingTasks(
+            blockingTasks
+                .stream()
+                .map(this::buildWorkflowTaskTemplateListModel)
+                .collect(Collectors.toList())
+        );
+
+        selectedWorkflowTaskTemplateModel.setNoneBlockingTasks(
+            workflow
+                .getTasks()
+                .stream()
+                .filter(workflowTask -> !workflowTask.equals(task))
+                .filter(
+                    workflowTask -> !blockingTasks.contains(workflowTask)
+                )
+                .collect(
+                    Collectors.toMap(
+                        workflowTask -> String.format(
+                            "UUID-%s", workflowTask.getUuid()
+                        ),
+                        workflowTask -> globalizationHelper
+                            .getValueFromLocalizedString(
+                                workflowTask.getLabel()
+                            )
+                    )
+                )
+        );
+
+        return "org/librecms/ui/contentsection/configuration/workflow-task.xhtml";
     }
 
     @POST
@@ -869,7 +1049,7 @@ public class ConfigurationWorkflowController {
 
     @POST
     @Path(
-        "/{workflowIdentifier}/tasks/{taskIdentifier}/blockingTasks/@add")
+        "/{workflowIdentifier}/tasks/{taskIdentifier}/blocking-tasks/@add")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String addBlockingTask(
@@ -923,7 +1103,8 @@ public class ConfigurationWorkflowController {
             models.put("workflowTemplateIdentifier", workflowIdentiferParam);
             models.put("blockedTaskIdentifier", taskIdentifierParam);
             models.put("blockingTaskIdentifier", blockingTaskParam);
-            return "org/librecms/ui/contentsection/configuration/workflowtask-circular-dependency.xhtml";
+           
+            return "org/librecms/ui/contentsection/configuration/workflow-task-circular-dependency.xhtml";
         }
 
         return String.format(

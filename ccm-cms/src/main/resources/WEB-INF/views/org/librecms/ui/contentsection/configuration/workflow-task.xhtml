@@ -1,0 +1,180 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:cms="http://xmlns.jcp.org/jsf/composite/components/cms"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/contentsection.xhtml">
+
+        <ui:param name="activePage" value="configuration" />
+        <ui:param name="title" 
+                  value="#{CmsAdminMessages['contentsection.configuration.workflows.tasks.title']}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration">
+                    #{CmsAdminMessages['contentsection.configuration.title']}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/workflows">
+                    #{CmsAdminMessages['contentsection.configuration.workflows.title']}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/workflows/UUID-#{SelectedWorkflowTemplateModel.uuid}">
+                    #{SelectedWorkflowTemplateModel.displayName}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                #{CmsAdminMessages['contentsection.configuration.workflows.tasks.title']}
+            </li>
+            <li aria-current="page" class="breadcrumb-item">
+                #{SelectedWorkflowTaskTemplateModel.displayLabel}
+            </li>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container">
+                <ui:include src="configuration-tabs.xhtml">
+                    <ui:param name="activeConfPage" value="workflows" />
+                </ui:include>
+
+                <c:if test="#{not empty errors}">
+                    <c:forEach items="#{errors}" var="error">
+                        <div class="alert alert-danger" role="alert">
+                            #{error}
+                        </div>
+                    </c:forEach>
+                </c:if>
+
+                <h1>#{CmsAdminMessages.getMessage('contentsection.configuration.workflow.task_details.title', [SelectedWorkflowTemplateModel.displayName ,SelectedWorkflowTaskTemplateModel.displayLabel])}</h1>
+
+                <libreccm:localizedStringEditor
+                    addButtonLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.label.add.button']}"
+                    addDialogCancelLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.label.add.cancel']}"
+                    addDialogLocaleSelectHelp="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.label.add.locale.help']}"
+                    addDialogLocaleSelectLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.label.add.locale.label']}"
+                    addDialogSubmitLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.label.locale.add.submit']}"
+                    addDialogTitle="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.label.add.title']}"
+                    addDialogValueHelp="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.label.add.value.help']}"
+                    addDialogValueLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.label.add.value.label']}"
+                    addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/workflows/UUID-#{SelectedWorkflowTemplateModel.uuid}/tasks/UUID-#{SelectedWorkflowTaskTemplateModel.uuid}/label/@add"
+                    editButtonLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.label.edit.button']}"
+                    editDialogCancelLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.label.edit.cancel']}"
+                    editDialogSubmitLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.label.edit.submit']}"
+                    editDialogTitle="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.label.edit.title']}"
+                    editDialogValueHelp="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.label.edit.value.help']}"
+                    editDialogValueLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.label.edit.value.label']}"
+                    editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/workflows/UUID-#{SelectedWorkflowTemplateModel.uuid}/tasks/UUID-#{SelectedWorkflowTaskTemplateModel.uuid}/label/@edit"
+                    editorId="workflow-label"
+                    hasUnusedLocales="#{SelectedWorkflowTaskTemplateModel.hasUnusedLabelLocales}"
+                    objectIdentifier="ID-#{SelectedPhaseDefinitionModel.definitionId}"
+                    removeButtonLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.label.remove.button']}"
+                    removeDialogCancelLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.label.remove.cancel']}"
+                    removeDialogSubmitLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.label.remove.submit']}"
+                    removeDialogText="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.label.remove.text']}"
+                    removeDialogTitle="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.label.remove.title']}"
+                    removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/workflows/UUID-#{SelectedWorkflowTemplateModel.uuid}/tasks/UUID-#{SelectedWorkflowTaskTemplateModel.uuid}/label/@remove"
+                    title="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.label.title']}"
+                    unusedLocales="#{SelectedWorkflowTaskTemplateModel.unusedLabelLocales}"
+                    values="#{SelectedWorkflowTaskTemplateModel.label}"
+                    />
+
+                <libreccm:localizedStringEditor
+                    addButtonLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.description.add.button']}"
+                    addDialogCancelLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.description.add.cancel']}"
+                    addDialogLocaleSelectHelp="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.description.add.locale.help']}"
+                    addDialogLocaleSelectLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.description.add.locale.description']}"
+                    addDialogSubmitLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.description.locale.add.submit']}"
+                    addDialogTitle="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.description.add.title']}"
+                    addDialogValueHelp="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.description.add.value.help']}"
+                    addDialogValueLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.description.add.value.label']}"
+                    addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/workflows/UUID-#{SelectedWorkflowTemplateModel.uuid}/tasks/UUID-#{SelectedWorkflowTaskTemplateModel.uuid}/description/@add"
+                    editButtonLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.description.edit.button']}"
+                    editDialogCancelLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.description.edit.cancel']}"
+                    editDialogSubmitLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.description.edit.submit']}"
+                    editDialogTitle="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.description.edit.title']}"
+                    editDialogValueHelp="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.description.edit.value.help']}"
+                    editDialogValueLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.description.edit.value.label']}"
+                    editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/workflows/UUID-#{SelectedWorkflowTemplateModel.uuid}/tasks/UUID-#{SelectedWorkflowTaskTemplateModel.uuid}/description/@edit"
+                    editorId="workflow-description"
+                    hasUnusedLocales="#{SelectedWorkflowTaskTemplateModel.hasUnusedLabelLocales}"
+                    objectIdentifier="ID-#{SelectedPhaseDefinitionModel.definitionId}"
+                    removeButtonLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.description.remove.button']}"
+                    removeDialogCancelLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.description.remove.cancel']}"
+                    removeDialogSubmitLabel="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.description.remove.submit']}"
+                    removeDialogText="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.description.remove.text']}"
+                    removeDialogTitle="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.description.remove.title']}"
+                    removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/workflows/UUID-#{SelectedWorkflowTemplateModel.uuid}/tasks/UUID-#{SelectedWorkflowTaskTemplateModel.uuid}/description/@remove"
+                    title="#{CmsAdminMessages['contentsection.configuration.workflows.task_details.description.title']}"
+                    unusedLocales="#{SelectedWorkflowTaskTemplateModel.unusedLabelLocales}"
+                    values="#{SelectedWorkflowTaskTemplateModel.description}"
+                    />
+
+                <h2>#{CmsAdminMessages['contentsection.configuration.workflows.task_details.blocking_tasks.title']}</h2>
+
+                <div class="mb-2">
+                    <div class="text-right">
+                        <button class="btn btn-primary"
+                                data-toggle="modal"
+                                data-target="#add-blocking-task-dialog"
+                                type="button">
+                            <bootstrap:svgIcon icon="plus-circle" />
+                            <span>#{CmsAdminMessages['contentsection.configuration.workflows.task_details.blocking_tasks.add']}</span>
+                        </button>
+                    </div>
+
+                    <div aria-hidden="true"
+                         aria-labelledby="add-blocking-task-dialog-title"
+                         class="modal fade"
+                         id="add-blocking-task-dialog"
+                         tabindex="-1">
+                        <div class="modal-dialog">
+                            <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/workflows/UUID-#{SelectedWorkflowTemplateModel.uuid}/tasks/UUID-#{SelectedWorkflowTaskTemplateModel.uuid}/blocking-tasks/@add"
+                                  class="modal-content"
+                                  method="post">
+                                <div class="modal-header">
+                                    <h3 class="modal-title"
+                                        id="add-blocking-task-dialog-title">
+                                        #{CmsAdminMessages['contentsection.configuration.workflows.task_details.blocking_tasks.add.dialog.title']}
+                                    </h3>
+                                     <button aria-label="#{CmsAdminMessages['contentsection.configuration.workflow.task_details.blocking_tasks.add.dialog.close']}" 
+                                            class="close" 
+                                            data-dismiss="modal"
+                                            type="button">
+                                        <bootstrap:svgIcon icon="x" />
+                                    </button>
+                                </div>
+                                <div class="modal-content">
+                                    <bootstrap:formGroupSelect 
+                                        help="#{CmsAdminMessages['contentsection.configuration.workflow.task_details.blocking_tasks.add.dialog.task_select.help']}"
+                                        inputId="add-blocking-task-dialog-task-select"
+                                        label="#{CmsAdminMessages['contentsection.configuration.workflow.task_details.blocking_tasks.add.dialog.task_select.label']}"
+                                        name="blockingTask"
+                                        options="#{SelectedWorkflowTaskTemplateModel.noneBlockingTasks}"
+                                        />
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-warning" 
+                                            data-dismiss="modal"
+                                            type="button">
+                                        #{CmsAdminMessages['contentsection.configuration.workflow.task_details.blocking_tasks.add.dialog.close']}
+                                    </button>
+                                    <button class="btn btn-primary" 
+                                            type="submit" >
+                                        #{CmsAdminMessages['contentsection.configuration.workflow.task_details.blocking_tasks.add.dialog.submit']}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>

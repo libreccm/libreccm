@@ -11,15 +11,16 @@ import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.AuthorizationRequired;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionManager;
-import org.librecms.contentsection.LifecycleDefinitionListModel;
 import org.librecms.lifecycle.LifecycleDefinition;
 import org.librecms.lifecycle.LifecycleDefinitionRepository;
 import org.librecms.lifecycle.LifecycleManager;
 import org.librecms.lifecycle.PhaseDefinition;
 import org.librecms.lifecycle.PhaseDefinititionRepository;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -133,7 +134,16 @@ public class ConfigurationLifecyclesController {
             );
         }
         final LifecycleDefinition definition = definitionResult.get();
+        selectedLifecycleDefModel.setDisplayLabel(
+            globalizationHelper.getValueFromLocalizedString(
+                definition.getLabel()
+            )
+        );
         selectedLifecycleDefModel.setUuid(definition.getUuid());
+
+        final List<Locale> availableLocales = globalizationHelper
+            .getAvailableLocales();
+
         selectedLifecycleDefModel.setLabel(
             definition
                 .getLabel()
@@ -147,6 +157,16 @@ public class ConfigurationLifecyclesController {
                     )
                 )
         );
+        final Set<Locale> labelLocales = definition
+            .getLabel()
+            .getAvailableLocales();
+        selectedLifecycleDefModel.setUnusedLabelLocales(
+            availableLocales
+                .stream()
+                .filter(locale -> !labelLocales.contains(locale))
+                .map(Locale::toString)
+                .collect(Collectors.toList())
+        );
         selectedLifecycleDefModel.setDescription(
             definition
                 .getDescription()
@@ -159,6 +179,16 @@ public class ConfigurationLifecyclesController {
                         entry -> entry.getValue()
                     )
                 )
+        );
+        final Set<Locale> descriptionLocales = definition
+            .getDescription()
+            .getAvailableLocales();
+        selectedLifecycleDefModel.setUnusedDescriptionLocales(
+            availableLocales
+                .stream()
+                .filter(locale -> !descriptionLocales.contains(locale))
+                .map(Locale::toString)
+                .collect(Collectors.toList())
         );
         selectedLifecycleDefModel.setPhaseDefinitions(
             definition
@@ -487,8 +517,12 @@ public class ConfigurationLifecyclesController {
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @PathParam("lifecycleIdentifier") final String lifecycleIdentiferParam,
         @FormParam("label") final String label,
-        @FormParam("defaultDelay") final long defaultDelay,
-        @FormParam("defaultDuration") final long defaultDuration
+        @FormParam("defaultDelayDays") final long defaultDelayDays,
+        @FormParam("defaultDelayHours") final long defaultDelayHours,
+        @FormParam("defaultDelayMinutes") final long defaultDelayMinutes,
+        @FormParam("defaultDurationDays") final long defaultDurationDays,
+        @FormParam("defaultDurationHours") final long defaultDurationHours,
+        @FormParam("defaultDurationMinutes") final long defaultDurationMinutes
     ) {
         final Optional<ContentSection> sectionResult = sectionsUi
             .findContentSection(sectionIdentifierParam);
@@ -512,8 +546,19 @@ public class ConfigurationLifecyclesController {
         final LifecycleDefinition definition = definitionResult.get();
 
         final PhaseDefinition phaseDefinition = new PhaseDefinition();
-        phaseDefinition.setDefaultDelay(defaultDelay);
-        phaseDefinition.setDefaultDuration(defaultDuration);
+        
+        final Duration defaultDelay = new Duration();
+        defaultDelay.setDays(defaultDelayDays);
+        defaultDelay.setHours(defaultDelayHours);
+        defaultDelay.setMinutes(defaultDelayMinutes);
+        phaseDefinition.setDefaultDelay(defaultDelay.toMinutes());
+        
+        final Duration defaultDuration = new Duration();
+        defaultDuration.setDays(defaultDurationDays);
+        defaultDuration.setHours(defaultDurationHours);
+        defaultDuration.setMinutes(defaultDurationMinutes);
+        phaseDefinition.setDefaultDuration(defaultDuration.toMinutes());
+        
         phaseDefinition
             .getLabel()
             .addValue(globalizationHelper.getNegotiatedLocale(), label);
@@ -555,6 +600,13 @@ public class ConfigurationLifecyclesController {
             );
         }
         final LifecycleDefinition definition = definitionResult.get();
+        selectedLifecycleDefModel.setDisplayLabel(
+            globalizationHelper.getValueFromLocalizedString(
+                definition.getLabel()
+            )
+        );
+        selectedLifecycleDefModel.setUuid(definition.getUuid());
+
         final Optional<PhaseDefinition> phaseDefinitionResult
             = findPhaseDefinition(definition, sectionIdentifierParam);
         if (!phaseDefinitionResult.isPresent()) {
@@ -564,12 +616,24 @@ public class ConfigurationLifecyclesController {
                 phaseIdentifierParam
             );
         }
+
         final PhaseDefinition phaseDefinition = phaseDefinitionResult.get();
-        selectedPhaseDefModel.setDefaultDelay(phaseDefinition.getDefaultDelay());
+        selectedPhaseDefModel.setDefaultDelay(
+            Duration.fromMinutes(
+                phaseDefinition.getDefaultDelay()
+            )
+        );
         selectedPhaseDefModel.setDefaultDuration(
-            phaseDefinition.getDefaultDuration()
+            Duration.fromMinutes(
+                phaseDefinition.getDefaultDuration()
+            )
         );
         selectedPhaseDefModel.setDefinitionId(phaseDefinition.getDefinitionId());
+        final List<Locale> availableLocales
+            = globalizationHelper.getAvailableLocales();
+        final Set<Locale> descriptionLocales = phaseDefinition
+            .getDescription()
+            .getAvailableLocales();
         selectedPhaseDefModel.setDescription(
             phaseDefinition
                 .getDescription()
@@ -583,6 +647,16 @@ public class ConfigurationLifecyclesController {
                     )
                 )
         );
+        selectedPhaseDefModel.setUnusedDescriptionLocales(
+            availableLocales
+                .stream()
+                .filter(locale -> !descriptionLocales.contains(locale))
+                .map(Locale::toString)
+                .collect(Collectors.toList())
+        );
+        final Set<Locale> labelLocales = phaseDefinition
+            .getLabel()
+            .getAvailableLocales();
         selectedPhaseDefModel.setLabel(
             phaseDefinition
                 .getLabel()
@@ -596,6 +670,19 @@ public class ConfigurationLifecyclesController {
                     )
                 )
         );
+        selectedPhaseDefModel.setUnusedLabelLocales(
+            availableLocales
+                .stream()
+                .filter(locale -> !labelLocales.contains(locale))
+                .map(Locale::toString)
+                .collect(Collectors.toList())
+        );
+        selectedPhaseDefModel.setDisplayLabel(
+            globalizationHelper.getValueFromLocalizedString(
+                phaseDefinition.getLabel()
+            )
+        );
+
         return "org/librecms/ui/contentsection/configuration/lifecycle-phase.xhtml";
     }
 
@@ -607,8 +694,12 @@ public class ConfigurationLifecyclesController {
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @PathParam("lifecycleIdentifier") final String lifecycleIdentiferParam,
         @PathParam("phaseIdentifier") final String phaseIdentifierParam,
-        @FormParam("defaultDelay") final long defaultDelay,
-        @FormParam("defaultDuration") final long defaultDuration
+        @FormParam("defaultDelayDays") final long defaultDelayDays,
+        @FormParam("defaultDelayHours") final long defaultDelayHours,
+        @FormParam("defaultDelayMinutes") final long defaultDelayMinutes,
+        @FormParam("defaultDurationDays") final long defaultDurationDays,
+        @FormParam("defaultDurationHours") final long defaultDurationHours,
+        @FormParam("defaultDurationMinutes") final long defaultDurationMinutes
     ) {
         final Optional<ContentSection> sectionResult = sectionsUi
             .findContentSection(sectionIdentifierParam);
@@ -640,8 +731,18 @@ public class ConfigurationLifecyclesController {
             );
         }
         final PhaseDefinition phaseDefinition = phaseDefinitionResult.get();
-        phaseDefinition.setDefaultDelay(defaultDelay);
-        phaseDefinition.setDefaultDuration(defaultDuration);
+        
+         final Duration defaultDelay = new Duration();
+        defaultDelay.setDays(defaultDelayDays);
+        defaultDelay.setHours(defaultDelayHours);
+        defaultDelay.setMinutes(defaultDelayMinutes);
+        phaseDefinition.setDefaultDelay(defaultDelay.toMinutes());
+        
+        final Duration defaultDuration = new Duration();
+        defaultDuration.setDays(defaultDurationDays);
+        defaultDuration.setHours(defaultDurationHours);
+        defaultDuration.setMinutes(defaultDurationMinutes);
+        phaseDefinition.setDefaultDuration(defaultDuration.toMinutes());
 
         phaseDefinititionRepo.save(phaseDefinition);
 
@@ -1079,42 +1180,20 @@ public class ConfigurationLifecyclesController {
         final PhaseDefinition definition
     ) {
         final PhaseDefinitionModel model = new PhaseDefinitionModel();
-        model.setDefaultDelay(definition.getDefaultDelay());
-        model.setDefaultDuration(definition.getDefaultDuration());
+        model.setDefaultDelay(
+            Duration.fromMinutes(definition.getDefaultDelay())
+        );
+        model.setDefaultDuration(
+            Duration.fromMinutes(definition.getDefaultDuration())
+        );
         model.setDefinitionId(definition.getDefinitionId());
         model.setDescription(
-            definition
-                .getDescription()
-                .getValues()
-                .entrySet()
-                .stream()
-                .collect(
-                    Collectors.toMap(
-                        entry -> entry.getKey().toString(),
-                        entry -> entry.getValue()
-                    )
-                )
-        );
-        model.setDisplayDescription(
             globalizationHelper
                 .getValueFromLocalizedString(definition.getDescription())
         );
-        model.setDisplayLabel(
+        model.setLabel(
             globalizationHelper
                 .getValueFromLocalizedString(definition.getLabel())
-        );
-        model.setLabel(
-            definition
-                .getLabel()
-                .getValues()
-                .entrySet()
-                .stream()
-                .collect(
-                    Collectors.toMap(
-                        entry -> entry.getKey().toString(),
-                        entry -> entry.getValue()
-                    )
-                )
         );
         return model;
     }
