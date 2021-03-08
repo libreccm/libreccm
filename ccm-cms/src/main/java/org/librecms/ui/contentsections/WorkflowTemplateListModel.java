@@ -19,6 +19,8 @@ public class WorkflowTemplateListModel {
 
     private String description;
 
+    private boolean hasTasks;
+
     public long getWorkflowId() {
         return workflowId;
     }
@@ -49,6 +51,14 @@ public class WorkflowTemplateListModel {
 
     public void setDescription(final String description) {
         this.description = description;
+    }
+
+    public boolean getHasTasks() {
+        return hasTasks;
+    }
+
+    public void setHasTasks(boolean hasTasks) {
+        this.hasTasks = hasTasks;
     }
 
 }

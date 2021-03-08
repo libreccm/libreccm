@@ -11,6 +11,7 @@ import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.workflow.CircularTaskDependencyException;
 import org.libreccm.workflow.Task;
+import org.libreccm.workflow.TaskDependency;
 import org.libreccm.workflow.TaskManager;
 import org.libreccm.workflow.TaskRepository;
 import org.libreccm.workflow.Workflow;
@@ -19,6 +20,7 @@ import org.libreccm.workflow.WorkflowRepository;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionManager;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -757,7 +759,6 @@ public class ConfigurationWorkflowController {
         }
         final Task task = taskResult.get();
         taskManager.removeTask(workflow, task);
-        taskRepo.delete(task);
 
         return String.format(
             "redirect:/%s/configuration/workflows/%s",
@@ -1291,6 +1292,7 @@ public class ConfigurationWorkflowController {
                 workflow.getDescription()
             )
         );
+        model.setHasTasks(!workflow.getTasks().isEmpty());
         model.setName(
             globalizationHelper.getValueFromLocalizedString(workflow.getName())
         );
@@ -1308,6 +1310,10 @@ public class ConfigurationWorkflowController {
             globalizationHelper.getValueFromLocalizedString(
                 task.getDescription()
             )
+        );
+        model.setHasDependencies(
+            !task.getBlockedTasks().isEmpty()
+                || !task.getBlockingTasks().isEmpty()
         );
         model.setLabel(
             globalizationHelper.getValueFromLocalizedString(

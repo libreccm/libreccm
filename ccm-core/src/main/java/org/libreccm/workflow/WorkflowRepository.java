@@ -24,8 +24,11 @@ import org.libreccm.core.CcmObject;
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+
 import java.util.Optional;
 import java.util.UUID;
+
+import javax.transaction.Transactional;
 
 /**
  * Repository for {@link Workflow}s.
@@ -36,7 +39,7 @@ import java.util.UUID;
 public class WorkflowRepository extends AbstractEntityRepository<Long, Workflow> {
 
     private static final long serialVersionUID = -8811728904958517569L;
-
+    
     @Override
     public Class<Workflow> getEntityClass() {
         return Workflow.class;
@@ -62,6 +65,8 @@ public class WorkflowRepository extends AbstractEntityRepository<Long, Workflow>
         super.initNewEntity(workflow);
         workflow.setUuid(UUID.randomUUID().toString());
     }
+    
+    
 
     /**
      * Find a {@link Workflow} by its UUID.

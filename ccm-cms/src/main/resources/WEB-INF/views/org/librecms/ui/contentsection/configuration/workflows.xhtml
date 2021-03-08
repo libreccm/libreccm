@@ -159,6 +159,7 @@
                                     </div>
                                 </td>
                                 <td class="del-col">
+                                    <c:if test="#{!workflowTemplate.hasTasks}">
                                     <libreccm:deleteDialog
                                         actionTarget="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/workflows/UUID-#{workflowTemplate.uuid}/@delete"
                                         buttonText="#{CmsAdminMessages['contentsection.configuration.workflows.delete_button.label']}"
@@ -168,6 +169,7 @@
                                         dialogTitle="#{CmsAdminMessages['contentsection.configuration.workflows.delete_dialog.title']}"
                                         message="#{CmsAdminMessages.getMessage('contentsection.configuration.workflows.delete_dialog.message', [ContentSectionModel.sectionName, workflowTemplate.name])}"
                                         />
+                                    </c:if>
                                 </td>
                             </tr>
                         </c:forEach>

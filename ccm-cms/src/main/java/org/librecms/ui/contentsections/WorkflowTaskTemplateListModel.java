@@ -24,6 +24,8 @@ public class WorkflowTaskTemplateListModel {
     private String label;
 
     private String description;
+    
+    private boolean hasDependencies;
 
     public long getTaskId() {
         return taskId;
@@ -56,5 +58,15 @@ public class WorkflowTaskTemplateListModel {
     public void setDescription(final String description) {
         this.description = description;
     }
+
+    public boolean getHasDependencies() {
+        return hasDependencies;
+    }
+
+    public void setHasDependencies(final boolean hasDependencies) {
+        this.hasDependencies = hasDependencies;
+    }
+    
+    
 
 }

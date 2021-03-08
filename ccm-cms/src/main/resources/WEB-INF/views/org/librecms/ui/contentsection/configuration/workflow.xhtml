@@ -229,15 +229,17 @@
                                         </div>
                                     </td>
                                     <td class="del-col">
-                                        <libreccm:deleteDialog 
-                                            actionTarget="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/workflows/UUID-#{SelectedWorkflowTemplateModel.uuid}/tasks/UUID-#{task.uuid}/@remove"
-                                            buttonText="#{CmsAdminMessages['contentsection.configuration.workflow.tasks.remove.button.label']}"
-                                            cancelLabel="#{CmsAdminMessages['contentsection.configuration.workflow.tasks.remove.dialog.close']}"
-                                            confirmLabel="#{CmsAdminMessages['contentsection.configuration.workflow.tasks.remove.dialog.confirm']}"
-                                            dialogId="task-#{task.taskId}-remove-dialog"
-                                            dialogTitle="#{CmsAdminMessages['contentsection.configuration.workflow.tasks.remove.dialog.title']}"
-                                            message="#{CmsAdminMessages.getMessage('contentsection.configuration.workflow.tasks.remove.dialog.message', [ContentSectionModel.sectionName, SelectedWorkflowTemplateModel.displayName, task.label])}"
-                                            />
+                                        <c:if test="#{!task.hasDependencies}">
+                                            <libreccm:deleteDialog 
+                                                actionTarget="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/workflows/UUID-#{SelectedWorkflowTemplateModel.uuid}/tasks/UUID-#{task.uuid}/@remove"
+                                                buttonText="#{CmsAdminMessages['contentsection.configuration.workflow.tasks.remove.button.label']}"
+                                                cancelLabel="#{CmsAdminMessages['contentsection.configuration.workflow.tasks.remove.dialog.close']}"
+                                                confirmLabel="#{CmsAdminMessages['contentsection.configuration.workflow.tasks.remove.dialog.confirm']}"
+                                                dialogId="task-#{task.taskId}-remove-dialog"
+                                                dialogTitle="#{CmsAdminMessages['contentsection.configuration.workflow.tasks.remove.dialog.title']}"
+                                                message="#{CmsAdminMessages.getMessage('contentsection.configuration.workflow.tasks.remove.dialog.message', [ContentSectionModel.sectionName, SelectedWorkflowTemplateModel.displayName, task.label])}"
+                                                />
+                                        </c:if>
                                     </td>
                                 </tr>
                             </c:forEach>
