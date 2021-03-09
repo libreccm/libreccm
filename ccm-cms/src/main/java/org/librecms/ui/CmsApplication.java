@@ -14,7 +14,8 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 /**
- *
+ * The CMS application acts as entry point for all CMS related user interfaces.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ApplicationPath("/@cms")

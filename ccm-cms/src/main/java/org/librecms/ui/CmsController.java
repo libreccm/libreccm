@@ -34,6 +34,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 /**
+ * Controller for the CMS application which allows the management of content
+ * sections.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -57,6 +59,13 @@ public class CmsController {
     @Inject
     private PermissionChecker permissionChecker;
 
+    /**
+     * Redirects requests to the root path ({@code /@cms} or {@code /@cms/}) to
+     * the {@code /@cms/contentsections}.
+     *
+     * @return A redirect response with the {@link Response.Status#SEE_OTHER}
+     *         response code.
+     */
     @GET
     @Path("/")
     @AuthorizationRequired
@@ -81,6 +90,11 @@ public class CmsController {
         }
     }
 
+    /**
+     * Shows all available content sections.
+     *
+     * @return The template to use.
+     */
     @GET
     @Path("/contentsections/")
     @AuthorizationRequired
@@ -88,6 +102,13 @@ public class CmsController {
         return "org/librecms/ui/cms/contentsections-list.xhtml";
     }
 
+    /**
+     * Creates a new content section.
+     *
+     * @param sectionName The name of the new section.
+     *
+     * @return Redirect to the content sections list.
+     */
     @POST
     @Path("/contentsections/new")
     @AuthorizationRequired
@@ -101,6 +122,16 @@ public class CmsController {
         return "redirect:/contentsections/";
     }
 
+    /**
+     * Renames a content section.
+     *
+     * @param identifierParam The identifier (see {@link Identifier} and
+     *                        {@link IdentifierParser}) of the content section
+     *                        to rename.
+     * @param sectionName     The new name of the content section.
+     *
+     * @return Redirect to the list of content sections.
+     */
     @POST
     @Path("/contentsections/{sectionIdentifier}/rename")
     @AuthorizationRequired
@@ -117,6 +148,19 @@ public class CmsController {
         return "redirect:/contentsections/";
     }
 
+    /**
+     * Deletes a content section. The content section must be empty (no items,
+     * assets or folders in it).
+     *
+     * @param identifierParam The identifier (see {@link Identifier} and
+     *                        {@link IdentifierParser}) of the content section
+     *                        to delete.
+     * @param confirmed       A string which must contain the value {@code true}
+     *                        to be sure that the user confirmed the deletion of
+     *                        the content section.
+     *
+     * @return Redirect to the list of content sections.
+     */
     @POST
     @Path("/contentsections/{sectionIdentifier}/delete")
     @AuthorizationRequired
@@ -145,6 +189,11 @@ public class CmsController {
         return "redirect:/contentsections/";
     }
 
+    /**
+     * ToDo: Show UI for managing pages.
+     *
+     * @return Placeholder
+     */
     @GET
     @Path("/pages")
     @AuthorizationRequired
@@ -152,6 +201,11 @@ public class CmsController {
         return "org/librecms/ui/cms/pages.xhtml";
     }
 
+    /**
+     * ToDo: Search for content items (and assets?) in all content sections.
+     *
+     * @return Placeholder
+     */
     @GET
     @Path("/search")
     @AuthorizationRequired
@@ -159,6 +213,22 @@ public class CmsController {
         return "org/librecms/ui/cms/search.xhtml";
     }
 
+    /**
+     * Helper function for retrieving a content section by an identifier.
+     *
+     * @param identifierParam The identifier paramter.
+     *
+     * @return The content section if a section identified by the provided
+     *         identifier exists.
+     *
+     * @throws WebApplicationException A {@link WebApplicationException} with
+     *                                 {@link Response.Status#NOT_FOUND} status
+     *                                 code if there is not content section
+     *                                 identified by the provided identifier.
+     *
+     * @see IdentifierParser
+     * @see Identifier
+     */
     private ContentSection findContentSection(final String identifierParam) {
         final Identifier identifier = identifierParser.parseIdentifier(
             identifierParam
@@ -213,6 +283,16 @@ public class CmsController {
         return section;
     }
 
+    /**
+     * Helper function to determine of a content section can be deleted. Checks
+     * if the {@link ContentSection#rootAssetsFolder} and the
+     * {@link ContentSection#rootDocumentsFolder} are empty.
+     *
+     * @param section The section
+     *
+     * @return {@code true} if the content section is empty can be deleted,
+     *         {@code false} is not.
+     */
     protected boolean canDelete(final ContentSection section) {
         final Folder rootAssetsFolder = section.getRootAssetsFolder();
         final Folder rootDocumentsFolder = section.getRootDocumentsFolder();

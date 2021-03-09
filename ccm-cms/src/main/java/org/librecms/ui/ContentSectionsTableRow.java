@@ -18,19 +18,35 @@
  */
 package org.librecms.ui;
 
+import org.libreccm.ui.admin.contentsections.ContentSectionTableRow;
+
+import java.util.Comparator;
 import java.util.Objects;
 
 /**
- *
+ * Model for row in the table listing a available content sections.
+ * 
+ * @see CmsController#getContentSections()
+ * @see ContentSectionsTableModel
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ContentSectionsTableRow implements
     Comparable<ContentSectionsTableRow> {
 
+    /**
+     * The ID of the content section.
+     */
     private long sectionId;
 
+    /**
+     * The label of the content section.
+     */
     private String label;
 
+    /**
+     * Is the section empty and can be deleted?
+     */
     private boolean deletable;
 
     public long getSectionId() {
@@ -57,6 +73,15 @@ public class ContentSectionsTableRow implements
         this.deletable = deletable;
     }
 
+    /**
+     * Compares two {@link ContentSectionTableRow}s using the {@link #label} and
+     * {@link #sectionId}.
+     * 
+     * @param other The other row
+     * @return The result
+     * 
+     * @see Comparator#compare(java.lang.Object, java.lang.Object) 
+     */
     @Override
     public int compareTo(final ContentSectionsTableRow other) {
         int result;

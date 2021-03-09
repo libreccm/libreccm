@@ -19,6 +19,7 @@
 package org.librecms.ui;
 
 import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.ui.admin.contentsections.ContentSectionTableRow;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionRepository;
 
@@ -30,8 +31,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.transaction.Transactional;
 
-
 /**
+ * Model for table of content sections.
+ *
+ * @see CmsController#getContentSections()
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -39,14 +42,24 @@ import javax.transaction.Transactional;
 @Named("ContentSectionsTableModel")
 public class ContentSectionsTableModel {
 
+    /**
+     * The controller.
+     */
     @Inject
     private CmsController controller;
-    
+
+    /**
+     * Repository for content sections.
+     */
     @Inject
     private ContentSectionRepository sectionRepo;
-    
-    
 
+    /**
+     * Retrieves all available content sections and builds a
+     * {@link ContentSectionTableRow} for each content sections.
+     *
+     * @return A list of {@link ContentSectionTableRow}s.
+     */
     @AuthorizationRequired
     @Transactional
     public List<ContentSectionsTableRow> getContentSections() {
@@ -58,6 +71,14 @@ public class ContentSectionsTableModel {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Helper method for building a {@link ContentSectionTableRow} for a
+     * {@link ContentSection}.
+     *
+     * @param section The content section.
+     *
+     * @return A {@link ContentSectionTableRow} for the section.
+     */
     private ContentSectionsTableRow buildTableRow(
         final ContentSection section
     ) {
