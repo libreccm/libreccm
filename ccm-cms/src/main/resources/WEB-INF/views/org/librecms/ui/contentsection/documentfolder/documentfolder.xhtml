@@ -241,7 +241,7 @@
                                                     <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documentfolders/#{row.folderPath}">#{row.name}</a>
                                                 </c:when>
                                                 <c:when test="#{row.permissions.grantedApprove or row.permissions.grantedCategorize or row.permissions.grantedEdit or row.permissions.grantedPreview or row.permissions.grantedPublish}">
-                                                    <a href="#">#{row.name}</a>
+                                                    <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{row.folderPath}/#{row.name}">#{row.name}</a>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <span>#{row.name}</span>

@@ -39,6 +39,10 @@ import org.librecms.CmsConstants;
 import static org.librecms.CmsConstants.*;
 
 import org.librecms.contentsection.ContentItem;
+import org.librecms.ui.contentsections.documents.MvcArticleCreateStep;
+import org.librecms.ui.contentsections.documents.MvcArticlePropertiesStep;
+import org.librecms.ui.contentsections.documents.MvcArticleTextBodyStep;
+import org.librecms.ui.contentsections.documents.MvcAuthoringKit;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -71,6 +75,13 @@ import javax.xml.bind.annotation.XmlRootElement;
             order = 2
         )
     })
+@MvcAuthoringKit(
+    createStep = MvcArticleCreateStep.class,
+    authoringSteps = {
+        MvcArticlePropertiesStep.class,
+        MvcArticleTextBodyStep.class
+    }
+)
 @XmlRootElement(name = "article", namespace = CMS_XML_NS)
 public class Article extends ContentItem implements Serializable {
 

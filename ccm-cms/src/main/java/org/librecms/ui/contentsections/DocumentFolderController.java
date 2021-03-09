@@ -624,6 +624,7 @@ public class DocumentFolderController {
             );
             row.setDeletable(!itemManager.isLive(contentItem));
             row.setFolder(false);
+            row.setFolderPath(itemManager.getItemPath(contentItem));
             row.setLanguages(
                 new TreeSet<>(
                     itemL10NManager
