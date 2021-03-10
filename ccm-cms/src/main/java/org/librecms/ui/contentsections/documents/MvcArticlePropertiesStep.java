@@ -5,6 +5,8 @@
  */
 package org.librecms.ui.contentsections.documents;
 
+import org.librecms.contentsection.ContentItem;
+
 import javax.enterprise.context.RequestScoped;
 import javax.mvc.Controller;
 import javax.ws.rs.Path;
@@ -17,5 +19,30 @@ import javax.ws.rs.Path;
 @Controller
 @Path("/")
 public class MvcArticlePropertiesStep implements MvcAuthoringStep {
+
+    @Override
+    public String getPathFragment() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Class<? extends ContentItem> supportedDocumenType() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String getLabel() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String getDescription() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String getBundle() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }
