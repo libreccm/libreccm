@@ -11,7 +11,6 @@ import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.workflow.CircularTaskDependencyException;
 import org.libreccm.workflow.Task;
-import org.libreccm.workflow.TaskDependency;
 import org.libreccm.workflow.TaskManager;
 import org.libreccm.workflow.TaskRepository;
 import org.libreccm.workflow.Workflow;
@@ -20,7 +19,6 @@ import org.libreccm.workflow.WorkflowRepository;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionManager;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;

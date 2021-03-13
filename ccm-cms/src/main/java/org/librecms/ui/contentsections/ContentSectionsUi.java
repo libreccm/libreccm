@@ -24,7 +24,7 @@ import javax.mvc.Models;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-class ContentSectionsUi {
+public class ContentSectionsUi {
 
     @Inject
     private ContentSectionRepository sectionRepo;

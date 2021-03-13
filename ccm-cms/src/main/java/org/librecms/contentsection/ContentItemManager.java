@@ -69,6 +69,8 @@ import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.PermissionManager;
 import org.librecms.contentsection.privileges.TypePrivileges;
 
+import java.lang.reflect.Constructor;
+
 /**
  * Manager class providing several methods to manipulate {@link ContentItem}s.
  *
@@ -148,7 +150,7 @@ public class ContentItemManager {
                                  folder,
                                  type,
                                  item -> {
-                                 },
+                             },
                                  locale);
 
     }
@@ -243,7 +245,7 @@ public class ContentItemManager {
                                  workflowTemplate,
                                  type,
                                  item -> {
-                                 },
+                             },
                                  locale);
 
     }
@@ -307,8 +309,12 @@ public class ContentItemManager {
 
         final T item;
         try {
-            item = type.newInstance();
-        } catch (InstantiationException | IllegalAccessException ex) {
+            final Constructor<T> constructor = type.getConstructor();
+            item = constructor.newInstance();
+        } catch (NoSuchMethodException
+                 | InstantiationException
+                 | InvocationTargetException
+                 | IllegalAccessException ex) {
             LOGGER.error("Failed to create new content item of type \"{}\" "
                              + "in content section \"{}\".",
                          type.getName(),
@@ -317,8 +323,7 @@ public class ContentItemManager {
         }
 
         item.setDisplayName(name);
-        item.getName().addValue(locale,
-                                name);
+        item.getName().addValue(locale, name);
 
         item.setVersion(ContentItemVersion.DRAFT);
         item.setContentType(contentType.get());
@@ -938,7 +943,7 @@ public class ContentItemManager {
                 if (isLive(linkedDraftItem)) {
                     try {
                         final Optional<ContentItem> linkedLiveItem
-                                                        = getLiveVersion(
+                            = getLiveVersion(
                                 linkedDraftItem, ContentItem.class);
                         writeMethod.invoke(liveItem, linkedLiveItem);
                     } catch (IllegalAccessException
@@ -1154,8 +1159,8 @@ public class ContentItemManager {
         for (final AttachmentList attachmentList : attachmentLists) {
             attachmentList.getAttachments().forEach(
                 attachment -> {
-                    unpublishAttachment(attachment);
-                });
+                unpublishAttachment(attachment);
+            });
         }
 
         final List<Category> categories = liveItem

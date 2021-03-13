@@ -39,9 +39,9 @@ import org.librecms.CmsConstants;
 import static org.librecms.CmsConstants.*;
 
 import org.librecms.contentsection.ContentItem;
-import org.librecms.ui.contentsections.documents.MvcArticleCreateStep;
-import org.librecms.ui.contentsections.documents.MvcArticlePropertiesStep;
-import org.librecms.ui.contentsections.documents.MvcArticleTextBodyStep;
+import org.librecms.ui.contenttypes.MvcArticleCreateStep;
+import org.librecms.ui.contenttypes.MvcArticlePropertiesStep;
+import org.librecms.ui.contenttypes.MvcArticleTextBodyStep;
 import org.librecms.ui.contentsections.documents.MvcAuthoringKit;
 
 import javax.xml.bind.annotation.XmlRootElement;
