@@ -6,6 +6,7 @@
 package org.librecms.ui.contentsections;
 
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.PermissionManager;
 import org.libreccm.security.Role;
@@ -43,6 +44,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
 /**
+ * Controller for managing the asset folders of a content section.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -51,54 +53,117 @@ import javax.ws.rs.QueryParam;
 @Path("/{sectionIdentifier}/assetfolders")
 public class AssetFolderController {
 
+    /**
+     * The {@link AssetFolderModel} stores information about the current asset
+     * folder for the view.
+     */
     @Inject
     private AssetFolderModel assetFolderModel;
 
+    /**
+     * The {@link AssetFolderTree} stores information about the current asset
+     * folder for the view.
+     */
     @Inject
     private AssetFolderTree assetFolderTree;
 
+    /**
+     * Used to build the {@link AssetPermissionsModel}.
+     */
     @Inject
     private AssetPermissionsModelProvider assetPermissions;
 
+    /**
+     * A special permissions checker for {@link Asset}s.
+     */
     @Inject
     private AssetPermissionsChecker assetPermissionsChecker;
 
+    /**
+     * {@link AssetManager} for performing operations on {@link Asset}s.
+     */
     @Inject
     private AssetManager assetManager;
 
+    /**
+     * {@link AssetRepository} for storing and retrieving {@link Asset}s.
+     */
     @Inject
     private AssetRepository assetRepo;
 
+    /**
+     * Stores information about the currnet {@link ContentSection} for the view.
+     */
     @Inject
     private ContentSectionModel contentSectionModel;
 
+    /**
+     * Provides several services.
+     */
     @Inject
     private ContentSectionsUi sectionsUi;
 
+    /**
+     * Provides information about the permissions of a user for {@link Asset}s.
+     */
     @Inject
     private CurrentUserAssetPermissions currentUserPermissions;
 
+    /**
+     * Performs operations on folders.
+     */
     @Inject
     private FolderManager folderManager;
 
+    /**
+     * Stores and retrieves {@link Folder}s.
+     */
     @Inject
     private FolderRepository folderRepo;
 
+    /**
+     * A helper for working with {@link LocalizedString}s.
+     */
     @Inject
     private GlobalizationHelper globalizationHelper;
 
+    /**
+     * Helper for getting the privileges for the current user for an
+     * {@link Asset}.
+     */
     @Inject
     private GrantedAssetPrivileges grantedPrivileges;
 
+    /**
+     * MVC {@link Models} instance. Used to store data for the view which is not
+     * provided by a model class.
+     */
     @Inject
     private Models models;
 
+    /**
+     * Performs operations on permissions.
+     */
     @Inject
     private PermissionManager permissionManager;
 
+    /**
+     * Used to retrieve roles.
+     */
     @Inject
     private RoleRepository roleRepo;
 
+    /**
+     * Lists the assets and subfolders in the
+     * {@link ContentSection#rootAssetsFolder}.
+     *
+     * @param sectionIdentifier The identifier for the content section.
+     * @param filterTerm        An optional filter term.
+     * @param firstResult       The index of the first result to show.
+     * @param maxResults        The maximum number of results to show.
+     *
+     * @return The template to use for generating the view.
+     */
     @GET
     @Path("/")
     @AuthorizationRequired
@@ -114,6 +179,17 @@ public class AssetFolderController {
         );
     }
 
+    /**
+     * Lists the assets and subfolders in an assets folder.
+     *
+     * @param sectionIdentifier The identifier for the content section.
+     * @param folderPath        The path of the folder.
+     * @param filterTerm        An optional filter term.
+     * @param firstResult       The index of the first result to show.
+     * @param maxResults        The maximum number of results to show.
+     *
+     * @return The template to use for generating the view.
+     */
     @GET
     @Path("/{folderPath:(.+)?}")
     @AuthorizationRequired
@@ -204,6 +280,14 @@ public class AssetFolderController {
         return "org/librecms/ui/contentsection/assetfolder/assetfolder.xhtml";
     }
 
+    /**
+     * Creates a new subfolder in the {@link ContentSection#rootAssetsFolder}.
+     *
+     * @param sectionIdentifier The identifier for the content section.
+     * @param folderName        The name of the new folder.
+     *
+     * @return A redirect for showing the to the listing of the root folder.
+     */
     @POST
     @Path("/")
     @AuthorizationRequired
@@ -217,6 +301,15 @@ public class AssetFolderController {
         );
     }
 
+    /**
+     * Creates a new subfolder in the {@link ContentSection#rootAssetsFolder}.
+     *
+     * @param sectionIdentifier The identifier for the content section.
+     * @param parentFolderPath  Path of the parent folder of the new folder.
+     * @param folderName        The name of the new folder.
+     *
+     * @return A redirect for showing the to the listing of the parent folder.
+     */
     @POST
     @Path("/{parentFolderPath:(.+)?}")
     @AuthorizationRequired
@@ -275,6 +368,17 @@ public class AssetFolderController {
         );
     }
 
+    /**
+     * Update the permissions of a role for the
+     * {@link ContentSection#rootAssetsFolder}.
+     *
+     * @param sectionIdentifier The identifier for the content section.
+     * @param roleParam         The name of the role.
+     * @param permissions       The new permissions of the role for the root
+     *                          assets folder.
+     *
+     * @return A redirect to the listing of the root assets folder.
+     */
     @POST
     @Path("/@permissions/{role}/")
     @AuthorizationRequired
@@ -289,6 +393,17 @@ public class AssetFolderController {
         );
     }
 
+    /**
+     * Update the permissions of a role for a folder.
+     *
+     * @param sectionIdentifier The identifier for the content section.
+     * @param folderPath        The path of the folder.
+     * @param roleParam         The name of the role.
+     * @param permissions       The new permissions of the role for the assets
+     *                          folder.
+     *
+     * @return A redirect to the listing of the assets folder.
+     */
     @POST
     @Path("/@permissions/{role}/{folderPath:(.+)?}")
     @AuthorizationRequired
@@ -374,6 +489,15 @@ public class AssetFolderController {
         );
     }
 
+    /**
+     * Renames a folder.
+     *
+     * @param sectionIdentifier The identifier for the content section.
+     * @param folderPath        The path of the folder.
+     * @param folderName        The new name of the folder.
+     *
+     * @return A redirect to the listing of the assets folder.
+     */
     @POST
     @Path("/@rename/{folderPath:(.+)?}")
     @AuthorizationRequired
@@ -435,6 +559,15 @@ public class AssetFolderController {
         );
     }
 
+    /**
+     * Helper method for showing a error message if there is not folder for the
+     * provided path.
+     *
+     * @param section    The current {@link ContentSection}.
+     * @param folderPath The requested folder path.
+     *
+     * @return The error message view.
+     */
     private String showAssetFolderNotFound(
         final ContentSection section, final String folderPath
     ) {
@@ -443,6 +576,13 @@ public class AssetFolderController {
         return "org/librecms/ui/contentsection/assetfolder/asssetfolder-not-found.xhtml";
     }
 
+    /**
+     * Helper methods for building the breadcrumbs.
+     *
+     * @param folderPath The path of the current folder.
+     *
+     * @return The {@link FolderBreadcrumbsModel} for the path of the folder.
+     */
     private List<FolderBreadcrumbsModel> buildBreadcrumbs(
         final String folderPath
     ) {
@@ -469,6 +609,15 @@ public class AssetFolderController {
         return breadcrumbs;
     }
 
+    /**
+     * Helper method for building the {@link AssetFolderRowModel} for a
+     * subfolder.
+     *
+     * @param section The current content section.
+     * @param entry   The entry to process.
+     *
+     * @return A {@link AssetFolderRowModel} for hte provided entry.
+     */
     private AssetFolderRowModel buildRowModel(
         final ContentSection section, final AssetFolderEntry entry
     ) {

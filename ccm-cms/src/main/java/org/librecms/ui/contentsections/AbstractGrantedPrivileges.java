@@ -18,17 +18,33 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 /**
+ * Abstract builder for {@link PrivilegesGrantedToRoleModel} instances.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 abstract class AbstractGrantedPrivileges {
-    
+
+    /**
+     * {@link PermissionChecker} instance used.
+     */
     @Inject
     private PermissionChecker permissionChecker;
-    
+
+    /**
+     * {@link PermissionManager} instance used.
+     */
     @Inject
     private PermissionManager permissionManager;
-    
+
+    /**
+     * Build a permissions matrix for the provided folder.
+     *
+     * @param section The content section to which the folder belongs.
+     * @param folder  The folder.
+     *
+     * @return A list of {@link PrivilegesGrantedToRoleModel} (the rows and
+     *         columns of the matrix).
+     */
     public List<PrivilegesGrantedToRoleModel> buildPermissionsMatrix(
         final ContentSection section, final Folder folder
     ) {
@@ -38,8 +54,24 @@ abstract class AbstractGrantedPrivileges {
             .map(role -> buildPrivilegesGrantedToRoleModel(role, folder))
             .collect(Collectors.toList());
     }
-    
-     private PrivilegesGrantedToRoleModel buildPrivilegesGrantedToRoleModel(
+
+    /**
+     * Provides the privileges class to use.
+     *
+     * @return The class containing the constants for the privileges to use.
+     */
+    protected abstract Class<?> getPrivilegesClass();
+
+    /**
+     * Helper method for building a {@link PrivilegesGrantedToRoleModel}.
+     *
+     * @param role   The role for which the model is build.
+     * @param folder The folder for which the model is build.
+     *
+     * @return A {@link PrivilegesGrantedToRoleModel} for the {@code role} and
+     *         the {@code folder}.
+     */
+    private PrivilegesGrantedToRoleModel buildPrivilegesGrantedToRoleModel(
         final Role role, final Folder folder
     ) {
         final List<GrantedPrivilegeModel> grantedPrivilges = permissionManager
@@ -64,8 +96,18 @@ abstract class AbstractGrantedPrivileges {
 
         return model;
     }
-     
-     private GrantedPrivilegeModel buildGrantedPrivilegeModel(
+
+    /**
+     * Helper method for building a {@link GrantedPrivilegeModel}.
+     *
+     * @param role        The role for which the model is build.
+     * @param folder      The folder for which the model is build.
+     * @param privilege   The privilege for which the model is build.
+     * @param permissions The permissions to use for building the model.
+     *
+     * @return A {@link GrantedPrivilegeModel} for the provided parameters.
+     */
+    private GrantedPrivilegeModel buildGrantedPrivilegeModel(
         final Role role,
         final Folder folder,
         final String privilege,
@@ -90,6 +132,4 @@ abstract class AbstractGrantedPrivileges {
         return model;
     }
 
-    protected abstract Class<?> getPrivilegesClass();
-    
 }
