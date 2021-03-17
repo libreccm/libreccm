@@ -5,24 +5,50 @@
  */
 package org.librecms.ui.contentsections;
 
+import org.libreccm.l10n.GlobalizationHelper;
+
 /**
+ * Model bean for transferring the data about an object in a folder to the
+ * frontend.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class CategorizedObjectModel {
 
+    /**
+     * The ID of the object.
+     */
     private long objectId;
 
+    /**
+     * The UUID of the object.
+     */
     private String objectUuid;
 
+    /**
+     * The display name of the object.
+     */
     private String displayName;
 
+    /**
+     * The title of the object. If available the title is in the {@link GlobalizationHelper#getNegotiatedLocale()
+     * } is used. Otherwise the default language is used.
+     */
     private String title;
 
+    /**
+     * The type of the object.
+     */
     private String type;
 
+    /**
+     * Is the object the index object of the folder?
+     */
     private boolean indexObject;
 
+    /**
+     * The order index for the object.
+     */
     private long objectOrder;
 
     public long getObjectId() {

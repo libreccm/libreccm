@@ -12,15 +12,29 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 /**
+ * A utility CDI bean for building the {@link AssetPermissionsModel} for a asset
+ * {@link Folder} or an {@link Asset}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Dependent
 class AssetPermissionsModelProvider {
 
+    /**
+     * The {@link AssetPermissionsChecker} instance to use.
+     */
     @Inject
     private AssetPermissionsChecker permissionChecker;
 
+    /**
+     * Builds an {@link AssetPermissionsModel} for the provided assets
+     * {@link Folder}
+     *
+     * @param folder The {@link Folder} for which the
+     *               {@link AssetPermissionsModel} is build.
+     *
+     * @return The {@link AssetFolderModel} for the {@link Folder}.
+     */
     public AssetPermissionsModel buildAssetPermissionsModel(
         final Folder folder
     ) {
@@ -44,6 +58,15 @@ class AssetPermissionsModelProvider {
         return model;
     }
 
+    /**
+     * Builds an {@link AssetPermissionsModel} for the provided assets
+     * {@link Asset}
+     *
+     * @param folder The {@link Asset} for which the
+     *               {@link AssetPermissionsModel} is build.
+     *
+     * @return The {@link AssetFolderModel} for the {@link Asset}.
+     */
     public AssetPermissionsModel buildAssetPermissionsModel(
         final Asset asset
     ) {

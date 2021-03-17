@@ -6,7 +6,8 @@
 package org.librecms.ui.contentsections;
 
 /**
- *
+ * A node of the {@link AssetFolderTree}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class AssetFolderTreeNode

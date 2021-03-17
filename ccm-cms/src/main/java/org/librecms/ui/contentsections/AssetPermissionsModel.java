@@ -5,20 +5,40 @@
  */
 package org.librecms.ui.contentsections;
 
+import org.librecms.contentsection.privileges.AssetPrivileges;
+
 /**
+ * Model describing the permissions granted to the current user for an
+ * {@link Asset} or an assets {@link Folder}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class AssetPermissionsModel implements PermissionsModel {
 
+    /**
+     * Has the user been granted the {@link AssetPrivileges#CREATE_NEW}
+     * privilege?
+     */
     private boolean grantedCreateNew;
 
+    /**
+     * Has the user been granted the {@link AssetPrivileges#DELETE} privilege?
+     */
     private boolean grantedDelete;
 
+    /**
+     * Has the user been granted the {@link AssetPrivileges#USE} privilege?
+     */
     private boolean grantedUse;
 
+    /**
+     * Has the user been granted the {@link AssetPrivileges#EDIT} privilege?
+     */
     private boolean grantedEdit;
 
+    /**
+     * Has the user been granted the {@link AssetPrivileges#VIEW} privilege?
+     */
     private boolean grantedView;
 
     public boolean isGrantedCreateNew() {

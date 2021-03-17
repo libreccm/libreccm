@@ -13,31 +13,63 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 /**
- *
+ * Model for the current asset folder. Provides data about the folder for the 
+ * template.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 @Named("AssetFolderModel")
 public class AssetFolderModel {
 
+    /**
+     * How many objects are in the folder (subfolders and assets)?
+     */
     private long count;
 
+    /**
+     * Index of the first result shown.
+     */
     private int firstResult;
 
+    /**
+     * The maximum number of results on a page.
+     */
     private int maxResults;
 
+    /**
+     * The objects (subfolders and assets) in the folder.
+     */
     private List<AssetFolderRowModel> rows;
 
+    /**
+     * The breadcrumbs of the folder path.
+     */
     private List<FolderBreadcrumbsModel> breadcrumbs;
 
+    /**
+     * The path of the folder.
+     */
     private String path;
 
+    /**
+     * Can the current user create sub folders in this folder?
+     */
     private boolean canCreateSubFolders;
 
+    /**
+     * Can the current folder create assets in this folder?
+     */
     private boolean canCreateAssets;
 
+    /**
+     * The permissions granted to the current user.
+     */
     private List<GrantedPrivilegeModel> currentUserPermissions;
 
+    /**
+     * The privileges granted to different roles for the current folder.
+     */
     private List<PrivilegesGrantedToRoleModel> grantedPermissions;
 
     private List<String> privileges;

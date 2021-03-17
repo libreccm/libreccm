@@ -43,6 +43,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
+ * Controller for managing category systems assigned to a content section and
+ * their categories.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -51,33 +53,70 @@ import javax.ws.rs.PathParam;
 @Path("/{sectionIdentifier}/categorysystems")
 public class CategoriesController {
 
+    /**
+     * The {@link CategoryManager} to use.
+     */
     @Inject
     private CategoryManager categoryManager;
 
+    /**
+     * The {@link CategoryRepository} to use.
+     */
     @Inject
     private CategoryRepository categoryRepo;
 
+    /**
+     * The {@link CategorySystemModel} which stores the data of the selected
+     * category system for the view.
+     */
     @Inject
     private CategorySystemModel categorySystemModel;
 
+    /**
+     * The {@link ContentSectionModel} which stores the data of the current
+     * content section for the view.
+     */
     @Inject
     private ContentSectionModel sectionModel;
 
+    /**
+     * The {@link ContentSectionRepository} to use.
+     */
     @Inject
     private ContentSectionRepository sectionRepo;
 
+    /**
+     * The {@link GlobalizationHelper} to use.
+     */
     @Inject
     private GlobalizationHelper globalizationHelper;
 
+    /**
+     * The {@link IdentifierParser} to use.
+     */
     @Inject
     private IdentifierParser identifierParser;
 
+    /**
+     * The {@link Models} instance to use to provide data for the view.
+     */
     @Inject
     private Models models;
 
+    /**
+     * The {@link PermissionChecker} to use.
+     */
     @Inject
     private PermissionChecker permissionChecker;
 
+    /**
+     * Lists all category systems ({@link Domain}s) assigned to the current
+     * {@link ContentSection}.
+     *
+     * @param sectionIdentifier The identifier of the current content section.
+     *
+     * @return The template to use for generating the view.
+     */
     @GET
     @Path("/")
     @AuthorizationRequired
@@ -105,6 +144,15 @@ public class CategoriesController {
         return "org/librecms/ui/contentsection/categorysystems/categorysystems.xhtml";
     }
 
+    /**
+     * Show the root category of a category system.
+     *
+     * @param sectionIdentifier The identifier of the curent content section.
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     *
+     * @return The template to use for generating the view.
+     */
     @GET
     @Path("/{context}")
     @AuthorizationRequired
@@ -120,6 +168,15 @@ public class CategoriesController {
         );
     }
 
+    /**
+     * Show the root category of a category system.
+     *
+     * @param sectionIdentifier The identifier of the curent content section.
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     *
+     * @return The template to use for generating the view.
+     */
     @GET
     @Path("/{context}/categories")
     @AuthorizationRequired
@@ -131,6 +188,16 @@ public class CategoriesController {
         return showCategorySystem(sectionIdentifier, context, "");
     }
 
+    /**
+     * Show a category of a category system.
+     *
+     * @param sectionIdentifier The identifier of the curent content section.
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param categoryPath      The path of the category to show.
+     *
+     * @return The template to use for generating the view.
+     */
     @GET
     @Path("/{context}/categories/{categoryPath:(.+)?}")
     @AuthorizationRequired
@@ -205,6 +272,18 @@ public class CategoriesController {
         return "org/librecms/ui/contentsection/categorysystems/categorysystem.xhtml";
     }
 
+    /**
+     * Add a localized value to the title of the root category.
+     *
+     * @param sectionIdentifier The identifier of the current content section .
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param localeParam       The locale of the new value.
+     * @param value             The new value.
+     *
+     * @return A redirect to the categories page or the template for generating
+     *         an error message view.
+     */
     @POST
     @Path("/{context}/categories/@title/add")
     @AuthorizationRequired
@@ -218,6 +297,19 @@ public class CategoriesController {
         return addTitle(sectionIdentifier, context, "", localeParam, value);
     }
 
+    /**
+     * Add a localized value to the title of the category.
+     *
+     * @param sectionIdentifier The identifier of the current content section .
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param categoryPathParam The path of the category.
+     * @param localeParam       The locale of the new value.
+     * @param value             The new value.
+     *
+     * @return A redirect to the categories page or the template for generating
+     *         an error message view.
+     */
     @POST
     @Path("/{context}/categories/{categoryPath:(.+)?}/@title/add")
     @AuthorizationRequired
@@ -255,6 +347,18 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Update a localized value of the title of the root category.
+     *
+     * @param sectionIdentifier The identifier of the current content section .
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param localeParam       The locale of the new value.
+     * @param value             The new value.
+     *
+     * @return A redirect to the categories page or the template for generating
+     *         an error message view.
+     */
     @POST
     @Path("/{context}/categories/@title/edit/{locale}")
     @AuthorizationRequired
@@ -270,6 +374,19 @@ public class CategoriesController {
         );
     }
 
+    /**
+     * Edit the localized value to the title of a category.
+     *
+     * @param sectionIdentifier The identifier of the current content section .
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param categoryPathParam The path of the category.
+     * @param localeParam       The locale of the new value.
+     * @param value             The new value.
+     *
+     * @return A redirect to the categories page or the template for generating
+     *         an error message view.
+     */
     @POST
     @Path("/{context}/categories/{categoryPath:(.+)?}/@title/edit/{locale}")
     @AuthorizationRequired
@@ -307,6 +424,18 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Remove a localized value from the title of the root category.
+     *
+     * @param sectionIdentifier The identifier of the current content section .
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param localeParam       The locale of the new value.
+     * @param value             The new value.
+     *
+     * @return A redirect to the categories page or the template for generating
+     *         an error message view.
+     */
     @POST
     @Path("/{context}/categories/@title/remove/{locale}")
     @AuthorizationRequired
@@ -320,6 +449,19 @@ public class CategoriesController {
         return removeTitle(sectionIdentifier, context, "", localeParam, value);
     }
 
+    /**
+     * Remove a localized value from the title of the category.
+     *
+     * @param sectionIdentifier The identifier of the current content section .
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param categoryPathParam The path of the current category.
+     * @param localeParam       The locale of the new value.
+     * @param value             The new value.
+     *
+     * @return A redirect to the categories page or the template for generating
+     *         an error message view.
+     */
     @POST
     @Path("/{context}/categories/{categoryPath:(.+)?}/@title/remove/{locale}")
     @AuthorizationRequired
@@ -356,6 +498,18 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Add a localized value to the description of the root category.
+     *
+     * @param sectionIdentifier The identifier of the current content section .
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param localeParam       The locale of the new value.
+     * @param value             The new value.
+     *
+     * @return A redirect to the categories page or the template for generating
+     *         an error message view.
+     */
     @POST
     @Path("/{context}/categories/@description/add")
     @AuthorizationRequired
@@ -371,6 +525,19 @@ public class CategoriesController {
         );
     }
 
+    /**
+     * Add a localized value to the description of a category.
+     *
+     * @param sectionIdentifier The identifier of the current content section .
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param categoryPathParam The path of the category.
+     * @param localeParam       The locale of the new value.
+     * @param value             The new value.
+     *
+     * @return A redirect to the categories page or the template for generating
+     *         an error message view.
+     */
     @POST
     @Path("/{context}/categories/{categoryPath:(.+)?}/@description/add")
     @AuthorizationRequired
@@ -408,6 +575,18 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Update a localized value of the description of the root category.
+     *
+     * @param sectionIdentifier The identifier of the current content section .
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param localeParam       The locale of the new value.
+     * @param value             The new value.
+     *
+     * @return A redirect to the categories page or the template for generating
+     *         an error message view.
+     */
     @POST
     @Path("/{context}/categories/@description/edit/{locale}")
     @AuthorizationRequired
@@ -423,6 +602,19 @@ public class CategoriesController {
         );
     }
 
+    /**
+     * Edit the localized value to the description of a category.
+     *
+     * @param sectionIdentifier The identifier of the current content section .
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param categoryPathParam The path of the category.
+     * @param localeParam       The locale of the new value.
+     * @param value             The new value.
+     *
+     * @return A redirect to the categories page or the template for generating
+     *         an error message view.
+     */
     @POST
     @Path(
         "/{context}/categories/{categoryPath:(.+)?}/@description/edit/{locale}"
@@ -462,6 +654,18 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Remove a localized value from the description of the root category.
+     *
+     * @param sectionIdentifier The identifier of the current content section .
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param localeParam       The locale of the new value.
+     * @param value             The new value.
+     *
+     * @return A redirect to the categories page or the template for generating
+     *         an error message view.
+     */
     @POST
     @Path("/{context}/categories/@description/remove/{locale}")
     @AuthorizationRequired
@@ -477,6 +681,19 @@ public class CategoriesController {
         );
     }
 
+    /**
+     * Remove a localized value from the description of the category.
+     *
+     * @param sectionIdentifier The identifier of the current content section .
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param categoryPathParam The path of the current category.
+     * @param localeParam       The locale of the new value.
+     * @param value             The new value.
+     *
+     * @return A redirect to the categories page or the template for generating
+     *         an error message view.
+     */
     @POST
     @Path(
         "/{context}/categories/{categoryPath:(.+)?}/@description/remove/{locale}"
@@ -515,6 +732,23 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Update some properties of a category.
+     *
+     * @param sectionIdentifier The identifier of the current
+     *                          {@link ContentSection}.
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param categoryPath      The path of the current category.
+     * @param categoryName      The new name of the category.
+     * @param uniqueId          The unique ID of the category.
+     * @param isEnabled         Is the category enabled?
+     * @param isVisible         Is the category visible?
+     * @param isAbstract        Is the category an abstract category?
+     *
+     * @return A redirect to the category detail page or a view for generating
+     *         an error message.
+     */
     @POST
     @Path("/{context}/categories/{categoryPath:(.+)?}/@properties")
     @AuthorizationRequired
@@ -553,6 +787,19 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Sets the index element of a category.
+     *
+     * @param sectionIdentifier The identifier of the current
+     *                          {@link ContentSection}.
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param categoryPath      The path of the current category.
+     * @param indexElementUuid  The UUID of the new index element.
+     *
+     * @return A redirect to the category page or the template for generating an
+     *         error view.
+     */
     @GET
     @Path(
         "/{context}/categories/{categoryPath:(.+)?}/@index-element/{indexElementUuid}")
@@ -608,6 +855,18 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Rests (removes) the index element of a category.
+     *
+     * @param sectionIdentifier The identifier of the current
+     *                          {@link ContentSection}.
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param categoryPath      The path of the current category.
+     *
+     * @return A redirect to the category page or the template for generating an
+     *         error view.
+     */
     @GET
     @Path("/{context}/categories/{categoryPath:(.+)?}/@index-element/reset")
     @AuthorizationRequired
@@ -634,6 +893,21 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Adds a new subcategory to the root assets folder of a content section.
+     *
+     * @param sectionIdentifier The identifier of the current
+     *                          {@link ContentSection}.
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param categoryName      The name of the new category.
+     * @param uniqueId          The unique ID of the new category.
+     * @param isEnabled         Is the new category enabled.
+     * @param isVisible         Is the new category visible?
+     * @param isAbstract        Is the new category an abstract category?
+     *
+     * @return A redirect to the details page of the new category.
+     */
     @POST
     @Path("/{context}/categories/@subcategories")
     @AuthorizationRequired
@@ -659,6 +933,22 @@ public class CategoriesController {
         );
     }
 
+    /**
+     * Adds a new subcategory to an assets folder of a content section.
+     *
+     * @param sectionIdentifier The identifier of the current
+     *                          {@link ContentSection}.
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param categoryPath      The path of the parent category.
+     * @param categoryName      The name of the new category.
+     * @param uniqueId          The unique ID of the new category.
+     * @param isEnabled         Is the new category enabled.
+     * @param isVisible         Is the new category visible?
+     * @param isAbstract        Is the new category an abstract category?
+     *
+     * @return A redirect to the details page of the new category.
+     */
     @POST
     @Path("/{context}/categories/{categoryPath:(.+)?}/@subcategories")
     @AuthorizationRequired
@@ -697,6 +987,17 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Deletes a category.
+     *
+     * @param sectionIdentifier The identifier of the current
+     *                          {@link ContentSection}.
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param categoryPath      The path of the category to delete.
+     *
+     * @return A redirect to the detail page of the parent category.
+     */
     @POST
     @Path("/{context}/categories/{categoryPath:(.+)?}/@delete")
     @AuthorizationRequired
@@ -734,6 +1035,19 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Moves a category to another super category.
+     *
+     ** @param sectionIdentifier     The identifier of the current
+     *                                {@link ContentSection}.
+     * @param context               The mapping context of the assigned category
+     *                              system.
+     * @param categoryPath          The path of the category to move.
+     * @param targetIdentifierParam The identifier of the new parent category.
+     *
+     * @return A redirect to the details page of the super category, or the
+     *         template for showing a error view.
+     */
     @POST
     @Path("/{context}/categories/{categoryPath:(.+)?}/@move")
     @AuthorizationRequired
@@ -794,6 +1108,19 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Reorders subcategories.
+     *
+     * @param sectionIdentifier The identifier of the current
+     *                          {@link ContentSection}.
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param categoryPath      The path of the category to move.
+     * @param direction         The direction of the move.
+     *
+     * @return A redirect to the details page of the parent category or the
+     *         template for building an error message.
+     */
     @POST
     @Path("/{context}/categories/{categoryPath:(.+)?}/@order")
     @AuthorizationRequired
@@ -855,6 +1182,20 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Reorders subcategories.
+     *
+     * @param sectionIdentifier The identifier of the current
+     *                          {@link ContentSection}.
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param categoryPath      The path of the category .
+     * @param objectIdentifier  The identifier of the object to move.
+     * @param direction         The direction of the move.
+     *
+     * @return A redirect to the details page of the parent category or the
+     *         template for building an error message.
+     */
     @POST
     @Path(
         "/{context}/categories/{categoryPath:(.+)?}/@objects/{objectIdentifier}/order")
@@ -923,6 +1264,13 @@ public class CategoriesController {
         }
     }
 
+    /**
+     * Helper method for retrieving the current {@link ContentSection},
+     *
+     * @param sectionIdentifier The identifier of the section.
+     *
+     * @return A {@link Optional} with the requested {@link ContentSection}.
+     */
     private Optional<ContentSection> retrieveContentSection(
         final String sectionIdentifier
     ) {
@@ -950,6 +1298,15 @@ public class CategoriesController {
         return sectionResult;
     }
 
+    /**
+     * @param sectionIdentifier The identifier of the current
+     *                          {@link ContentSection}.
+     * @param context           The mapping context of the assigned category
+     *                          system.
+     * @param categoryPath      The path of the category .
+     *
+     * @return A {@link RetrieveResult}.
+     */
     private RetrieveResult<Category> retrieveCategory(
         final String sectionIdentifier,
         final String context,
@@ -1059,6 +1416,14 @@ public class CategoriesController {
         return model;
     }
 
+    /**
+     * Helper method for building the {@link CategoryModel} for the
+     * {@link Category}.
+     *
+     * @param category
+     *
+     * @return A {@link CategoryModel} for the provided category.
+     */
     private CategoryModel buildCategoryModel(final Category category) {
         final CategoryModel model = new CategoryModel();
         model.setAbstractCategory(category.isAbstractCategory());
@@ -1153,6 +1518,13 @@ public class CategoriesController {
         return model;
     }
 
+    /**
+     * Build a {@link CategoryModel} fro a subcategory.
+     *
+     * @param category The subcategory to use.
+     *
+     * @return A {@link CategoryModel} for the provided {@link Category}.
+     */
     private CategoryModel buildSubCategoriesModel(final Category category) {
         final CategoryModel model = new CategoryModel();
         model.setAbstractCategory(category.isAbstractCategory());
@@ -1177,6 +1549,15 @@ public class CategoriesController {
         return model;
     }
 
+    /**
+     * Build a {@link CategorizedObjectModel} for an object in a {@link Folder}.
+     *
+     * @param categorization The {@link Categorization} instance of the object
+     *                       and the folder.
+     *
+     * @return A {@link CategorizedObjectModel} for the provided
+     *         {@link Categorization}.
+     */
     private CategorizedObjectModel buildCategorizedObjectModel(
         final Categorization categorization
     ) {

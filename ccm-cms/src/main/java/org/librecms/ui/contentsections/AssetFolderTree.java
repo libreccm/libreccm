@@ -12,6 +12,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 /**
+ * A model bean for the tree of asset folder of a content section.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -19,9 +20,14 @@ import javax.inject.Inject;
 public class AssetFolderTree
     extends AbstractFolderTree<AssetFolderTreeNode, AssetPermissionsModel> {
 
+    /**
+     * {@link AssetPermissionsModelProvider} used to create the
+     * {@link AssetPermissionsModel} for the folder and the currentu user.
+     */
     @Inject
     private AssetPermissionsModelProvider assetPermissions;
 
+    
     @Override
     public AssetFolderTreeNode newFolderTreeNode() {
         return new AssetFolderTreeNode();
