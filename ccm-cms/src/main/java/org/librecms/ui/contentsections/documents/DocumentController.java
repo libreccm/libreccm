@@ -5,17 +5,9 @@
  */
 package org.librecms.ui.contentsections.documents;
 
-import org.libreccm.api.Identifier;
-import org.libreccm.api.IdentifierParser;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.PermissionChecker;
-import org.libreccm.workflow.AssignableTask;
-import org.libreccm.workflow.AssignableTaskManager;
-import org.libreccm.workflow.TaskManager;
-import org.libreccm.workflow.Workflow;
-import org.libreccm.workflow.WorkflowManager;
-import org.libreccm.workflow.WorkflowRepository;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
@@ -25,17 +17,11 @@ import org.librecms.contentsection.FolderRepository;
 import org.librecms.contentsection.FolderType;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 import org.librecms.lifecycle.LifecycleDefinition;
-import org.librecms.lifecycle.LifecycleManager;
 import org.librecms.lifecycle.Phase;
-import org.librecms.lifecycle.PhaseRepository;
 import org.librecms.ui.contentsections.ContentSectionsUi;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
-import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -71,6 +57,9 @@ public class DocumentController {
     private ContentSectionsUi sectionsUi;
 
     @Inject
+    private DocumentUi documentUi;
+
+    @Inject
     private FolderRepository folderRepo;
 
     @Inject
@@ -86,37 +75,16 @@ public class DocumentController {
     private GlobalizationHelper globalizationHelper;
 
     @Inject
-    private IdentifierParser identifierParser;
-
-    @Inject
-    private LifecycleManager lifecycleManager;
-
-    @Inject
     private Models models;
 
     @Inject
     private PermissionChecker permissionChecker;
 
     @Inject
-    private PhaseRepository phaseRepository;
-
-    @Inject
     private PublishStepModel publishStepModel;
 
     @Inject
     private SelectedDocumentModel selectedDocumentModel;
-
-    @Inject
-    private WorkflowManager workflowManager;
-
-    @Inject
-    private AssignableTaskManager assignableTaskManager;
-
-    @Inject
-    private TaskManager taskManager;
-
-    @Inject
-    private WorkflowRepository workflowRepository;
 
     @GET
     @Path("/")
@@ -287,7 +255,7 @@ public class DocumentController {
         final Optional<ContentItem> itemResult = itemRepo
             .findByPath(section, documentPath);
         if (!itemResult.isPresent()) {
-            return showDocumentNotFound(section, documentPath);
+            return documentUi.showDocumentNotFound(section, documentPath);
         }
         final ContentItem item = itemResult.get();
         if (!permissionChecker.isPermitted(ItemPrivileges.EDIT, item)) {
@@ -324,7 +292,7 @@ public class DocumentController {
         final Optional<ContentItem> itemResult = itemRepo
             .findByPath(section, documentPath);
         if (!itemResult.isPresent()) {
-            return showDocumentNotFound(section, documentPath);
+            return documentUi.showDocumentNotFound(section, documentPath);
         }
         final ContentItem item = itemResult.get();
         if (!permissionChecker.isPermitted(ItemPrivileges.PUBLISH, item)) {
@@ -356,84 +324,6 @@ public class DocumentController {
     }
 
     @POST
-    @Path("/{documentPath:(.+)?}/@lifecycle/phases/{phaseId}")
-    @AuthorizationRequired
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String updatePhaseDates(
-        @PathParam("sectionIdentifider") final String sectionIdentifier,
-        @PathParam("documentPath") final String documentPath,
-        @PathParam("phaseId") final long phaseId,
-        @FormParam("startDate") final String startDateParam,
-        @FormParam("endDate") final String endDateParam
-    ) {
-        final Optional<ContentSection> sectionResult = sectionsUi
-            .findContentSection(sectionIdentifier);
-        if (!sectionResult.isPresent()) {
-            return sectionsUi.showContentSectionNotFound(sectionIdentifier);
-        }
-        final ContentSection section = sectionResult.get();
-
-        final Optional<ContentItem> itemResult = itemRepo
-            .findByPath(section, documentPath);
-        if (!itemResult.isPresent()) {
-            return showDocumentNotFound(section, documentPath);
-        }
-        final ContentItem item = itemResult.get();
-        if (!permissionChecker.isPermitted(ItemPrivileges.PUBLISH, item)) {
-            return sectionsUi.showAccessDenied(
-                "sectionIdentifier", sectionIdentifier,
-                "documentPath", documentPath
-            );
-        }
-
-        if (item.getLifecycle() != null) {
-            final Optional<Phase> phaseResult = item
-                .getLifecycle()
-                .getPhases()
-                .stream()
-                .filter(phase -> phase.getPhaseId() == phaseId)
-                .findAny();
-
-            if (!phaseResult.isPresent()) {
-                models.put("section", section.getLabel());
-                models.put("phaseId", phaseId);
-                return "org/librecms/ui/contentsection/phase-not-found.xhtml";
-            }
-
-            final Phase phase = phaseResult.get();
-            final DateTimeFormatter dateTimeFormatter
-                = DateTimeFormatter.ISO_DATE_TIME
-                    .withZone(ZoneId.systemDefault());
-            final LocalDateTime startLocalDateTime = LocalDateTime
-                .parse(startDateParam, dateTimeFormatter);
-            phase.setStartDateTime(
-                Date.from(
-                    startLocalDateTime.toInstant(
-                        ZoneOffset.from(startLocalDateTime)
-                    )
-                )
-            );
-            final LocalDateTime endLocalDateTime = LocalDateTime
-                .parse(endDateParam, dateTimeFormatter);
-            phase.setEndDateTime(
-                Date.from(
-                    endLocalDateTime.toInstant(
-                        ZoneOffset.from(endLocalDateTime)
-                    )
-                )
-            );
-
-            phaseRepository.save(phase);
-        }
-
-        return String.format(
-            "redirect:/%s/documents/%s/@publish",
-            sectionIdentifier,
-            documentPath
-        );
-    }
-
-    @POST
     @Path("/{documentPath:(.+)?}/@publish")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
@@ -453,7 +343,7 @@ public class DocumentController {
         final Optional<ContentItem> itemResult = itemRepo
             .findByPath(section, documentPath);
         if (!itemResult.isPresent()) {
-            return showDocumentNotFound(section, documentPath);
+            return documentUi.showDocumentNotFound(section, documentPath);
         }
         final ContentItem item = itemResult.get();
         if (!permissionChecker.isPermitted(ItemPrivileges.PUBLISH, item)) {
@@ -506,7 +396,7 @@ public class DocumentController {
         final Optional<ContentItem> itemResult = itemRepo
             .findByPath(section, documentPath);
         if (!itemResult.isPresent()) {
-            return showDocumentNotFound(section, documentPath);
+            return documentUi.showDocumentNotFound(section, documentPath);
         }
         final ContentItem item = itemResult.get();
         if (!permissionChecker.isPermitted(ItemPrivileges.PUBLISH, item)) {
@@ -543,7 +433,7 @@ public class DocumentController {
         final Optional<ContentItem> itemResult = itemRepo
             .findByPath(section, documentPath);
         if (!itemResult.isPresent()) {
-            return showDocumentNotFound(section, documentPath);
+            return documentUi.showDocumentNotFound(section, documentPath);
         }
         final ContentItem item = itemResult.get();
         if (!permissionChecker.isPermitted(ItemPrivileges.PUBLISH, item)) {
@@ -552,7 +442,7 @@ public class DocumentController {
                 "documentPath", documentPath
             );
         }
-        
+
         itemManager.unpublish(item);
 
         return String.format(
@@ -562,250 +452,248 @@ public class DocumentController {
         );
     }
 
-    @POST
-    @Path("/{documentPath:(.+)?}/@workflow/tasks/${taskIdentifier}/@lock")
-    @AuthorizationRequired
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String lockTask(
-        @PathParam("sectionIdentifider") final String sectionIdentifier,
-        @PathParam("documentPath") final String documentPath,
-        @PathParam("taskIdentifier") final String taskIdentifier,
-        @FormParam("returnUrl") final String returnUrl
-    ) {
-        final Optional<ContentSection> sectionResult = sectionsUi
-            .findContentSection(sectionIdentifier);
-        if (!sectionResult.isPresent()) {
-            return sectionsUi.showContentSectionNotFound(sectionIdentifier);
-        }
-        final ContentSection section = sectionResult.get();
-
-        final Optional<ContentItem> itemResult = itemRepo
-            .findByPath(section, documentPath);
-        if (!itemResult.isPresent()) {
-            return showDocumentNotFound(section, documentPath);
-        }
-        final ContentItem item = itemResult.get();
-        selectedDocumentModel.setContentItem(item);
-
-        final Optional<AssignableTask> taskResult = findTask(
-            item, taskIdentifier
-        );
-        if (!taskResult.isPresent()) {
-            return showTaskNotFound(section, documentPath, taskIdentifier);
-        }
-
-        final AssignableTask task = taskResult.get();
-        assignableTaskManager.lockTask(task);
-
-        return String.format("redirect:%s", returnUrl);
-    }
-
-    @POST
-    @Path("/{documentPath:(.+)?}/@workflow/tasks/${taskIdentifier}/@unlock")
-    @AuthorizationRequired
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String unlockTask(
-        @PathParam("sectionIdentifider") final String sectionIdentifier,
-        @PathParam("documentPath") final String documentPath,
-        @PathParam("taskIdentifier") final String taskIdentifier,
-        @FormParam("returnUrl") final String returnUrl
-    ) {
-        final Optional<ContentSection> sectionResult = sectionsUi
-            .findContentSection(sectionIdentifier);
-        if (!sectionResult.isPresent()) {
-            return sectionsUi.showContentSectionNotFound(sectionIdentifier);
-        }
-        final ContentSection section = sectionResult.get();
-
-        final Optional<ContentItem> itemResult = itemRepo
-            .findByPath(section, documentPath);
-        if (!itemResult.isPresent()) {
-            return showDocumentNotFound(section, documentPath);
-        }
-        final ContentItem item = itemResult.get();
-        selectedDocumentModel.setContentItem(item);
-
-        final Optional<AssignableTask> taskResult = findTask(
-            item, taskIdentifier
-        );
-        if (!taskResult.isPresent()) {
-            return showTaskNotFound(section, documentPath, taskIdentifier);
-        }
-
-        final AssignableTask task = taskResult.get();
-        assignableTaskManager.unlockTask(task);
-
-        return String.format("redirect:%s", returnUrl);
-    }
-
-    @POST
-    @Path("/{documentPath:(.+)?}/@workflow/tasks/${taskIdentifier}/@finish")
-    @AuthorizationRequired
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String finishTask(
-        @PathParam("sectionIdentifider") final String sectionIdentifier,
-        @PathParam("documentPath") final String documentPath,
-        @PathParam("taskIdentifier") final String taskIdentifier,
-        @FormParam("comment") @DefaultValue("") final String comment,
-        @FormParam("returnUrl") final String returnUrl
-    ) {
-        final Optional<ContentSection> sectionResult = sectionsUi
-            .findContentSection(sectionIdentifier);
-        if (!sectionResult.isPresent()) {
-            return sectionsUi.showContentSectionNotFound(sectionIdentifier);
-        }
-        final ContentSection section = sectionResult.get();
-
-        final Optional<ContentItem> itemResult = itemRepo
-            .findByPath(section, documentPath);
-        if (!itemResult.isPresent()) {
-            return showDocumentNotFound(section, documentPath);
-        }
-        final ContentItem item = itemResult.get();
-        selectedDocumentModel.setContentItem(item);
-
-        final Optional<AssignableTask> taskResult = findTask(
-            item, taskIdentifier
-        );
-        if (!taskResult.isPresent()) {
-            return showTaskNotFound(section, documentPath, taskIdentifier);
-        }
-
-        final AssignableTask task = taskResult.get();
-        if (comment.isEmpty()) {
-            assignableTaskManager.finish(task);
-        } else {
-            assignableTaskManager.finish(task, comment);
-        }
-
-        return String.format("redirect:%s", returnUrl);
-    }
-
-    @POST
-    @Path(
-        "/{documentPath:(.+)?}/@workflow/@applyAlternative/{workflowIdentifier}")
-    @AuthorizationRequired
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String applyAlternateWorkflow(
-        @PathParam("sectionIdentifider") final String sectionIdentifier,
-        @PathParam("documentPath") final String documentPath,
-        @FormParam("newWorkflowUuid") final String newWorkflowUuid,
-        @FormParam("returnUrl") final String returnUrl
-    ) {
-        final Optional<ContentSection> sectionResult = sectionsUi
-            .findContentSection(sectionIdentifier);
-        if (!sectionResult.isPresent()) {
-            return sectionsUi.showContentSectionNotFound(sectionIdentifier);
-        }
-        final ContentSection section = sectionResult.get();
-
-        final Optional<ContentItem> itemResult = itemRepo
-            .findByPath(section, documentPath);
-        if (!itemResult.isPresent()) {
-            return showDocumentNotFound(section, documentPath);
-        }
-        final ContentItem item = itemResult.get();
-        selectedDocumentModel.setContentItem(item);
-
-        if (!permissionChecker.isPermitted(
-            ItemPrivileges.APPLY_ALTERNATE_WORKFLOW, item)) {
-            return sectionsUi.showAccessDenied(
-                "sectionIdentifier", sectionIdentifier,
-                "documentPath", documentPath
-            );
-        }
-
-        final Optional<Workflow> workflowResult = section
-            .getWorkflowTemplates()
-            .stream()
-            .filter(template -> template.getUuid().equals(newWorkflowUuid))
-            .findAny();
-        if (!workflowResult.isPresent()) {
-            models.put("section", section.getLabel());
-            models.put("workflowUuid", newWorkflowUuid);
-            return "org/librecms/ui/contentsection/workflow-not-found.xhtml";
-        }
-
-        workflowManager.createWorkflow(workflowResult.get(), item);
-        return String.format("redirect:%s", returnUrl);
-    }
-
-    @POST
-    @Path("/{documentPath:(.+)?}/@workflow/@restart")
-    @AuthorizationRequired
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String restartWorkflow(
-        @PathParam("sectionIdentifider") final String sectionIdentifier,
-        @PathParam("documentPath") final String documentPath,
-        @FormParam("returnUrl") final String returnUrl
-    ) {
-        final Optional<ContentSection> sectionResult = sectionsUi
-            .findContentSection(sectionIdentifier);
-        if (!sectionResult.isPresent()) {
-            return sectionsUi.showContentSectionNotFound(sectionIdentifier);
-        }
-        final ContentSection section = sectionResult.get();
-
-        final Optional<ContentItem> itemResult = itemRepo
-            .findByPath(section, documentPath);
-        if (!itemResult.isPresent()) {
-            return showDocumentNotFound(section, documentPath);
-        }
-        final ContentItem item = itemResult.get();
-        selectedDocumentModel.setContentItem(item);
-
-        if (!permissionChecker.isPermitted(
-            ItemPrivileges.APPLY_ALTERNATE_WORKFLOW, item)) {
-            return sectionsUi.showAccessDenied(
-                "sectionIdentifier", sectionIdentifier,
-                "documentPath", documentPath
-            );
-        }
-
-        if (item.getWorkflow() != null) {
-            workflowManager.start(item.getWorkflow());
-        }
-
-        return String.format("redirect:%s", returnUrl);
-    }
-
-    private Optional<AssignableTask> findTask(
-        final ContentItem item,
-        final String taskIdentifier
-    ) {
-        final Workflow workflow = item.getWorkflow();
-        if (workflow == null) {
-            return Optional.empty();
-        }
-
-        final Identifier identifier = identifierParser.parseIdentifier(
-            taskIdentifier
-        );
-        switch (identifier.getType()) {
-            case ID:
-                return workflow
-                    .getTasks()
-                    .stream()
-                    .filter(task -> task instanceof AssignableTask)
-                    .map(task -> (AssignableTask) task)
-                    .filter(
-                        task -> task.getTaskId() == Long
-                        .parseLong(identifier.getIdentifier())
-                    ).findAny();
-            default:
-                return workflow
-                    .getTasks()
-                    .stream()
-                    .filter(task -> task instanceof AssignableTask)
-                    .map(task -> (AssignableTask) task)
-                    .filter(
-                        task -> task.getUuid().equals(
-                            identifier.getIdentifier()
-                        )
-                    ).findAny();
-        }
-    }
-
+//    @POST
+//    @Path("/{documentPath:(.+)?}/@workflow/tasks/${taskIdentifier}/@lock")
+//    @AuthorizationRequired
+//    @Transactional(Transactional.TxType.REQUIRED)
+//    public String lockTask(
+//        @PathParam("sectionIdentifider") final String sectionIdentifier,
+//        @PathParam("documentPath") final String documentPath,
+//        @PathParam("taskIdentifier") final String taskIdentifier,
+//        @FormParam("returnUrl") final String returnUrl
+//    ) {
+//        final Optional<ContentSection> sectionResult = sectionsUi
+//            .findContentSection(sectionIdentifier);
+//        if (!sectionResult.isPresent()) {
+//            return sectionsUi.showContentSectionNotFound(sectionIdentifier);
+//        }
+//        final ContentSection section = sectionResult.get();
+//
+//        final Optional<ContentItem> itemResult = itemRepo
+//            .findByPath(section, documentPath);
+//        if (!itemResult.isPresent()) {
+//            return documentUi.showDocumentNotFound(section, documentPath);
+//        }
+//        final ContentItem item = itemResult.get();
+//        selectedDocumentModel.setContentItem(item);
+//
+//        final Optional<AssignableTask> taskResult = findTask(
+//            item, taskIdentifier
+//        );
+//        if (!taskResult.isPresent()) {
+//            return showTaskNotFound(section, documentPath, taskIdentifier);
+//        }
+//
+//        final AssignableTask task = taskResult.get();
+//        assignableTaskManager.lockTask(task);
+//
+//        return String.format("redirect:%s", returnUrl);
+//    }
+//    @POST
+//    @Path("/{documentPath:(.+)?}/@workflow/tasks/${taskIdentifier}/@unlock")
+//    @AuthorizationRequired
+//    @Transactional(Transactional.TxType.REQUIRED)
+//    public String unlockTask(
+//        @PathParam("sectionIdentifider") final String sectionIdentifier,
+//        @PathParam("documentPath") final String documentPath,
+//        @PathParam("taskIdentifier") final String taskIdentifier,
+//        @FormParam("returnUrl") final String returnUrl
+//    ) {
+//        final Optional<ContentSection> sectionResult = sectionsUi
+//            .findContentSection(sectionIdentifier);
+//        if (!sectionResult.isPresent()) {
+//            return sectionsUi.showContentSectionNotFound(sectionIdentifier);
+//        }
+//        final ContentSection section = sectionResult.get();
+//
+//        final Optional<ContentItem> itemResult = itemRepo
+//            .findByPath(section, documentPath);
+//        if (!itemResult.isPresent()) {
+//            return documentUi.showDocumentNotFound(section, documentPath);
+//        }
+//        final ContentItem item = itemResult.get();
+//        selectedDocumentModel.setContentItem(item);
+//
+//        final Optional<AssignableTask> taskResult = findTask(
+//            item, taskIdentifier
+//        );
+//        if (!taskResult.isPresent()) {
+//            return showTaskNotFound(section, documentPath, taskIdentifier);
+//        }
+//
+//        final AssignableTask task = taskResult.get();
+//        assignableTaskManager.unlockTask(task);
+//
+//        return String.format("redirect:%s", returnUrl);
+//    }
+//
+//    @POST
+//    @Path("/{documentPath:(.+)?}/@workflow/tasks/${taskIdentifier}/@finish")
+//    @AuthorizationRequired
+//    @Transactional(Transactional.TxType.REQUIRED)
+//    public String finishTask(
+//        @PathParam("sectionIdentifider") final String sectionIdentifier,
+//        @PathParam("documentPath") final String documentPath,
+//        @PathParam("taskIdentifier") final String taskIdentifier,
+//        @FormParam("comment") @DefaultValue("") final String comment,
+//        @FormParam("returnUrl") final String returnUrl
+//    ) {
+//        final Optional<ContentSection> sectionResult = sectionsUi
+//            .findContentSection(sectionIdentifier);
+//        if (!sectionResult.isPresent()) {
+//            return sectionsUi.showContentSectionNotFound(sectionIdentifier);
+//        }
+//        final ContentSection section = sectionResult.get();
+//
+//        final Optional<ContentItem> itemResult = itemRepo
+//            .findByPath(section, documentPath);
+//        if (!itemResult.isPresent()) {
+//            return documentUi.showDocumentNotFound(section, documentPath);
+//        }
+//        final ContentItem item = itemResult.get();
+//        selectedDocumentModel.setContentItem(item);
+//
+//        final Optional<AssignableTask> taskResult = findTask(
+//            item, taskIdentifier
+//        );
+//        if (!taskResult.isPresent()) {
+//            return showTaskNotFound(section, documentPath, taskIdentifier);
+//        }
+//
+//        final AssignableTask task = taskResult.get();
+//        if (comment.isEmpty()) {
+//            assignableTaskManager.finish(task);
+//        } else {
+//            assignableTaskManager.finish(task, comment);
+//        }
+//
+//        return String.format("redirect:%s", returnUrl);
+//    }
+//
+//    @POST
+//    @Path(
+//        "/{documentPath:(.+)?}/@workflow/@applyAlternative/{workflowIdentifier}")
+//    @AuthorizationRequired
+//    @Transactional(Transactional.TxType.REQUIRED)
+//    public String applyAlternateWorkflow(
+//        @PathParam("sectionIdentifider") final String sectionIdentifier,
+//        @PathParam("documentPath") final String documentPath,
+//        @FormParam("newWorkflowUuid") final String newWorkflowUuid,
+//        @FormParam("returnUrl") final String returnUrl
+//    ) {
+//        final Optional<ContentSection> sectionResult = sectionsUi
+//            .findContentSection(sectionIdentifier);
+//        if (!sectionResult.isPresent()) {
+//            return sectionsUi.showContentSectionNotFound(sectionIdentifier);
+//        }
+//        final ContentSection section = sectionResult.get();
+//
+//        final Optional<ContentItem> itemResult = itemRepo
+//            .findByPath(section, documentPath);
+//        if (!itemResult.isPresent()) {
+//            return documentUi.showDocumentNotFound(section, documentPath);
+//        }
+//        final ContentItem item = itemResult.get();
+//        selectedDocumentModel.setContentItem(item);
+//
+//        if (!permissionChecker.isPermitted(
+//            ItemPrivileges.APPLY_ALTERNATE_WORKFLOW, item)) {
+//            return sectionsUi.showAccessDenied(
+//                "sectionIdentifier", sectionIdentifier,
+//                "documentPath", documentPath
+//            );
+//        }
+//
+//        final Optional<Workflow> workflowResult = section
+//            .getWorkflowTemplates()
+//            .stream()
+//            .filter(template -> template.getUuid().equals(newWorkflowUuid))
+//            .findAny();
+//        if (!workflowResult.isPresent()) {
+//            models.put("section", section.getLabel());
+//            models.put("workflowUuid", newWorkflowUuid);
+//            return "org/librecms/ui/contentsection/workflow-not-found.xhtml";
+//        }
+//
+//        workflowManager.createWorkflow(workflowResult.get(), item);
+//        return String.format("redirect:%s", returnUrl);
+//    }
+//
+//    @POST
+//    @Path("/{documentPath:(.+)?}/@workflow/@restart")
+//    @AuthorizationRequired
+//    @Transactional(Transactional.TxType.REQUIRED)
+//    public String restartWorkflow(
+//        @PathParam("sectionIdentifider") final String sectionIdentifier,
+//        @PathParam("documentPath") final String documentPath,
+//        @FormParam("returnUrl") final String returnUrl
+//    ) {
+//        final Optional<ContentSection> sectionResult = sectionsUi
+//            .findContentSection(sectionIdentifier);
+//        if (!sectionResult.isPresent()) {
+//            return sectionsUi.showContentSectionNotFound(sectionIdentifier);
+//        }
+//        final ContentSection section = sectionResult.get();
+//
+//        final Optional<ContentItem> itemResult = itemRepo
+//            .findByPath(section, documentPath);
+//        if (!itemResult.isPresent()) {
+//            return documentUi.showDocumentNotFound(section, documentPath);
+//        }
+//        final ContentItem item = itemResult.get();
+//        selectedDocumentModel.setContentItem(item);
+//
+//        if (!permissionChecker.isPermitted(
+//            ItemPrivileges.APPLY_ALTERNATE_WORKFLOW, item)) {
+//            return sectionsUi.showAccessDenied(
+//                "sectionIdentifier", sectionIdentifier,
+//                "documentPath", documentPath
+//            );
+//        }
+//
+//        if (item.getWorkflow() != null) {
+//            workflowManager.start(item.getWorkflow());
+//        }
+//
+//        return String.format("redirect:%s", returnUrl);
+//    }
+//
+//    private Optional<AssignableTask> findTask(
+//        final ContentItem item,
+//        final String taskIdentifier
+//    ) {
+//        final Workflow workflow = item.getWorkflow();
+//        if (workflow == null) {
+//            return Optional.empty();
+//        }
+//
+//        final Identifier identifier = identifierParser.parseIdentifier(
+//            taskIdentifier
+//        );
+//        switch (identifier.getType()) {
+//            case ID:
+//                return workflow
+//                    .getTasks()
+//                    .stream()
+//                    .filter(task -> task instanceof AssignableTask)
+//                    .map(task -> (AssignableTask) task)
+//                    .filter(
+//                        task -> task.getTaskId() == Long
+//                        .parseLong(identifier.getIdentifier())
+//                    ).findAny();
+//            default:
+//                return workflow
+//                    .getTasks()
+//                    .stream()
+//                    .filter(task -> task instanceof AssignableTask)
+//                    .map(task -> (AssignableTask) task)
+//                    .filter(
+//                        task -> task.getUuid().equals(
+//                            identifier.getIdentifier()
+//                        )
+//                    ).findAny();
+//        }
+//    }
     private LifecycleListEntry buildLifecycleListEntry(
         final LifecycleDefinition definition
     ) {
@@ -849,25 +737,6 @@ public class DocumentController {
         );
         entry.setStarted(phase.isStarted());
         return entry;
-    }
-
-    private String showDocumentNotFound(
-        final ContentSection section, final String documentPath
-    ) {
-        models.put("section", section.getLabel());
-        models.put("documentPath", documentPath);
-        return "org/librecms/ui/contentsection/document-not-found.xhtml";
-    }
-
-    private String showTaskNotFound(
-        final ContentSection section,
-        final String documentPath,
-        final String taskIdentifier
-    ) {
-        models.put("section", section.getLabel());
-        models.put("documentPath", documentPath);
-        models.put("taskIdentifier", taskIdentifier);
-        return "org/librecms/ui/contentsection/task-not-found.xhtml";
     }
 
     private static class CreateDocumentOfTypeLiteral
