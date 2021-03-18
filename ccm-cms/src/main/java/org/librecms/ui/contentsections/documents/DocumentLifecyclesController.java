@@ -24,7 +24,6 @@ import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.transaction.Transactional;
@@ -102,7 +101,7 @@ public class DocumentLifecyclesController {
             if (!phaseResult.isPresent()) {
                 models.put("section", section.getLabel());
                 models.put("phaseId", phaseId);
-                return "org/librecms/ui/contentsection/phase-not-found.xhtml";
+                return "org/librecms/ui/contentsection/documents/phase-not-found.xhtml";
             }
 
             final Phase phase = phaseResult.get();

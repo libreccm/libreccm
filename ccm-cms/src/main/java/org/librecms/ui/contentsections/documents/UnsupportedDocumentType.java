@@ -25,7 +25,7 @@ import javax.ws.rs.Path;
 public class UnsupportedDocumentType implements MvcAuthoringStep {
 
     @Override
-    public Class<? extends ContentItem> supportedDocumenType() {
+    public Class<? extends ContentItem> supportedDocumentType() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -66,7 +66,7 @@ public class UnsupportedDocumentType implements MvcAuthoringStep {
 
     @Override
     public String showStep() {
-        return "org/librecms/ui/contentsection/unsupported-documenttype.xhtml";
+        return "org/librecms/ui/contentsection/documents/unsupported-documenttype.xhtml";
     }
 
     @GET

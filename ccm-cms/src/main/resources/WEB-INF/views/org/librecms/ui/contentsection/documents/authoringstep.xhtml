@@ -1,0 +1,40 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/contentsection.xhtml">
+
+        <ui:define name="documentMain">
+            <div class="row">
+                
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link #{activeDocumentTab == 'editTab' ? 'active' : ''}"
+                           href="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}">
+                            #{CmsAdminMessages['contentsection.document.tabs.edit.title']}
+                        </a>
+                    </li>
+                     <li class="nav-item">
+                        <a class="nav-link #{activeDocumentTab == 'history' ? 'active' : ''}"
+                           href="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@history">
+                            #{CmsAdminMessages['contentsection.document.tabs.history.title']}
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="col-sm-3">
+                    <!-- Workflow widget -->
+
+                    <!-- Authoring steps -->
+                </div>
+
+                <div class="col-sm-9">
+                    <ui:insert name="authoringStep" />
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

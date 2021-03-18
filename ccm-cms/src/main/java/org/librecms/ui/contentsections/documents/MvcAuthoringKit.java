@@ -7,7 +7,9 @@ package org.librecms.ui.contentsections.documents;
 
 import org.librecms.contentsection.ContentItem;
 
-import javax.mvc.Controller;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 
 /**
  * Provides the steps for creating and viewing and editing a document (content
@@ -19,6 +21,7 @@ import javax.mvc.Controller;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+@Retention(RetentionPolicy.RUNTIME)
 public @interface MvcAuthoringKit {
 
     /**
@@ -26,7 +29,7 @@ public @interface MvcAuthoringKit {
      *
      * @return Descriptor class for the create step.
      */
-    Class<? extends MvcDocumentCreateStep> createStep();
+    Class<? extends MvcDocumentCreateStep<?>> createStep();
 
     /**
      * The authoring steps for editing the properties of the document. They are

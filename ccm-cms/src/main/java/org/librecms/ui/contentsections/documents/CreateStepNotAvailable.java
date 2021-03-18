@@ -64,7 +64,7 @@ public class CreateStepNotAvailable
 
     @Override
     public String createContentItem() {
-        return "org/librecms/ui/contentsection/documents/create-step-not-notavailable.xhtml";
+        return "org/librecms/ui/contentsection/documents/create-step-not-available.xhtml";
     }
 
     @Override

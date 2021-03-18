@@ -1,0 +1,32 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition>
+        <li class="breadcrumb-item">
+            <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}">
+                #{ContentSectionModel.sectionName}
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documentfolders">
+                #{CmsAdminMessages['contentsection.documents.title']}
+            </a>
+        </li>
+        <c:forEach items="#{CmsSelectedDocumentModel.parentFolderBreadcrumbs}"
+                   var="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documentsfolders/#{breadcrumb.path}">
+                    #{breadcrumb.pathToken}
+                </a>
+            </li>
+        </c:forEach>
+        <li class="breadcrumb-item">
+            <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}">
+                #{CmsSelectedDocumentModel.itemTitle}
+            </a>
+        </li>
+    </ui:composition>
+</html>

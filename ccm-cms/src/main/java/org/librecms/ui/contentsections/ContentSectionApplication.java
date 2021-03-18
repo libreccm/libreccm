@@ -6,6 +6,9 @@
 package org.librecms.ui.contentsections;
 
 import org.libreccm.ui.IsAuthenticatedFilter;
+import org.librecms.ui.contentsections.documents.DocumentController;
+import org.librecms.ui.contentsections.documents.DocumentLifecyclesController;
+import org.librecms.ui.contentsections.documents.DocumentWorkflowController;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,6 +36,9 @@ public class ContentSectionApplication extends Application {
         classes.add(ConfigurationWorkflowController.class);
         classes.add(ContentSectionController.class);
         classes.add(DocumentFolderController.class);
+        classes.add(DocumentController.class);
+        classes.add(DocumentLifecyclesController.class);
+        classes.add(DocumentWorkflowController.class);
         classes.add(IsAuthenticatedFilter.class);
 
         return classes;

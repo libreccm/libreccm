@@ -228,7 +228,7 @@ public class DocumentWorkflowController {
         if (!workflowResult.isPresent()) {
             models.put("section", section.getLabel());
             models.put("workflowUuid", newWorkflowUuid);
-            return "org/librecms/ui/contentsection/workflow-not-found.xhtml";
+            return "org/librecms/ui/contentsection/documents/workflow-not-found.xhtml";
         }
 
         workflowManager.createWorkflow(workflowResult.get(), item);
@@ -319,7 +319,7 @@ public class DocumentWorkflowController {
         models.put("section", section.getLabel());
         models.put("documentPath", documentPath);
         models.put("taskIdentifier", taskIdentifier);
-        return "org/librecms/ui/contentsection/task-not-found.xhtml";
+        return "org/librecms/ui/contentsection/documents/task-not-found.xhtml";
     }
 
 }

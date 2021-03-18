@@ -32,7 +32,7 @@ public interface MvcAuthoringStep {
      *
      * @return The document type supported by the authoring step.
      */
-    Class<? extends ContentItem> supportedDocumenType();
+    Class<? extends ContentItem> supportedDocumentType();
 
     /**
      * Gets the localized label of the authoring step. The language variant to

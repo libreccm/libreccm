@@ -61,7 +61,7 @@ public class MvcArticleTextBodyStep implements MvcAuthoringStep {
     private Article document;
 
     @Override
-    public Class<? extends ContentItem> supportedDocumenType() {
+    public Class<? extends ContentItem> supportedDocumentType() {
         return Article.class;
     }
 

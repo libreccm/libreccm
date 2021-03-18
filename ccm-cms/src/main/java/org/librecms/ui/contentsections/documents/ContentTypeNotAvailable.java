@@ -64,7 +64,7 @@ public class ContentTypeNotAvailable
 
     @Override
     public String createContentItem() {
-        return "org/librecms/ui/contentsection/documents/document-type-not-notavailable.xhtml";
+        return "org/librecms/ui/contentsection/documents/document-type-not-available.xhtml";
     }
 
     @Override

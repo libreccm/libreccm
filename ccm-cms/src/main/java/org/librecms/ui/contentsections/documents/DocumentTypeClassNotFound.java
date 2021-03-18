@@ -59,12 +59,12 @@ class DocumentTypeClassNotFound
 
     @Override
     public String showCreateForm() {
-        return "org/librecms/ui/contentsection/documents/document-type-not-found.xhtml";
+        return "org/librecms/ui/contentsection/documents/document-type-not-available.xhtml";
     }
 
     @Override
     public String createContentItem() {
-        return "org/librecms/ui/contentsection/documents/document-type-not-found.xhtml";
+        return "org/librecms/ui/contentsection/documents/document-type-not-available.xhtml";
     }
 
     @Override

@@ -62,7 +62,7 @@ public class ContentSectionNotFound
     }
 
     @Override
-    public Class<? extends ContentItem> supportedDocumenType() {
+    public Class<? extends ContentItem> supportedDocumentType() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
