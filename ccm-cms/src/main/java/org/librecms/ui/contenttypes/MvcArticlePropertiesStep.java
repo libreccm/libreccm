@@ -8,7 +8,6 @@ package org.librecms.ui.contenttypes;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.contentsection.ContentItem;
-import org.librecms.contentsection.ContentItemL10NManager;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
@@ -23,10 +22,13 @@ import javax.ws.rs.Path;
 
 import org.librecms.ui.contentsections.documents.MvcAuthoringStep;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Named;
 import javax.transaction.Transactional;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -40,6 +42,7 @@ import javax.ws.rs.PathParam;
 @Controller
 @Path("/")
 @AuthoringStepPathFragment(MvcArticlePropertiesStep.PATH_FRAGMENT)
+@Named("CmsArticlePropertiesStep")
 public class MvcArticlePropertiesStep implements MvcAuthoringStep {
 
     static final String PATH_FRAGMENT = "basicproperties";
@@ -49,7 +52,6 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
 
     @Inject
     private ContentItemManager itemManager;
-
 
     @Inject
     private FolderManager folderManager;
@@ -141,7 +143,7 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
     }
 
     @POST
-    @Path("/name/{locale}")
+    @Path("/name")
     @Transactional(Transactional.TxType.REQUIRED)
     public String updateName(@FormParam("name") final String name) {
         document.setDisplayName(name);
@@ -169,6 +171,18 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
                     entry -> entry.getValue()
                 )
             );
+    }
+    
+    public List<String> getUnusedTitleLocales() {
+        final Set<Locale> titleLocales = document
+            .getTitle()
+            .getAvailableLocales();
+        return globalizationHelper
+            .getAvailableLocales()
+            .stream()
+            .filter(locale -> !titleLocales.contains(locale))
+            .map(Locale::toString)
+            .collect(Collectors.toList());
     }
 
     @POST
@@ -227,6 +241,18 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
         );
     }
 
+     public List<String> getUnusedDescriptionLocales() {
+        final Set<Locale> descriptionLocales = document
+            .getDescription()
+            .getAvailableLocales();
+        return globalizationHelper
+            .getAvailableLocales()
+            .stream()
+            .filter(locale -> !descriptionLocales.contains(locale))
+            .map(Locale::toString)
+            .collect(Collectors.toList());
+    }
+    
     public Map<String, String> getDescriptionValues() {
         return document
             .getDescription()

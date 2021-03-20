@@ -13,8 +13,10 @@ import org.libreccm.workflow.TaskState;
  */
 public class TaskListEntry {
 
+    private String taskUuid;
+
     private String label;
-    
+
     private String description;
 
     private TaskState taskState;
@@ -22,6 +24,16 @@ public class TaskListEntry {
     private boolean currentTask;
 
     private boolean assignedToCurrentUser;
+
+    private boolean locked;
+
+    public String getTaskUuid() {
+        return taskUuid;
+    }
+
+    public void setTaskUuid(final String taskUuid) {
+        this.taskUuid = taskUuid;
+    }
 
     public String getLabel() {
         return label;
@@ -61,6 +73,14 @@ public class TaskListEntry {
 
     public void setDescription(final String description) {
         this.description = description;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(final boolean locked) {
+        this.locked = locked;
     }
 
 }

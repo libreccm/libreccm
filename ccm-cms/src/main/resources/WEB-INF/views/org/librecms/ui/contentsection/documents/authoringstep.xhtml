@@ -8,7 +8,7 @@
 
         <ui:define name="documentMain">
             <div class="row">
-                
+
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
                         <a class="nav-link #{activeDocumentTab == 'editTab' ? 'active' : ''}"
@@ -16,21 +16,137 @@
                             #{CmsAdminMessages['contentsection.document.tabs.edit.title']}
                         </a>
                     </li>
-                     <li class="nav-item">
+                    <li class="nav-item">
                         <a class="nav-link #{activeDocumentTab == 'history' ? 'active' : ''}"
                            href="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@history">
                             #{CmsAdminMessages['contentsection.document.tabs.history.title']}
                         </a>
                     </li>
                 </ul>
-                
+
                 <div class="col-sm-3">
                     <!-- Workflow widget -->
+                    <h2>#{CmsAdminMessages['contentsection.document.authoring.workflow.title']}</h2>
+                    <p>
+                        #{CmsAdminMessages['contentsection.document.authoring.workflow.active_workflow_label']}: 
+                        #{CmsSelectedDocumentModel.workflowName}
+                        <button class="btn btn-secondary"
+                                disabled="#{!CmsSelectedDocumentModel.canChangeWorkflow ? 'disabled': ''}"
+                                type="button">
+                            #{CmsAdminMessages['contentsection.document.authoring.workflow.change_workflow']}: 
+                        </button>
+                    </p>
+                    <p>
+                        #{CmsAdminMessages['contentsection.document.authoring.workflow.active_task']}: }
+                        <c:choose>
+                            <c:when test="#{CmsSelectedDocumentModel.currentTask != null}">
+                                #{CmsSelectedDocumentModel.currentTask.label}
+                            </c:when>
+                            <c:otherwise>
+                                #{CmsAdminMessages['contentsection.document.authoring.workflow.active_task.none']}: }
+                            </c:otherwise>
+                        </c:choose>
+                        <c:choose>
+                            <c:when test="#{CmsSelectedDocumentModel.currentTask.assignedToCurrentUser and CmsSelectedDocumentModel.currentTask.locked}">
+                                <form action="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@workflow/tasks/UUID-#{CmsSelectedDocumentModel.currentTask.taskUuid}/@unlock"
+                                      method="post">
+                                    <input name="returnUrl"
+                                           type="hidden"
+                                           value="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/#{authoringStep}" />
+                                    <button class="btn btn-secondary" 
+                                            type="submit">
+                                        #{CmsAdminMessages['contentsection.document.authoring.workflow.active_task.release']}
+                                    </button>
+                                </form>
+                                <form action="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@workflow/tasks/UUID-#{CmsSelectedDocumentModel.currentTask.taskUuid}/@finish"
+                                      method="post">
+                                    <input name="returnUrl"
+                                           type="hidden"
+                                           value="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/#{authoringStep}" />
+                                    <button class="btn btn-secondary" 
+                                            type="submit">
+                                        #{CmsAdminMessages['contentsection.document.authoring.workflow.active_task.finish']}
+                                    </button>
+                                </form>
+                            </c:when>
+                            <c:when test="#{CmsSelectedDocumentModel.currentTask.locked and CmsSelectedDocumentModel.canChangeWorkflow}">
+                                <form action="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@workflow/tasks/UUID-#{CmsSelectedDocumentModel.currentTask.taskUuid}/@lock"
+                                      method="post">
+                                    <input name="returnUrl"
+                                           type="hidden"
+                                           value="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/#{authoringStep}" />
+                                    <button class="btn btn-secondary" 
+                                            type="submit">
+                                        #{CmsAdminMessages['contentsection.document.authoring.workflow.active_task.takeover']}: }
+                                        </a>
+                                    </button>
+                            </c:when>
+                            <c:when test="#{CmsSelectedDocumentModel.currentTask.assignedToCurrentUser or CmsSelectedDocumentModel.canChangeWorkflow}">
+                                <form action="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@workflow/tasks/UUID-#{CmsSelectedDocumentModel.currentTask.taskUuid}/@lock">
+                                    <input name="returnUrl"
+                                           type="hidden"
+                                           value="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/#{authoringStep}" />
+                                    <button class="btn btn-secondary" 
+                                            type="button">
+                                        #{CmsAdminMessages['contentsection.document.authoring.workflow.active_task.lock']}: }
+                                    </button>
+                                    </c:otherwise>
+                                </form>
+                        </c:choose>
+                    </p>
 
                     <!-- Authoring steps -->
+                    <h2>#{CmsAdminMessages['contentsection.document.authoring.steps.title']}</h2>
+                    <ul class="list-group">
+                        <c:forEach items="#{CmsSelectedDocumentModel.authoringStepsList}"
+                                   var="step">
+                            <li aria-current="#{step.pathFragment == authoringStep ? 'true' : ''}
+                                class="list-group-item #{step.pathFragment == authoringStep ? 'active' : ''}">
+                                <a class="list-group-item-action"
+                                   href="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/#{step.pathFragment}">
+                                    #{step.label}
+                                </a>
+                            </li>
+                        </c:forEach>
+
+                        <c:if test="#{!CmsSelectedDocumentModel.excludeDefaultAuthoringSteps}">
+                            <li aria-current="#{'categorize' == authoringStep ? 'true' : ''}
+                                class="list-group-item #{'categorize' == authoringStep ? 'active' : ''}">
+                                <a class="list-group-item-action"
+                                   href="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/categorize">
+                                    #{CmsAdminMessages['contentsection.document.authoring.steps.categorize.label']}
+                                </a>
+                            </li>
+                            <li aria-current="#{'relatedInfo' == authoringStep ? 'true' : ''}
+                                class="list-group-item #{'relatedInfo' == authoringStep ? 'active' : ''}">
+                                <a class="list-group-item-action"
+                                   href="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/relatedInfo">
+                                    #{CmsAdminMessages['contentsection.document.authoring.steps.relatedInfo.label']}
+                                </a>
+                            </li>
+                        </c:if>
+
+                        <li aria-current="#{'publish' == authoringStep ? 'true' : ''}
+                            class="list-group-item #{'publish' == authoringStep ? 'active' : ''}">
+                            <a class="list-group-item-action"
+                               href="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@publish">
+                                #{CmsAdminMessages['contentsection.document.authoring.steps.publish.label']}
+                            </a>
+                        </li>
+
+                    </ul>
+
                 </div>
 
                 <div class="col-sm-9">
+
+                    <c:forEach items="#{CmsMessages.messages.entrySet}"
+                               var="message">
+                        <div class="alert alert-#{message.key}" role="alert">
+                            #{message.value}
+                        </div>
+                    </c:forEach>
+
                     <ui:insert name="authoringStep" />
                 </div>
             </div>

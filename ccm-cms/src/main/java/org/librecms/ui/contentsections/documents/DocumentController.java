@@ -49,7 +49,6 @@ import javax.ws.rs.PathParam;
 @RequestScoped
 @Path("/{sectionIdentifier}/documents")
 @Controller
-@Named("CmsDocumentController")
 public class DocumentController {
 
     @Inject
@@ -261,6 +260,8 @@ public class DocumentController {
             return new UnsupportedDocumentType();
         }
 
+        models.put("authoringStep", authoringStepIdentifier);
+        
         selectedDocumentModel.setContentItem(item);
 
         authoringStep.setContentSection(section);
@@ -351,6 +352,8 @@ public class DocumentController {
                     .collect(Collectors.toList())
             );
         }
+        
+        models.put("authoringStep", "publish");
 
         return "org/librecms/ui/contentsection/documents/publish.xhtml";
     }

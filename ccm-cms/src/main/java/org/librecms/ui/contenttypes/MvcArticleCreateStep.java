@@ -19,8 +19,13 @@ import javax.inject.Named;
 
 import org.librecms.ui.contentsections.documents.MvcDocumentCreateStep;
 
+import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.mvc.Models;
@@ -32,7 +37,7 @@ import javax.ws.rs.FormParam;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Named
+@Named("CmsArticleCreateStep")
 public class MvcArticleCreateStep implements MvcDocumentCreateStep<Article> {
 
     @Inject
@@ -54,6 +59,8 @@ public class MvcArticleCreateStep implements MvcDocumentCreateStep<Article> {
 
     private Folder folder;
 
+    private SortedMap<String, String> messages;
+
     @FormParam("name")
     private String name;
 
@@ -68,6 +75,10 @@ public class MvcArticleCreateStep implements MvcDocumentCreateStep<Article> {
 
     @FormParam("selectedWorkflow")
     private String selectedWorkflow;
+
+    public MvcArticleCreateStep() {
+        messages = new TreeMap<>();
+    }
 
     @Override
     public Class<Article> getDocumentType() {
@@ -90,28 +101,28 @@ public class MvcArticleCreateStep implements MvcDocumentCreateStep<Article> {
     public ContentSection getContentSection() {
         return section;
     }
-    
+
     @Override
     public String getContentSectionLabel() {
         return section.getLabel();
     }
-    
+
     @Override
     public String getContentSectionTitle() {
         return globalizationHelper
             .getValueFromLocalizedString(section.getTitle());
     }
-    
+
     @Override
     public void setContentSection(final ContentSection section) {
         this.section = section;
     }
-    
+
     @Override
     public Folder getFolder() {
         return folder;
     }
-    
+
     @Override
     public String getFolderPath() {
         return folderManager.getFolderPath(folder);
@@ -123,12 +134,74 @@ public class MvcArticleCreateStep implements MvcDocumentCreateStep<Article> {
     }
 
     @Override
+    public Map<String, String> getMessages() {
+        return Collections.unmodifiableSortedMap(messages);
+    }
+
+    public void addMessage(final String context, final String message) {
+        messages.put(context, message);
+    }
+
+    public void setMessages(final SortedMap<String, String> messages) {
+        this.messages = new TreeMap<>(messages);
+    }
+
+//    @GET
+//    @Path("/")
+    @Override
     public String showCreateForm() {
         return "org/librecms/ui/contenttypes/article/create-article.xhtml";
     }
 
+//    @POST
+//    @Path("/")
     @Override
     public String createContentItem() {
+        if (name == null || name.isEmpty()) {
+            messages.put(
+                "danger",
+                globalizationHelper.getLocalizedTextsUtil(
+                    getBundle()
+                ).getText("createstep.name.error.missing")
+            );
+        }
+
+        if (!name.matches("^([a-zA-Z0-9_-]*)$")) {
+            messages.put(
+                "danger",
+                globalizationHelper.getLocalizedTextsUtil(
+                    getBundle()
+                ).getText("createstep.name.error.invalid")
+            );
+        }
+
+        if (title == null || title.isEmpty()) {
+            messages.put(
+                "danger",
+                globalizationHelper.getLocalizedTextsUtil(
+                    getBundle()
+                ).getText("createstep.title.error.missing")
+            );
+        }
+
+        if (summary == null || summary.isEmpty()) {
+            messages.put(
+                "danger",
+                globalizationHelper.getLocalizedTextsUtil(
+                    getBundle()
+                ).getText("createstep.summary.error.missing")
+            );
+        }
+
+        if (initialLocale == null || initialLocale.isEmpty()) {
+            messages.put(
+                "danger",
+                globalizationHelper.getLocalizedTextsUtil(
+                    getBundle()
+                ).getText("createstep.initial_locale.error.missing")
+            );
+        }
+
         final Optional<Workflow> workflowResult = section
             .getWorkflowTemplates()
             .stream()
@@ -136,10 +209,30 @@ public class MvcArticleCreateStep implements MvcDocumentCreateStep<Article> {
             .findAny();
 
         if (!workflowResult.isPresent()) {
-            models.put("section", section.getLabel());
-            models.put("selectedWorkflow", selectedWorkflow);
+            messages.put(
+                "danger",
+                globalizationHelper.getLocalizedTextsUtil(
+                    getBundle()
+                ).getText("createstep.workflow.error.not_available")
+            );
+        }
 
-            return "org/librecms/ui/contentsection/documents/workflow-not-available.xhtml";
+        if (!messages.isEmpty()) {
+            final String folderPath = getFolderPath();
+            if (folderPath.isEmpty() || "/".equals(folderPath)) {
+                return String.format(
+                    "/@contentsections/%s/documents/@create/%s",
+                    section.getLabel(),
+                    getDocumentType().getName()
+                );
+            } else {
+                return String.format(
+                    "/@contentsections/%s/documents/%s/@create/%s",
+                    section.getLabel(),
+                    folderPath,
+                    getDocumentType().getName()
+                );
+            }
         }
 
         final Locale locale = new Locale(initialLocale);
@@ -163,6 +256,71 @@ public class MvcArticleCreateStep implements MvcDocumentCreateStep<Article> {
             folderManager.getFolderPath(folder),
             name
         );
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public String getInitialLocale() {
+        return initialLocale;
+    }
+
+    public String getSelectedWorkflow() {
+        if (selectedWorkflow == null || selectedWorkflow.isEmpty()) {
+            return section
+                .getContentTypes()
+                .stream()
+                .filter(
+                    type -> type.getContentItemClass().equals(
+                        Article.class.getName()
+                    )
+                )
+                .findAny()
+                .map(type -> type.getDefaultWorkflow())
+                .map(
+                    workflow -> globalizationHelper.getValueFromLocalizedString(
+                        workflow.getName()
+                    )
+                )
+                .orElse("");
+        } else {
+            return selectedWorkflow;
+        }
+    }
+
+    public Map<String, String> getAvailableLocales() {
+        return globalizationHelper
+            .getAvailableLocales()
+            .stream()
+            .collect(Collectors.toMap(
+                Locale::toString,
+                locale -> locale.getDisplayLanguage(
+                    globalizationHelper.getNegotiatedLocale()
+                )
+            ));
+    }
+
+    public Map<String, String> getAvailableWorkflows() {
+        return section
+            .getWorkflowTemplates()
+            .stream()
+            .collect(
+                Collectors.toMap(
+                    workflow -> workflow.getUuid(),
+                    workflow -> globalizationHelper.getValueFromLocalizedString(
+                        workflow.getName()
+                    )
+                )
+            );
     }
 
 }

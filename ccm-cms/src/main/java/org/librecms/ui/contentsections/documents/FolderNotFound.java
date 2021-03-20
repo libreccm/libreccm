@@ -9,6 +9,8 @@ import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.Folder;
 
+import java.util.Map;
+
 /**
  * A pseudo implemention of the {@link MvcDocumentCreateStep} interface used by
  * the {@link DocumentController} to show an error message when the requested
@@ -79,6 +81,11 @@ public class FolderNotFound
 
     @Override
     public String getFolderPath() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Map<String, String> getMessages() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

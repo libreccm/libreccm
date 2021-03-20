@@ -10,7 +10,6 @@ import org.librecms.contentsection.ContentItem;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-
 /**
  * Provides the steps for creating and viewing and editing a document (content
  * item). The classes provided for {@link #createStep()} and 
@@ -39,5 +38,14 @@ public @interface MvcAuthoringKit {
      *         document type.
      */
     Class<? extends MvcAuthoringStep>[] authoringSteps();
+
+    /**
+     * If set to {@code true} some authoring steps like categorization or
+     * related info are not shown. If set to {@code true} some of these steps
+     * can still be added by adding them to {@link #authoringSteps() }.
+     *
+     * @return {@code true} if the default steps should be excluded.
+     */
+    boolean excludeDefaultAuthoringSteps() default false;
 
 }

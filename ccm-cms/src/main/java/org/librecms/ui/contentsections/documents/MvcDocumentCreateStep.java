@@ -10,6 +10,7 @@ import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.Folder;
 
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.inject.Named;
@@ -60,12 +61,12 @@ public interface MvcDocumentCreateStep<T extends ContentItem> {
 
     /**
      * The current content section.
-     * 
+     *
      * @return The current content section.
      */
     ContentSection getContentSection();
-    
-      /**
+
+    /**
      * Convinient method for getting the label of the current content section.
      *
      * @return The label of the current content section.
@@ -78,7 +79,7 @@ public interface MvcDocumentCreateStep<T extends ContentItem> {
      * @return The title of the current content section for the current locale.
      */
     String getContentSectionTitle();
-    
+
     /**
      * The current content section is provided by the
      * {@link DocumentController}.
@@ -89,18 +90,18 @@ public interface MvcDocumentCreateStep<T extends ContentItem> {
 
     /**
      * The parent folder of the new item.
-     * 
+     *
      * @return The parent folder of the new item.
      */
     Folder getFolder();
-    
+
     /**
      * Gets the path the the parent folder of the new item.
-     * 
+     *
      * @return The path of the parent folder of the new item.
      */
     String getFolderPath();
-    
+
     /**
      * The parent folder of the new item is provided by the
      * {@link DocumentController}.
@@ -109,6 +110,13 @@ public interface MvcDocumentCreateStep<T extends ContentItem> {
      */
     void setFolder(final Folder folder);
 
+    /**
+     * Gets messages from the create step.
+     * 
+     * @return 
+     */
+    Map<String, String> getMessages();
+    
     /**
      * Endpoint displaying the create form.
      *
