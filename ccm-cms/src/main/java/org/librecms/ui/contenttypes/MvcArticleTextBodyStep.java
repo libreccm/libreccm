@@ -21,16 +21,18 @@ import javax.ws.rs.Path;
 
 import org.librecms.ui.contentsections.documents.MvcAuthoringStep;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
 
-import static org.librecms.ui.contenttypes.MvcArticlePropertiesStep.PATH_FRAGMENT;
 
 /**
  *
@@ -40,9 +42,10 @@ import static org.librecms.ui.contenttypes.MvcArticlePropertiesStep.PATH_FRAGMEN
 @Controller
 @Path("/")
 @AuthoringStepPathFragment(MvcArticleTextBodyStep.PATH_FRAGMENT)
+@Named("CmsArticleTextBodyStep")
 public class MvcArticleTextBodyStep implements MvcAuthoringStep {
 
-    static final String PATH_FRAGMENT = "basicproperties";
+    static final String PATH_FRAGMENT = "text";
 
     @Inject
     private ContentItemRepository itemRepo;
@@ -146,6 +149,18 @@ public class MvcArticleTextBodyStep implements MvcAuthoringStep {
                     entry -> entry.getValue()
                 )
             );
+    }
+    
+    public List<String> getUnusedLocales() {
+        final Set<Locale> locales = document
+            .getText()
+            .getAvailableLocales();
+        return globalizationHelper
+            .getAvailableLocales()
+            .stream()
+            .filter(locale -> !locales.contains(locale))
+            .map(Locale::toString)
+            .collect(Collectors.toList());
     }
 
     @POST

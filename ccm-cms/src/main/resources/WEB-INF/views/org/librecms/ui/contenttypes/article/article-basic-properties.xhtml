@@ -41,6 +41,7 @@
             editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/basicproperties/title/@edit"
             editorId="title-editor"
             hasUnusedLocales="#{!CmsArticlePropertiesStep.unusedTitleLocales.isEmpty()}"
+            headingLevel="3"
             objectIdentifier="#{CmsSelectedDocumentModel.itemPath}"
             removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/basicproperties/title/@remove"
             title="#{CmsArticleMessageBundle['basicproperties.title.header']}"
@@ -53,11 +54,13 @@
             editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/basicproperties/description/@edit"
             editorId="description-editor"
             hasUnusedLocales="#{!CmsArticlePropertiesStep.unusedTitleLocales.isEmpty()}"
+            headingLevel="3"
             objectIdentifier="#{CmsSelectedDocumentModel.itemPath}"
             removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/basicproperties/description/@remove"
             title="#{CmsArticleMessageBundle['basicproperties.description.header']}"
             unusedLocales="#{CmsArticlePropertiesStep.unusedTitleLocales}"
             values="#{CmsArticlePropertiesStep.descriptionValues}"
+            useTextarea="true"
             />
 
     </ui:composition>

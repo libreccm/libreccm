@@ -1,0 +1,27 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/authoringstep.xhtml">
+        
+        <h2>#{CmsArticleMessageBundle['textstep.header']}</h2>
+        
+        <libreccm:localizedStringEditor 
+            addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/text/@add"
+            editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/text/@edit"
+            editorId="article-text-editor"
+            hasUnusedLocales="#{!CmsArticleTextBodyStep.unusedLocales.isEmpty()}"
+            headingLevel="3"
+            objectIdentifier="#{CmsSelectedDocumentModel.itemPath}"
+            removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/text/@remove"
+            title="#{CmsArticleMessageBundle['text.editor.header']}"
+            unusedLocales="#{CmsArticleTextBodyStep.unusedLocales}"
+            useTextarea="true"
+            values="#{CmsArticleTextBodyStep.textValues}"
+            />
+        
+    </ui:composition>
+</html>
+
