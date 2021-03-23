@@ -197,7 +197,7 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
         itemRepo.save(document);
 
         return String.format(
-            "redirect:/@documents/%s/%s/@edit/%s",
+            "redirect:%s/@documents/%s/@edit/%s",
             section.getLabel(),
             getContentItemPath(),
             PATH_FRAGMENT
@@ -216,7 +216,7 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
         itemRepo.save(document);
 
         return String.format(
-            "redirect:/@documents/%s/%s/@edit/%s",
+            "redirect:%s/@documents/%s/@edit/%s",
             section.getLabel(),
             getContentItemPath(),
             PATH_FRAGMENT
@@ -234,7 +234,7 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
         itemRepo.save(document);
 
         return String.format(
-            "redirect:/@documents/%s/%s/@edit/%s",
+            "redirect:%s/@documents/%s/@edit/%s",
             section.getLabel(),
             getContentItemPath(),
             PATH_FRAGMENT
@@ -279,7 +279,7 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
         itemRepo.save(document);
 
         return String.format(
-            "redirect:/@documents/%s/%s/@edit/%s",
+            "redirect:%s/@documents/%s/@edit/%s",
             section.getLabel(),
             getContentItemPath(),
             PATH_FRAGMENT
@@ -298,7 +298,7 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
         itemRepo.save(document);
 
         return String.format(
-            "redirect:/@documents/%s/%s/@edit/%s",
+            "redirect:%s/@documents/%s/@edit/%s",
             section.getLabel(),
             getContentItemPath(),
             PATH_FRAGMENT
@@ -316,7 +316,7 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
         itemRepo.save(document);
 
         return String.format(
-            "redirect:/@documents/%s/%s/@edit/%s",
+            "redirect:%s/@documents/%s/@edit/%s",
             section.getLabel(),
             getContentItemPath(),
             PATH_FRAGMENT
