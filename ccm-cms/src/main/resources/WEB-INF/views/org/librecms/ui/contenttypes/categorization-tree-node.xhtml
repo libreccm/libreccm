@@ -1,0 +1,48 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition>
+
+        <li class="form-check">
+            <div class="d-flex">
+                <c:if test="#{!node.subCategories.isEmpty()}">
+                    <button aria-label="#{CmsDefaultStepsMessageBundle['categorization.tree.show_subcategories']}"
+                            class="btn btn-light p-0 subfolders-toggler"
+                            data-toggle="collapse"
+                            data-target="##{node.categoryUuid}-subcategories"
+                            aria-expanded="#{node.subCategoryAssigned or isRoot ? 'true' : 'false'}"
+                            aria-controls="#{node.categoryUuid}-subcategories"
+                            type="button">
+
+                    </button>
+                </c:if>
+                <label class="form-check-label"
+                       for="#{node.categoryUuid}">
+                    #{node.title}
+                </label>
+                <input class="form-check-input"
+                       id="#{node.categoryUuid}"
+                       type="checkbox"
+                       value="#{node.categoryUuid}" />
+            </div>
+            <c:if test="#{!node.subCategories.isEmpty()}">
+                <ul class="#{node.subCategoryAssigned or isRoot ? 'collapse' : 'collapse.show'} "
+                    id="#{node.categoryUuid}-subcategories">
+                    <c:forEach items="#{node.subCategories}"
+                               var="subCat">
+                        <ui:include src="categorization-tree-node.xhtml">
+                            <ui:param name="node" 
+                                      value="#{subCat}" />
+                            <ui:param name="isRoot"
+                                      value="false" />
+                        </ui:include>
+                    </c:forEach>
+                </ul>
+            </c:if>
+        </li>
+
+    </ui:composition>
+</html>

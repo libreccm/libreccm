@@ -1,0 +1,90 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/authoringstep.xhtml">
+
+        <c:forEach items="#{CmsCategorizationStep.categorizationTrees}"
+                   var="tree">
+            <h2>#{tree.domainTitle}</h2>
+
+            <div class="d-flex">
+                <span>#{CmsDefaultStepsMessageBundle['categorization.system.assigned.to']}</span>
+                <button class="btn btn-primary"
+                        data-target="#edit-categorization-#{tree.domainKey}"
+                        data-toggle="modal"
+                        type="button">
+                    <bootstrap:svgIcon icon="pen" />
+                    <span class="sr-only">
+                        #{CmsDefaultStepsMessageBundle['categorization.system.assigned.edit']}
+                    </span>
+                </button>
+            </div>
+            <div aria-labelledby="edit-categorization-#{tree.domainKey}-title" 
+                 aria-hidden="true"
+                 class="modal fade"
+                 id="edit-categorization-#{tree.domainKey}"
+                 tabindex="-1">
+                <div class="modal-dialog">
+                    <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/categorization/#{tree.domainKey}"
+                          class="modal-content"
+                          method="post">
+                        <div class="modal-header">
+                            <h3 class="modal-title" 
+                                id="edit-categorization-#{tree.domainKey}-title">
+                                #{CmsDefaultStepsMessageBundle.getMessage('categorization.edit.title', tree.domainKey, CmsCategorizationStep.contentItemTitle)}
+                                <button aria-label="#{CmsDefaultStepsMessageBundle['categorization.edit.cancel']}"
+                                        class="close"
+                                        data-dismiss="modal"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="x-circle" />
+                                </button>
+                            </h3>
+                        </div>
+                        <div class="modal-body">
+                            <ul class="#{tree.root.subCategoryAssigned ? 'collapse' : 'collapse.show'} "
+                    id="#{node.categoryUuid}-subcategories">
+                                <ui:include src="categorization-tree-node.xhtml">
+                                    <ui:param name="node"
+                                              value="#{tree.root}" />
+                                    <ui:param name="isRoot"
+                                              value="true" />
+                                </ui:include>
+                            </ul>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-warning"
+                                    data-dismiss="modal"
+                                    type="button">
+                                #{CmsDefaultStepsMessageBundle['categorization.edit.cancel']}
+                            </button>
+                            <button class="btn btn-success"
+                                    type="submit">
+                                #{CmsDefaultStepsMessageBundle['categorization.edit.apply']}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <c:choose>
+                <c:when test="#{tree.root.assigned or tree.root.subCategoryAssigned}">
+                    <c:forEach items="#{tree.assignedCategories}"
+                               var="assigned">
+                        #{assigned}
+                    </c:forEach>
+                </c:when>
+                <c:otherwise>
+                    <div class="alert alert-info" role="alert">
+                        #{CmsDefaultStepsMessageBundle['categorization.system.assigned.none']}
+                    </div>
+                </c:otherwise>
+            </c:choose>
+
+
+        </c:forEach>
+
+    </ui:composition>
+</html>

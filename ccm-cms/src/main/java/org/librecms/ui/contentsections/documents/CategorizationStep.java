@@ -19,6 +19,7 @@ import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentSection;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -247,7 +248,38 @@ public class CategorizationStep implements MvcAuthoringStep {
         );
         tree.setRoot(buildCategorizationTreeNode(domain.getRoot()));
 
+        tree.setAssignedCategories(
+            buildAssignedCategoriesList(tree.getRoot(), "")
+        );
+
         return tree;
+    }
+
+    private List<String> buildAssignedCategoriesList(
+        final CategorizationTreeNode node, final String parentPath
+    ) {
+        final List<String> assigned = new ArrayList<>();
+        if (node.isAssigned()) {
+            assigned.add(String.join("/", parentPath, node.getTitle()));
+        }
+
+        if (node.isSubCategoryAssigned()) {
+            assigned.addAll(
+                node
+                    .getSubCategories()
+                    .stream()
+                    .map(
+                        subCat -> buildAssignedCategoriesList(
+                            subCat, String.join("/", node.getTitle()
+                            )
+                        )
+                    )
+                    .flatMap(result -> result.stream())
+                    .collect(Collectors.toList())
+            );
+        }
+
+        return assigned;
     }
 
     private CategorizationTreeNode buildCategorizationTreeNode(

@@ -5,6 +5,10 @@
  */
 package org.librecms.ui.contentsections.documents;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
@@ -18,6 +22,8 @@ public class CategorizationTree {
     private String domainDescription;
 
     private CategorizationTreeNode root;
+
+    private List<String> assignedCategories;
 
     public String getDomainKey() {
         return domainKey;
@@ -49,6 +55,14 @@ public class CategorizationTree {
 
     public void setRoot(final CategorizationTreeNode root) {
         this.root = root;
+    }
+
+    public List<String> getAssignedCategories() {
+        return Collections.unmodifiableList(assignedCategories);
+    }
+
+    public void setAssignedCategories(final List<String> assignedCategories) {
+        this.assignedCategories = new ArrayList<>(assignedCategories);
     }
 
 }
