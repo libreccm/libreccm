@@ -208,7 +208,7 @@ public class CategorizationStep implements MvcAuthoringStep {
         updateAssignedCategories(domain.getRoot(), assignedCategoriesParam);
 
         return String.format(
-            "/%s@documents/%s/@authoringsteps/%s",
+            "redirect:/%s/@documents/%s/@authoringsteps/%s",
             section.getLabel(),
             getContentItemPath(),
             PATH_FRAGMENT
