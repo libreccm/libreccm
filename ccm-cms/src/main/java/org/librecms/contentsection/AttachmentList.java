@@ -46,7 +46,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
-import static org.librecms.CmsConstants.*;
+import static org.librecms.CmsConstants.DB_SCHEMA;
+
 
 /**
  * A list of assets attached a {@link ContentItem}. Each {@link ContentItem} may
