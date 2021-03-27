@@ -37,6 +37,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -50,6 +52,12 @@ import static org.librecms.CmsConstants.*;
  */
 @Entity
 @Table(name = "LIFECYLE_DEFINITIONS", schema = DB_SCHEMA)
+@NamedQueries(
+    @NamedQuery(
+        name = "LifecycleDefinition.findByUuid",
+        query = "SELECT d FROM LifecycleDefinition d WHERE d.uuid = :uuid"
+    )
+)
 public class LifecycleDefinition implements Identifiable, Serializable {
 
     private static final long serialVersionUID = 1291162870555527717L;

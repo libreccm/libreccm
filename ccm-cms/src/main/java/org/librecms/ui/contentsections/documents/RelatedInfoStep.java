@@ -158,7 +158,7 @@ public class RelatedInfoStep implements MvcAuthoringStep {
 
     @Override
     public String showStep() {
-        return "org/librecms/ui/contenttypes/relatedinfo.xhtml";
+        return "org/librecms/ui/documents/relatedinfo.xhtml";
     }
 
     @Transactional
@@ -239,8 +239,9 @@ public class RelatedInfoStep implements MvcAuthoringStep {
 
         final Optional<Asset> assetResult = assetRepo.findByUuid(assetUuid);
         if (!assetResult.isPresent()) {
+            models.put("section", section.getLabel());
             models.put("assetUuid", assetUuid);
-            return "org/librecms/ui/contenttypes/asset-not-found.xhtml";
+            return "org/librecms/ui/documents/asset-not-found.xhtml";
         }
 
         final Asset asset = assetResult.get();
@@ -277,7 +278,7 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
         if (!itemResult.isPresent()) {
             models.put("targetItemUuid", targetItemUuid);
-            return "org/librecms/ui/contenttypes/target-item-not-found.xhtml";
+            return "org/librecms/ui/documents/target-item-not-found.xhtml";
         }
 
         final RelatedLink relatedLink = new RelatedLink();
@@ -318,7 +319,7 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
         if (!itemResult.isPresent()) {
             models.put("targetItemUuid", targetItemUuid);
-            return "org/librecms/ui/contenttypes/target-item-not-found.xhtml";
+            return "org/librecms/ui/documents/target-item-not-found.xhtml";
         }
 
         final Optional<RelatedLink> linkResult = list
@@ -332,9 +333,9 @@ public class RelatedInfoStep implements MvcAuthoringStep {
 
         if (!linkResult.isPresent()) {
             models.put("contentItem", itemManager.getItemPath(document));
-            models.put("listIdentifierParam", listIdentifierParam);
+            models.put("listIdentifier", listIdentifierParam);
             models.put("internalLinkUuid", internalLinkUuid);
-            return "org/librecms/ui/contenttypes/internal-link-asset-not-found.xhtml";
+            return "org/librecms/ui/documents/internal-link-asset-not-found.xhtml";
         }
 
         final RelatedLink link = linkResult.get();
@@ -381,7 +382,7 @@ public class RelatedInfoStep implements MvcAuthoringStep {
             models.put("contentItem", itemManager.getItemPath(document));
             models.put("listIdentifierParam", listIdentifierParam);
             models.put("internalLinkUuid", internalLinkUuid);
-            return "org/librecms/ui/contenttypes/internal-link-asset-not-found.xhtml";
+            return "org/librecms/ui/documents/internal-link-asset-not-found.xhtml";
         }
 
         final RelatedLink link = linkResult.get();
@@ -429,7 +430,7 @@ public class RelatedInfoStep implements MvcAuthoringStep {
             models.put("contentItem", itemManager.getItemPath(document));
             models.put("listIdentifierParam", listIdentifierParam);
             models.put("internalLinkUuid", internalLinkUuid);
-            return "org/librecms/ui/contenttypes/internal-link-asset-not-found.xhtml";
+            return "org/librecms/ui/documents/internal-link-asset-not-found.xhtml";
         }
 
         final RelatedLink link = linkResult.get();
@@ -476,7 +477,7 @@ public class RelatedInfoStep implements MvcAuthoringStep {
             models.put("contentItem", itemManager.getItemPath(document));
             models.put("listIdentifierParam", listIdentifierParam);
             models.put("internalLinkUuid", internalLinkUuid);
-            return "org/librecms/ui/contenttypes/internal-link-asset-not-found.xhtml";
+            return "org/librecms/ui/documents/internal-link-asset-not-found.xhtml";
         }
 
         final RelatedLink link = linkResult.get();
@@ -693,7 +694,7 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     private String showAttachmentListNotFound(final String listIdentifier) {
         models.put("contentItem", itemManager.getItemPath(document));
         models.put("listIdentifier", listIdentifier);
-        return "org/librecms/ui/contenttypes/attachmentlist-not-found.xhtml";
+        return "org/librecms/ui/documents/attachmentlist-not-found.xhtml";
     }
 
     private AttachmentListDto buildAttachmentListDto(

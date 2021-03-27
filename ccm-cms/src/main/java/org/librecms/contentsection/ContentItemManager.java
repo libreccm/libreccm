@@ -70,6 +70,8 @@ import org.libreccm.security.PermissionManager;
 import org.librecms.contentsection.privileges.TypePrivileges;
 
 import java.lang.reflect.Constructor;
+import java.time.Instant;
+import java.util.Date;
 
 /**
  * Manager class providing several methods to manipulate {@link ContentItem}s.
@@ -839,6 +841,39 @@ public class ContentItemManager {
 
         return publish(item, lifecycleDefinition);
     }
+    
+    /**
+     * Creates a live version of content item or updates the live version of a
+     * content item if there already a live version using the default lifecycle
+     * for the content type of the provided item.
+     *
+     * @param item The content item to publish.
+     * @param startDateTime Start date and time of the lifecycle. May not ben null.
+     * @param endDateTime End date/time of the lifecycle. May be null.
+     *
+     * @return The published content item.
+     */
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public ContentItem publish(
+        @RequiresPrivilege(ItemPrivileges.PUBLISH)
+        final ContentItem item,
+        final Date startDateTime,
+        final Date endDateTime
+    ) {
+
+        if (item == null) {
+            throw new IllegalArgumentException(
+                "The item to publish can't be null.");
+        }
+
+        final LifecycleDefinition lifecycleDefinition = item.getContentType()
+            .getDefaultLifecycle();
+
+        return publish(
+            item, lifecycleDefinition, startDateTime, endDateTime
+        );
+    }
 
     /**
      * Creates a live version of content item or updates the live version of a
@@ -856,8 +891,35 @@ public class ContentItemManager {
     public ContentItem publish(
         @RequiresPrivilege(ItemPrivileges.PUBLISH)
         final ContentItem item,
-        final LifecycleDefinition lifecycleDefinition) {
+        final LifecycleDefinition lifecycleDefinition
+    ) {
+        return publish(
+            item, lifecycleDefinition, Date.from(Instant.now()), null
+        );
+    }
 
+    /**
+     * Creates a live version of content item or updates the live version of a
+     * content item if there already a live version.
+     *
+     * @param item                The content item to publish.
+     * @param lifecycleDefinition The definition of the lifecycle to use for the
+     *                            new item.
+     * @param startDateTime The begin of the lifecycle. May not be null.
+     * @param endDateTime The end of the lifecycle. May be null.
+     *
+     * @return The published content item.
+     */
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    @SuppressWarnings("unchecked")
+    public ContentItem publish(
+        @RequiresPrivilege(ItemPrivileges.PUBLISH)
+        final ContentItem item,
+        final LifecycleDefinition lifecycleDefinition,
+        final Date startDateTime,
+        final Date endDateTime
+    ) {
         if (item == null) {
             throw new IllegalArgumentException(
                 "The item to publish can't be null.");
@@ -866,6 +928,12 @@ public class ContentItemManager {
         if (lifecycleDefinition == null) {
             throw new IllegalArgumentException(
                 "The lifecycle definition for the "
+                    + "lifecycle of the item to publish can't be null.");
+        }
+        
+        if (startDateTime == null) {
+            throw new IllegalArgumentException(
+                "The start date of the "
                     + "lifecycle of the item to publish can't be null.");
         }
 
@@ -887,6 +955,10 @@ public class ContentItemManager {
 
         final Lifecycle lifecycle = lifecycleManager
             .createLifecycle(lifecycleDefinition);
+        lifecycle.setStartDateTime(startDateTime);
+        if (endDateTime != null) {
+            lifecycle.setEndDateTime(endDateTime);
+        }
 
         liveItem.setLifecycle(lifecycle);
         liveItem.setWorkflow(draftItem.getWorkflow());

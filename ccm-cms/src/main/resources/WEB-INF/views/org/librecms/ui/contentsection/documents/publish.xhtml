@@ -17,11 +17,125 @@
         </ui:define>
 
         <ui:define name="main">
-            <div class="container">
-                <div class="alert alert-info" role="alert">
-                    Not implemented yet.
-                </div>
-            </div>
+            <c:choose>
+                <c:when test="#{CmsPublishStep.live}">
+                    <h2>
+                        ${CmsDefaultStepsMessageBundle['publishstep.lifecycle.assigned']}: 
+                        ${CmsPublishStep.assignedLifecycleLabel}
+                    </h2>
+                    <p>
+                        ${CmsPublishStep.assignedLifecycleDecription}
+                    </p>
+
+                    <div class="d-flex">
+                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/publish/@publish"
+                              method="post">
+                            <button class="btn btn-primary"
+                                    type="submit">
+                                ${CmsDefaultStepsMessageBundle['publishstep.lifecycle.republish']}
+                            </button>
+                        </form>
+
+                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/publish/@unpublish"
+                              method="post">
+                            <button class="btn btn-warning"
+                                    type="submit">
+                                ${CmsDefaultStepsMessageBundle['publishstep.lifecycle.unpublish']}
+                            </button>
+                        </form>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/publish/@publish"
+                          method="post">
+
+                        <div class="form-group">
+                            <label for="lifecycle-select">
+                                ${CmsDefaultStepsMessageBundle['publishstep.lifecycle_select.label']}
+                            </label>
+                            <select aria-describedby="lifecycle-select-help"
+                                    class="form-control custom-select" 
+                                    id="lifecycle-select"
+                                    name="selectedLifecycleDefUuid">
+                                <c:forEach items="#{CmsDocumentPublishStepModel.availableLifecycles}"
+                                           var="lifecycleDef">
+                                    <option 
+                                        selected="#{lifecycleDef.uuid == lifecycleDefinitionUuid ? 'selected' : ''}"
+                                        value="#{lifecycleDef.uuid}">
+                                        #{lifecycleDef.label}
+                                    </option>
+                                </c:forEach>
+                            </select>
+                            <small class="form-text text-muted"
+                                   id="lifecycle-select-help">
+                                ${CmsDefaultStepsMessageBundle['publishstep.lifecycle_select.help']}
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <div aria-describedby="lifecycle-startdatetime-help"
+                                 class="d-flex">
+                                <label for="lifecycle-startdate">
+                                    ${CmsDefaultStepsMessageBundle['publishstep.lifecycle_startdate.label']}
+                                </label>
+                                <input class="form-control"
+                                       id="lifecycle-startdate"
+                                       name="startDate"
+                                       required="true"
+                                       type="date" />
+
+                                <label for="starttime">
+                                    ${CmsDefaultStepsMessageBundle['publishstep.lifecycle_starttime.label']}
+                                </label>
+                                <input class="form-control"
+                                       id="lifecycle-starttime"
+                                       name="startTime"
+                                       required="true"
+                                       type="date" />
+
+                            </div>
+                            <small class="form-text text-muted"
+                                   id="lifecycle-startdatetime-help">
+                                ${CmsDefaultStepsMessageBundle['publishstep.lifecycle_startdatetime.help']}
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <div aria-describedby="lifecycle-enddatetime-help"
+                                 class="d-flex">
+                                <label for="lifecycle-enddate">
+                                    ${CmsDefaultStepsMessageBundle['publishstep.lifecycle_enddate.label']}
+                                </label>
+                                <input class="form-control"
+                                       id="lifecycle-enddate"
+                                       name="endDate"
+                                       required="true"
+                                       type="date" />
+
+                                <label for="endtime">
+                                    ${CmsDefaultStepsMessageBundle['publishstep.lifecycle_endtime.label']}
+                                </label>
+                                <input class="form-control"
+                                       id="lifecycle-endtime"
+                                       name="endTime"
+                                       required="true"
+                                       type="date" />
+
+                            </div>
+                            <small class="form-text text-muted"
+                                   id="lifecycle-enddatetime-help">
+                                ${CmsDefaultStepsMessageBundle['publishstep.lifecycle_enddatetime.help']}
+                            </small>
+                        </div>
+
+                        <button class="btn btn-primary"
+                                type="submit">
+                            ${CmsDefaultStepsMessageBundle['publishstep.lifecycle.publish']}
+                        </button>
+                    </form>
+                </c:otherwise>
+            </c:choose>
+
         </ui:define>
     </ui:composition>
 </html>

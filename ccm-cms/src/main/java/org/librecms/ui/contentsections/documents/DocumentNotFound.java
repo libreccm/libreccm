@@ -66,7 +66,7 @@ public class DocumentNotFound implements MvcAuthoringStep {
 
      @Override
     public String showStep() {
-        return "org/librecms/ui/contentsection/document-not-found.xhtml";
+        return "org/librecms/ui/contentsection/documents/document-not-found.xhtml";
     }
     
     @GET

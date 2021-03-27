@@ -26,7 +26,7 @@ class DocumentUi {
     ) {
         models.put("section", section.getLabel());
         models.put("documentPath", documentPath);
-        return "org/librecms/ui/contentsection/document-not-found.xhtml";
+        return "org/librecms/ui/contentsection/documents/document-not-found.xhtml";
     }
 
    

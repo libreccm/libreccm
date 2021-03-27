@@ -29,7 +29,7 @@ public class PublishStepModel {
         phases = new ArrayList<>();
     }
 
-    public List<LifecycleListEntry> getAvailableListcycles() {
+    public List<LifecycleListEntry> getAvailableLifecycles() {
         return Collections.unmodifiableList(availableListcycles);
     }
 

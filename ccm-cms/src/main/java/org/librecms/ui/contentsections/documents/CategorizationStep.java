@@ -139,7 +139,7 @@ public class CategorizationStep implements MvcAuthoringStep {
 
     @Override
     public String showStep() {
-        return "org/librecms/ui/contenttypes/categorization.xhtml";
+        return "org/librecms/ui/documents/categorization.xhtml";
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -201,7 +201,7 @@ public class CategorizationStep implements MvcAuthoringStep {
         if (!domainResult.isPresent()) {
             models.put("section", section.getLabel());
             models.put("domainIdentifier", domainIdentifierParam);
-            return "org/librecms/ui/contenttypes/categorization-domain-not-found.xhtml";
+            return "org/librecms/ui/documents/categorization-domain-not-found.xhtml";
         }
 
         final Domain domain = domainResult.get();

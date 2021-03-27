@@ -20,9 +20,11 @@ package org.librecms.lifecycle;
 
 import org.libreccm.core.AbstractEntityRepository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.enterprise.context.RequestScoped;
+import javax.persistence.NoResultException;
 
 /**
  *
@@ -34,6 +36,21 @@ public class LifecycleDefinitionRepository
 
     private static final long serialVersionUID = -6388883975391235155L;
 
+    public Optional<LifecycleDefinition> findByUuid(final String uuid) {
+        try {
+            return Optional.of(
+                getEntityManager()
+                .createNamedQuery(
+                    "LifecycleDefinition.findByUuid", 
+                    LifecycleDefinition.class)
+                .setParameter("uuid", uuid)
+                .getSingleResult()
+            );
+        } catch(NoResultException ex) {
+            return Optional.empty();
+        }
+    }
+    
     @Override
     public Class<LifecycleDefinition> getEntityClass() {
         return LifecycleDefinition.class;
