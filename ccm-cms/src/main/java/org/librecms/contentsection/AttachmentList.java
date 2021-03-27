@@ -67,6 +67,20 @@ import static org.librecms.CmsConstants.DB_SCHEMA;
     )
     ,
     @NamedQuery(
+        name = "AttachmentList.findForItemAndId",
+        query = "SELECT l FROM AttachmentList l "
+            + "WHERE l.listId = :listId "
+            + "AND l.item = :item"
+    )
+    ,
+    @NamedQuery(
+        name = "AttachmentList.findForItemAndUuid",
+        query = "SELECT l FROM AttachmentList l "
+            + "WHERE l.uuid = :uuid "
+            + "AND l.item = :item"
+    )
+    ,
+    @NamedQuery(
         name = "AttachmentList.findForItemAndName",
         query = "SELECT l FROM AttachmentList l "
                     + "WHERE l.name = :name "

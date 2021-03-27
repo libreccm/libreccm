@@ -5,30 +5,40 @@
  */
 package org.librecms.ui.contentsections.documents;
 
+import org.libreccm.api.Identifier;
+import org.libreccm.api.IdentifierParser;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.assets.AssetTypeInfo;
 import org.librecms.assets.AssetTypesManager;
+import org.librecms.assets.RelatedLink;
+import org.librecms.contentsection.Asset;
+import org.librecms.contentsection.AssetRepository;
 import org.librecms.contentsection.AttachmentList;
 import org.librecms.contentsection.AttachmentListL10NManager;
 import org.librecms.contentsection.AttachmentListManager;
 import org.librecms.contentsection.AttachmentListRepository;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
+import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ItemAttachment;
 import org.librecms.contentsection.ItemAttachmentManager;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.mvc.Controller;
+import javax.mvc.Models;
 import javax.transaction.Transactional;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 /**
  *
@@ -44,6 +54,9 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     static final String PATH_FRAGMENT = "relatedinfo";
 
     @Inject
+    private AssetRepository assetRepo;
+
+    @Inject
     private AssetTypesManager assetTypesManager;
 
     @Inject
@@ -56,13 +69,22 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     private AttachmentListRepository listRepo;
 
     @Inject
+    private ContentItemRepository itemRepo;
+
+    @Inject
     private ContentItemManager itemManager;
 
     @Inject
     private GlobalizationHelper globalizationHelper;
 
     @Inject
+    private IdentifierParser identifierParser;
+
+    @Inject
     private ItemAttachmentManager attachmentManager;
+
+    @Inject
+    private Models models;
 
     private ContentItem document;
 
@@ -171,16 +193,509 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
-    // ToDo Remove Attachment List
-    // Add attachment (attach asset)
-    // Add internal link
-    // Remove attachment
-    // ToDo Move attachment list to first position
-    // ToDo Move attachment list up
-    // ToDo Move attachment list down
-    // ToDo Move item attachment to first position
-    // ToDo Move item attachment up
-    // ToDo Move item attachment down
+    @POST
+    @Path("/attachmentlists/{attachmentListIdentifier}/@remove")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String removeAttachmentList(
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam,
+        @FormParam("confirm") final String confirm
+    ) {
+
+        final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+
+        if ("true".equalsIgnoreCase(confirm)) {
+            listManager.removeAttachmentList(listResult.get());
+        }
+
+        return String.format(
+            "redirect:/%s/@documents/%s/@authoringsteps/%s",
+            section.getLabel(),
+            getContentItemPath(),
+            PATH_FRAGMENT
+        );
+    }
+
+    @POST
+    @Path("/attachmentlists/{attachmentListIdentifier}/attachments")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String createAttachment(
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam,
+        @FormParam("assetUuid") final String assetUuid
+    ) {
+        final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+        final AttachmentList list = listResult.get();
+
+        final Optional<Asset> assetResult = assetRepo.findByUuid(assetUuid);
+        if (!assetResult.isPresent()) {
+            models.put("assetUuid", assetUuid);
+            return "org/librecms/ui/contenttypes/asset-not-found.xhtml";
+        }
+
+        final Asset asset = assetResult.get();
+
+        attachmentManager.attachAsset(asset, list);
+
+        return String.format(
+            "redirect:/%s/@documents/%s/@authoringsteps/%s",
+            section.getLabel(),
+            getContentItemPath(),
+            PATH_FRAGMENT
+        );
+    }
+
+    @POST
+    @Path("/attachmentlists/{attachmentListIdentifier}/internal-links")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String createInteralLink(
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam,
+        @FormParam("targetItemUuid") final String targetItemUuid,
+        @FormParam("title") final String title
+    ) {
+        final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+        final AttachmentList list = listResult.get();
+
+        final Optional<ContentItem> itemResult = itemRepo.findByUuid(
+            targetItemUuid
+        );
+        if (!itemResult.isPresent()) {
+            models.put("targetItemUuid", targetItemUuid);
+            return "org/librecms/ui/contenttypes/target-item-not-found.xhtml";
+        }
+
+        final RelatedLink relatedLink = new RelatedLink();
+        relatedLink.getTitle().addValue(
+            globalizationHelper.getNegotiatedLocale(), title
+        );
+        relatedLink.setTargetItem(document);
+
+        attachmentManager.attachAsset(relatedLink, list);
+        return String.format(
+            "redirect:/%s/@documents/%s/@authoringsteps/%s",
+            section.getLabel(),
+            getContentItemPath(),
+            PATH_FRAGMENT
+        );
+    }
+
+    @POST
+    @Path(
+        "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String updateInteralLinkTarget(
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam,
+        @PathParam("internalLinkUuid") final String internalLinkUuid,
+        @FormParam("targetItemUuid") final String targetItemUuid
+    ) {
+        final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+        final AttachmentList list = listResult.get();
+
+        final Optional<ContentItem> itemResult = itemRepo.findByUuid(
+            targetItemUuid
+        );
+        if (!itemResult.isPresent()) {
+            models.put("targetItemUuid", targetItemUuid);
+            return "org/librecms/ui/contenttypes/target-item-not-found.xhtml";
+        }
+
+        final Optional<RelatedLink> linkResult = list
+            .getAttachments()
+            .stream()
+            .map(ItemAttachment::getAsset)
+            .filter(asset -> asset instanceof RelatedLink)
+            .map(asset -> (RelatedLink) asset)
+            .filter(link -> link.getUuid().equals(internalLinkUuid))
+            .findAny();
+
+        if (!linkResult.isPresent()) {
+            models.put("contentItem", itemManager.getItemPath(document));
+            models.put("listIdentifierParam", listIdentifierParam);
+            models.put("internalLinkUuid", internalLinkUuid);
+            return "org/librecms/ui/contenttypes/internal-link-asset-not-found.xhtml";
+        }
+
+        final RelatedLink link = linkResult.get();
+        link.setTargetItem(document);
+        assetRepo.save(link);
+
+        return String.format(
+            "redirect:/%s/@documents/%s/@authoringsteps/%s",
+            section.getLabel(),
+            getContentItemPath(),
+            PATH_FRAGMENT
+        );
+    }
+
+    @POST
+    @Path(
+        "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}/title/@add")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String addInteralLinkTitle(
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam,
+        @PathParam("internalLinkUuid") final String internalLinkUuid,
+        @FormParam("locale") final String localeParam,
+        @FormParam("value") final String value
+    ) {
+        final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+        final AttachmentList list = listResult.get();
+
+        final Optional<RelatedLink> linkResult = list
+            .getAttachments()
+            .stream()
+            .map(ItemAttachment::getAsset)
+            .filter(asset -> asset instanceof RelatedLink)
+            .map(asset -> (RelatedLink) asset)
+            .filter(link -> link.getUuid().equals(internalLinkUuid))
+            .findAny();
+
+        if (!linkResult.isPresent()) {
+            models.put("contentItem", itemManager.getItemPath(document));
+            models.put("listIdentifierParam", listIdentifierParam);
+            models.put("internalLinkUuid", internalLinkUuid);
+            return "org/librecms/ui/contenttypes/internal-link-asset-not-found.xhtml";
+        }
+
+        final RelatedLink link = linkResult.get();
+        final Locale locale = new Locale(localeParam);
+        link.getTitle().addValue(locale, value);
+        assetRepo.save(link);
+
+        return String.format(
+            "redirect:/%s/@documents/%s/@authoringsteps/%s",
+            section.getLabel(),
+            getContentItemPath(),
+            PATH_FRAGMENT
+        );
+    }
+
+    @POST
+    @Path(
+        "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}/title/@edit/{locale}")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String updateInteralLinkTitle(
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam,
+        @PathParam("internalLinkUuid") final String internalLinkUuid,
+        @PathParam("locale") final String localeParam,
+        @FormParam("value") final String value
+    ) {
+        final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+        final AttachmentList list = listResult.get();
+
+        final Optional<RelatedLink> linkResult = list
+            .getAttachments()
+            .stream()
+            .map(ItemAttachment::getAsset)
+            .filter(asset -> asset instanceof RelatedLink)
+            .map(asset -> (RelatedLink) asset)
+            .filter(link -> link.getUuid().equals(internalLinkUuid))
+            .findAny();
+
+        if (!linkResult.isPresent()) {
+            models.put("contentItem", itemManager.getItemPath(document));
+            models.put("listIdentifierParam", listIdentifierParam);
+            models.put("internalLinkUuid", internalLinkUuid);
+            return "org/librecms/ui/contenttypes/internal-link-asset-not-found.xhtml";
+        }
+
+        final RelatedLink link = linkResult.get();
+        final Locale locale = new Locale(localeParam);
+        link.getTitle().addValue(locale, value);
+        assetRepo.save(link);
+
+        return String.format(
+            "redirect:/%s/@documents/%s/@authoringsteps/%s",
+            section.getLabel(),
+            getContentItemPath(),
+            PATH_FRAGMENT
+        );
+    }
+
+    @POST
+    @Path(
+        "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}/title/@edit/{locale}")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String removeInteralLinkTitle(
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam,
+        @PathParam("internalLinkUuid") final String internalLinkUuid,
+        @PathParam("locale") final String localeParam
+    ) {
+        final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+        final AttachmentList list = listResult.get();
+
+        final Optional<RelatedLink> linkResult = list
+            .getAttachments()
+            .stream()
+            .map(ItemAttachment::getAsset)
+            .filter(asset -> asset instanceof RelatedLink)
+            .map(asset -> (RelatedLink) asset)
+            .filter(link -> link.getUuid().equals(internalLinkUuid))
+            .findAny();
+
+        if (!linkResult.isPresent()) {
+            models.put("contentItem", itemManager.getItemPath(document));
+            models.put("listIdentifierParam", listIdentifierParam);
+            models.put("internalLinkUuid", internalLinkUuid);
+            return "org/librecms/ui/contenttypes/internal-link-asset-not-found.xhtml";
+        }
+
+        final RelatedLink link = linkResult.get();
+        final Locale locale = new Locale(localeParam);
+        link.getTitle().removeValue(locale);
+        assetRepo.save(link);
+
+        return String.format(
+            "redirect:/%s/@documents/%s/@authoringsteps/%s",
+            section.getLabel(),
+            getContentItemPath(),
+            PATH_FRAGMENT
+        );
+    }
+
+    @POST
+    @Path(
+        "/attachmentlists/{attachmentListIdentifier}/attachments/{attachmentUuid}/@remove")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String removeAttachment(
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam,
+        @PathParam("attachmentUuid") final String attachmentUuid,
+        @FormParam("confirm") final String confirm
+    ) {
+        final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+        final AttachmentList list = listResult.get();
+
+        final Optional<ItemAttachment<?>> result = list
+            .getAttachments()
+            .stream()
+            .filter(attachment -> attachment.getUuid().equals(attachmentUuid))
+            .findFirst();
+
+        if (result.isPresent() && "true".equalsIgnoreCase(confirm)) {
+            final Asset asset = result.get().getAsset();
+            attachmentManager.unattachAsset(asset, list);
+            if (asset instanceof RelatedLink
+                    && ((RelatedLink) asset).getTargetItem() != null) {
+                assetRepo.delete(asset);
+            }
+        }
+
+        return String.format(
+            "redirect:/%s/@documents/%s/@authoringsteps/%s",
+            section.getLabel(),
+            getContentItemPath(),
+            PATH_FRAGMENT
+        );
+    }
+
+    @POST
+    @Path(
+        "/attachmentlists/{attachmentListIdentifier}/@moveUp")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String moveListUp(
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam
+    ) {
+        final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+        final AttachmentList list = listResult.get();
+
+        listManager.moveUp(list);
+
+        return String.format(
+            "redirect:/%s/@documents/%s/@authoringsteps/%s",
+            section.getLabel(),
+            getContentItemPath(),
+            PATH_FRAGMENT
+        );
+    }
+
+    @POST
+    @Path(
+        "/attachmentlists/{attachmentListIdentifier}/@moveDown")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String moveListDown(
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam
+    ) {
+        final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+        final AttachmentList list = listResult.get();
+
+        listManager.moveDown(list);
+
+        return String.format(
+            "redirect:/%s/@documents/%s/@authoringsteps/%s",
+            section.getLabel(),
+            getContentItemPath(),
+            PATH_FRAGMENT
+        );
+    }
+
+    @POST
+    @Path(
+        "/attachmentlists/{attachmentListIdentifier}/attachments/{attachmentUuid}/@moveUp")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String moveAttachmentUp(
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam,
+        @PathParam("attachmentUuid") final String attachmentUuid
+    ) {
+        final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+        final AttachmentList list = listResult.get();
+
+        final Optional<ItemAttachment<?>> result = list
+            .getAttachments()
+            .stream()
+            .filter(attachment -> attachment.getUuid().equals(attachmentUuid))
+            .findFirst();
+
+        if (result.isPresent()) {
+            final ItemAttachment<?> attachment = result.get();
+            final Asset asset = attachment.getAsset();
+            attachmentManager.moveUp(asset, list);
+        }
+
+        return String.format(
+            "redirect:/%s/@documents/%s/@authoringsteps/%s",
+            section.getLabel(),
+            getContentItemPath(),
+            PATH_FRAGMENT
+        );
+    }
+
+    @POST
+    @Path(
+        "/attachmentlists/{attachmentListIdentifier}/attachments/{attachmentUuid}/@moveDown")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String moveAttachmentDown(
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam,
+        @PathParam("attachmentUuid") final String attachmentUuid
+    ) {
+        final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+        final AttachmentList list = listResult.get();
+
+        final Optional<ItemAttachment<?>> result = list
+            .getAttachments()
+            .stream()
+            .filter(attachment -> attachment.getUuid().equals(attachmentUuid))
+            .findFirst();
+
+        if (result.isPresent()) {
+            final ItemAttachment<?> attachment = result.get();
+            final Asset asset = attachment.getAsset();
+            attachmentManager.moveDown(asset, list);
+        }
+
+        return String.format(
+            "redirect:/%s/@documents/%s/@authoringsteps/%s",
+            section.getLabel(),
+            getContentItemPath(),
+            PATH_FRAGMENT
+        );
+    }
+
+    private Optional<AttachmentList> findAttachmentList(
+        final String attachmentListIdentifier
+    ) {
+        final Identifier identifier = identifierParser.parseIdentifier(
+            attachmentListIdentifier
+        );
+        final Optional<AttachmentList> listResult;
+        switch (identifier.getType()) {
+            case ID:
+                listResult = listRepo
+                    .findForItemAndId(
+                        document, Long.parseLong(identifier.getIdentifier())
+                    );
+                break;
+            case UUID:
+                listResult = listRepo
+                    .findForItemAndUuid(
+                        document, identifier.getIdentifier()
+                    );
+                break;
+            default:
+                listResult = listRepo
+                    .findForItemAndName(
+                        document, identifier.getIdentifier()
+                    );
+                break;
+        }
+
+        return listResult;
+    }
+
+    private String showAttachmentListNotFound(final String listIdentifier) {
+        models.put("contentItem", itemManager.getItemPath(document));
+        models.put("listIdentifier", listIdentifier);
+        return "org/librecms/ui/contenttypes/attachmentlist-not-found.xhtml";
+    }
+
     private AttachmentListDto buildAttachmentListDto(
         final AttachmentList attachmentList
     ) {
