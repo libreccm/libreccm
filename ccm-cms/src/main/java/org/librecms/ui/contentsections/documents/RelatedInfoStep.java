@@ -36,6 +36,7 @@ import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.transaction.Transactional;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -60,6 +61,9 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     private AssetTypesManager assetTypesManager;
 
     @Inject
+    private AttachmentListDetailsModel listDetailsModel;
+
+    @Inject
     private AttachmentListManager listManager;
 
     @Inject
@@ -68,6 +72,9 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Inject
     private AttachmentListRepository listRepo;
 
+    @Inject
+    private InternalLinkDetailsModel internalLinkDetailsModel;
+    
     @Inject
     private ContentItemRepository itemRepo;
 
@@ -176,7 +183,8 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Transactional(Transactional.TxType.REQUIRED)
     public String addAttachmentList(
         @FormParam("listName") final String name,
-        @FormParam("listTitle") final String title
+        @FormParam("listTitle") final String title,
+        @FormParam("listDescription") final String description
     ) {
         final AttachmentList list = listManager.createAttachmentList(
             document, name
@@ -184,12 +192,61 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         list.getTitle().addValue(
             globalizationHelper.getNegotiatedLocale(), title
         );
+        list.getDescription().addValue(
+            globalizationHelper.getNegotiatedLocale(), description
+        );
         listRepo.save(list);
         return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s",
+            "redirect:/%s/@documents/%s/@authoringsteps/%s/attachmentslists/%s",
             section.getLabel(),
             getContentItemPath(),
-            PATH_FRAGMENT
+            PATH_FRAGMENT,
+            list.getName()
+        );
+    }
+
+    @GET
+    @Path("/attachmentlists/{attachmentListIdentifier}/@details")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String showAttachmentListDetails(
+        @PathParam("attachmentListIdentifier") final String listIdentifierParam
+    ) {
+        final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+
+        listDetailsModel.setAttachmentList(listResult.get());
+
+        return "org/librecms/ui/documents/relatedinfo-attachmentlist-details.xhtml";
+    }
+
+    @POST
+    @Path("/attachmentlists/{attachmentListIdentifier}/@remove")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String updateAttachmentList(
+        @PathParam("attachmentListIdentifier") final String listIdentifierParam,
+        @FormParam("listName") final String name
+    ) {
+        final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+
+        final AttachmentList list = listResult.get();
+        list.setName(name);
+        listRepo.save(list);
+
+        return String.format(
+            "redirect:/%s/@documents/%s/@authoringsteps/%s/attachmentslists/%s",
+            section.getLabel(),
+            getContentItemPath(),
+            PATH_FRAGMENT,
+            list.getName()
         );
     }
 
@@ -197,11 +254,9 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Path("/attachmentlists/{attachmentListIdentifier}/@remove")
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeAttachmentList(
-        @PathParam("attachmentListIdentifier")
-        final String listIdentifierParam,
+        @PathParam("attachmentListIdentifier") final String listIdentifierParam,
         @FormParam("confirm") final String confirm
     ) {
-
         final Optional<AttachmentList> listResult = findAttachmentList(
             listIdentifierParam
         );
@@ -256,10 +311,29 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
-    @POST
-    @Path("/attachmentlists/{attachmentListIdentifier}/internal-links")
+    @GET
+    @Path("/attachmentlists/{attachmentListIdentifier}/internal-links/@create")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String createInteralLink(
+    public String createInternalLink(
+        @PathParam("attachmentListIdentifier") 
+        final String listIdentifierParam
+    ) {
+          final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+        final AttachmentList list = listResult.get();
+        models.put("attachmentList", list.getName());
+        
+        return "org/librecms/ui/documents/relatedinfo-create-internallink.xhtml";
+    }
+
+    @POST
+    @Path("/attachmentlists/{attachmentListIdentifier}/internal-links/@create")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String createInternalLink(
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
         @FormParam("targetItemUuid") final String targetItemUuid,
@@ -295,12 +369,53 @@ public class RelatedInfoStep implements MvcAuthoringStep {
             PATH_FRAGMENT
         );
     }
+    
+     @GET
+    @Path(
+        "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}/@details")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String showInternalLinkDetails(
+        @PathParam("attachmentListIdentifier") 
+        final String listIdentifierParam,
+        @PathParam("internalLinkUuid") final String internalLinkUuid
+    ) {
+          final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+        final AttachmentList list = listResult.get();
+        
+             final Optional<RelatedLink> linkResult = list
+            .getAttachments()
+            .stream()
+            .map(ItemAttachment::getAsset)
+            .filter(asset -> asset instanceof RelatedLink)
+            .map(asset -> (RelatedLink) asset)
+            .filter(link -> link.getUuid().equals(internalLinkUuid))
+            .findAny();
+
+        if (!linkResult.isPresent()) {
+            models.put("contentItem", itemManager.getItemPath(document));
+            models.put("listIdentifier", listIdentifierParam);
+            models.put("internalLinkUuid", internalLinkUuid);
+            return "org/librecms/ui/documents/internal-link-asset-not-found.xhtml";
+        }
+
+        final RelatedLink link = linkResult.get();
+        internalLinkDetailsModel.setListIdentifier(list.getName());
+        internalLinkDetailsModel.setInternalLink(link);
+        
+        return "org/librecms/ui/documents/relatedinfo-create-internallink.xhtml";
+    }
+
 
     @POST
     @Path(
         "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String updateInteralLinkTarget(
+    public String updateInternalLinkTarget(
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
         @PathParam("internalLinkUuid") final String internalLinkUuid,
@@ -339,7 +454,7 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         }
 
         final RelatedLink link = linkResult.get();
-        link.setTargetItem(document);
+        link.setTargetItem(itemResult.get());
         assetRepo.save(link);
 
         return String.format(
@@ -354,7 +469,7 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Path(
         "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}/title/@add")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String addInteralLinkTitle(
+    public String addInternalLinkTitle(
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
         @PathParam("internalLinkUuid") final String internalLinkUuid,
@@ -402,7 +517,7 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Path(
         "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}/title/@edit/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String updateInteralLinkTitle(
+    public String updateInternalLinkTitle(
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
         @PathParam("internalLinkUuid") final String internalLinkUuid,
@@ -450,7 +565,7 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Path(
         "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}/title/@edit/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String removeInteralLinkTitle(
+    public String removeInternalLinkTitle(
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
         @PathParam("internalLinkUuid") final String internalLinkUuid,
@@ -739,6 +854,10 @@ public class RelatedInfoStep implements MvcAuthoringStep {
                 .getText(assetTypeInfo.getLabelKey())
         );
         dto.setAttachmentId(itemAttachment.getAttachmentId());
+        dto.setInternalLink(
+            itemAttachment.getAsset() instanceof RelatedLink
+            && ((RelatedLink) itemAttachment.getAsset()).getTargetItem() != null
+        );
         dto.setSortKey(itemAttachment.getSortKey());
         dto.setTitle(
             globalizationHelper
