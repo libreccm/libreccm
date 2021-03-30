@@ -18,7 +18,7 @@ import javax.inject.Inject;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Dependent
-class AssetPermissionsModelProvider {
+public class AssetPermissionsModelProvider {
 
     /**
      * The {@link AssetPermissionsChecker} instance to use.

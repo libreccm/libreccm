@@ -42,7 +42,7 @@ public class DocumentFolderRowModel {
         return created;
     }
 
-    protected void setCreated(final String created) {
+    public void setCreated(final String created) {
         this.created = created;
     }
 
@@ -50,7 +50,7 @@ public class DocumentFolderRowModel {
         return deletable;
     }
 
-    protected void setDeletable(final boolean deletable) {
+    public void setDeletable(final boolean deletable) {
         this.deletable = deletable;
     }
 
@@ -62,11 +62,11 @@ public class DocumentFolderRowModel {
         return folderPath;
     }
 
-    protected void setFolderPath(final String folderPath) {
+    public void setFolderPath(final String folderPath) {
         this.folderPath = folderPath;
     }
 
-    protected void setFolder(final boolean folder) {
+    public void setFolder(final boolean folder) {
         this.folder = folder;
     }
 
@@ -78,7 +78,7 @@ public class DocumentFolderRowModel {
         return String.join(", ", languages);
     }
 
-    protected void setLanguages(final SortedSet<String> languages) {
+    public void setLanguages(final SortedSet<String> languages) {
         this.languages = languages;
     }
 
@@ -86,7 +86,7 @@ public class DocumentFolderRowModel {
         return lastEdited;
     }
 
-    protected void setLastEdited(final String lastEdited) {
+    public void setLastEdited(final String lastEdited) {
         this.lastEdited = lastEdited;
     }
 
@@ -94,7 +94,7 @@ public class DocumentFolderRowModel {
         return lastEditPublished;
     }
 
-    protected void setLastEditPublished(final boolean lastEditPublished) {
+    public void setLastEditPublished(final boolean lastEditPublished) {
         this.lastEditPublished = lastEditPublished;
     }
 
@@ -102,7 +102,7 @@ public class DocumentFolderRowModel {
         return name;
     }
 
-    protected void setName(final String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -118,7 +118,7 @@ public class DocumentFolderRowModel {
         return title;
     }
 
-    protected void setTitle(final String title) {
+    public void setTitle(final String title) {
         this.title = title;
     }
 
@@ -126,7 +126,7 @@ public class DocumentFolderRowModel {
         return type;
     }
 
-    protected void setType(final String type) {
+    public void setType(final String type) {
         this.type = type;
     }
 
@@ -134,7 +134,7 @@ public class DocumentFolderRowModel {
         return permissions;
     }
 
-    protected void setPermissions(
+    public void setPermissions(
         final DocumentPermissionsModel permissions
     ) {
         this.permissions = permissions;

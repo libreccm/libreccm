@@ -9,8 +9,11 @@ import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.assets.RelatedLink;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -32,7 +35,11 @@ public class InternalLinkDetailsModel {
 
     private String uuid;
 
+    private String label;
+    
     private Map<String, String> title;
+
+    private List<String> unusedTitleLocales;
 
     private String targetItemUuid;
 
@@ -52,8 +59,16 @@ public class InternalLinkDetailsModel {
         return uuid;
     }
 
+    public String getLabel() {
+        return label;
+    }
+    
     public Map<String, String> getTitle() {
         return Collections.unmodifiableMap(title);
+    }
+
+    public List<String> getUnusedTitleLocales() {
+        return Collections.unmodifiableList(unusedTitleLocales);
     }
 
     public String getTargetItemUuid() {
@@ -72,6 +87,9 @@ public class InternalLinkDetailsModel {
         Objects.requireNonNull(link);
 
         uuid = link.getUuid();
+        label = globalizationHelper.getValueFromLocalizedString(
+            link.getTitle()
+        );
         title = link
             .getTitle()
             .getValues()
@@ -83,6 +101,13 @@ public class InternalLinkDetailsModel {
                     entry -> entry.getValue()
                 )
             );
+        final Set<Locale> titleLocales = link.getTitle().getAvailableLocales();
+        unusedTitleLocales = globalizationHelper
+            .getAvailableLocales()
+            .stream()
+            .filter(locale -> !titleLocales.contains(locale))
+            .map(Locale::toString)
+            .collect(Collectors.toList());
         targetItemUuid = link.getTargetItem().getItemUuid();
         targetItemName = link.getTargetItem().getDisplayName();
         targetItemTitle = globalizationHelper.getValueFromLocalizedString(

@@ -18,7 +18,7 @@ import javax.inject.Inject;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Dependent
-class DocumentPermissions {
+public class DocumentPermissions {
 
     @Inject
     private PermissionChecker permissionChecker;

@@ -1,0 +1,103 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/content-section/documents/document.xhtml">
+
+        <ui:param name="activePage" value="document" />
+        <ui:param name="title" value="#{CmsAdminMessages['contentsection.documents.publishstep.title']}" />
+
+        <ui:define name="breadcrumb">
+            <ui:include src="document-breadcrumbs.xhtml" />
+            <li aria-current="page" class="breadcrumb-item">
+                #{CmsAdminMessages['contentsection.document.publishstep.title']}
+            </li>
+        </ui:define>
+
+        <ui:define name="authoringStep">
+            <h3>
+                #{CmsDefaultStepsMessageBundle.getMessage('relatedinfo.attachmentlist.details.title', [CmsAttachmentListDetailsModel.name])}
+            </h3>
+
+            <p>
+                <span>#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.name.label']}: </span>
+                #{CmsAttachmentListDetailsModel.name}
+                <button class="btn btn-primary" 
+                        data-toggle="modal"
+                        data-target="#name-edit-dialog"
+                        type="button">
+
+                </button>
+            </p>
+            <div aria-hidden="true"
+                 aria-labelledby="name-edit-dialog-title"
+                 id="name-edit-dialog"
+                 class="modal fade"
+                 tabindex="-1">
+                <div class="modal-dialog">
+                    <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/@update"
+                          class="modal-content"
+                          method="post">
+                        <div class="modal-header">
+                            <h4>
+                                #{CmsDefaultStepsMessageBundle.getMessage('relatedinfo.attachmentlist.details.name_edit_dialog.title', [CmsAttachmentListDetailsModel.name])}
+                            </h4>
+                            <button aria-label="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.name_edit_dialog.close']}"
+                                    class="close"
+                                    data-dismiss="modal"
+                                    type="button">
+                                <bootstrap:svgIcon icon="x-circle" />
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <bootstrap:formGroupText 
+                                help="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.name_edit_dialog.name.help']}"
+                                inputId="name"
+                                label="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.name_edit_dialog.name.label']}"
+                                name="listName"
+                                required="true" />
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-warning"
+                                    data-dismiss="modal"
+                                    type="button">
+                                #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.name_edit_dialog.close']}"
+                            </button>
+                            <button class="btn btn-success"
+                                    type="submit">
+                                #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.name_edit_dialog.save']}"
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <libreccm:localizedStringEditor addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/title/@add"
+                                            editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/title/@edit"
+                                            editorId="list-title-editor"
+                                            hasUnusedLocales="#{!CmsAttachmentListDetailsModel.unusedDescriptionLocales.isEmpty()}"
+                                            objectIdentifier="#{CmsAttachmentListDetailsModel.name}"
+                                            removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/title/@remove"
+                                            title="CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title_editor.title']}"
+                                            unusedLocales="#{CmsAttachmentListDetailsModel.unusedDescriptionLocales}"
+                                            values="#{CmsAttachmentListDetailsModel.titles}"
+                                            />
+
+            <libreccm:localizedStringEditor addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/description/@add"
+                                            editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/description/@edit"
+                                            editorId="list-description-editor"
+                                            hasUnusedLocales="#{!CmsAttachmentListDetailsModel.unusedD.isEmpty()}"
+                                            objectIdentifier="#{CmsAttachmentListDetailsModel.name}"
+                                            removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/description/@remove"
+                                            title="CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description_editor.title']}"
+                                            unusedLocales="#{CmsAttachmentListDetailsModel.unusedTitleLocales}"
+                                            useTextarea="true"
+                                            values="#{CmsAttachmentListDetailsModel.descriptions}"
+                                            />
+
+        </ui:define>
+
+    </ui:composition>
+</html>

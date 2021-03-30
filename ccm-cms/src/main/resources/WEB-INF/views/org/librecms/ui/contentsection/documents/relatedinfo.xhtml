@@ -89,6 +89,13 @@
                     <bootstrap:svgIcon icon="plus-circle" />
                     <span>#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.attachment.add.label']}</span>
                 </button>
+                <button class="btn btn-primary"
+                        data-target="#attachmentlist-#{list.name}-add-internallink-dialog"
+                        data-toggle="modal"
+                        type="button">
+                    <bootstrap:svgIcon icon="link-45deg" />
+                    <span>#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.internal_link.add.label']}</span>
+                </button>
             </div>
             <div aria-hidden="true"
                  aria-labelledby="attachmentlist-#{list.name}-add-attachment-dialog-title"
@@ -102,7 +109,7 @@
                                 id="attachmentlist-#{list.name}-add-attachment-dialog-title">
                                 #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.attachment.add.dialog.title']}
                             </h3>
-                             <button aria-label="#{CmsDefaultStepsMessageBundle['relatedinfo.attachment.add.dialog.close']}"
+                            <button aria-label="#{CmsDefaultStepsMessageBundle['relatedinfo.attachment.add.dialog.close']}"
                                     class="close" 
                                     data-dismiss="modal"
                                     type="button">
@@ -118,10 +125,46 @@
                     </div>
                 </div>
             </div>
-            
+
+            <div aria-hidden="true" 
+                 aria-labelledby="attachmentlist-#{list.name}-add-internallink-dialog-title"
+                 class="modal fade"
+                 id="attachmentlist-#{list.name}-add-internallink-dialog"
+                 tabindex="-1">
+                <div class="modal-dialog">
+                    <form class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">
+                                #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.internallink.add.dialog.title']}
+                            </h3>
+                            <button aria-label="#{CmsDefaultStepsMessageBundle['relatedinfo.internallink.add.dialog.close']}"
+                                    class="close" 
+                                    data-dismiss="modal"
+                                    type="button">
+                                <bootstrap:svgIcon icon="x-circle" />
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-info" role="alert">
+                                Not implemented yet, requires JavaScript for good user experience.
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-warning"
+                                    data-dismiss="modal"
+                                    type="button">
+                                #{CmsDefaultStepsMessageBundle['relatedinfo.internallink.add.dialog.close']}
+                            </button>
+                            <button class="btn btn-success">
+                                #{CmsDefaultStepsMessageBundle['relatedinfo.internallink.add.dialog.save']}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
             <!-- ToDo: Button and Dialog for adding internal links -->
-            
-            
+
+
             <ul>
                 <c:forEach items="#{CmsRelatedInfoStep.attachmentLists}"
                            var="list">

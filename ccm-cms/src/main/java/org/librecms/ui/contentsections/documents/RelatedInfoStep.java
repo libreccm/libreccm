@@ -12,21 +12,47 @@ import org.librecms.assets.AssetTypeInfo;
 import org.librecms.assets.AssetTypesManager;
 import org.librecms.assets.RelatedLink;
 import org.librecms.contentsection.Asset;
+import org.librecms.contentsection.AssetFolderEntry;
+import org.librecms.contentsection.AssetManager;
 import org.librecms.contentsection.AssetRepository;
 import org.librecms.contentsection.AttachmentList;
 import org.librecms.contentsection.AttachmentListL10NManager;
 import org.librecms.contentsection.AttachmentListManager;
 import org.librecms.contentsection.AttachmentListRepository;
 import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentItemL10NManager;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.ContentType;
+import org.librecms.contentsection.ContentTypeRepository;
+import org.librecms.contentsection.DocumentFolderEntry;
+import org.librecms.contentsection.Folder;
+import org.librecms.contentsection.FolderManager;
+import org.librecms.contentsection.FolderRepository;
+import org.librecms.contentsection.FolderType;
 import org.librecms.contentsection.ItemAttachment;
 import org.librecms.contentsection.ItemAttachmentManager;
+import org.librecms.ui.contentsections.AssetFolderRowModel;
+import org.librecms.ui.contentsections.AssetFolderTree;
+import org.librecms.ui.contentsections.AssetFolderTreeNode;
+import org.librecms.ui.contentsections.AssetPermissionsModel;
+import org.librecms.ui.contentsections.AssetPermissionsModelProvider;
+import org.librecms.ui.contentsections.DocumentFolderRowModel;
+import org.librecms.ui.contentsections.DocumentFolderTree;
+import org.librecms.ui.contentsections.DocumentFolderTreeNode;
+import org.librecms.ui.contentsections.DocumentPermissions;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -35,11 +61,15 @@ import javax.inject.Named;
 import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.transaction.Transactional;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 /**
  *
@@ -53,6 +83,18 @@ import javax.ws.rs.PathParam;
 public class RelatedInfoStep implements MvcAuthoringStep {
 
     static final String PATH_FRAGMENT = "relatedinfo";
+
+    @Inject
+    private AssetFolderTree assetFolderTree;
+
+    /**
+     * Used to build the {@link AssetPermissionsModel}.
+     */
+    @Inject
+    private AssetPermissionsModelProvider assetPermissions;
+
+    @Inject
+    private AssetManager assetManager;
 
     @Inject
     private AssetRepository assetRepo;
@@ -73,13 +115,31 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     private AttachmentListRepository listRepo;
 
     @Inject
+    private DocumentFolderTree documentFolderTree;
+
+    @Inject
+    private DocumentPermissions documentPermissions;
+
+    @Inject
+    private FolderManager folderManager;
+
+    @Inject
+    private FolderRepository folderRepo;
+
+    @Inject
     private InternalLinkDetailsModel internalLinkDetailsModel;
-    
+
+    @Inject
+    private ContentItemL10NManager itemL10NManager;
+
+    @Inject
+    private ContentItemManager itemManager;
+
     @Inject
     private ContentItemRepository itemRepo;
 
     @Inject
-    private ContentItemManager itemManager;
+    private ContentTypeRepository contentTypeRepo;
 
     @Inject
     private GlobalizationHelper globalizationHelper;
@@ -168,13 +228,132 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         return "org/librecms/ui/documents/relatedinfo.xhtml";
     }
 
-    @Transactional
+    @Transactional(Transactional.TxType.REQUIRED)
     public List<AttachmentListDto> getAttachmentLists() {
         return document
             .getAttachments()
             .stream()
             .filter(list -> !list.getName().startsWith("."))
             .map(this::buildAttachmentListDto)
+            .collect(Collectors.toList());
+    }
+
+    @GET
+    @Path("/asset-folders")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<AssetFolderTreeNode> getAssetFolderTree() {
+        return assetFolderTree.buildFolderTree(
+            section, section.getRootAssetsFolder()
+        );
+    }
+
+    @GET
+    @Path("/asset-folders/{folderPath}/assets")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<AssetFolderRowModel> getAssetsInFolder(
+        @PathParam("folderPath") final String folderPath,
+        @QueryParam("firstResult") @DefaultValue("0") final int firstResult,
+        @QueryParam("maxResults") @DefaultValue("20") final int maxResults,
+        @QueryParam("filterTerm") @DefaultValue("") final String filterTerm
+    ) {
+        final Folder folder;
+        if (folderPath.isEmpty()) {
+            folder = section.getRootAssetsFolder();
+        } else {
+            final Optional<Folder> folderResult = folderRepo.findByPath(
+                section, folderPath, FolderType.ASSETS_FOLDER
+            );
+            if (folderResult.isPresent()) {
+                folder = folderResult.get();
+            } else {
+                return Collections.emptyList();
+            }
+        }
+        return folderRepo
+            .getAssetFolderEntries(
+                folder, firstResult, maxResults, filterTerm
+            )
+            .stream()
+            .map(entry -> buildAssetFolderRowModel(section, entry))
+            .collect(Collectors.toList());
+    }
+
+    @GET
+    @Path("/search-assets")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<AssetFolderRowModel> findAssets(
+        @QueryParam("firstResult") @DefaultValue("0") final int firstResult,
+        @QueryParam("maxResults") @DefaultValue("20") final int maxResults,
+        @QueryParam("searchTerm") @DefaultValue("") final String searchTerm
+    ) {
+        return assetRepo.findByTitleAndContentSection(searchTerm, section)
+            .stream()
+            .map(asset -> buildAssetFolderRowModel(section, asset))
+            .collect(Collectors.toList());
+
+    }
+
+    @GET
+    @Path("/document-folders")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<DocumentFolderTreeNode> getDocumentFolderTree() {
+        return documentFolderTree.buildFolderTree(
+            section, section.getRootDocumentsFolder()
+        );
+    }
+
+    @GET
+    @Path("/document-folders/{folderPath}/documents")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<DocumentFolderRowModel> getDocumentsInFolder(
+        @PathParam("folderPath") final String folderPath,
+        @QueryParam("firstResult") @DefaultValue("0") final int firstResult,
+        @QueryParam("maxResults") @DefaultValue("20") final int maxResults,
+        @QueryParam("filterTerm") @DefaultValue("") final String filterTerm
+    ) {
+        final Folder folder;
+        if (folderPath.isEmpty()) {
+            folder = section.getRootDocumentsFolder();
+        } else {
+            final Optional<Folder> folderResult = folderRepo.findByPath(
+                section, folderPath, FolderType.ASSETS_FOLDER
+            );
+            if (folderResult.isPresent()) {
+                folder = folderResult.get();
+            } else {
+                return Collections.emptyList();
+            }
+        }
+
+        return folderRepo
+            .getDocumentFolderEntries(
+                folder,
+                firstResult,
+                maxResults,
+                filterTerm
+            )
+            .stream()
+            .map(entry -> buildDocumentFolderRowModel(section, entry))
+            .collect(Collectors.toList());
+    }
+
+    @GET
+    @Path("/search-documents")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public List<DocumentFolderRowModel> findDocuments(
+        @QueryParam("firstResult") @DefaultValue("0") final int firstResult,
+        @QueryParam("maxResults") @DefaultValue("20") final int maxResults,
+        @QueryParam("searchTerm") @DefaultValue("") final String searchTerm
+    ) {
+        return itemRepo.findByNameAndContentSection(searchTerm, section)
+            .stream()
+            .map(asset -> buildDocumentFolderRowModel(section, asset))
             .collect(Collectors.toList());
     }
 
@@ -224,7 +403,7 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     }
 
     @POST
-    @Path("/attachmentlists/{attachmentListIdentifier}/@remove")
+    @Path("/attachmentlists/{attachmentListIdentifier}/@update")
     @Transactional(Transactional.TxType.REQUIRED)
     public String updateAttachmentList(
         @PathParam("attachmentListIdentifier") final String listIdentifierParam,
@@ -277,6 +456,176 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     }
 
     @POST
+    @Path("/attachmentlists/{attachmentListIdentifier}/title/@add")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String addAttachmentListTitle(
+        @PathParam("attachmentListIdentifier") final String listIdentifierParam,
+        @FormParam("locale") final String localeParam,
+        @FormParam("value") final String value
+    ) {
+        final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+
+        final AttachmentList list = listResult.get();
+        list.getTitle().addValue(new Locale(localeParam), value);
+        listRepo.save(list);
+
+        return String.format(
+            "redirect:/%s/@documents/%s/@authoringsteps/%s/attachmentslists/%s",
+            section.getLabel(),
+            getContentItemPath(),
+            PATH_FRAGMENT,
+            list.getName()
+        );
+    }
+
+    @POST
+    @Path("/attachmentlists/{attachmentListIdentifier}/title/@edit/{locale}")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String updateAttachmentListTitle(
+        @PathParam("attachmentListIdentifier") final String listIdentifierParam,
+        @PathParam("locale") final String localeParam,
+        @FormParam("value") final String value
+    ) {
+        final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+
+        final AttachmentList list = listResult.get();
+        list.getTitle().addValue(new Locale(localeParam), value);
+        listRepo.save(list);
+
+        return String.format(
+            "redirect:/%s/@documents/%s/@authoringsteps/%s/attachmentslists/%s",
+            section.getLabel(),
+            getContentItemPath(),
+            PATH_FRAGMENT,
+            list.getName()
+        );
+    }
+
+    @POST
+    @Path("/attachmentlists/{attachmentListIdentifier}/title/@remove/{locale}")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String removeAttachmentListTitle(
+        @PathParam("attachmentListIdentifier") final String listIdentifierParam,
+        @PathParam("locale") final String localeParam,
+        @FormParam("value") final String value
+    ) {
+        final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+
+        final AttachmentList list = listResult.get();
+        list.getTitle().removeValue(new Locale(localeParam));
+        listRepo.save(list);
+
+        return String.format(
+            "redirect:/%s/@documents/%s/@authoringsteps/%s/attachmentslists/%s",
+            section.getLabel(),
+            getContentItemPath(),
+            PATH_FRAGMENT,
+            list.getName()
+        );
+    }
+
+    @POST
+    @Path("/attachmentlists/{attachmentListIdentifier}/description/@add")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String addAttachmentListDescription(
+        @PathParam("attachmentListIdentifier") final String listIdentifierParam,
+        @FormParam("locale") final String localeParam,
+        @FormParam("value") final String value
+    ) {
+        final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+
+        final AttachmentList list = listResult.get();
+        list.getDescription().addValue(new Locale(localeParam), value);
+        listRepo.save(list);
+
+        return String.format(
+            "redirect:/%s/@documents/%s/@authoringsteps/%s/attachmentslists/%s",
+            section.getLabel(),
+            getContentItemPath(),
+            PATH_FRAGMENT,
+            list.getName()
+        );
+    }
+
+    @POST
+    @Path(
+        "/attachmentlists/{attachmentListIdentifier}/description/@edit/{locale}")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String updateAttachmentListDescription(
+        @PathParam("attachmentListIdentifier") final String listIdentifierParam,
+        @PathParam("locale") final String localeParam,
+        @FormParam("value") final String value
+    ) {
+        final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+
+        final AttachmentList list = listResult.get();
+        list.getDescription().addValue(new Locale(localeParam), value);
+        listRepo.save(list);
+
+        return String.format(
+            "redirect:/%s/@documents/%s/@authoringsteps/%s/attachmentslists/%s",
+            section.getLabel(),
+            getContentItemPath(),
+            PATH_FRAGMENT,
+            list.getName()
+        );
+    }
+
+    @POST
+    @Path(
+        "/attachmentlists/{attachmentListIdentifier}/description/@remove/{locale}")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String removeAttachmentListDescription(
+        @PathParam("attachmentListIdentifier") final String listIdentifierParam,
+        @PathParam("locale") final String localeParam,
+        @FormParam("value") final String value
+    ) {
+        final Optional<AttachmentList> listResult = findAttachmentList(
+            listIdentifierParam
+        );
+        if (!listResult.isPresent()) {
+            return showAttachmentListNotFound(listIdentifierParam);
+        }
+
+        final AttachmentList list = listResult.get();
+        list.getDescription().removeValue(new Locale(localeParam));
+        listRepo.save(list);
+
+        return String.format(
+            "redirect:/%s/@documents/%s/@authoringsteps/%s/attachmentslists/%s",
+            section.getLabel(),
+            getContentItemPath(),
+            PATH_FRAGMENT,
+            list.getName()
+        );
+    }
+
+    @POST
     @Path("/attachmentlists/{attachmentListIdentifier}/attachments")
     @Transactional(Transactional.TxType.REQUIRED)
     public String createAttachment(
@@ -315,10 +664,10 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Path("/attachmentlists/{attachmentListIdentifier}/internal-links/@create")
     @Transactional(Transactional.TxType.REQUIRED)
     public String createInternalLink(
-        @PathParam("attachmentListIdentifier") 
+        @PathParam("attachmentListIdentifier")
         final String listIdentifierParam
     ) {
-          final Optional<AttachmentList> listResult = findAttachmentList(
+        final Optional<AttachmentList> listResult = findAttachmentList(
             listIdentifierParam
         );
         if (!listResult.isPresent()) {
@@ -326,7 +675,7 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         }
         final AttachmentList list = listResult.get();
         models.put("attachmentList", list.getName());
-        
+
         return "org/librecms/ui/documents/relatedinfo-create-internallink.xhtml";
     }
 
@@ -369,25 +718,25 @@ public class RelatedInfoStep implements MvcAuthoringStep {
             PATH_FRAGMENT
         );
     }
-    
-     @GET
+
+    @GET
     @Path(
         "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}/@details")
     @Transactional(Transactional.TxType.REQUIRED)
     public String showInternalLinkDetails(
-        @PathParam("attachmentListIdentifier") 
+        @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
         @PathParam("internalLinkUuid") final String internalLinkUuid
     ) {
-          final Optional<AttachmentList> listResult = findAttachmentList(
+        final Optional<AttachmentList> listResult = findAttachmentList(
             listIdentifierParam
         );
         if (!listResult.isPresent()) {
             return showAttachmentListNotFound(listIdentifierParam);
         }
         final AttachmentList list = listResult.get();
-        
-             final Optional<RelatedLink> linkResult = list
+
+        final Optional<RelatedLink> linkResult = list
             .getAttachments()
             .stream()
             .map(ItemAttachment::getAsset)
@@ -406,14 +755,14 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         final RelatedLink link = linkResult.get();
         internalLinkDetailsModel.setListIdentifier(list.getName());
         internalLinkDetailsModel.setInternalLink(link);
-        
-        return "org/librecms/ui/documents/relatedinfo-create-internallink.xhtml";
-    }
 
+        return "org/librecms/ui/documents/relatedinfo-internallink-details.xhtml";
+    }
 
     @POST
     @Path(
-        "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}")
+        "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}"
+    )
     @Transactional(Transactional.TxType.REQUIRED)
     public String updateInternalLinkTarget(
         @PathParam("attachmentListIdentifier")
@@ -563,7 +912,8 @@ public class RelatedInfoStep implements MvcAuthoringStep {
 
     @POST
     @Path(
-        "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}/title/@edit/{locale}")
+        "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}/title/@remove/{locale}"
+    )
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeInternalLinkTitle(
         @PathParam("attachmentListIdentifier")
@@ -856,7 +1206,8 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         dto.setAttachmentId(itemAttachment.getAttachmentId());
         dto.setInternalLink(
             itemAttachment.getAsset() instanceof RelatedLink
-            && ((RelatedLink) itemAttachment.getAsset()).getTargetItem() != null
+                && ((RelatedLink) itemAttachment.getAsset()).getTargetItem()
+                       != null
         );
         dto.setSortKey(itemAttachment.getSortKey());
         dto.setTitle(
@@ -867,6 +1218,298 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
         dto.setUuid(itemAttachment.getUuid());
         return dto;
+    }
+
+    private AssetFolderRowModel buildAssetFolderRowModel(
+        final ContentSection section, final AssetFolderEntry entry
+    ) {
+        Objects.requireNonNull(section);
+        Objects.requireNonNull(entry);
+
+        final AssetFolderRowModel row = new AssetFolderRowModel();
+        if (entry.isFolder()) {
+            final Folder folder = folderRepo
+                .findById(entry.getEntryId())
+                .get();
+            row.setDeletable(false);
+            row.setFolder(true);
+            row.setFolderPath(
+                folderManager
+                    .getFolderPath(folder)
+                    .substring(
+                        folderManager
+                            .getFolderPath(section.getRootAssetsFolder())
+                            .length()
+                    )
+            );
+            row.setName(entry.getDisplayName());
+            row.setTitle(
+                globalizationHelper.getValueFromLocalizedString(
+                    folder.getTitle()
+                )
+            );
+            row.setType(
+                globalizationHelper.getLocalizedTextsUtil(
+                    "org.librecms.CmsAdminMessages"
+                ).getText("contentsection.assetfolder.types.folder")
+            );
+            row.setPermissions(
+                assetPermissions.buildAssetPermissionsModel(folder)
+            );
+        } else {
+            final Asset asset = assetRepo
+                .findById(entry.getEntryId())
+                .get();
+            row.setDeletable(!assetManager.isAssetInUse(asset));
+            row.setFolder(false);
+            row.setName(entry.getDisplayName());
+            row.setNoneCmsObject(false);
+            row.setTitle(
+                globalizationHelper.getValueFromLocalizedString(
+                    asset.getTitle()
+                )
+            );
+            row.setType(asset.getClass().getName());
+            row.setPermissions(
+                assetPermissions.buildAssetPermissionsModel(asset)
+            );
+        }
+
+        return row;
+    }
+
+    private AssetFolderRowModel buildAssetFolderRowModel(
+        final ContentSection section, final Asset asset
+    ) {
+        Objects.requireNonNull(section);
+        Objects.requireNonNull(asset);
+
+        final AssetFolderRowModel row = new AssetFolderRowModel();
+        row.setDeletable(false);
+        row.setFolder(false);
+        row.setName(asset.getDisplayName());
+        row.setNoneCmsObject(false);
+        row.setTitle(
+            globalizationHelper.getValueFromLocalizedString(
+                asset.getTitle()
+            )
+        );
+        row.setType(asset.getClass().getName());
+        row.setPermissions(
+            assetPermissions.buildAssetPermissionsModel(asset)
+        );
+
+        return row;
+    }
+
+    private DocumentFolderRowModel buildDocumentFolderRowModel(
+        final ContentSection section, final DocumentFolderEntry entry
+    ) {
+        Objects.requireNonNull(section);
+        Objects.requireNonNull(entry);
+
+        final DocumentFolderRowModel row = new DocumentFolderRowModel();
+        if (entry.isFolder()) {
+            final Folder folder = folderRepo
+                .findById(entry.getEntryId())
+                .get();
+            row.setCreated("");
+            row.setDeletable(
+                folderManager
+                    .folderIsDeletable(folder)
+                    == FolderManager.FolderIsDeletable.YES
+            );
+            row.setFolder(true);
+            row.setFolderPath(
+                folderManager
+                    .getFolderPath(folder)
+                    .substring(
+                        folderManager
+                            .getFolderPath(section.getRootDocumentsFolder())
+                            .length()
+                    )
+            );
+            row.setLanguages(Collections.emptySortedSet());
+            row.setLastEditPublished(false);
+            row.setLastEdited("");
+            row.setName(entry.getDisplayName());
+            row.setTitle(
+                globalizationHelper.getValueFromLocalizedString(
+                    folder.getTitle()
+                )
+            );
+            row.setType(
+                globalizationHelper.getLocalizedTextsUtil(
+                    "org.librecms.CmsAdminMessages"
+                ).getText("contentsection.documentfolder.types.folder")
+            );
+            row.setPermissions(
+                documentPermissions.buildDocumentPermissionsModel(folder)
+            );
+        } else {
+            final ContentItem contentItem = itemRepo
+                .findById(entry.getEntryId())
+                .get();
+            row.setCreated(
+                DateTimeFormatter.ISO_DATE.format(
+                    LocalDate.ofInstant(
+                        contentItem.getCreationDate().toInstant(),
+                        ZoneId.systemDefault()
+                    )
+                )
+            );
+            row.setDeletable(!itemManager.isLive(contentItem));
+            row.setFolder(false);
+            row.setFolderPath(itemManager.getItemPath(contentItem));
+            row.setLanguages(
+                new TreeSet<>(
+                    itemL10NManager
+                        .availableLanguages(contentItem)
+                        .stream()
+                        .map(Locale::toString)
+                        .collect(Collectors.toSet())
+                )
+            );
+            if (itemManager.isLive(contentItem)) {
+                final LocalDate draftLastModified = LocalDate.ofInstant(
+                    contentItem.getLastModified().toInstant(),
+                    ZoneId.systemDefault()
+                );
+                final LocalDate liveLastModified = LocalDate.ofInstant(
+                    itemManager
+                        .getLiveVersion(contentItem, contentItem.getClass())
+                        .map(ContentItem::getLastModified)
+                        .map(Date::toInstant)
+                        .get(),
+                    ZoneId.systemDefault()
+                );
+                row.setLastEditPublished(
+                    liveLastModified.isBefore(draftLastModified)
+                );
+            } else {
+                row.setLastEditPublished(false);
+            }
+
+            row.setLastEdited(
+                DateTimeFormatter.ISO_DATE.format(
+                    LocalDate.ofInstant(
+                        contentItem.getLastModified().toInstant(),
+                        ZoneId.systemDefault()
+                    )
+                )
+            );
+            row.setName(entry.getDisplayName());
+            row.setNoneCmsObject(false);
+            row.setTitle(
+                globalizationHelper.getValueFromLocalizedString(
+                    contentItem.getTitle()
+                )
+            );
+            row.setType(
+                contentTypeRepo
+                    .findByContentSectionAndClass(
+                        section, contentItem.getClass()
+                    )
+                    .map(ContentType::getLabel)
+                    .map(
+                        label -> globalizationHelper
+                            .getValueFromLocalizedString(
+                                label
+                            )
+                    ).orElse("?")
+            );
+            row.setPermissions(
+                documentPermissions.buildDocumentPermissionsModel(
+                    contentItem
+                )
+            );
+        }
+
+        return row;
+    }
+
+    private DocumentFolderRowModel buildDocumentFolderRowModel(
+        final ContentSection section, final ContentItem contentItem
+    ) {
+        Objects.requireNonNull(section);
+        Objects.requireNonNull(contentItem);
+
+        final DocumentFolderRowModel row = new DocumentFolderRowModel();
+        row.setCreated(
+            DateTimeFormatter.ISO_DATE.format(
+                LocalDate.ofInstant(
+                    contentItem.getCreationDate().toInstant(),
+                    ZoneId.systemDefault()
+                )
+            )
+        );
+        row.setDeletable(!itemManager.isLive(contentItem));
+        row.setFolder(false);
+        row.setFolderPath(itemManager.getItemPath(contentItem));
+        row.setLanguages(
+            new TreeSet<>(
+                itemL10NManager
+                    .availableLanguages(contentItem)
+                    .stream()
+                    .map(Locale::toString)
+                    .collect(Collectors.toSet())
+            )
+        );
+        if (itemManager.isLive(contentItem)) {
+            final LocalDate draftLastModified = LocalDate.ofInstant(
+                contentItem.getLastModified().toInstant(),
+                ZoneId.systemDefault()
+            );
+            final LocalDate liveLastModified = LocalDate.ofInstant(
+                itemManager
+                    .getLiveVersion(contentItem, contentItem.getClass())
+                    .map(ContentItem::getLastModified)
+                    .map(Date::toInstant)
+                    .get(),
+                ZoneId.systemDefault()
+            );
+            row.setLastEditPublished(
+                liveLastModified.isBefore(draftLastModified)
+            );
+        } else {
+            row.setLastEditPublished(false);
+        }
+
+        row.setLastEdited(
+            DateTimeFormatter.ISO_DATE.format(
+                LocalDate.ofInstant(
+                    contentItem.getLastModified().toInstant(),
+                    ZoneId.systemDefault()
+                )
+            )
+        );
+        row.setName(contentItem.getDisplayName());
+        row.setNoneCmsObject(false);
+        row.setTitle(
+            globalizationHelper.getValueFromLocalizedString(
+                contentItem.getTitle()
+            )
+        );
+        row.setType(
+            contentTypeRepo
+                .findByContentSectionAndClass(
+                    section, contentItem.getClass()
+                )
+                .map(ContentType::getLabel)
+                .map(
+                    label -> globalizationHelper
+                        .getValueFromLocalizedString(
+                            label
+                        )
+                ).orElse("?")
+        );
+        row.setPermissions(
+            documentPermissions.buildDocumentPermissionsModel(
+                contentItem
+            )
+        );
+
+        return row;
     }
 
 }
