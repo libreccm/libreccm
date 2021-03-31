@@ -18,27 +18,21 @@ import com.arsdigita.cms.CMS;
 
 import org.librecms.contentsection.ContentType;
 
-import com.arsdigita.cms.dispatcher.Utilities;
 import com.arsdigita.cms.ui.ContentSectionRequestLocal;
 import com.arsdigita.globalization.GlobalizedMessage;
-import com.arsdigita.ui.admin.GlobalizationUtil;
 
-import org.libreccm.security.Party;
 import org.libreccm.security.Role;
 
 import com.arsdigita.util.LockableImpl;
 
-import java.awt.image.Kernel;
 import java.util.List;
 
 import org.libreccm.cdi.utils.CdiUtil;
-import org.libreccm.security.Permission;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.RoleRepository;
 import org.librecms.CmsConstants;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.privileges.AdminPrivileges;
-import sun.security.util.SecurityConstants;
 
 import java.util.Iterator;
 

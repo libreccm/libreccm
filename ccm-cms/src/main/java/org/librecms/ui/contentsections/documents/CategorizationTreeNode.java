@@ -1,36 +1,85 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2021 LibreCCM Foundation.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package org.librecms.ui.contentsections.documents;
+
+import org.libreccm.categorization.Category;
+import org.libreccm.l10n.GlobalizationHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
+ * A node of a {@link CategorizationTree}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class CategorizationTreeNode {
-    
+
+    /**
+     * The ID of the {@link Category} represented by the node.
+     */
     private long categoryId;
-    
+
+    /**
+     * The UUID of the {@link Category} represented by the node.
+     */
     private String categoryUuid;
-    
+
+    /**
+     * The unique ID of the {@link Category} represented by the node.
+     */
     private String uniqueId;
-    
+
+    /**
+     * The name of the {@link Category} represented by the node.
+     */
     private String categoryName;
-    
+
+    /**
+     * The title of the {@link Category} represented by the node. This value is
+     * determined from {@link Category#title} using
+     * {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)}.
+     */
     private String title;
-    
+
+    /**
+     * The description of the {@link Category} represented by the node. This
+     * value is determined from {@link Category#description} using
+     * {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)}.
+     */
     private String description;
-    
+
+    /**
+     * Is the category assigned to the current content item?
+     */
     private boolean assigned;
-    
+
+    /**
+     * Is any subcategory of the category represented by this node assigned to
+     * the current content item?
+     */
     private boolean subCategoryAssigned;
-    
+
+    /**
+     * Nodes for the subcategories of the category represented by this node.
+     */
     private List<CategorizationTreeNode> subCategories;
 
     public long getCategoryId() {
@@ -45,7 +94,7 @@ public class CategorizationTreeNode {
         return categoryUuid;
     }
 
-    public void setCategoryUuid(final String  categoryUuid) {
+    public void setCategoryUuid(final String categoryUuid) {
         this.categoryUuid = categoryUuid;
     }
 
@@ -53,7 +102,7 @@ public class CategorizationTreeNode {
         return uniqueId;
     }
 
-    public void setUniqueId(final String  uniqueId) {
+    public void setUniqueId(final String uniqueId) {
         this.uniqueId = uniqueId;
     }
 
@@ -61,7 +110,7 @@ public class CategorizationTreeNode {
         return categoryName;
     }
 
-    public void setCategoryName(final String  categoryName) {
+    public void setCategoryName(final String categoryName) {
         this.categoryName = categoryName;
     }
 
@@ -69,7 +118,7 @@ public class CategorizationTreeNode {
         return title;
     }
 
-    public void setTitle(final String  title) {
+    public void setTitle(final String title) {
         this.title = title;
     }
 
@@ -77,7 +126,7 @@ public class CategorizationTreeNode {
         return description;
     }
 
-    public void setDescription(final String  description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -106,7 +155,5 @@ public class CategorizationTreeNode {
     ) {
         this.subCategories = new ArrayList<>(subCategories);
     }
-    
-    
-    
+
 }

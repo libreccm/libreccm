@@ -1,28 +1,70 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2021 LibreCCM Foundation.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package org.librecms.ui.contentsections.documents;
+
+import org.libreccm.categorization.Domain;
+import org.libreccm.l10n.GlobalizationHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
+ * A tree structure of a category system (domain) with markers for the
+ * categories assigned to the curent content item.
+ *
+ * @see CategorizationStep
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class CategorizationTree {
 
+    /**
+     * The domain key of the category system.
+     *
+     * @see Domain#domainKey
+     */
     private String domainKey;
 
+    /**
+     * The title of the domain. This value is determined from
+     * {@link Domain#title} using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }
+     */
     private String domainTitle;
 
+    /**
+     * The description of the domain. This value is determined from
+     * {@link Domain#description} using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }
+     */
     private String domainDescription;
 
+    /**
+     * The node for the root category of the domain.
+     */
     private CategorizationTreeNode root;
 
+    /**
+     * A list of the paths of the categories assigned to the current content
+     * item.
+     */
     private List<String> assignedCategories;
 
     public String getDomainKey() {

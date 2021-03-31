@@ -1,7 +1,20 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2021 LibreCCM Foundation.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package org.librecms.ui.contentsections.documents;
 
@@ -9,7 +22,6 @@ import org.libreccm.api.Identifier;
 import org.libreccm.api.IdentifierParser;
 import org.libreccm.categorization.Category;
 import org.libreccm.categorization.CategoryManager;
-import org.libreccm.categorization.CategoryRepository;
 import org.libreccm.categorization.Domain;
 import org.libreccm.categorization.DomainOwnership;
 import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
@@ -37,6 +49,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
+ * Authoring step for categorizing a {@link ContentItem}. The class is an EE MVC
+ * controller as well as a model for the view of the authoring step.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -53,9 +67,6 @@ public class CategorizationStep implements MvcAuthoringStep {
     private CategoryManager categoryManager;
 
     @Inject
-    private CategoryRepository categoryRepo;
-
-    @Inject
     private IdentifierParser identifierParser;
 
     @Inject
@@ -67,15 +78,27 @@ public class CategorizationStep implements MvcAuthoringStep {
     @Inject
     private Models models;
 
+    /**
+     * The current content section.
+     */
     private ContentSection section;
 
+    /**
+     * The current document.
+     */
     private ContentItem document;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Class<? extends ContentItem> supportedDocumentType() {
         return ContentItem.class;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getLabel() {
         return globalizationHelper
@@ -83,6 +106,9 @@ public class CategorizationStep implements MvcAuthoringStep {
             .getText("authoringsteps.categorization.label");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getDescription() {
         return globalizationHelper
@@ -90,58 +116,97 @@ public class CategorizationStep implements MvcAuthoringStep {
             .getText("authoringsteps.categorization.description");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getBundle() {
         return DefaultAuthoringStepConstants.BUNDLE;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ContentSection getContentSection() {
         return section;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setContentSection(final ContentSection section) {
         this.section = section;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getContentSectionLabel() {
         return section.getLabel();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getContentSectionTitle() {
         return globalizationHelper
             .getValueFromLocalizedString(section.getTitle());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ContentItem getContentItem() {
         return document;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setContentItem(final ContentItem document) {
         this.document = document;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getContentItemPath() {
         return itemManager.getItemPath(document);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getContentItemTitle() {
         return globalizationHelper
             .getValueFromLocalizedString(document.getTitle());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String showStep() {
         return "org/librecms/ui/documents/categorization.xhtml";
     }
 
+    /**
+     * Provides a tree view of the category system assigned to the current
+     * content section in an format which can be processed in MVC templates.
+     *
+     * The categories assigned to the current item as marked.
+     *
+     * @return Tree view of the category systems assigned to the current content
+     *         section.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     public List<CategorizationTree> getCategorizationTrees() {
         return section
@@ -152,6 +217,15 @@ public class CategorizationStep implements MvcAuthoringStep {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Update the categorization of the current item.
+     *
+     * @param domainIdentifierParam   The identifier for category system to use.
+     * @param assignedCategoriesParam The UUIDs of the categories assigned to
+     *                                the current content item.
+     *
+     * @return A redirect to the categorization step.
+     */
     @POST
     @Path("/{domainIdentifier}")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -215,6 +289,19 @@ public class CategorizationStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Helper method for updating the assigned categories of the current content
+     * item. If the current item is not assigned to a category included in the
+     * {@code assignedCategoriesParam} to category is assigned to the content
+     * item. Likewise, if a category is assigned to the current content item,
+     * but not included in the {@code assignedCategoriesParam} the catgory is
+     * removed from the current content item.
+     *
+     * @param category                A category
+     * @param assignedCategoriesParam The UUIDs of the categories which should
+     *                                be assigned to the current content item.
+     *
+     */
     private void updateAssignedCategories(
         final Category category,
         final Set<String> assignedCategoriesParam
@@ -234,6 +321,15 @@ public class CategorizationStep implements MvcAuthoringStep {
         }
     }
 
+    /**
+     * Helper method for building the {@link CategorizationTree} for a category
+     * system.
+     *
+     * @param domain The category system from which the
+     *               {@link CategorizationTree} is created.
+     *
+     * @return The {@link CategorizationTree} for the provided category system.
+     */
     private CategorizationTree buildCategorizationTree(final Domain domain) {
         final CategorizationTree tree = new CategorizationTree();
         tree.setDomainDescription(
@@ -255,6 +351,17 @@ public class CategorizationStep implements MvcAuthoringStep {
         return tree;
     }
 
+    /**
+     * Helper method for building a list of the categories assigned to the
+     * current content item.
+     *
+     * @param node       A {@link CategorizationTreeNode}
+     * @param parentPath The parent path of the category represented by the
+     *                   {@code node}.
+     *
+     * @return A list of paths of the categories assigned to the current content
+     *         item.
+     */
     private List<String> buildAssignedCategoriesList(
         final CategorizationTreeNode node, final String parentPath
     ) {
@@ -282,6 +389,15 @@ public class CategorizationStep implements MvcAuthoringStep {
         return assigned;
     }
 
+    /**
+     * Helper method for building the {@link CategorizationTreeNode} for a
+     * category.
+     *
+     * @param category The category from which the node is created.
+     *
+     * @return A {@link CategorizationTreeNode} for the provided
+     *         {@code category}.
+     */
     private CategorizationTreeNode buildCategorizationTreeNode(
         final Category category
     ) {
