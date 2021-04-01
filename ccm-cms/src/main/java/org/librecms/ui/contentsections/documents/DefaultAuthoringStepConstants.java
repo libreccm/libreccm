@@ -19,17 +19,21 @@
 package org.librecms.ui.contentsections.documents;
 
 /**
+ * Some constants shared by the default authoring steps.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public final class DefaultAuthoringStepConstants {
-    
+
     private DefaultAuthoringStepConstants() {
-        
+
     }
-    
-    
+
+    /**
+     * Fully qualified name of the bundle used for providing the labels and
+     * other localized resource of the default authoring steps.
+     */
     public static final String BUNDLE
         = "org.libreccms.ui.DefaultAuthoringStepsBundle";
-    
+
 }

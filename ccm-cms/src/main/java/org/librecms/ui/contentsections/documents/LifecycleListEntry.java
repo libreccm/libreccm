@@ -18,16 +18,33 @@
  */
 package org.librecms.ui.contentsections.documents;
 
+import org.libreccm.l10n.GlobalizationHelper;
+import org.librecms.lifecycle.LifecycleDefinition;
+
 /**
+ * Entry in the list of lifecycle definitions.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class LifecycleListEntry {
-    
+
+    /**
+     * The UUID of the lifecycle
+     */
     private String uuid;
-    
+
+    /**
+     * The label of the lifecycle. This value is determined from
+     * {@link LifecycleDefinition#label} using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }.
+     */
     private String label;
-    
+
+    /**
+     * The description of the lifecycle. This value is determined from
+     * {@link LifecycleDefinition#description} using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }.
+     */
     private String description;
 
     public String getLabel() {
@@ -53,7 +70,5 @@ public class LifecycleListEntry {
     public void setUuid(final String uuid) {
         this.uuid = uuid;
     }
-    
-    
-    
+
 }

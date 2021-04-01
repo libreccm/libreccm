@@ -18,22 +18,48 @@
  */
 package org.librecms.ui.contentsections.documents;
 
+import org.libreccm.l10n.GlobalizationHelper;
+import org.librecms.contentsection.ItemAttachment;
+
 /**
+ * A DTO for providing data about an {@link ItemAttachment} in a form suitable
+ * for a MVC view.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class ItemAttachmentDto {
 
+    /**
+     * The ID of the attachment.
+     */
     private long attachmentId;
 
+    /**
+     * The UUID of the attachment.
+     */
     private String uuid;
 
+    /**
+     * The sort key of the attachment.
+     */
     private long sortKey;
 
+    /**
+     * The type of the asset of the attachment.
+     */
     private String assetType;
 
+    /**
+     * The title of the asset assigned to an content item. This value is
+     * determined from the title of the asset using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }.
+     */
     private String title;
-    
+
+    /**
+     * An indicator if the attachment is containing an internal
+     * {@link RelatedLink}.
+     */
     private boolean internalLink;
 
     public long getAttachmentId() {
@@ -83,7 +109,5 @@ public class ItemAttachmentDto {
     public void setInternalLink(final boolean internalLink) {
         this.internalLink = internalLink;
     }
-    
-    
 
 }

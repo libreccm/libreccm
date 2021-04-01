@@ -29,7 +29,7 @@ import javax.inject.Qualifier;
 
 /**
  * Qualifier annotation for implementation of {@link MvcDocumentCreateStep} 
- * providing the type of the created document/content item. Used to select
+ * defining the type of the created document/content item. Used to select
  * the requested create step from all available implementations.
  * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>

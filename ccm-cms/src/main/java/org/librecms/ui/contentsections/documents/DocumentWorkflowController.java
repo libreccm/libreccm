@@ -46,6 +46,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
+ * Controller for managing the {@link Workflow} assigned to a
+ * {@link ContentItem}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -54,33 +56,70 @@ import javax.ws.rs.PathParam;
 @Controller
 public class DocumentWorkflowController {
 
+    /**
+     * Used to manage the tasks of the workflow.
+     */
     @Inject
     private AssignableTaskManager assignableTaskManager;
 
+    /**
+     * Used to retrieve the current content item.
+     */
     @Inject
     private ContentItemRepository itemRepo;
 
+    /**
+     * Common functions for controllers working with {@link ContentSection}s.
+     */
     @Inject
     private ContentSectionsUi sectionsUi;
 
+    /**
+     * Common functions for controllers working with {@link ContentItem}s.
+     */
     @Inject
     private DocumentUi documentUi;
 
+    /**
+     * {@link IdentifierParser} instance for parsing identifiers.
+     */
     @Inject
     private IdentifierParser identifierParser;
 
+    /**
+     * Used to check permissions for the current content item.
+     */
     @Inject
     private PermissionChecker permissionChecker;
 
+    /**
+     * Provides access to the properties of the select content item in the view.
+     */
     @Inject
     private SelectedDocumentModel selectedDocumentModel;
 
+    /**
+     * Used to provided data for the view without a named bean.
+     */
     @Inject
     private Models models;
 
+    /**
+     * Used to manage the workflow of a {@link ContentItem}.
+     */
     @Inject
     private WorkflowManager workflowManager;
 
+    /**
+     * Lock a task of a workflow.
+     *
+     * @param sectionIdentifier The identifier of the curent content section.
+     * @param documentPath      The path of the current document.
+     * @param taskIdentifier    The identifier of the task to lock.
+     * @param returnUrl         The URL to return to.
+     *
+     * @return A redirect to the {@code returnUrl}.
+     */
     @POST
     @Path("/tasks/${taskIdentifier}/@lock")
     @AuthorizationRequired
@@ -119,6 +158,16 @@ public class DocumentWorkflowController {
         return String.format("redirect:%s", returnUrl);
     }
 
+    /**
+     * Unlocks/releases a task.
+     *
+     * @param sectionIdentifier The identifier of the current content section.
+     * @param documentPath      The identifier of the current document.
+     * @param taskIdentifier    The identifier of the task to unlock.
+     * @param returnUrl         The URL to return to.
+     *
+     * @return A redirect to the {@code returnUrl}.
+     */
     @POST
     @Path("/tasks/${taskIdentifier}/@unlock")
     @AuthorizationRequired
@@ -157,6 +206,17 @@ public class DocumentWorkflowController {
         return String.format("redirect:%s", returnUrl);
     }
 
+    /**
+     * Finishes a task.
+     *
+     * @param sectionIdentifier The identifier of the current content section.
+     * @param documentPath      The path of the current document.
+     * @param taskIdentifier    The identifier of task to finish.
+     * @param comment           A comment to add to the task.
+     * @param returnUrl         The URL to return to.
+     *
+     * @return A redirect to the {@code returnUrl}.
+     */
     @POST
     @Path("/tasks/${taskIdentifier}/@finish")
     @AuthorizationRequired
@@ -200,6 +260,17 @@ public class DocumentWorkflowController {
         return String.format("redirect:%s", returnUrl);
     }
 
+    /**
+     * Apply another workflow to a content item.
+     *
+     * @param sectionIdentifier The identifier of the current content section.
+     * @param documentPath      The path of the currentd document.
+     * @param newWorkflowUuid   The UUID of the the workflow definition form
+     *                          which the new workflow is created.
+     * @param returnUrl         The URL to return to.
+     *
+     * @return A redirect to the {@code returnUrl}.
+     */
     @POST
     @Path("@workflow/@applyAlternative/{workflowIdentifier}")
     @AuthorizationRequired
@@ -248,6 +319,15 @@ public class DocumentWorkflowController {
         return String.format("redirect:%s", returnUrl);
     }
 
+    /**
+     * Restarts the workflow assigned to an content item.
+     *
+     * @param sectionIdentifier The identifier of the current content section.
+     * @param documentPath      The path of the current document.
+     * @param returnUrl         The URL to return to.
+     *
+     * @return A redirect to the {@code returnUrl}.
+     */
     @POST
     @Path("/@restart")
     @AuthorizationRequired
@@ -287,6 +367,17 @@ public class DocumentWorkflowController {
         return String.format("redirect:%s", returnUrl);
     }
 
+    /**
+     * Helper method to find a specific task of the current workflow of a
+     * content item.
+     *
+     * @param item           The content item.
+     * @param taskIdentifier The identifier of the task.
+     *
+     * @return An {@link Optional} with the task identified by the provided
+     *         {@code taskIdentifier} or an empty {@link Optional} if no such
+     *         task could be found.
+     */
     private Optional<AssignableTask> findTask(
         final ContentItem item,
         final String taskIdentifier
@@ -324,6 +415,15 @@ public class DocumentWorkflowController {
         }
     }
 
+    /**
+     * Helper method for showing the "task not found" error message.
+     *
+     * @param section
+     * @param documentPath
+     * @param taskIdentifier
+     *
+     * @return
+     */
     private String showTaskNotFound(
         final ContentSection section,
         final String documentPath,

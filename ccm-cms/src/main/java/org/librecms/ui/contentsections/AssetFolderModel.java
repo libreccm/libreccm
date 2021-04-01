@@ -14,7 +14,7 @@ import javax.inject.Named;
 
 /**
  * Model for the current asset folder. Provides data about the folder for the 
- * template.
+ * view template.
  * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

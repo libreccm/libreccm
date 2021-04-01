@@ -25,12 +25,16 @@ import javax.inject.Inject;
 import javax.mvc.Models;
 
 /**
- *
+ * Provides common functions used by several controllers.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 class DocumentUi {
 
+    /**
+     * Used to provide data for the views without a named bean.
+     */
     @Inject
     private Models models;
 

@@ -29,13 +29,16 @@ import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.FolderRepository;
 import org.librecms.contentsection.FolderType;
 import org.librecms.contentsection.privileges.ItemPrivileges;
+import org.librecms.lifecycle.Lifecycle;
 import org.librecms.lifecycle.LifecycleDefinition;
 import org.librecms.lifecycle.Phase;
 import org.librecms.ui.contentsections.ContentSectionsUi;
+import org.librecms.ui.contentsections.DocumentFolderController;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -44,7 +47,6 @@ import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.transaction.Transactional;
@@ -56,6 +58,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
+ * Controller for the UI for managing documents ({@link ContentItem}s.)
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -64,42 +67,92 @@ import javax.ws.rs.PathParam;
 @Controller
 public class DocumentController {
 
+    /**
+     * Item manager instance for performing operations on {@link ContentItem}s.
+     */
     @Inject
     private ContentItemManager itemManager;
 
+    /**
+     * {@link ContentSectionsUi} instance providing for helper functions for
+     * dealing with {@link ContentSection}s.
+     */
     @Inject
     private ContentSectionsUi sectionsUi;
 
+    /**
+     * {@link DocumentUi} instance providing some common functions for managing
+     * documents.
+     */
     @Inject
     private DocumentUi documentUi;
 
+    /**
+     * {@link FolderRepository} instance for retrieving folders.
+     */
     @Inject
     private FolderRepository folderRepo;
 
+    /**
+     * {@link ContentItemRepository} instance for retrieving content items.
+     */
     @Inject
     private ContentItemRepository itemRepo;
 
+    /**
+     * All available {@link MvcAuthoringStep}s.
+     */
     @Inject
     private Instance<MvcAuthoringStep> authoringSteps;
 
+    /**
+     * All available {@link MvcDocumentCreateStep}s.
+     */
     @Inject
     private Instance<MvcDocumentCreateStep<?>> createSteps;
 
+    /**
+     * {@link GlobalizationHelper} for working with localized texts etc.
+     */
     @Inject
     private GlobalizationHelper globalizationHelper;
 
+    /**
+     * Used to make avaiable in the views without a named bean.
+     */
     @Inject
     private Models models;
 
+    /**
+     * Used to check permissions on content items.
+     */
     @Inject
     private PermissionChecker permissionChecker;
 
+    /**
+     * Model for the {@link PublishStep}.
+     */
     @Inject
     private PublishStepModel publishStepModel;
 
+    /**
+     * Named beans providing access to the properties of the selected document
+     * (content item} from the view.
+     */
     @Inject
     private SelectedDocumentModel selectedDocumentModel;
 
+    /**
+     * Redirect requests to the root path of this controller to the
+     * {@link DocumentFolderController}. The root path of this controller has no
+     * function. We assume that somebody who access the root folders wants to
+     * browse all documents in the content section. Therefore we redirect these
+     * requests to the {@link DocumentFolderController}.
+     *
+     * @param sectionIdentifier The identififer of the current content section.
+     *
+     * @return A redirect to the {@link DocumentFolderController}.
+     */
     @GET
     @Path("/")
     @AuthorizationRequired
@@ -113,6 +166,16 @@ public class DocumentController {
         );
     }
 
+    /**
+     * Delegates requests for the path {@code @create} to the create step
+     * (subresource) of the document type. The new document will be created in
+     * the root folder of the current content section.
+     *
+     * @param sectionIdentifier The identifier of the current content section.
+     * @param documentType      The type of the document to create.
+     *
+     * @return The create step subresource.
+     */
     @Path("/@create/{documentType}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
@@ -123,6 +186,17 @@ public class DocumentController {
         return createDocument(sectionIdentifier, "", documentType);
     }
 
+    /**
+     * Delegates requests for the path {@code @create} to the create step
+     * (subresource) of the document type.
+     *
+     * @param sectionIdentifier The identifier of the current content section.
+     * @param folderPath        Path of the folder in which the new document is
+     *                          created.
+     * @param documentType      The type of the document to create.
+     *
+     * @return The create step subresource.
+     */
     @Path("/{folderPath:(.+)?}/@create/{documentType}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
@@ -195,6 +269,16 @@ public class DocumentController {
         return createStep;
     }
 
+    /**
+     * Redirects to the first authoring step for the document identified by the
+     * provided path.
+     *
+     * @param sectionIdentifier The identifier of the current content section.
+     * @param documentPath      The path of the document.
+     *
+     * @return A redirect to the first authoring step of the document, or the
+     *         {@link DocumentNotFound} pseudo authoring step.
+     */
     @Path("/{documentPath:(.+)?}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
@@ -225,6 +309,18 @@ public class DocumentController {
         );
     }
 
+    /**
+     * Redirect requests for an authoring step to the subresource of the
+     * authoring step.
+     *
+     * @param sectionIdentifier       The identifier of the current content
+     *                                section.
+     * @param documentPath            The path of the document to edit.
+     * @param authoringStepIdentifier The identifier/path fragment of the
+     *                                authoring step.
+     *
+     * @return The authoring step subresource.
+     */
     @Path("/{documentPath:(.+)?}/@authoringsteps/{authoringStep}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
@@ -274,7 +370,7 @@ public class DocumentController {
         }
 
         models.put("authoringStep", authoringStepIdentifier);
-        
+
         selectedDocumentModel.setContentItem(item);
 
         authoringStep.setContentSection(section);
@@ -283,6 +379,14 @@ public class DocumentController {
         return authoringStep;
     }
 
+    /**
+     * Show the document history page.
+     *
+     * @param sectionIdentifier The identifier of the current content section.
+     * @param documentPath      The path of the document.
+     *
+     * @return The template for the document history page.
+     */
     @POST
     @Path("/{documentPath:(.+)?}/@history")
     @AuthorizationRequired
@@ -320,6 +424,14 @@ public class DocumentController {
         return "org/librecms/ui/contentsection/documents/history.xhtml";
     }
 
+    /**
+     * Shows the publish step for the current document.
+     *
+     * @param sectionIdentifier The identifier of the current content section.
+     * @param documentPath      The path of the document to publish.
+     *
+     * @return The template for the publish step.
+     */
     @GET
     @Path("/{documentPath:(.+)?}/@publish")
     @AuthorizationRequired
@@ -355,22 +467,32 @@ public class DocumentController {
                 .map(this::buildLifecycleListEntry)
                 .collect(Collectors.toList())
         );
-        if (item.getLifecycle() != null) {
-            publishStepModel.setPhases(
-                item
-                    .getLifecycle()
-                    .getPhases()
-                    .stream()
-                    .map(this::buildPhaseListEntry)
-                    .collect(Collectors.toList())
-            );
-        }
-        
+        publishStepModel.setPhases(
+            Optional
+                .ofNullable(item.getLifecycle())
+                .map(Lifecycle::getPhases)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(this::buildPhaseListEntry)
+                .collect(Collectors.toList())
+        );
+
         models.put("authoringStep", "publish");
 
         return "org/librecms/ui/contentsection/documents/publish.xhtml";
     }
 
+    /**
+     * Published a document.
+     *
+     * @param sectionIdentifier     The identifier of the current content
+     *                              section.
+     * @param documentPath          The path of the document to publish.
+     * @param selectedLifecycleUuid The UUID of the lifecycle selected for the
+     *                              document.
+     *
+     * @return A redirect to the publish step (redirect after POST pattern).
+     */
     @POST
     @Path("/{documentPath:(.+)?}/@publish")
     @AuthorizationRequired
@@ -426,6 +548,14 @@ public class DocumentController {
         );
     }
 
+    /**
+     * Republishes a document.
+     *
+     * @param sectionIdentifier The identifier of the current content section.
+     * @param documentPath      The path of the document to republish.
+     *
+     * @return A redirect to the publish step (redirect after POST pattern).
+     */
     @POST
     @Path("/{documentPath:(.+)?}/@republish")
     @AuthorizationRequired
@@ -463,6 +593,14 @@ public class DocumentController {
         );
     }
 
+    /**
+     * Unpublishes a document.
+     *
+     * @param sectionIdentifier The identifier of the current content section.
+     * @param documentPath      The path of the document to unpublish.
+     *
+     * @return A redirect to the publish step (redirect after POST pattern).
+     */
     @POST
     @Path("/{documentPath:(.+)?}/@publish")
     @AuthorizationRequired
@@ -500,6 +638,14 @@ public class DocumentController {
         );
     }
 
+    /**
+     * Helper method for reading the authoring steps for the current content
+     * item.
+     *
+     * @param item The content item.
+     *
+     * @return A list of authoring steps for the provided item.
+     */
     private List<MvcAuthoringStep> readAuthoringSteps(
         final ContentItem item
     ) {
@@ -518,9 +664,17 @@ public class DocumentController {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Helper method for finding the path fragment for the first authoring step
+     * for a content item.
+     *
+     * @param item The content item.
+     *
+     * @return The path fragment of the first authoring step of the item.
+     */
     private String findPathFragmentForFirstStep(final ContentItem item) {
         final List<MvcAuthoringStep> steps = readAuthoringSteps(item);
-        
+
         final MvcAuthoringStep firstStep = steps.get(0);
         final AuthoringStepPathFragment pathFragment = firstStep
             .getClass()
@@ -528,6 +682,16 @@ public class DocumentController {
         return pathFragment.value();
     }
 
+    /**
+     * Helper method for building an entry in the list of lifecycles for the
+     * view.
+     *
+     * @param definition The lifecycle definition from which the entry is
+     *                   created.
+     *
+     * @return A {@link LifecycleListEntry} for the provided
+     *         {@link LifecycleDefinition}.
+     */
     private LifecycleListEntry buildLifecycleListEntry(
         final LifecycleDefinition definition
     ) {
@@ -546,6 +710,14 @@ public class DocumentController {
         return entry;
     }
 
+    /**
+     * Builds a {@link PhaseListEntry} for displaying the phases of a
+     * {@link Lifecycle}.
+     *
+     * @param phase The phase from which the entry is created.
+     *
+     * @return A {@link PhaseListEntry} for the provided {@link Phase}.
+     */
     private PhaseListEntry buildPhaseListEntry(final Phase phase) {
         final DateTimeFormatter dateTimeFormatter
             = DateTimeFormatter.ISO_DATE_TIME
@@ -573,6 +745,10 @@ public class DocumentController {
         return entry;
     }
 
+    /**
+     * An annotation literal used to retrieve the create step for a specific
+     * content type.
+     */
     private static class CreateDocumentOfTypeLiteral
         extends AnnotationLiteral<CreatesDocumentOfType>
         implements CreatesDocumentOfType {
@@ -594,6 +770,10 @@ public class DocumentController {
 
     }
 
+    /**
+     * An annotation literal for retrieving the authoring step with a specific
+     * path fragment.
+     */
     private static class AuthoringStepPathFragmentLiteral
         extends AnnotationLiteral<AuthoringStepPathFragment>
         implements AuthoringStepPathFragment {

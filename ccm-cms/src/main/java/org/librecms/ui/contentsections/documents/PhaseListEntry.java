@@ -18,24 +18,53 @@
  */
 package org.librecms.ui.contentsections.documents;
 
+import org.libreccm.l10n.GlobalizationHelper;
+import org.librecms.lifecycle.PhaseDefinition;
+
 /**
+ * Entry in the list of phases of a lifecycle.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class PhaseListEntry {
 
+    /**
+     * The ID of the phase.
+     */
     private long phaseId;
 
+    /**
+     * The label of the phase. This value is determined from the label of the
+     * {@link PhaseDefinition} of the phase using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }.
+     */
     private String label;
 
+    /**
+     * The description of the phase. This value is determined from the description of the
+     * {@link PhaseDefinition} of the phase using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }.
+     */
     private String description;
 
+    /**
+     * Has the phase already started?
+     */
     private boolean started;
 
+    /**
+     * Is the phase finished?
+     */
     private boolean finished;
 
+    /**
+     * The start date and time of the phase.
+     */
     private String startDateTime;
 
+    /**
+     * The end date and time of the phase.
+     */
     private String endDateTime;
 
     public String getLabel() {

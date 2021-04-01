@@ -18,26 +18,56 @@
  */
 package org.librecms.ui.contentsections.documents;
 
+import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.workflow.Task;
 import org.libreccm.workflow.TaskState;
+import org.librecms.contentsection.ContentItem;
 
 /**
+ * An entry in the list of tasks of the workflow assigned to an
+ * {@link ContentItem}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class TaskListEntry {
 
+    /**
+     * The UUID of the task.
+     */
     private String taskUuid;
 
+    /**
+     * The label of the task. This value is determined from {@link Task#label}
+     * using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }.
+     */
     private String label;
 
+    /**
+     * The description of the task. This value is determined from
+     * {@link Task#description} using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }.
+     */
     private String description;
 
+    /**
+     * The state of the task.
+     */
     private TaskState taskState;
 
+    /**
+     * Is the task the current task?
+     */
     private boolean currentTask;
 
+    /**
+     * Is the task assigned to the current user?
+     */
     private boolean assignedToCurrentUser;
 
+    /**
+     * Is the task locked?
+     */
     private boolean locked;
 
     public String getTaskUuid() {

@@ -26,15 +26,22 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 /**
- *
+ * Model providing some data for the views of the {@link PublishStep}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 @Named("CmsDocumentPublishStepModel")
 public class PublishStepModel {
 
+    /**
+     * A list of the available lifecycles.
+     */
     private List<LifecycleListEntry> availableListcycles;
 
+    /**
+     * The phases of the lifecycle assigned to the current content item.
+     */
     private List<PhaseListEntry> phases;
 
     public PublishStepModel() {

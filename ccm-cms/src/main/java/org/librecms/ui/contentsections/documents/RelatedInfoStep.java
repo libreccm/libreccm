@@ -18,6 +18,8 @@
  */
 package org.librecms.ui.contentsections.documents;
 
+import com.arsdigita.kernel.KernelConfig;
+
 import org.libreccm.api.Identifier;
 import org.libreccm.api.IdentifierParser;
 import org.libreccm.l10n.GlobalizationHelper;
@@ -29,7 +31,6 @@ import org.librecms.contentsection.AssetFolderEntry;
 import org.librecms.contentsection.AssetManager;
 import org.librecms.contentsection.AssetRepository;
 import org.librecms.contentsection.AttachmentList;
-import org.librecms.contentsection.AttachmentListL10NManager;
 import org.librecms.contentsection.AttachmentListManager;
 import org.librecms.contentsection.AttachmentListRepository;
 import org.librecms.contentsection.ContentItem;
@@ -85,6 +86,13 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 /**
+ * Authoring step for managing the {@link AttachmentList} and
+ * {@link ItemAttachment}s assigned to a {@link ContentItem}.
+ *
+ * This class acts as controller for several views as well as named bean that
+ * provides data for these views. Some of the views of the step use JavaScript
+ * enhanced widgets. Therefore, some of the paths/endpoints provided by this
+ * class return JSON data.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -95,8 +103,14 @@ import javax.ws.rs.core.MediaType;
 @Named("CmsRelatedInfoStep")
 public class RelatedInfoStep implements MvcAuthoringStep {
 
+    /**
+     * The path fragment of the step.
+     */
     static final String PATH_FRAGMENT = "relatedinfo";
 
+    /**
+     * The asset folder tree of the current content section.
+     */
     @Inject
     private AssetFolderTree assetFolderTree;
 
@@ -106,68 +120,128 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Inject
     private AssetPermissionsModelProvider assetPermissions;
 
+    /**
+     * {@link AssetManager} instance of managing {@link Asset}s.
+     */
     @Inject
     private AssetManager assetManager;
 
+    /**
+     * Used to retrieve and save {@link Asset}s.
+     */
     @Inject
     private AssetRepository assetRepo;
 
+    /**
+     * Provides access to the available asset types.
+     */
     @Inject
     private AssetTypesManager assetTypesManager;
 
+    /**
+     * Model for the details view of an {@link AttachmentList}.
+     */
     @Inject
     private AttachmentListDetailsModel listDetailsModel;
 
+    /**
+     * Manager for {@link AttachmentList}s.
+     */
     @Inject
     private AttachmentListManager listManager;
 
-    @Inject
-    private AttachmentListL10NManager listL10NManager;
-
+    /**
+     * Used to retrieve and save {@link AttachmentList}s.
+     */
     @Inject
     private AttachmentListRepository listRepo;
 
+    /**
+     * The document folder tree of the current content section.
+     */
     @Inject
     private DocumentFolderTree documentFolderTree;
 
+    /**
+     * Used to check permissions of the current content item.
+     */
     @Inject
     private DocumentPermissions documentPermissions;
 
+    /**
+     * Used to retrieve the path of folders.
+     */
     @Inject
     private FolderManager folderManager;
 
+    /**
+     * Used to retrieve folders.
+     */
     @Inject
     private FolderRepository folderRepo;
 
+    /**
+     * Model for the details view of an internal {@link RelatedLink}.
+     */
     @Inject
     private InternalLinkDetailsModel internalLinkDetailsModel;
 
+    /**
+     * Manages localization of {@link ContentItem}s.
+     */
     @Inject
     private ContentItemL10NManager itemL10NManager;
 
+    /**
+     * Manages {@link ContentItem}s.
+     */
     @Inject
     private ContentItemManager itemManager;
 
+    /**
+     * Used to retrieve the current content item.
+     */
     @Inject
     private ContentItemRepository itemRepo;
 
+    /**
+     * Used to retrieve content types.
+     */
     @Inject
     private ContentTypeRepository contentTypeRepo;
 
+    /**
+     * Used for globalization stuff.
+     */
     @Inject
     private GlobalizationHelper globalizationHelper;
 
+    /**
+     * Used to parse identifiers.
+     */
     @Inject
     private IdentifierParser identifierParser;
 
+    /**
+     * Manages {@link ItemAttachment}.
+     */
     @Inject
     private ItemAttachmentManager attachmentManager;
 
+    /**
+     * Used to provide data for the views without a named bean.
+     */
     @Inject
     private Models models;
 
+    /**
+     * The current document/content item.
+     */
     private ContentItem document;
 
+    /**
+     * The current content section.
+     */
     private ContentSection section;
 
     @Override
@@ -241,6 +315,13 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         return "org/librecms/ui/documents/relatedinfo.xhtml";
     }
 
+    /**
+     * Gets the {@link AttachmentList}s of the current content item and converts
+     * them to {@link AttachmentListDto}s to make data about the lists available
+     * in the views.
+     *
+     * @return A list of the {@link AttachmentList} of the current content item.
+     */
     @Transactional(Transactional.TxType.REQUIRED)
     public List<AttachmentListDto> getAttachmentLists() {
         return document
@@ -251,6 +332,12 @@ public class RelatedInfoStep implements MvcAuthoringStep {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Gets the asset folder tree of the current content section as JSON data.
+     *
+     * @return The assets folder tree of the current content section as JSON
+     *         data.
+     */
     @GET
     @Path("/asset-folders")
     @Produces(MediaType.APPLICATION_JSON)
@@ -261,6 +348,17 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Gets the assets in the folder as JSON data.
+     *
+     * @param folderPath  The path of the folder.
+     * @param firstResult The index of the firset result to show.
+     * @param maxResults  The maximum number of results to show.
+     * @param filterTerm  An optional filter term for filtering the assets in
+     *                    the folder by their name.
+     *
+     * @return A list of the assets in the folder as JSON data.
+     */
     @GET
     @Path("/asset-folders/{folderPath}/assets")
     @Produces(MediaType.APPLICATION_JSON)
@@ -293,6 +391,16 @@ public class RelatedInfoStep implements MvcAuthoringStep {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Show all assets of a content section filtered by their name.
+     *
+     * @param firstResult The index of the first result to show.
+     * @param maxResults  The maximum number of results to show.
+     * @param searchTerm  An optional search term applied to the names of the
+     *                    assets.
+     *
+     * @return A list of matching assets as JSON.
+     */
     @GET
     @Path("/search-assets")
     @Produces(MediaType.APPLICATION_JSON)
@@ -309,6 +417,13 @@ public class RelatedInfoStep implements MvcAuthoringStep {
 
     }
 
+    /**
+     * Gets the document folder tree of the current content section as JSON
+     * data.
+     *
+     * @return The document folder tree of the current content section as JSON
+     *         data.
+     */
     @GET
     @Path("/document-folders")
     @Produces(MediaType.APPLICATION_JSON)
@@ -319,6 +434,17 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Gets the documents in the folder as JSON data.
+     *
+     * @param folderPath  The path of the folder.
+     * @param firstResult The index of the firset result to show.
+     * @param maxResults  The maximum number of results to show.
+     * @param filterTerm  An optional filter term for filtering the documents in
+     *                    the folder by their name.
+     *
+     * @return A list of the documents in the folder as JSON data.
+     */
     @GET
     @Path("/document-folders/{folderPath}/documents")
     @Produces(MediaType.APPLICATION_JSON)
@@ -355,6 +481,16 @@ public class RelatedInfoStep implements MvcAuthoringStep {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Show all documents of a content section filtered by their name.
+     *
+     * @param firstResult The index of the first result to show.
+     * @param maxResults  The maximum number of results to show.
+     * @param searchTerm  An optional search term applied to the names of the
+     *                    docuemnts.
+     *
+     * @return A list of matching documents/content items as JSON.
+     */
     @GET
     @Path("/search-documents")
     @Produces(MediaType.APPLICATION_JSON)
@@ -370,6 +506,16 @@ public class RelatedInfoStep implements MvcAuthoringStep {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Adds a new attachment list.
+     *
+     * @param name        The name of the list.
+     * @param title       The title of the list for the language returned by {@link GlobalizationHelper#getNegotiatedLocale()
+     *                    } .
+     * @param description The description of the list of the default locale {@link GlobalizationHelper#getNegotiatedLocale().
+     *
+     * @return A redirect to the list of attachment lists.
+     */
     @POST
     @Path("/attachmentlists/@add")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -397,6 +543,13 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Shows the details of an attachment list.
+     *
+     * @param listIdentifierParam The identifier of the list.
+     *
+     * @return The template for the details view.
+     */
     @GET
     @Path("/attachmentlists/{attachmentListIdentifier}/@details")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -415,6 +568,14 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         return "org/librecms/ui/documents/relatedinfo-attachmentlist-details.xhtml";
     }
 
+    /**
+     * Updates an attachment list.
+     *
+     * @param listIdentifierParam The identifier of the list to update.
+     * @param name                The new name of the list.
+     *
+     * @return A redirect to the list of attachment lists.
+     */
     @POST
     @Path("/attachmentlists/{attachmentListIdentifier}/@update")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -442,6 +603,16 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Removes an attachment list and all item attachment of the list.
+     *
+     * @param listIdentifierParam The identifier of the list to remove.
+     * @param confirm             The value of the confirm parameter. Must
+     *                            contain {@code true} (as string not as
+     *                            boolean), otherwise this method does nothing.
+     *
+     * @return A redirect to the list of attachment lists.
+     */
     @POST
     @Path("/attachmentlists/{attachmentListIdentifier}/@remove")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -468,6 +639,15 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Adds a localized title to an attachment list.
+     *
+     * @param listIdentifierParam The identifier of the list.
+     * @param localeParam         The locale of the new title value.
+     * @param value               The value of the new title value.
+     *
+     * @return A redirect to the details view of the attachment list.
+     */
     @POST
     @Path("/attachmentlists/{attachmentListIdentifier}/title/@add")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -496,6 +676,15 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Updates a localized title value of an attachment list.
+     *
+     * @param listIdentifierParam The identifier of the list.
+     * @param localeParam         The locale of the title value to update.
+     * @param value               The new title value.
+     *
+     * @return A redirect to the details view of the attachment list.
+     */
     @POST
     @Path("/attachmentlists/{attachmentListIdentifier}/title/@edit/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -524,13 +713,20 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Removes a localized title value of an attachment list.
+     *
+     * @param listIdentifierParam The identifier of the list.
+     * @param localeParam         The locale of the title value to remove.
+     *
+     * @return A redirect to the details view of the attachment list.
+     */
     @POST
     @Path("/attachmentlists/{attachmentListIdentifier}/title/@remove/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeAttachmentListTitle(
         @PathParam("attachmentListIdentifier") final String listIdentifierParam,
-        @PathParam("locale") final String localeParam,
-        @FormParam("value") final String value
+        @PathParam("locale") final String localeParam
     ) {
         final Optional<AttachmentList> listResult = findAttachmentList(
             listIdentifierParam
@@ -552,6 +748,15 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Adds a localized description to an attachment list.
+     *
+     * @param listIdentifierParam The identifier of the list.
+     * @param localeParam         The locale of the new description value.
+     * @param value               The value of the new description value.
+     *
+     * @return A redirect to the details view of the attachment list.
+     */
     @POST
     @Path("/attachmentlists/{attachmentListIdentifier}/description/@add")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -580,6 +785,15 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Updates a localized description value of an attachment list.
+     *
+     * @param listIdentifierParam The identifier of the list.
+     * @param localeParam         The locale of the description value to update.
+     * @param value               The new description value.
+     *
+     * @return A redirect to the details view of the attachment list.
+     */
     @POST
     @Path(
         "/attachmentlists/{attachmentListIdentifier}/description/@edit/{locale}")
@@ -609,14 +823,21 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Removes a localized description value of an attachment list.
+     *
+     * @param listIdentifierParam The identifier of the list.
+     * @param localeParam         The locale of the description value to remove.
+     *
+     * @return A redirect to the details view of the attachment list.
+     */
     @POST
     @Path(
         "/attachmentlists/{attachmentListIdentifier}/description/@remove/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeAttachmentListDescription(
         @PathParam("attachmentListIdentifier") final String listIdentifierParam,
-        @PathParam("locale") final String localeParam,
-        @FormParam("value") final String value
+        @PathParam("locale") final String localeParam
     ) {
         final Optional<AttachmentList> listResult = findAttachmentList(
             listIdentifierParam
@@ -638,6 +859,15 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Create new attachment.
+     *
+     * @param listIdentifierParam The identifier of the list to which the
+     *                            attachment is added.
+     * @param assetUuid           The asset to use for the attachment.
+     *
+     * @return A redirect to the list of attachment lists and attachments.
+     */
     @POST
     @Path("/attachmentlists/{attachmentListIdentifier}/attachments")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -673,6 +903,14 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Shows the form for creating a new internal link.
+     *
+     * @param listIdentifierParam The identifier of the list to which the
+     *                            attachment is added.
+     *
+     * @return The template for the form for creating a new internal link.
+     */
     @GET
     @Path("/attachmentlists/{attachmentListIdentifier}/internal-links/@create")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -692,6 +930,19 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         return "org/librecms/ui/documents/relatedinfo-create-internallink.xhtml";
     }
 
+    /**
+     * Create a new internal link.
+     *
+     * @param listIdentifierParam The identifier of the list to which the
+     *                            attachment is added.
+     * @param targetItemUuid      The UUID of the target item of the internal
+     *                            link.
+     * @param title               The title of the new internal link for the
+     *                            language return by {@link GlobalizationHelper#getNegotiatedLocale()
+     *                            }.
+     *
+     * @return A redirect to the list of attachment lists and attachments.
+     */
     @POST
     @Path("/attachmentlists/{attachmentListIdentifier}/internal-links/@create")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -732,6 +983,17 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Show the details of an internal link.
+     *
+     * @param listIdentifierParam The identifier of the {@link AttachmentList}
+     *                            to which the link belongs.
+     * @param internalLinkUuid    The UUID of the link.
+     *
+     * @return The template for the details view of the link, or the template
+     *         for the link not found message if the link iwth the provided UUID
+     *         is found in the provided attachment list.
+     */
     @GET
     @Path(
         "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}/@details")
@@ -772,6 +1034,16 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         return "org/librecms/ui/documents/relatedinfo-internallink-details.xhtml";
     }
 
+    /**
+     * Updates the target of an internal link.
+     *
+     * @param listIdentifierParam The identifier of the {@link AttachmentList}
+     *                            to which the link belongs.
+     * @param internalLinkUuid    The UUID of the link.
+     * @param targetItemUuid      The UUID of the new target item.
+     *
+     * @return A redirect to the details view of the link.
+     */
     @POST
     @Path(
         "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}"
@@ -827,6 +1099,17 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Add a localized title value to an internal link.
+     *
+     * @param listIdentifierParam The identifier of the {@link AttachmentList}
+     *                            to which the link belongs.
+     * @param internalLinkUuid    The UUID of the link.
+     * @param localeParam         The locale of the new title value.
+     * @param value               The localized value.
+     *
+     * @return A redirect to the details view of the link.
+     */
     @POST
     @Path(
         "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}/title/@add")
@@ -875,6 +1158,17 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Updates a localized title value of an internal link.
+     *
+     * @param listIdentifierParam The identifier of the {@link AttachmentList}
+     *                            to which the link belongs.
+     * @param internalLinkUuid    The UUID of the link.
+     * @param localeParam         The locale of the title value to update.
+     * @param value               The localized value.
+     *
+     * @return A redirect to the details view of the link.
+     */
     @POST
     @Path(
         "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}/title/@edit/{locale}")
@@ -923,6 +1217,16 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Removes a localized title value from an internal link.
+     *
+     * @param listIdentifierParam The identifier of the {@link AttachmentList}
+     *                            to which the link belongs.
+     * @param internalLinkUuid    The UUID of the link.
+     * @param localeParam         The locale of the value to remove.
+     *
+     * @return A redirect to the details view of the link.
+     */
     @POST
     @Path(
         "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}/title/@remove/{locale}"
@@ -971,6 +1275,19 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Removes an attachment from an {@link AttachmentList}. The {@link Asset}
+     * of the attachment will not be deleted unless it is a related link.
+     *
+     * @param listIdentifierParam The identifier of the {@link AttachmentList}
+     *                            to which the attachment belongs.
+     * @param attachmentUuid      The UUID of the attachment to remove.
+     * @param confirm             The value of the {@code confirm} parameter. If
+     *                            the value anything other than the string
+     *                            {@code true} the method does nothing.
+     *
+     * @return
+     */
     @POST
     @Path(
         "/attachmentlists/{attachmentListIdentifier}/attachments/{attachmentUuid}/@remove")
@@ -1012,6 +1329,13 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Move an attachment list one position up.
+     *
+     * @param listIdentifierParam The identifer of the list to move.
+     *
+     * @return A redirect to list of attachment lists.
+     */
     @POST
     @Path(
         "/attachmentlists/{attachmentListIdentifier}/@moveUp")
@@ -1038,6 +1362,13 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Move an attachment list one position down.
+     *
+     * @param listIdentifierParam The identifer of the list to move.
+     *
+     * @return A redirect to list of attachment lists.
+     */
     @POST
     @Path(
         "/attachmentlists/{attachmentListIdentifier}/@moveDown")
@@ -1064,6 +1395,14 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Move an attachment one position up.
+     *
+     * @param listIdentifierParam The identifer to which the attachment belongs.
+     * @param attachmentUuid      The UUID of the attachment ot move.
+     *
+     * @return A redirect to list of attachment lists and attachments.
+     */
     @POST
     @Path(
         "/attachmentlists/{attachmentListIdentifier}/attachments/{attachmentUuid}/@moveUp")
@@ -1101,6 +1440,14 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Move an attachment one position down.
+     *
+     * @param listIdentifierParam The identifer to which the attachment belongs.
+     * @param attachmentUuid      The UUID of the attachment ot move.
+     *
+     * @return A redirect to list of attachment lists and attachements.
+     */
     @POST
     @Path(
         "/attachmentlists/{attachmentListIdentifier}/attachments/{attachmentUuid}/@moveDown")
@@ -1138,6 +1485,15 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * A helper function to find an attachment list.
+     *
+     * @param attachmentListIdentifier The idenfifier of the attachment list.
+     *
+     * @return An {@link Optional} with the attachment list or an empty optional
+     *         if the current content item has no list with the provided
+     *         identifier.
+     */
     private Optional<AttachmentList> findAttachmentList(
         final String attachmentListIdentifier
     ) {
@@ -1169,6 +1525,13 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         return listResult;
     }
 
+    /**
+     * Show the "attachment list not found" error page.
+     *
+     * @param listIdentifier The identifier of the list that was not found.
+     *
+     * @return The template for the "attachment list not found" page.
+     */
     private String showAttachmentListNotFound(final String listIdentifier) {
         models.put("contentItem", itemManager.getItemPath(document));
         models.put("listIdentifier", listIdentifier);
@@ -1205,6 +1568,15 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         return dto;
     }
 
+    /**
+     * Helper function for building a {@link ItemAttachmentDto} for an
+     * {@link ItemAttachment}.
+     *
+     * @param itemAttachment The {@link ItemAttachment} from which the
+     *                       {@link ItemAttachmentDto} is build.
+     *
+     * @return The {@link ItemAttachmentDto}.
+     */
     private ItemAttachmentDto buildItemAttachmentDto(
         final ItemAttachment<?> itemAttachment
     ) {
@@ -1233,6 +1605,15 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         return dto;
     }
 
+    /**
+     * Build the model for a row in the asset folder listing.
+     *
+     * @param section The content section.
+     * @param entry   The {@link AssetFolderEntry} from which the model is
+     *                build.
+     *
+     * @return The {@link AssetFolderRowModel} for the provided {@code entry}.
+     */
     private AssetFolderRowModel buildAssetFolderRowModel(
         final ContentSection section, final AssetFolderEntry entry
     ) {
@@ -1291,6 +1672,14 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         return row;
     }
 
+    /**
+     * Build the model for a row in the asset folder listing.
+     *
+     * @param section The content section.
+     * @param asset   The {@link Asset} from which the model is build.
+     *
+     * @return The {@link AssetFolderRowModel} for the provided {@code asset}.
+     */
     private AssetFolderRowModel buildAssetFolderRowModel(
         final ContentSection section, final Asset asset
     ) {
@@ -1315,6 +1704,16 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         return row;
     }
 
+    /**
+     * Build the model for a row in the document folder listing.
+     *
+     * @param section The content section.
+     * @param entry   The {@link DocumentFolderEntry} from which the model is
+     *                build.
+     *
+     * @return The {@link DocumentFolderRowModel} for the provided
+     *         {@code entry}.
+     */
     private DocumentFolderRowModel buildDocumentFolderRowModel(
         final ContentSection section, final DocumentFolderEntry entry
     ) {
@@ -1441,6 +1840,15 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         return row;
     }
 
+    /**
+     * Build the model for a row in the document folder listing.
+     *
+     * @param section     The content section.
+     * @param contentItem The {@link Contentitem} from which the model is build.
+     *
+     * @return The {@link DocumentFolderRowModel} for the provided
+     *         {@code contentItem}.
+     */
     private DocumentFolderRowModel buildDocumentFolderRowModel(
         final ContentSection section, final ContentItem contentItem
     ) {

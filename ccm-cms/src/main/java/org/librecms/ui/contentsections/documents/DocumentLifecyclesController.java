@@ -46,6 +46,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
+ * Controller for managing the lifecycles of a document.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -53,25 +54,58 @@ import javax.ws.rs.PathParam;
 @Path("/{sectionIdentifier}/documents/{documentPath:(.+)?}/@lifecycle/")
 @Controller
 public class DocumentLifecyclesController {
-    
+
+    /**
+     * {@link ContentItemRepository} instance for retrieving content items.
+     */
     @Inject
     private ContentItemRepository itemRepo;
-    
+
+    /**
+     * Several common functions for {@link ContentSection}s.
+     */
     @Inject
     private ContentSectionsUi sectionsUi;
-    
+
+    /**
+     * Several common functions for documents/{@link ContentItem}s.
+     */
     @Inject
     private DocumentUi documentUi;
-    
+
+    /**
+     * Used to provide data for the views without a named bean.
+     */
     @Inject
     private Models models;
-    
+
+    /**
+     * Used to check permissions.
+     */
     @Inject
     private PermissionChecker permissionChecker;
-    
+
+    /**
+     * Used to retrive {
+     *
+     * @Phase}s of a {@link Lifecycle}.
+     */
     @Inject
     private PhaseRepository phaseRepository;
-    
+
+    /**
+     * Update the dates of a {@link Phase}.
+     *
+     * @param sectionIdentifier  The identifier of the current content section.
+     * @param documentPath       The path of the document.
+     * @param phaseId            The ID of the phase.
+     * @param startDateTimeParam The start date of the phase of ISO formatted
+     *                           date/time.
+     * @param endDateTimeParam   The end date of the phase of ISO formatted
+     *                           date/time.
+     *
+     * @return
+     */
     @POST
     @Path("/phases/{phaseId}")
     @AuthorizationRequired
@@ -80,8 +114,8 @@ public class DocumentLifecyclesController {
         @PathParam("sectionIdentifider") final String sectionIdentifier,
         @PathParam("documentPath") final String documentPath,
         @PathParam("phaseId") final long phaseId,
-        @FormParam("startDate") final String startDateParam,
-        @FormParam("endDate") final String endDateParam
+        @FormParam("startDate") final String startDateTimeParam,
+        @FormParam("endDate") final String endDateTimeParam
     ) {
         final Optional<ContentSection> sectionResult = sectionsUi
             .findContentSection(sectionIdentifier);
@@ -122,7 +156,7 @@ public class DocumentLifecyclesController {
                 = DateTimeFormatter.ISO_DATE_TIME
                     .withZone(ZoneId.systemDefault());
             final LocalDateTime startLocalDateTime = LocalDateTime
-                .parse(startDateParam, dateTimeFormatter);
+                .parse(startDateTimeParam, dateTimeFormatter);
             phase.setStartDateTime(
                 Date.from(
                     startLocalDateTime.toInstant(
@@ -131,7 +165,7 @@ public class DocumentLifecyclesController {
                 )
             );
             final LocalDateTime endLocalDateTime = LocalDateTime
-                .parse(endDateParam, dateTimeFormatter);
+                .parse(endDateTimeParam, dateTimeFormatter);
             phase.setEndDateTime(
                 Date.from(
                     endLocalDateTime.toInstant(
@@ -149,4 +183,5 @@ public class DocumentLifecyclesController {
             documentPath
         );
     }
+
 }

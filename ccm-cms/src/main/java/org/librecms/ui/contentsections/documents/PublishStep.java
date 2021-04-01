@@ -22,6 +22,7 @@ import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentSection;
+import org.librecms.lifecycle.Lifecycle;
 import org.librecms.lifecycle.LifecycleDefinition;
 import org.librecms.lifecycle.LifecycleDefinitionRepository;
 
@@ -46,6 +47,9 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 /**
+ * Authoring step (part of the default steps) for publishing a
+ * {@link ContentItem}. This class acts as controller for the view(s) of the
+ * publish step as well as named bean providing some data for these views.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -56,6 +60,9 @@ import javax.ws.rs.Path;
 @Named("CmsPublishStep")
 public class PublishStep implements MvcAuthoringStep {
 
+    /**
+     * The path fragment of the publish step.
+     */
     static final String PATH_FRAGMENT = "publish";
 
     @Inject
@@ -158,20 +165,52 @@ public class PublishStep implements MvcAuthoringStep {
         return "org/librecms/ui/documents/publish.xhtml";
     }
 
+    /**
+     * Is the current document live?
+     *
+     * @return
+     */
     public boolean isLive() {
         return itemManager.isLive(document);
     }
 
+    /**
+     * Get the label of the lifecycle assigned to the current content item. The
+     * value is determined from the label of the definition of the lifecycle
+     * using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }.
+     *
+     * @return The label of the lifecycle assigned to the current content item,
+     *         or an empty string if no lifecycle is assigned to the item.
+     */
+    @Transactional(Transactional.TxType.REQUIRED)
     public String getAssignedLifecycleLabel() {
-        return globalizationHelper.getValueFromLocalizedString(
-            document.getLifecycle().getDefinition().getLabel()
-        );
+        return Optional
+            .ofNullable(document.getLifecycle())
+            .map(Lifecycle::getDefinition)
+            .map(LifecycleDefinition::getLabel)
+            .map(globalizationHelper::getValueFromLocalizedString)
+            .orElse("");
+
     }
 
+    /**
+     * Get the description of the lifecycle assigned to the current content
+     * item. The value is determined from the description of the definition of
+     * the lifecycle using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }.
+     *
+     * @return The description of the lifecycle assigned to the current content
+     *         item, or an empty string if no lifecycle is assigned to the item.
+     */
+    @Transactional(Transactional.TxType.REQUIRED)
     public String getAssignedLifecycleDecription() {
-        return globalizationHelper.getValueFromLocalizedString(
-            document.getLifecycle().getDefinition().getDescription()
-        );
+        return Optional
+            .ofNullable(document.getLifecycle())
+            .map(Lifecycle::getDefinition)
+            .map(LifecycleDefinition::getDescription)
+            .map(globalizationHelper::getValueFromLocalizedString)
+            .orElse("");
     }
 
     /**
@@ -329,6 +368,11 @@ public class PublishStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Unpublishes the current content item.
+     *
+     * @return A redirect to the publish step.
+     */
     @POST
     @Path("/@unpublish")
     @Transactional(Transactional.TxType.REQUIRED)

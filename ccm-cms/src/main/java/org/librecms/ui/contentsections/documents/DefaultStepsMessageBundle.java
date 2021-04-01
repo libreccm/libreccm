@@ -20,10 +20,14 @@ package org.librecms.ui.contentsections.documents;
 
 import org.libreccm.ui.AbstractMessagesBean;
 
+import java.util.ResourceBundle;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 /**
+ * Named bean wrapping the {@link ResourceBundle} providing the localized labels
+ * and other localized resources for the default authoring steps.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -35,8 +39,5 @@ public class DefaultStepsMessageBundle extends AbstractMessagesBean {
     protected String getMessageBundle() {
         return DefaultAuthoringStepConstants.BUNDLE;
     }
-    
-    
-    
-    
+
 }

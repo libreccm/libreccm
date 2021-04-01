@@ -19,7 +19,9 @@
 package org.librecms.ui.contentsections.documents;
 
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.l10n.LocalizedString;
 import org.librecms.assets.RelatedLink;
+import org.librecms.contentsection.AttachmentList;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,6 +36,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 /**
+ * Model proving the properties of an internal {@link RelatedLink} for the
+ * internal link edit view of the {@link RelatedInfoStep}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -41,23 +45,52 @@ import javax.inject.Named;
 @Named("CmsInternalLinkDetailsModel")
 public class InternalLinkDetailsModel {
 
+    /**
+     * Used to retrieve values from {@link LocalizedString}s.
+     */
     @Inject
     private GlobalizationHelper globalizationHelper;
 
+    /**
+     * The identifier of the {@link AttachmentList} of the link.
+     */
     private String listIdentifier;
 
+    /**
+     * The UUID of the link.
+     */
     private String uuid;
 
+    /**
+     * The label of the link.
+     */
     private String label;
-    
+
+    /**
+     * The localized titles of the link.
+     */
     private Map<String, String> title;
 
+    /**
+     * The locales for which no title has been specified.
+     */
     private List<String> unusedTitleLocales;
 
+    /**
+     * The UUID of the target item of the link.
+     */
     private String targetItemUuid;
 
+    /**
+     * The name of the target item of the link
+     */
     private String targetItemName;
 
+    /**
+     * The title of the target item of the link. This value is determined from
+     * the title of the target item using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }.
+     */
     private String targetItemTitle;
 
     public String getListIdentifier() {
@@ -75,7 +108,7 @@ public class InternalLinkDetailsModel {
     public String getLabel() {
         return label;
     }
-    
+
     public Map<String, String> getTitle() {
         return Collections.unmodifiableMap(title);
     }
@@ -96,6 +129,12 @@ public class InternalLinkDetailsModel {
         return targetItemTitle;
     }
 
+    /**
+     * Sets the properties of this model based on the properties on the provided
+     * link.
+     *
+     * @param link The link to use.
+     */
     protected void setInternalLink(final RelatedLink link) {
         Objects.requireNonNull(link);
 
