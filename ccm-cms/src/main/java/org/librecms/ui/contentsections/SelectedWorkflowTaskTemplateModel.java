@@ -1,9 +1,27 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2021 LibreCCM Foundation.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package org.librecms.ui.contentsections;
+
+import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.workflow.AssignableTask;
+import org.libreccm.workflow.Task;
+import org.libreccm.workflow.Workflow;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,6 +33,13 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 /**
+ * Model providing the data of the selected task of a workflow template for the
+ * details view of a task.
+ *
+ * @see ConfigurationWorkflowController
+ * @see Workflow
+ * @see Task
+ * @see AssignableTask
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -22,24 +47,56 @@ import javax.inject.Named;
 @Named("SelectedWorkflowTaskTemplateModel")
 public class SelectedWorkflowTaskTemplateModel {
 
+    /**
+     * The ID of the task.
+     */
     private long taskId;
 
+    /**
+     * The UUID of the task.
+     */
     private String uuid;
 
+    /**
+     * The display label of the task. This value is determined from
+     * {@link Task#label} using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }.
+     */
     private String displayLabel;
 
+    /**
+     * The localized labels of the task.
+     */
     private Map<String, String> label;
 
+    /**
+     * The locales for which no localized label has been defined yet.
+     */
     private List<String> unusedLabelLocales;
 
+    /**
+     * The localized descriptions of the task.
+     */
     private Map<String, String> description;
 
+    /**
+     * The locales for which no localized description has been defined yet.
+     */
     private List<String> unusedDescriptionLocales;
 
+    /**
+     * Tasks that block the selected task.
+     */
     private List<WorkflowTaskTemplateListModel> blockedTasks;
 
+    /**
+     * Task that are blocked by the selected tak.
+     */
     private List<WorkflowTaskTemplateListModel> blockingTasks;
 
+    /**
+     * Ohter that don't block the selected task.
+     */
     private Map<String, String> noneBlockingTasks;
 
     public long getTaskId() {

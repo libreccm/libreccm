@@ -1,13 +1,27 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2021 LibreCCM Foundation.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package org.librecms.ui.contentsections;
 
 import org.libreccm.api.Identifier;
 import org.libreccm.api.IdentifierParser;
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.Party;
 import org.libreccm.security.PartyRepository;
@@ -47,6 +61,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 
 /**
+ * Controller for managing the roles of a content section.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -55,50 +70,98 @@ import javax.ws.rs.POST;
 @Path("/{sectionIdentifier}/configuration/roles")
 public class ConfigurationRolesController {
 
+    /**
+     * Used to check admin permissions for content sections.
+     */
     @Inject
     private AdminPermissionsChecker adminPermissionsChecker;
 
+    /**
+     * Wrapper around the messages bundle for CMS admin messages.
+     */
     @Inject
     private CmsAdminMessages messages;
 
+    /**
+     * Used to perform actions involing {@link ContentSection}s.
+     */
     @Inject
     private ContentSectionManager sectionManager;
 
+    /**
+     * Model for the current content section.
+     */
     @Inject
     private ContentSectionModel sectionModel;
 
-//    @Inject
-//    private ContentSectionRepository sectionRepo;
+    /**
+     * Provides common functions for all controllers working with
+     * {@link ContentSection}s.
+     */
     @Inject
     private ContentSectionsUi sectionsUi;
 
+    /**
+     * Provides several functions for working with {@link LocalizedString}
+     */
     @Inject
     private GlobalizationHelper globalizationHelper;
 
+    /**
+     * Used to parse identifiers.
+     */
     @Inject
     private IdentifierParser identifierParser;
 
+    /**
+     * Used to provide data for views with a named bean.
+     */
     @Inject
     private Models models;
 
+    /**
+     * Used to retrieve and save parties.
+     */
     @Inject
     private PartyRepository partyRepository;
 
+    /**
+     * Used to check permissions.
+     */
     @Inject
     private PermissionChecker permissionChecker;
 
+    /**
+     * Used for complex operations on permissions.
+     */
     @Inject
     private PermissionManager permissionManager;
 
+    /**
+     * Used for operations on roles.
+     */
     @Inject
     private RoleManager roleManager;
 
+    /**
+     * Used to retrieve and save {@link Role}s.
+     */
     @Inject
     private RoleRepository roleRepo;
 
+    /**
+     * Model for the selected role.
+     */
     @Inject
     private SelectedRoleModel selectedRoleModel;
 
+    /**
+     * List all roles of the current content section.
+     *
+     * @param sectionIdentifierParam Identifier of the current content section.
+     *
+     * @return The template for the roles list.
+     */
     @GET
     @Path("/")
     @AuthorizationRequired
@@ -148,6 +211,14 @@ public class ConfigurationRolesController {
         return "org/librecms/ui/contentsection/configuration/roles.xhtml";
     }
 
+    /**
+     * Show the details view for a role.
+     *
+     * @param sectionIdentifierParam Identifier of the current content section.
+     * @param roleName               The name of the role.
+     *
+     * @return The template for the details view of the role.
+     */
     @GET
     @Path("/{roleName}")
     @AuthorizationRequired
@@ -219,6 +290,15 @@ public class ConfigurationRolesController {
         return "org/librecms/ui/contentsection/configuration/role.xhtml";
     }
 
+    /**
+     * Renames a role
+     *
+     * @param sectionIdentifierParam Identifier of the current content section.
+     * @param roleName               The name of the role to rename.
+     * @param newRoleName            The new name of the role.
+     *
+     * @return A redirect to the details view of the role.
+     */
     @POST
     @Path("/{roleName}/@rename")
     @AuthorizationRequired
@@ -263,6 +343,18 @@ public class ConfigurationRolesController {
         );
     }
 
+    /**
+     * Update the permissions granted to the role for the current content
+     * section.
+     *
+     * @param sectionIdentifierParam Identifier of the current content section.
+     * @param roleName               The name of the role.
+     * @param grantedPermissions     The permissions granted to the role for the
+     *                               current content section. Permissions not
+     *                               included here, but are granted are removed.
+     *
+     * @return A redirect to the details view of the role.
+     */
     @POST
     @Path("/{roleName}/@permissions")
     @AuthorizationRequired
@@ -345,6 +437,18 @@ public class ConfigurationRolesController {
         );
     }
 
+    /**
+     * Updates the members of a role.
+     *
+     * @param sectionIdentifierParam Identifier of the current content section.
+     * @param roleName               The name of the role.
+     * @param roleMembersParam       The members of the role. Parties that are a
+     *                               member of the role but not included this
+     *                               list are removed from the members of the
+     *                               role.
+     *
+     * @return A redirect to the details view of the role.
+     */
     @POST
     @Path("/{roleName}/@members")
     @AuthorizationRequired
@@ -409,6 +513,17 @@ public class ConfigurationRolesController {
         );
     }
 
+    /**
+     * Adds a localized description to a role.
+     *
+     * @param sectionIdentifierParam The identifier of the current content
+     *                               section.
+     * @param roleName               The name of the role.
+     * @param localeParam            The locale of the value to add.
+     * @param value                  The value to add.
+     *
+     * @return A redirect to the details view of the role.
+     */
     @POST
     @Path("/{roleName}/description/@add")
     @AuthorizationRequired
@@ -455,6 +570,17 @@ public class ConfigurationRolesController {
         );
     }
 
+    /**
+     * Updates a localized description of a role.
+     *
+     * @param sectionIdentifierParam The identifier of the current content
+     *                               section.
+     * @param roleName               The name of the role.
+     * @param localeParam            The locale of the value to update.
+     * @param value                  The updated value.
+     *
+     * @return A redirect to the details view of the role.
+     */
     @POST
     @Path("/{roleName}/description/@edit/{locale}")
     @AuthorizationRequired
@@ -501,6 +627,16 @@ public class ConfigurationRolesController {
         );
     }
 
+    /**
+     * Removes a localized description from a role.
+     *
+     * @param sectionIdentifierParam The identifier of the current content
+     *                               section.
+     * @param roleName               The name of the role.
+     * @param localeParam            The locale of the value to remove.
+     *
+     * @return A redirect to the details view of the role.
+     */
     @POST
     @Path("/{roleName}/description/@remove/{locale}")
     @AuthorizationRequired
@@ -545,6 +681,15 @@ public class ConfigurationRolesController {
         );
     }
 
+    /**
+     * Creates a new role for the current content section.
+     *
+     * @param sectionIdentifierParam The identifier of the current content
+     *                               section.
+     * @param roleName               The name of the new role.
+     *
+     * @return A redirect to the list of roles.
+     */
     @POST
     @Path("/@new")
     @AuthorizationRequired
@@ -595,6 +740,16 @@ public class ConfigurationRolesController {
         );
     }
 
+    /**
+     * Adds some existing roles the content section.
+     *
+     * @param sectionIdentifierParam The identifier of the current content
+     *                               section.
+     * @param rolesToAdd             The existing roles to add to the current
+     *                               content section.
+     *
+     * @return A redirect to the list of roles.
+     */
     @POST
     @Path("/@add")
     @AuthorizationRequired
@@ -632,6 +787,16 @@ public class ConfigurationRolesController {
         );
     }
 
+    /**
+     * Removes a role from the current content section. The role is
+     * <strong>not</strong> deleted.
+     *
+     * @param sectionIdentifierParam The identifier of the current content
+     *                               section.
+     * @param roleIdentifierParam    The identifier of the role to remove.
+     *
+     * @return A redirect to the list of roles.
+     */
     @POST
     @Path("/{roleIdentifier}/@remove")
     @AuthorizationRequired
@@ -654,7 +819,7 @@ public class ConfigurationRolesController {
                 "sectionIdentifier", sectionIdentifierParam
             );
         }
-      
+
         final Optional<Role> roleResult = findRole(roleIdentifierParam);
         if (!roleResult.isPresent()) {
             return showRoleNotFound(section, roleIdentifierParam);
@@ -667,6 +832,15 @@ public class ConfigurationRolesController {
         );
     }
 
+    /**
+     * Removes a role from the current content section and deletes the role.
+     *
+     * @param sectionIdentifierParam The identifier of the current content
+     *                               section.
+     * @param roleIdentifierParam    The identifier of the role to delete.
+     *
+     * @return A redirect to the list of roles.
+     */
     @POST
     @Path("/{roleIdentifier}/@delete")
     @AuthorizationRequired
@@ -702,6 +876,14 @@ public class ConfigurationRolesController {
         );
     }
 
+    /**
+     * Helper method for finding a role.
+     *
+     * @param roleIdentifierParam The identifier of the role.
+     *
+     * @return An {@link Optional} with the role, or an empty {@link Optional}
+     *         if there is not role with the provided identifier.
+     */
     private Optional<Role> findRole(final String roleIdentifierParam) {
         final Identifier roleIdentifier = identifierParser.parseIdentifier(
             roleIdentifierParam
@@ -722,6 +904,14 @@ public class ConfigurationRolesController {
         }
     }
 
+    /**
+     * Shows the "role not found" error page.
+     *
+     * @param section  The current content section.
+     * @param roleName The name of the role.
+     *
+     * @return The template of the "role not found" error page.
+     */
     private String showRoleNotFound(
         final ContentSection section, final String roleName
     ) {
@@ -730,6 +920,13 @@ public class ConfigurationRolesController {
         return "org/librecms/ui/contentsection/configuration/role-not-found.xhtml";
     }
 
+    /**
+     * Helper method for building a {@link RoleListItemModel} for a role.
+     *
+     * @param role The role.
+     *
+     * @return A {@link RoleListItemModel} for the {@code role}.
+     */
     private RoleListItemModel buildRoleListModel(final Role role) {
         final RoleListItemModel model = new RoleListItemModel();
         model.setRoleId(role.getRoleId());
@@ -743,6 +940,13 @@ public class ConfigurationRolesController {
         return model;
     }
 
+    /**
+     * Build a {@link RoleMembershipModel} for showing the members of a role.
+     *
+     * @param membership The membership from which the model is build.
+     *
+     * @return {@link RoleMembershipModel} for the {@code membership}.
+     */
     private RoleMembershipModel buildRoleMembershipModel(
         final RoleMembership membership
     ) {
@@ -753,6 +957,16 @@ public class ConfigurationRolesController {
         return model;
     }
 
+    /**
+     * Builds the {@link RoleSectionPermissionModel}s for a role and content
+     * section.
+     *
+     * @param role    The role.
+     * @param section The content section
+     *
+     * @return A list of {@link RoleSectionPermissionModel}s for the role and
+     *         the content section.
+     */
     private List<RoleSectionPermissionModel> buildRolePermissions(
         final Role role, final ContentSection section
     ) {
@@ -791,6 +1005,16 @@ public class ConfigurationRolesController {
         return permissions;
     }
 
+    /**
+     * Builds a {@link RoleSectionPermissionModel} for a role, a privilege and a
+     * content section.
+     *
+     * @param role      The role.
+     * @param privilege The privilege.
+     * @param section   The content section.
+     *
+     * @return A {@link RoleSectionPermissionModel} for the provided parameters.
+     */
     private RoleSectionPermissionModel buildRoleSectionPermissionModel(
         final Role role, final String privilege, final ContentSection section
     ) {
@@ -803,6 +1027,16 @@ public class ConfigurationRolesController {
         return model;
     }
 
+    /**
+     * Builds a {@link RoleSectionPermissionModel} for a role, a privilege and a
+     * folder.
+     *
+     * @param role      The role.
+     * @param privilege The privilege.
+     * @param folder    The folder
+     *
+     * @return A {@link RoleSectionPermissionModel} for the provided parameters.
+     */
     private RoleSectionPermissionModel buildRoleSectionPermissionModel(
         final Role role, final String privilege, final Folder folder
     ) {
@@ -815,6 +1049,15 @@ public class ConfigurationRolesController {
         return model;
     }
 
+    /**
+     * Checks if a role has a member.
+     *
+     * @param role       The role.
+     * @param memberName The name of the member.
+     *
+     * @return {@code true} if the role has member with the provided name,
+     *         {@code false} otherwise.
+     */
     private boolean hasMember(final Role role, final String memberName) {
         return role
             .getMemberships()
@@ -823,6 +1066,12 @@ public class ConfigurationRolesController {
             .anyMatch(name -> name.equals(memberName));
     }
 
+    /**
+     * Adds a new member to a role.
+     *
+     * @param role          The role.
+     * @param newMemberName The name of the new member.
+     */
     private void addNewMember(final Role role, final String newMemberName) {
         final Optional<Party> result = partyRepository.findByName(
             newMemberName
@@ -833,6 +1082,12 @@ public class ConfigurationRolesController {
         }
     }
 
+    /**
+     * Removes a new member from a role.
+     *
+     * @param role              The role.
+     * @param removedMemberName The name of the member to remove from the role.
+     */
     private void removeMember(final Role role, final String removedMemberName) {
         final Optional<Party> result = partyRepository.findByName(
             removedMemberName

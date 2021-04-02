@@ -1,7 +1,20 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2021 LibreCCM Foundation.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package org.librecms.ui.contentsections;
 
@@ -14,6 +27,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 /**
+ * Model for displaying a document folder.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -21,28 +35,64 @@ import javax.inject.Named;
 @Named("DocumentFolderModel")
 public class DocumentFolderModel {
 
+    /**
+     * Count of items (content items and subfolders) in the folder.
+     */
     private long count;
 
+    /**
+     * The index of the first item in the folder shown.
+     */
     private int firstResult;
 
+    /**
+     * The maximum number of items shown.
+     */
     private int maxResults;
 
+    /**
+     * The rows for the table showing the contents of the folder.
+     */
     private List<DocumentFolderRowModel> rows;
 
+    /**
+     * The breadcrumb trail of the folder.
+     */
     private List<FolderBreadcrumbsModel> breadcrumbs;
 
+    /**
+     * The path of the folder.
+     */
     private String path;
 
+    /**
+     * Can the current user create subfolders in the folder.
+     */
     private boolean canCreateSubFolders;
 
+    /**
+     * Can the current user create items in the folder.
+     */
     private boolean canCreateItems;
 
+    /**
+     * Can the current user administer items in the folder.
+     */
     private boolean canAdminister;
 
+    /**
+     * Permissions of the current user for the folder.
+     */
     private List<GrantedPrivilegeModel> currentUserPermissions;
 
+    /**
+     * Privileges granted to the roles of the content section for the folder.
+     */
     private List<PrivilegesGrantedToRoleModel> grantedPermissions;
 
+    /**
+     * A list of the privileges that can be granted for a document folder.
+     */
     private List<String> privileges;
 
     public long getCount() {

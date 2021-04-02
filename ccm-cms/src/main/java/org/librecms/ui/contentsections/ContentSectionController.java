@@ -16,6 +16,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 /**
+ * Controller for managing content sections.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -23,9 +24,17 @@ import javax.ws.rs.core.Response;
 @Path("/")
 public class ContentSectionController {
 
+    /**
+     * The current HTTP Servlet request.
+     */
     @Inject
     private HttpServletRequest request;
 
+    /**
+     * Redirect to the list of content sections.
+     *
+     * @return A redirect.
+     */
     @GET
     @Path("/")
     @AuthorizationRequired
@@ -51,7 +60,14 @@ public class ContentSectionController {
             throw new WebApplicationException(ex);
         }
     }
-    
+
+    /**
+     * Redirect to the document folder page of the content section.
+     *
+     * @param sectionIdentifier The identifier of the content section.
+     *
+     * @return A redirect to the document folders page.
+     */
     @GET
     @Path("/{sectionIdentifier}")
     @AuthorizationRequired

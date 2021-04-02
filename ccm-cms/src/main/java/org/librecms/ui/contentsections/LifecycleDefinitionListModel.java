@@ -1,22 +1,55 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2021 LibreCCM Foundation.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package org.librecms.ui.contentsections;
 
+import org.libreccm.l10n.GlobalizationHelper;
+import org.librecms.lifecycle.LifecycleDefinition;
+
 /**
+ * Model for the entries in a list of {@link LifecycleDefinition}s.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class LifecycleDefinitionListModel {
 
+    /**
+     * The ID of the lifecycle definition.
+     */
     private long definitionId;
 
+    /**
+     * The UUID of the lifecycle definition.
+     */
     private String uuid;
 
+    /**
+     * The label of the lifecycle definition. This value is determined from
+     * {@link LifecycleDefinition#label} using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }.
+     */
     private String label;
 
+    /**
+     * The description of the lifecycle definition. This value is determined
+     * from {@link LifecycleDefinition#description} using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }.
+     */
     private String description;
 
     public long getDefinitionId() {

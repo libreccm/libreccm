@@ -1,40 +1,103 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2021 LibreCCM Foundation.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package org.librecms.ui.contentsections;
+
+import org.libreccm.l10n.GlobalizationHelper;
+import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.ContentType;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
+ * Model for a row in the table of document types/cintent types assigned to a
+ * {@link ContentSection}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
+ *
+ * @see ConfigurationDocumentTypesController
+ * @see ContentType
  */
 public class DocumentTypesTableRowModel {
 
+    /**
+     * The display name of the content type.
+     */
     private String displayName;
 
+    /**
+     * The class implementing the type.
+     */
     private String contentItemClass;
 
+    /**
+     * The label of the content type. This value is determined from
+     * {@link ContentType#label} using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }.
+     */
     private String label;
 
+    /**
+     * The description of the content type. This value is determined from
+     * {@link ContentType#description} using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }.
+     */
     private String description;
 
+    /**
+     * The mode of the type.
+     */
     private String mode;
 
+    /**
+     * The label of the default lifecycle of the type. This value of determined
+     * from the label of the default lifecycle using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }.
+     */
     private String defaultLifecycleLabel;
 
+    /**
+     * The UUID of the default lifecycle.
+     */
     private List<String> defaultLifecycleUuid;
 
+     /**
+     * The label of the default workflow of the type. This value of determined
+     * from the label of the default workflow using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }.
+     */
     private String defaultWorkflowLabel;
 
+    /**
+     * The UUID of the default workflow.
+     */
     private List<String> defaultWorkflowUuid;
 
+    /**
+     * The UUID of the type.
+     */
     private String uuid;
 
+    /**
+     * The permissions of the current user for the type.
+     */
     private List<DocumentTypePermissionModel> permissions;
 
     public String getContentItemClass() {

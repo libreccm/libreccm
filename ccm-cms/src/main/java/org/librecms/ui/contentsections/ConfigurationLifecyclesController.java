@@ -1,13 +1,27 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2021 LibreCCM Foundation.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package org.librecms.ui.contentsections;
 
 import org.libreccm.api.Identifier;
 import org.libreccm.api.IdentifierParser;
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.AuthorizationRequired;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionManager;
@@ -35,6 +49,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
+ * Controller for managing the {@link LifecycleDefinition}s of a
+ * {@link ContentSection}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -43,42 +59,86 @@ import javax.ws.rs.PathParam;
 @Path("/{sectionIdentifier}/configuration/lifecycles")
 public class ConfigurationLifecyclesController {
 
+    /**
+     * Checks admin permissions for the current content section.
+     */
     @Inject
     private AdminPermissionsChecker adminPermissionsChecker;
 
+    /**
+     * Used for some operations on {@link ContentSection}s.
+     */
     @Inject
     private ContentSectionManager sectionManager;
-    
+
+    /**
+     * Model for the current content section.
+     */
     @Inject
     private ContentSectionModel sectionModel;
 
+    /**
+     * Provides common functions for controllers working with content sections.
+     */
     @Inject
     private ContentSectionsUi sectionsUi;
 
+    /**
+     * Provides functions for working with {@link LocalizedString}s.
+     */
     @Inject
     private GlobalizationHelper globalizationHelper;
 
+    /**
+     * Used to parse identifiers.
+     */
     @Inject
     private IdentifierParser identifierParser;
 
+    /**
+     * Used to manage lifecycles.
+     */
     @Inject
     private LifecycleManager lifecycleManager;
-    
+
+    /**
+     * Used to retrieve and save {@link LifecycleDefinition}s.
+     */
     @Inject
     private LifecycleDefinitionRepository definitionRepo;
 
+    /**
+     * Used to provide data for the views without a named bean.
+     */
     @Inject
     private Models models;
 
+    /**
+     * Used to retrive and save {@link PhaseDefinition}s.
+     */
     @Inject
     private PhaseDefinititionRepository phaseDefinititionRepo;
 
+    /**
+     * Model for the current {@link LifecycleDefinition}.
+     */
     @Inject
     private SelectedLifecycleDefinitionModel selectedLifecycleDefModel;
 
+    /**
+     * Model for the selected {@link PhaseDefinition}.
+     */
     @Inject
     private SelectedPhaseDefinitionModel selectedPhaseDefModel;
 
+    /**
+     * List all {@link LifecycleDefinition}s of the current content section.
+     *
+     * @param sectionIdentifierParam The identifier of the current content
+     *                               section.
+     *
+     * @return The template for the list of {@link LifecycleDefinition}s.
+     */
     @GET
     @Path("/")
     @AuthorizationRequired
@@ -110,6 +170,17 @@ public class ConfigurationLifecyclesController {
         return "org/librecms/ui/contentsection/configuration/lifecycles.xhtml";
     }
 
+    /**
+     * Show the details view for a {@link LifecycleDefinition}.
+     *
+     * @param sectionIdentifierParam  The identifier of the current content
+     *                                section.
+     * @param lifecycleIdentiferParam The identifier of the lifecycle
+     *                                definition.
+     *
+     * @return The template for the details view of
+     *         {@link LifecycleDefinition}s.
+     */
     @GET
     @Path("/{lifecycleIdentifier}")
     @AuthorizationRequired
@@ -206,6 +277,17 @@ public class ConfigurationLifecyclesController {
         return "org/librecms/ui/contentsection/configuration/lifecycle.xhtml";
     }
 
+    /**
+     * Add a {@link LifecycleDefinition} to the current {@link ContentSection}
+     *
+     * @param sectionIdentifierParam The identifier of the current content
+     *                               section.
+     * @param label                  The label of the new
+     *                               {@link LifecycleDefinition}.
+     *
+     * @return A redirect to the list of lifecycle definitions of the content
+     *         section.
+     */
     @POST
     @Path("/@add")
     @AuthorizationRequired
@@ -241,6 +323,17 @@ public class ConfigurationLifecyclesController {
         );
     }
 
+    /**
+     * Deletes a {@link LifecycleDefinition} of the current
+     * {@link ContentSection}
+     *
+     * @param sectionIdentifierParam  The identifier of the current content
+     *                                section.
+     * @param lifecycleIdentiferParam The identifier of the lifecycle to delete.
+     *
+     * @return A redirect to the list of lifecycle definitions of the content
+     *         section.
+     */
     @POST
     @Path("/{lifecycleIdentifier}/@delete")
     @AuthorizationRequired
@@ -280,6 +373,18 @@ public class ConfigurationLifecyclesController {
         );
     }
 
+    /**
+     * Adds a localized label to a {@link LifecycleDefinition}.
+     *
+     * @param sectionIdentifierParam  The identifier of the current content
+     *                                section.
+     * @param lifecycleIdentiferParam The identifier of the lifecycle
+     *                                definition.
+     * @param localeParam             The locale of the value to add.
+     * @param value                   The value to add.
+     *
+     * @return A redirect to the details view of the lifecycle.
+     */
     @POST
     @Path("/{lifecycleIdentifier}/label/@add")
     @AuthorizationRequired
@@ -321,6 +426,18 @@ public class ConfigurationLifecyclesController {
         );
     }
 
+    /**
+     * Updates a localized label of a {@link LifecycleDefinition}.
+     *
+     * @param sectionIdentifierParam  The identifier of the current content
+     *                                section.
+     * @param lifecycleIdentiferParam The identifier of the lifecycle
+     *                                definition.
+     * @param localeParam             The locale of the value to update.
+     * @param value                   The updated value.
+     *
+     * @return A redirect to the details view of the lifecycle.
+     */
     @POST
     @Path("/{lifecycleIdentifier}/label/@edit/{locale}")
     @AuthorizationRequired
@@ -362,6 +479,17 @@ public class ConfigurationLifecyclesController {
         );
     }
 
+    /**
+     * Removes a localized label from a {@link LifecycleDefinition}.
+     *
+     * @param sectionIdentifierParam  The identifier of the current content
+     *                                section.
+     * @param lifecycleIdentiferParam The identifier of the lifecycle
+     *                                definition.
+     * @param localeParam             The locale of the value to remove.
+     *
+     * @return A redirect to the details view of the lifecycle.
+     */
     @POST
     @Path("/{lifecycleIdentifier}/label/@remove/{locale}")
     @AuthorizationRequired
@@ -402,6 +530,18 @@ public class ConfigurationLifecyclesController {
         );
     }
 
+    /**
+     * Adds a localized description to a {@link LifecycleDefinition}.
+     *
+     * @param sectionIdentifierParam  The identifier of the current content
+     *                                section.
+     * @param lifecycleIdentiferParam The identifier of the lifecycle
+     *                                definition.
+     * @param localeParam             The locale of the value to add.
+     * @param value                   The value to add.
+     *
+     * @return A redirect to the details view of the lifecycle.
+     */
     @POST
     @Path("/{lifecycleIdentifier}/description/@add")
     @AuthorizationRequired
@@ -443,6 +583,18 @@ public class ConfigurationLifecyclesController {
         );
     }
 
+    /**
+     * Updates a localized description of a {@link LifecycleDefinition}.
+     *
+     * @param sectionIdentifierParam  The identifier of the current content
+     *                                section.
+     * @param lifecycleIdentiferParam The identifier of the lifecycle
+     *                                definition.
+     * @param localeParam             The locale of the value to update.
+     * @param value                   The updated value.
+     *
+     * @return A redirect to the details view of the lifecycle.
+     */
     @POST
     @Path("/{lifecycleIdentifier}/description/@edit/{locale}")
     @AuthorizationRequired
@@ -484,6 +636,17 @@ public class ConfigurationLifecyclesController {
         );
     }
 
+    /**
+     * Removes a localized description from a {@link LifecycleDefinition}.
+     *
+     * @param sectionIdentifierParam  The identifier of the current content
+     *                                section.
+     * @param lifecycleIdentiferParam The identifier of the lifecycle
+     *                                definition.
+     * @param localeParam             The locale of the value to remove
+     *
+     * @return A redirect to the details view of the lifecycle.
+     */
     @POST
     @Path("/{lifecycleIdentifier}/description/@remove/{locale}")
     @AuthorizationRequired
@@ -524,6 +687,23 @@ public class ConfigurationLifecyclesController {
         );
     }
 
+    /**
+     * Adds a {@link PhaseDefinition} to a {@link LifecycleDefinition}.
+     *
+     * @param sectionIdentifierParam  The identifier of the current content
+     *                                section.
+     * @param lifecycleIdentiferParam The identifier of the current lifecycle.
+     * @param label                   The label of the new phase definition.
+     * @param defaultDelayDays        The day part of the default deplay.
+     * @param defaultDelayHours       The hours part of the default delay.
+     * @param defaultDelayMinutes     The minutes part of the default delay.
+     * @param defaultDurationDays     The day part of the default duration.
+     * @param defaultDurationHours    The hours part of the default duration.
+     * @param defaultDurationMinutes  The minutes part of the default duration.
+     *
+     * @return A redirect to the details view of the
+     *         {@link LifecycleDefinition}.
+     */
     @POST
     @Path("/{lifecycleIdentifier}/phases/@add")
     @AuthorizationRequired
@@ -562,23 +742,23 @@ public class ConfigurationLifecyclesController {
         final LifecycleDefinition definition = definitionResult.get();
 
         final PhaseDefinition phaseDefinition = new PhaseDefinition();
-        
+
         final Duration defaultDelay = new Duration();
         defaultDelay.setDays(defaultDelayDays);
         defaultDelay.setHours(defaultDelayHours);
         defaultDelay.setMinutes(defaultDelayMinutes);
         phaseDefinition.setDefaultDelay(defaultDelay.toMinutes());
-        
+
         final Duration defaultDuration = new Duration();
         defaultDuration.setDays(defaultDurationDays);
         defaultDuration.setHours(defaultDurationHours);
         defaultDuration.setMinutes(defaultDurationMinutes);
         phaseDefinition.setDefaultDuration(defaultDuration.toMinutes());
-        
+
         phaseDefinition
             .getLabel()
             .addValue(globalizationHelper.getNegotiatedLocale(), label);
-        
+
         phaseDefinititionRepo.save(phaseDefinition);
         lifecycleManager.addPhaseDefinition(definition, phaseDefinition);
 
@@ -589,6 +769,18 @@ public class ConfigurationLifecyclesController {
         );
     }
 
+    /**
+     * Show the details view of a phase definition.
+     *
+     * @param sectionIdentifierParam  The identifier of the current content
+     *                                section.
+     * @param lifecycleIdentiferParam The identifier of the current lifecycle
+     *                                definition.
+     * @param phaseIdentifierParam    the identifier of the lifecycle
+     *                                definition.
+     *
+     * @return The template for the details view of the phase definition.
+     */
     @GET
     @Path("/{lifecycleIdentifier}/phases/{phaseIdentifier}")
     @AuthorizationRequired
@@ -705,6 +897,23 @@ public class ConfigurationLifecyclesController {
         return "org/librecms/ui/contentsection/configuration/lifecycle-phase.xhtml";
     }
 
+    /**
+     * Updates the parameters of a phase definition.
+     *
+     * @param sectionIdentifierParam  The identifier of the current content
+     *                                section.
+     * @param lifecycleIdentiferParam The identifier of the current lifecycle.
+     * @param phaseIdentifier         The identifier of the phase to update.
+     * @param defaultDelayDays        The day part of the default deplay.
+     * @param defaultDelayHours       The hours part of the default delay.
+     * @param defaultDelayMinutes     The minutes part of the default delay.
+     * @param defaultDurationDays     The day part of the default duration.
+     * @param defaultDurationHours    The hours part of the default duration.
+     * @param defaultDurationMinutes  The minutes part of the default duration.
+     *
+     * @return A redirect to the details view of the
+     *         {@link LifecycleDefinition}.
+     */
     @POST
     @Path("/{lifecycleIdentifier}/phases/{phaseIdentifier}/@edit")
     @AuthorizationRequired
@@ -751,13 +960,13 @@ public class ConfigurationLifecyclesController {
             );
         }
         final PhaseDefinition phaseDefinition = phaseDefinitionResult.get();
-        
-         final Duration defaultDelay = new Duration();
+
+        final Duration defaultDelay = new Duration();
         defaultDelay.setDays(defaultDelayDays);
         defaultDelay.setHours(defaultDelayHours);
         defaultDelay.setMinutes(defaultDelayMinutes);
         phaseDefinition.setDefaultDelay(defaultDelay.toMinutes());
-        
+
         final Duration defaultDuration = new Duration();
         defaultDuration.setDays(defaultDurationDays);
         defaultDuration.setHours(defaultDurationHours);
@@ -774,6 +983,18 @@ public class ConfigurationLifecyclesController {
         );
     }
 
+    /**
+     * Removes a phase definition from the a lifecycle definition.
+     *
+     * @param sectionIdentifierParam  The identifier of the current content
+     *                                section.
+     * @param lifecycleIdentiferParam The identifier of the current lifecycle
+     *                                definition.
+     * @param phaseIdentifierParam    The identifier of the phase definition to
+     *                                remove.
+     *
+     * @return A redirect to the details view of the lifecycle definition.
+     */
     @POST
     @Path("/{lifecycleIdentifier}/phases/{phaseIdentifier}/@remove")
     @AuthorizationRequired
@@ -824,6 +1045,19 @@ public class ConfigurationLifecyclesController {
         );
     }
 
+    /**
+     * Adds a localized label to a {@link PhaseDefinition}.
+     *
+     * @param sectionIdentifierParam  The identifier of the current content
+     *                                section.
+     * @param lifecycleIdentiferParam The identifier of the current lifecycle
+     *                                definition.
+     * @param phaseIdentifierParam    Identifier of the {@link PhaseDefinition}.
+     * @param localeParam             The locale of the value to add.
+     * @param value                   The value to add.
+     *
+     * @return A redirect to the details view of the {@link PhaseDefinition}.
+     */
     @POST
     @Path("/{lifecycleIdentifier}/phases/{phaseIdentifier}/label/@add")
     @AuthorizationRequired
@@ -877,6 +1111,19 @@ public class ConfigurationLifecyclesController {
         );
     }
 
+    /**
+     * Updates the localized label of a {@link PhaseDefinition}.
+     *
+     * @param sectionIdentifierParam  The identifier of the current content
+     *                                section.
+     * @param lifecycleIdentiferParam The identifier of the current lifecycle
+     *                                definition.
+     * @param phaseIdentifierParam    Identifier of the {@link PhaseDefinition}.
+     * @param localeParam             The locale of the value to update.
+     * @param value                   The updated value.
+     *
+     * @return A redirect to the details view of the {@link PhaseDefinition}.
+     */
     @POST
     @Path("/{lifecycleIdentifier}/phases/{phaseIdentifier}/label/@edit/{locale}")
     @AuthorizationRequired
@@ -930,6 +1177,18 @@ public class ConfigurationLifecyclesController {
         );
     }
 
+    /**
+     * Removes a localized label of a {@link PhaseDefinition}.
+     *
+     * @param sectionIdentifierParam  The identifier of the current content
+     *                                section.
+     * @param lifecycleIdentiferParam The identifier of the current lifecycle
+     *                                definition.
+     * @param phaseIdentifierParam    Identifier of the {@link PhaseDefinition}.
+     * @param localeParam             The locale of the value to remove.
+     *
+     * @return A redirect to the details view of the {@link PhaseDefinition}.
+     */
     @POST
     @Path(
         "/{lifecycleIdentifier}/phases/{phaseIdentifier}/label/@remove/{locale}"
@@ -984,6 +1243,19 @@ public class ConfigurationLifecyclesController {
         );
     }
 
+    /**
+     * Adds a localized description to a {@link PhaseDefinition}.
+     *
+     * @param sectionIdentifierParam  The identifier of the current content
+     *                                section.
+     * @param lifecycleIdentiferParam The identifier of the current lifecycle
+     *                                definition.
+     * @param phaseIdentifierParam    Identifier of the {@link PhaseDefinition}.
+     * @param localeParam             The locale of the value to add.
+     * @param value                   The value to add.
+     *
+     * @return A redirect to the details view of the {@link PhaseDefinition}.
+     */
     @POST
     @Path("/{lifecycleIdentifier}/phases/{phaseIdentifier}/description/@add")
     @AuthorizationRequired
@@ -1039,6 +1311,19 @@ public class ConfigurationLifecyclesController {
         );
     }
 
+    /**
+     * Updates the localized description of a {@link PhaseDefinition}.
+     *
+     * @param sectionIdentifierParam  The identifier of the current content
+     *                                section.
+     * @param lifecycleIdentiferParam The identifier of the current lifecycle
+     *                                definition.
+     * @param phaseIdentifierParam    Identifier of the {@link PhaseDefinition}.
+     * @param localeParam             The locale of the value to update.
+     * @param value                   The updated value.
+     *
+     * @return A redirect to the details view of the {@link PhaseDefinition}.
+     */
     @POST
     @Path(
         "/{lifecycleIdentifier}/phases/{phaseIdentifier}/description/@edit/{locale}"
@@ -1096,6 +1381,18 @@ public class ConfigurationLifecyclesController {
         );
     }
 
+    /**
+     * Removes a localized description of a {@link PhaseDefinition}.
+     *
+     * @param sectionIdentifierParam  The identifier of the current content
+     *                                section.
+     * @param lifecycleIdentiferParam The identifier of the current lifecycle
+     *                                definition.
+     * @param phaseIdentifierParam    Identifier of the {@link PhaseDefinition}.
+     * @param localeParam             The locale of the value to remove.
+     *
+     * @return A redirect to the details view of the {@link PhaseDefinition}.
+     */
     @POST
     @Path(
         "/{lifecycleIdentifier}/phases/{phaseIdentifier}/description/@remove/{locale}"
@@ -1150,6 +1447,15 @@ public class ConfigurationLifecyclesController {
         );
     }
 
+    /**
+     * Builds a {@link LifecycleDefinitionListModel} for a
+     * {@link LifecycleDefinition}.
+     *
+     * @param definition The lifecycle definition.
+     *
+     * @return A {@link LifecycleDefinitionListModel} for the
+     *         {@code definition}.
+     */
     private LifecycleDefinitionListModel buildListModel(
         final LifecycleDefinition definition
     ) {
@@ -1170,6 +1476,16 @@ public class ConfigurationLifecyclesController {
         return model;
     }
 
+    /**
+     * Finds a lifecycle definition.
+     *
+     * @param section                   The current content section.
+     * @param definitionIdentifierParam The identifier of the definition.
+     *
+     * @return An {@link Optional} with the {@link LifecycleDefinition} or an
+     *         empty {@link Optional} if the current content section has no
+     *         matching {@link LifecycleDefinition}.
+     */
     private Optional<LifecycleDefinition> findLifecycleDefinition(
         final ContentSection section, final String definitionIdentifierParam
     ) {
@@ -1196,6 +1512,14 @@ public class ConfigurationLifecyclesController {
         }
     }
 
+    /**
+     * Shows the "lifecycle definition not found" error page.
+     *
+     * @param section              The current content section.
+     * @param definitionIdentifier The identifier of the lifecycle definition.
+     *
+     * @return The template for the "lifecycle definition not found" error page.
+     */
     private String showLifecycleDefinitionNotFound(
         final ContentSection section,
         final String definitionIdentifier
@@ -1205,6 +1529,13 @@ public class ConfigurationLifecyclesController {
         return "org/librecms/ui/contentsection/configuration/lifecycle-not-found.xhtml";
     }
 
+    /**
+     * Build the {@link PhaseDefinitionModel} for a {@link PhaseDefinition}.
+     *
+     * @param definition The phase definition.
+     *
+     * @return A {@link PhaseDefinitionModel} for the {@code definition}.
+     */
     private PhaseDefinitionModel buildPhaseDefinitionModel(
         final PhaseDefinition definition
     ) {
@@ -1227,6 +1558,17 @@ public class ConfigurationLifecyclesController {
         return model;
     }
 
+    /**
+     * Finds a {@link PhaseDefinition}.
+     *
+     * @param lifecycleDefinition            The lifecycle definition.
+     * @param phaseDefinitionIdentifierParam The identifier of the phase
+     *                                       definition.
+     *
+     * @return An {@link Optional} with the {@link PhaseDefinition} or an empty
+     *         {@link Optional} if the {@link LifecycleDefinition} has the
+     *         {@link PhaseDefinition} with the provided identifier.
+     */
     private Optional<PhaseDefinition> findPhaseDefinition(
         final LifecycleDefinition lifecycleDefinition,
         final String phaseDefinitionIdentifierParam
@@ -1240,6 +1582,16 @@ public class ConfigurationLifecyclesController {
             ).findAny();
     }
 
+    /**
+     * Shows the "phase definition not found" error page.
+     *
+     * @param section                   The current content section.
+     * @param definitionIdentifier      The identifier of the lifecycle
+     *                                  definition.
+     * @param phaseDefinitionIdentifier The idenfifier of the phase definition.
+     *
+     * @return The template for the "phase definition not found" error page.
+     */
     private String showPhaseDefinitionNotFound(
         final ContentSection section,
         final String definitionIdentifier,

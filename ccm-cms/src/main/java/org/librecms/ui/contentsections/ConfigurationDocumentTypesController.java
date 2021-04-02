@@ -1,13 +1,26 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2021 LibreCCM Foundation.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package org.librecms.ui.contentsections;
 
-import org.libreccm.api.Identifier;
 import org.libreccm.api.IdentifierParser;
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.l10n.LocalizedString;
 import org.libreccm.l10n.LocalizedTextsUtil;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.PermissionChecker;
@@ -16,11 +29,9 @@ import org.libreccm.security.Role;
 import org.libreccm.workflow.Workflow;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionManager;
-import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.ContentType;
 import org.librecms.contentsection.ContentTypeManager;
 import org.librecms.contentsection.ContentTypeMode;
-import org.librecms.contentsection.privileges.AdminPrivileges;
 import org.librecms.contentsection.privileges.TypePrivileges;
 import org.librecms.contenttypes.ContentTypeInfo;
 import org.librecms.contenttypes.ContentTypesManager;
@@ -45,6 +56,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
+ * Controller for managing the document types assigned to a
+ * {@link ContentSection}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -53,48 +66,81 @@ import javax.ws.rs.PathParam;
 @Path("/{sectionIdentifier}/configuration/documenttypes")
 public class ConfigurationDocumentTypesController {
 
+    /**
+     * Checks admin permissions for {@link ContentSection}s.
+     */
     @Inject
     private AdminPermissionsChecker adminPermissionsChecker;
 
+    /**
+     * Provides some localized messages.
+     */
     @Inject
     private CmsAdminMessages cmsAdminMessages;
 
+    /**
+     * Model for the current content section.
+     */
     @Inject
     private ContentSectionModel sectionModel;
 
+    /**
+     * Provides functions for working with content sections.
+     */
     @Inject
     private ContentSectionManager sectionManager;
 
+    /**
+     * Common functions for controllers working with content sections.
+     */
     @Inject
     private ContentSectionsUi sectionsUi;
 
+    /**
+     * Provides functions for working with content types.
+     */
     @Inject
     private ContentTypeManager typeManager;
 
+    /**
+     * Provides function for managing the content types assigned to a content
+     * section.
+     */
     @Inject
     private ContentTypesManager typesManager;
 
-    @Inject
-    private DocumentTypeModel documentTypeModel;
-
+    /**
+     * Model for displaying a list of document types.
+     */
     @Inject
     private DocumentTypesModel documentTypesModel;
 
+    /**
+     * Provides functions for working with {@link LocalizedString}s.
+     */
     @Inject
     private GlobalizationHelper globalizationHelper;
 
-    @Inject
-    private IdentifierParser identifierParser;
-
+    /**
+     * Used to provide data for the views without a named bean.
+     */
     @Inject
     private Models models;
 
+    /**
+     * Checks permissions.
+     */
     @Inject
     private PermissionChecker permissionChecker;
 
-    @Inject
-    private PermissionManager permissionManager;
-
+    /**
+     * Shows a list of {@link ContentType}s assigned to a content section.
+     *
+     * @param sectionIdentifierParam The identifier of the current content
+     *                               section.
+     *
+     * @return The template of the list of document types.
+     */
     @GET
     @Path("/")
     @AuthorizationRequired
@@ -168,6 +214,19 @@ public class ConfigurationDocumentTypesController {
         return "org/librecms/ui/contentsection/configuration/documenttypes.xhtml";
     }
 
+    /**
+     * Adds a document type to a {@link ContentSection}.
+     *
+     * @param sectionIdentifierParam The identifier of the current content
+     *                               section.
+     * @param contentItemClass       The class of the content type to add.
+     * @param defaultLifecycleUuid   The UUID of the default lifecycle for the
+     *                               type.
+     * @param defaultWorkflowUuid    The UUID of the default workflow for the
+     *                               type.
+     *
+     * @return A redirect to the list of document types.
+     */
     @POST
     @Path("/")
     @AuthorizationRequired
@@ -260,6 +319,19 @@ public class ConfigurationDocumentTypesController {
         );
     }
 
+    /**
+     * Updates a document type.
+     *
+     * @param sectionIdentifierParam The identifier of the current content
+     *                               section.
+     * @param documentTypeParam      the identifier of the type to update.
+     * @param defaultLifecycleUuid   The UUID of the new default lifecycle.
+     * @param defaultWorkflowUuid    The UUID of the new default workflow.
+     * @param roleUuids              The roles that are permitted to use the
+     *                               type.
+     *
+     * @return A redirect to the list of document types.
+     */
     @POST
     @Path("/{documentType}")
     @AuthorizationRequired
@@ -351,90 +423,15 @@ public class ConfigurationDocumentTypesController {
         );
     }
 
-//    @POST
-//    @Path("/{documentType}/default-workflow")
-//    public String setDefaultWorkflow(
-//        @PathParam("sectionIdentifier") final String sectionIdentifierParam,
-//        @PathParam("documentType") final String documentTypeParam,
-//        @FormParam("defaultWorkflowUuid") final String defaultWorkflowUuid
-//    ) {
-//        final Identifier sectionIdentifier = identifierParser.parseIdentifier(
-//            sectionIdentifierParam
-//        );
-//
-//        final Optional<ContentSection> sectionResult;
-//        switch (sectionIdentifier.getType()) {
-//            case ID:
-//                sectionResult = sectionRepo.findById(
-//                    Long.parseLong(
-//                        sectionIdentifier.getIdentifier()
-//                    )
-//                );
-//                break;
-//            case UUID:
-//                sectionResult = sectionRepo.findByUuid(
-//                    sectionIdentifier.getIdentifier()
-//                );
-//                break;
-//            default:
-//                sectionResult = sectionRepo.findByLabel(
-//                    sectionIdentifier.getIdentifier()
-//                );
-//                break;
-//        }
-//
-//        if (!sectionResult.isPresent()) {
-//            models.put("sectionIdentifier", sectionIdentifier);
-//            return "org/librecms/ui/contentsection/contentsection-not-found.xhtml";
-//        }
-//        final ContentSection section = sectionResult.get();
-//        sectionModel.setSection(section);
-//
-//        if (!permissionChecker.isPermitted(
-//            AdminPrivileges.ADMINISTER_CONTENT_TYPES, section
-//        )) {
-//            models.put("sectionIdentifier", sectionIdentifier);
-//            return "org/librecms/ui/contentsection/access-denied.xhtml";
-//        }
-//
-//        final Optional<ContentType> typeResult = section
-//            .getContentTypes()
-//            .stream()
-//            .filter(type -> type.getContentItemClass().equals(documentTypeParam))
-//            .findAny();
-//
-//        if (!typeResult.isPresent()) {
-//            return "org/librecms/ui/contentsection/configuration/documenttype-not-found.xhtml";
-//        }
-//
-//        final Optional<Workflow> defaultWorkflow = section
-//            .getWorkflowTemplates()
-//            .stream()
-//            .filter(def -> def.getUuid().equals(defaultWorkflowUuid))
-//            .findAny();
-//
-//        if (!defaultWorkflow.isPresent()) {
-//            models.put(
-//                "errors",
-//                cmsAdminMessages.getMessage(
-//                    "contentsection.configuration.documenttypes.selected_workflow_not_available",
-//                    new String[]{defaultWorkflowUuid}
-//                )
-//            );
-//
-//            return listDocumentTypes(sectionIdentifierParam);
-//        }
-//
-//        typeManager.setDefaultWorkflow(
-//            typeResult.get(), defaultWorkflow.get()
-//        );
-//
-//        return String.format(
-//            "redirect:%s/configuration/documenttypes/%s",
-//            sectionIdentifierParam,
-//            documentTypeParam
-//        );
-//    }
+    /**
+     * Removes a {@link ContentType} from a {@link ContentSection}.
+     *
+     * @param sectionIdentifierParam The identifier of the current content
+     *                               section.
+     * @param documentTypeParam      The identifier of the type to remove.
+     *
+     * @return A redirect to the list of document types.
+     */
     @POST
     @Path("/{documentType}/@remove")
     @AuthorizationRequired
@@ -480,6 +477,13 @@ public class ConfigurationDocumentTypesController {
         );
     }
 
+    /**
+     * Builds a {@link DocumentTypesTableRowModel} for a {@link ContentType}.
+     *
+     * @param type The content type.
+     *
+     * @return The {@link DocumentTypesTableRowModel} for the the {@code type}.
+     */
     private DocumentTypesTableRowModel buildDocumentTypesTableRowModel(
         final ContentType type
     ) {
@@ -552,6 +556,13 @@ public class ConfigurationDocumentTypesController {
         return model;
     }
 
+    /**
+     * Builds a {@link DocumentTypeInfoModel} from a {@link ContentTypeInfo}.
+     *
+     * @param typeInfo The type info.
+     *
+     * @return A {@link DocumentTypeInfoModel} for the {@code typeInfo}.
+     */
     private DocumentTypeInfoModel buildDocumentTypeInfoModel(
         final ContentTypeInfo typeInfo
     ) {
@@ -569,6 +580,17 @@ public class ConfigurationDocumentTypesController {
         return model;
     }
 
+    /**
+     * Builds a {@link DocumentTypeLifecycleModel} for a
+     * {@link LifecycleDefinition}.
+     *
+     * @param definition       The lifecycle definition.
+     * @param defaultLifecycle Is the definition the default lifecycle for the
+     *                         content types.
+     *
+     * @return The {@link DocumentTypeLifecycleModel} for the
+     *         {@code definition}.
+     */
     private DocumentTypeLifecycleModel buildLifecycleModel(
         final LifecycleDefinition definition,
         final boolean defaultLifecycle
@@ -592,6 +614,14 @@ public class ConfigurationDocumentTypesController {
         return model;
     }
 
+    /**
+     * Builds a {@link DocumentTypeWorkflowModel} for a {@link Workflow}.
+     *
+     * @param workflow        The workflow (template).
+     * @param defaultWorkflow Is the workflow the default workflow for the type?
+     *
+     * @return A {@link DocumentTypeWorkflowModel} for the {@code workflow}.
+     */
     private DocumentTypeWorkflowModel buildWorkflowModel(
         final Workflow workflow, final boolean defaultWorkflow
     ) {
@@ -612,6 +642,16 @@ public class ConfigurationDocumentTypesController {
         return model;
     }
 
+    /**
+     * Builds a {@link DocumentTypePermissionModel} for a {@link ContentType}
+     * and a {@code Role}.
+     *
+     * @param type The content type.
+     * @param role The role.
+     *
+     * @return A {@link DocumentTypePermissionModel} for the {@link ContentType}
+     *         and {@link Role}.
+     */
     private DocumentTypePermissionModel buildDocumentTypePermissionModel(
         final ContentType type, final Role role
     ) {

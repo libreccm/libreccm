@@ -1,7 +1,20 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2021 LibreCCM Foundation.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package org.librecms.ui.contentsections;
 
@@ -56,6 +69,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 
 /**
+ * Controller for managing doucment folders.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -68,60 +82,127 @@ public class DocumentFolderController {
         DocumentFolderController.class
     );
 
+    /**
+     * Used for actions on {@link ContentItem}s in the folder.
+     */
     @Inject
     private ContentItemManager itemManager;
 
+    /**
+     * Used to retrieve {@link ContentItem}s in the folder.
+     */
     @Inject
     private ContentItemRepository itemRepo;
 
+    /**
+     * Used for localization actions for the items in the folder.
+     */
     @Inject
     private ContentItemL10NManager itemL10NManager;
 
+    /**
+     * Model for the current {@link ContentSection}.
+     */
     @Inject
     private ContentSectionModel contentSectionModel;
 
+    /**
+     * Provides common functions for all controllers working with
+     * {@link ContentSection}s.
+     */
     @Inject
     private ContentSectionsUi sectionsUi;
 
+    /**
+     * Used to retrieve {@link ContentType}s.
+     */
     @Inject
     private ContentTypeRepository contentTypeRepo;
 
+    /**
+     * Model for the current document folder.
+     */
     @Inject
     private DocumentFolderModel documentFolderModel;
 
+    /**
+     * Used for actions on folders.
+     */
     @Inject
     private FolderManager folderManager;
 
+    /**
+     * Used to retrieve and save folders.
+     */
     @Inject
     private FolderRepository folderRepo;
 
+    /**
+     * Used for globalization actions.
+     */
     @Inject
     private GlobalizationHelper globalizationHelper;
 
+    /**
+     * Used to provide data for the views without a named bean.
+     */
     @Inject
     private Models models;
 
+    /**
+     * Used to update the permissions of the folder.
+     */
     @Inject
     private PermissionManager permissionManager;
 
+    /**
+     * Used to retrieve roles.
+     */
     @Inject
     private RoleRepository roleRepo;
 
+    /**
+     * Used to check permissions on {@link ContentItem}s.
+     */
     @Inject
     private DocumentPermissions documentPermissions;
 
+    /**
+     * Model for the document folder tree.
+     */
     @Inject
     private DocumentFolderTree documentFolderTree;
 
+    /**
+     * Privileges granted to the current for the items in the folder.
+     */
     @Inject
     private GrantedItemPrivileges grantedPrivileges;
 
+    /**
+     * Privileges granted to the current for the items in the folder.
+     */
     @Inject
     private CurrentUserDocumentPermissions currentUserPermissions;
 
+    /**
+     * Permission checker for {@link ContentItem}s.
+     */
     @Inject
     private ItemPermissionChecker itemPermissionChecker;
 
+    /**
+     * List the content items and subfolders of the root folder of a content
+     * section.
+     *
+     * @param sectionIdentifier The identifier of the content section.
+     * @param filterTerm        An optional filter term for filtering the items
+     *                          and subfolders.
+     * @param firstResult       The index of the first result to show.
+     * @param maxResults        The maximum number of results to show.
+     *
+     * @return The template for showing the content of a document folder.
+     */
     @GET
     @Path("/")
     @AuthorizationRequired
@@ -137,6 +218,18 @@ public class DocumentFolderController {
         );
     }
 
+    /**
+     * List the content items and subfolders of a folder of a content section.
+     *
+     * @param sectionIdentifier The identifier of the content section.
+     * @param folderPath        Path of the folder.
+     * @param filterTerm        An optional filter term for filtering the items
+     *                          and subfolders.
+     * @param firstResult       The index of the first result to show.
+     * @param maxResults        The maximum number of results to show.
+     *
+     * @return The template for showing the content of a document folder.
+     */
     @GET
     @Path("/{folderPath:(.+)?}")
     @AuthorizationRequired
@@ -242,10 +335,20 @@ public class DocumentFolderController {
         return "org/librecms/ui/contentsection/documentfolder/documentfolder.xhtml";
     }
 
+    /**
+     * Only for testing, will be removed.
+     *
+     * @param sectionIdentifier
+     *
+     * @return
+     *
+     * @deprecated
+     */
     @GET
     @Path("/create-testdata")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
+    @Deprecated
     public String createTestData(
         @PathParam("sectionIdentifier") final String sectionIdentifier
     ) {
@@ -315,6 +418,14 @@ public class DocumentFolderController {
         }
     }
 
+    /**
+     * Creates a new subfolder in the root folder of a content section.
+     *
+     * @param sectionIdentifier The identifier of the content section.
+     * @param folderName        The name of the new folder.
+     *
+     * @return A redirect to the listing of the root folder.
+     */
     @POST
     @Path("/")
     @AuthorizationRequired
@@ -328,6 +439,15 @@ public class DocumentFolderController {
         );
     }
 
+    /**
+     * Create a new subfolder in a folder.
+     *
+     * @param sectionIdentifier The identifier of the content section.
+     * @param parentFolderPath  The path of the parent folder.
+     * @param folderName        The name of the new folder.
+     *
+     * @return A redirect to the listing of the parent folder.
+     */
     @POST
     @Path("/{parentFolderPath:(.+)?}")
     @AuthorizationRequired
@@ -383,6 +503,16 @@ public class DocumentFolderController {
         );
     }
 
+    /**
+     * Updates the permissions of the root folder of a content section.
+     *
+     * @param sectionIdentifier The identifier of the content section.
+     * @param roleParam         The identifier of the role for which the
+     *                          permissions are updated.
+     * @param permissions       The updated permissions.
+     *
+     * @return A redirect to the listing of the folder.
+     */
     @POST
     @Path("/@permissions/{role}/")
     @AuthorizationRequired
@@ -397,6 +527,17 @@ public class DocumentFolderController {
         );
     }
 
+    /**
+     * Updates the permissions of afolder of a content section.
+     *
+     * @param sectionIdentifier The identifier of the content section.
+     * @param folderPath        The path of the folder.
+     * @param roleParam         The identifier of the role for which the
+     *                          permissions are updated.
+     * @param permissions       The updated permissions.
+     *
+     * @return A redirect to the listing of the folder.
+     */
     @POST
     @Path("/@permissions/{role}/{folderPath:(.+)?}")
     @AuthorizationRequired
@@ -478,6 +619,15 @@ public class DocumentFolderController {
         );
     }
 
+    /**
+     * Renames a folder.
+     *
+     * @param sectionIdentifier The identifier of the content section
+     * @param folderPath        The path of the folder.
+     * @param folderName        The new name of the folder.
+     *
+     * @return A redirect to the folder.
+     */
     @POST
     @Path("/@rename/{folderPath:(.+)?}")
     @AuthorizationRequired
@@ -538,6 +688,13 @@ public class DocumentFolderController {
         );
     }
 
+    /**
+     * A helper method for building the breadcrumb trail of a folder.
+     *
+     * @param folderPath The path of the folder.
+     *
+     * @return The breadcrumb trail for the folder.
+     */
     private List<FolderBreadcrumbsModel> buildBreadcrumbs(
         final String folderPath
     ) {
@@ -564,6 +721,15 @@ public class DocumentFolderController {
         return breadcrumbs;
     }
 
+    /**
+     * Helper method for building a {@link DocumentFolderRowModel} for an entry
+     * in the document folder.
+     *
+     * @param section The content section of the folder.
+     * @param entry   The entry from which the row is created.
+     *
+     * @return A {@link DocumentFolderRowModel} for the provided {@code entry}.
+     */
     private DocumentFolderRowModel buildRowModel(
         final ContentSection section, final DocumentFolderEntry entry
     ) {
@@ -688,6 +854,15 @@ public class DocumentFolderController {
         return row;
     }
 
+    /**
+     * Helper method for showing the "document folder not found" page if there
+     * is not folder for the provided path.
+     *
+     * @param section    The content section.
+     * @param folderPath The folder path.
+     *
+     * @return The template of the "document folder not found" page.
+     */
     private String showDocumentFolderNotFound(
         final ContentSection section, final String folderPath
     ) {

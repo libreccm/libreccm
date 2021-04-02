@@ -1,9 +1,24 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2021 LibreCCM Foundation.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package org.librecms.ui.contentsections;
+
+import org.libreccm.workflow.Workflow;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,6 +30,11 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 /**
+ * Model providing the data about the selected workflow template for the
+ * workflow details view.
+ *
+ * @see ConfigurationWorkflowController
+ * @see Workflow
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -22,20 +42,44 @@ import javax.inject.Named;
 @Named("SelectedWorkflowTemplateModel")
 public class SelectedWorkflowTemplateModel {
 
+    /**
+     * The ID of the selected workflow template.
+     */
     private long workflowId;
 
+    /**
+     * The UUID of the selected workflow template.
+     */
     private String uuid;
-    
+
+    /**
+     * The display name of the selected workflow template.
+     */
     private String displayName;
 
+    /**
+     * The localized titles of the selected workflow template.
+     */
     private Map<String, String> name;
 
+    /**
+     * Locales for which no title value has been definied yet.
+     */
     private List<String> unusedNameLocales;
 
+    /**
+     * The localized descriptions of the selected workflow template.
+     */
     private Map<String, String> description;
 
+    /**
+     * The locales for which no localized description has definied yet.
+     */
     private List<String> unusedDescriptionLocales;
 
+    /**
+     * The tasks of the selected workflow template.
+     */
     private List<WorkflowTaskTemplateListModel> tasks;
 
     public long getWorkflowId() {
@@ -96,11 +140,11 @@ public class SelectedWorkflowTemplateModel {
         this.unusedDescriptionLocales
             = new ArrayList<>(unusedDescriptionLocales);
     }
-    
+
     public boolean getHasUnusedNameLocales() {
         return !unusedNameLocales.isEmpty();
     }
-    
+
     public boolean getHasUnusedDescriptionLocales() {
         return !unusedDescriptionLocales.isEmpty();
     }
@@ -113,5 +157,4 @@ public class SelectedWorkflowTemplateModel {
         this.displayName = displayName;
     }
 
-    
 }

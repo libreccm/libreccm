@@ -1,9 +1,25 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2021 LibreCCM Foundation.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package org.librecms.ui.contentsections;
+
+import org.libreccm.categorization.Category;
+import org.libreccm.l10n.GlobalizationHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,43 +28,99 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Model for the details view of a category.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class CategoryModel {
 
+    /**
+     * The ID of the category.
+     */
     private long categoryId;
 
+    /**
+     * The UUID of the category.
+     */
     private String uuid;
 
+    /**
+     * The unique ID of the category.
+     */
     private String uniqueId;
 
+    /**
+     * The name of the category.
+     */
     private String name;
 
+    /**
+     * The path of the category.
+     */
     private String path;
 
+    /**
+     * The title of the category to display. This value is determined from
+     * {@link Category#title} using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }.
+     */
     private String title;
 
+    /**
+     * The localized titles of the category.
+     */
     private Map<String, String> localizedTitles;
 
+    /**
+     * The description of the category to display. This value is determined from
+     * {@link Category#description} using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }.
+     */
     private String description;
 
+    /**
+     * The localized descriptions of the category.
+     */
     private Map<String, String> localizedDescriptions;
 
+    /**
+     * Is the category enabled?
+     */
     private boolean enabled;
 
+     /**
+     * Is the category visible?
+     */
     private boolean visible;
 
+     /**
+     * Is the category an abstract category?
+     */
     private boolean abstractCategory;
 
+    /**
+     * The sub categories of the category.
+     */
     private List<CategoryModel> subCategories;
 
+    /**
+     * The objects assigned to which the category is assigned.
+     */
     private List<CategorizedObjectModel> objects;
 
+    /**
+     * The order of the category.
+     */
     private long categoryOrder;
 
+    /**
+     * Locales for which no localized title has been defined yet.
+     */
     private List<String> unusedTitleLocales;
 
+    /**
+     * Locales for which no localized description has been defined yet.
+     */
     private List<String> unusedDescriptionLocales;
 
     public CategoryModel() {

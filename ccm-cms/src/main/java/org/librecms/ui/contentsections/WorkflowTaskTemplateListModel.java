@@ -1,30 +1,60 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2021 LibreCCM Foundation.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package org.librecms.ui.contentsections;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.workflow.Task;
 
 /**
+ * Model for an item in the list tasks of a workflows template.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 public class WorkflowTaskTemplateListModel {
 
+    /**
+     * The ID of the task.
+     */
     private long taskId;
 
+    /**
+     * The UUID of the task.
+     */
     private String uuid;
 
+    /**
+     * The label of the task. This value determined from {@link Task#label}
+     * using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }.
+     */
     private String label;
 
+    /**
+     * The description of the task. This value determined from
+     * {@link Task#description} using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
+     * }.
+     */
     private String description;
-    
+
+    /**
+     * Does the task have any dependencies?
+     */
     private boolean hasDependencies;
 
     public long getTaskId() {
@@ -66,7 +96,5 @@ public class WorkflowTaskTemplateListModel {
     public void setHasDependencies(final boolean hasDependencies) {
         this.hasDependencies = hasDependencies;
     }
-    
-    
 
 }

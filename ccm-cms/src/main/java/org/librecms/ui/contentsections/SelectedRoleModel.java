@@ -1,7 +1,20 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2021 LibreCCM Foundation.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package org.librecms.ui.contentsections;
 
@@ -21,6 +34,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 /**
+ * Model for details view of a role providing the data of the selected role.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -28,17 +42,38 @@ import javax.inject.Named;
 @Named("SelectedRoleModel")
 public class SelectedRoleModel {
 
+    /**
+     * Party repository for retrieving parties.
+     */
     @Inject
     private PartyRepository partyRepository;
 
+    /**
+     * The name of the role.
+     */
     private String name;
 
+    /**
+     * The localized descriptions of the role.
+     */
     private Map<String, String> description;
 
+    /**
+     * Locales for which not localized description has been defined yet.
+     */
     private List<String> unusedDescriptionLocales;
 
+    /**
+     * The members of the role.
+     */
     private List<RoleMembershipModel> members;
 
+    /**
+     * Builds {@link RolePartyFormEntry} objects for all parties. They are used
+     * to create the form for adding members and removing members from the role.
+     *
+     * @return A list of {@link RolePartyFormEntry} objects for all parties.
+     */
     public List<RolePartyFormEntry> getRolePartyFormEnties() {
         return partyRepository
             .findAll()
@@ -100,6 +135,14 @@ public class SelectedRoleModel {
         return !unusedDescriptionLocales.isEmpty();
     }
 
+    /**
+     * Helper method for building a {@link RolePartyFormEntry} for the a
+     * {@link Party}.
+     *
+     * @param party The party.
+     *
+     * @return A {@link RolePartyFormEntry} for the {@code party}.
+     */
     private RolePartyFormEntry buildRolePartyFormEntry(final Party party) {
         final RolePartyFormEntry entry = new RolePartyFormEntry();
         entry.setPartyId(party.getPartyId());

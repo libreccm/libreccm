@@ -1,16 +1,26 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2021 LibreCCM Foundation.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
  */
 package org.librecms.ui.contentsections;
 
-import org.libreccm.api.Identifier;
-import org.libreccm.api.IdentifierParser;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.contentsection.ContentSection;
-import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 
 import java.util.Optional;
@@ -18,13 +28,14 @@ import java.util.Optional;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.mvc.Controller;
-import javax.mvc.Models;
 import javax.transaction.Transactional;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
+ * Controller for the index page of the configuration of a
+ * {@link ContentSection}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -33,24 +44,32 @@ import javax.ws.rs.PathParam;
 @Path("/{sectionIdentifier}/configuration")
 public class ConfigurationController {
 
+    /**
+     * Model for the current content section.
+     */
     @Inject
     private ContentSectionModel sectionModel;
 
-    @Inject
-    private ContentSectionRepository sectionRepo;
-
+    /**
+     * Common functions for controllers working with content sections.
+     */
     @Inject
     private ContentSectionsUi sectionsUi;
 
-    @Inject
-    private IdentifierParser identifierParser;
-
-    @Inject
-    private Models models;
-
+    /**
+     * Checks permissions.
+     */
     @Inject
     private PermissionChecker permissionChecker;
 
+    /**
+     * Shows the configuration index page for the current content section.
+     *
+     * @param sectionIdentifierParam The identifier of the current content
+     *                               section.
+     *
+     * @return The template for the index page.
+     */
     @GET
     @Path("/")
     @AuthorizationRequired
@@ -74,6 +93,15 @@ public class ConfigurationController {
         return "org/librecms/ui/contentsection/configuration/index.xhtml";
     }
 
+    /**
+     * Checks if the current user is permitted to access the configurations page
+     * of the content section.
+     *
+     * @param section The content section.
+     *
+     * @return {@code true} if the current user is permitted, {@code false}
+     *         otherwise.
+     */
     private boolean hasRequiredPermission(final ContentSection section) {
         return permissionChecker.isPermitted(
             AdminPrivileges.ADMINISTER_CONTENT_TYPES, section
