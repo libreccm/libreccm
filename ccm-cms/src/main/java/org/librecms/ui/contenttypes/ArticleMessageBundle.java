@@ -19,12 +19,14 @@
 package org.librecms.ui.contenttypes;
 
 import org.libreccm.ui.AbstractMessagesBean;
+import org.librecms.contenttypes.Article;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 /**
- *
+ * Message bundle fo the authoring steps for editing an {@link Article}.
+ * 
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped

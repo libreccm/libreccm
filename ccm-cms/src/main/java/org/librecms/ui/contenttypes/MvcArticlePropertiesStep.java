@@ -20,6 +20,7 @@ package org.librecms.ui.contenttypes;
 
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.l10n.LocalizedString;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
@@ -48,6 +49,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
 
 /**
+ * Authoring step for editing the basic properties of an a {@link Article}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -58,22 +60,43 @@ import javax.ws.rs.PathParam;
 @Named("CmsArticlePropertiesStep")
 public class MvcArticlePropertiesStep implements MvcAuthoringStep {
 
+    /**
+     * The path fragment of the step.
+     */
     static final String PATH_FRAGMENT = "basicproperties";
 
+    /**
+     * Used for retrieving and saving the article.
+     */
     @Inject
     private ContentItemRepository itemRepo;
 
+    /**
+     * Provides functions for working with content items.
+     */
     @Inject
     private ContentItemManager itemManager;
 
+    /**
+     * Provides functions for working with folders.
+     */
     @Inject
     private FolderManager folderManager;
 
+    /**
+     * Provides functions for working with {@link LocalizedString}s.
+     */
     @Inject
     private GlobalizationHelper globalizationHelper;
 
+    /**
+     * The current content section.
+     */
     private ContentSection section;
 
+    /**
+     * The {@link Article} to edit.
+     */
     private Article document;
 
     @Override
@@ -151,10 +174,22 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
 
     }
 
+    /**
+     * Gets the display name of the current article.
+     *
+     * @return The display name of the current article.
+     */
     public String getName() {
         return document.getDisplayName();
     }
 
+    /**
+     * Updates the name of the current article.
+     *
+     * @param name The new name of the article.
+     *
+     * @return A redirect to this authoring step.
+     */
     @POST
     @Path("/name")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -172,6 +207,11 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Get the values of the localized title of the article.
+     *
+     * @return The values of the localized title of the article.
+     */
     public Map<String, String> getTitleValues() {
         return document
             .getTitle()
@@ -185,7 +225,12 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
                 )
             );
     }
-    
+
+    /**
+     * Get the locales for which no localized title has been defined yet.
+     *
+     * @return The locales for which no localized title has been defined yet.
+     */
     public List<String> getUnusedTitleLocales() {
         final Set<Locale> titleLocales = document
             .getTitle()
@@ -198,6 +243,14 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Adds a localized title to the article.
+     *
+     * @param localeParam The locale of the title.
+     * @param value       The title value.
+     *
+     * @return A redirect to this authoring step.
+     */
     @POST
     @Path("/title/@add")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -217,6 +270,14 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Updates a localized title of the article.
+     *
+     * @param localeParam The locale to update.
+     * @param value       The updated title value.
+     *
+     * @return A redirect to this authoring step.
+     */
     @POST
     @Path("/title/@edit/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -236,6 +297,13 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Removes a localized title of the article.
+     *
+     * @param localeParam The locale to remove.
+     *
+     * @return A redirect to this authoring step.
+     */
     @POST
     @Path("/title/@remove/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -254,7 +322,13 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
         );
     }
 
-     public List<String> getUnusedDescriptionLocales() {
+    /**
+     * Get the locales for which no localized description has been defined yet.
+     *
+     * @return The locales for which no localized description has been defined
+     *         yet.
+     */
+    public List<String> getUnusedDescriptionLocales() {
         final Set<Locale> descriptionLocales = document
             .getDescription()
             .getAvailableLocales();
@@ -265,7 +339,12 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
             .map(Locale::toString)
             .collect(Collectors.toList());
     }
-    
+
+    /**
+     * Get the values of the localized decrription of the article.
+     *
+     * @return The values of the localized description of the article.
+     */
     public Map<String, String> getDescriptionValues() {
         return document
             .getDescription()
@@ -280,6 +359,14 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
             );
     }
 
+    /**
+     * Adds a localized description to the article.
+     *
+     * @param localeParam The locale of the description.
+     * @param value       The description value.
+     *
+     * @return A redirect to this authoring step.
+     */
     @POST
     @Path("/title/@add")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -299,6 +386,14 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Updates a localized description of the article.
+     *
+     * @param localeParam The locale to update.
+     * @param value       The updated description value.
+     *
+     * @return A redirect to this authoring step.
+     */
     @POST
     @Path("/title/@edit/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -318,6 +413,13 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Removes a localized description of the article.
+     *
+     * @param localeParam The locale to remove.
+     *
+     * @return A redirect to this authoring step.
+     */
     @POST
     @Path("/title/@remove/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)

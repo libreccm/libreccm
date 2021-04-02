@@ -19,6 +19,7 @@
 package org.librecms.ui.contenttypes;
 
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.l10n.LocalizedString;
 import org.libreccm.workflow.Workflow;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
@@ -53,39 +54,78 @@ import javax.ws.rs.FormParam;
 @Named("CmsArticleCreateStep")
 public class MvcArticleCreateStep implements MvcDocumentCreateStep<Article> {
 
+    /**
+     * Provides functions for working with content items.
+     */
     @Inject
     private ContentItemManager itemManager;
 
+    /**
+     * Used to save the article.
+     */
     @Inject
     private ContentItemRepository itemRepo;
 
+    /**
+     * Provides operations for folders.
+     */
     @Inject
     private FolderManager folderManager;
 
+    /**
+     * Provides functions for working with {@link LocalizedString}s.
+     */
     @Inject
     private GlobalizationHelper globalizationHelper;
 
+    /**
+     * Used to provided data for the views without a named bean.
+     */
     @Inject
     private Models models;
 
+    /**
+     * The current content section.
+     */
     private ContentSection section;
 
+    /**
+     * The current folder.
+     */
     private Folder folder;
 
+    /**
+     * Messages to be shown to the user.
+     */
     private SortedMap<String, String> messages;
 
+    /**
+     * Name of the article.
+     */
     @FormParam("name")
     private String name;
 
+    /**
+     * Title of the article.
+     */
     @FormParam("title")
     private String title;
 
+    /**
+     * Summary of the article.
+     */
     @FormParam("summary")
     private String summary;
 
+    /**
+     * The initial locale of the article.
+     */
     @FormParam("locale")
     private String initialLocale;
 
+    /**
+     * The workflow to use for the new article.
+     */
     @FormParam("selectedWorkflow")
     private String selectedWorkflow;
 

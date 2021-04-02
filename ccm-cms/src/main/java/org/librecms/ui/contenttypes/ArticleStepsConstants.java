@@ -19,6 +19,7 @@
 package org.librecms.ui.contenttypes;
 
 /**
+ * Constants for the authoring steps for editing an {@link Article}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -31,6 +32,4 @@ public final class ArticleStepsConstants {
     public static final String BUNDLE
         = "org.libreccms.ui.contenttypes.ArticleBundle";
 
-    
-    
 }

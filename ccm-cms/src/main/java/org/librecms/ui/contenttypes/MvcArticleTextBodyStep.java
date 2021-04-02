@@ -46,8 +46,8 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
 
-
 /**
+ * Authoring step for editing the main text of an {@link Article}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -58,22 +58,37 @@ import javax.ws.rs.PathParam;
 @Named("CmsArticleTextBodyStep")
 public class MvcArticleTextBodyStep implements MvcAuthoringStep {
 
+    /**
+     * The path fragment of the step.
+     */
     static final String PATH_FRAGMENT = "text";
 
+    /**
+     * Used for retrieving and saving the article.
+     */
     @Inject
     private ContentItemRepository itemRepo;
 
+    /**
+     * Provides functions for working with content items.
+     */
     @Inject
     private ContentItemManager itemManager;
 
-    @Inject
-    private FolderManager folderManager;
-
+    /**
+     * Provides functions for working with {@link LocalizedString}s.
+     */
     @Inject
     private GlobalizationHelper globalizationHelper;
 
+    /**
+     * The current content section.
+     */
     private ContentSection section;
 
+    /**
+     * The {@link Article} to edit.
+     */
     private Article document;
 
     @Override
@@ -150,6 +165,11 @@ public class MvcArticleTextBodyStep implements MvcAuthoringStep {
         return "org/librecms/ui/contenttypes/article/article-text.xhtml";
     }
 
+    /**
+     * Get all localized values of the main text.
+     *
+     * @return The localized values of the main text.
+     */
     public Map<String, String> getTextValues() {
         return document
             .getText()
@@ -163,7 +183,12 @@ public class MvcArticleTextBodyStep implements MvcAuthoringStep {
                 )
             );
     }
-    
+
+    /**
+     * Gets the locales for which the main text has not been defined yet.
+     *
+     * @return The locales for which the main text has not been defined yet.
+     */
     public List<String> getUnusedLocales() {
         final Set<Locale> locales = document
             .getText()
@@ -176,6 +201,14 @@ public class MvcArticleTextBodyStep implements MvcAuthoringStep {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Adds a localized main text.
+     *
+     * @param localeParam The locale of the text.
+     * @param value       The text.
+     *
+     * @return A redirect to this authoring step.
+     */
     @POST
     @Path("/@add")
     public String addTextValue(
@@ -194,6 +227,14 @@ public class MvcArticleTextBodyStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Updates a localized main text.
+     *
+     * @param localeParam The locale of the text.
+     * @param value       The text.
+     *
+     * @return A redirect to this authoring step.
+     */
     @POST
     @Path("/@edit/{locale}")
     public String editTextValue(
@@ -212,6 +253,13 @@ public class MvcArticleTextBodyStep implements MvcAuthoringStep {
         );
     }
 
+    /**
+     * Removes a localized main text.
+     *
+     * @param localeParam The locale of the text.
+     *
+     * @return A redirect to this authoring step.
+     */
     @POST
     @Path("/@remove/{locale}")
     public String remvoeTextValue(
