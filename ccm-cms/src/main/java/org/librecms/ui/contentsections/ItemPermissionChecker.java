@@ -112,7 +112,7 @@ public class ItemPermissionChecker {
      * @return {@code true} if the current user can apply alternate workflows to
      *         the item, {@code false} otherwise.
      */
-    public boolean canApplyAlternateWorkflowItems(
+    public boolean canApplyAlternateWorkflow(
         final ContentItem item
     ) {
         return permissionChecker.isPermitted(
@@ -303,7 +303,7 @@ public class ItemPermissionChecker {
      * @return {@code true} if the current user can edit the item, {@code false}
      *         otherwise.
      */
-    public boolean canEditItems(final ContentItem item) {
+    public boolean canEditItem(final ContentItem item) {
         return permissionChecker.isPermitted(
             ItemPrivileges.EDIT, item
         );

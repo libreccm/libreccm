@@ -25,6 +25,7 @@ import org.librecms.contentsection.ContentSection;
 import org.librecms.lifecycle.Lifecycle;
 import org.librecms.lifecycle.LifecycleDefinition;
 import org.librecms.lifecycle.LifecycleDefinitionRepository;
+import org.librecms.ui.contentsections.ItemPermissionChecker;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -69,7 +70,16 @@ public class PublishStep implements MvcAuthoringStep {
     private ContentItemManager itemManager;
 
     @Inject
+    private DefaultStepsMessageBundle defaultStepsMessageBundle;
+
+    @Inject
+    private DocumentUi documentUi;
+
+    @Inject
     private GlobalizationHelper globalizationHelper;
+
+    @Inject
+    private ItemPermissionChecker itemPermissionChecker;
 
     @Inject
     private LifecycleDefinitionRepository lifecycleDefRepo;
@@ -149,20 +159,30 @@ public class PublishStep implements MvcAuthoringStep {
 
     @Override
     public String showStep() {
-        final String lifecycleDefUuid;
-        if (itemManager.isLive(document)) {
-            lifecycleDefUuid = document
-                .getLifecycle()
-                .getDefinition()
-                .getUuid();
+        if (itemPermissionChecker.canPublishItems(document)) {
+            final String lifecycleDefUuid;
+            if (itemManager.isLive(document)) {
+                lifecycleDefUuid = document
+                    .getLifecycle()
+                    .getDefinition()
+                    .getUuid();
+            } else {
+                lifecycleDefUuid = document
+                    .getContentType()
+                    .getDefaultLifecycle()
+                    .getUuid();
+            }
+            models.put("lifecycleDefinitionUuid", lifecycleDefUuid);
+            return "org/librecms/ui/documents/publish.xhtml";
         } else {
-            lifecycleDefUuid = document
-                .getContentType()
-                .getDefaultLifecycle()
-                .getUuid();
+            return documentUi.showAccessDenied(
+                section,
+                document,
+                defaultStepsMessageBundle.getMessage(
+                    "access_to_authoringstep_denied", new String[]{getLabel()}
+                )
+            );
         }
-        models.put("lifecycleDefinitionUuid", lifecycleDefUuid);
-        return "org/librecms/ui/documents/publish.xhtml";
     }
 
     /**
@@ -336,6 +356,14 @@ public class PublishStep implements MvcAuthoringStep {
             )
         );
 
+        if (!itemPermissionChecker.canPublishItems(document)) {
+            return documentUi.showAccessDenied(
+                section,
+                document,
+                "item.publish"
+            );
+        }
+
         if (selectedLifecycleDefUuid.isEmpty()) {
             if (itemManager.isLive(document)) {
                 final LifecycleDefinition definition;
@@ -377,6 +405,14 @@ public class PublishStep implements MvcAuthoringStep {
     @Path("/@unpublish")
     @Transactional(Transactional.TxType.REQUIRED)
     public String unpublish() {
+          if (!itemPermissionChecker.canPublishItems(document)) {
+            return documentUi.showAccessDenied(
+                section,
+                document,
+                "item.unpublish"
+            );
+        }
+        
         itemManager.unpublish(document);
 
         return String.format(

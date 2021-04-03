@@ -34,6 +34,7 @@ import org.librecms.lifecycle.LifecycleDefinition;
 import org.librecms.lifecycle.Phase;
 import org.librecms.ui.contentsections.ContentSectionsUi;
 import org.librecms.ui.contentsections.DocumentFolderController;
+import org.librecms.ui.contentsections.ItemPermissionChecker;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -112,10 +113,19 @@ public class DocumentController {
     private Instance<MvcDocumentCreateStep<?>> createSteps;
 
     /**
+     * Messages for default steps
+     */
+    @Inject
+    private DefaultStepsMessageBundle defaultStepsMessageBundle;
+
+    /**
      * {@link GlobalizationHelper} for working with localized texts etc.
      */
     @Inject
     private GlobalizationHelper globalizationHelper;
+
+    @Inject
+    private ItemPermissionChecker itemPermissionChecker;
 
     /**
      * Used to make avaiable in the views without a named bean.
@@ -230,6 +240,15 @@ public class DocumentController {
             folder = folderResult.get();
         }
 
+        if (!itemPermissionChecker.canCreateNewItems(folder)) {
+            models.put("section", section.getLabel());
+            models.put("folderPath", folderPath);
+            models.put(
+                "step", defaultStepsMessageBundle.getMessage("create_step")
+            );
+            return new CreateDenied();
+        }
+
         final Class<? extends ContentItem> documentClass;
         try {
             documentClass = (Class<? extends ContentItem>) Class.forName(
@@ -301,6 +320,14 @@ public class DocumentController {
             documentUi.showDocumentNotFound(section, documentPath);
         }
         final ContentItem item = itemResult.get();
+        if (!itemPermissionChecker.canEditItem(item)) {
+            return documentUi.showAccessDenied(
+                section,
+                item,
+                defaultStepsMessageBundle.getMessage("edit_denied")
+            );
+        }
+
         return String.format(
             "redirect:/%s/documents/%s/@authoringsteps/%s",
             sectionIdentifier,
@@ -345,6 +372,14 @@ public class DocumentController {
             return new DocumentNotFound();
         }
         final ContentItem item = itemResult.get();
+        if (!itemPermissionChecker.canEditItem(item)) {
+            models.put("section", section.getLabel());
+            models.put("documentPath", itemManager.getItemFolder(item));
+            models.put(
+                "step", defaultStepsMessageBundle.getMessage("edit_step")
+            );
+            return new EditDenied();
+        }
 
         final Instance<MvcAuthoringStep> instance = authoringSteps
             .select(
@@ -415,6 +450,19 @@ public class DocumentController {
             );
         }
         selectedDocumentModel.setContentItem(item);
+
+        if (!itemPermissionChecker.canEditItem(item)) {
+            models.put("section", section.getLabel());
+            models.put("documentPath", itemManager.getItemFolder(item));
+            models.put(
+                "step", defaultStepsMessageBundle.getMessage("edit_step")
+            );
+            return documentUi.showAccessDenied(
+                section,
+                documentPath,
+                defaultStepsMessageBundle.getMessage("history")
+            );
+        }
 
         models.put(
             "revisions",

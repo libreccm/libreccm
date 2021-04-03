@@ -18,6 +18,8 @@
  */
 package org.librecms.ui.contentsections;
 
+import com.arsdigita.cms.ui.authoring.multipartarticle.SectionPreviewPanel;
+
 import org.libreccm.api.Identifier;
 import org.libreccm.api.IdentifierParser;
 import org.libreccm.categorization.Categorization;
@@ -99,6 +101,12 @@ public class CategoriesController {
     private ContentSectionRepository sectionRepo;
 
     /**
+     * Provides common functions for controllers working with content sections.
+     */
+    @Inject
+    private ContentSectionsUi sectionsUi;
+
+    /**
      * The {@link GlobalizationHelper} to use.
      */
     @Inject
@@ -145,6 +153,14 @@ public class CategoriesController {
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
+
+        if (!permissionChecker.isPermitted(
+            AdminPrivileges.ADMINISTER_CATEGORIES, section
+        )) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifier
+            );
+        }
 
         final List<DomainListEntryModel> domains = section
             .getDomains()
@@ -229,6 +245,14 @@ public class CategoriesController {
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
 
+        if (!permissionChecker.isPermitted(
+            AdminPrivileges.ADMINISTER_CATEGORIES, section
+        )) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifier
+            );
+        }
+        
         final Optional<DomainOwnership> domainResult = section
             .getDomains()
             .stream()

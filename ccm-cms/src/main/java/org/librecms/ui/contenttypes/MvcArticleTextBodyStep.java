@@ -20,13 +20,15 @@ package org.librecms.ui.contenttypes;
 
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.l10n.LocalizedString;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
-import org.librecms.contentsection.FolderManager;
 import org.librecms.contenttypes.Article;
+import org.librecms.ui.contentsections.ItemPermissionChecker;
 import org.librecms.ui.contentsections.documents.AuthoringStepPathFragment;
+import org.librecms.ui.contentsections.documents.DocumentUi;
 
 import javax.enterprise.context.RequestScoped;
 import javax.mvc.Controller;
@@ -58,6 +60,9 @@ import javax.ws.rs.PathParam;
 @Named("CmsArticleTextBodyStep")
 public class MvcArticleTextBodyStep implements MvcAuthoringStep {
 
+    @Inject
+    private ArticleMessageBundle articleMessageBundle;
+
     /**
      * The path fragment of the step.
      */
@@ -75,11 +80,17 @@ public class MvcArticleTextBodyStep implements MvcAuthoringStep {
     @Inject
     private ContentItemManager itemManager;
 
+    @Inject
+    private DocumentUi documentUi;
+
     /**
      * Provides functions for working with {@link LocalizedString}s.
      */
     @Inject
     private GlobalizationHelper globalizationHelper;
+
+    @Inject
+    private ItemPermissionChecker itemPermissionChecker;
 
     /**
      * The current content section.
@@ -162,7 +173,15 @@ public class MvcArticleTextBodyStep implements MvcAuthoringStep {
 
     @Override
     public String showStep() {
-        return "org/librecms/ui/contenttypes/article/article-text.xhtml";
+        if (itemPermissionChecker.canEditItem(document)) {
+            return "org/librecms/ui/contenttypes/article/article-text.xhtml";
+        } else {
+            return documentUi.showAccessDenied(
+                section,
+                document,
+                articleMessageBundle.getMessage("article.edit.denied")
+            );
+        }
     }
 
     /**

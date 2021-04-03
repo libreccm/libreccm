@@ -222,7 +222,8 @@ public class AssetFolderController {
         }
         final ContentSection section = sectionResult.get();
 
-        if (!assetPermissionsChecker.canEditAssets(section)) {
+        if (!assetPermissionsChecker.canEditAssets(section)
+                && !assetPermissionsChecker.canUseAssets(section)) {
             sectionsUi.showAccessDenied("sectionIdentifier", sectionIdentifier);
         }
 
@@ -342,7 +343,8 @@ public class AssetFolderController {
             return sectionsUi.showContentSectionNotFound(sectionIdentifier);
         }
 
-        if (!assetPermissionsChecker.canEditAssets(section)) {
+        if (!assetPermissionsChecker.canEditAssets(section)
+                && !assetPermissionsChecker.canUseAssets(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifier
             );
@@ -527,11 +529,6 @@ public class AssetFolderController {
             section = sectionResult.get();
         } else {
             return sectionsUi.showContentSectionNotFound(sectionIdentifier);
-        }
-        if (!assetPermissionsChecker.canEditAssets(section)) {
-            return sectionsUi.showAccessDenied(
-                "sectionidentifier", sectionIdentifier
-            );
         }
 
         final Folder folder;

@@ -31,6 +31,7 @@ import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 import org.librecms.ui.contentsections.ContentSectionsUi;
+import org.librecms.ui.contentsections.ItemPermissionChecker;
 
 import java.util.Optional;
 
@@ -74,6 +75,9 @@ public class DocumentWorkflowController {
     @Inject
     private ContentSectionsUi sectionsUi;
 
+    @Inject
+    private DefaultStepsMessageBundle defaultStepsMessageBundle;
+    
     /**
      * Common functions for controllers working with {@link ContentItem}s.
      */
@@ -86,6 +90,9 @@ public class DocumentWorkflowController {
     @Inject
     private IdentifierParser identifierParser;
 
+    @Inject
+    private ItemPermissionChecker itemPermissionChecker;
+    
     /**
      * Used to check permissions for the current content item.
      */
@@ -144,6 +151,15 @@ public class DocumentWorkflowController {
         }
         final ContentItem item = itemResult.get();
         selectedDocumentModel.setContentItem(item);
+        if (!itemPermissionChecker.canEditItem(item)) {
+            return documentUi.showAccessDenied(
+                section, 
+                documentPath, 
+                defaultStepsMessageBundle.getMessage(
+                    "workflows.task.lock.access_denied"
+                )
+            );
+        }
 
         final Optional<AssignableTask> taskResult = findTask(
             item, taskIdentifier
@@ -192,6 +208,15 @@ public class DocumentWorkflowController {
         }
         final ContentItem item = itemResult.get();
         selectedDocumentModel.setContentItem(item);
+         if (!itemPermissionChecker.canEditItem(item)) {
+            return documentUi.showAccessDenied(
+                section, 
+                documentPath, 
+                defaultStepsMessageBundle.getMessage(
+                    "workflows.task.lock.access_denied"
+                )
+            );
+        }
 
         final Optional<AssignableTask> taskResult = findTask(
             item, taskIdentifier
@@ -242,6 +267,15 @@ public class DocumentWorkflowController {
         }
         final ContentItem item = itemResult.get();
         selectedDocumentModel.setContentItem(item);
+         if (!itemPermissionChecker.canEditItem(item)) {
+            return documentUi.showAccessDenied(
+                section, 
+                documentPath, 
+                defaultStepsMessageBundle.getMessage(
+                    "workflows.task.lock.access_denied"
+                )
+            );
+        }
 
         final Optional<AssignableTask> taskResult = findTask(
             item, taskIdentifier
@@ -295,6 +329,15 @@ public class DocumentWorkflowController {
         }
         final ContentItem item = itemResult.get();
         selectedDocumentModel.setContentItem(item);
+         if (!itemPermissionChecker.canApplyAlternateWorkflow(item)) {
+            return documentUi.showAccessDenied(
+                section, 
+                documentPath, 
+                defaultStepsMessageBundle.getMessage(
+                    "workflows.task.lock.access_denied"
+                )
+            );
+        }
 
         if (!permissionChecker.isPermitted(
             ItemPrivileges.APPLY_ALTERNATE_WORKFLOW, item)) {
@@ -351,6 +394,15 @@ public class DocumentWorkflowController {
         }
         final ContentItem item = itemResult.get();
         selectedDocumentModel.setContentItem(item);
+         if (!itemPermissionChecker.canEditItem(item)) {
+            return documentUi.showAccessDenied(
+                section, 
+                documentPath, 
+                defaultStepsMessageBundle.getMessage(
+                    "workflows.task.lock.access_denied"
+                )
+            );
+        }
 
         if (!permissionChecker.isPermitted(
             ItemPrivileges.APPLY_ALTERNATE_WORKFLOW, item)) {

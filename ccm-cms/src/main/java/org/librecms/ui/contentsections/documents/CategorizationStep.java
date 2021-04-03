@@ -27,9 +27,11 @@ import org.libreccm.categorization.DomainOwnership;
 import org.libreccm.categorization.ObjectNotAssignedToCategoryException;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.security.PermissionChecker;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentSection;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +69,9 @@ public class CategorizationStep implements MvcAuthoringStep {
     private CategoryManager categoryManager;
 
     @Inject
+    private DocumentUi documentUi;
+
+    @Inject
     private IdentifierParser identifierParser;
 
     @Inject
@@ -77,6 +82,9 @@ public class CategorizationStep implements MvcAuthoringStep {
 
     @Inject
     private Models models;
+
+    @Inject
+    private PermissionChecker permissionChecker;
 
     /**
      * The current content section.
@@ -195,7 +203,15 @@ public class CategorizationStep implements MvcAuthoringStep {
      */
     @Override
     public String showStep() {
-        return "org/librecms/ui/documents/categorization.xhtml";
+        if (permissionChecker.isPermitted(ItemPrivileges.CATEGORIZE, document)) {
+            return "org/librecms/ui/documents/categorization.xhtml";
+        } else {
+            return documentUi.showAccessDenied(
+                section,
+                document,
+                getLabel()
+            );
+        }
     }
 
     /**

@@ -27,6 +27,9 @@ import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.FolderManager;
 import org.librecms.contenttypes.Article;
+import org.librecms.ui.contentsections.ItemPermissionChecker;
+import org.librecms.ui.contentsections.documents.DefaultStepsMessageBundle;
+import org.librecms.ui.contentsections.documents.DocumentUi;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
@@ -54,6 +57,9 @@ import javax.ws.rs.FormParam;
 @Named("CmsArticleCreateStep")
 public class MvcArticleCreateStep implements MvcDocumentCreateStep<Article> {
 
+    @Inject
+    private ArticleMessageBundle articleMessageBundle;
+    
     /**
      * Provides functions for working with content items.
      */
@@ -66,6 +72,11 @@ public class MvcArticleCreateStep implements MvcDocumentCreateStep<Article> {
     @Inject
     private ContentItemRepository itemRepo;
 
+ 
+    
+    @Inject
+    private DocumentUi documentUi;
+    
     /**
      * Provides operations for folders.
      */
@@ -78,6 +89,9 @@ public class MvcArticleCreateStep implements MvcDocumentCreateStep<Article> {
     @Inject
     private GlobalizationHelper globalizationHelper;
 
+    @Inject
+    private ItemPermissionChecker itemPermissionChecker;
+    
     /**
      * Used to provided data for the views without a named bean.
      */
@@ -203,7 +217,15 @@ public class MvcArticleCreateStep implements MvcDocumentCreateStep<Article> {
 //    @Path("/")
     @Override
     public String showCreateForm() {
+        if (itemPermissionChecker.canCreateNewItems(folder)) {
         return "org/librecms/ui/contenttypes/article/create-article.xhtml";
+        } else {
+            return documentUi.showAccessDenied(
+                section, 
+                getFolderPath(), 
+                articleMessageBundle.getMessage("create_new_article.denied")
+            );
+        }
     }
 
 //    @POST

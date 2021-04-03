@@ -18,6 +18,8 @@
  */
 package org.librecms.ui.contentsections.documents;
 
+import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentSection;
 
 import javax.enterprise.context.RequestScoped;
@@ -30,14 +32,36 @@ import javax.mvc.Models;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-class DocumentUi {
+public class DocumentUi {
 
+    @Inject
+    private ContentItemManager itemManager;
+    
     /**
      * Used to provide data for the views without a named bean.
      */
     @Inject
     private Models models;
 
+    public String showAccessDenied(
+        final ContentSection section, 
+        final ContentItem item,
+        final String step
+    ) {
+        return showAccessDenied(section, itemManager.getItemPath(item), step);
+    }
+    
+    public String showAccessDenied(
+        final ContentSection section, 
+        final String documentPath, 
+        final String step
+    ) {
+        models.put("section", section.getLabel());
+        models.put("documentPath", documentPath);
+        models.put("step", step);
+        return "org/librecms/ui/contentsection/documents/access-denied.xhtml";
+    }
+    
     public String showDocumentNotFound(
         final ContentSection section, final String documentPath
     ) {

@@ -309,7 +309,7 @@ public class ConfigurationWorkflowController {
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
             );
@@ -353,7 +353,7 @@ public class ConfigurationWorkflowController {
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
             );
@@ -404,7 +404,7 @@ public class ConfigurationWorkflowController {
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
             );
@@ -455,7 +455,7 @@ public class ConfigurationWorkflowController {
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
             );
@@ -505,7 +505,7 @@ public class ConfigurationWorkflowController {
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
             );
@@ -556,7 +556,7 @@ public class ConfigurationWorkflowController {
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
             );
@@ -607,7 +607,7 @@ public class ConfigurationWorkflowController {
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
             );
@@ -656,7 +656,7 @@ public class ConfigurationWorkflowController {
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
             );
@@ -706,7 +706,7 @@ public class ConfigurationWorkflowController {
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
             );
@@ -864,7 +864,7 @@ public class ConfigurationWorkflowController {
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
             );
@@ -918,7 +918,7 @@ public class ConfigurationWorkflowController {
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
             );
@@ -979,7 +979,7 @@ public class ConfigurationWorkflowController {
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
             );
@@ -1042,7 +1042,7 @@ public class ConfigurationWorkflowController {
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
             );
@@ -1104,7 +1104,7 @@ public class ConfigurationWorkflowController {
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
             );
@@ -1167,7 +1167,7 @@ public class ConfigurationWorkflowController {
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
             );
@@ -1231,7 +1231,7 @@ public class ConfigurationWorkflowController {
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
             );
@@ -1293,7 +1293,7 @@ public class ConfigurationWorkflowController {
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
             );
@@ -1356,7 +1356,7 @@ public class ConfigurationWorkflowController {
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
             );
@@ -1437,7 +1437,7 @@ public class ConfigurationWorkflowController {
         }
         final ContentSection section = sectionResult.get();
         sectionModel.setSection(section);
-        if (!adminPermissionsChecker.canAdministerLifecycles(section)) {
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
             return sectionsUi.showAccessDenied(
                 "sectionIdentifier", sectionIdentifierParam
             );
