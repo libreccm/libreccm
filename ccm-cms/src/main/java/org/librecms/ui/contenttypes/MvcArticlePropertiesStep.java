@@ -29,7 +29,6 @@ import org.librecms.contentsection.FolderManager;
 import org.librecms.contenttypes.Article;
 import org.librecms.ui.contentsections.ItemPermissionChecker;
 import org.librecms.ui.contentsections.documents.AuthoringStepPathFragment;
-import org.librecms.ui.contentsections.documents.DefaultStepsMessageBundle;
 import org.librecms.ui.contentsections.documents.DocumentUi;
 
 import javax.enterprise.context.RequestScoped;

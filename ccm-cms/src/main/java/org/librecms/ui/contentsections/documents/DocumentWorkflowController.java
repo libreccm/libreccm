@@ -213,7 +213,7 @@ public class DocumentWorkflowController {
                 section, 
                 documentPath, 
                 defaultStepsMessageBundle.getMessage(
-                    "workflows.task.lock.access_denied"
+                    "workflows.task.unlock.access_denied"
                 )
             );
         }
@@ -272,7 +272,7 @@ public class DocumentWorkflowController {
                 section, 
                 documentPath, 
                 defaultStepsMessageBundle.getMessage(
-                    "workflows.task.lock.access_denied"
+                    "workflows.task.finish.access_denied"
                 )
             );
         }
@@ -334,7 +334,7 @@ public class DocumentWorkflowController {
                 section, 
                 documentPath, 
                 defaultStepsMessageBundle.getMessage(
-                    "workflows.task.lock.access_denied"
+                    "workflows.task.apply_alternate.access_denied"
                 )
             );
         }
@@ -399,7 +399,7 @@ public class DocumentWorkflowController {
                 section, 
                 documentPath, 
                 defaultStepsMessageBundle.getMessage(
-                    "workflows.task.lock.access_denied"
+                    "workflows.task.restart.access_denied"
                 )
             );
         }

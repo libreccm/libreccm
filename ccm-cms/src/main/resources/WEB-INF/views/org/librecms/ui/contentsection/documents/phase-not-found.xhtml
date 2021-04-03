@@ -7,7 +7,7 @@
     <ui:composition template="/WEB-INF/views/org/librecms/ui/content-section/documents/document.xhtml">
         
         <ui:param name="activePage" value="document" />
-        <ui:param name="title" value="#{CmsAdminMessages['contentsection.documents.document_type.not_available.title']}" />
+        <ui:param name="title" value="#{CmsAdminMessages['contentsection.document.lifecycle_phase.not_available.title']}" />
         
         <ui:define name="breadcrumb">
             <ui:include src="document-breadcrumbs.xhtml" />
@@ -19,7 +19,7 @@
          <ui:define name="main">
             <div class="container">
                 <div class="alert alert-danger" role="alert">
-                    #{CmsAdminMessages.getMessage('contentsection.document.lifecycle.not_available.message', [section, phaseId])}
+                    #{CmsAdminMessages.getMessage('contentsection.document.lifecycle_phase.not_available.message', [section, phaseId])}
                 </div>
             </div>
         </ui:define>
