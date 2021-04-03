@@ -18,13 +18,11 @@
  */
 package org.librecms.ui.contentsections;
 
-import org.libreccm.api.IdentifierParser;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.l10n.LocalizedString;
 import org.libreccm.l10n.LocalizedTextsUtil;
 import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.security.PermissionChecker;
-import org.libreccm.security.PermissionManager;
 import org.libreccm.security.Role;
 import org.libreccm.workflow.Workflow;
 import org.librecms.contentsection.ContentSection;
