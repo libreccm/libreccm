@@ -18,7 +18,6 @@
  */
 package org.librecms.ui.contentsections.documents;
 
-import com.arsdigita.kernel.KernelConfig;
 
 import org.libreccm.api.Identifier;
 import org.libreccm.api.IdentifierParser;
@@ -72,7 +71,6 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.transaction.Transactional;
 import javax.ws.rs.DefaultValue;
@@ -97,7 +95,6 @@ import javax.ws.rs.core.MediaType;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Controller
 @Path("/")
 @AuthoringStepPathFragment(RelatedInfoStep.PATH_FRAGMENT)
 @Named("CmsRelatedInfoStep")

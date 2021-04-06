@@ -30,6 +30,6 @@ public final class ArticleStepsConstants {
     }
 
     public static final String BUNDLE
-        = "org.libreccms.ui.contenttypes.ArticleBundle";
+        = "org.librecms.ui.contenttypes.ArticleBundle";
 
 }

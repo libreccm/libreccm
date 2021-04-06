@@ -33,7 +33,6 @@ import org.librecms.ui.contentsections.documents.DocumentUi;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.mvc.Controller;
 import javax.ws.rs.Path;
 
 import org.librecms.ui.contentsections.documents.MvcAuthoringStep;
@@ -56,7 +55,6 @@ import javax.ws.rs.PathParam;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Controller
 @Path("/")
 @AuthoringStepPathFragment(MvcArticlePropertiesStep.PATH_FRAGMENT)
 @Named("CmsArticlePropertiesStep")

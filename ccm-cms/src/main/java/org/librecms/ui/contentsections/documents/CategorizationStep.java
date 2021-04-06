@@ -42,7 +42,6 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.transaction.Transactional;
 import javax.ws.rs.FormParam;
@@ -57,7 +56,6 @@ import javax.ws.rs.PathParam;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Controller
 @Path("/")
 @AuthoringStepPathFragment(CategorizationStep.PATH_FRAGMENT)
 @Named("CmsCategorizationStep")

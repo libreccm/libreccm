@@ -168,7 +168,7 @@ public class DocumentController {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String redirectToDocumentFolders(
-        @PathParam("sectionIdentifider") final String sectionIdentifier
+        @PathParam("sectionIdentifier") final String sectionIdentifier
     ) {
         return String.format(
             "redirect:/%s/documentfolders/",
@@ -190,7 +190,7 @@ public class DocumentController {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public MvcDocumentCreateStep<? extends ContentItem> createDocument(
-        @PathParam("sectionIdentifider") final String sectionIdentifier,
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("documentType") final String documentType
     ) {
         return createDocument(sectionIdentifier, "", documentType);
@@ -212,7 +212,7 @@ public class DocumentController {
     @Transactional(Transactional.TxType.REQUIRED)
     @SuppressWarnings("unchecked")
     public MvcDocumentCreateStep<? extends ContentItem> createDocument(
-        @PathParam("sectionIdentifider") final String sectionIdentifier,
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("folderPath") final String folderPath,
         @PathParam("documentType") final String documentType
     ) {
@@ -302,7 +302,7 @@ public class DocumentController {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String editDocument(
-        @PathParam("sectionIdentifider") final String sectionIdentifier,
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("documentPath") final String documentPath
     ) {
         final Optional<ContentSection> sectionResult = sectionsUi
@@ -352,7 +352,7 @@ public class DocumentController {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public MvcAuthoringStep editDocument(
-        @PathParam("sectionIdentifider") final String sectionIdentifier,
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("documentPath") final String documentPath,
         @PathParam("authoringStep") final String authoringStepIdentifier
     ) {
@@ -427,7 +427,7 @@ public class DocumentController {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String showHistory(
-        @PathParam("sectionIdentifider") final String sectionIdentifier,
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("documentPath") final String documentPath
     ) {
         final Optional<ContentSection> sectionResult = sectionsUi
@@ -485,7 +485,7 @@ public class DocumentController {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String showPublishStep(
-        @PathParam("sectionIdentifider") final String sectionIdentifier,
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("documentPath") final String documentPath
     ) {
         final Optional<ContentSection> sectionResult = sectionsUi
@@ -546,7 +546,7 @@ public class DocumentController {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String publish(
-        @PathParam("sectionIdentifider") final String sectionIdentifier,
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("documentPath") final String documentPath,
         @FormParam("selectedLifecycleUuid") @DefaultValue("")
         final String selectedLifecycleUuid
@@ -609,7 +609,7 @@ public class DocumentController {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String republish(
-        @PathParam("sectionIdentifider") final String sectionIdentifier,
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("documentPath") final String documentPath
     ) {
         final Optional<ContentSection> sectionResult = sectionsUi
@@ -654,7 +654,7 @@ public class DocumentController {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String unpublish(
-        @PathParam("sectionIdentifider") final String sectionIdentifier,
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("documentPath") final String documentPath
     ) {
         final Optional<ContentSection> sectionResult = sectionsUi

@@ -34,6 +34,6 @@ public final class DefaultAuthoringStepConstants {
      * other localized resource of the default authoring steps.
      */
     public static final String BUNDLE
-        = "org.libreccms.ui.DefaultAuthoringStepsBundle";
+        = "org.librecms.ui.DefaultAuthoringStepsBundle";
 
 }

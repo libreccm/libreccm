@@ -40,7 +40,6 @@ import java.util.Optional;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.transaction.Transactional;
 import javax.ws.rs.FormParam;
@@ -55,7 +54,6 @@ import javax.ws.rs.Path;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Controller
 @Path("/")
 @AuthoringStepPathFragment(PublishStep.PATH_FRAGMENT)
 @Named("CmsPublishStep")

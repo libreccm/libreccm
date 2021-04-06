@@ -30,7 +30,6 @@ import org.librecms.ui.contentsections.ItemPermissionChecker;
 import org.librecms.ui.contentsections.documents.AuthoringStepPathFragment;
 import org.librecms.ui.contentsections.documents.DocumentUi;
 
-import javax.enterprise.context.RequestScoped;
 import javax.mvc.Controller;
 import javax.ws.rs.Path;
 
@@ -42,6 +41,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.FormParam;
@@ -54,7 +54,6 @@ import javax.ws.rs.PathParam;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Controller
 @Path("/")
 @AuthoringStepPathFragment(MvcArticleTextBodyStep.PATH_FRAGMENT)
 @Named("CmsArticleTextBodyStep")
