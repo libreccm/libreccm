@@ -141,7 +141,7 @@
                                                                 class="close"
                                                                 data-dismiss="modal"
                                                                 type="button">
-                                                            <span aria-hidden="true">&times;</span>
+                                                            <bootstrap:svgIcon icon="x-circle" />
                                                         </button>
                                                     </div>
                                                     <div class="modal-body">
@@ -163,7 +163,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <button class="btn btn-danger"
+                                                        <button class="btn btn-warning"
                                                                 data-dismiss="modal"
                                                                 type="button">
                                                             #{CmsAdminMessages['contentsection.documentfolder.new_subfolder_dialog.close']}
@@ -188,10 +188,56 @@
                                 </c:choose>
                                 <c:choose>
                                     <c:when test="#{DocumentFolderModel.canCreateItems}">
-                                        <button class="btn btn-primary" title="#{CmsAdminMessages['contentsection.documentfolder.add_document']}">
+                                        <button class="btn btn-primary" 
+                                                data-toggle="modal"
+                                                data-target="#new-document-dialog"
+                                                title="#{CmsAdminMessages['contentsection.documentfolder.add_document']}">
                                             <bootstrap:svgIcon icon="file-earmark-plus" />
                                             <span class="sr-only">#{CmsAdminMessages['contentsection.documentfolder.add_document']}</span>
                                         </button>
+                                        <div aria-hidden="true" 
+                                             aria-labelledby="new-document-dialog-title"
+                                             class="modal fade"
+                                             id="new-document-dialog"
+                                             tabindex="-1">
+                                            <div class="modal-dialog">
+                                                <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{DocumentFolderModel.path}/@create"
+                                                      class="modal-content"
+                                                      method="post">
+                                                    <div class="modal-header">
+                                                        <h2 class="modal-title"
+                                                            id="new-document-dialog-title">
+                                                            #{CmsAdminMessages['contentsection.documentfolder.new_document_dialog.title']}
+                                                        </h2>
+                                                        <button aria-label="#{CmsAdminMessages['contentsection.documentfolder.new_document_dialog.close']}"
+                                                                class="close"
+                                                                data-dismiss="modal"
+                                                                type="button">
+                                                            <bootstrap:svgIcon icon="x-circle" />
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <bootstrap:formGroupSelect 
+                                                            help="#{CmsAdminMessages['contentsection.documentfolder.new_document_dialog.documenttype.help']}"
+                                                            inputId="documentType"
+                                                            label="#{CmsAdminMessages['contentsection.documentfolder.new_document_dialog.documenttype.label']}"
+                                                            name="documentType"
+                                                            options="#{ContentSectionModel.availableDocumentTypes}" />
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btn btn-warning"
+                                                                data-dismiss="modal"
+                                                                type="button">
+                                                            #{CmsAdminMessages['contentsection.documentfolder.new_document_dialog.close']}
+                                                        </button>
+                                                        <button class="btn btn-success"
+                                                                type="submit">
+                                                            #{CmsAdminMessages['contentsection.documentfolder.new_document_dialog.submit']}
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </c:when>
                                     <c:otherwise>
                                         <button class="btn btn-primary"

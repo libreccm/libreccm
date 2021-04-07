@@ -95,14 +95,15 @@ public class ConfigurationDocumentTypesController {
     private ContentSectionsUi sectionsUi;
 
     /**
-     * Provides functions for working with content types.
+     * Provides function for managing the content types assigned to a content
+     * section.
      */
     @Inject
     private ContentTypeManager typeManager;
 
     /**
-     * Provides function for managing the content types assigned to a content
-     * section.
+     * Provides functions for working with content types.
+     *
      */
     @Inject
     private ContentTypesManager typesManager;

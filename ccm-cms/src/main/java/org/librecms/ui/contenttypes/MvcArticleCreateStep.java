@@ -28,6 +28,7 @@ import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.FolderManager;
 import org.librecms.contenttypes.Article;
 import org.librecms.ui.contentsections.ItemPermissionChecker;
+import org.librecms.ui.contentsections.documents.CreatesDocumentOfType;
 import org.librecms.ui.contentsections.documents.DocumentUi;
 
 import javax.enterprise.context.RequestScoped;
@@ -46,6 +47,8 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.mvc.Models;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 
 /**
  * Describes the create step for {@link Article}.
@@ -54,6 +57,7 @@ import javax.ws.rs.FormParam;
  */
 @RequestScoped
 @Named("CmsArticleCreateStep")
+@CreatesDocumentOfType(Article.class)
 public class MvcArticleCreateStep implements MvcDocumentCreateStep<Article> {
 
     @Inject
@@ -212,8 +216,8 @@ public class MvcArticleCreateStep implements MvcDocumentCreateStep<Article> {
         this.messages = new TreeMap<>(messages);
     }
 
-//    @GET
-//    @Path("/")
+    @POST
+    @Path("/")
     @Override
     public String showCreateForm() {
         if (itemPermissionChecker.canCreateNewItems(folder)) {
@@ -227,8 +231,8 @@ public class MvcArticleCreateStep implements MvcDocumentCreateStep<Article> {
         }
     }
 
-//    @POST
-//    @Path("/")
+    @POST
+    @Path("/@create")
     @Override
     public String createContentItem() {
         if (name == null || name.isEmpty()) {

@@ -22,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.PermissionManager;
 import org.libreccm.security.Role;
 import org.libreccm.security.RoleRepository;
@@ -38,7 +39,9 @@ import org.librecms.contentsection.FolderManager;
 import org.librecms.contentsection.FolderRepository;
 import org.librecms.contentsection.FolderType;
 import org.librecms.contentsection.privileges.ItemPrivileges;
+import org.librecms.contentsection.privileges.TypePrivileges;
 import org.librecms.contenttypes.Article;
+import org.librecms.contenttypes.ContentTypesManager;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -47,10 +50,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -114,6 +120,13 @@ public class DocumentFolderController {
     private ContentSectionsUi sectionsUi;
 
     /**
+     * Provides functions for working with content types.
+     *
+     */
+    @Inject
+    private ContentTypesManager typesManager;
+
+    /**
      * Used to retrieve {@link ContentType}s.
      */
     @Inject
@@ -148,6 +161,10 @@ public class DocumentFolderController {
      */
     @Inject
     private Models models;
+
+    // Used to check permissions
+    @Inject
+    private PermissionChecker permissionChecker;
 
     /**
      * Used to update the permissions of the folder.
@@ -303,6 +320,37 @@ public class DocumentFolderController {
 
         contentSectionModel.setDocumentFolders(
             documentFolderTree.buildFolderTree(section, folder)
+        );
+
+        contentSectionModel.setAvailableDocumentTypes(
+            section
+                .getContentTypes()
+                .stream()
+                .filter(
+                    type -> permissionChecker.isPermitted(
+                        TypePrivileges.USE_TYPE, type)
+                )
+                .map(typesManager::getContentTypeInfo)
+                .sorted(
+                    (typeInfo1, typeInfo2) -> globalizationHelper
+                        .getLocalizedTextsUtil(
+                            typeInfo1.getLabelBundle()).getText(
+                        typeInfo1.getLabelKey()).compareTo(globalizationHelper
+                        .getLocalizedTextsUtil(typeInfo2.getLabelBundle())
+                        .getText(typeInfo2.getLabelKey()))
+                )
+                .collect(
+                    Collectors.toMap(
+                        typeInfo -> typeInfo.getContentItemClass().getName(),
+                        typeInfo -> globalizationHelper
+                            .getLocalizedTextsUtil(
+                                typeInfo.getLabelBundle()).getText(
+                            typeInfo.getLabelKey()
+                        ),
+                        (key1, key2) -> key1,
+                        () -> new LinkedHashMap<>()
+                    )
+                )
         );
 
         documentFolderModel.setRows(
@@ -869,6 +917,25 @@ public class DocumentFolderController {
         models.put("contentSection", section.getLabel());
         models.put("folderPath", folderPath);
         return "org/librecms/ui/contentsection/documentfolder/documentfolder-not-found.xhtml";
+    }
+
+    private DocumentTypeInfoModel buildContentTypeInfo(
+        final ContentType contentType
+    ) {
+        final DocumentTypeInfoModel model = new DocumentTypeInfoModel();
+        model.setContentItemClass(contentType.getContentItemClass());
+        model.setDescription(
+            globalizationHelper.getValueFromLocalizedString(
+                contentType.getDescription()
+            )
+        );
+        model.setLabel(
+            globalizationHelper.getValueFromLocalizedString(
+                contentType.getLabel()
+            )
+        );
+
+        return model;
     }
 
 }

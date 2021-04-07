@@ -207,14 +207,14 @@ public class DocumentController {
      *
      * @return The create step subresource.
      */
-    @Path("/{folderPath:(.+)?}/@create/{documentType}")
+    @Path("/{folderPath:(.+)?}/@create/")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     @SuppressWarnings("unchecked")
     public MvcDocumentCreateStep<? extends ContentItem> createDocument(
         @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("folderPath") final String folderPath,
-        @PathParam("documentType") final String documentType
+        @FormParam("documentType") final String documentType
     ) {
         final Optional<ContentSection> sectionResult = sectionsUi
             .findContentSection(sectionIdentifier);

@@ -24,6 +24,9 @@ import org.librecms.contentsection.Folder;
 
 import java.util.Map;
 
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+
 /**
  * A pseudo implemention of the {@link MvcDocumentCreateStep} interface used by
  * the {@link DocumentController} to show an error message when not create step
@@ -72,11 +75,15 @@ public class CreateStepNotAvailable
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @POST
+    @Path("/")
     @Override
     public String showCreateForm() {
         return "org/librecms/ui/contentsection/documents/create-step-not-available.xhtml";
     }
 
+    @POST
+    @Path("/@create")
     @Override
     public String createContentItem() {
         return "org/librecms/ui/contentsection/documents/create-step-not-available.xhtml";

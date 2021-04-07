@@ -18,19 +18,23 @@
  */
 package org.librecms.ui.contentsections;
 
+import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.privileges.AdminPrivileges;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.transaction.Transactional;
 
 /**
  * Model for providing data about a {@link ContentSection}.
@@ -47,6 +51,9 @@ public class ContentSectionModel {
     @Inject
     private PermissionChecker permissionChecker;
 
+    @Inject
+    private GlobalizationHelper globalizationHelper;
+
     /**
      * The content section.
      */
@@ -62,7 +69,12 @@ public class ContentSectionModel {
      */
     private List<DocumentFolderTreeNode> documentFolders;
 
+    private Map<String, String> availableDocumentTypes;
+
     /**
+     *
+     *
+     * /**
      * Sets the section for the model
      *
      * @param section The content section.
@@ -103,6 +115,18 @@ public class ContentSectionModel {
         final List<DocumentFolderTreeNode> documentFolders
     ) {
         this.documentFolders = new ArrayList<>(documentFolders);
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public Map<String, String> getAvailableDocumentTypes() {
+        return Collections.unmodifiableMap(availableDocumentTypes);
+    }
+
+    protected void setAvailableDocumentTypes(
+        final Map<String, String> availableDocumentTypes
+    ) {
+        this.availableDocumentTypes
+            = new LinkedHashMap<>(availableDocumentTypes);
     }
 
     /**
