@@ -23,32 +23,19 @@ import org.libreccm.l10n.LocalizedString;
 import org.libreccm.workflow.Workflow;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
-import org.librecms.contentsection.ContentSection;
-import org.librecms.contentsection.Folder;
-import org.librecms.contentsection.FolderManager;
 import org.librecms.contenttypes.Article;
-import org.librecms.ui.contentsections.ItemPermissionChecker;
+import org.librecms.ui.contentsections.documents.AbstractMvcDocumentCreateStep;
 import org.librecms.ui.contentsections.documents.CreatesDocumentOfType;
-import org.librecms.ui.contentsections.documents.DocumentUi;
+
+import java.util.Locale;
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
-import org.librecms.ui.contentsections.documents.MvcDocumentCreateStep;
-
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
 import javax.inject.Inject;
 import javax.mvc.Models;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.core.MultivaluedMap;
 
 /**
  * Describes the create step for {@link Article}.
@@ -58,11 +45,20 @@ import javax.ws.rs.Path;
 @RequestScoped
 @Named("CmsArticleCreateStep")
 @CreatesDocumentOfType(Article.class)
-public class MvcArticleCreateStep implements MvcDocumentCreateStep<Article> {
+public class MvcArticleCreateStep
+    extends AbstractMvcDocumentCreateStep<Article> {
 
-    @Inject
-    private ArticleMessageBundle articleMessageBundle;
-    
+    private static final String FORM_PARAM_NAME = "name";
+
+    private static final String FORM_PARAM_TITLE = "title";
+
+    private static final String FORM_PARAM_SUMMARY = "summary";
+
+    private static final String FORM_PARAM_INITIAL_LOCALE = "initialLocale";
+
+    private static final String FORM_PARAM_SELECTED_WORKFLOW
+        = "selectedWorkflow";
+
     /**
      * Provides functions for working with content items.
      */
@@ -75,26 +71,12 @@ public class MvcArticleCreateStep implements MvcDocumentCreateStep<Article> {
     @Inject
     private ContentItemRepository itemRepo;
 
- 
-    
-    @Inject
-    private DocumentUi documentUi;
-    
-    /**
-     * Provides operations for folders.
-     */
-    @Inject
-    private FolderManager folderManager;
-
     /**
      * Provides functions for working with {@link LocalizedString}s.
      */
     @Inject
     private GlobalizationHelper globalizationHelper;
 
-    @Inject
-    private ItemPermissionChecker itemPermissionChecker;
-    
     /**
      * Used to provided data for the views without a named bean.
      */
@@ -102,53 +84,29 @@ public class MvcArticleCreateStep implements MvcDocumentCreateStep<Article> {
     private Models models;
 
     /**
-     * The current content section.
-     */
-    private ContentSection section;
-
-    /**
-     * The current folder.
-     */
-    private Folder folder;
-
-    /**
-     * Messages to be shown to the user.
-     */
-    private SortedMap<String, String> messages;
-
-    /**
      * Name of the article.
      */
-    @FormParam("name")
     private String name;
 
     /**
      * Title of the article.
      */
-    @FormParam("title")
     private String title;
 
     /**
      * Summary of the article.
      */
-    @FormParam("summary")
     private String summary;
 
     /**
      * The initial locale of the article.
      */
-    @FormParam("locale")
     private String initialLocale;
 
     /**
      * The workflow to use for the new article.
      */
-    @FormParam("selectedWorkflow")
     private String selectedWorkflow;
-
-    public MvcArticleCreateStep() {
-        messages = new TreeMap<>();
-    }
 
     @Override
     public Class<Article> getDocumentType() {
@@ -165,175 +123,6 @@ public class MvcArticleCreateStep implements MvcDocumentCreateStep<Article> {
     @Override
     public String getBundle() {
         return ArticleStepsConstants.BUNDLE;
-    }
-
-    @Override
-    public ContentSection getContentSection() {
-        return section;
-    }
-
-    @Override
-    public String getContentSectionLabel() {
-        return section.getLabel();
-    }
-
-    @Override
-    public String getContentSectionTitle() {
-        return globalizationHelper
-            .getValueFromLocalizedString(section.getTitle());
-    }
-
-    @Override
-    public void setContentSection(final ContentSection section) {
-        this.section = section;
-    }
-
-    @Override
-    public Folder getFolder() {
-        return folder;
-    }
-
-    @Override
-    public String getFolderPath() {
-        return folderManager.getFolderPath(folder);
-    }
-
-    @Override
-    public void setFolder(final Folder folder) {
-        this.folder = folder;
-    }
-
-    @Override
-    public Map<String, String> getMessages() {
-        return Collections.unmodifiableSortedMap(messages);
-    }
-
-    public void addMessage(final String context, final String message) {
-        messages.put(context, message);
-    }
-
-    public void setMessages(final SortedMap<String, String> messages) {
-        this.messages = new TreeMap<>(messages);
-    }
-
-    @POST
-    @Path("/")
-    @Override
-    public String showCreateForm() {
-        if (itemPermissionChecker.canCreateNewItems(folder)) {
-        return "org/librecms/ui/contenttypes/article/create-article.xhtml";
-        } else {
-            return documentUi.showAccessDenied(
-                section, 
-                getFolderPath(), 
-                articleMessageBundle.getMessage("create_new_article.denied")
-            );
-        }
-    }
-
-    @POST
-    @Path("/@create")
-    @Override
-    public String createContentItem() {
-        if (name == null || name.isEmpty()) {
-            messages.put(
-                "danger",
-                globalizationHelper.getLocalizedTextsUtil(
-                    getBundle()
-                ).getText("createstep.name.error.missing")
-            );
-        }
-
-        if (!name.matches("^([a-zA-Z0-9_-]*)$")) {
-            messages.put(
-                "danger",
-                globalizationHelper.getLocalizedTextsUtil(
-                    getBundle()
-                ).getText("createstep.name.error.invalid")
-            );
-        }
-
-        if (title == null || title.isEmpty()) {
-            messages.put(
-                "danger",
-                globalizationHelper.getLocalizedTextsUtil(
-                    getBundle()
-                ).getText("createstep.title.error.missing")
-            );
-        }
-
-        if (summary == null || summary.isEmpty()) {
-            messages.put(
-                "danger",
-                globalizationHelper.getLocalizedTextsUtil(
-                    getBundle()
-                ).getText("createstep.summary.error.missing")
-            );
-        }
-
-        if (initialLocale == null || initialLocale.isEmpty()) {
-            messages.put(
-                "danger",
-                globalizationHelper.getLocalizedTextsUtil(
-                    getBundle()
-                ).getText("createstep.initial_locale.error.missing")
-            );
-        }
-
-        final Optional<Workflow> workflowResult = section
-            .getWorkflowTemplates()
-            .stream()
-            .filter(template -> template.getUuid().equals(selectedWorkflow))
-            .findAny();
-
-        if (!workflowResult.isPresent()) {
-            messages.put(
-                "danger",
-                globalizationHelper.getLocalizedTextsUtil(
-                    getBundle()
-                ).getText("createstep.workflow.error.not_available")
-            );
-        }
-
-        if (!messages.isEmpty()) {
-            final String folderPath = getFolderPath();
-            if (folderPath.isEmpty() || "/".equals(folderPath)) {
-                return String.format(
-                    "/@contentsections/%s/documents/@create/%s",
-                    section.getLabel(),
-                    getDocumentType().getName()
-                );
-            } else {
-                return String.format(
-                    "/@contentsections/%s/documents/%s/@create/%s",
-                    section.getLabel(),
-                    folderPath,
-                    getDocumentType().getName()
-                );
-            }
-        }
-
-        final Locale locale = new Locale(initialLocale);
-
-        final Article article = itemManager.createContentItem(
-            name,
-            section,
-            folder,
-            workflowResult.get(),
-            Article.class,
-            locale
-        );
-
-        article.getTitle().addValue(locale, title);
-        article.getDescription().addValue(locale, summary);
-        itemRepo.save(article);
-
-        return String.format(
-            "redirect:/%s/documents/%s/%s/@edit/basicproperties",
-            section.getLabel(),
-            folderManager.getFolderPath(folder),
-            name
-        );
     }
 
     public String getName() {
@@ -354,7 +143,7 @@ public class MvcArticleCreateStep implements MvcDocumentCreateStep<Article> {
 
     public String getSelectedWorkflow() {
         if (selectedWorkflow == null || selectedWorkflow.isEmpty()) {
-            return section
+            return getContentSection()
                 .getContentTypes()
                 .stream()
                 .filter(
@@ -375,30 +164,136 @@ public class MvcArticleCreateStep implements MvcDocumentCreateStep<Article> {
         }
     }
 
-    public Map<String, String> getAvailableLocales() {
-        return globalizationHelper
-            .getAvailableLocales()
-            .stream()
-            .collect(Collectors.toMap(
-                Locale::toString,
-                locale -> locale.getDisplayLanguage(
-                    globalizationHelper.getNegotiatedLocale()
-                )
-            ));
+    @Override
+    public String showCreateStep() {
+        return "org/librecms/ui/contenttypes/article/create-article.xhtml";
     }
 
-    public Map<String, String> getAvailableWorkflows() {
-        return section
+    @Override
+    public String createItem(final MultivaluedMap<String, String> formParams) {
+        if (!formParams.containsKey(FORM_PARAM_NAME)
+                || formParams.getFirst(FORM_PARAM_NAME) == null
+                || formParams.getFirst(FORM_PARAM_NAME).isEmpty()) {
+            addMessage(
+                "danger",
+                globalizationHelper.getLocalizedTextsUtil(
+                    getBundle()
+                ).getText("createstep.name.error.missing")
+            );
+        }
+
+        name = formParams.getFirst(FORM_PARAM_NAME);
+        if (!name.matches("^([a-zA-Z0-9_-]*)$")) {
+            addMessage(
+                "danger",
+                globalizationHelper.getLocalizedTextsUtil(
+                    getBundle()
+                ).getText("createstep.name.error.invalid")
+            );
+        }
+
+        if (!formParams.containsKey(FORM_PARAM_TITLE)
+                || formParams.getFirst(FORM_PARAM_TITLE) == null
+                || formParams.getFirst(FORM_PARAM_TITLE).isEmpty()) {
+            addMessage(
+                "danger",
+                globalizationHelper.getLocalizedTextsUtil(
+                    getBundle()
+                ).getText("createstep.title.error.missing")
+            );
+        }
+        title = formParams.getFirst(FORM_PARAM_TITLE);
+
+        if (!formParams.containsKey(FORM_PARAM_SUMMARY)
+                || formParams.getFirst(FORM_PARAM_SUMMARY) == null
+                || formParams.getFirst(FORM_PARAM_SUMMARY).isEmpty()) {
+            addMessage(
+                "danger",
+                globalizationHelper.getLocalizedTextsUtil(
+                    getBundle()
+                ).getText("createstep.summary.error.missing")
+            );
+        }
+        summary = formParams.getFirst(FORM_PARAM_SUMMARY);
+
+        if (!formParams.containsKey(FORM_PARAM_INITIAL_LOCALE)
+                || formParams.getFirst(FORM_PARAM_INITIAL_LOCALE) == null
+                || formParams.getFirst(FORM_PARAM_INITIAL_LOCALE).isEmpty()) {
+            addMessage(
+                "danger",
+                globalizationHelper.getLocalizedTextsUtil(
+                    getBundle()
+                ).getText("createstep.initial_locale.error.missing")
+            );
+        }
+        final Locale locale = new Locale(
+            formParams.getFirst(FORM_PARAM_INITIAL_LOCALE)
+        );
+
+        if (!formParams.containsKey(FORM_PARAM_SELECTED_WORKFLOW)
+                || formParams.getFirst(FORM_PARAM_SELECTED_WORKFLOW) == null
+                || formParams.getFirst(FORM_PARAM_SELECTED_WORKFLOW).isEmpty()) {
+            addMessage(
+                "danger",
+                globalizationHelper.getLocalizedTextsUtil(
+                    getBundle()
+                ).getText("createstep.workflow.none_selected")
+            );
+        }
+        selectedWorkflow = formParams.getFirst(FORM_PARAM_SELECTED_WORKFLOW);
+
+        final Optional<Workflow> workflowResult = getContentSection()
             .getWorkflowTemplates()
             .stream()
-            .collect(
-                Collectors.toMap(
-                    workflow -> workflow.getUuid(),
-                    workflow -> globalizationHelper.getValueFromLocalizedString(
-                        workflow.getName()
-                    )
-                )
+            .filter(template -> template.getUuid().equals(selectedWorkflow))
+            .findAny();
+
+        if (!workflowResult.isPresent()) {
+            addMessage(
+                "danger",
+                globalizationHelper.getLocalizedTextsUtil(
+                    getBundle()
+                ).getText("createstep.workflow.error.not_available")
             );
+        }
+
+        if (!getMessages().isEmpty()) {
+            final String folderPath = getFolderPath();
+            if (folderPath.isEmpty() || "/".equals(folderPath)) {
+                return String.format(
+                    "/@contentsections/%s/documents/@create/%s",
+                    getContentSectionLabel(),
+                    getDocumentType().getName()
+                );
+            } else {
+                return String.format(
+                    "/@contentsections/%s/documents/%s/@create/%s",
+                    getContentSectionLabel(),
+                    folderPath,
+                    getDocumentType().getName()
+                );
+            }
+        }
+
+        final Article article = itemManager.createContentItem(
+            name,
+            getContentSection(),
+            getFolder(),
+            workflowResult.get(),
+            Article.class,
+            locale
+        );
+
+        article.getTitle().addValue(locale, title);
+        article.getDescription().addValue(locale, summary);
+        itemRepo.save(article);
+
+        return String.format(
+            "redirect:/%s/documents/%s/%s/@edit/basicproperties",
+            getContentSectionLabel(),
+            getFolderPath(),
+            name
+        );
     }
 
 }

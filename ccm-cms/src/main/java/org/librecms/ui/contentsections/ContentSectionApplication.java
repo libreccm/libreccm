@@ -18,6 +18,8 @@
  */
 package org.librecms.ui.contentsections;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.libreccm.ui.IsAuthenticatedFilter;
 import org.librecms.ui.contentsections.documents.DocumentController;
 import org.librecms.ui.contentsections.documents.DocumentLifecyclesController;
@@ -31,11 +33,15 @@ import javax.ws.rs.core.Application;
 
 /**
  * JAX-RS application for managing a content section.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @ApplicationPath("/@contentsections")
 public class ContentSectionApplication extends Application {
+
+    private static final Logger LOGGER = LogManager.getLogger(
+        ContentSectionApplication.class
+    );
 
     @Override
     public Set<Class<?>> getClasses() {
@@ -57,5 +63,7 @@ public class ContentSectionApplication extends Application {
 
         return classes;
     }
+
+   
 
 }

@@ -79,7 +79,7 @@ public class ContentSectionModel {
      *
      * @param section The content section.
      */
-    protected void setSection(final ContentSection section) {
+    public void setSection(final ContentSection section) {
         this.section = Objects.requireNonNull(
             section, "Parameter section can't be null"
         );

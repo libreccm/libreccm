@@ -4,13 +4,13 @@
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <ui:composition template="/WEB-INF/views/org/librecms/ui/content-section/documents/document.xhtml">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/document.xhtml">
         
         <ui:param name="activePage" value="document" />
         <ui:param name="title" value="#{CmsAdminMessages['contentsection.documents.createstep.not_available.title']}" />
         
         <ui:define name="breadcrumb">
-           <ui:include src="document-breadcrumbs.xhtml" />
+           <!--<ui:include src="document-breadcrumbs.xhtml" />-->
             <li aria-current="page" class="breadcrumb-item">
                 #{CmsAdminMessages['contentsection.documents.createstep.breadcrumb']} #{documentType}
             </li>
