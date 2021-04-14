@@ -40,22 +40,27 @@ import org.librecms.ui.contentsections.ItemPermissionChecker;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.transaction.Transactional;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Form;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
 /**
@@ -76,7 +81,7 @@ public class DocumentController {
 
     @Inject
     private ContentSectionModel sectionModel;
-    
+
     /**
      * {@link ContentSectionsUi} instance providing for helper functions for
      * dealing with {@link ContentSection}s.
@@ -112,6 +117,7 @@ public class DocumentController {
      * All available {@link MvcDocumentCreateStep}s.
      */
     @Inject
+    @Any
     private Instance<MvcDocumentCreateStep<?>> createSteps;
 
     /**
@@ -253,23 +259,28 @@ public class DocumentController {
 
     @POST
     @Path("/@create/{documentType}")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String createDocument(
         @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("documentType") final String documentType,
-        final MultivaluedMap<String, String> formParameters
+        //final MultivaluedMap<String, String> formParameters
+        final Form form
     ) {
         return createDocument(
             sectionIdentifier,
-            "", documentType,
-            formParameters
+            "", 
+            documentType,
+            //formParameters
+            form.asMap()
         );
     }
 
     @POST
     @Path("/{folderPath:(.+)?}/@create/{documentType}")
     @AuthorizationRequired
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Transactional(Transactional.TxType.REQUIRED)
     @SuppressWarnings({"unchecked", "unchecked"})
     public String createDocument(
@@ -925,12 +936,8 @@ public class DocumentController {
             );
         }
 
-        //final Class<? extends ContentItem> documentClass;
         final Class<?> clazz;
         try {
-//            documentClass = (Class<? extends ContentItem>) Class.forName(
-//                documentType
-//            );
             clazz = Class.forName(documentType);
         } catch (ClassNotFoundException ex) {
             return new CreateStepResult(
@@ -964,6 +971,22 @@ public class DocumentController {
             .get();
 
         createStep.setContentSection(section);
+        createStep.setAvailableWorkflows(
+            section
+                .getWorkflowTemplates()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        workflow -> workflow.getUuid(),
+                        workflow -> globalizationHelper
+                            .getValueFromLocalizedString(
+                                workflow.getName()
+                            ),
+                        (value1, value2) -> value1,
+                        () -> new LinkedHashMap<String, String>()
+                    )
+                )
+        );
         createStep.setFolder(folder);
 
         return new CreateStepResult(createStep);

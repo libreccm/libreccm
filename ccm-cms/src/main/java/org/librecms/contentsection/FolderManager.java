@@ -76,6 +76,7 @@ public class FolderManager {
      * @see #folderIsDeletable(org.librecms.contentsection.Folder)
      */
     public enum FolderIsDeletable {
+
         /**
          * Folder can be deleted.
          */
@@ -92,12 +93,14 @@ public class FolderManager {
          * Folder can't be deleted because the folder is a root folder.
          */
         IS_ROOT_FOLDER
+
     }
 
     /**
      * Describes if a folder is movable to another folder or not and why.
      */
     public enum FolderIsMovable {
+
         /**
          * The folder can be moved to the specified target folder.
          */
@@ -127,6 +130,7 @@ public class FolderManager {
          * The folder to contains assets which are in use.
          */
         HAS_IN_USE_ASSETS
+
     }
 
     @Transactional(Transactional.TxType.REQUIRED)

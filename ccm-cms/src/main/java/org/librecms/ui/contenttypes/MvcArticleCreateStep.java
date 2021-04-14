@@ -20,6 +20,7 @@ package org.librecms.ui.contenttypes;
 
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.l10n.LocalizedString;
+import org.libreccm.security.AuthorizationRequired;
 import org.libreccm.workflow.Workflow;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
@@ -35,6 +36,7 @@ import javax.inject.Named;
 
 import javax.inject.Inject;
 import javax.mvc.Models;
+import javax.transaction.Transactional;
 import javax.ws.rs.core.MultivaluedMap;
 
 /**
@@ -109,8 +111,8 @@ public class MvcArticleCreateStep
     private String selectedWorkflow;
 
     @Override
-    public Class<Article> getDocumentType() {
-        return Article.class;
+    public String getDocumentType() {
+        return Article.class.getName();
     }
 
     @Override
@@ -141,6 +143,7 @@ public class MvcArticleCreateStep
         return initialLocale;
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
     public String getSelectedWorkflow() {
         if (selectedWorkflow == null || selectedWorkflow.isEmpty()) {
             return getContentSection()
@@ -169,6 +172,8 @@ public class MvcArticleCreateStep
         return "org/librecms/ui/contenttypes/article/create-article.xhtml";
     }
 
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public String createItem(final MultivaluedMap<String, String> formParams) {
         if (!formParams.containsKey(FORM_PARAM_NAME)
@@ -180,6 +185,7 @@ public class MvcArticleCreateStep
                     getBundle()
                 ).getText("createstep.name.error.missing")
             );
+            return showCreateStep();
         }
 
         name = formParams.getFirst(FORM_PARAM_NAME);
@@ -190,6 +196,7 @@ public class MvcArticleCreateStep
                     getBundle()
                 ).getText("createstep.name.error.invalid")
             );
+            return showCreateStep();
         }
 
         if (!formParams.containsKey(FORM_PARAM_TITLE)
@@ -201,6 +208,7 @@ public class MvcArticleCreateStep
                     getBundle()
                 ).getText("createstep.title.error.missing")
             );
+            return showCreateStep();
         }
         title = formParams.getFirst(FORM_PARAM_TITLE);
 
@@ -213,6 +221,7 @@ public class MvcArticleCreateStep
                     getBundle()
                 ).getText("createstep.summary.error.missing")
             );
+            return showCreateStep();
         }
         summary = formParams.getFirst(FORM_PARAM_SUMMARY);
 
@@ -225,6 +234,7 @@ public class MvcArticleCreateStep
                     getBundle()
                 ).getText("createstep.initial_locale.error.missing")
             );
+            return showCreateStep();
         }
         final Locale locale = new Locale(
             formParams.getFirst(FORM_PARAM_INITIAL_LOCALE)
@@ -239,6 +249,7 @@ public class MvcArticleCreateStep
                     getBundle()
                 ).getText("createstep.workflow.none_selected")
             );
+            return showCreateStep();
         }
         selectedWorkflow = formParams.getFirst(FORM_PARAM_SELECTED_WORKFLOW);
 
@@ -255,24 +266,11 @@ public class MvcArticleCreateStep
                     getBundle()
                 ).getText("createstep.workflow.error.not_available")
             );
+            return showCreateStep();
         }
 
         if (!getMessages().isEmpty()) {
-            final String folderPath = getFolderPath();
-            if (folderPath.isEmpty() || "/".equals(folderPath)) {
-                return String.format(
-                    "/@contentsections/%s/documents/@create/%s",
-                    getContentSectionLabel(),
-                    getDocumentType().getName()
-                );
-            } else {
-                return String.format(
-                    "/@contentsections/%s/documents/%s/@create/%s",
-                    getContentSectionLabel(),
-                    folderPath,
-                    getDocumentType().getName()
-                );
-            }
+            return showCreateStep();
         }
 
         final Article article = itemManager.createContentItem(
@@ -295,5 +293,7 @@ public class MvcArticleCreateStep
             name
         );
     }
+
+    
 
 }

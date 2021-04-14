@@ -7,71 +7,75 @@
     <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/contentsection.xhtml">
 
         <ui:define name="main">
-
-            <c:forEach items="#{CmsArticleCreateStep.messages.entrySet}"
-                       var="message">
-                <div class="alert alert-#{message.key}" role="alert">
-                    #{message.value}
-                </div>
-            </c:forEach>
-            
-            <form action="#{mvc.basePath}/#{CmsArticleCreateStep.contentSectionLabel}/documents/#{CmsArticleCreateStep.folderPath}/@create/#{CmsArticleCreateStep.documentType}"
-                  method="post">
-                <bootstrap:formGroupText 
-                    help="#{CmsArticleMessageBundle['createform.name.help']}"
-                    inputId="name"
-                    label="#{CmsArticleMessageBundle['createform.name.label']}"
-                    name="name"
-                    pattern="^([a-zA-Z0-9_-]*)$"
-                    required="true"
-                    />
-
-                <bootstrap:formGroupSelect 
-                    help="#{CmsArticleMessageBundle['createform.initial_locale.help']}"
-                    inputId="locale"
-                    label="#{CmsArticleMessageBundle['createform.initial_locale.label']}"
-                    name="locale"
-                    options="#{CmsArticleCreateStep.availableLocales}"
-                    required="true"
-                    selectedOptions="#{[CmsArticleCreateStep.initialLocale]}"
-                    />
-
-                <bootstrap:formGroupText
-                    help="#{CmsArticleMessageBundle['createform.title.help']}"
-                    inputId="title"
-                    label="#{CmsArticleMessageBundle['createform.title.label']}"
-                    name="title"
-                    required="true"
-                    />
-
-                <bootstrap:formGroupTextarea 
-                    help="#{CmsArticleMessageBundle['createform.summary.help']}"
-                    inputId="summary"
-                    label="#{CmsArticleMessageBundle['createform.summary.label']}"
-                    name="summary"
-                    required="true"
-                    />
+            <div class="container">
+                <h1>#{CmsArticleMessageBundle['createform.title']}</h1>
                 
-                <bootstrap:formGroupSelect 
-                    help="#{CmsArticleMessageBundle['createform.workflow.help']}"
-                    inputId="workflow"
-                    label="#{CmsArticleMessageBundle['createform.workflow.label']}"
-                    name="workflow"
-                    options="#{CmsArticleCreateStep.availableWorkflows}"
-                    selectedOptions="#{[CmsArticleCreateStep.selectedWorkflow]}"
-                    />
-                
-                <a class="btn btn-warning"
-                    href="#{mvc.basePath}/#{CmsArticleCreateStep.contentSectionLabel}/documentfolders/#{CmsArticleCreateStep.folderPath}">
-                    #{CmsArticleMessageBundle['createform.cancel']}
-                </a>
-                <button class="btn btn-success"
-                        type="submit">
-                    #{CmsArticleMessageBundle['createform.submit']}
-                </button>
+                <c:forEach items="#{CmsArticleCreateStep.messages.entrySet}"
+                           var="message">
+                    <div class="alert alert-#{message.key}" role="alert">
+                        #{message.value}
+                    </div>
+                </c:forEach>
 
-            </form>
+                <form action="#{mvc.basePath}/#{CmsArticleCreateStep.contentSectionLabel}/documents/#{CmsArticleCreateStep.folderPath}@create/#{CmsArticleCreateStep.documentType}"
+                      method="post">
+                    <bootstrap:formGroupText 
+                        help="#{CmsArticleMessageBundle['createform.name.help']}"
+                        inputId="name"
+                        label="#{CmsArticleMessageBundle['createform.name.label']}"
+                        name="name"
+                        pattern="^([a-zA-Z0-9_-]*)$"
+                        required="true"
+                        />
 
+                    <bootstrap:formGroupSelect 
+                        help="#{CmsArticleMessageBundle['createform.initial_locale.help']}"
+                        inputId="locale"
+                        label="#{CmsArticleMessageBundle['createform.initial_locale.label']}"
+                        name="locale"
+                        options="#{CmsArticleCreateStep.availableLocales}"
+                        required="true"
+                        selectedOptions="#{[CmsArticleCreateStep.initialLocale]}"
+                        />
+
+                    <bootstrap:formGroupText
+                        help="#{CmsArticleMessageBundle['createform.title.help']}"
+                        inputId="title"
+                        label="#{CmsArticleMessageBundle['createform.title.label']}"
+                        name="title"
+                        required="true"
+                        />
+
+                    <bootstrap:formGroupTextarea 
+                        cols="80"
+                        help="#{CmsArticleMessageBundle['createform.summary.help']}"
+                        inputId="summary"
+                        label="#{CmsArticleMessageBundle['createform.summary.label']}"
+                        name="summary"
+                        required="true"
+                        rows="16"
+                        />
+
+                    <bootstrap:formGroupSelect 
+                        help="#{CmsArticleMessageBundle['createform.workflow.help']}"
+                        inputId="workflow"
+                        label="#{CmsArticleMessageBundle['createform.workflow.label']}"
+                        name="workflow"
+                        options="#{CmsArticleCreateStep.availableWorkflows}"
+                        selectedOptions="#{[CmsArticleCreateStep.selectedWorkflow]}"
+                        />
+
+                    <a class="btn btn-warning"
+                       href="#{mvc.basePath}/#{CmsArticleCreateStep.contentSectionLabel}/documentfolders/#{CmsArticleCreateStep.folderPath}">
+                        #{CmsArticleMessageBundle['createform.cancel']}
+                    </a>
+                    <button class="btn btn-success"
+                            type="submit">
+                        #{CmsArticleMessageBundle['createform.submit']}
+                    </button>
+
+                </form>
+            </div>
         </ui:define>
 
     </ui:composition>

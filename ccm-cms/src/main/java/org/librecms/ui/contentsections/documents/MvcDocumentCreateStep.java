@@ -26,7 +26,6 @@ import org.librecms.contentsection.Folder;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MultivaluedMap;
 
 /**
@@ -38,10 +37,10 @@ import javax.ws.rs.core.MultivaluedMap;
  * } to provide the current current content section and folder. After that,
  * depending on the request method, either {@link #showCreateStep} or {@link #createItem(javax.ws.rs.core.Form)]
  * will be called.
- * 
+ *
  * In most cases, {@link AbstractMvcDocumentCreateStep} should be used as
  * base for implementations. {@link AbstractMvcDocumentCreateStep} implements
- * several common operations. 
+ * several common operations.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  *
@@ -64,7 +63,7 @@ public interface MvcDocumentCreateStep<T extends ContentItem> {
      *
      * @return A redirect to the first authoring step of the new document.
      */
-    String createItem(MultivaluedMap<String, String> formParams); 
+    String createItem(MultivaluedMap<String, String> formParams);
 
     /**
      * Should be set by the implementing class to indicate if the current user
@@ -80,7 +79,7 @@ public interface MvcDocumentCreateStep<T extends ContentItem> {
      *
      * @return Document type generated.
      */
-    Class<T> getDocumentType();
+    String getDocumentType();
 
     /**
      * Localized description of the create step. The current locale as returned
@@ -99,6 +98,13 @@ public interface MvcDocumentCreateStep<T extends ContentItem> {
      *         the create step.
      */
     String getBundle();
+
+    /**
+     * The locales that can be used for documents.
+     *
+     * @return The locales that can be used for documents.
+     */
+    Map<String, String> getAvailableLocales();
 
     /**
      * The current content section.
@@ -128,6 +134,23 @@ public interface MvcDocumentCreateStep<T extends ContentItem> {
      * @param section The current content section.
      */
     void setContentSection(final ContentSection section);
+
+    /**
+     * Retrieves the workflows available for the current content section.
+     *
+     * @return A map of the available workflows. The key is the UUID of the
+     *         workflow, the value is the name of the workflow.
+     */
+    Map<String, String> getAvailableWorkflows();
+
+    /**
+     * Used by the {@link DocumentController} to provide the available
+     * workflows.
+     *
+     * @param availableWorkflows
+     */
+    void setAvailableWorkflows(
+        final Map<String, String> availableWorkflows);
 
     /**
      * The parent folder of the new item.

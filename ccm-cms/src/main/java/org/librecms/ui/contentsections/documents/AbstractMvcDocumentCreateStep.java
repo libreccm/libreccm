@@ -18,7 +18,6 @@
  */
 package org.librecms.ui.contentsections.documents;
 
-import org.libreccm.api.Identifier;
 import org.libreccm.api.IdentifierParser;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.l10n.LocalizedString;
@@ -28,17 +27,18 @@ import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.FolderManager;
 import org.librecms.contentsection.FolderRepository;
-import org.librecms.contentsection.FolderType;
-import org.librecms.ui.contentsections.ItemPermissionChecker;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
+import java.util.NavigableMap;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 /**
  *
@@ -48,12 +48,6 @@ import javax.inject.Inject;
 @Dependent
 public abstract class AbstractMvcDocumentCreateStep<T extends ContentItem>
     implements MvcDocumentCreateStep<T> {
-
-    @Inject
-    private ContentSectionRepository sectionRepo;
-
-    @Inject
-    private FolderRepository folderRepository;
 
     /**
      * Provides operations for folders.
@@ -67,9 +61,6 @@ public abstract class AbstractMvcDocumentCreateStep<T extends ContentItem>
     @Inject
     private GlobalizationHelper globalizationHelper;
 
-    @Inject
-    private IdentifierParser identifierParser;
-
     private boolean canCreate;
 
     /**
@@ -82,6 +73,8 @@ public abstract class AbstractMvcDocumentCreateStep<T extends ContentItem>
      */
     private ContentSection section;
 
+    private Map<String, String> availableWorkflows;
+
     /**
      * Messages to be shown to the user.
      */
@@ -91,26 +84,58 @@ public abstract class AbstractMvcDocumentCreateStep<T extends ContentItem>
         messages = new TreeMap<>();
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public Map<String, String> getAvailableLocales() {
+        return globalizationHelper
+            .getAvailableLocales()
+            .stream()
+            .collect(
+                Collectors.toMap(
+                    locale -> locale.toString(),
+                    locale -> locale.toString(),
+                    (value1, value2) -> value1,
+                    () -> new LinkedHashMap<String, String>()
+                )
+            );
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public ContentSection getContentSection() {
         return section;
     }
-    
+
+    @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void setContentSection(final ContentSection section) {
         this.section = section;
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public String getContentSectionLabel() {
         return section.getLabel();
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public String getContentSectionTitle() {
         return globalizationHelper.getValueFromLocalizedString(
             section.getTitle()
         );
+    }
+
+    @Override
+    public Map<String, String> getAvailableWorkflows() {
+        return Collections.unmodifiableMap(availableWorkflows);
+    }
+
+    @Override
+    public void setAvailableWorkflows(
+        final Map<String, String> availableWorkflows
+    ) {
+        this.availableWorkflows = new LinkedHashMap<>(availableWorkflows);
     }
 
 //    protected final void setContentSectionByIdentifier(
@@ -146,7 +171,6 @@ public abstract class AbstractMvcDocumentCreateStep<T extends ContentItem>
 //            canCreate = false;
 //        }
 //    }
-
 //    protected final void setFolderByPath(final String folderPath) {
 //        final Optional<Folder> folderResult = folderRepository.findByPath(
 //            section,
@@ -183,7 +207,11 @@ public abstract class AbstractMvcDocumentCreateStep<T extends ContentItem>
 
     @Override
     public String getFolderPath() {
-        return folderManager.getFolderPath(folder);
+        if (folder.getParentFolder() == null) {
+            return "";
+        } else {
+            return folderManager.getFolderPath(folder);
+        }
     }
 
     @Override
