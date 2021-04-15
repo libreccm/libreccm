@@ -51,6 +51,7 @@ import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.mvc.Controller;
 import javax.mvc.Models;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -59,9 +60,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Form;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 
 /**
  * Controller for the UI for managing documents ({@link ContentItem}s.)
@@ -259,21 +259,19 @@ public class DocumentController {
 
     @POST
     @Path("/@create/{documentType}")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String createDocument(
         @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("documentType") final String documentType,
-        //final MultivaluedMap<String, String> formParameters
-        final Form form
+        @Context final HttpServletRequest request
     ) {
         return createDocument(
             sectionIdentifier,
             "", 
             documentType,
             //formParameters
-            form.asMap()
+            request
         );
     }
 
@@ -287,7 +285,7 @@ public class DocumentController {
         @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("folderPath") final String folderPath,
         @PathParam("documentType") final String documentType,
-        final MultivaluedMap<String, String> formParameters
+        @Context final HttpServletRequest request
     ) {
         final CreateStepResult result = findCreateStep(
             sectionIdentifier,
@@ -295,7 +293,7 @@ public class DocumentController {
         );
 
         if (result.isCreateStepAvailable()) {
-            return result.getCreateStep().createItem(formParameters);
+            return result.getCreateStep().createItem(request.getParameterMap());
         } else {
             return result.getErrorTemplate();
         }

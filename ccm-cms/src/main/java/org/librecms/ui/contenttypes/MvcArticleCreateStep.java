@@ -28,7 +28,9 @@ import org.librecms.contenttypes.Article;
 import org.librecms.ui.contentsections.documents.AbstractMvcDocumentCreateStep;
 import org.librecms.ui.contentsections.documents.CreatesDocumentOfType;
 
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
@@ -37,7 +39,6 @@ import javax.inject.Named;
 import javax.inject.Inject;
 import javax.mvc.Models;
 import javax.transaction.Transactional;
-import javax.ws.rs.core.MultivaluedMap;
 
 /**
  * Describes the create step for {@link Article}.
@@ -56,10 +57,10 @@ public class MvcArticleCreateStep
 
     private static final String FORM_PARAM_SUMMARY = "summary";
 
-    private static final String FORM_PARAM_INITIAL_LOCALE = "initialLocale";
+    private static final String FORM_PARAM_INITIAL_LOCALE = "locale";
 
     private static final String FORM_PARAM_SELECTED_WORKFLOW
-        = "selectedWorkflow";
+        = "workflow";
 
     /**
      * Provides functions for working with content items.
@@ -175,10 +176,10 @@ public class MvcArticleCreateStep
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
-    public String createItem(final MultivaluedMap<String, String> formParams) {
+    public String createItem(final Map<String, String[]> formParams) {
         if (!formParams.containsKey(FORM_PARAM_NAME)
-                || formParams.getFirst(FORM_PARAM_NAME) == null
-                || formParams.getFirst(FORM_PARAM_NAME).isEmpty()) {
+                || formParams.get(FORM_PARAM_NAME) == null
+                || formParams.get(FORM_PARAM_NAME).length == 0) {
             addMessage(
                 "danger",
                 globalizationHelper.getLocalizedTextsUtil(
@@ -188,7 +189,7 @@ public class MvcArticleCreateStep
             return showCreateStep();
         }
 
-        name = formParams.getFirst(FORM_PARAM_NAME);
+        name = formParams.get(FORM_PARAM_NAME)[0];
         if (!name.matches("^([a-zA-Z0-9_-]*)$")) {
             addMessage(
                 "danger",
@@ -200,8 +201,8 @@ public class MvcArticleCreateStep
         }
 
         if (!formParams.containsKey(FORM_PARAM_TITLE)
-                || formParams.getFirst(FORM_PARAM_TITLE) == null
-                || formParams.getFirst(FORM_PARAM_TITLE).isEmpty()) {
+                || formParams.get(FORM_PARAM_TITLE) == null
+                || formParams.get(FORM_PARAM_TITLE).length == 0) {
             addMessage(
                 "danger",
                 globalizationHelper.getLocalizedTextsUtil(
@@ -210,11 +211,11 @@ public class MvcArticleCreateStep
             );
             return showCreateStep();
         }
-        title = formParams.getFirst(FORM_PARAM_TITLE);
+        title = formParams.get(FORM_PARAM_TITLE)[0];
 
         if (!formParams.containsKey(FORM_PARAM_SUMMARY)
-                || formParams.getFirst(FORM_PARAM_SUMMARY) == null
-                || formParams.getFirst(FORM_PARAM_SUMMARY).isEmpty()) {
+                || formParams.get(FORM_PARAM_SUMMARY) == null
+                || formParams.get(FORM_PARAM_SUMMARY).length == 0) {
             addMessage(
                 "danger",
                 globalizationHelper.getLocalizedTextsUtil(
@@ -223,11 +224,11 @@ public class MvcArticleCreateStep
             );
             return showCreateStep();
         }
-        summary = formParams.getFirst(FORM_PARAM_SUMMARY);
+        summary = formParams.get(FORM_PARAM_SUMMARY)[0];
 
         if (!formParams.containsKey(FORM_PARAM_INITIAL_LOCALE)
-                || formParams.getFirst(FORM_PARAM_INITIAL_LOCALE) == null
-                || formParams.getFirst(FORM_PARAM_INITIAL_LOCALE).isEmpty()) {
+                || formParams.get(FORM_PARAM_INITIAL_LOCALE) == null
+                || formParams.get(FORM_PARAM_INITIAL_LOCALE).length == 0) {
             addMessage(
                 "danger",
                 globalizationHelper.getLocalizedTextsUtil(
@@ -237,12 +238,12 @@ public class MvcArticleCreateStep
             return showCreateStep();
         }
         final Locale locale = new Locale(
-            formParams.getFirst(FORM_PARAM_INITIAL_LOCALE)
+            formParams.get(FORM_PARAM_INITIAL_LOCALE)[0]
         );
 
         if (!formParams.containsKey(FORM_PARAM_SELECTED_WORKFLOW)
-                || formParams.getFirst(FORM_PARAM_SELECTED_WORKFLOW) == null
-                || formParams.getFirst(FORM_PARAM_SELECTED_WORKFLOW).isEmpty()) {
+                || formParams.get(FORM_PARAM_SELECTED_WORKFLOW) == null
+                || formParams.get(FORM_PARAM_SELECTED_WORKFLOW).length == 0) {
             addMessage(
                 "danger",
                 globalizationHelper.getLocalizedTextsUtil(
@@ -251,7 +252,7 @@ public class MvcArticleCreateStep
             );
             return showCreateStep();
         }
-        selectedWorkflow = formParams.getFirst(FORM_PARAM_SELECTED_WORKFLOW);
+        selectedWorkflow = formParams.get(FORM_PARAM_SELECTED_WORKFLOW)[0];
 
         final Optional<Workflow> workflowResult = getContentSection()
             .getWorkflowTemplates()

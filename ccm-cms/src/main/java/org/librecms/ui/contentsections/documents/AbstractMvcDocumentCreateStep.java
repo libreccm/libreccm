@@ -18,20 +18,16 @@
  */
 package org.librecms.ui.contentsections.documents;
 
-import org.libreccm.api.IdentifierParser;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.l10n.LocalizedString;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
-import org.librecms.contentsection.ContentSectionRepository;
 import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.FolderManager;
-import org.librecms.contentsection.FolderRepository;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.NavigableMap;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;

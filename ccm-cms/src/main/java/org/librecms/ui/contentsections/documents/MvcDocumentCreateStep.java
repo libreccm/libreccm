@@ -26,7 +26,6 @@ import org.librecms.contentsection.Folder;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.ws.rs.core.MultivaluedMap;
 
 /**
  * A create step for a document/content item. Implementing classes are MUST be
@@ -63,7 +62,7 @@ public interface MvcDocumentCreateStep<T extends ContentItem> {
      *
      * @return A redirect to the first authoring step of the new document.
      */
-    String createItem(MultivaluedMap<String, String> formParams);
+    String createItem(Map<String, String[]> formParams);
 
     /**
      * Should be set by the implementing class to indicate if the current user
