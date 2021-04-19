@@ -39,8 +39,10 @@ import org.librecms.ui.contentsections.ItemPermissionChecker;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -264,7 +266,8 @@ public class DocumentController {
     ) {
         final CreateStepResult result = findCreateStep(
             sectionIdentifier,
-            folderPath, documentType
+            folderPath,
+            documentType
         );
 
         if (result.isCreateStepAvailable()) {
@@ -334,130 +337,169 @@ public class DocumentController {
         }
     }
 
-//    /**
-//     * Redirects to the first authoring step for the document identified by the
-//     * provided path.
-//     *
-//     * @param sectionIdentifier The identifier of the current content section.
-//     * @param documentPath      The path of the document.
-//     *
-//     * @return A redirect to the first authoring step of the document, or the
-//     *         {@link DocumentNotFound} pseudo authoring step.
-//     */
-//    @Path("/{documentPath:(.+)?}")
-//    @AuthorizationRequired
-//    @Transactional(Transactional.TxType.REQUIRED)
-//    public String editDocument(
-//        @PathParam("sectionIdentifier") final String sectionIdentifier,
-//        @PathParam("documentPath") final String documentPath
-//    ) {
-//        final Optional<ContentSection> sectionResult = sectionsUi
-//            .findContentSection(sectionIdentifier);
-//        if (!sectionResult.isPresent()) {
-//            sectionsUi.showContentSectionNotFound(sectionIdentifier);
-//        }
-//        final ContentSection section = sectionResult.get();
-//
-//        final Optional<ContentItem> itemResult = itemRepo
-//            .findByPath(section, documentPath);
-//        if (!itemResult.isPresent()) {
-//            models.put("section", section.getLabel());
-//            models.put("documentPath", documentPath);
-//            documentUi.showDocumentNotFound(section, documentPath);
-//        }
-//        final ContentItem item = itemResult.get();
-//        if (!itemPermissionChecker.canEditItem(item)) {
-//            return documentUi.showAccessDenied(
-//                section,
-//                item,
-//                defaultStepsMessageBundle.getMessage("edit_denied")
-//            );
-//        }
-//
-//        return String.format(
-//            "redirect:/%s/documents/%s/@authoringsteps/%s",
-//            sectionIdentifier,
-//            documentPath,
-//            findPathFragmentForFirstStep(item)
-//        );
-//    }
-//    /**
-//     * Redirect requests for an authoring step to the subresource of the
-//     * authoring step.
-//     *
-//     * @param sectionIdentifier       The identifier of the current content
-//     *                                section.
-//     * @param documentPath            The path of the document to edit.
-//     * @param authoringStepIdentifier The identifier/path fragment of the
-//     *                                authoring step.
-//     *
-//     * @return The authoring step subresource.
-//     */
-//    @Path("/{documentPath:(.+)?}/@authoringsteps/{authoringStep}")
-//    @AuthorizationRequired
-//    @Transactional(Transactional.TxType.REQUIRED)
-//    public MvcAuthoringStep editDocument(
-//        @PathParam("sectionIdentifier") final String sectionIdentifier,
-//        @PathParam("documentPath") final String documentPath,
-//        @PathParam("authoringStep") final String authoringStepIdentifier
-//    ) {
-//        final Optional<ContentSection> sectionResult = sectionsUi
-//            .findContentSection(sectionIdentifier);
-//        if (!sectionResult.isPresent()) {
-//            models.put("sectionIdentifier", sectionIdentifier);
-//            return new ContentSectionNotFound();
-//        }
-//        final ContentSection section = sectionResult.get();
-//
-//        final Optional<ContentItem> itemResult = itemRepo
-//            .findByPath(section, documentPath);
-//        if (!itemResult.isPresent()) {
-//            models.put("section", section.getLabel());
-//            models.put("documentPath", documentPath);
-//            return new DocumentNotFound();
-//        }
-//        final ContentItem item = itemResult.get();
-//        if (!itemPermissionChecker.canEditItem(item)) {
-//            models.put("section", section.getLabel());
-//            models.put("documentPath", itemManager.getItemFolder(item));
-//            models.put(
-//                "step", defaultStepsMessageBundle.getMessage("edit_step")
-//            );
-//            return new EditDenied();
-//        }
-//
-//        final Instance<MvcAuthoringStep> instance = authoringSteps
-//            .select(
-//                new AuthoringStepPathFragmentLiteral(
-//                    authoringStepIdentifier
-//                )
-//            );
-//        if (instance.isUnsatisfied() || instance.isAmbiguous()) {
-//            models.put("section", section.getLabel());
-//            models.put("documentPath", documentPath);
-//            models.put("authoringStep", authoringStepIdentifier);
-//            return new AuthoringStepNotAvailable();
-//        }
-//        final MvcAuthoringStep authoringStep = instance.get();
-//
-//        if (!authoringStep.supportedDocumentType().isAssignableFrom(item
-//            .getClass())) {
-//            models.put("section", section.getLabel());
-//            models.put("documentPath", documentPath);
-//            models.put("documentType", item.getClass().getName());
-//            models.put("authoringStep", authoringStepIdentifier);
-//            return new UnsupportedDocumentType();
-//        }
-//
-//        models.put("authoringStep", authoringStepIdentifier);
-//
-//        selectedDocumentModel.setContentItem(item);
-//
-//        authoringStep.setContentSection(section);
-//        authoringStep.setContentItem(item);
-//
-//        return authoringStep;
-//    }
+    /**
+     * Redirects to the first authoring step for the document identified by the
+     * provided path.
+     *
+     * @param sectionIdentifier The identifier of the current content section.
+     * @param documentPath      The path of the document.
+     *
+     * @return A redirect to the first authoring step of the document, or the
+     *         {@link DocumentNotFound} pseudo authoring step.
+     */
+    @GET
+    @Path("/{documentPath:(.+)?}")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String showEditDocument(
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @PathParam("documentPath") final String documentPath
+    ) {
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifier);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifier);
+        }
+        final ContentSection section = sectionResult.get();
+
+        final Optional<ContentItem> itemResult = itemRepo
+            .findByPath(section, documentPath);
+        if (!itemResult.isPresent()) {
+            models.put("section", section.getLabel());
+            models.put("documentPath", documentPath);
+            documentUi.showDocumentNotFound(section, documentPath);
+        }
+        final ContentItem item = itemResult.get();
+        if (!itemPermissionChecker.canEditItem(item)) {
+            return documentUi.showAccessDenied(
+                section,
+                item,
+                defaultStepsMessageBundle.getMessage("edit_denied")
+            );
+        }
+
+        return String.format(
+            "redirect:/%s/documents/%s/@authoringsteps/%s",
+            sectionIdentifier,
+            documentPath,
+            findFirstAuthoringStep(item)
+        );
+    }
+
+    /**
+     * Redirect requests for an authoring step to the subresource of the
+     * authoring step.
+     *
+     * @param sectionIdentifier       The identifier of the current content
+     *                                section.
+     * @param documentPath            The path of the document to edit.
+     * @param authoringStepIdentifier The identifier/path fragment of the
+     *                                authoring step.
+     * @param request
+     *
+     * @return The authoring step subresource.
+     */
+    @GET
+    @Path("/{documentPath:(.+)?}/@authoringsteps/{authoringStep}")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String showEditDocument(
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @PathParam("documentPath") final String documentPath,
+        @PathParam("authoringStep") final String authoringStepIdentifier,
+        @Context final HttpServletRequest request
+    ) {
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifier);
+        if (!sectionResult.isPresent()) {
+            models.put("sectionIdentifier", sectionIdentifier);
+            return sectionsUi.showContentSectionNotFound(sectionIdentifier);
+        }
+        final ContentSection section = sectionResult.get();
+
+        final Optional<ContentItem> itemResult = itemRepo
+            .findByPath(section, documentPath);
+        if (!itemResult.isPresent()) {
+            models.put("section", section.getLabel());
+            models.put("documentPath", documentPath);
+            return documentUi.showDocumentNotFound(section, documentPath);
+        }
+        final ContentItem item = itemResult.get();
+        if (!itemPermissionChecker.canEditItem(item)) {
+            models.put("section", section.getLabel());
+            models.put("documentPath", itemManager.getItemFolder(item));
+            models.put(
+                "step", defaultStepsMessageBundle.getMessage("edit_step")
+            );
+            return documentUi.showAccessDenied(
+                section, documentPath, documentPath
+            );
+        }
+
+        final Instance<MvcAuthoringStep> instance = authoringSteps
+            .select(
+                new AuthoringStepPathFragmentLiteral(
+                    authoringStepIdentifier
+                )
+            );
+        if (instance.isUnsatisfied() || instance.isAmbiguous()) {
+            models.put("section", section.getLabel());
+            models.put("documentPath", documentPath);
+            models.put("authoringStep", authoringStepIdentifier);
+            return showAuthoringStepNotAvailable(authoringStepIdentifier);
+        }
+        final MvcAuthoringStep authoringStep = instance.get();
+
+        if (!authoringStep.supportedDocumentType().isAssignableFrom(item
+            .getClass())) {
+            models.put("section", section.getLabel());
+            models.put("documentPath", documentPath);
+            models.put("documentType", item.getClass().getName());
+            models.put("authoringStep", authoringStepIdentifier);
+            return showUnsupportedDocumentType(
+                authoringStepIdentifier,
+                item.getClass().getName()
+            );
+        }
+
+        models.put("authoringStep", authoringStepIdentifier);
+
+        selectedDocumentModel.setContentItem(item);
+
+        authoringStep.setContentSection(section);
+        authoringStep.setContentItem(item);
+
+        return authoringStep.showStep();
+    }
+
+    @POST
+    @Path("/{documentPath:(.+)?}/@authoringsteps/{authoringStep}")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String doEditAction(
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @PathParam("documentPath") final String documentPath,
+        @PathParam("authoringStep") final String authoringStepIdentifier,
+        @Context final HttpServletRequest request
+    ) {
+        throw new UnsupportedOperationException();
+    }
+
+    @POST
+    @Path(
+        "/{documentPath:(.+)?}/@authoringsteps/{authoringStep}/{parameterPath:(.+)?}")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String doEditAction(
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @PathParam("documentPath") final String documentPath,
+        @PathParam("authoringStep") final String authoringStepIdentifier,
+        @PathParam("parameterPath") final String parameterPath,
+        @Context final HttpServletRequest request
+    ) {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Show the document history page.
      *
@@ -730,46 +772,48 @@ public class DocumentController {
         );
     }
 
-//    /**
-//     * Helper method for reading the authoring steps for the current content
-//     * item.
-//     *
-//     * @param item The content item.
-//     *
-//     * @return A list of authoring steps for the provided item.
-//     */
-//    private List<MvcAuthoringStep> readAuthoringSteps(
-//        final ContentItem item
-//    ) {
-//        final MvcAuthoringKit authoringKit = item
-//            .getClass()
-//            .getAnnotation(MvcAuthoringKit.class);
-//
-//        final Class<? extends MvcAuthoringStep>[] stepClasses = authoringKit
-//            .authoringSteps();
-//
-//        return Arrays
-//            .stream(stepClasses)
-//            .map(authoringSteps::select)
-//            .filter(instance -> instance.isResolvable())
-//            .map(Instance::get)
-//            .collect(Collectors.toList());
-//    }
     /**
-     * // * Helper method for finding the path fragment for the first authoring
-     * step // * for a content item. // * // * @param item The content item. //
-     * * // * @return The path fragment of the first authoring step of the item.
-     * //
+     * Helper method for reading the authoring steps for the current content
+     * item.
+     *
+     * @param item The content item.
+     *
+     * @return A list of authoring steps for the provided item.
      */
-//    private String findPathFragmentForFirstStep(final ContentItem item) {
-//        final List<MvcAuthoringStep> steps = readAuthoringSteps(item);
-//
-//        final MvcAuthoringStep firstStep = steps.get(0);
-//        final AuthoringStepPathFragment pathFragment = firstStep
-//            .getClass()
-//            .getAnnotation(AuthoringStepPathFragment.class);
-//        return pathFragment.value();
-//    }
+    private List<MvcAuthoringStep> readAuthoringSteps(
+        final ContentItem item
+    ) {
+        final MvcAuthoringKit authoringKit = item
+            .getClass()
+            .getAnnotation(MvcAuthoringKit.class);
+
+        final Class<? extends MvcAuthoringStep>[] stepClasses = authoringKit
+            .authoringSteps();
+
+        return Arrays
+            .stream(stepClasses)
+            .map(authoringSteps::select)
+            .filter(instance -> instance.isResolvable())
+            .map(Instance::get)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Helper method for finding the path fragment for the first authoring step
+     * for a content item.
+     *
+     * @param item The content item.
+     *
+     * @return The path fragment of the first authoring step of the item.
+     *
+     */
+    private String findFirstAuthoringStep(final ContentItem item) {
+        final List<MvcAuthoringStep> steps = readAuthoringSteps(item);
+
+        final MvcAuthoringStep firstStep = steps.get(0);
+        return firstStep.getClass().getName();
+    }
+
     /**
      * Helper method for building an entry in the list of lifecycles for the
      * view.
@@ -901,6 +945,19 @@ public class DocumentController {
         models.put("documentType", documentType);
 
         return "org/librecms/ui/contentsection/documents/create-step-not-available.xhtml";
+    }
+
+    private String showAuthoringStepNotAvailable(final String stepIdentifier) {
+        models.put("stepIdentifier", stepIdentifier);
+        return "org/librecms/ui/contentsection/documents/authoringstep-not-available.xhtml";
+    }
+
+    private String showUnsupportedDocumentType(
+        final String stepIdentifier, final String documentType
+    ) {
+        models.put("stepIdentifier", stepIdentifier);
+        models.put("documentType", documentType);
+        return "org/librecms/ui/contentsection/documents/unsupportedDocumentType.xhtml";
     }
 
     private CreateStepResult findCreateStep(
