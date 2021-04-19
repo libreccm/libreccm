@@ -52,6 +52,7 @@
         <div class="form-group">
             <label for="#{cc.attrs.inputId}">${cc.attrs.label}</label>
             <textarea aria-describedby="#{cc.attrs.inputId}-help"
+                      class="form-control"
                       cols="#{not empty cc.attrs.cols ? cc.attrs.cols : null}"
                       id="#{cc.attrs.inputId}"
                       maxlength="#{not empty cc.attrs.maxlength ? cc.attrs.maxlength : null}"
