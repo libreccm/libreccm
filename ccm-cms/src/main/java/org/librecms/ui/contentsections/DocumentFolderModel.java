@@ -149,6 +149,14 @@ public class DocumentFolderModel {
         return path;
     }
 
+    public String getPathWithTrailingSlash() {
+        if (path.isEmpty()) {
+            return "";
+        } else {
+            return String.format("%s/", path);
+        }
+    }
+
     protected void setPath(final String path) {
         this.path = path;
     }

@@ -75,13 +75,13 @@ import javax.xml.bind.annotation.XmlRootElement;
             order = 2
         )
     })
-//@MvcAuthoringKit(
-//    createStep = MvcArticleCreateStep.class,
-//    authoringSteps = {
-//        MvcArticlePropertiesStep.class,
-//        MvcArticleTextBodyStep.class
-//    }
-//)
+@MvcAuthoringKit(
+    createStep = MvcArticleCreateStep.class,
+    authoringSteps = {
+        MvcArticlePropertiesStep.class,
+        MvcArticleTextBodyStep.class
+    }
+)
 @XmlRootElement(name = "article", namespace = CMS_XML_NS)
 public class Article extends ContentItem implements Serializable {
 

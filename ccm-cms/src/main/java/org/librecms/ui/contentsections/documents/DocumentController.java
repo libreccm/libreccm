@@ -108,11 +108,13 @@ public class DocumentController {
     @Inject
     private ContentItemRepository itemRepo;
 
-//    /**
-//     * All available {@link MvcAuthoringStep}s.
-//     */
-//    @Inject
-//    private Instance<MvcAuthoringStep> authoringSteps;
+    /**
+     * All available {@link MvcAuthoringStep}s.
+     */
+    @Inject
+    @Any
+    private Instance<MvcAuthoringStep> authoringSteps;
+
     /**
      * All available {@link MvcDocumentCreateStep}s.
      */
@@ -225,6 +227,21 @@ public class DocumentController {
         return showCreateStep(sectionIdentifier, "", documentType);
     }
 
+    @POST
+    @Path("/@create")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String showCreateStepPost(
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @FormParam("documentType") final String documentType
+    ) {
+        return String.format(
+            "redirect:/%s/documents/@create/%s",
+            sectionIdentifier,
+            documentType
+        );
+    }
+
     /**
      * Shows the create step of the document type.
      *
@@ -258,6 +275,24 @@ public class DocumentController {
     }
 
     @POST
+    @Path("/{folderPath:(.+)?}/@create/{documentType}")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    @SuppressWarnings("unchecked")
+    public String showCreateStepPost(
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @PathParam("folderPath") final String folderPath,
+        @FormParam("documentType") final String documentType
+    ) {
+        return String.format(
+            "redirect:/%s/documents/%s/@create/%s",
+            sectionIdentifier,
+            folderPath,
+            documentType
+        );
+    }
+
+    @POST
     @Path("/@create/{documentType}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
@@ -268,7 +303,7 @@ public class DocumentController {
     ) {
         return createDocument(
             sectionIdentifier,
-            "", 
+            "",
             documentType,
             //formParameters
             request
@@ -799,31 +834,6 @@ public class DocumentController {
     }
 
     /**
-     * An annotation literal used to retrieve the create step for a specific
-     * content type.
-     */
-    private static class CreateDocumentOfTypeLiteral
-        extends AnnotationLiteral<CreatesDocumentOfType>
-        implements CreatesDocumentOfType {
-
-        private static final long serialVersionUID = 1L;
-
-        private final Class<? extends ContentItem> value;
-
-        public CreateDocumentOfTypeLiteral(
-            final Class<? extends ContentItem> value
-        ) {
-            this.value = value;
-        }
-
-        @Override
-        public Class<? extends ContentItem> value() {
-            return value;
-        }
-
-    }
-
-    /**
      * An annotation literal for retrieving the authoring step with a specific
      * path fragment.
      */
@@ -958,8 +968,23 @@ public class DocumentController {
             );
         }
 
-        final Instance<MvcDocumentCreateStep<?>> instance = createSteps
-            .select(new CreateDocumentOfTypeLiteral(documentClass));
+        final Optional<MvcAuthoringKit> authoringKitResult = Optional
+            .ofNullable(
+                documentClass.getDeclaredAnnotation(MvcAuthoringKit.class)
+            );
+        if (!authoringKitResult.isPresent()) {
+            return new CreateStepResult(
+                showCreateStepNotAvailable(section, folderPath, documentType)
+            );
+        }
+        final MvcAuthoringKit authoringKit = authoringKitResult.get();
+        final Class<? extends MvcDocumentCreateStep<?>> createStepClass
+            = authoringKit.createStep();
+
+//        final Instance<MvcDocumentCreateStep<?>> instance = createSteps
+//            .select(new CreateDocumentOfTypeLiteral(documentClass));
+        final Instance<? extends MvcDocumentCreateStep<?>> instance
+            = createSteps.select(createStepClass);
         if (instance.isUnsatisfied() || instance.isAmbiguous()) {
             return new CreateStepResult(
                 showCreateStepNotAvailable(section, folderPath, documentType)

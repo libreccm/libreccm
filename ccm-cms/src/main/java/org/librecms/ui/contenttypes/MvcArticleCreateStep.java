@@ -26,9 +26,7 @@ import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contenttypes.Article;
 import org.librecms.ui.contentsections.documents.AbstractMvcDocumentCreateStep;
-import org.librecms.ui.contentsections.documents.CreatesDocumentOfType;
 
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -47,7 +45,6 @@ import javax.transaction.Transactional;
  */
 @RequestScoped
 @Named("CmsArticleCreateStep")
-@CreatesDocumentOfType(Article.class)
 public class MvcArticleCreateStep
     extends AbstractMvcDocumentCreateStep<Article> {
 
