@@ -47,10 +47,9 @@ public @interface MvcAuthoringKit {
      * The authoring steps for editing the properties of the document. They are
      * used in the same order as they are provided here.
      *
-     * @return The descriptor classes ofr the authoring steps for the annotated
-     *         document type.
+     * @return The authoring steps for the annotated document type.
      */
-    Class<? extends MvcAuthoringStep>[] authoringSteps();
+    MvcAuthoringKitStep[] authoringSteps();
 
     /**
      * If set to {@code true} some authoring steps like categorization or

@@ -22,10 +22,9 @@ import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
 
+import java.util.Map;
+
 import javax.inject.Named;
-import javax.transaction.Transactional;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
 
 /**
  * An authoring step for a document (content item). Implementing classes are
@@ -139,9 +138,17 @@ public interface MvcAuthoringStep {
      *
      * @return The template of the edit step.
      */
-    @GET
-    @Path("/")
-    @Transactional(Transactional.TxType.REQUIRED)
     String showStep();
+
+    /**
+     * Apply changes from the from of the script.Authoring steps that have
+     * multiple forms may choose to implement this method as any no-op method
+     * that simply redirects to the template view (same as {@link #showStep()}.
+     *
+     * @param formParameters The form parameters submitted.
+     *
+     * @return The template of the view to show.
+     */
+    String applyEdits(Map<String, String[]> formParameters);
 
 }

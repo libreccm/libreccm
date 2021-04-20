@@ -19,12 +19,14 @@
 package org.librecms.ui.contentsections.documents;
 
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.security.AuthorizationRequired;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.lifecycle.Lifecycle;
 import org.librecms.lifecycle.LifecycleDefinition;
 import org.librecms.lifecycle.LifecycleDefinitionRepository;
+import org.librecms.ui.contentsections.AbstractMvcAuthoringStep;
 import org.librecms.ui.contentsections.ItemPermissionChecker;
 
 import java.time.LocalDate;
@@ -35,6 +37,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
@@ -57,7 +60,19 @@ import javax.ws.rs.Path;
 @Path("/")
 @AuthoringStepPathFragment(PublishStep.PATH_FRAGMENT)
 @Named("CmsPublishStep")
-public class PublishStep implements MvcAuthoringStep {
+public class PublishStep extends AbstractMvcAuthoringStep {
+
+
+    private static final String SELECTED_LIFECYCLE_DEF_UUID
+        = "selectedLifecycleDefUuid";
+
+    private static final String START_DATE = "startDate";
+
+    private static final String START_TIME = "startTime";
+
+    private static final String END_DATE = "endDate";
+
+    private static final String END_TIME = "endTime";
 
     /**
      * The path fragment of the publish step.
@@ -85,9 +100,6 @@ public class PublishStep implements MvcAuthoringStep {
     @Inject
     private Models models;
 
-    private ContentItem document;
-
-    private ContentSection section;
 
     @Override
     public Class<? extends ContentItem> supportedDocumentType() {
@@ -113,59 +125,19 @@ public class PublishStep implements MvcAuthoringStep {
         return DefaultAuthoringStepConstants.BUNDLE;
     }
 
-    @Override
-    public ContentSection getContentSection() {
-        return section;
-    }
-
-    @Override
-    public void setContentSection(final ContentSection section) {
-        this.section = section;
-    }
-
-    @Override
-    public String getContentSectionLabel() {
-        return section.getLabel();
-    }
-
-    @Override
-    public String getContentSectionTitle() {
-        return globalizationHelper
-            .getValueFromLocalizedString(section.getTitle());
-    }
-
-    @Override
-    public ContentItem getContentItem() {
-        return document;
-    }
-
-    @Override
-    public void setContentItem(final ContentItem document) {
-        this.document = document;
-    }
-
-    @Override
-    public String getContentItemPath() {
-        return itemManager.getItemPath(document);
-    }
-
-    @Override
-    public String getContentItemTitle() {
-        return globalizationHelper
-            .getValueFromLocalizedString(document.getTitle());
-    }
+    
 
     @Override
     public String showStep() {
-        if (itemPermissionChecker.canPublishItems(document)) {
+        if (itemPermissionChecker.canPublishItems(getContentItem())) {
             final String lifecycleDefUuid;
-            if (itemManager.isLive(document)) {
-                lifecycleDefUuid = document
+            if (itemManager.isLive(getContentItem())) {
+                lifecycleDefUuid = getContentItem()
                     .getLifecycle()
                     .getDefinition()
                     .getUuid();
             } else {
-                lifecycleDefUuid = document
+                lifecycleDefUuid = getContentItem()
                     .getContentType()
                     .getDefaultLifecycle()
                     .getUuid();
@@ -174,8 +146,8 @@ public class PublishStep implements MvcAuthoringStep {
             return "org/librecms/ui/documents/publish.xhtml";
         } else {
             return documentUi.showAccessDenied(
-                section,
-                document,
+                getContentSection(),
+                getContentItem(),
                 defaultStepsMessageBundle.getMessage(
                     "access_to_authoringstep_denied", new String[]{getLabel()}
                 )
@@ -183,14 +155,28 @@ public class PublishStep implements MvcAuthoringStep {
         }
     }
 
-    /**
-     * Is the current document live?
-     *
-     * @return
-     */
-    public boolean isLive() {
-        return itemManager.isLive(document);
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public String applyEdits(final Map<String, String[]> formParameters) {
+        if (!formParameters.containsKey(SELECTED_LIFECYCLE_DEF_UUID)
+                || formParameters.get(SELECTED_LIFECYCLE_DEF_UUID) == null
+                || formParameters.get(SELECTED_LIFECYCLE_DEF_UUID).length == 0) {
+            if (!formParameters.containsKey(SELECTED_LIFECYCLE_DEF_UUID)
+                || formParameters.get(SELECTED_LIFECYCLE_DEF_UUID) == null
+                || formParameters.get(SELECTED_LIFECYCLE_DEF_UUID).length == 0) {
+            models.put("missingLifecycleDefinitionUuid", true);
+            addParameterValueToModels(formParameters, START_DATE);
+            addParameterValueToModels(formParameters, START_TIME);
+            addParameterValueToModels(formParameters, END_DATE);
+            addParameterValueToModels(formParameters, END_TIME);
+            
+            return "org/librecms/ui/documenttypes/publish.xhtml";
+        }
+        }
     }
+
+   
 
     /**
      * Get the label of the lifecycle assigned to the current content item. The
@@ -204,7 +190,7 @@ public class PublishStep implements MvcAuthoringStep {
     @Transactional(Transactional.TxType.REQUIRED)
     public String getAssignedLifecycleLabel() {
         return Optional
-            .ofNullable(document.getLifecycle())
+            .ofNullable(getContentItem().getLifecycle())
             .map(Lifecycle::getDefinition)
             .map(LifecycleDefinition::getLabel)
             .map(globalizationHelper::getValueFromLocalizedString)
@@ -224,7 +210,7 @@ public class PublishStep implements MvcAuthoringStep {
     @Transactional(Transactional.TxType.REQUIRED)
     public String getAssignedLifecycleDecription() {
         return Optional
-            .ofNullable(document.getLifecycle())
+            .ofNullable(getContentItem().getLifecycle())
             .map(Lifecycle::getDefinition)
             .map(LifecycleDefinition::getDescription)
             .map(globalizationHelper::getValueFromLocalizedString)
@@ -247,16 +233,14 @@ public class PublishStep implements MvcAuthoringStep {
      *
      * @return A redirect the the publish step.
      */
-    @POST
-    @Path("/@publish")
+    @MvcAuthoringAction(
+        method = MvcAuthoringActionMethod.POST,
+        path = "/@publish"
+    )
     @Transactional(Transactional.TxType.REQUIRED)
     public String publish(
-        @FormParam("selectedLifecycleDefUuid")
-        final String selectedLifecycleDefUuid,
-        @FormParam("startDate") final String startDateParam,
-        @FormParam("startTime") final String startTimeParam,
-        @FormParam("endDate") final String endDateParam,
-        @FormParam("endTime") final String endTimeParam
+        final String parameterPath,
+        final Map<String, String[]> parameters
     ) {
         if (selectedLifecycleDefUuid == null) {
             models.put("missingLifecycleDefinitionUuid", true);
@@ -403,14 +387,14 @@ public class PublishStep implements MvcAuthoringStep {
     @Path("/@unpublish")
     @Transactional(Transactional.TxType.REQUIRED)
     public String unpublish() {
-          if (!itemPermissionChecker.canPublishItems(document)) {
+        if (!itemPermissionChecker.canPublishItems(document)) {
             return documentUi.showAccessDenied(
                 section,
                 document,
                 "item.unpublish"
             );
         }
-        
+
         itemManager.unpublish(document);
 
         return String.format(
@@ -420,5 +404,6 @@ public class PublishStep implements MvcAuthoringStep {
             PATH_FRAGMENT
         );
     }
-
+    
+   
 }

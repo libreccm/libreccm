@@ -308,7 +308,6 @@ public class DocumentController {
             sectionIdentifier,
             "",
             documentType,
-            //formParameters
             request
         );
     }
@@ -327,7 +326,8 @@ public class DocumentController {
     ) {
         final CreateStepResult result = findCreateStep(
             sectionIdentifier,
-            folderPath, documentType
+            folderPath, 
+            documentType
         );
 
         if (result.isCreateStepAvailable()) {
