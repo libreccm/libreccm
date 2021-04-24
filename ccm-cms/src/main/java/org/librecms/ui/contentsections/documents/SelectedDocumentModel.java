@@ -19,6 +19,7 @@
 package org.librecms.ui.contentsections.documents;
 
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.l10n.LocalizedTextsUtil;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.security.Shiro;
 import org.libreccm.workflow.AssignableTask;
@@ -39,9 +40,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.ws.rs.Path;
 
 /**
  * Model/named bean providing data about the currently selected document for
@@ -60,10 +61,10 @@ public class SelectedDocumentModel {
     private AssignableTaskManager taskManager;
 
     /**
-     * All available authoring steps.
+     * Checks if authoring step classes have all required annotations.
      */
     @Inject
-    private Instance<MvcAuthoringStep> authoringSteps;
+    private AuthoringStepsValidator stepsValidator;
 
     /**
      * Used to get information about the item.
@@ -307,14 +308,14 @@ public class SelectedDocumentModel {
             .getClass()
             .getAnnotation(MvcAuthoringKit.class);
 
-        final Class<? extends MvcAuthoringStep>[] stepClasses = authoringKit
-            .authoringSteps();
+        final List<Class<?>> stepClasses = Arrays
+            .stream(authoringKit.authoringSteps())
+            .collect(Collectors.toList());
 
-        return Arrays
-            .stream(stepClasses)
-            .map(authoringSteps::select)
-            .filter(instance -> instance.isResolvable())
-            .map(Instance::get)
+        return stepClasses
+            .stream()
+            .filter(stepsValidator::validateAuthoringStep)
+            .filter(stepClass -> stepsValidator.supportsItem(stepClass, item))
             .map(this::buildAuthoringStepListEntry)
             .collect(Collectors.toList());
     }
@@ -328,27 +329,38 @@ public class SelectedDocumentModel {
      * @return An {@link AuthoringStepListEntry} for the step.
      */
     private AuthoringStepListEntry buildAuthoringStepListEntry(
-        final MvcAuthoringStep step
+        final Class<?> authoringStepClass
     ) {
+        final MvcAuthoringStep stepAnnotation = authoringStepClass
+            .getAnnotation(MvcAuthoringStep.class);
+        final Path pathAnnotation = authoringStepClass.getAnnotation(
+            Path.class
+        );
+        final LocalizedTextsUtil textsUtil = globalizationHelper
+            .getLocalizedTextsUtil(stepAnnotation.bundle());
         final AuthoringStepListEntry entry = new AuthoringStepListEntry();
-        entry.setDescription(step.getDescription());
-        entry.setLabel(step.getLabel());
-        entry.setPathFragment(readAuthoringStepPathFragment(step));
+        entry.setDescription(textsUtil.getText(stepAnnotation.descriptionKey()));
+        entry.setLabel(textsUtil.getText(stepAnnotation.labelKey()));
+        entry.setPath(createStepPath(pathAnnotation.value()));
         return entry;
     }
 
-    /**
-     * Helper method for retrieving the path fragment of an authoring step.
-     *
-     * @param step The step.
-     *
-     * @return The path fragment of the step.
-     */
-    private String readAuthoringStepPathFragment(final MvcAuthoringStep step) {
-        return step
-            .getClass()
-            .getAnnotation(AuthoringStepPathFragment.class)
-            .value();
+    private String createStepPath(final String path) {
+        return path
+            .replace(
+                String.format(
+                    "{%s}",
+                    MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM
+                ),
+                item.getContentType().getContentSection().getLabel()
+            )
+            .replace(
+                String.format(
+                    "{%s}",
+                    MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM
+                ),
+                itemPath
+            );
     }
 
 }

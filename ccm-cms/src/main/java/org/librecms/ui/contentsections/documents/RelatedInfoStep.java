@@ -18,10 +18,10 @@
  */
 package org.librecms.ui.contentsections.documents;
 
-
 import org.libreccm.api.Identifier;
 import org.libreccm.api.IdentifierParser;
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.security.PermissionChecker;
 import org.librecms.assets.AssetTypeInfo;
 import org.librecms.assets.AssetTypesManager;
 import org.librecms.assets.RelatedLink;
@@ -46,6 +46,7 @@ import org.librecms.contentsection.FolderRepository;
 import org.librecms.contentsection.FolderType;
 import org.librecms.contentsection.ItemAttachment;
 import org.librecms.contentsection.ItemAttachmentManager;
+import org.librecms.contentsection.privileges.ItemPrivileges;
 import org.librecms.ui.contentsections.AssetFolderRowModel;
 import org.librecms.ui.contentsections.AssetFolderTree;
 import org.librecms.ui.contentsections.AssetFolderTreeNode;
@@ -71,11 +72,14 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.transaction.Transactional;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -95,10 +99,16 @@ import javax.ws.rs.core.MediaType;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Path("/")
-@AuthoringStepPathFragment(RelatedInfoStep.PATH_FRAGMENT)
+@Path(MvcAuthoringSteps.PATH_PREFIX + "relatedinfo")
+@Controller
 @Named("CmsRelatedInfoStep")
-public class RelatedInfoStep implements MvcAuthoringStep {
+@MvcAuthoringStep(
+    bundle = DefaultAuthoringStepConstants.BUNDLE,
+    descriptionKey = "authoringsteps.relatedinfo.description",
+    labelKey = "authoringsteps.relatedinfo.label",
+    supportedDocumentType = ContentItem.class
+)
+public class RelatedInfoStep {
 
     /**
      * The path fragment of the step.
@@ -164,6 +174,9 @@ public class RelatedInfoStep implements MvcAuthoringStep {
      */
     @Inject
     private DocumentPermissions documentPermissions;
+
+    @Inject
+    private DocumentUi documentUi;
 
     /**
      * Used to retrieve the path of folders.
@@ -231,85 +244,40 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Inject
     private Models models;
 
-    /**
-     * The current document/content item.
-     */
-    private ContentItem document;
+    @Inject
+    private MvcAuthoringStepService stepService;
 
-    /**
-     * The current content section.
-     */
-    private ContentSection section;
+    @Inject
+    private PermissionChecker permissionChecker;
 
-    @Override
-    public Class<? extends ContentItem> supportedDocumentType() {
-        return ContentItem.class;
-    }
+    @GET
+    @Path("/")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String showStep(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath
+    ) {
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
 
-    @Override
-    public String getLabel() {
-        return globalizationHelper
-            .getLocalizedTextsUtil(getBundle())
-            .getText("authoringsteps.relatedinfo.label");
-    }
-
-    @Override
-    public String getDescription() {
-        return globalizationHelper
-            .getLocalizedTextsUtil(getBundle())
-            .getText("authoringsteps.relatedinfo.description");
-    }
-
-    @Override
-    public String getBundle() {
-        return DefaultAuthoringStepConstants.BUNDLE;
-    }
-
-    @Override
-    public ContentSection getContentSection() {
-        return section;
-    }
-
-    @Override
-    public void setContentSection(final ContentSection section) {
-        this.section = section;
-    }
-
-    @Override
-    public String getContentSectionLabel() {
-        return section.getLabel();
-    }
-
-    @Override
-    public String getContentSectionTitle() {
-        return globalizationHelper
-            .getValueFromLocalizedString(section.getTitle());
-    }
-
-    @Override
-    public ContentItem getContentItem() {
-        return document;
-    }
-
-    @Override
-    public void setContentItem(final ContentItem document) {
-        this.document = document;
-    }
-
-    @Override
-    public String getContentItemPath() {
-        return itemManager.getItemPath(document);
-    }
-
-    @Override
-    public String getContentItemTitle() {
-        return globalizationHelper
-            .getValueFromLocalizedString(document.getTitle());
-    }
-
-    @Override
-    public String showStep() {
-        return "org/librecms/ui/documents/relatedinfo.xhtml";
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            return "org/librecms/ui/documents/relatedinfo.xhtml";
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
@@ -321,7 +289,8 @@ public class RelatedInfoStep implements MvcAuthoringStep {
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public List<AttachmentListDto> getAttachmentLists() {
-        return document
+        return stepService
+            .getDocument()
             .getAttachments()
             .stream()
             .filter(list -> !list.getName().startsWith("."))
@@ -332,6 +301,9 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     /**
      * Gets the asset folder tree of the current content section as JSON data.
      *
+     * @param sectionIdentifier
+     * @param documentPath
+     *
      * @return The assets folder tree of the current content section as JSON
      *         data.
      */
@@ -339,20 +311,41 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Path("/asset-folders")
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<AssetFolderTreeNode> getAssetFolderTree() {
-        return assetFolderTree.buildFolderTree(
-            section, section.getRootAssetsFolder()
-        );
+    public List<AssetFolderTreeNode> getAssetFolderTree(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath
+    ) {
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException
+                 | DocumentNotFoundException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final ContentSection section = stepService.getContentSection();
+            return assetFolderTree.buildFolderTree(
+                section, section.getRootAssetsFolder()
+            );
+        } else {
+            throw new ForbiddenException();
+        }
     }
 
     /**
      * Gets the assets in the folder as JSON data.
      *
-     * @param folderPath  The path of the folder.
-     * @param firstResult The index of the firset result to show.
-     * @param maxResults  The maximum number of results to show.
-     * @param filterTerm  An optional filter term for filtering the assets in
-     *                    the folder by their name.
+     * @param folderPath        The path of the folder.
+     * @param firstResult       The index of the firset result to show.
+     * @param maxResults        The maximum number of results to show.
+     * @param filterTerm        An optional filter term for filtering the assets
+     *                          in the folder by their name.
+     * @param documentPath
+     * @param sectionIdentifier
      *
      * @return A list of the assets in the folder as JSON data.
      */
@@ -361,40 +354,67 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional(Transactional.TxType.REQUIRED)
     public List<AssetFolderRowModel> getAssetsInFolder(
-        @PathParam("folderPath") final String folderPath,
-        @QueryParam("firstResult") @DefaultValue("0") final int firstResult,
-        @QueryParam("maxResults") @DefaultValue("20") final int maxResults,
-        @QueryParam("filterTerm") @DefaultValue("") final String filterTerm
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
+        @PathParam("folderPath")
+        final String folderPath,
+        @QueryParam("firstResult")
+        @DefaultValue("0")
+        final int firstResult,
+        @QueryParam("maxResults")
+        @DefaultValue("20")
+        final int maxResults,
+        @QueryParam("filterTerm")
+        @DefaultValue("")
+        final String filterTerm
     ) {
-        final Folder folder;
-        if (folderPath.isEmpty()) {
-            folder = section.getRootAssetsFolder();
-        } else {
-            final Optional<Folder> folderResult = folderRepo.findByPath(
-                section, folderPath, FolderType.ASSETS_FOLDER
-            );
-            if (folderResult.isPresent()) {
-                folder = folderResult.get();
-            } else {
-                return Collections.emptyList();
-            }
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException
+                 | DocumentNotFoundException ex) {
+            throw new NotFoundException(ex.getMessage());
         }
-        return folderRepo
-            .getAssetFolderEntries(
-                folder, firstResult, maxResults, filterTerm
-            )
-            .stream()
-            .map(entry -> buildAssetFolderRowModel(section, entry))
-            .collect(Collectors.toList());
+
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final ContentSection section = stepService.getContentSection();
+            final Folder folder;
+            if (folderPath.isEmpty()) {
+                folder = section.getRootAssetsFolder();
+            } else {
+                final Optional<Folder> folderResult = folderRepo.findByPath(
+                    section, folderPath, FolderType.ASSETS_FOLDER
+                );
+                if (folderResult.isPresent()) {
+                    folder = folderResult.get();
+                } else {
+                    return Collections.emptyList();
+                }
+            }
+            return folderRepo
+                .getAssetFolderEntries(
+                    folder, firstResult, maxResults, filterTerm
+                )
+                .stream()
+                .map(entry -> buildAssetFolderRowModel(section, entry))
+                .collect(Collectors.toList());
+        } else {
+            throw new ForbiddenException();
+        }
     }
 
     /**
      * Show all assets of a content section filtered by their name.
      *
-     * @param firstResult The index of the first result to show.
-     * @param maxResults  The maximum number of results to show.
-     * @param searchTerm  An optional search term applied to the names of the
-     *                    assets.
+     * @param sectionIdentifier
+     * @param documentPath
+     * @param firstResult       The index of the first result to show.
+     * @param maxResults        The maximum number of results to show.
+     * @param searchTerm        An optional search term applied to the names of
+     *                          the assets.
      *
      * @return A list of matching assets as JSON.
      */
@@ -403,20 +423,47 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional(Transactional.TxType.REQUIRED)
     public List<AssetFolderRowModel> findAssets(
-        @QueryParam("firstResult") @DefaultValue("0") final int firstResult,
-        @QueryParam("maxResults") @DefaultValue("20") final int maxResults,
-        @QueryParam("searchTerm") @DefaultValue("") final String searchTerm
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
+        @QueryParam("firstResult")
+        @DefaultValue("0")
+        final int firstResult,
+        @QueryParam("maxResults")
+        @DefaultValue("20")
+        final int maxResults,
+        @QueryParam("searchTerm")
+        @DefaultValue("")
+        final String searchTerm
     ) {
-        return assetRepo.findByTitleAndContentSection(searchTerm, section)
-            .stream()
-            .map(asset -> buildAssetFolderRowModel(section, asset))
-            .collect(Collectors.toList());
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException
+                 | DocumentNotFoundException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
 
+        final ContentSection section = stepService.getContentSection();
+
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            return assetRepo.findByTitleAndContentSection(searchTerm, section)
+                .stream()
+                .map(asset -> buildAssetFolderRowModel(section, asset))
+                .collect(Collectors.toList());
+        } else {
+            throw new ForbiddenException();
+        }
     }
 
     /**
      * Gets the document folder tree of the current content section as JSON
      * data.
+     *
+     * @param sectionIdentifier
+     * @param documentPath
      *
      * @return The document folder tree of the current content section as JSON
      *         data.
@@ -425,20 +472,41 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Path("/document-folders")
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional(Transactional.TxType.REQUIRED)
-    public List<DocumentFolderTreeNode> getDocumentFolderTree() {
-        return documentFolderTree.buildFolderTree(
-            section, section.getRootDocumentsFolder()
-        );
+    public List<DocumentFolderTreeNode> getDocumentFolderTree(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath
+    ) {
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException
+                 | DocumentNotFoundException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final ContentSection section = stepService.getContentSection();
+            return documentFolderTree.buildFolderTree(
+                section, section.getRootDocumentsFolder()
+            );
+        } else {
+            throw new ForbiddenException();
+        }
     }
 
     /**
      * Gets the documents in the folder as JSON data.
      *
-     * @param folderPath  The path of the folder.
-     * @param firstResult The index of the firset result to show.
-     * @param maxResults  The maximum number of results to show.
-     * @param filterTerm  An optional filter term for filtering the documents in
-     *                    the folder by their name.
+     * @param sectionIdentifier
+     * @param documentPath
+     * @param folderPath        The path of the folder.
+     * @param firstResult       The index of the firset result to show.
+     * @param maxResults        The maximum number of results to show.
+     * @param filterTerm        An optional filter term for filtering the
+     *                          documents in the folder by their name.
      *
      * @return A list of the documents in the folder as JSON data.
      */
@@ -447,44 +515,71 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional(Transactional.TxType.REQUIRED)
     public List<DocumentFolderRowModel> getDocumentsInFolder(
-        @PathParam("folderPath") final String folderPath,
-        @QueryParam("firstResult") @DefaultValue("0") final int firstResult,
-        @QueryParam("maxResults") @DefaultValue("20") final int maxResults,
-        @QueryParam("filterTerm") @DefaultValue("") final String filterTerm
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
+        @PathParam("folderPath")
+        final String folderPath,
+        @QueryParam("firstResult")
+        @DefaultValue("0")
+        final int firstResult,
+        @QueryParam("maxResults")
+        @DefaultValue("20")
+        final int maxResults,
+        @QueryParam("filterTerm")
+        @DefaultValue("")
+        final String filterTerm
     ) {
-        final Folder folder;
-        if (folderPath.isEmpty()) {
-            folder = section.getRootDocumentsFolder();
-        } else {
-            final Optional<Folder> folderResult = folderRepo.findByPath(
-                section, folderPath, FolderType.ASSETS_FOLDER
-            );
-            if (folderResult.isPresent()) {
-                folder = folderResult.get();
-            } else {
-                return Collections.emptyList();
-            }
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException
+                 | DocumentNotFoundException ex) {
+            throw new NotFoundException(ex.getMessage());
         }
 
-        return folderRepo
-            .getDocumentFolderEntries(
-                folder,
-                firstResult,
-                maxResults,
-                filterTerm
-            )
-            .stream()
-            .map(entry -> buildDocumentFolderRowModel(section, entry))
-            .collect(Collectors.toList());
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final ContentSection section = stepService.getContentSection();
+            final Folder folder;
+            if (folderPath.isEmpty()) {
+                folder = section.getRootDocumentsFolder();
+            } else {
+                final Optional<Folder> folderResult = folderRepo.findByPath(
+                    section, folderPath, FolderType.ASSETS_FOLDER
+                );
+                if (folderResult.isPresent()) {
+                    folder = folderResult.get();
+                } else {
+                    return Collections.emptyList();
+                }
+            }
+
+            return folderRepo
+                .getDocumentFolderEntries(
+                    folder,
+                    firstResult,
+                    maxResults,
+                    filterTerm
+                )
+                .stream()
+                .map(entry -> buildDocumentFolderRowModel(section, entry))
+                .collect(Collectors.toList());
+        } else {
+            throw new ForbiddenException();
+        }
     }
 
     /**
      * Show all documents of a content section filtered by their name.
      *
-     * @param firstResult The index of the first result to show.
-     * @param maxResults  The maximum number of results to show.
-     * @param searchTerm  An optional search term applied to the names of the
-     *                    docuemnts.
+     * @param sectionIdentifier
+     * @param documentPath
+     * @param firstResult       The index of the first result to show.
+     * @param maxResults        The maximum number of results to show.
+     * @param searchTerm        An optional search term applied to the names of
+     *                          the docuemnts.
      *
      * @return A list of matching documents/content items as JSON.
      */
@@ -493,23 +588,51 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional(Transactional.TxType.REQUIRED)
     public List<DocumentFolderRowModel> findDocuments(
-        @QueryParam("firstResult") @DefaultValue("0") final int firstResult,
-        @QueryParam("maxResults") @DefaultValue("20") final int maxResults,
-        @QueryParam("searchTerm") @DefaultValue("") final String searchTerm
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
+        @QueryParam("firstResult")
+        @DefaultValue("0")
+        final int firstResult,
+        @QueryParam("maxResults")
+        @DefaultValue("20")
+        final int maxResults,
+        @QueryParam("searchTerm")
+        @DefaultValue("")
+        final String searchTerm
     ) {
-        return itemRepo.findByNameAndContentSection(searchTerm, section)
-            .stream()
-            .map(asset -> buildDocumentFolderRowModel(section, asset))
-            .collect(Collectors.toList());
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException
+                 | DocumentNotFoundException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final ContentSection section = stepService.getContentSection();
+            return itemRepo.findByNameAndContentSection(searchTerm, section)
+                .stream()
+                .map(asset -> buildDocumentFolderRowModel(section, asset))
+                .collect(Collectors.toList());
+        } else {
+            throw new ForbiddenException();
+        }
     }
 
     /**
      * Adds a new attachment list.
      *
-     * @param name        The name of the list.
-     * @param title       The title of the list for the language returned by {@link GlobalizationHelper#getNegotiatedLocale()
-     *                    } .
-     * @param description The description of the list of the default locale {@link GlobalizationHelper#getNegotiatedLocale().
+     * @param sectionIdentifier
+     * @param documentPath
+     * @param name              The name of the list.
+     * @param title             The title of the list for the language returned
+     *                          by {@link GlobalizationHelper#getNegotiatedLocale()
+     *                          } .
+     * @param description       The description of the list of the default
+     *                          locale {@link GlobalizationHelper#getNegotiatedLocale().
      *
      * @return A redirect to the list of attachment lists.
      */
@@ -517,32 +640,58 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Path("/attachmentlists/@add")
     @Transactional(Transactional.TxType.REQUIRED)
     public String addAttachmentList(
-        @FormParam("listName") final String name,
-        @FormParam("listTitle") final String title,
-        @FormParam("listDescription") final String description
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
+        @FormParam("listName")
+        final String name,
+        @FormParam("listTitle")
+        final String title,
+        @FormParam("listDescription")
+        final String description
     ) {
-        final AttachmentList list = listManager.createAttachmentList(
-            document, name
-        );
-        list.getTitle().addValue(
-            globalizationHelper.getNegotiatedLocale(), title
-        );
-        list.getDescription().addValue(
-            globalizationHelper.getNegotiatedLocale(), description
-        );
-        listRepo.save(list);
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s/attachmentslists/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT,
-            list.getName()
-        );
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
+
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final ContentItem document = stepService.getDocument();
+            final AttachmentList list = listManager.createAttachmentList(
+                document, name
+            );
+            list.getTitle().addValue(
+                globalizationHelper.getNegotiatedLocale(), title
+            );
+            list.getDescription().addValue(
+                globalizationHelper.getNegotiatedLocale(), description
+            );
+            listRepo.save(list);
+            return stepService
+                .buildRedirectPathForStep(
+                    getClass(),
+                    String.format("/attachmentlists/%s", list.getName())
+                );
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Shows the details of an attachment list.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifier of the list.
      *
      * @return The template for the details view.
@@ -551,23 +700,48 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Path("/attachmentlists/{attachmentListIdentifier}/@details")
     @Transactional(Transactional.TxType.REQUIRED)
     public String showAttachmentListDetails(
-        @PathParam("attachmentListIdentifier") final String listIdentifierParam
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
 
-        listDetailsModel.setAttachmentList(listResult.get());
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
 
-        return "org/librecms/ui/documents/relatedinfo-attachmentlist-details.xhtml";
+            listDetailsModel.setAttachmentList(listResult.get());
+
+            return "org/librecms/ui/documents/relatedinfo-attachmentlist-details.xhtml";
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Updates an attachment list.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifier of the list to update.
      * @param name                The new name of the list.
      *
@@ -577,32 +751,55 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Path("/attachmentlists/{attachmentListIdentifier}/@update")
     @Transactional(Transactional.TxType.REQUIRED)
     public String updateAttachmentList(
-        @PathParam("attachmentListIdentifier") final String listIdentifierParam,
-        @FormParam("listName") final String name
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam,
+        @FormParam("listName")
+        final String name
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
 
-        final AttachmentList list = listResult.get();
-        list.setName(name);
-        listRepo.save(list);
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
 
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s/attachmentslists/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT,
-            list.getName()
-        );
+            final AttachmentList list = listResult.get();
+            list.setName(name);
+            listRepo.save(list);
+
+            return stepService.buildRedirectPathForStep(
+                getClass(),
+                String.format("/attachmentlists/%s", list.getName())
+            );
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Removes an attachment list and all item attachment of the list.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifier of the list to remove.
      * @param confirm             The value of the confirm parameter. Must
      *                            contain {@code true} (as string not as
@@ -614,31 +811,52 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Path("/attachmentlists/{attachmentListIdentifier}/@remove")
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeAttachmentList(
-        @PathParam("attachmentListIdentifier") final String listIdentifierParam,
-        @FormParam("confirm") final String confirm
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam,
+        @FormParam("confirm")
+        final String confirm
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
 
-        if ("true".equalsIgnoreCase(confirm)) {
-            listManager.removeAttachmentList(listResult.get());
-        }
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
 
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT
-        );
+            if ("true".equalsIgnoreCase(confirm)) {
+                listManager.removeAttachmentList(listResult.get());
+            }
+
+            return stepService.buildRedirectPathForStep(getClass());
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Adds a localized title to an attachment list.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifier of the list.
      * @param localeParam         The locale of the new title value.
      * @param value               The value of the new title value.
@@ -649,33 +867,57 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Path("/attachmentlists/{attachmentListIdentifier}/title/@add")
     @Transactional(Transactional.TxType.REQUIRED)
     public String addAttachmentListTitle(
-        @PathParam("attachmentListIdentifier") final String listIdentifierParam,
-        @FormParam("locale") final String localeParam,
-        @FormParam("value") final String value
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam,
+        @FormParam("locale")
+        final String localeParam,
+        @FormParam("value")
+        final String value
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
 
-        final AttachmentList list = listResult.get();
-        list.getTitle().addValue(new Locale(localeParam), value);
-        listRepo.save(list);
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
 
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s/attachmentslists/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT,
-            list.getName()
-        );
+            final AttachmentList list = listResult.get();
+            list.getTitle().addValue(new Locale(localeParam), value);
+            listRepo.save(list);
+
+            return stepService.buildRedirectPathForStep(
+                getClass(),
+                String.format("/attachmentlists/%s", list.getName())
+            );
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Updates a localized title value of an attachment list.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifier of the list.
      * @param localeParam         The locale of the title value to update.
      * @param value               The new title value.
@@ -686,68 +928,115 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Path("/attachmentlists/{attachmentListIdentifier}/title/@edit/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String updateAttachmentListTitle(
-        @PathParam("attachmentListIdentifier") final String listIdentifierParam,
-        @PathParam("locale") final String localeParam,
-        @FormParam("value") final String value
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam,
+        @PathParam("locale")
+        final String localeParam,
+        @FormParam("value")
+        final String value
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
 
-        final AttachmentList list = listResult.get();
-        list.getTitle().addValue(new Locale(localeParam), value);
-        listRepo.save(list);
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
 
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s/attachmentslists/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT,
-            list.getName()
-        );
+            final AttachmentList list = listResult.get();
+            list.getTitle().addValue(new Locale(localeParam), value);
+            listRepo.save(list);
+
+            return stepService.buildRedirectPathForStep(
+                getClass(),
+                String.format("/attachmentlists/%s", list.getName())
+            );
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Removes a localized title value of an attachment list.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifier of the list.
      * @param localeParam         The locale of the title value to remove.
      *
      * @return A redirect to the details view of the attachment list.
      */
     @POST
-    @Path("/attachmentlists/{attachmentListIdentifier}/title/@remove/{locale}")
+    @Path(
+        "/attachmentlists/{attachmentListIdentifier}/title/@remove/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeAttachmentListTitle(
-        @PathParam("attachmentListIdentifier") final String listIdentifierParam,
-        @PathParam("locale") final String localeParam
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam,
+        @PathParam("locale")
+        final String localeParam
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
 
-        final AttachmentList list = listResult.get();
-        list.getTitle().removeValue(new Locale(localeParam));
-        listRepo.save(list);
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
 
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s/attachmentslists/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT,
-            list.getName()
-        );
+            final AttachmentList list = listResult.get();
+            list.getTitle().removeValue(new Locale(localeParam));
+            listRepo.save(list);
+
+            return stepService.buildRedirectPathForStep(
+                getClass(), String.format("/attachmentlists/%s", list.getName())
+            );
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Adds a localized description to an attachment list.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifier of the list.
      * @param localeParam         The locale of the new description value.
      * @param value               The value of the new description value.
@@ -758,33 +1047,56 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Path("/attachmentlists/{attachmentListIdentifier}/description/@add")
     @Transactional(Transactional.TxType.REQUIRED)
     public String addAttachmentListDescription(
-        @PathParam("attachmentListIdentifier") final String listIdentifierParam,
-        @FormParam("locale") final String localeParam,
-        @FormParam("value") final String value
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam,
+        @FormParam("locale")
+        final String localeParam,
+        @FormParam("value")
+        final String value
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
 
-        final AttachmentList list = listResult.get();
-        list.getDescription().addValue(new Locale(localeParam), value);
-        listRepo.save(list);
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
 
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s/attachmentslists/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT,
-            list.getName()
-        );
+            final AttachmentList list = listResult.get();
+            list.getDescription().addValue(new Locale(localeParam), value);
+            listRepo.save(list);
+
+            return stepService.buildRedirectPathForStep(
+                getClass(), String.format("/attachmentlists/%s", list.getName())
+            );
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Updates a localized description value of an attachment list.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifier of the list.
      * @param localeParam         The locale of the description value to update.
      * @param value               The new description value.
@@ -796,33 +1108,56 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         "/attachmentlists/{attachmentListIdentifier}/description/@edit/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String updateAttachmentListDescription(
-        @PathParam("attachmentListIdentifier") final String listIdentifierParam,
-        @PathParam("locale") final String localeParam,
-        @FormParam("value") final String value
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam,
+        @PathParam("locale")
+        final String localeParam,
+        @FormParam("value")
+        final String value
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
 
-        final AttachmentList list = listResult.get();
-        list.getDescription().addValue(new Locale(localeParam), value);
-        listRepo.save(list);
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
 
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s/attachmentslists/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT,
-            list.getName()
-        );
+            final AttachmentList list = listResult.get();
+            list.getDescription().addValue(new Locale(localeParam), value);
+            listRepo.save(list);
+
+            return stepService.buildRedirectPathForStep(
+                getClass(), String.format("/attachmentlists/%s", list.getName())
+            );
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Removes a localized description value of an attachment list.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifier of the list.
      * @param localeParam         The locale of the description value to remove.
      *
@@ -833,32 +1168,54 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         "/attachmentlists/{attachmentListIdentifier}/description/@remove/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeAttachmentListDescription(
-        @PathParam("attachmentListIdentifier") final String listIdentifierParam,
-        @PathParam("locale") final String localeParam
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam,
+        @PathParam("locale")
+        final String localeParam
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
 
-        final AttachmentList list = listResult.get();
-        list.getDescription().removeValue(new Locale(localeParam));
-        listRepo.save(list);
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
 
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s/attachmentslists/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT,
-            list.getName()
-        );
+            final AttachmentList list = listResult.get();
+            list.getDescription().removeValue(new Locale(localeParam));
+            listRepo.save(list);
+
+            return stepService.buildRedirectPathForStep(
+                getClass(), String.format("/attachmentlists/%s", list.getName())
+            );
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Create new attachment.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifier of the list to which the
      *                            attachment is added.
      * @param assetUuid           The asset to use for the attachment.
@@ -869,67 +1226,113 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     @Path("/attachmentlists/{attachmentListIdentifier}/attachments")
     @Transactional(Transactional.TxType.REQUIRED)
     public String createAttachment(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
-        @FormParam("assetUuid") final String assetUuid
+        @FormParam("assetUuid")
+        final String assetUuid
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
-        }
-        final AttachmentList list = listResult.get();
-
-        final Optional<Asset> assetResult = assetRepo.findByUuid(assetUuid);
-        if (!assetResult.isPresent()) {
-            models.put("section", section.getLabel());
-            models.put("assetUuid", assetUuid);
-            return "org/librecms/ui/documents/asset-not-found.xhtml";
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
 
-        final Asset asset = assetResult.get();
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
+            final AttachmentList list = listResult.get();
 
-        attachmentManager.attachAsset(asset, list);
+            final Optional<Asset> assetResult = assetRepo.findByUuid(assetUuid);
+            if (!assetResult.isPresent()) {
+                models
+                    .put("section", stepService.getContentSection().getLabel());
+                models.put("assetUuid", assetUuid);
+                return "org/librecms/ui/documents/asset-not-found.xhtml";
+            }
 
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT
-        );
+            final Asset asset = assetResult.get();
+
+            attachmentManager.attachAsset(asset, list);
+
+            return stepService.buildRedirectPathForStep(getClass());
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Shows the form for creating a new internal link.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifier of the list to which the
      *                            attachment is added.
      *
      * @return The template for the form for creating a new internal link.
      */
     @GET
-    @Path("/attachmentlists/{attachmentListIdentifier}/internal-links/@create")
+    @Path(
+        "/attachmentlists/{attachmentListIdentifier}/internal-links/@create")
     @Transactional(Transactional.TxType.REQUIRED)
     public String createInternalLink(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
-        final AttachmentList list = listResult.get();
-        models.put("attachmentList", list.getName());
 
-        return "org/librecms/ui/documents/relatedinfo-create-internallink.xhtml";
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
+            final AttachmentList list = listResult.get();
+            models.put("attachmentList", list.getName());
+
+            return "org/librecms/ui/documents/relatedinfo-create-internallink.xhtml";
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Create a new internal link.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifier of the list to which the
      *                            attachment is added.
      * @param targetItemUuid      The UUID of the target item of the internal
@@ -941,48 +1344,72 @@ public class RelatedInfoStep implements MvcAuthoringStep {
      * @return A redirect to the list of attachment lists and attachments.
      */
     @POST
-    @Path("/attachmentlists/{attachmentListIdentifier}/internal-links/@create")
+    @Path(
+        "/attachmentlists/{attachmentListIdentifier}/internal-links/@create")
     @Transactional(Transactional.TxType.REQUIRED)
     public String createInternalLink(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
-        @FormParam("targetItemUuid") final String targetItemUuid,
-        @FormParam("title") final String title
+        @FormParam("targetItemUuid")
+        final String targetItemUuid,
+        @FormParam("title")
+        final String title
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
-        }
-        final AttachmentList list = listResult.get();
-
-        final Optional<ContentItem> itemResult = itemRepo.findByUuid(
-            targetItemUuid
-        );
-        if (!itemResult.isPresent()) {
-            models.put("targetItemUuid", targetItemUuid);
-            return "org/librecms/ui/documents/target-item-not-found.xhtml";
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
 
-        final RelatedLink relatedLink = new RelatedLink();
-        relatedLink.getTitle().addValue(
-            globalizationHelper.getNegotiatedLocale(), title
-        );
-        relatedLink.setTargetItem(document);
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
+            final AttachmentList list = listResult.get();
 
-        attachmentManager.attachAsset(relatedLink, list);
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT
-        );
+            final Optional<ContentItem> itemResult = itemRepo.findByUuid(
+                targetItemUuid
+            );
+            if (!itemResult.isPresent()) {
+                models.put("targetItemUuid", targetItemUuid);
+                return "org/librecms/ui/documents/target-item-not-found.xhtml";
+            }
+
+            final RelatedLink relatedLink = new RelatedLink();
+            relatedLink.getTitle().addValue(
+                globalizationHelper.getNegotiatedLocale(), title
+            );
+            relatedLink.setTargetItem(stepService.getDocument());
+
+            attachmentManager.attachAsset(relatedLink, list);
+            return stepService.buildRedirectPathForStep(
+                getClass(), String.format("/attachmentlists/%s", list.getName())
+            );
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Show the details of an internal link.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifier of the {@link AttachmentList}
      *                            to which the link belongs.
      * @param internalLinkUuid    The UUID of the link.
@@ -996,44 +1423,69 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}/@details")
     @Transactional(Transactional.TxType.REQUIRED)
     public String showInternalLinkDetails(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
-        @PathParam("internalLinkUuid") final String internalLinkUuid
+        @PathParam("internalLinkUuid")
+        final String internalLinkUuid
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
-        }
-        final AttachmentList list = listResult.get();
-
-        final Optional<RelatedLink> linkResult = list
-            .getAttachments()
-            .stream()
-            .map(ItemAttachment::getAsset)
-            .filter(asset -> asset instanceof RelatedLink)
-            .map(asset -> (RelatedLink) asset)
-            .filter(link -> link.getUuid().equals(internalLinkUuid))
-            .findAny();
-
-        if (!linkResult.isPresent()) {
-            models.put("contentItem", itemManager.getItemPath(document));
-            models.put("listIdentifier", listIdentifierParam);
-            models.put("internalLinkUuid", internalLinkUuid);
-            return "org/librecms/ui/documents/internal-link-asset-not-found.xhtml";
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
 
-        final RelatedLink link = linkResult.get();
-        internalLinkDetailsModel.setListIdentifier(list.getName());
-        internalLinkDetailsModel.setInternalLink(link);
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
+            final AttachmentList list = listResult.get();
 
-        return "org/librecms/ui/documents/relatedinfo-internallink-details.xhtml";
+            final Optional<RelatedLink> linkResult = list
+                .getAttachments()
+                .stream()
+                .map(ItemAttachment::getAsset)
+                .filter(asset -> asset instanceof RelatedLink)
+                .map(asset -> (RelatedLink) asset)
+                .filter(link -> link.getUuid().equals(internalLinkUuid))
+                .findAny();
+
+            if (!linkResult.isPresent()) {
+                models.put("contentItem", stepService.getDocumentPath());
+                models.put("listIdentifier", listIdentifierParam);
+                models.put("internalLinkUuid", internalLinkUuid);
+                return "org/librecms/ui/documents/internal-link-asset-not-found.xhtml";
+            }
+
+            final RelatedLink link = linkResult.get();
+            internalLinkDetailsModel.setListIdentifier(list.getName());
+            internalLinkDetailsModel.setInternalLink(link);
+
+            return "org/librecms/ui/documents/relatedinfo-internallink-details.xhtml";
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Updates the target of an internal link.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifier of the {@link AttachmentList}
      *                            to which the link belongs.
      * @param internalLinkUuid    The UUID of the link.
@@ -1047,58 +1499,81 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     )
     @Transactional(Transactional.TxType.REQUIRED)
     public String updateInternalLinkTarget(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
-        @PathParam("internalLinkUuid") final String internalLinkUuid,
-        @FormParam("targetItemUuid") final String targetItemUuid
+        @PathParam("internalLinkUuid")
+        final String internalLinkUuid,
+        @FormParam("targetItemUuid")
+        final String targetItemUuid
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
-        }
-        final AttachmentList list = listResult.get();
-
-        final Optional<ContentItem> itemResult = itemRepo.findByUuid(
-            targetItemUuid
-        );
-        if (!itemResult.isPresent()) {
-            models.put("targetItemUuid", targetItemUuid);
-            return "org/librecms/ui/documents/target-item-not-found.xhtml";
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
 
-        final Optional<RelatedLink> linkResult = list
-            .getAttachments()
-            .stream()
-            .map(ItemAttachment::getAsset)
-            .filter(asset -> asset instanceof RelatedLink)
-            .map(asset -> (RelatedLink) asset)
-            .filter(link -> link.getUuid().equals(internalLinkUuid))
-            .findAny();
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
+            final AttachmentList list = listResult.get();
 
-        if (!linkResult.isPresent()) {
-            models.put("contentItem", itemManager.getItemPath(document));
-            models.put("listIdentifier", listIdentifierParam);
-            models.put("internalLinkUuid", internalLinkUuid);
-            return "org/librecms/ui/documents/internal-link-asset-not-found.xhtml";
+            final Optional<ContentItem> itemResult = itemRepo.findByUuid(
+                targetItemUuid
+            );
+            if (!itemResult.isPresent()) {
+                models.put("targetItemUuid", targetItemUuid);
+                return "org/librecms/ui/documents/target-item-not-found.xhtml";
+            }
+
+            final Optional<RelatedLink> linkResult = list
+                .getAttachments()
+                .stream()
+                .map(ItemAttachment::getAsset)
+                .filter(asset -> asset instanceof RelatedLink)
+                .map(asset -> (RelatedLink) asset)
+                .filter(link -> link.getUuid().equals(internalLinkUuid))
+                .findAny();
+
+            if (!linkResult.isPresent()) {
+                models.put("contentItem", stepService.getDocumentPath());
+                models.put("listIdentifier", listIdentifierParam);
+                models.put("internalLinkUuid", internalLinkUuid);
+                return "org/librecms/ui/documents/internal-link-asset-not-found.xhtml";
+            }
+
+            final RelatedLink link = linkResult.get();
+            link.setTargetItem(itemResult.get());
+            assetRepo.save(link);
+
+            return stepService.buildRedirectPathForStep(
+                getClass(), String.format("/attachmentlists/%s", list.getName())
+            );
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
         }
-
-        final RelatedLink link = linkResult.get();
-        link.setTargetItem(itemResult.get());
-        assetRepo.save(link);
-
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT
-        );
     }
 
     /**
      * Add a localized title value to an internal link.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifier of the {@link AttachmentList}
      *                            to which the link belongs.
      * @param internalLinkUuid    The UUID of the link.
@@ -1112,52 +1587,76 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}/title/@add")
     @Transactional(Transactional.TxType.REQUIRED)
     public String addInternalLinkTitle(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
-        @PathParam("internalLinkUuid") final String internalLinkUuid,
-        @FormParam("locale") final String localeParam,
-        @FormParam("value") final String value
+        @PathParam("internalLinkUuid")
+        final String internalLinkUuid,
+        @FormParam("locale")
+        final String localeParam,
+        @FormParam("value")
+        final String value
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
-        }
-        final AttachmentList list = listResult.get();
-
-        final Optional<RelatedLink> linkResult = list
-            .getAttachments()
-            .stream()
-            .map(ItemAttachment::getAsset)
-            .filter(asset -> asset instanceof RelatedLink)
-            .map(asset -> (RelatedLink) asset)
-            .filter(link -> link.getUuid().equals(internalLinkUuid))
-            .findAny();
-
-        if (!linkResult.isPresent()) {
-            models.put("contentItem", itemManager.getItemPath(document));
-            models.put("listIdentifierParam", listIdentifierParam);
-            models.put("internalLinkUuid", internalLinkUuid);
-            return "org/librecms/ui/documents/internal-link-asset-not-found.xhtml";
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
 
-        final RelatedLink link = linkResult.get();
-        final Locale locale = new Locale(localeParam);
-        link.getTitle().addValue(locale, value);
-        assetRepo.save(link);
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
+            final AttachmentList list = listResult.get();
 
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT
-        );
+            final Optional<RelatedLink> linkResult = list
+                .getAttachments()
+                .stream()
+                .map(ItemAttachment::getAsset)
+                .filter(asset -> asset instanceof RelatedLink)
+                .map(asset -> (RelatedLink) asset)
+                .filter(link -> link.getUuid().equals(internalLinkUuid))
+                .findAny();
+
+            if (!linkResult.isPresent()) {
+                models.put("contentItem", stepService.getDocumentPath());
+                models.put("listIdentifierParam", listIdentifierParam);
+                models.put("internalLinkUuid", internalLinkUuid);
+                return "org/librecms/ui/documents/internal-link-asset-not-found.xhtml";
+            }
+
+            final RelatedLink link = linkResult.get();
+            final Locale locale = new Locale(localeParam);
+            link.getTitle().addValue(locale, value);
+            assetRepo.save(link);
+
+            return stepService.buildRedirectPathForStep(
+                getClass(), String.format("/attachmentlists/%s", list.getName())
+            );
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Updates a localized title value of an internal link.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifier of the {@link AttachmentList}
      *                            to which the link belongs.
      * @param internalLinkUuid    The UUID of the link.
@@ -1171,52 +1670,76 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}/title/@edit/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String updateInternalLinkTitle(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
-        @PathParam("internalLinkUuid") final String internalLinkUuid,
-        @PathParam("locale") final String localeParam,
-        @FormParam("value") final String value
+        @PathParam("internalLinkUuid")
+        final String internalLinkUuid,
+        @PathParam("locale")
+        final String localeParam,
+        @FormParam("value")
+        final String value
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
-        }
-        final AttachmentList list = listResult.get();
-
-        final Optional<RelatedLink> linkResult = list
-            .getAttachments()
-            .stream()
-            .map(ItemAttachment::getAsset)
-            .filter(asset -> asset instanceof RelatedLink)
-            .map(asset -> (RelatedLink) asset)
-            .filter(link -> link.getUuid().equals(internalLinkUuid))
-            .findAny();
-
-        if (!linkResult.isPresent()) {
-            models.put("contentItem", itemManager.getItemPath(document));
-            models.put("listIdentifierParam", listIdentifierParam);
-            models.put("internalLinkUuid", internalLinkUuid);
-            return "org/librecms/ui/documents/internal-link-asset-not-found.xhtml";
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
 
-        final RelatedLink link = linkResult.get();
-        final Locale locale = new Locale(localeParam);
-        link.getTitle().addValue(locale, value);
-        assetRepo.save(link);
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
+            final AttachmentList list = listResult.get();
 
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT
-        );
+            final Optional<RelatedLink> linkResult = list
+                .getAttachments()
+                .stream()
+                .map(ItemAttachment::getAsset)
+                .filter(asset -> asset instanceof RelatedLink)
+                .map(asset -> (RelatedLink) asset)
+                .filter(link -> link.getUuid().equals(internalLinkUuid))
+                .findAny();
+
+            if (!linkResult.isPresent()) {
+                models.put("contentItem", stepService.getDocumentPath());
+                models.put("listIdentifierParam", listIdentifierParam);
+                models.put("internalLinkUuid", internalLinkUuid);
+                return "org/librecms/ui/documents/internal-link-asset-not-found.xhtml";
+            }
+
+            final RelatedLink link = linkResult.get();
+            final Locale locale = new Locale(localeParam);
+            link.getTitle().addValue(locale, value);
+            assetRepo.save(link);
+
+            return stepService.buildRedirectPathForStep(
+                getClass(), String.format("/attachmentlists/%s", list.getName())
+            );
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Removes a localized title value from an internal link.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifier of the {@link AttachmentList}
      *                            to which the link belongs.
      * @param internalLinkUuid    The UUID of the link.
@@ -1230,52 +1753,75 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     )
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeInternalLinkTitle(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
-        @PathParam("internalLinkUuid") final String internalLinkUuid,
-        @PathParam("locale") final String localeParam
+        @PathParam("internalLinkUuid")
+        final String internalLinkUuid,
+        @PathParam("locale")
+        final String localeParam
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
-        }
-        final AttachmentList list = listResult.get();
-
-        final Optional<RelatedLink> linkResult = list
-            .getAttachments()
-            .stream()
-            .map(ItemAttachment::getAsset)
-            .filter(asset -> asset instanceof RelatedLink)
-            .map(asset -> (RelatedLink) asset)
-            .filter(link -> link.getUuid().equals(internalLinkUuid))
-            .findAny();
-
-        if (!linkResult.isPresent()) {
-            models.put("contentItem", itemManager.getItemPath(document));
-            models.put("listIdentifierParam", listIdentifierParam);
-            models.put("internalLinkUuid", internalLinkUuid);
-            return "org/librecms/ui/documents/internal-link-asset-not-found.xhtml";
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
 
-        final RelatedLink link = linkResult.get();
-        final Locale locale = new Locale(localeParam);
-        link.getTitle().removeValue(locale);
-        assetRepo.save(link);
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
+            final AttachmentList list = listResult.get();
 
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT
-        );
+            final Optional<RelatedLink> linkResult = list
+                .getAttachments()
+                .stream()
+                .map(ItemAttachment::getAsset)
+                .filter(asset -> asset instanceof RelatedLink)
+                .map(asset -> (RelatedLink) asset)
+                .filter(link -> link.getUuid().equals(internalLinkUuid))
+                .findAny();
+
+            if (!linkResult.isPresent()) {
+                models.put("contentItem", stepService.getDocumentPath());
+                models.put("listIdentifierParam", listIdentifierParam);
+                models.put("internalLinkUuid", internalLinkUuid);
+                return "org/librecms/ui/documents/internal-link-asset-not-found.xhtml";
+            }
+
+            final RelatedLink link = linkResult.get();
+            final Locale locale = new Locale(localeParam);
+            link.getTitle().removeValue(locale);
+            assetRepo.save(link);
+
+            return stepService.buildRedirectPathForStep(
+                getClass(), String.format("/attachmentlists/%s", list.getName())
+            );
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
-     * Removes an attachment from an {@link AttachmentList}. The {@link Asset}
-     * of the attachment will not be deleted unless it is a related link.
+     * Removes an attachment from an {@link AttachmentList}.The {@link Asset} of
+     * the attachment will not be deleted unless it is a related link.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifier of the {@link AttachmentList}
      *                            to which the attachment belongs.
      * @param attachmentUuid      The UUID of the attachment to remove.
@@ -1290,45 +1836,69 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         "/attachmentlists/{attachmentListIdentifier}/attachments/{attachmentUuid}/@remove")
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeAttachment(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
-        @PathParam("attachmentUuid") final String attachmentUuid,
-        @FormParam("confirm") final String confirm
+        @PathParam("attachmentUuid")
+        final String attachmentUuid,
+        @FormParam("confirm")
+        final String confirm
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
-        final AttachmentList list = listResult.get();
 
-        final Optional<ItemAttachment<?>> result = list
-            .getAttachments()
-            .stream()
-            .filter(attachment -> attachment.getUuid().equals(attachmentUuid))
-            .findFirst();
-
-        if (result.isPresent() && "true".equalsIgnoreCase(confirm)) {
-            final Asset asset = result.get().getAsset();
-            attachmentManager.unattachAsset(asset, list);
-            if (asset instanceof RelatedLink
-                    && ((RelatedLink) asset).getTargetItem() != null) {
-                assetRepo.delete(asset);
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
             }
-        }
+            final AttachmentList list = listResult.get();
 
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT
-        );
+            final Optional<ItemAttachment<?>> result = list
+                .getAttachments()
+                .stream()
+                .filter(attachment -> attachment.getUuid()
+                .equals(attachmentUuid))
+                .findFirst();
+
+            if (result.isPresent() && "true".equalsIgnoreCase(confirm)) {
+                final Asset asset = result.get().getAsset();
+                attachmentManager.unattachAsset(asset, list);
+                if (asset instanceof RelatedLink
+                        && ((RelatedLink) asset).getTargetItem() != null) {
+                    assetRepo.delete(asset);
+                }
+            }
+
+            return stepService.buildRedirectPathForStep(
+                getClass(), String.format("/attachmentlists/%s", list.getName())
+            );
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Move an attachment list one position up.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifer of the list to move.
      *
      * @return A redirect to list of attachment lists.
@@ -1338,63 +1908,104 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         "/attachmentlists/{attachmentListIdentifier}/@moveUp")
     @Transactional(Transactional.TxType.REQUIRED)
     public String moveListUp(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
-        final AttachmentList list = listResult.get();
 
-        listManager.moveUp(list);
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
+            final AttachmentList list = listResult.get();
 
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT
-        );
+            listManager.moveUp(list);
+
+            return stepService.buildRedirectPathForStep(
+                getClass(), String.format("/attachmentlists/%s", list.getName())
+            );
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Move an attachment list one position down.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifer of the list to move.
      *
      * @return A redirect to list of attachment lists.
      */
     @POST
-    @Path(
-        "/attachmentlists/{attachmentListIdentifier}/@moveDown")
+    @Path("/attachmentlists/{attachmentListIdentifier}/@moveDown")
     @Transactional(Transactional.TxType.REQUIRED)
     public String moveListDown(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
-        final AttachmentList list = listResult.get();
 
-        listManager.moveDown(list);
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
+            final AttachmentList list = listResult.get();
 
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT
-        );
+            listManager.moveDown(list);
+
+            return stepService.buildRedirectPathForStep(
+                getClass(), String.format("/attachmentlists/%s", list.getName())
+            );
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Move an attachment one position up.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifer to which the attachment belongs.
      * @param attachmentUuid      The UUID of the attachment ot move.
      *
@@ -1405,41 +2016,64 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         "/attachmentlists/{attachmentListIdentifier}/attachments/{attachmentUuid}/@moveUp")
     @Transactional(Transactional.TxType.REQUIRED)
     public String moveAttachmentUp(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
-        @PathParam("attachmentUuid") final String attachmentUuid
+        @PathParam("attachmentUuid")
+        final String attachmentUuid
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
-        }
-        final AttachmentList list = listResult.get();
-
-        final Optional<ItemAttachment<?>> result = list
-            .getAttachments()
-            .stream()
-            .filter(attachment -> attachment.getUuid().equals(attachmentUuid))
-            .findFirst();
-
-        if (result.isPresent()) {
-            final ItemAttachment<?> attachment = result.get();
-            final Asset asset = attachment.getAsset();
-            attachmentManager.moveUp(asset, list);
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
 
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT
-        );
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
+            final AttachmentList list = listResult.get();
+
+            final Optional<ItemAttachment<?>> result = list
+                .getAttachments()
+                .stream()
+                .filter(attachment -> attachment.getUuid()
+                .equals(attachmentUuid))
+                .findFirst();
+
+            if (result.isPresent()) {
+                final ItemAttachment<?> attachment = result.get();
+                final Asset asset = attachment.getAsset();
+                attachmentManager.moveUp(asset, list);
+            }
+
+            return stepService.buildRedirectPathForStep(
+                getClass(), String.format("/attachmentlists/%s", list.getName())
+            );
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Move an attachment one position down.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param listIdentifierParam The identifer to which the attachment belongs.
      * @param attachmentUuid      The UUID of the attachment ot move.
      *
@@ -1450,36 +2084,57 @@ public class RelatedInfoStep implements MvcAuthoringStep {
         "/attachmentlists/{attachmentListIdentifier}/attachments/{attachmentUuid}/@moveDown")
     @Transactional(Transactional.TxType.REQUIRED)
     public String moveAttachmentDown(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
-        @PathParam("attachmentUuid") final String attachmentUuid
+        @PathParam("attachmentUuid")
+        final String attachmentUuid
     ) {
-        final Optional<AttachmentList> listResult = findAttachmentList(
-            listIdentifierParam
-        );
-        if (!listResult.isPresent()) {
-            return showAttachmentListNotFound(listIdentifierParam);
-        }
-        final AttachmentList list = listResult.get();
-
-        final Optional<ItemAttachment<?>> result = list
-            .getAttachments()
-            .stream()
-            .filter(attachment -> attachment.getUuid().equals(attachmentUuid))
-            .findFirst();
-
-        if (result.isPresent()) {
-            final ItemAttachment<?> attachment = result.get();
-            final Asset asset = attachment.getAsset();
-            attachmentManager.moveDown(asset, list);
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
 
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT
-        );
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, stepService.getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
+            final AttachmentList list = listResult.get();
+
+            final Optional<ItemAttachment<?>> result = list
+                .getAttachments()
+                .stream()
+                .filter(attachment -> attachment.getUuid()
+                .equals(attachmentUuid))
+                .findFirst();
+
+            if (result.isPresent()) {
+                final ItemAttachment<?> attachment = result.get();
+                final Asset asset = attachment.getAsset();
+                attachmentManager.moveDown(asset, list);
+            }
+
+            return stepService.buildRedirectPathForStep(
+                getClass(), String.format("/attachmentlists/%s", list.getName())
+            );
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
@@ -1494,6 +2149,7 @@ public class RelatedInfoStep implements MvcAuthoringStep {
     private Optional<AttachmentList> findAttachmentList(
         final String attachmentListIdentifier
     ) {
+        final ContentItem document = stepService.getDocument();
         final Identifier identifier = identifierParser.parseIdentifier(
             attachmentListIdentifier
         );
@@ -1530,7 +2186,7 @@ public class RelatedInfoStep implements MvcAuthoringStep {
      * @return The template for the "attachment list not found" page.
      */
     private String showAttachmentListNotFound(final String listIdentifier) {
-        models.put("contentItem", itemManager.getItemPath(document));
+        models.put("contentItem", stepService.getDocumentPath());
         models.put("listIdentifier", listIdentifier);
         return "org/librecms/ui/documents/attachmentlist-not-found.xhtml";
     }

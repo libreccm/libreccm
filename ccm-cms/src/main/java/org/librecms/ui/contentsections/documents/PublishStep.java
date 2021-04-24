@@ -19,14 +19,11 @@
 package org.librecms.ui.contentsections.documents;
 
 import org.libreccm.l10n.GlobalizationHelper;
-import org.libreccm.security.AuthorizationRequired;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
-import org.librecms.contentsection.ContentSection;
 import org.librecms.lifecycle.Lifecycle;
 import org.librecms.lifecycle.LifecycleDefinition;
 import org.librecms.lifecycle.LifecycleDefinitionRepository;
-import org.librecms.ui.contentsections.AbstractMvcAuthoringStep;
 import org.librecms.ui.contentsections.ItemPermissionChecker;
 
 import java.time.LocalDate;
@@ -37,17 +34,20 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.transaction.Transactional;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 /**
  * Authoring step (part of the default steps) for publishing a
@@ -57,22 +57,19 @@ import javax.ws.rs.Path;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Path("/")
-@AuthoringStepPathFragment(PublishStep.PATH_FRAGMENT)
+@Path(MvcAuthoringSteps.PATH_PREFIX + "publish")
+@Controller
 @Named("CmsPublishStep")
-public class PublishStep extends AbstractMvcAuthoringStep {
+@MvcAuthoringStep(
+    bundle = DefaultAuthoringStepConstants.BUNDLE,
+    descriptionKey = "authoringsteps.publish.description",
+    labelKey = "authoringsteps.publish.label",
+    supportedDocumentType = ContentItem.class
+)
+public class PublishStep {
 
-
-    private static final String SELECTED_LIFECYCLE_DEF_UUID
-        = "selectedLifecycleDefUuid";
-
-    private static final String START_DATE = "startDate";
-
-    private static final String START_TIME = "startTime";
-
-    private static final String END_DATE = "endDate";
-
-    private static final String END_TIME = "endTime";
+    private static final String TEMPLATE
+        = "org/librecms/ui/documenttypes/publish.xhtml";
 
     /**
      * The path fragment of the publish step.
@@ -100,83 +97,53 @@ public class PublishStep extends AbstractMvcAuthoringStep {
     @Inject
     private Models models;
 
+    @Inject
+    private MvcAuthoringStepService stepService;
 
-    @Override
-    public Class<? extends ContentItem> supportedDocumentType() {
-        return ContentItem.class;
-    }
+    @GET
+    @Path("/")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String showStep(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath
+    ) {
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
 
-    @Override
-    public String getLabel() {
-        return globalizationHelper
-            .getLocalizedTextsUtil(getBundle())
-            .getText("authoringsteps.publish.label");
-    }
-
-    @Override
-    public String getDescription() {
-        return globalizationHelper
-            .getLocalizedTextsUtil(getBundle())
-            .getText("authoringsteps.publish.description");
-    }
-
-    @Override
-    public String getBundle() {
-        return DefaultAuthoringStepConstants.BUNDLE;
-    }
-
-    
-
-    @Override
-    public String showStep() {
-        if (itemPermissionChecker.canPublishItems(getContentItem())) {
+        final ContentItem document = stepService.getDocument();
+        if (itemPermissionChecker.canPublishItems(stepService.getDocument())) {
             final String lifecycleDefUuid;
-            if (itemManager.isLive(getContentItem())) {
-                lifecycleDefUuid = getContentItem()
+            if (itemManager.isLive(document)) {
+                lifecycleDefUuid = document
                     .getLifecycle()
                     .getDefinition()
                     .getUuid();
             } else {
-                lifecycleDefUuid = getContentItem()
+                lifecycleDefUuid = document
                     .getContentType()
                     .getDefaultLifecycle()
                     .getUuid();
             }
             models.put("lifecycleDefinitionUuid", lifecycleDefUuid);
-            return "org/librecms/ui/documents/publish.xhtml";
+            return TEMPLATE;
         } else {
             return documentUi.showAccessDenied(
-                getContentSection(),
-                getContentItem(),
+                stepService.getContentSection(),
+                stepService.getDocument(),
                 defaultStepsMessageBundle.getMessage(
-                    "access_to_authoringstep_denied", new String[]{getLabel()}
+                    "access_to_authoringstep_denied",
+                    new String[]{stepService.getLabel(getClass())}
                 )
             );
         }
     }
-
-    @AuthorizationRequired
-    @Transactional(Transactional.TxType.REQUIRED)
-    @Override
-    public String applyEdits(final Map<String, String[]> formParameters) {
-        if (!formParameters.containsKey(SELECTED_LIFECYCLE_DEF_UUID)
-                || formParameters.get(SELECTED_LIFECYCLE_DEF_UUID) == null
-                || formParameters.get(SELECTED_LIFECYCLE_DEF_UUID).length == 0) {
-            if (!formParameters.containsKey(SELECTED_LIFECYCLE_DEF_UUID)
-                || formParameters.get(SELECTED_LIFECYCLE_DEF_UUID) == null
-                || formParameters.get(SELECTED_LIFECYCLE_DEF_UUID).length == 0) {
-            models.put("missingLifecycleDefinitionUuid", true);
-            addParameterValueToModels(formParameters, START_DATE);
-            addParameterValueToModels(formParameters, START_TIME);
-            addParameterValueToModels(formParameters, END_DATE);
-            addParameterValueToModels(formParameters, END_TIME);
-            
-            return "org/librecms/ui/documenttypes/publish.xhtml";
-        }
-        }
-    }
-
-   
 
     /**
      * Get the label of the lifecycle assigned to the current content item. The
@@ -190,7 +157,7 @@ public class PublishStep extends AbstractMvcAuthoringStep {
     @Transactional(Transactional.TxType.REQUIRED)
     public String getAssignedLifecycleLabel() {
         return Optional
-            .ofNullable(getContentItem().getLifecycle())
+            .ofNullable(stepService.getDocument().getLifecycle())
             .map(Lifecycle::getDefinition)
             .map(LifecycleDefinition::getLabel)
             .map(globalizationHelper::getValueFromLocalizedString)
@@ -210,7 +177,7 @@ public class PublishStep extends AbstractMvcAuthoringStep {
     @Transactional(Transactional.TxType.REQUIRED)
     public String getAssignedLifecycleDecription() {
         return Optional
-            .ofNullable(getContentItem().getLifecycle())
+            .ofNullable(stepService.getDocument().getLifecycle())
             .map(Lifecycle::getDefinition)
             .map(LifecycleDefinition::getDescription)
             .map(globalizationHelper::getValueFromLocalizedString)
@@ -222,6 +189,9 @@ public class PublishStep extends AbstractMvcAuthoringStep {
      * {@code selectedLifecycleDefUuid} is ignored.The apply a new lifecycle the
      * document the unpublished first.
      *
+     *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param selectedLifecycleDefUuid The ID of the lifecycle definition from
      *                                 which the lifecycle for the item is
      *                                 created.
@@ -230,37 +200,55 @@ public class PublishStep extends AbstractMvcAuthoringStep {
      * @param endDateParam
      * @param endTimeParam
      *
-     *
      * @return A redirect the the publish step.
      */
-    @MvcAuthoringAction(
-        method = MvcAuthoringActionMethod.POST,
-        path = "/@publish"
-    )
+    @POST
+    @Path("/")
     @Transactional(Transactional.TxType.REQUIRED)
     public String publish(
-        final String parameterPath,
-        final Map<String, String[]> parameters
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
+        @FormParam("selectedLifecycleDefUuid")
+        final String selectedLifecycleDefUuid,
+        @FormParam("startDate") @DefaultValue("")
+        final String startDateParam,
+        @FormParam("startTime") @DefaultValue("")
+        final String startTimeParam,
+        @FormParam("endDate") @DefaultValue("")
+        final String endDateParam,
+        @FormParam("endTime") @DefaultValue("")
+        final String endTimeParam
     ) {
-        if (selectedLifecycleDefUuid == null) {
-            models.put("missingLifecycleDefinitionUuid", true);
-            models.put("startDateTime", startDateParam);
-            models.put("startDateTime", startTimeParam);
-            models.put("endDateTime", endDateParam);
-            models.put("endDateTime", endTimeParam);
-            return "org/librecms/ui/documenttypes/publish.xhtml";
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
-        if (startDateParam == null
-                || startDateParam.isEmpty()
-                || startTimeParam == null
-                || startTimeParam.isEmpty()) {
+
+        final ContentItem document = stepService.getDocument();
+
+        if (selectedLifecycleDefUuid.isEmpty()) {
+            models.put("missingLifecycleDefinitionUuid", true);
+            models.put("startDate", startDateParam);
+            models.put("startTime", startTimeParam);
+            models.put("endDate", endDateParam);
+            models.put("endTime", endTimeParam);
+
+            return TEMPLATE;
+        }
+        if (startDateParam.isEmpty() || startTimeParam.isEmpty()) {
             models.put("lifecycleDefinitionUuid", selectedLifecycleDefUuid);
             models.put("missingStartDateTime", true);
-            models.put("startDateTime", startDateParam);
-            models.put("startDateTime", startTimeParam);
-            models.put("endDateTime", endDateParam);
-            models.put("endDateTime", endTimeParam);
-            return "org/librecms/ui/documents/publish.xhtml";
+            models.put("startDate", startDateParam);
+            models.put("startTime", startTimeParam);
+            models.put("endDate", endDateParam);
+            models.put("endTime", endTimeParam);
+
+            return TEMPLATE;
         }
 
         final DateTimeFormatter isoDateFormatter = DateTimeFormatter.ISO_DATE
@@ -274,11 +262,12 @@ public class PublishStep extends AbstractMvcAuthoringStep {
         } catch (DateTimeParseException ex) {
             models.put("invalidStartDate", true);
             models.put("lifecycleDefinitionUuid", selectedLifecycleDefUuid);
-            models.put("startDateTime", startDateParam);
-            models.put("startDateTime", startTimeParam);
-            models.put("endDateTime", endDateParam);
-            models.put("endDateTime", endTimeParam);
-            return "org/librecms/ui/documents/publish.xhtml";
+            models.put("startDate", startDateParam);
+            models.put("startTime", startTimeParam);
+            models.put("endDate", endDateParam);
+            models.put("endTime", endTimeParam);
+
+            return TEMPLATE;
         }
 
         final LocalTime localStartTime;
@@ -287,11 +276,12 @@ public class PublishStep extends AbstractMvcAuthoringStep {
         } catch (DateTimeParseException ex) {
             models.put("invalidStartTime", true);
             models.put("lifecycleDefinitionUuid", selectedLifecycleDefUuid);
-            models.put("startDateTime", startDateParam);
-            models.put("startDateTime", startTimeParam);
-            models.put("endDateTime", endDateParam);
-            models.put("endDateTime", endTimeParam);
-            return "org/librecms/ui/documents/publish.xhtml";
+            models.put("startDate", startDateParam);
+            models.put("startTime", startTimeParam);
+            models.put("endDate", endDateParam);
+            models.put("endTime", endTimeParam);
+
+            return TEMPLATE;
         }
 
         final LocalDateTime startLocalDateTime = LocalDateTime.of(
@@ -309,11 +299,12 @@ public class PublishStep extends AbstractMvcAuthoringStep {
         } catch (DateTimeParseException ex) {
             models.put("invalidEndDate", true);
             models.put("lifecycleDefinitionUuid", selectedLifecycleDefUuid);
-            models.put("startDateTime", startDateParam);
-            models.put("startDateTime", startTimeParam);
-            models.put("endDateTime", endDateParam);
-            models.put("endDateTime", endTimeParam);
-            return "org/librecms/ui/documents/publish.xhtml";
+            models.put("startDate", startDateParam);
+            models.put("startTime", startTimeParam);
+            models.put("endDate", endDateParam);
+            models.put("endTime", endTimeParam);
+
+            return TEMPLATE;
         }
 
         final LocalTime localEndTime;
@@ -322,11 +313,12 @@ public class PublishStep extends AbstractMvcAuthoringStep {
         } catch (DateTimeParseException ex) {
             models.put("invalidEndTime", true);
             models.put("lifecycleDefinitionUuid", selectedLifecycleDefUuid);
-            models.put("startDateTime", startDateParam);
-            models.put("startDateTime", startTimeParam);
-            models.put("endDateTime", endDateParam);
-            models.put("endDateTime", endTimeParam);
-            return "org/librecms/ui/documents/publish.xhtml";
+            models.put("startDate", startDateParam);
+            models.put("startTime", startTimeParam);
+            models.put("endDate", endDateParam);
+            models.put("endTime", endTimeParam);
+
+            return TEMPLATE;
         }
 
         final LocalDateTime endLocalDateTime = LocalDateTime.of(
@@ -340,7 +332,7 @@ public class PublishStep extends AbstractMvcAuthoringStep {
 
         if (!itemPermissionChecker.canPublishItems(document)) {
             return documentUi.showAccessDenied(
-                section,
+                stepService.getContentSection(),
                 document,
                 "item.publish"
             );
@@ -354,13 +346,17 @@ public class PublishStep extends AbstractMvcAuthoringStep {
                     document, definition, startDateTime, endDateTime
                 );
             } else {
-                itemManager.publish(document, startDateTime, endDateTime);
+                itemManager
+                    .publish(document, startDateTime, endDateTime);
             }
         } else {
             final Optional<LifecycleDefinition> definitionResult
                 = lifecycleDefRepo.findByUuid(selectedLifecycleDefUuid);
             if (!definitionResult.isPresent()) {
-                models.put("contentSection", section.getLabel());
+                models.put(
+                    "contentSection",
+                    stepService.getContentSection().getLabel()
+                );
                 models.put("lifecycleDefinitionUuid", selectedLifecycleDefUuid);
                 return "org/librecms/ui/documents/lifecycle-definition-not-found.xhtml";
             }
@@ -370,12 +366,7 @@ public class PublishStep extends AbstractMvcAuthoringStep {
             );
         }
 
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT
-        );
+        return stepService.buildRedirectPathForStep(getClass());
     }
 
     /**
@@ -383,13 +374,16 @@ public class PublishStep extends AbstractMvcAuthoringStep {
      *
      * @return A redirect to the publish step.
      */
-    @POST
-    @Path("/@unpublish")
+    @MvcAuthoringAction(
+        method = MvcAuthoringActionMethod.POST,
+        path = "/@unpublish"
+    )
     @Transactional(Transactional.TxType.REQUIRED)
     public String unpublish() {
+        final ContentItem document = stepService.getDocument();
         if (!itemPermissionChecker.canPublishItems(document)) {
             return documentUi.showAccessDenied(
-                section,
+                stepService.getContentSection(),
                 document,
                 "item.unpublish"
             );
@@ -397,13 +391,7 @@ public class PublishStep extends AbstractMvcAuthoringStep {
 
         itemManager.unpublish(document);
 
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT
-        );
+        return stepService.buildRedirectPathForStep(getClass());
     }
-    
-   
+
 }

@@ -18,24 +18,23 @@
  */
 package org.librecms.ui.contenttypes;
 
-import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.l10n.LocalizedString;
-import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
-import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.FolderManager;
 import org.librecms.contenttypes.Article;
 import org.librecms.ui.contentsections.ItemPermissionChecker;
-import org.librecms.ui.contentsections.documents.AuthoringStepPathFragment;
+import org.librecms.ui.contentsections.documents.ContentSectionNotFoundException;
+import org.librecms.ui.contentsections.documents.DocumentNotFoundException;
 import org.librecms.ui.contentsections.documents.DocumentUi;
+import org.librecms.ui.contentsections.documents.MvcAuthoringStep;
+import org.librecms.ui.contentsections.documents.MvcAuthoringStepService;
+import org.librecms.ui.contentsections.documents.MvcAuthoringSteps;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Path;
-
-import org.librecms.ui.contentsections.documents.MvcAuthoringStep;
 
 import java.util.List;
 import java.util.Locale;
@@ -44,10 +43,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Named;
+import javax.mvc.Controller;
+import javax.mvc.Models;
 import javax.transaction.Transactional;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
+
 
 /**
  * Authoring step for editing the basic properties of an a {@link Article}.
@@ -55,18 +59,19 @@ import javax.ws.rs.PathParam;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Path("/")
-@AuthoringStepPathFragment(MvcArticlePropertiesStep.PATH_FRAGMENT)
+@Path(MvcAuthoringSteps.PATH_PREFIX + "/@basicproperties")
+@Controller
 @Named("CmsArticlePropertiesStep")
-public class MvcArticlePropertiesStep implements MvcAuthoringStep {
+@MvcAuthoringStep(
+    bundle = ArticleStepsConstants.BUNDLE,
+    descriptionKey = "authoringsteps.basicproperties.description",
+    labelKey = "authoringsteps.basicproperties.label",
+    supportedDocumentType = Article.class
+)
+public class MvcArticlePropertiesStep {
 
     @Inject
     private ArticleMessageBundle articleMessageBundle;
-
-    /**
-     * The path fragment of the step.
-     */
-    static final String PATH_FRAGMENT = "basicproperties";
 
     /**
      * Used for retrieving and saving the article.
@@ -98,97 +103,38 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
     @Inject
     private ItemPermissionChecker itemPermissionChecker;
 
-    /**
-     * The current content section.
-     */
-    private ContentSection section;
+    @Inject
+    private Models models;
 
-    /**
-     * The {@link Article} to edit.
-     */
-    private Article document;
+    @Inject
+    private MvcAuthoringStepService stepService;
 
-    @Override
-    public Class<? extends ContentItem> supportedDocumentType() {
-        return Article.class;
-    }
-
-    @Override
-    public String getLabel() {
-        return globalizationHelper
-            .getLocalizedTextsUtil(getBundle())
-            .getText("authoringsteps.basicproperties.label");
-    }
-
-    @Override
-    public String getDescription() {
-        return globalizationHelper
-            .getLocalizedTextsUtil(getBundle())
-            .getText("authoringsteps.basicproperties.description");
-    }
-
-    @Override
-    public String getBundle() {
-        return ArticleStepsConstants.BUNDLE;
-    }
-
-    @Override
-    public ContentSection getContentSection() {
-        return section;
-    }
-
-    @Override
-    public String getContentSectionLabel() {
-        return section.getLabel();
-    }
-
-    @Override
-    public String getContentSectionTitle() {
-        return globalizationHelper
-            .getValueFromLocalizedString(section.getTitle());
-    }
-
-    @Override
-    public void setContentSection(final ContentSection section) {
-        this.section = section;
-    }
-
-    @Override
-    public ContentItem getContentItem() {
-        return document;
-    }
-
-    @Override
-    public String getContentItemPath() {
-        return itemManager.getItemPath(document);
-    }
-
-    @Override
-    public String getContentItemTitle() {
-        return globalizationHelper
-            .getValueFromLocalizedString(document.getTitle());
-    }
-
-    @Override
-    public void setContentItem(final ContentItem document) {
-        if (!(document instanceof Article)) {
-            throw new UnexpectedErrorException("Not an article.");
+    @GET
+    @Path("/")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String showStep(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath
+    ) {
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
         }
-        this.document = (Article) document;
-    }
 
-    @Override
-    public String showStep() {
-        if (itemPermissionChecker.canEditItem(document)) {
+        if (itemPermissionChecker.canEditItem(stepService.getDocument())) {
             return "org/librecms/ui/contenttypes/article/article-basic-properties.xhtml";
         } else {
             return documentUi.showAccessDenied(
-                section,
-                document,
+                stepService.getContentSection(),
+                stepService.getDocument(),
                 articleMessageBundle.getMessage("article.edit.denied")
             );
         }
-
     }
 
     /**
@@ -197,31 +143,54 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
      * @return The display name of the current article.
      */
     public String getName() {
-        return document.getDisplayName();
+        return stepService.getDocument().getDisplayName();
     }
 
     /**
      * Updates the name of the current article.
      *
-     * @param name The new name of the article.
+     * @param sectionIdentifier
+     * @param documentPath
+     * @param name
      *
      * @return A redirect to this authoring step.
      */
     @POST
     @Path("/name")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String updateName(@FormParam("name") final String name) {
-        document.setDisplayName(name);
-        itemRepo.save(document);
-        return String.format(
-            "redirect:/@documents/%s/%s/%s/@edit/%s",
-            section.getLabel(),
-            folderManager.getFolderPath(
-                itemManager.getItemFolder(document).get()
-            ),
-            name,
-            PATH_FRAGMENT
-        );
+    public String updateName(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
+        @FormParam("name") @DefaultValue("") final String name
+    ) {
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
+
+        if (itemPermissionChecker.canEditItem(stepService.getDocument())) {
+            if (name.isEmpty() || name.matches("\\s*")) {
+                models.put("nameMissing", true);
+
+                return showStep(sectionIdentifier, documentPath);
+            }
+
+            stepService.getDocument().setDisplayName(name);
+            itemRepo.save(stepService.getDocument());
+
+            return stepService.buildRedirectPathForStep(getClass());
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
@@ -230,7 +199,8 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
      * @return The values of the localized title of the article.
      */
     public Map<String, String> getTitleValues() {
-        return document
+        return stepService
+            .getDocument()
             .getTitle()
             .getValues()
             .entrySet()
@@ -249,7 +219,8 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
      * @return The locales for which no localized title has been defined yet.
      */
     public List<String> getUnusedTitleLocales() {
-        final Set<Locale> titleLocales = document
+        final Set<Locale> titleLocales = stepService
+            .getDocument()
             .getTitle()
             .getAvailableLocales();
         return globalizationHelper
@@ -261,37 +232,56 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
     }
 
     /**
-     * Adds a localized title to the article.
+     * Updates a localized title of the article.
      *
-     * @param localeParam The locale of the title.
-     * @param value       The title value.
+     * @param sectionIdentifier
+     * @param documentPath
+     * @param localeParam       The locale to update.
+     * @param value             The updated title value.
      *
      * @return A redirect to this authoring step.
      */
     @POST
-    @Path("/title/@add")
+    @Path("/title/@edit/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String addTitle(
-        @FormParam("locale") final String localeParam,
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
+        @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
-        final Locale locale = new Locale(localeParam);
-        document.getTitle().addValue(locale, value);
-        itemRepo.save(document);
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
 
-        return String.format(
-            "redirect:%s/@documents/%s/@edit/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT
-        );
+        if (itemPermissionChecker.canEditItem(stepService.getDocument())) {
+            final Locale locale = new Locale(localeParam);
+            stepService.getDocument().getTitle().addValue(locale, value);
+            itemRepo.save(stepService.getDocument());
+
+            return stepService.buildRedirectPathForStep(getClass());
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Updates a localized title of the article.
      *
-     * @param localeParam The locale to update.
-     * @param value       The updated title value.
+     * @param sectionIdentifier
+     * @param documentPath
+     * @param localeParam       The locale to update.
+     * @param value             The updated title value.
      *
      * @return A redirect to this authoring step.
      */
@@ -299,25 +289,41 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
     @Path("/title/@edit/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String editTitle(
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
-        final Locale locale = new Locale(localeParam);
-        document.getTitle().addValue(locale, value);
-        itemRepo.save(document);
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
 
-        return String.format(
-            "redirect:%s/@documents/%s/@edit/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT
-        );
+        if (itemPermissionChecker.canEditItem(stepService.getDocument())) {
+            final Locale locale = new Locale(localeParam);
+            stepService.getDocument().getTitle().removeValue(locale);
+            itemRepo.save(stepService.getDocument());
+
+            return stepService.buildRedirectPathForStep(getClass());
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Removes a localized title of the article.
      *
-     * @param localeParam The locale to remove.
+     * @param sectionIdentifier
+     * @param documentPath
+     * @param localeParam       The locale to remove.
      *
      * @return A redirect to this authoring step.
      */
@@ -325,18 +331,33 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
     @Path("/title/@remove/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeTitle(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
         @PathParam("locale") final String localeParam
     ) {
-        final Locale locale = new Locale(localeParam);
-        document.getTitle().removeValue(locale);
-        itemRepo.save(document);
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
 
-        return String.format(
-            "redirect:%s/@documents/%s/@edit/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT
-        );
+        if (itemPermissionChecker.canEditItem(stepService.getDocument())) {
+            final Locale locale = new Locale(localeParam);
+            stepService.getDocument().getTitle().removeValue(locale);
+            itemRepo.save(stepService.getDocument());
+
+            return stepService.buildRedirectPathForStep(getClass());
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
@@ -346,7 +367,8 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
      *         yet.
      */
     public List<String> getUnusedDescriptionLocales() {
-        final Set<Locale> descriptionLocales = document
+        final Set<Locale> descriptionLocales = stepService
+            .getDocument()
             .getDescription()
             .getAvailableLocales();
         return globalizationHelper
@@ -363,7 +385,8 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
      * @return The values of the localized description of the article.
      */
     public Map<String, String> getDescriptionValues() {
-        return document
+        return stepService
+            .getDocument()
             .getDescription()
             .getValues()
             .entrySet()
@@ -379,8 +402,10 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
     /**
      * Adds a localized description to the article.
      *
-     * @param localeParam The locale of the description.
-     * @param value       The description value.
+     * @param sectionIdentifier
+     * @param documentPath
+     * @param localeParam       The locale of the description.
+     * @param value             The description value.
      *
      * @return A redirect to this authoring step.
      */
@@ -388,26 +413,43 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
     @Path("/title/@add")
     @Transactional(Transactional.TxType.REQUIRED)
     public String addDescription(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
         @FormParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
-        final Locale locale = new Locale(localeParam);
-        document.getDescription().addValue(locale, value);
-        itemRepo.save(document);
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
 
-        return String.format(
-            "redirect:%s/@documents/%s/@edit/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT
-        );
+        if (itemPermissionChecker.canEditItem(stepService.getDocument())) {
+            final Locale locale = new Locale(localeParam);
+            stepService.getDocument().getDescription().addValue(locale, value);
+            itemRepo.save(stepService.getDocument());
+
+            return stepService.buildRedirectPathForStep(getClass());
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Updates a localized description of the article.
      *
-     * @param localeParam The locale to update.
-     * @param value       The updated description value.
+     * @param sectionIdentifier
+     * @param documentPath
+     * @param localeParam       The locale to update.
+     * @param value             The updated description value.
      *
      * @return A redirect to this authoring step.
      */
@@ -415,24 +457,41 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
     @Path("/title/@edit/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String editDescription(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
     ) {
-        final Locale locale = new Locale(localeParam);
-        document.getDescription().addValue(locale, value);
-        itemRepo.save(document);
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
 
-        return String.format(
-            "redirect:%s/@documents/%s/@edit/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT
-        );
+        if (itemPermissionChecker.canEditItem(stepService.getDocument())) {
+            final Locale locale = new Locale(localeParam);
+            stepService.getDocument().getDescription().addValue(locale, value);
+            itemRepo.save(stepService.getDocument());
+
+            return stepService.buildRedirectPathForStep(getClass());
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
     /**
      * Removes a localized description of the article.
      *
+     * @param sectionIdentifier
+     * @param documentPath
      * @param localeParam The locale to remove.
      *
      * @return A redirect to this authoring step.
@@ -441,18 +500,33 @@ public class MvcArticlePropertiesStep implements MvcAuthoringStep {
     @Path("/title/@remove/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeDescription(
+          @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath,
         @PathParam("locale") final String localeParam
     ) {
-        final Locale locale = new Locale(localeParam);
-        document.getDescription().removeValue(locale);
-        itemRepo.save(document);
+         try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
 
-        return String.format(
-            "redirect:%s/@documents/%s/@edit/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT
-        );
+        if (itemPermissionChecker.canEditItem(stepService.getDocument())) {
+        final Locale locale = new Locale(localeParam);
+        stepService.getDocument().getDescription().removeValue(locale);
+        itemRepo.save(stepService.getDocument());
+
+         return stepService.buildRedirectPathForStep(getClass());
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
+            );
+        }
     }
 
 }

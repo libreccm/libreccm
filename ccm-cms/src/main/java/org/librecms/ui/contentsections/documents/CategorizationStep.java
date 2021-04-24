@@ -29,8 +29,6 @@ import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.PermissionChecker;
 import org.librecms.contentsection.ContentItem;
-import org.librecms.contentsection.ContentItemManager;
-import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.privileges.ItemPrivileges;
 
 import java.util.ArrayList;
@@ -42,10 +40,11 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.transaction.Transactional;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
@@ -56,12 +55,16 @@ import javax.ws.rs.PathParam;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Path("/")
-@AuthoringStepPathFragment(CategorizationStep.PATH_FRAGMENT)
+@Path(MvcAuthoringSteps.PATH_PREFIX + "categorization")
+@Controller
 @Named("CmsCategorizationStep")
-public class CategorizationStep implements MvcAuthoringStep {
-
-    static final String PATH_FRAGMENT = "categorization";
+@MvcAuthoringStep(
+    bundle = DefaultAuthoringStepConstants.BUNDLE,
+    descriptionKey = "authoringsteps.categorization.description",
+    labelKey = "authoringsteps.categorization.label",
+    supportedDocumentType = ContentItem.class
+)
+public class CategorizationStep {
 
     @Inject
     private CategoryManager categoryManager;
@@ -73,9 +76,6 @@ public class CategorizationStep implements MvcAuthoringStep {
     private IdentifierParser identifierParser;
 
     @Inject
-    private ContentItemManager itemManager;
-
-    @Inject
     private GlobalizationHelper globalizationHelper;
 
     @Inject
@@ -84,130 +84,35 @@ public class CategorizationStep implements MvcAuthoringStep {
     @Inject
     private PermissionChecker permissionChecker;
 
-    /**
-     * The current content section.
-     */
-    private ContentSection section;
+    @Inject
+    private MvcAuthoringStepService stepService;
 
-    /**
-     * The current document.
-     */
-    private ContentItem document;
+    @GET
+    @Path("/")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String showStep(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        final String documentPath
+    ) {
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Class<? extends ContentItem> supportedDocumentType() {
-        return ContentItem.class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getLabel() {
-        return globalizationHelper
-            .getLocalizedTextsUtil(getBundle())
-            .getText("authoringsteps.categorization.label");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getDescription() {
-        return globalizationHelper
-            .getLocalizedTextsUtil(getBundle())
-            .getText("authoringsteps.categorization.description");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getBundle() {
-        return DefaultAuthoringStepConstants.BUNDLE;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ContentSection getContentSection() {
-        return section;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setContentSection(final ContentSection section) {
-        this.section = section;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getContentSectionLabel() {
-        return section.getLabel();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getContentSectionTitle() {
-        return globalizationHelper
-            .getValueFromLocalizedString(section.getTitle());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ContentItem getContentItem() {
-        return document;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setContentItem(final ContentItem document) {
-        this.document = document;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getContentItemPath() {
-        return itemManager.getItemPath(document);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getContentItemTitle() {
-        return globalizationHelper
-            .getValueFromLocalizedString(document.getTitle());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String showStep() {
-        if (permissionChecker.isPermitted(ItemPrivileges.CATEGORIZE, document)) {
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.CATEGORIZE, stepService.getDocument()
+        )) {
             return "org/librecms/ui/documents/categorization.xhtml";
         } else {
             return documentUi.showAccessDenied(
-                section,
-                document,
-                getLabel()
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(getClass())
             );
         }
     }
@@ -223,7 +128,8 @@ public class CategorizationStep implements MvcAuthoringStep {
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public List<CategorizationTree> getCategorizationTrees() {
-        return section
+        return stepService
+            .getContentSection()
             .getDomains()
             .stream()
             .map(DomainOwnership::getDomain)
@@ -234,27 +140,33 @@ public class CategorizationStep implements MvcAuthoringStep {
     /**
      * Update the categorization of the current item.
      *
-     * @param domainIdentifierParam   The identifier for category system to use.
-     * @param assignedCategoriesParam The UUIDs of the categories assigned to
-     *                                the current content item.
+     * @param parameterPath The identifier for category system to use.
+     * @param parameters    The parameters of the request. The map must contain
+     *                      a value with the key {@code assignedCategories}.
+     *
      *
      * @return A redirect to the categorization step.
      */
-    @POST
-    @Path("/{domainIdentifier}")
+    @MvcAuthoringAction(
+        method = MvcAuthoringActionMethod.POST,
+        path = "/domains/"
+    )
+    @Path("/domains/{domain}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String updateCategorization(
-        @PathParam("domainIdentifierParam") final String domainIdentifierParam,
-        @FormParam("assignedCategories")
+        @PathParam("domain")
+        final String domainParam,
+        @FormParam("assignedCategories") 
         final Set<String> assignedCategoriesParam
     ) {
         final Identifier domainIdentifier = identifierParser.parseIdentifier(
-            domainIdentifierParam
+            domainParam
         );
         final Optional<Domain> domainResult;
         switch (domainIdentifier.getType()) {
             case ID:
-                domainResult = section
+                domainResult = stepService
+                    .getContentSection()
                     .getDomains()
                     .stream()
                     .map(DomainOwnership::getDomain)
@@ -264,7 +176,8 @@ public class CategorizationStep implements MvcAuthoringStep {
                     ).findAny();
                 break;
             case UUID:
-                domainResult = section
+                domainResult = stepService
+                    .getContentSection()
                     .getDomains()
                     .stream()
                     .map(DomainOwnership::getDomain)
@@ -275,7 +188,8 @@ public class CategorizationStep implements MvcAuthoringStep {
                     ).findAny();
                 break;
             default:
-                domainResult = section
+                domainResult = stepService
+                    .getContentSection()
                     .getDomains()
                     .stream()
                     .map(DomainOwnership::getDomain)
@@ -287,20 +201,16 @@ public class CategorizationStep implements MvcAuthoringStep {
         }
 
         if (!domainResult.isPresent()) {
-            models.put("section", section.getLabel());
-            models.put("domainIdentifier", domainIdentifierParam);
+            models.put("section", stepService.getContentSection().getLabel());
+            models.put("domainIdentifier", domainIdentifier);
             return "org/librecms/ui/documents/categorization-domain-not-found.xhtml";
         }
 
-        final Domain domain = domainResult.get();
-        updateAssignedCategories(domain.getRoot(), assignedCategoriesParam);
-
-        return String.format(
-            "redirect:/%s/@documents/%s/@authoringsteps/%s",
-            section.getLabel(),
-            getContentItemPath(),
-            PATH_FRAGMENT
+        updateAssignedCategories(
+            domainResult.get().getRoot(), assignedCategoriesParam
         );
+        
+        return stepService.buildRedirectPathForStep(getClass());
     }
 
     /**
@@ -320,6 +230,7 @@ public class CategorizationStep implements MvcAuthoringStep {
         final Category category,
         final Set<String> assignedCategoriesParam
     ) {
+        final ContentItem document = stepService.getDocument();
         if (assignedCategoriesParam.contains(category.getUuid())
                 && !categoryManager.isAssignedToCategory(category, document)) {
             categoryManager.addObjectToCategory(document, category);
@@ -416,6 +327,7 @@ public class CategorizationStep implements MvcAuthoringStep {
         final Category category
     ) {
         final CategorizationTreeNode node = new CategorizationTreeNode();
+        final ContentItem document = stepService.getDocument();
         node.setAssigned(categoryManager.isAssignedToCategory(
             category, document)
         );

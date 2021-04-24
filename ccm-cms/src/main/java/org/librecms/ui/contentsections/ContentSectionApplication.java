@@ -21,14 +21,23 @@ package org.librecms.ui.contentsections;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.ui.IsAuthenticatedFilter;
+import org.librecms.ui.contentsections.documents.AuthoringStepsValidator;
 import org.librecms.ui.contentsections.documents.DocumentController;
 import org.librecms.ui.contentsections.documents.DocumentLifecyclesController;
 import org.librecms.ui.contentsections.documents.DocumentWorkflowController;
+import org.librecms.ui.contentsections.documents.MvcAuthoringSteps;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.mvc.Controller;
 import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 
 /**
@@ -42,6 +51,13 @@ public class ContentSectionApplication extends Application {
     private static final Logger LOGGER = LogManager.getLogger(
         ContentSectionApplication.class
     );
+
+    @Inject
+    private AuthoringStepsValidator stepsValidator;
+    
+    @Inject
+    @Any
+    private Instance<MvcAuthoringSteps> authoringSteps;
 
     @Override
     public Set<Class<?>> getClasses() {
@@ -57,6 +73,9 @@ public class ContentSectionApplication extends Application {
         classes.add(ContentSectionController.class);
         classes.add(DocumentFolderController.class);
         classes.add(DocumentController.class);
+
+        classes.addAll(getAuthoringSteps());
+
         classes.add(DocumentLifecyclesController.class);
         classes.add(DocumentWorkflowController.class);
         classes.add(IsAuthenticatedFilter.class);
@@ -64,6 +83,13 @@ public class ContentSectionApplication extends Application {
         return classes;
     }
 
-   
+    private Set<Class<?>> getAuthoringSteps() {
+        return authoringSteps
+            .stream()
+            .map(MvcAuthoringSteps::getClasses)
+            .flatMap(Set::stream)
+            .filter(stepsValidator::validateAuthoringStep)
+            .collect(Collectors.toSet());
+    }
 
 }

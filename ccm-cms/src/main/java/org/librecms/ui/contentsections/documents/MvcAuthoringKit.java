@@ -49,7 +49,7 @@ public @interface MvcAuthoringKit {
      *
      * @return The authoring steps for the annotated document type.
      */
-    MvcAuthoringKitStep[] authoringSteps();
+    Class<?>[] authoringSteps();
 
     /**
      * If set to {@code true} some authoring steps like categorization or

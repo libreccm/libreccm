@@ -18,53 +18,26 @@
  */
 package org.librecms.ui.contentsections.documents;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.enterprise.context.ApplicationScoped;
+
 /**
- * A DTO used in several views to display information about an authoring step.
- * 
- * @see SelectedDocumentModel
- * @see SelectedDocumentModel#getAuthoringStepsList() 
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class AuthoringStepListEntry {
+@ApplicationScoped
+public class CmsMvcAuthoringSteps implements MvcAuthoringSteps {
 
-    /**
-     * The label of the authoring step.
-     */
-    private String label;
-
-    /**
-     * The description of the authoring step.
-     */
-    private String description;
-
-    /**
-     * The path fragment of the authoring step.
-     */
-    private String path;
-
-    public String getLabel() {
-        return label;
+    @Override
+    public Set<Class<?>> getClasses() {
+        final Set<Class<?>> classes = new HashSet<>();
+        classes.add(ExampleAuthoringStep.class);
+        
+        return classes;
     }
-
-    public void setLabel(final String label) {
-        this.label = label;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(final String path) {
-        this.path = path;
-    }
-
+    
+    
+    
 }

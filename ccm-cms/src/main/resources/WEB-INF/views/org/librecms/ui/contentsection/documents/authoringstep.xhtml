@@ -100,10 +100,10 @@
                     <ul class="list-group">
                         <c:forEach items="#{CmsSelectedDocumentModel.authoringStepsList}"
                                    var="step">
-                            <li aria-current="#{step.pathFragment == authoringStep ? 'true' : ''}
-                                class="list-group-item #{step.pathFragment == authoringStep ? 'active' : ''}">
+                            <li aria-current="#{step.path == authoringStep ? 'true' : ''}
+                                class="list-group-item #{step.path == authoringStep ? 'active' : ''}">
                                 <a class="list-group-item-action"
-                                   href="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/#{step.pathFragment}">
+                                   href="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/#{step.path}">
                                     #{step.label}
                                 </a>
                             </li>

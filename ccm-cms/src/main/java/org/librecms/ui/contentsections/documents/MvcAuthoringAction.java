@@ -56,7 +56,8 @@ public @interface MvcAuthoringAction {
 
     /**
      * The path fragment for invoking the action. The value of this parameter is
-     * added to the path of the authoring step.
+     * added to the path of the authoring step. Any path fragments after the
+     * value are provided to the method in the {@code parameterPath} parameter.
      *
      * @return The path fragment for invoking the action.
      */

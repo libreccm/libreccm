@@ -18,30 +18,22 @@
  */
 package org.librecms.ui.contentsections.documents;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import java.util.Set;
 
 /**
- * Metadata about an authoring step.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Retention(RetentionPolicy.RUNTIME)
-public @interface MvcAuthoringKitStep {
+public interface MvcAuthoringSteps {
 
-    /**
-     * The path of authoring step. This value is added the the path for
-     * authoring steps.
-     *
-     * @return The path fragment for th authoring step.
-     */
-    String path();
+    public static final String PATH_PREFIX
+        = "/{sectionIdentifier}/documents/{documentPath:(.+)?}/@";
 
-    /**
-     * The class implementing the authoring step.
-     *
-     * @return The class implementing the authoring step.
-     */
-    Class<? extends MvcAuthoringStep> authoringStep();
+    public static final String SECTION_IDENTIFIER_PATH_PARAM
+        = "sectionIdentifier";
+
+    public static final String DOCUMENT_PATH_PATH_PARAM = "documentPath";
+
+    Set<Class<?>> getClasses();
 
 }

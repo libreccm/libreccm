@@ -43,7 +43,6 @@ import org.librecms.ui.contenttypes.MvcArticleCreateStep;
 import org.librecms.ui.contenttypes.MvcArticlePropertiesStep;
 import org.librecms.ui.contenttypes.MvcArticleTextBodyStep;
 import org.librecms.ui.contentsections.documents.MvcAuthoringKit;
-import org.librecms.ui.contentsections.documents.MvcAuthoringKitStep;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -79,14 +78,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @MvcAuthoringKit(
     createStep = MvcArticleCreateStep.class,
     authoringSteps = {
-        @MvcAuthoringKitStep(
-            path = "basic-properties",
-            authoringStep = MvcArticlePropertiesStep.class
-        ),
-        @MvcAuthoringKitStep(
-            path = "basic-properties",
-            authoringStep = MvcArticleTextBodyStep.class
-        )
+        MvcArticlePropertiesStep.class,
+        MvcArticleTextBodyStep.class
     }
 )
 @XmlRootElement(name = "article", namespace = CMS_XML_NS)
