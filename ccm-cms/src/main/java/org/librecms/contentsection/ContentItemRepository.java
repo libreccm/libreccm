@@ -376,8 +376,9 @@ public class ContentItemRepository
         final ContentItemVersion version) {
 
         final TypedQuery<ContentItem> query = getEntityManager()
-            .createNamedQuery("ContentItem.findByNameAndContentSectionAndVersion",
-                              ContentItem.class);
+            .createNamedQuery(
+                "ContentItem.findByNameAndContentSectionAndVersion",
+                ContentItem.class);
         query.setParameter("section", section);
         query.setParameter("name", name);
         query.setParameter("type", type);
@@ -627,8 +628,16 @@ public class ContentItemRepository
         //the folder containing the item using the FolderRepository.
         final String normalizedPath = PathUtil.normalizePath(path);
         final int lastTokenStart = normalizedPath.lastIndexOf('/');
-        final String folderPath = normalizedPath.substring(0, lastTokenStart);
-        final String itemName = normalizedPath.substring(lastTokenStart + 1);
+        final String folderPath;
+        final String itemName;
+
+        if (lastTokenStart == -1) {
+            folderPath = "/";
+            itemName = normalizedPath;
+        } else {
+            folderPath = normalizedPath.substring(0, lastTokenStart);
+            itemName = normalizedPath.substring(lastTokenStart + 1);
+        }
 
         final Optional<Folder> folder = folderRepo.findByPath(
             section, folderPath, FolderType.DOCUMENTS_FOLDER);

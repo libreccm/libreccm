@@ -32,7 +32,9 @@ public interface MvcAuthoringSteps {
     public static final String SECTION_IDENTIFIER_PATH_PARAM
         = "sectionIdentifier";
 
-    public static final String DOCUMENT_PATH_PATH_PARAM = "documentPath";
+    public static final String DOCUMENT_PATH_PATH_PARAM_NAME = "documentPath";
+    
+    public static final String DOCUMENT_PATH_PATH_PARAM = DOCUMENT_PATH_PATH_PARAM_NAME + ":(.+)?";
 
     Set<Class<?>> getClasses();
 

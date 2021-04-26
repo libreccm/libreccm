@@ -18,6 +18,9 @@
  */
 package org.librecms.ui.contentsections.documents;
 
+import org.librecms.ui.contenttypes.MvcArticlePropertiesStep;
+import org.librecms.ui.contenttypes.MvcArticleTextBodyStep;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,10 +37,14 @@ public class CmsMvcAuthoringSteps implements MvcAuthoringSteps {
     public Set<Class<?>> getClasses() {
         final Set<Class<?>> classes = new HashSet<>();
         classes.add(ExampleAuthoringStep.class);
-        
+
+        classes.add(CategorizationStep.class);
+        classes.add(PublishStep.class);
+        classes.add(RelatedInfoStep.class);
+        classes.add(MvcArticlePropertiesStep.class);
+        classes.add(MvcArticleTextBodyStep.class);
+
         return classes;
     }
-    
-    
-    
+
 }

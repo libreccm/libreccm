@@ -55,7 +55,7 @@ import javax.ws.rs.PathParam;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Path(MvcAuthoringSteps.PATH_PREFIX + "/@text")
+@Path(MvcAuthoringSteps.PATH_PREFIX + "text")
 @Controller
 @Named("CmsArticleTextBodyStep")
 @MvcAuthoringStep(
@@ -96,7 +96,7 @@ public class MvcArticleTextBodyStep {
     public String showStep(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath
     ) {
         try {
@@ -170,7 +170,7 @@ public class MvcArticleTextBodyStep {
     public String addTextValue(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @FormParam("locale") final String localeParam,
         @FormParam("value") final String value
@@ -214,7 +214,7 @@ public class MvcArticleTextBodyStep {
     public String editTextValue(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
@@ -257,7 +257,7 @@ public class MvcArticleTextBodyStep {
     public String remvoeTextValue(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("locale") final String localeParam
     ) {

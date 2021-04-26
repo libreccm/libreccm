@@ -75,11 +75,11 @@
                                     <input name="returnUrl"
                                            type="hidden"
                                            value="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/#{authoringStep}" />
-                                    <button class="btn btn-secondary" 
+                                    <button class="btn btn-secondary"
                                             type="submit">
-                                        #{CmsAdminMessages['contentsection.document.authoring.workflow.active_task.takeover']}: }
-                                        </a>
+                                        #{CmsAdminMessages['contentsection.document.authoring.workflow.active_task.takeover']}
                                     </button>
+                                </form>
                             </c:when>
                             <c:when test="#{CmsSelectedDocumentModel.currentTask.assignedToCurrentUser or CmsSelectedDocumentModel.canChangeWorkflow}">
                                 <form action="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@workflow/tasks/UUID-#{CmsSelectedDocumentModel.currentTask.taskUuid}/@lock">

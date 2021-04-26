@@ -474,32 +474,35 @@ public class DocumentController {
 //
 //        return authoringStep.showStep();
 //    }
-    @POST
-    @Path("/{documentPath:(.+)?}/@authoringsteps/{authoringStep}")
+    @GET
+    @Path("/{documentPath:(.+)?}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String doEditAction(
+    public String editDocument(
         @PathParam("sectionIdentifier") final String sectionIdentifier,
-        @PathParam("documentPath") final String documentPath,
-        @PathParam("authoringStep") final String authoringStepIdentifier,
-        @Context final HttpServletRequest request
+        @PathParam("documentPath") final String documentPath
     ) {
-        throw new UnsupportedOperationException();
-    }
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifier);
+        if (!sectionResult.isPresent()) {
+            return sectionsUi.showContentSectionNotFound(sectionIdentifier);
+        }
+        final ContentSection section = sectionResult.get();
 
-    @POST
-    @Path(
-        "/{documentPath:(.+)?}/@authoringsteps/{authoringStep}/{parameterPath:(.+)?}")
-    @AuthorizationRequired
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String doEditAction(
-        @PathParam("sectionIdentifier") final String sectionIdentifier,
-        @PathParam("documentPath") final String documentPath,
-        @PathParam("authoringStep") final String authoringStepIdentifier,
-        @PathParam("parameterPath") final String parameterPath,
-        @Context final HttpServletRequest request
-    ) {
-        throw new UnsupportedOperationException();
+        final Optional<ContentItem> itemResult = itemRepo
+            .findByPath(section, documentPath);
+        if (!itemResult.isPresent()) {
+            return documentUi.showDocumentNotFound(section, documentPath);
+        }
+        final ContentItem item = itemResult.get();
+        if (!permissionChecker.isPermitted(ItemPrivileges.EDIT, item)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifier,
+                "documentPath", documentPath
+            );
+        }
+
+        return String.format("redirect:%s", findFirstAuthoringStep(item));
     }
 
     /**
@@ -820,8 +823,7 @@ public class DocumentController {
                 item.getContentType().getContentSection().getLabel()
             )
             .replace(
-                String.format(
-                    "{%s}",
+                String.format("/{%s}",
                     MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM
                 ),
                 itemManager.getItemPath(item)
@@ -892,29 +894,6 @@ public class DocumentController {
     }
 
     /**
-     * An annotation literal for retrieving the authoring step with a specific
-     * path fragment.
-     */
-    private static class AuthoringStepPathFragmentLiteral
-        extends AnnotationLiteral<AuthoringStepPathFragment>
-        implements AuthoringStepPathFragment {
-
-        private static final long serialVersionUID = 1L;
-
-        private final String value;
-
-        public AuthoringStepPathFragmentLiteral(final String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String value() {
-            return value;
-        }
-
-    }
-
-    /**
      * Helper method for showing the "document folder not found" page if there
      * is not folder for the provided path.
      *
@@ -959,19 +938,6 @@ public class DocumentController {
         models.put("documentType", documentType);
 
         return "org/librecms/ui/contentsection/documents/create-step-not-available.xhtml";
-    }
-
-    private String showAuthoringStepNotAvailable(final String stepIdentifier) {
-        models.put("stepIdentifier", stepIdentifier);
-        return "org/librecms/ui/contentsection/documents/authoringstep-not-available.xhtml";
-    }
-
-    private String showUnsupportedDocumentType(
-        final String stepIdentifier, final String documentType
-    ) {
-        models.put("stepIdentifier", stepIdentifier);
-        models.put("documentType", documentType);
-        return "org/librecms/ui/contentsection/documents/unsupportedDocumentType.xhtml";
     }
 
     private CreateStepResult findCreateStep(

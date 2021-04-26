@@ -59,7 +59,7 @@ import javax.ws.rs.PathParam;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Path(MvcAuthoringSteps.PATH_PREFIX + "/@basicproperties")
+@Path(MvcAuthoringSteps.PATH_PREFIX + "basicproperties")
 @Controller
 @Named("CmsArticlePropertiesStep")
 @MvcAuthoringStep(
@@ -115,7 +115,7 @@ public class MvcArticlePropertiesStep {
     public String showStep(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath
     ) {
         try {
@@ -161,7 +161,7 @@ public class MvcArticlePropertiesStep {
     public String updateName(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @FormParam("name") @DefaultValue("") final String name
     ) {
@@ -247,7 +247,7 @@ public class MvcArticlePropertiesStep {
     public String addTitle(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
@@ -290,7 +290,7 @@ public class MvcArticlePropertiesStep {
     @Transactional(Transactional.TxType.REQUIRED)
     public String editTitle(
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
@@ -333,7 +333,7 @@ public class MvcArticlePropertiesStep {
     public String removeTitle(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("locale") final String localeParam
     ) {
@@ -415,7 +415,7 @@ public class MvcArticlePropertiesStep {
     public String addDescription(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @FormParam("locale") final String localeParam,
         @FormParam("value") final String value
@@ -459,7 +459,7 @@ public class MvcArticlePropertiesStep {
     public String editDescription(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("locale") final String localeParam,
         @FormParam("value") final String value
@@ -502,7 +502,7 @@ public class MvcArticlePropertiesStep {
     public String removeDescription(
           @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("locale") final String localeParam
     ) {

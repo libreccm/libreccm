@@ -184,9 +184,8 @@ public class MvcAuthoringStepService {
                         section.getLabel()
                     )
                     .replace(
-                        String.format(
-                            "{%s}",
-                            MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM
+                        String.format("{%s}",
+                            MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME
                         ),
                         documentPath
                     )
@@ -232,9 +231,8 @@ public class MvcAuthoringStepService {
                         section.getLabel()
                     )
                     .replace(
-                        String.format(
-                            "{%s}",
-                            MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM
+                        String.format("{%s}",
+                            MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME
                         ),
                         documentPath
                     )

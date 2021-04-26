@@ -256,7 +256,7 @@ public class RelatedInfoStep {
     public String showStep(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath
     ) {
         try {
@@ -314,7 +314,7 @@ public class RelatedInfoStep {
     public List<AssetFolderTreeNode> getAssetFolderTree(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath
     ) {
         try {
@@ -356,7 +356,7 @@ public class RelatedInfoStep {
     public List<AssetFolderRowModel> getAssetsInFolder(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("folderPath")
         final String folderPath,
@@ -425,7 +425,7 @@ public class RelatedInfoStep {
     public List<AssetFolderRowModel> findAssets(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @QueryParam("firstResult")
         @DefaultValue("0")
@@ -475,7 +475,7 @@ public class RelatedInfoStep {
     public List<DocumentFolderTreeNode> getDocumentFolderTree(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath
     ) {
         try {
@@ -517,7 +517,7 @@ public class RelatedInfoStep {
     public List<DocumentFolderRowModel> getDocumentsInFolder(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("folderPath")
         final String folderPath,
@@ -590,7 +590,7 @@ public class RelatedInfoStep {
     public List<DocumentFolderRowModel> findDocuments(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @QueryParam("firstResult")
         @DefaultValue("0")
@@ -642,7 +642,7 @@ public class RelatedInfoStep {
     public String addAttachmentList(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @FormParam("listName")
         final String name,
@@ -702,7 +702,7 @@ public class RelatedInfoStep {
     public String showAttachmentListDetails(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam
@@ -753,7 +753,7 @@ public class RelatedInfoStep {
     public String updateAttachmentList(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
@@ -813,7 +813,7 @@ public class RelatedInfoStep {
     public String removeAttachmentList(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
@@ -869,7 +869,7 @@ public class RelatedInfoStep {
     public String addAttachmentListTitle(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
@@ -930,7 +930,7 @@ public class RelatedInfoStep {
     public String updateAttachmentListTitle(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
@@ -991,7 +991,7 @@ public class RelatedInfoStep {
     public String removeAttachmentListTitle(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
@@ -1049,7 +1049,7 @@ public class RelatedInfoStep {
     public String addAttachmentListDescription(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
@@ -1110,7 +1110,7 @@ public class RelatedInfoStep {
     public String updateAttachmentListDescription(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
@@ -1170,7 +1170,7 @@ public class RelatedInfoStep {
     public String removeAttachmentListDescription(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
@@ -1228,7 +1228,7 @@ public class RelatedInfoStep {
     public String createAttachment(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
@@ -1293,7 +1293,7 @@ public class RelatedInfoStep {
     public String createInternalLink(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam
@@ -1350,7 +1350,7 @@ public class RelatedInfoStep {
     public String createInternalLink(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
@@ -1425,7 +1425,7 @@ public class RelatedInfoStep {
     public String showInternalLinkDetails(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
@@ -1501,7 +1501,7 @@ public class RelatedInfoStep {
     public String updateInternalLinkTarget(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
@@ -1589,7 +1589,7 @@ public class RelatedInfoStep {
     public String addInternalLinkTitle(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
@@ -1672,7 +1672,7 @@ public class RelatedInfoStep {
     public String updateInternalLinkTitle(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
@@ -1755,7 +1755,7 @@ public class RelatedInfoStep {
     public String removeInternalLinkTitle(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
@@ -1838,7 +1838,7 @@ public class RelatedInfoStep {
     public String removeAttachment(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
@@ -1910,7 +1910,7 @@ public class RelatedInfoStep {
     public String moveListUp(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam
@@ -1963,7 +1963,7 @@ public class RelatedInfoStep {
     public String moveListDown(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam
@@ -2018,7 +2018,7 @@ public class RelatedInfoStep {
     public String moveAttachmentUp(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
@@ -2086,7 +2086,7 @@ public class RelatedInfoStep {
     public String moveAttachmentDown(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
