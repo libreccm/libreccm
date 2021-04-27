@@ -1,12 +1,10 @@
 <!DOCTYPE html [<!ENTITY times '&#215;'>]>
 <html xmlns="http://www.w3.org/1999/xhtml" 
-      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/contentsection.xhtml">
 
-        <ui:define name="documentMain">
+        <ui:define name="main">
             <div class="row">
 
                 <ul class="nav nav-tabs">
@@ -90,8 +88,8 @@
                                             type="button">
                                         #{CmsAdminMessages['contentsection.document.authoring.workflow.active_task.lock']}: }
                                     </button>
-                                    </c:otherwise>
                                 </form>
+                            </c:when>
                         </c:choose>
                     </p>
 
@@ -100,7 +98,7 @@
                     <ul class="list-group">
                         <c:forEach items="#{CmsSelectedDocumentModel.authoringStepsList}"
                                    var="step">
-                            <li aria-current="#{step.path == authoringStep ? 'true' : ''}
+                            <li aria-current="#{step.path == authoringStep ? 'true' : ''}"
                                 class="list-group-item #{step.path == authoringStep ? 'active' : ''}">
                                 <a class="list-group-item-action"
                                    href="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/#{step.path}">
@@ -110,14 +108,14 @@
                         </c:forEach>
 
                         <c:if test="#{!CmsSelectedDocumentModel.excludeDefaultAuthoringSteps}">
-                            <li aria-current="#{'categorize' == authoringStep ? 'true' : ''}
+                            <li aria-current="#{'categorize' == authoringStep ? 'true' : ''}"
                                 class="list-group-item #{'categorize' == authoringStep ? 'active' : ''}">
                                 <a class="list-group-item-action"
                                    href="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/categorize">
                                     #{CmsAdminMessages['contentsection.document.authoring.steps.categorize.label']}
                                 </a>
                             </li>
-                            <li aria-current="#{'relatedInfo' == authoringStep ? 'true' : ''}
+                            <li aria-current="#{'relatedInfo' == authoringStep ? 'true' : ''}"
                                 class="list-group-item #{'relatedInfo' == authoringStep ? 'active' : ''}">
                                 <a class="list-group-item-action"
                                    href="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/relatedInfo">
@@ -126,7 +124,7 @@
                             </li>
                         </c:if>
 
-                        <li aria-current="#{'publish' == authoringStep ? 'true' : ''}
+                        <li aria-current="#{'publish' == authoringStep ? 'true' : ''}"
                             class="list-group-item #{'publish' == authoringStep ? 'active' : ''}">
                             <a class="list-group-item-action"
                                href="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@publish">

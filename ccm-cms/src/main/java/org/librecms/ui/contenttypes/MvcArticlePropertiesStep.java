@@ -32,6 +32,8 @@ import org.librecms.ui.contentsections.documents.MvcAuthoringStep;
 import org.librecms.ui.contentsections.documents.MvcAuthoringStepService;
 import org.librecms.ui.contentsections.documents.MvcAuthoringSteps;
 
+import java.util.Collections;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Path;
@@ -51,7 +53,6 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
-
 
 /**
  * Authoring step for editing the basic properties of an a {@link Article}.
@@ -109,6 +110,14 @@ public class MvcArticlePropertiesStep {
     @Inject
     private MvcAuthoringStepService stepService;
 
+    private Map<String, String> titleValues;
+
+    private List<String> unusedTitleLocales;
+
+    private Map<String, String> descriptionValues;
+
+    private List<String> unusedDescriptionLocales;
+
     @GET
     @Path("/")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -127,6 +136,56 @@ public class MvcArticlePropertiesStep {
         }
 
         if (itemPermissionChecker.canEditItem(stepService.getDocument())) {
+            titleValues = stepService
+                .getDocument()
+                .getTitle()
+                .getValues()
+                .entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> entry.getValue()
+                    )
+                );
+
+            final Set<Locale> titleLocales = stepService
+                .getDocument()
+                .getTitle()
+                .getAvailableLocales();
+
+            unusedTitleLocales = globalizationHelper
+                .getAvailableLocales()
+                .stream()
+                .filter(locale -> !titleLocales.contains(locale))
+                .map(Locale::toString)
+                .collect(Collectors.toList());
+
+            descriptionValues = stepService
+                .getDocument()
+                .getDescription()
+                .getValues()
+                .entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> entry.getValue()
+                    )
+                );
+
+            final Set<Locale> descriptionLocales = stepService
+                .getDocument()
+                .getDescription()
+                .getAvailableLocales();
+
+            unusedDescriptionLocales = globalizationHelper
+                .getAvailableLocales()
+                .stream()
+                .filter(locale -> !descriptionLocales.contains(locale))
+                .map(Locale::toString)
+                .collect(Collectors.toList());
+
             return "org/librecms/ui/contenttypes/article/article-basic-properties.xhtml";
         } else {
             return documentUi.showAccessDenied(
@@ -135,6 +194,7 @@ public class MvcArticlePropertiesStep {
                 articleMessageBundle.getMessage("article.edit.denied")
             );
         }
+
     }
 
     /**
@@ -199,18 +259,7 @@ public class MvcArticlePropertiesStep {
      * @return The values of the localized title of the article.
      */
     public Map<String, String> getTitleValues() {
-        return stepService
-            .getDocument()
-            .getTitle()
-            .getValues()
-            .entrySet()
-            .stream()
-            .collect(
-                Collectors.toMap(
-                    entry -> entry.getKey().toString(),
-                    entry -> entry.getValue()
-                )
-            );
+        return Collections.unmodifiableMap(titleValues);
     }
 
     /**
@@ -219,16 +268,7 @@ public class MvcArticlePropertiesStep {
      * @return The locales for which no localized title has been defined yet.
      */
     public List<String> getUnusedTitleLocales() {
-        final Set<Locale> titleLocales = stepService
-            .getDocument()
-            .getTitle()
-            .getAvailableLocales();
-        return globalizationHelper
-            .getAvailableLocales()
-            .stream()
-            .filter(locale -> !titleLocales.contains(locale))
-            .map(Locale::toString)
-            .collect(Collectors.toList());
+        return Collections.unmodifiableList(unusedTitleLocales);
     }
 
     /**
@@ -367,16 +407,7 @@ public class MvcArticlePropertiesStep {
      *         yet.
      */
     public List<String> getUnusedDescriptionLocales() {
-        final Set<Locale> descriptionLocales = stepService
-            .getDocument()
-            .getDescription()
-            .getAvailableLocales();
-        return globalizationHelper
-            .getAvailableLocales()
-            .stream()
-            .filter(locale -> !descriptionLocales.contains(locale))
-            .map(Locale::toString)
-            .collect(Collectors.toList());
+        return Collections.unmodifiableList(unusedDescriptionLocales);
     }
 
     /**
@@ -385,18 +416,7 @@ public class MvcArticlePropertiesStep {
      * @return The values of the localized description of the article.
      */
     public Map<String, String> getDescriptionValues() {
-        return stepService
-            .getDocument()
-            .getDescription()
-            .getValues()
-            .entrySet()
-            .stream()
-            .collect(
-                Collectors.toMap(
-                    entry -> entry.getKey().toString(),
-                    entry -> entry.getValue()
-                )
-            );
+        return Collections.unmodifiableMap(descriptionValues);
     }
 
     /**
@@ -492,7 +512,7 @@ public class MvcArticlePropertiesStep {
      *
      * @param sectionIdentifier
      * @param documentPath
-     * @param localeParam The locale to remove.
+     * @param localeParam       The locale to remove.
      *
      * @return A redirect to this authoring step.
      */
@@ -500,13 +520,13 @@ public class MvcArticlePropertiesStep {
     @Path("/title/@remove/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeDescription(
-          @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
         @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("locale") final String localeParam
     ) {
-         try {
+        try {
             stepService.setSectionAndDocument(sectionIdentifier, documentPath);
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
@@ -515,11 +535,11 @@ public class MvcArticlePropertiesStep {
         }
 
         if (itemPermissionChecker.canEditItem(stepService.getDocument())) {
-        final Locale locale = new Locale(localeParam);
-        stepService.getDocument().getDescription().removeValue(locale);
-        itemRepo.save(stepService.getDocument());
+            final Locale locale = new Locale(localeParam);
+            stepService.getDocument().getDescription().removeValue(locale);
+            itemRepo.save(stepService.getDocument());
 
-         return stepService.buildRedirectPathForStep(getClass());
+            return stepService.buildRedirectPathForStep(getClass());
         } else {
             return documentUi.showAccessDenied(
                 stepService.getContentSection(),

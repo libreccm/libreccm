@@ -23,6 +23,7 @@ import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
+import org.librecms.ui.contentsections.ContentSectionModel;
 import org.librecms.ui.contentsections.ContentSectionsUi;
 
 import java.util.Objects;
@@ -49,10 +50,16 @@ public class MvcAuthoringStepService {
     private ContentItemRepository itemRepo;
 
     @Inject
+    private ContentSectionModel sectionModel;
+
+    @Inject
     private ContentSectionsUi sectionsUi;
 
     @Inject
     private GlobalizationHelper globalizationHelper;
+
+    @Inject
+    private SelectedDocumentModel documentModel;
 
     private ContentSection section;
 
@@ -141,6 +148,7 @@ public class MvcAuthoringStepService {
                         sectionIdentifier)
                 )
             );
+        sectionModel.setSection(section);
 
         document = itemRepo
             .findByPath(section, documentPath)
@@ -155,6 +163,7 @@ public class MvcAuthoringStepService {
                     )
                 )
             );
+        documentModel.setContentItem(document);
 
         this.documentPath = itemManager.getItemPath(document);
     }
@@ -185,7 +194,7 @@ public class MvcAuthoringStepService {
                     )
                     .replace(
                         String.format("{%s}",
-                            MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME
+                                      MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME
                         ),
                         documentPath
                     )
@@ -232,7 +241,7 @@ public class MvcAuthoringStepService {
                     )
                     .replace(
                         String.format("{%s}",
-                            MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME
+                                      MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME
                         ),
                         documentPath
                     )

@@ -6,62 +6,64 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/authoringstep.xhtml">
 
-        <h2>#{CmsArticleMessageBundle['basicproperties.name.header']}</h2>
+        <ui:define name="authoringStep">
+            <h2>#{CmsArticleMessageBundle['basicproperties.name.header']}</h2>
 
-        <div class="d-flex">
-            <pre>
-                #{CmsArticlePropertiesStep.name}
-            </pre>
-            <button class="btn btn-primary"
-                    data-toggle="modal"
-                    data-target="name-edit-dialog"
-                    type="button">
-                <bootstrap:svgIcon icon="pen" />
-                <span class="sr-only">
-                    #{CmsArticleMessageBundle['basicproperties.name.edit']}
-                </span>
-            </button>
-            <div aria-hidden="true" 
-                 aria-labelledby="name-edit-dialog-title"
-                 class="modal fade"
-                 id="name-edit-dialog"
-                 tabindex="-1">
-                <div class="modal-dialog">
-                    <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/basicproperties/name"
-                          class="modal-content"
-                          method="post">
+            <div class="d-flex">
+                <pre>
+                    #{CmsArticlePropertiesStep.name}
+                </pre>
+                <button class="btn btn-primary"
+                        data-toggle="modal"
+                        data-target="name-edit-dialog"
+                        type="button">
+                    <bootstrap:svgIcon icon="pen" />
+                    <span class="sr-only">
+                        #{CmsArticleMessageBundle['basicproperties.name.edit']}
+                    </span>
+                </button>
+                <div aria-hidden="true" 
+                     aria-labelledby="name-edit-dialog-title"
+                     class="modal fade"
+                     id="name-edit-dialog"
+                     tabindex="-1">
+                    <div class="modal-dialog">
+                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/basicproperties/name"
+                              class="modal-content"
+                              method="post">
 
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <libreccm:localizedStringEditor 
-            addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/basicproperties/title/@add"
-            editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/basicproperties/title/@edit"
-            editorId="title-editor"
-            hasUnusedLocales="#{!CmsArticlePropertiesStep.unusedTitleLocales.isEmpty()}"
-            headingLevel="3"
-            objectIdentifier="#{CmsSelectedDocumentModel.itemPath}"
-            removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/basicproperties/title/@remove"
-            title="#{CmsArticleMessageBundle['basicproperties.title.header']}"
-            unusedLocales="#{CmsArticlePropertiesStep.unusedTitleLocales}"
-            values="#{CmsArticlePropertiesStep.titleValues}"
-            />
+            <libreccm:localizedStringEditor 
+                addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/basicproperties/title/@add"
+                editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/basicproperties/title/@edit"
+                editorId="title-editor"
+                hasUnusedLocales="#{!CmsArticlePropertiesStep.unusedTitleLocales.isEmpty()}"
+                headingLevel="3"
+                objectIdentifier="#{CmsSelectedDocumentModel.itemPath}"
+                removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/basicproperties/title/@remove"
+                title="#{CmsArticleMessageBundle['basicproperties.title.header']}"
+                unusedLocales="#{CmsArticlePropertiesStep.unusedTitleLocales}"
+                values="#{CmsArticlePropertiesStep.titleValues}"
+                />
 
-        <libreccm:localizedStringEditor 
-            addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/basicproperties/description/@add"
-            editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/basicproperties/description/@edit"
-            editorId="description-editor"
-            hasUnusedLocales="#{!CmsArticlePropertiesStep.unusedTitleLocales.isEmpty()}"
-            headingLevel="3"
-            objectIdentifier="#{CmsSelectedDocumentModel.itemPath}"
-            removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/basicproperties/description/@remove"
-            title="#{CmsArticleMessageBundle['basicproperties.description.header']}"
-            unusedLocales="#{CmsArticlePropertiesStep.unusedTitleLocales}"
-            values="#{CmsArticlePropertiesStep.descriptionValues}"
-            useTextarea="true"
-            />
+            <libreccm:localizedStringEditor 
+                addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/basicproperties/description/@add"
+                editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/basicproperties/description/@edit"
+                editorId="description-editor"
+                hasUnusedLocales="#{!CmsArticlePropertiesStep.unusedTitleLocales.isEmpty()}"
+                headingLevel="3"
+                objectIdentifier="#{CmsSelectedDocumentModel.itemPath}"
+                removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/basicproperties/description/@remove"
+                title="#{CmsArticleMessageBundle['basicproperties.description.header']}"
+                unusedLocales="#{CmsArticlePropertiesStep.unusedTitleLocales}"
+                values="#{CmsArticlePropertiesStep.descriptionValues}"
+                useTextarea="true"
+                />
+        </ui:define>
 
     </ui:composition>
 </html>

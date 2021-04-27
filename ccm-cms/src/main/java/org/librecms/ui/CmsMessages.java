@@ -36,6 +36,10 @@ import javax.inject.Named;
 public class CmsMessages {
 
     private SortedMap<String, String> messages;
+    
+    public CmsMessages() {
+        this.messages = new TreeMap<>();
+    }
 
     public Map<String, String> getMessages() {
         return Collections.unmodifiableSortedMap(messages);
