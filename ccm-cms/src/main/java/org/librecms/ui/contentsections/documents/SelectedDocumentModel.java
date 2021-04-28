@@ -357,7 +357,7 @@ public class SelectedDocumentModel {
             .replace(
                 String.format(
                     "{%s}",
-                    MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM
+                    MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM
                 ),
                 itemPath
             );

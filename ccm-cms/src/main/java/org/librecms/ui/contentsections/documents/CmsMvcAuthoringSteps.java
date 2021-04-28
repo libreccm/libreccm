@@ -39,7 +39,6 @@ public class CmsMvcAuthoringSteps implements MvcAuthoringSteps {
         classes.add(ExampleAuthoringStep.class);
 
         classes.add(CategorizationStep.class);
-        classes.add(PublishStep.class);
         classes.add(RelatedInfoStep.class);
         classes.add(MvcArticlePropertiesStep.class);
         classes.add(MvcArticleTextBodyStep.class);

@@ -60,7 +60,7 @@ import javax.ws.rs.PathParam;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Path(MvcAuthoringSteps.PATH_PREFIX + "basicproperties")
+@Path(MvcAuthoringSteps.PATH_PREFIX + "article-basicproperties")
 @Controller
 @Named("CmsArticlePropertiesStep")
 @MvcAuthoringStep(
@@ -242,13 +242,17 @@ public class MvcArticlePropertiesStep {
 
             stepService.getDocument().setDisplayName(name);
             itemRepo.save(stepService.getDocument());
+            
+            stepService.updateDocumentPath();
 
-            return stepService.buildRedirectPathForStep(getClass());
+            return stepService.buildRedirectPathForStep(
+                MvcArticlePropertiesStep.class
+            );
         } else {
             return documentUi.showAccessDenied(
                 stepService.getContentSection(),
                 stepService.getDocument(),
-                stepService.getLabel(getClass())
+                stepService.getLabel(MvcArticlePropertiesStep.class)
             );
         }
     }

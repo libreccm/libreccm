@@ -31,6 +31,7 @@ import java.util.Optional;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+import javax.mvc.Models;
 import javax.ws.rs.Path;
 
 /**
@@ -57,6 +58,9 @@ public class MvcAuthoringStepService {
 
     @Inject
     private GlobalizationHelper globalizationHelper;
+
+    @Inject
+    private Models models;
 
     @Inject
     private SelectedDocumentModel documentModel;
@@ -166,6 +170,12 @@ public class MvcAuthoringStepService {
         documentModel.setContentItem(document);
 
         this.documentPath = itemManager.getItemPath(document);
+
+        models.put("activeDocumentTab", "editTab");
+    }
+
+    public void updateDocumentPath() {
+        documentPath = itemManager.getItemPath(document);
     }
 
     /**
@@ -193,8 +203,9 @@ public class MvcAuthoringStepService {
                         section.getLabel()
                     )
                     .replace(
-                        String.format("{%s}",
-                                      MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME
+                        String.format(
+                            "{%s}",
+                            MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM
                         ),
                         documentPath
                     )
