@@ -52,10 +52,12 @@
                       shortDescription="Label for the edit button" 
                       type="String" />
         <cc:attribute name="editDialogCancelLabel"
+                      default="Cancel"
                       required="false"
                       shortDescription="Label for the cancel and close button of the edit dialog"
                       type="String" />
         <cc:attribute name="editDialogSubmitLabel"
+                      default="save"
                       required="false"
                       shortDescription="Label for the submit button of the edit dialog"
                       type="String" />
@@ -407,7 +409,7 @@
                                                             </c:choose>
                                                             <small class="form-text text-muted"
                                                                    id="#{cc.attrs.editorId}-#{entry.key}-edit-dialog-value-help">
-                                                                #{cc.attrs.addDialogValueHelp}
+                                                                #{cc.attrs.editDialogValueHelp}
                                                             </small>
                                                         </div>
                                                     </div>
