@@ -286,10 +286,54 @@ public class MvcArticlePropertiesStep {
      * @return A redirect to this authoring step.
      */
     @POST
-    @Path("/title/@edit/{locale}")
+    @Path("/title/@add")
     @Transactional(Transactional.TxType.REQUIRED)
     public String addTitle(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
+        final String documentPath,
+        @FormParam("locale") final String localeParam,
+        @FormParam("value") final String value
+    ) {
+        try {
+            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
+
+        if (itemPermissionChecker.canEditItem(stepService.getDocument())) {
+            final Locale locale = new Locale(localeParam);
+            stepService.getDocument().getTitle().addValue(locale, value);
+            itemRepo.save(stepService.getDocument());
+
+            return stepService.buildRedirectPathForStep(MvcArticlePropertiesStep.class);
+        } else {
+            return documentUi.showAccessDenied(
+                stepService.getContentSection(),
+                stepService.getDocument(),
+                stepService.getLabel(MvcArticlePropertiesStep.class)
+            );
+        }
+    }
+
+    /**
+     * Updates a localized title of the article.
+     *
+     * @param sectionIdentifier
+     * @param documentPath
+     * @param localeParam       The locale to update.
+     * @param value             The updated title value.
+     *
+     * @return A redirect to this authoring step.
+     */
+    @POST
+    @Path("/title/@edit/{locale}")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String editTitle(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM) 
         final String sectionIdentifier,
         @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
@@ -309,55 +353,12 @@ public class MvcArticlePropertiesStep {
             stepService.getDocument().getTitle().addValue(locale, value);
             itemRepo.save(stepService.getDocument());
 
-            return stepService.buildRedirectPathForStep(getClass());
+            return stepService.buildRedirectPathForStep(MvcArticlePropertiesStep.class);
         } else {
             return documentUi.showAccessDenied(
                 stepService.getContentSection(),
                 stepService.getDocument(),
-                stepService.getLabel(getClass())
-            );
-        }
-    }
-
-    /**
-     * Updates a localized title of the article.
-     *
-     * @param sectionIdentifier
-     * @param documentPath
-     * @param localeParam       The locale to update.
-     * @param value             The updated title value.
-     *
-     * @return A redirect to this authoring step.
-     */
-    @POST
-    @Path("/title/@edit/{locale}")
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String editTitle(
-        final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
-        final String documentPath,
-        @PathParam("locale") final String localeParam,
-        @FormParam("value") final String value
-    ) {
-        try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
-        } catch (ContentSectionNotFoundException ex) {
-            return ex.showErrorMessage();
-        } catch (DocumentNotFoundException ex) {
-            return ex.showErrorMessage();
-        }
-
-        if (itemPermissionChecker.canEditItem(stepService.getDocument())) {
-            final Locale locale = new Locale(localeParam);
-            stepService.getDocument().getTitle().removeValue(locale);
-            itemRepo.save(stepService.getDocument());
-
-            return stepService.buildRedirectPathForStep(getClass());
-        } else {
-            return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                stepService.getLabel(MvcArticlePropertiesStep.class)
             );
         }
     }
@@ -394,12 +395,12 @@ public class MvcArticlePropertiesStep {
             stepService.getDocument().getTitle().removeValue(locale);
             itemRepo.save(stepService.getDocument());
 
-            return stepService.buildRedirectPathForStep(getClass());
+            return stepService.buildRedirectPathForStep(MvcArticlePropertiesStep.class);
         } else {
             return documentUi.showAccessDenied(
                 stepService.getContentSection(),
                 stepService.getDocument(),
-                stepService.getLabel(getClass())
+                stepService.getLabel(MvcArticlePropertiesStep.class)
             );
         }
     }
@@ -434,7 +435,7 @@ public class MvcArticlePropertiesStep {
      * @return A redirect to this authoring step.
      */
     @POST
-    @Path("/title/@add")
+    @Path("/description/@add")
     @Transactional(Transactional.TxType.REQUIRED)
     public String addDescription(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
@@ -457,12 +458,12 @@ public class MvcArticlePropertiesStep {
             stepService.getDocument().getDescription().addValue(locale, value);
             itemRepo.save(stepService.getDocument());
 
-            return stepService.buildRedirectPathForStep(getClass());
+            return stepService.buildRedirectPathForStep(MvcArticlePropertiesStep.class);
         } else {
             return documentUi.showAccessDenied(
                 stepService.getContentSection(),
                 stepService.getDocument(),
-                stepService.getLabel(getClass())
+                stepService.getLabel(MvcArticlePropertiesStep.class)
             );
         }
     }
@@ -478,7 +479,7 @@ public class MvcArticlePropertiesStep {
      * @return A redirect to this authoring step.
      */
     @POST
-    @Path("/title/@edit/{locale}")
+    @Path("/description/@edit/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String editDescription(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
@@ -501,12 +502,12 @@ public class MvcArticlePropertiesStep {
             stepService.getDocument().getDescription().addValue(locale, value);
             itemRepo.save(stepService.getDocument());
 
-            return stepService.buildRedirectPathForStep(getClass());
+            return stepService.buildRedirectPathForStep(MvcArticlePropertiesStep.class);
         } else {
             return documentUi.showAccessDenied(
                 stepService.getContentSection(),
                 stepService.getDocument(),
-                stepService.getLabel(getClass())
+                stepService.getLabel(MvcArticlePropertiesStep.class)
             );
         }
     }
@@ -521,7 +522,7 @@ public class MvcArticlePropertiesStep {
      * @return A redirect to this authoring step.
      */
     @POST
-    @Path("/title/@remove/{locale}")
+    @Path("/description/@remove/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeDescription(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
@@ -543,12 +544,12 @@ public class MvcArticlePropertiesStep {
             stepService.getDocument().getDescription().removeValue(locale);
             itemRepo.save(stepService.getDocument());
 
-            return stepService.buildRedirectPathForStep(getClass());
+            return stepService.buildRedirectPathForStep(MvcArticlePropertiesStep.class);
         } else {
             return documentUi.showAccessDenied(
                 stepService.getContentSection(),
                 stepService.getDocument(),
-                stepService.getLabel(getClass())
+                stepService.getLabel(MvcArticlePropertiesStep.class)
             );
         }
     }
