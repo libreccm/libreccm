@@ -35,14 +35,20 @@ import org.librecms.ui.contentsections.FolderBreadcrumbsModel;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.UriBuilder;
+
+import static javax.transaction.Transactional.TxType.values;
 
 /**
  * Model/named bean providing data about the currently selected document for
@@ -83,6 +89,9 @@ public class SelectedDocumentModel {
      */
     @Inject
     private GlobalizationHelper globalizationHelper;
+
+    @Inject
+    private HttpServletRequest request;
 
     /**
      * Used to check permissions
@@ -209,7 +218,7 @@ public class SelectedDocumentModel {
         itemTitle = globalizationHelper.getValueFromLocalizedString(
             item.getTitle()
         );
-        itemPath = itemManager.getItemPath(item);
+        itemPath = itemManager.getItemPath(item).substring(1); //Without leading slash
         parentFolderBreadcrumbs = itemManager
             .getItemFolders(item)
             .stream()
@@ -322,7 +331,7 @@ public class SelectedDocumentModel {
 
     /**
      * Helper method for building a {@link AuthoringStepListEntry} from the
-     * {@link MvcAuthoringStep}.
+     * {@link MvcAuthoringStepDef}.
      *
      * @param step Th step.
      *
@@ -331,8 +340,8 @@ public class SelectedDocumentModel {
     private AuthoringStepListEntry buildAuthoringStepListEntry(
         final Class<?> authoringStepClass
     ) {
-        final MvcAuthoringStep stepAnnotation = authoringStepClass
-            .getAnnotation(MvcAuthoringStep.class);
+        final MvcAuthoringStepDef stepAnnotation = authoringStepClass
+            .getAnnotation(MvcAuthoringStepDef.class);
         final Path pathAnnotation = authoringStepClass.getAnnotation(
             Path.class
         );
@@ -341,7 +350,7 @@ public class SelectedDocumentModel {
         final AuthoringStepListEntry entry = new AuthoringStepListEntry();
         entry.setDescription(textsUtil.getText(stepAnnotation.descriptionKey()));
         entry.setLabel(textsUtil.getText(stepAnnotation.labelKey()));
-        entry.setPath(createStepPath(pathAnnotation.value()));
+        entry.setPath(createStepPath(authoringStepClass));
         return entry;
     }
 
@@ -361,6 +370,32 @@ public class SelectedDocumentModel {
                 ),
                 itemPath
             );
+    }
+
+    private String createStepPath(final Class<?> stepClass) {
+        final Map<String, String> values = new HashMap<>();
+        values.put(
+            MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM,
+            item.getContentType().getContentSection().getLabel()
+        );
+        values.put(
+            MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME,
+            itemPath
+        );
+
+        final UriBuilder uriBuilder;
+        if (request.getContextPath() == null) {
+            uriBuilder = UriBuilder.fromPath("/@contentsections");
+        } else {
+            uriBuilder = UriBuilder
+                .fromPath(request.getContextPath())
+                .path("/@contentsections");
+        }
+
+        return uriBuilder
+            .path(stepClass)
+            .buildFromMap(values, false)
+            .toString();
     }
 
 }

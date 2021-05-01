@@ -71,12 +71,12 @@ public class AuthoringStepsValidator {
             );
         }
         
-        if (stepClass.getAnnotation(MvcAuthoringStep.class) == null) {
+        if (stepClass.getAnnotation(MvcAuthoringStepDef.class) == null) {
             LOGGER.warn(
                 "Class {} is part of a set of authoring steps, but is not "
                     + "annotated with {}. The class will be ignored.",
                 stepClass.getName(),
-                MvcAuthoringStep.class
+                MvcAuthoringStepDef.class
             );
         }
 
@@ -86,8 +86,7 @@ public class AuthoringStepsValidator {
     public boolean supportsItem(
         final Class<?> stepClass, final ContentItem item
     ) {
-        final MvcAuthoringStep stepAnnotation = stepClass.getAnnotation(
-            MvcAuthoringStep.class
+        final MvcAuthoringStepDef stepAnnotation = stepClass.getAnnotation(MvcAuthoringStepDef.class
         );
 
         if (stepAnnotation == null) {

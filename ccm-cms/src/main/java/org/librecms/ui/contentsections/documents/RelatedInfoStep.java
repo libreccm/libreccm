@@ -102,13 +102,13 @@ import javax.ws.rs.core.MediaType;
 @Path(MvcAuthoringSteps.PATH_PREFIX + "relatedinfo")
 @Controller
 @Named("CmsRelatedInfoStep")
-@MvcAuthoringStep(
+@MvcAuthoringStepDef(
     bundle = DefaultAuthoringStepConstants.BUNDLE,
     descriptionKey = "authoringsteps.relatedinfo.description",
     labelKey = "authoringsteps.relatedinfo.label",
     supportedDocumentType = ContentItem.class
 )
-public class RelatedInfoStep {
+public class RelatedInfoStep extends AbstractMvcAuthoringStep {
 
     /**
      * The path fragment of the step.
@@ -245,11 +245,13 @@ public class RelatedInfoStep {
     private Models models;
 
     @Inject
-    private MvcAuthoringStepService stepService;
-
-    @Inject
     private PermissionChecker permissionChecker;
 
+    @Override
+    public Class<RelatedInfoStep> getStepClass() {
+        return RelatedInfoStep.class;
+    }
+    
     @GET
     @Path("/")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -260,7 +262,7 @@ public class RelatedInfoStep {
         final String documentPath
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -268,14 +270,14 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             return "org/librecms/ui/documents/relatedinfo.xhtml";
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -289,8 +291,7 @@ public class RelatedInfoStep {
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public List<AttachmentListDto> getAttachmentLists() {
-        return stepService
-            .getDocument()
+        return getDocument()
             .getAttachments()
             .stream()
             .filter(list -> !list.getName().startsWith("."))
@@ -318,16 +319,16 @@ public class RelatedInfoStep {
         final String documentPath
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException
                  | DocumentNotFoundException ex) {
             throw new NotFoundException(ex.getMessage());
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
-            final ContentSection section = stepService.getContentSection();
+            final ContentSection section = getContentSection();
             return assetFolderTree.buildFolderTree(
                 section, section.getRootAssetsFolder()
             );
@@ -371,16 +372,16 @@ public class RelatedInfoStep {
         final String filterTerm
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException
                  | DocumentNotFoundException ex) {
             throw new NotFoundException(ex.getMessage());
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
-            final ContentSection section = stepService.getContentSection();
+            final ContentSection section = getContentSection();
             final Folder folder;
             if (folderPath.isEmpty()) {
                 folder = section.getRootAssetsFolder();
@@ -438,16 +439,16 @@ public class RelatedInfoStep {
         final String searchTerm
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException
                  | DocumentNotFoundException ex) {
             throw new NotFoundException(ex.getMessage());
         }
 
-        final ContentSection section = stepService.getContentSection();
+        final ContentSection section = getContentSection();
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             return assetRepo.findByTitleAndContentSection(searchTerm, section)
                 .stream()
@@ -479,16 +480,16 @@ public class RelatedInfoStep {
         final String documentPath
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException
                  | DocumentNotFoundException ex) {
             throw new NotFoundException(ex.getMessage());
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
-            final ContentSection section = stepService.getContentSection();
+            final ContentSection section = getContentSection();
             return documentFolderTree.buildFolderTree(
                 section, section.getRootDocumentsFolder()
             );
@@ -532,16 +533,16 @@ public class RelatedInfoStep {
         final String filterTerm
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException
                  | DocumentNotFoundException ex) {
             throw new NotFoundException(ex.getMessage());
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
-            final ContentSection section = stepService.getContentSection();
+            final ContentSection section = getContentSection();
             final Folder folder;
             if (folderPath.isEmpty()) {
                 folder = section.getRootDocumentsFolder();
@@ -603,16 +604,16 @@ public class RelatedInfoStep {
         final String searchTerm
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException
                  | DocumentNotFoundException ex) {
             throw new NotFoundException(ex.getMessage());
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
-            final ContentSection section = stepService.getContentSection();
+            final ContentSection section = getContentSection();
             return itemRepo.findByNameAndContentSection(searchTerm, section)
                 .stream()
                 .map(asset -> buildDocumentFolderRowModel(section, asset))
@@ -652,7 +653,7 @@ public class RelatedInfoStep {
         final String description
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -660,9 +661,9 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
-            final ContentItem document = stepService.getDocument();
+            final ContentItem document = getDocument();
             final AttachmentList list = listManager.createAttachmentList(
                 document, name
             );
@@ -673,16 +674,14 @@ public class RelatedInfoStep {
                 globalizationHelper.getNegotiatedLocale(), description
             );
             listRepo.save(list);
-            return stepService
-                .buildRedirectPathForStep(
-                    getClass(),
+            return buildRedirectPathForStep(
                     String.format("/attachmentlists/%s", list.getName())
                 );
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -708,7 +707,7 @@ public class RelatedInfoStep {
         final String listIdentifierParam
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -716,7 +715,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -730,9 +729,9 @@ public class RelatedInfoStep {
             return "org/librecms/ui/documents/relatedinfo-attachmentlist-details.xhtml";
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -761,7 +760,7 @@ public class RelatedInfoStep {
         final String name
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -769,7 +768,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -782,15 +781,14 @@ public class RelatedInfoStep {
             list.setName(name);
             listRepo.save(list);
 
-            return stepService.buildRedirectPathForStep(
-                getClass(),
+            return buildRedirectPathForStep(
                 String.format("/attachmentlists/%s", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -821,7 +819,7 @@ public class RelatedInfoStep {
         final String confirm
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -829,7 +827,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -842,12 +840,12 @@ public class RelatedInfoStep {
                 listManager.removeAttachmentList(listResult.get());
             }
 
-            return stepService.buildRedirectPathForStep(getClass());
+            return buildRedirectPathForStep();
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -879,7 +877,7 @@ public class RelatedInfoStep {
         final String value
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -887,7 +885,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -900,15 +898,14 @@ public class RelatedInfoStep {
             list.getTitle().addValue(new Locale(localeParam), value);
             listRepo.save(list);
 
-            return stepService.buildRedirectPathForStep(
-                getClass(),
+            return buildRedirectPathForStep(
                 String.format("/attachmentlists/%s", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -940,7 +937,7 @@ public class RelatedInfoStep {
         final String value
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -948,7 +945,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -961,15 +958,14 @@ public class RelatedInfoStep {
             list.getTitle().addValue(new Locale(localeParam), value);
             listRepo.save(list);
 
-            return stepService.buildRedirectPathForStep(
-                getClass(),
+            return buildRedirectPathForStep(
                 String.format("/attachmentlists/%s", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -999,7 +995,7 @@ public class RelatedInfoStep {
         final String localeParam
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -1007,7 +1003,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -1020,14 +1016,14 @@ public class RelatedInfoStep {
             list.getTitle().removeValue(new Locale(localeParam));
             listRepo.save(list);
 
-            return stepService.buildRedirectPathForStep(
-                getClass(), String.format("/attachmentlists/%s", list.getName())
+            return buildRedirectPathForStep(
+                String.format("/attachmentlists/%s", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -1059,7 +1055,7 @@ public class RelatedInfoStep {
         final String value
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -1067,7 +1063,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -1080,14 +1076,14 @@ public class RelatedInfoStep {
             list.getDescription().addValue(new Locale(localeParam), value);
             listRepo.save(list);
 
-            return stepService.buildRedirectPathForStep(
-                getClass(), String.format("/attachmentlists/%s", list.getName())
+            return buildRedirectPathForStep(
+                String.format("/attachmentlists/%s", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -1120,7 +1116,7 @@ public class RelatedInfoStep {
         final String value
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -1128,7 +1124,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -1141,14 +1137,14 @@ public class RelatedInfoStep {
             list.getDescription().addValue(new Locale(localeParam), value);
             listRepo.save(list);
 
-            return stepService.buildRedirectPathForStep(
-                getClass(), String.format("/attachmentlists/%s", list.getName())
+            return buildRedirectPathForStep(
+                String.format("/attachmentlists/%s", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -1178,7 +1174,7 @@ public class RelatedInfoStep {
         final String localeParam
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -1186,7 +1182,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -1199,14 +1195,14 @@ public class RelatedInfoStep {
             list.getDescription().removeValue(new Locale(localeParam));
             listRepo.save(list);
 
-            return stepService.buildRedirectPathForStep(
-                getClass(), String.format("/attachmentlists/%s", list.getName())
+            return buildRedirectPathForStep(
+                String.format("/attachmentlists/%s", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -1236,7 +1232,7 @@ public class RelatedInfoStep {
         final String assetUuid
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -1244,7 +1240,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -1257,7 +1253,7 @@ public class RelatedInfoStep {
             final Optional<Asset> assetResult = assetRepo.findByUuid(assetUuid);
             if (!assetResult.isPresent()) {
                 models
-                    .put("section", stepService.getContentSection().getLabel());
+                    .put("section", getContentSection().getLabel());
                 models.put("assetUuid", assetUuid);
                 return "org/librecms/ui/documents/asset-not-found.xhtml";
             }
@@ -1266,12 +1262,12 @@ public class RelatedInfoStep {
 
             attachmentManager.attachAsset(asset, list);
 
-            return stepService.buildRedirectPathForStep(getClass());
+            return buildRedirectPathForStep();
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -1299,7 +1295,7 @@ public class RelatedInfoStep {
         final String listIdentifierParam
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -1307,7 +1303,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -1321,9 +1317,9 @@ public class RelatedInfoStep {
             return "org/librecms/ui/documents/relatedinfo-create-internallink.xhtml";
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -1360,7 +1356,7 @@ public class RelatedInfoStep {
         final String title
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -1368,7 +1364,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -1390,17 +1386,17 @@ public class RelatedInfoStep {
             relatedLink.getTitle().addValue(
                 globalizationHelper.getNegotiatedLocale(), title
             );
-            relatedLink.setTargetItem(stepService.getDocument());
+            relatedLink.setTargetItem(getDocument());
 
             attachmentManager.attachAsset(relatedLink, list);
-            return stepService.buildRedirectPathForStep(
-                getClass(), String.format("/attachmentlists/%s", list.getName())
+            return buildRedirectPathForStep(
+                String.format("/attachmentlists/%s", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -1433,7 +1429,7 @@ public class RelatedInfoStep {
         final String internalLinkUuid
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -1441,7 +1437,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -1461,7 +1457,7 @@ public class RelatedInfoStep {
                 .findAny();
 
             if (!linkResult.isPresent()) {
-                models.put("contentItem", stepService.getDocumentPath());
+                models.put("contentItem", getDocumentPath());
                 models.put("listIdentifier", listIdentifierParam);
                 models.put("internalLinkUuid", internalLinkUuid);
                 return "org/librecms/ui/documents/internal-link-asset-not-found.xhtml";
@@ -1474,9 +1470,9 @@ public class RelatedInfoStep {
             return "org/librecms/ui/documents/relatedinfo-internallink-details.xhtml";
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -1511,7 +1507,7 @@ public class RelatedInfoStep {
         final String targetItemUuid
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -1519,7 +1515,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -1547,7 +1543,7 @@ public class RelatedInfoStep {
                 .findAny();
 
             if (!linkResult.isPresent()) {
-                models.put("contentItem", stepService.getDocumentPath());
+                models.put("contentItem", getDocumentPath());
                 models.put("listIdentifier", listIdentifierParam);
                 models.put("internalLinkUuid", internalLinkUuid);
                 return "org/librecms/ui/documents/internal-link-asset-not-found.xhtml";
@@ -1557,14 +1553,14 @@ public class RelatedInfoStep {
             link.setTargetItem(itemResult.get());
             assetRepo.save(link);
 
-            return stepService.buildRedirectPathForStep(
-                getClass(), String.format("/attachmentlists/%s", list.getName())
+            return buildRedirectPathForStep(
+                String.format("/attachmentlists/%s", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -1601,7 +1597,7 @@ public class RelatedInfoStep {
         final String value
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -1609,7 +1605,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -1629,7 +1625,7 @@ public class RelatedInfoStep {
                 .findAny();
 
             if (!linkResult.isPresent()) {
-                models.put("contentItem", stepService.getDocumentPath());
+                models.put("contentItem", getDocumentPath());
                 models.put("listIdentifierParam", listIdentifierParam);
                 models.put("internalLinkUuid", internalLinkUuid);
                 return "org/librecms/ui/documents/internal-link-asset-not-found.xhtml";
@@ -1640,14 +1636,14 @@ public class RelatedInfoStep {
             link.getTitle().addValue(locale, value);
             assetRepo.save(link);
 
-            return stepService.buildRedirectPathForStep(
-                getClass(), String.format("/attachmentlists/%s", list.getName())
+            return buildRedirectPathForStep(
+                String.format("/attachmentlists/%s", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -1684,7 +1680,7 @@ public class RelatedInfoStep {
         final String value
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -1692,7 +1688,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -1712,7 +1708,7 @@ public class RelatedInfoStep {
                 .findAny();
 
             if (!linkResult.isPresent()) {
-                models.put("contentItem", stepService.getDocumentPath());
+                models.put("contentItem", getDocumentPath());
                 models.put("listIdentifierParam", listIdentifierParam);
                 models.put("internalLinkUuid", internalLinkUuid);
                 return "org/librecms/ui/documents/internal-link-asset-not-found.xhtml";
@@ -1723,14 +1719,14 @@ public class RelatedInfoStep {
             link.getTitle().addValue(locale, value);
             assetRepo.save(link);
 
-            return stepService.buildRedirectPathForStep(
-                getClass(), String.format("/attachmentlists/%s", list.getName())
+            return buildRedirectPathForStep(
+                String.format("/attachmentlists/%s", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -1765,7 +1761,7 @@ public class RelatedInfoStep {
         final String localeParam
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -1773,7 +1769,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -1793,7 +1789,7 @@ public class RelatedInfoStep {
                 .findAny();
 
             if (!linkResult.isPresent()) {
-                models.put("contentItem", stepService.getDocumentPath());
+                models.put("contentItem", getDocumentPath());
                 models.put("listIdentifierParam", listIdentifierParam);
                 models.put("internalLinkUuid", internalLinkUuid);
                 return "org/librecms/ui/documents/internal-link-asset-not-found.xhtml";
@@ -1804,14 +1800,14 @@ public class RelatedInfoStep {
             link.getTitle().removeValue(locale);
             assetRepo.save(link);
 
-            return stepService.buildRedirectPathForStep(
-                getClass(), String.format("/attachmentlists/%s", list.getName())
+            return buildRedirectPathForStep(
+                String.format("/attachmentlists/%s", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -1848,7 +1844,7 @@ public class RelatedInfoStep {
         final String confirm
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -1856,7 +1852,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -1882,14 +1878,14 @@ public class RelatedInfoStep {
                 }
             }
 
-            return stepService.buildRedirectPathForStep(
-                getClass(), String.format("/attachmentlists/%s", list.getName())
+            return buildRedirectPathForStep(
+                String.format("/attachmentlists/%s", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -1916,7 +1912,7 @@ public class RelatedInfoStep {
         final String listIdentifierParam
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -1924,7 +1920,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -1936,14 +1932,14 @@ public class RelatedInfoStep {
 
             listManager.moveUp(list);
 
-            return stepService.buildRedirectPathForStep(
-                getClass(), String.format("/attachmentlists/%s", list.getName())
+            return buildRedirectPathForStep(
+                String.format("/attachmentlists/%s", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -1969,7 +1965,7 @@ public class RelatedInfoStep {
         final String listIdentifierParam
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -1977,7 +1973,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -1989,14 +1985,14 @@ public class RelatedInfoStep {
 
             listManager.moveDown(list);
 
-            return stepService.buildRedirectPathForStep(
-                getClass(), String.format("/attachmentlists/%s", list.getName())
+            return buildRedirectPathForStep(
+                String.format("/attachmentlists/%s", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -2026,7 +2022,7 @@ public class RelatedInfoStep {
         final String attachmentUuid
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -2034,7 +2030,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -2057,14 +2053,14 @@ public class RelatedInfoStep {
                 attachmentManager.moveUp(asset, list);
             }
 
-            return stepService.buildRedirectPathForStep(
-                getClass(), String.format("/attachmentlists/%s", list.getName())
+            return buildRedirectPathForStep(
+                String.format("/attachmentlists/%s", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -2094,7 +2090,7 @@ public class RelatedInfoStep {
         final String attachmentUuid
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -2102,7 +2098,7 @@ public class RelatedInfoStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, stepService.getDocument()
+            ItemPrivileges.EDIT, getDocument()
         )) {
             final Optional<AttachmentList> listResult = findAttachmentList(
                 listIdentifierParam
@@ -2125,14 +2121,14 @@ public class RelatedInfoStep {
                 attachmentManager.moveDown(asset, list);
             }
 
-            return stepService.buildRedirectPathForStep(
-                getClass(), String.format("/attachmentlists/%s", list.getName())
+            return buildRedirectPathForStep(
+                String.format("/attachmentlists/%s", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -2149,7 +2145,7 @@ public class RelatedInfoStep {
     private Optional<AttachmentList> findAttachmentList(
         final String attachmentListIdentifier
     ) {
-        final ContentItem document = stepService.getDocument();
+        final ContentItem document = getDocument();
         final Identifier identifier = identifierParser.parseIdentifier(
             attachmentListIdentifier
         );
@@ -2186,7 +2182,7 @@ public class RelatedInfoStep {
      * @return The template for the "attachment list not found" page.
      */
     private String showAttachmentListNotFound(final String listIdentifier) {
-        models.put("contentItem", stepService.getDocumentPath());
+        models.put("contentItem", getDocumentPath());
         models.put("listIdentifier", listIdentifier);
         return "org/librecms/ui/documents/attachmentlist-not-found.xhtml";
     }

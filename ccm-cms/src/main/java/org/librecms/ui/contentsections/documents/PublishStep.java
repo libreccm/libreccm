@@ -60,13 +60,13 @@ import javax.ws.rs.PathParam;
 @Path(MvcAuthoringSteps.PATH_PREFIX + "publish")
 @Controller
 @Named("CmsPublishStep")
-@MvcAuthoringStep(
+@MvcAuthoringStepDef(
     bundle = DefaultAuthoringStepConstants.BUNDLE,
     descriptionKey = "authoringsteps.publish.description",
     labelKey = "authoringsteps.publish.label",
     supportedDocumentType = ContentItem.class
 )
-public class PublishStep {
+public class PublishStep extends AbstractMvcAuthoringStep {
 
     private static final String TEMPLATE
         = "org/librecms/ui/documenttypes/publish.xhtml";
@@ -96,9 +96,11 @@ public class PublishStep {
 
     @Inject
     private Models models;
-
-    @Inject
-    private MvcAuthoringStepService stepService;
+    
+    @Override
+    public Class<PublishStep> getStepClass() {
+        return PublishStep.class;
+    }
 
     @GET
     @Path("/")
@@ -110,15 +112,15 @@ public class PublishStep {
         final String documentPath
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
             return ex.showErrorMessage();
         }
 
-        final ContentItem document = stepService.getDocument();
-        if (itemPermissionChecker.canPublishItems(stepService.getDocument())) {
+        final ContentItem document = getDocument();
+        if (itemPermissionChecker.canPublishItems(getDocument())) {
             final String lifecycleDefUuid;
             if (itemManager.isLive(document)) {
                 lifecycleDefUuid = document
@@ -135,11 +137,11 @@ public class PublishStep {
             return TEMPLATE;
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
+                getContentSection(),
+                getDocument(),
                 defaultStepsMessageBundle.getMessage(
                     "access_to_authoringstep_denied",
-                    new String[]{stepService.getLabel(getClass())}
+                    new String[]{getLabel()}
                 )
             );
         }
@@ -157,7 +159,7 @@ public class PublishStep {
     @Transactional(Transactional.TxType.REQUIRED)
     public String getAssignedLifecycleLabel() {
         return Optional
-            .ofNullable(stepService.getDocument().getLifecycle())
+            .ofNullable(getDocument().getLifecycle())
             .map(Lifecycle::getDefinition)
             .map(LifecycleDefinition::getLabel)
             .map(globalizationHelper::getValueFromLocalizedString)
@@ -177,7 +179,7 @@ public class PublishStep {
     @Transactional(Transactional.TxType.REQUIRED)
     public String getAssignedLifecycleDecription() {
         return Optional
-            .ofNullable(stepService.getDocument().getLifecycle())
+            .ofNullable(getDocument().getLifecycle())
             .map(Lifecycle::getDefinition)
             .map(LifecycleDefinition::getDescription)
             .map(globalizationHelper::getValueFromLocalizedString)
@@ -222,14 +224,14 @@ public class PublishStep {
         final String endTimeParam
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
             return ex.showErrorMessage();
         }
 
-        final ContentItem document = stepService.getDocument();
+        final ContentItem document = getDocument();
 
         if (selectedLifecycleDefUuid.isEmpty()) {
             models.put("missingLifecycleDefinitionUuid", true);
@@ -332,7 +334,7 @@ public class PublishStep {
 
         if (!itemPermissionChecker.canPublishItems(document)) {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
+                getContentSection(),
                 document,
                 "item.publish"
             );
@@ -355,7 +357,7 @@ public class PublishStep {
             if (!definitionResult.isPresent()) {
                 models.put(
                     "contentSection",
-                    stepService.getContentSection().getLabel()
+                    getContentSection().getLabel()
                 );
                 models.put("lifecycleDefinitionUuid", selectedLifecycleDefUuid);
                 return "org/librecms/ui/documents/lifecycle-definition-not-found.xhtml";
@@ -366,7 +368,7 @@ public class PublishStep {
             );
         }
 
-        return stepService.buildRedirectPathForStep(getClass());
+        return buildRedirectPathForStep();
     }
 
     /**
@@ -380,10 +382,10 @@ public class PublishStep {
     )
     @Transactional(Transactional.TxType.REQUIRED)
     public String unpublish() {
-        final ContentItem document = stepService.getDocument();
+        final ContentItem document = getDocument();
         if (!itemPermissionChecker.canPublishItems(document)) {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
+                getContentSection(),
                 document,
                 "item.unpublish"
             );
@@ -391,7 +393,7 @@ public class PublishStep {
 
         itemManager.unpublish(document);
 
-        return stepService.buildRedirectPathForStep(getClass());
+        return buildRedirectPathForStep();
     }
 
 }

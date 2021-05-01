@@ -18,61 +18,92 @@
  */
 package org.librecms.ui.contentsections.documents;
 
-import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.contentsection.ContentItem;
+import org.librecms.contentsection.ContentSection;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import javax.inject.Named;
+import javax.ws.rs.Path;
 
 /**
- * Metadata of an authoring step for documents (content items).
- *
- * An authoring step for a document (content item). Implementing classes are
- * used as subresources by {@link DocumentController#editDocument(java.lang.String, java.lang.String, java.lang.String)
- * }. An implementation must be a named CDI bean (annotated with {@link Named},
- * annotated with the {@link AuthoringStepPathFragment} qualifier annotation.
- *
- * An implementation may contain multiple subresource paths for for displaying
- * forms and apply changes from these forms.
+ * Base interface for authoring steps. For buidling authoring steps it is
+ * recommanned to use the {@link AbstractMvcAuthoringStep} as base that
+ * implements most of the methods defined by this interface.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface MvcAuthoringStep {
+public interface MvcAuthoringStep {
+
+    Class<? extends MvcAuthoringStep> getStepClass();
+
+    ContentSection getContentSection() throws ContentSectionNotFoundException;
+
+    ContentItem getDocument() throws ContentSectionNotFoundException,
+                                     DocumentNotFoundException;
+
+    String getDocumentPath() throws ContentSectionNotFoundException,
+                                    DocumentNotFoundException;
 
     /**
-     * The name of the resource bundle providing the localized values for
-     * {@link #labelKey} and {@link descriptionKey}.
+     * Gets the label for an authoring step.
      *
-     * @return The resource bundle providing the localized labelKey and
-     *         descriptionKey.
+     * @return The label for the authoring step. If the implementing class is
+     *         not annotated with {@link MvcAuthoringStepDef} the string
+     *         {@code ???} is returned.
      */
-    String bundle();
+    String getLabel();
 
     /**
-     * The key for the localized description of the step.
+     * Gets the description for an authoring step.
      *
-     * @return The key for the localized description of the step.
+     * @return The label for the authoring step. If the implementing class is
+     *         not annotated with {@link MvcAuthoringStepDef} an empty stringis
+     *         returned.
      */
-    String descriptionKey();
+    String getDescription();
 
     /**
-     * The key for the localized label of the authoring step..
+     * If an authoring step alters the name of the content item and therefore
+     * the path of the item, the step MUST call this method to update the
+     * document path used by the step.
      *
-     * @return The key for the localized label of the authoring step...
+     * @throws
+     * org.librecms.ui.contentsections.documents.ContentSectionNotFoundException
+     * @throws
+     * org.librecms.ui.contentsections.documents.DocumentNotFoundException
      */
-    String labelKey();
+    void updateDocumentPath() throws ContentSectionNotFoundException,
+                                     DocumentNotFoundException;
 
     /**
-     * Authoring steps only support a specific type, and all subtypes.
+     * Builds the redirect path of the authoring step.This path is most often
+     * used to implement the redirect after post pattern.
      *
-     * @return The document type supported by the authoring step.
+     * @return The redirect path. If the the implementing class is not annotated
+     *         with {@link Path} an empty string is returned.
+     *
+     * @throws
+     * org.librecms.ui.contentsections.documents.ContentSectionNotFoundException
+     * @throws
+     * org.librecms.ui.contentsections.documents.DocumentNotFoundException
      */
-    Class<? extends ContentItem> supportedDocumentType();
+    String buildRedirectPathForStep() throws ContentSectionNotFoundException,
+                                             DocumentNotFoundException;
+
+    /**
+     * Builds the redirect path of the authoring step.This path is most often
+     * used to implement the redirect after post pattern.
+     *
+     * @param subPath additional path elements that are appended to the path of
+     *                the authoring step.
+     *
+     * @return The redirect path. If the the implemeting class is not annotated
+     *         with {@link Path} an empty string is returned.
+     *
+     * @throws
+     * org.librecms.ui.contentsections.documents.ContentSectionNotFoundException
+     * @throws
+     * org.librecms.ui.contentsections.documents.DocumentNotFoundException
+     */
+    String buildRedirectPathForStep(final String subPath) throws
+        ContentSectionNotFoundException, DocumentNotFoundException;
 
 }

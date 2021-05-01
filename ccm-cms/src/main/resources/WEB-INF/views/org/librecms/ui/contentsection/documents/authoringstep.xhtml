@@ -103,7 +103,7 @@
                             <li aria-current="#{step.path == authoringStep ? 'true' : ''}"
                                 class="list-group-item #{step.path == authoringStep ? 'active' : ''}">
                                 <a class="list-group-item-action"
-                                   href="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/#{step.path}">
+                                   href="#{step.path}">
                                     #{step.label}
                                 </a>
                             </li>

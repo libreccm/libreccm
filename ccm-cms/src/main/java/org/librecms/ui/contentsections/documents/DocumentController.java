@@ -114,11 +114,11 @@ public class DocumentController {
     private ContentItemRepository itemRepo;
 
     /**
-     * All available {@link MvcAuthoringStep}s.
+     * All available {@link MvcAuthoringStepDef}s.
      */
     @Inject
     @Any
-    private Instance<MvcAuthoringStep> authoringSteps;
+    private Instance<MvcAuthoringStepDef> authoringSteps;
 
     /**
      * All available {@link MvcDocumentCreateStep}s.
@@ -451,7 +451,7 @@ public class DocumentController {
 //            models.put("authoringStep", authoringStepIdentifier);
 //            return showAuthoringStepNotAvailable(authoringStepIdentifier);
 //        }
-//        final MvcAuthoringStep authoringStep = instance.get();
+//        final MvcAuthoringStepDef authoringStep = instance.get();
 //
 //        if (!authoringStep.supportedDocumentType().isAssignableFrom(item
 //            .getClass())) {

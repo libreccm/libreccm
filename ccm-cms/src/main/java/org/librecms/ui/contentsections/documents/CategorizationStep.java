@@ -58,13 +58,13 @@ import javax.ws.rs.PathParam;
 @Path(MvcAuthoringSteps.PATH_PREFIX + "categorization")
 @Controller
 @Named("CmsCategorizationStep")
-@MvcAuthoringStep(
+@MvcAuthoringStepDef(
     bundle = DefaultAuthoringStepConstants.BUNDLE,
     descriptionKey = "authoringsteps.categorization.description",
     labelKey = "authoringsteps.categorization.label",
     supportedDocumentType = ContentItem.class
 )
-public class CategorizationStep {
+public class CategorizationStep extends AbstractMvcAuthoringStep {
 
     @Inject
     private CategoryManager categoryManager;
@@ -84,9 +84,10 @@ public class CategorizationStep {
     @Inject
     private PermissionChecker permissionChecker;
 
-    @Inject
-    private MvcAuthoringStepService stepService;
-
+    public Class<CategorizationStep> getStepClass() {
+        return CategorizationStep.class;
+    }
+    
     @GET
     @Path("/")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -97,7 +98,7 @@ public class CategorizationStep {
         final String documentPath
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
@@ -105,14 +106,14 @@ public class CategorizationStep {
         }
 
         if (permissionChecker.isPermitted(
-            ItemPrivileges.CATEGORIZE, stepService.getDocument()
+            ItemPrivileges.CATEGORIZE, getDocument()
         )) {
             return "org/librecms/ui/documents/categorization.xhtml";
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(getClass())
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -128,8 +129,7 @@ public class CategorizationStep {
      */
     @Transactional(Transactional.TxType.REQUIRED)
     public List<CategorizationTree> getCategorizationTrees() {
-        return stepService
-            .getContentSection()
+        return getContentSection()
             .getDomains()
             .stream()
             .map(DomainOwnership::getDomain)
@@ -139,12 +139,11 @@ public class CategorizationStep {
 
     /**
      * Update the categorization of the current item.
-     *
-     * @param parameterPath The identifier for category system to use.
-     * @param parameters    The parameters of the request. The map must contain
-     *                      a value with the key {@code assignedCategories}.
+   
      *
      *
+     * @param domainParam
+     * @param assignedCategoriesParam
      * @return A redirect to the categorization step.
      */
     @MvcAuthoringAction(
@@ -159,14 +158,21 @@ public class CategorizationStep {
         @FormParam("assignedCategories") 
         final Set<String> assignedCategoriesParam
     ) {
+        try {
+            init();
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
+        
         final Identifier domainIdentifier = identifierParser.parseIdentifier(
             domainParam
         );
         final Optional<Domain> domainResult;
         switch (domainIdentifier.getType()) {
             case ID:
-                domainResult = stepService
-                    .getContentSection()
+                domainResult = getContentSection()
                     .getDomains()
                     .stream()
                     .map(DomainOwnership::getDomain)
@@ -176,8 +182,7 @@ public class CategorizationStep {
                     ).findAny();
                 break;
             case UUID:
-                domainResult = stepService
-                    .getContentSection()
+                domainResult = getContentSection()
                     .getDomains()
                     .stream()
                     .map(DomainOwnership::getDomain)
@@ -188,8 +193,7 @@ public class CategorizationStep {
                     ).findAny();
                 break;
             default:
-                domainResult = stepService
-                    .getContentSection()
+                domainResult = getContentSection()
                     .getDomains()
                     .stream()
                     .map(DomainOwnership::getDomain)
@@ -201,7 +205,7 @@ public class CategorizationStep {
         }
 
         if (!domainResult.isPresent()) {
-            models.put("section", stepService.getContentSection().getLabel());
+            models.put("section", getContentSection().getLabel());
             models.put("domainIdentifier", domainIdentifier);
             return "org/librecms/ui/documents/categorization-domain-not-found.xhtml";
         }
@@ -210,7 +214,7 @@ public class CategorizationStep {
             domainResult.get().getRoot(), assignedCategoriesParam
         );
         
-        return stepService.buildRedirectPathForStep(getClass());
+        return buildRedirectPathForStep();
     }
 
     /**
@@ -230,7 +234,7 @@ public class CategorizationStep {
         final Category category,
         final Set<String> assignedCategoriesParam
     ) {
-        final ContentItem document = stepService.getDocument();
+        final ContentItem document = getDocument();
         if (assignedCategoriesParam.contains(category.getUuid())
                 && !categoryManager.isAssignedToCategory(category, document)) {
             categoryManager.addObjectToCategory(document, category);
@@ -327,7 +331,7 @@ public class CategorizationStep {
         final Category category
     ) {
         final CategorizationTreeNode node = new CategorizationTreeNode();
-        final ContentItem document = stepService.getDocument();
+        final ContentItem document = getDocument();
         node.setAssigned(categoryManager.isAssignedToCategory(
             category, document)
         );

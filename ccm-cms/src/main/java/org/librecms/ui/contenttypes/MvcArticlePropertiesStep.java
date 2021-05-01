@@ -25,11 +25,11 @@ import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.FolderManager;
 import org.librecms.contenttypes.Article;
 import org.librecms.ui.contentsections.ItemPermissionChecker;
+import org.librecms.ui.contentsections.documents.AbstractMvcAuthoringStep;
 import org.librecms.ui.contentsections.documents.ContentSectionNotFoundException;
 import org.librecms.ui.contentsections.documents.DocumentNotFoundException;
 import org.librecms.ui.contentsections.documents.DocumentUi;
-import org.librecms.ui.contentsections.documents.MvcAuthoringStep;
-import org.librecms.ui.contentsections.documents.MvcAuthoringStepService;
+import org.librecms.ui.contentsections.documents.MvcAuthoringStepDef;
 import org.librecms.ui.contentsections.documents.MvcAuthoringSteps;
 
 import java.util.Collections;
@@ -63,13 +63,13 @@ import javax.ws.rs.PathParam;
 @Path(MvcAuthoringSteps.PATH_PREFIX + "article-basicproperties")
 @Controller
 @Named("CmsArticlePropertiesStep")
-@MvcAuthoringStep(
+@MvcAuthoringStepDef(
     bundle = ArticleStepsConstants.BUNDLE,
     descriptionKey = "authoringsteps.basicproperties.description",
     labelKey = "authoringsteps.basicproperties.label",
     supportedDocumentType = Article.class
 )
-public class MvcArticlePropertiesStep {
+public class MvcArticlePropertiesStep extends AbstractMvcAuthoringStep {
 
     @Inject
     private ArticleMessageBundle articleMessageBundle;
@@ -107,9 +107,6 @@ public class MvcArticlePropertiesStep {
     @Inject
     private Models models;
 
-    @Inject
-    private MvcAuthoringStepService stepService;
-
     private Map<String, String> titleValues;
 
     private List<String> unusedTitleLocales;
@@ -117,6 +114,11 @@ public class MvcArticlePropertiesStep {
     private Map<String, String> descriptionValues;
 
     private List<String> unusedDescriptionLocales;
+
+    @Override
+    public Class<MvcArticlePropertiesStep> getStepClass() {
+        return MvcArticlePropertiesStep.class;
+    }
 
     @GET
     @Path("/")
@@ -128,16 +130,15 @@ public class MvcArticlePropertiesStep {
         final String documentPath
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
             return ex.showErrorMessage();
         }
 
-        if (itemPermissionChecker.canEditItem(stepService.getDocument())) {
-            titleValues = stepService
-                .getDocument()
+        if (itemPermissionChecker.canEditItem(getDocument())) {
+            titleValues = getDocument()
                 .getTitle()
                 .getValues()
                 .entrySet()
@@ -149,8 +150,7 @@ public class MvcArticlePropertiesStep {
                     )
                 );
 
-            final Set<Locale> titleLocales = stepService
-                .getDocument()
+            final Set<Locale> titleLocales = getDocument()
                 .getTitle()
                 .getAvailableLocales();
 
@@ -161,8 +161,7 @@ public class MvcArticlePropertiesStep {
                 .map(Locale::toString)
                 .collect(Collectors.toList());
 
-            descriptionValues = stepService
-                .getDocument()
+            descriptionValues = getDocument()
                 .getDescription()
                 .getValues()
                 .entrySet()
@@ -174,8 +173,7 @@ public class MvcArticlePropertiesStep {
                     )
                 );
 
-            final Set<Locale> descriptionLocales = stepService
-                .getDocument()
+            final Set<Locale> descriptionLocales = getDocument()
                 .getDescription()
                 .getAvailableLocales();
 
@@ -189,8 +187,8 @@ public class MvcArticlePropertiesStep {
             return "org/librecms/ui/contenttypes/article/article-basic-properties.xhtml";
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
+                getContentSection(),
+                getDocument(),
                 articleMessageBundle.getMessage("article.edit.denied")
             );
         }
@@ -203,7 +201,7 @@ public class MvcArticlePropertiesStep {
      * @return The display name of the current article.
      */
     public String getName() {
-        return stepService.getDocument().getDisplayName();
+        return getDocument().getDisplayName();
     }
 
     /**
@@ -226,33 +224,31 @@ public class MvcArticlePropertiesStep {
         @FormParam("name") @DefaultValue("") final String name
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
             return ex.showErrorMessage();
         }
 
-        if (itemPermissionChecker.canEditItem(stepService.getDocument())) {
+        if (itemPermissionChecker.canEditItem(getDocument())) {
             if (name.isEmpty() || name.matches("\\s*")) {
                 models.put("nameMissing", true);
 
                 return showStep(sectionIdentifier, documentPath);
             }
 
-            stepService.getDocument().setDisplayName(name);
-            itemRepo.save(stepService.getDocument());
-            
-            stepService.updateDocumentPath();
+            getDocument().setDisplayName(name);
+            itemRepo.save(getDocument());
 
-            return stepService.buildRedirectPathForStep(
-                MvcArticlePropertiesStep.class
-            );
+            updateDocumentPath();
+
+            return buildRedirectPathForStep();
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(MvcArticlePropertiesStep.class)
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -297,24 +293,24 @@ public class MvcArticlePropertiesStep {
         @FormParam("value") final String value
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
             return ex.showErrorMessage();
         }
 
-        if (itemPermissionChecker.canEditItem(stepService.getDocument())) {
+        if (itemPermissionChecker.canEditItem(getDocument())) {
             final Locale locale = new Locale(localeParam);
-            stepService.getDocument().getTitle().addValue(locale, value);
-            itemRepo.save(stepService.getDocument());
+            getDocument().getTitle().addValue(locale, value);
+            itemRepo.save(getDocument());
 
-            return stepService.buildRedirectPathForStep(MvcArticlePropertiesStep.class);
+            return buildRedirectPathForStep();
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(MvcArticlePropertiesStep.class)
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -333,7 +329,7 @@ public class MvcArticlePropertiesStep {
     @Path("/title/@edit/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String editTitle(
-        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM) 
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
         @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
@@ -341,24 +337,24 @@ public class MvcArticlePropertiesStep {
         @FormParam("value") final String value
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
             return ex.showErrorMessage();
         }
 
-        if (itemPermissionChecker.canEditItem(stepService.getDocument())) {
+        if (itemPermissionChecker.canEditItem(getDocument())) {
             final Locale locale = new Locale(localeParam);
-            stepService.getDocument().getTitle().addValue(locale, value);
-            itemRepo.save(stepService.getDocument());
+            getDocument().getTitle().addValue(locale, value);
+            itemRepo.save(getDocument());
 
-            return stepService.buildRedirectPathForStep(MvcArticlePropertiesStep.class);
+            return buildRedirectPathForStep();
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(MvcArticlePropertiesStep.class)
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -383,24 +379,24 @@ public class MvcArticlePropertiesStep {
         @PathParam("locale") final String localeParam
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
             return ex.showErrorMessage();
         }
 
-        if (itemPermissionChecker.canEditItem(stepService.getDocument())) {
+        if (itemPermissionChecker.canEditItem(getDocument())) {
             final Locale locale = new Locale(localeParam);
-            stepService.getDocument().getTitle().removeValue(locale);
-            itemRepo.save(stepService.getDocument());
+            getDocument().getTitle().removeValue(locale);
+            itemRepo.save(getDocument());
 
-            return stepService.buildRedirectPathForStep(MvcArticlePropertiesStep.class);
+            return buildRedirectPathForStep();
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(MvcArticlePropertiesStep.class)
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -446,24 +442,24 @@ public class MvcArticlePropertiesStep {
         @FormParam("value") final String value
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
             return ex.showErrorMessage();
         }
 
-        if (itemPermissionChecker.canEditItem(stepService.getDocument())) {
+        if (itemPermissionChecker.canEditItem(getDocument())) {
             final Locale locale = new Locale(localeParam);
-            stepService.getDocument().getDescription().addValue(locale, value);
-            itemRepo.save(stepService.getDocument());
+            getDocument().getDescription().addValue(locale, value);
+            itemRepo.save(getDocument());
 
-            return stepService.buildRedirectPathForStep(MvcArticlePropertiesStep.class);
+            return buildRedirectPathForStep();
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(MvcArticlePropertiesStep.class)
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -490,24 +486,24 @@ public class MvcArticlePropertiesStep {
         @FormParam("value") final String value
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
             return ex.showErrorMessage();
         }
 
-        if (itemPermissionChecker.canEditItem(stepService.getDocument())) {
+        if (itemPermissionChecker.canEditItem(getDocument())) {
             final Locale locale = new Locale(localeParam);
-            stepService.getDocument().getDescription().addValue(locale, value);
-            itemRepo.save(stepService.getDocument());
+            getDocument().getDescription().addValue(locale, value);
+            itemRepo.save(getDocument());
 
-            return stepService.buildRedirectPathForStep(MvcArticlePropertiesStep.class);
+            return buildRedirectPathForStep();
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(MvcArticlePropertiesStep.class)
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
@@ -532,24 +528,24 @@ public class MvcArticlePropertiesStep {
         @PathParam("locale") final String localeParam
     ) {
         try {
-            stepService.setSectionAndDocument(sectionIdentifier, documentPath);
+            init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
         } catch (DocumentNotFoundException ex) {
             return ex.showErrorMessage();
         }
 
-        if (itemPermissionChecker.canEditItem(stepService.getDocument())) {
+        if (itemPermissionChecker.canEditItem(getDocument())) {
             final Locale locale = new Locale(localeParam);
-            stepService.getDocument().getDescription().removeValue(locale);
-            itemRepo.save(stepService.getDocument());
+            getDocument().getDescription().removeValue(locale);
+            itemRepo.save(getDocument());
 
-            return stepService.buildRedirectPathForStep(MvcArticlePropertiesStep.class);
+            return buildRedirectPathForStep();
         } else {
             return documentUi.showAccessDenied(
-                stepService.getContentSection(),
-                stepService.getDocument(),
-                stepService.getLabel(MvcArticlePropertiesStep.class)
+                getContentSection(),
+                getDocument(),
+                getLabel()
             );
         }
     }
