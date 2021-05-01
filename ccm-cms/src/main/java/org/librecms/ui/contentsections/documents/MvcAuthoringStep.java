@@ -43,6 +43,20 @@ public interface MvcAuthoringStep {
                                     DocumentNotFoundException;
 
     /**
+     * Can the current user edit the document. This method MUST only return
+     * {@code true} if
+     * <ul>
+     * <li>The current user has the permission to edit the item.</li>
+     * <li>The item has an active task.</li>
+     * <li>The task is assigned to the current user or the current user has
+     * admin priviliges for the content section of the item.</li>
+     * </ul>
+     *
+     * @return {@code true} if the current user can edit the document/item, {@false} otherwise.
+     */
+    boolean getCanEdit();
+
+    /**
      * Gets the label for an authoring step.
      *
      * @return The label for the authoring step. If the implementing class is
@@ -73,6 +87,8 @@ public interface MvcAuthoringStep {
     void updateDocumentPath() throws ContentSectionNotFoundException,
                                      DocumentNotFoundException;
 
+    String getStepPath();
+    
     /**
      * Builds the redirect path of the authoring step.This path is most often
      * used to implement the redirect after post pattern.

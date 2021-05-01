@@ -285,7 +285,7 @@ public class MvcArticleCreateStep
         itemRepo.save(article);
 
         return String.format(
-            "redirect:/%s/documents/%s/%s/@articleproperties",
+            "redirect:/%s/documents/%s/%s/@article-basicproperties",
             getContentSectionLabel(),
             getFolderPath(),
             name

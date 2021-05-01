@@ -99,6 +99,14 @@ public class SelectedWorkflowTaskTemplateModel {
      */
     private Map<String, String> noneBlockingTasks;
 
+    private List<String> assignedRoles;
+    
+    private List<String> assignedRoleKeys;
+    
+    private Map<String, String> availableRoles;
+    
+    
+
     public long getTaskId() {
         return taskId;
     }
@@ -195,5 +203,34 @@ public class SelectedWorkflowTaskTemplateModel {
     ) {
         this.noneBlockingTasks = new HashMap<>(noneBlockingTasks);
     }
+
+    public Map<String, String> getAvailableRoles() {
+        return Collections.unmodifiableMap(availableRoles);
+    }
+
+    public void setAvailableRoles(
+        final Map<String, String> availableRoles
+    ) {
+        this.availableRoles = new HashMap<>(availableRoles);
+    }
+
+    public List<String> getAssignedRoles() {
+        return Collections.unmodifiableList(assignedRoles);
+    }
+
+    public void setAssignedRoles(final List<String> assignedRoles) {
+        this.assignedRoles = new ArrayList<>(assignedRoles);
+    }
+
+    public List<String> getAssignedRoleKeys() {
+        return Collections.unmodifiableList(assignedRoleKeys);
+    }
+
+    public void setAssignedRoleKeys(final List<String> assignedRoleKeys) {
+        this.assignedRoleKeys = new ArrayList<>(assignedRoleKeys);
+    }
+    
+    
+    
 
 }

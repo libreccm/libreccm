@@ -26,8 +26,10 @@ import org.libreccm.security.User;
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -59,6 +61,13 @@ public class AssignableTaskRepository
     @Override
     public boolean isNew(final AssignableTask task) {
         return task.getTaskId() == 0;
+    }
+    
+    @Override
+    protected void initNewEntity(final AssignableTask entity) {
+        if (isNew(entity)) {
+            entity.setUuid(UUID.randomUUID().toString());
+        }
     }
 
     /**
@@ -109,5 +118,7 @@ public class AssignableTaskRepository
 
         return query.getResultList();
     }
+
+    
 
 }

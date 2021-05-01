@@ -28,16 +28,13 @@ import org.librecms.ui.contentsections.documents.DocumentWorkflowController;
 import org.librecms.ui.contentsections.documents.MvcAuthoringSteps;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import javax.mvc.Controller;
 import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 
 /**
@@ -73,11 +70,11 @@ public class ContentSectionApplication extends Application {
         classes.add(ContentSectionController.class);
         classes.add(DocumentFolderController.class);
         classes.add(DocumentController.class);
-
-        classes.addAll(getAuthoringSteps());
-
         classes.add(DocumentLifecyclesController.class);
         classes.add(DocumentWorkflowController.class);
+
+        classes.addAll(getAuthoringSteps());
+        
         classes.add(IsAuthenticatedFilter.class);
 
         return classes;

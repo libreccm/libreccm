@@ -102,6 +102,11 @@
                       required="true"
                       shortDescription="Identifier of the object to which the localized string belongs"
                       type="String" />
+        <cc:attribute name="readOnly"
+                      default="false"
+                      required="false"
+                      shortDescription="Don't show edit buttons."
+                      type="boolean" />
         <cc:attribute name="removeButtonLabel" 
                       default="Remove" 
                       required="false" 
@@ -190,7 +195,7 @@
                     <div>#{cc.attrs.title}</div>
                 </c:otherwise>
             </c:choose>
-            <c:if test="#{cc.attrs.hasUnusedLocales}">
+            <c:if test="#{cc.attrs.hasUnusedLocales and !cc.attrs.readOnly}">
                 <div class="mb-2">
                     <div class="text-right">
                         <button class="btn btn-secondary"
@@ -331,174 +336,178 @@
                                     <td>#{entry.key}</td>
                                     <td>#{entry.value}</td>
                                     <td>
-                                        <div class="text-center">
-                                            <button class="btn btn-info"
-                                                    data-target="##{cc.attrs.editorId}-#{entry.key}-edit-dialog"
-                                                    data-toggle="modal"
-                                                    type="button">
-                                                <bootstrap:svgIcon icon="pen" />
-                                                <span>#{cc.attrs.editButtonLabel}</span>
-                                            </button>
-                                        </div>
-                                        <div aria-labelledby="#{cc.attrs.editorId}-#{entry.key}-edit-dialog-title"
-                                             aria-hidden="true"
-                                             class="modal fade"
-                                             data-backdrop="static"
-                                             id="#{cc.attrs.editorId}-#{entry.key}-edit-dialog"
-                                             tabindex="-1">
-                                            <div class="modal-dialog">
-                                                <form accept-charset="UTF-8"
-                                                      action="#{cc.attrs.editMethod}/#{entry.key}"
-                                                      class="modal-content"
-                                                      method="post">
-                                                    <div class="modal-header">
-                                                        <c:choose>
-                                                            <c:when test="#{cc.attrs.headingLevel == 1}">
-                                                                <h2>#{cc.attrs.editDialogTitle}</h2>
-                                                            </c:when>
-                                                            <c:when test="#{cc.attrs.headingLevel == 2}">
-                                                                <h3>#{cc.attrs.editDialogTitle}</h3>
-                                                            </c:when>
-                                                            <c:when test="#{cc.attrs.headingLevel == 3}">
-                                                                <h4>#{cc.attrs.editDialogTitle}</h4>
-                                                            </c:when>
-                                                            <c:when test="#{cc.attrs.headingLevel == 4}">
-                                                                <h5>#{cc.attrs.editDialogTitle}</h5>
-                                                            </c:when>
-                                                            <c:when test="#{cc.attrs.headingLevel == 5}">
-                                                                <h6>#{cc.attrs.editDialogTitle}</h6>
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <div>#{cc.attrs.editDialogTitle}</div>
-                                                            </c:otherwise>
-                                                        </c:choose>
-                                                        <button aria-label="#{cc.attrs.editDialogCancelLabel}"
-                                                                class="close" 
-                                                                data-dismiss="modal" 
-                                                                type="button"   >
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <input name="locale"
-                                                               value="#{entry.key}"
-                                                               type="hidden" />
-                                                        <div class="form-group">
-                                                            <label for="#{cc.attrs.editorId}-#{entry.key}-edit-dialog-value}">
-                                                                #{cc.attrs.editDialogValueLabel}
-                                                            </label>
+                                        <c:if test="#{!cc.attrs.readOnly}">
+                                            <div class="text-center">
+                                                <button class="btn btn-info"
+                                                        data-target="##{cc.attrs.editorId}-#{entry.key}-edit-dialog"
+                                                        data-toggle="modal"
+                                                        type="button">
+                                                    <bootstrap:svgIcon icon="pen" />
+                                                    <span>#{cc.attrs.editButtonLabel}</span>
+                                                </button>
+                                            </div>
+                                            <div aria-labelledby="#{cc.attrs.editorId}-#{entry.key}-edit-dialog-title"
+                                                 aria-hidden="true"
+                                                 class="modal fade"
+                                                 data-backdrop="static"
+                                                 id="#{cc.attrs.editorId}-#{entry.key}-edit-dialog"
+                                                 tabindex="-1">
+                                                <div class="modal-dialog">
+                                                    <form accept-charset="UTF-8"
+                                                          action="#{cc.attrs.editMethod}/#{entry.key}"
+                                                          class="modal-content"
+                                                          method="post">
+                                                        <div class="modal-header">
                                                             <c:choose>
-                                                                <c:when test="#{cc.attrs.useTextarea}">
-                                                                    <textarea aria-describedby="#{cc.attrs.editorId}-#{entry.key}-edit-dialog-value-help"
-                                                                              class="form-control"
-                                                                              cols="80"
-                                                                              id="#{cc.attrs.editorId}-#{entry.key}-edit-dialog-value"
-                                                                              name="value"
-                                                                              required="true"
-                                                                              rows="10">#{entry.value}</textarea>
+                                                                <c:when test="#{cc.attrs.headingLevel == 1}">
+                                                                    <h2>#{cc.attrs.editDialogTitle}</h2>
+                                                                </c:when>
+                                                                <c:when test="#{cc.attrs.headingLevel == 2}">
+                                                                    <h3>#{cc.attrs.editDialogTitle}</h3>
+                                                                </c:when>
+                                                                <c:when test="#{cc.attrs.headingLevel == 3}">
+                                                                    <h4>#{cc.attrs.editDialogTitle}</h4>
+                                                                </c:when>
+                                                                <c:when test="#{cc.attrs.headingLevel == 4}">
+                                                                    <h5>#{cc.attrs.editDialogTitle}</h5>
+                                                                </c:when>
+                                                                <c:when test="#{cc.attrs.headingLevel == 5}">
+                                                                    <h6>#{cc.attrs.editDialogTitle}</h6>
                                                                 </c:when>
                                                                 <c:otherwise>
-                                                                    <input aria-describedby="#{cc.attrs.editorId}-#{entry.key}-edit-dialog-value-help"
-                                                                           class="form-control"
-                                                                           id="#{cc.attrs.editorId}-#{entry.key}-edit-dialog-value"
-                                                                           name="value"
-                                                                           required="true"
-                                                                           type="text" 
-                                                                           value="#{entry.value}" />
+                                                                    <div>#{cc.attrs.editDialogTitle}</div>
                                                                 </c:otherwise>
                                                             </c:choose>
-                                                            <small class="form-text text-muted"
-                                                                   id="#{cc.attrs.editorId}-#{entry.key}-edit-dialog-value-help">
-                                                                #{cc.attrs.editDialogValueHelp}
-                                                            </small>
+                                                            <button aria-label="#{cc.attrs.editDialogCancelLabel}"
+                                                                    class="close" 
+                                                                    data-dismiss="modal" 
+                                                                    type="button"   >
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
                                                         </div>
-                                                    </div>
-                                                    <div class="modal-footer">
+                                                        <div class="modal-body">
+                                                            <input name="locale"
+                                                                   value="#{entry.key}"
+                                                                   type="hidden" />
+                                                            <div class="form-group">
+                                                                <label for="#{cc.attrs.editorId}-#{entry.key}-edit-dialog-value}">
+                                                                    #{cc.attrs.editDialogValueLabel}
+                                                                </label>
+                                                                <c:choose>
+                                                                    <c:when test="#{cc.attrs.useTextarea}">
+                                                                        <textarea aria-describedby="#{cc.attrs.editorId}-#{entry.key}-edit-dialog-value-help"
+                                                                                  class="form-control"
+                                                                                  cols="80"
+                                                                                  id="#{cc.attrs.editorId}-#{entry.key}-edit-dialog-value"
+                                                                                  name="value"
+                                                                                  required="true"
+                                                                                  rows="10">#{entry.value}</textarea>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <input aria-describedby="#{cc.attrs.editorId}-#{entry.key}-edit-dialog-value-help"
+                                                                               class="form-control"
+                                                                               id="#{cc.attrs.editorId}-#{entry.key}-edit-dialog-value"
+                                                                               name="value"
+                                                                               required="true"
+                                                                               type="text" 
+                                                                               value="#{entry.value}" />
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                                <small class="form-text text-muted"
+                                                                       id="#{cc.attrs.editorId}-#{entry.key}-edit-dialog-value-help">
+                                                                    #{cc.attrs.editDialogValueHelp}
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <div class="modal-footer">
+                                                                <button class="btn btn-secondary" 
+                                                                        data-dismiss="modal"
+                                                                        type="button" >
+                                                                    #{cc.attrs.editDialogCancelLabel}
+                                                                </button>
+                                                                <button type="submit" class="btn btn-primary">
+                                                                    #{cc.attrs.editDialogSubmitLabel}
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </c:if>
+                                    </td>
+                                    <td>
+                                        <c:if test="#{!cc.attrs.readOnly}">
+                                            <div class="text-center">
+                                                <button class="btn btn-danger"
+                                                        data-target="##{cc.attrs.editorId}-#{entry.key}-remove-dialog"
+                                                        data-toggle="modal"
+                                                        type="button">
+                                                    <bootstrap:svgIcon icon="x-circle" />
+                                                    <span>#{cc.attrs.removeButtonLabel}</span>
+                                                </button>
+                                            </div>
+                                            <div aria-describedby="#{cc.attrs.editorId}-#{entry.key}-remove-dialog-title"
+                                                 aria-hidden="true"
+                                                 class="modal fade"
+                                                 data-backdrop="static"
+                                                 id="#{cc.attrs.editorId}-#{entry.key}-remove-dialog"
+                                                 tabindex="-1">
+                                                <div class="modal-dialog">
+                                                    <form action="#{cc.attrs.removeMethod}/#{entry.key}"
+                                                          class="modal-content"
+                                                          method="post">
+                                                        <div class="modal-header">
+                                                            <c:choose>
+                                                                <c:when test="#{cc.attrs.headingLevel == 1}">
+                                                                    <h2>#{cc.attrs.removeDialogTitle}</h2>
+                                                                </c:when>
+                                                                <c:when test="#{cc.attrs.headingLevel == 2}">
+                                                                    <h3>#{cc.attrs.removeDialogTitle}</h3>
+                                                                </c:when>
+                                                                <c:when test="#{cc.attrs.headingLevel == 3}">
+                                                                    <h4>#{cc.attrs.removeDialogTitle}</h4>
+                                                                </c:when>
+                                                                <c:when test="#{cc.attrs.headingLevel == 4}">
+                                                                    <h5>#{cc.attrs.removeDialogTitle}</h5>
+                                                                </c:when>
+                                                                <c:when test="#{cc.attrs.headingLevel == 5}">
+                                                                    <h6>#{cc.attrs.removeDialogTitle}</h6>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <div>#{cc.attrs.removeDialogTitle}</div>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                            <button aria-label="#{cc.attrs.removeDialogCancelLabel}"
+                                                                    class="close" 
+                                                                    data-dismiss="modal" 
+                                                                    type="button"   >
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>
+                                                                #{cc.attrs.removeDialogText}
+                                                            </p>
+                                                            <pre>#{entry.key}: #{entry.value}</pre>
+                                                            <input name="confirmed"
+                                                                   type="hidden"
+                                                                   value="true" />
+                                                        </div>
                                                         <div class="modal-footer">
                                                             <button class="btn btn-secondary" 
                                                                     data-dismiss="modal"
                                                                     type="button" >
-                                                                #{cc.attrs.editDialogCancelLabel}
+                                                                #{cc.attrs.removeDialogCancelLabel}
                                                             </button>
-                                                            <button type="submit" class="btn btn-primary">
-                                                                #{cc.attrs.editDialogSubmitLabel}
+                                                            <button type="submit" class="btn btn-danger">
+                                                                #{cc.attrs.removeDialogSubmitLabel}
                                                             </button>
                                                         </div>
-                                                    </div>
-                                                </form>
+                                                    </form>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="text-center">
-                                            <button class="btn btn-danger"
-                                                    data-target="##{cc.attrs.editorId}-#{entry.key}-remove-dialog"
-                                                    data-toggle="modal"
-                                                    type="button">
-                                                <bootstrap:svgIcon icon="x-circle" />
-                                                <span>#{cc.attrs.removeButtonLabel}</span>
-                                            </button>
-                                        </div>
-                                        <div aria-describedby="#{cc.attrs.editorId}-#{entry.key}-remove-dialog-title"
-                                             aria-hidden="true"
-                                             class="modal fade"
-                                             data-backdrop="static"
-                                             id="#{cc.attrs.editorId}-#{entry.key}-remove-dialog"
-                                             tabindex="-1">
-                                            <div class="modal-dialog">
-                                                <form action="#{cc.attrs.removeMethod}/#{entry.key}"
-                                                      class="modal-content"
-                                                      method="post">
-                                                    <div class="modal-header">
-                                                        <c:choose>
-                                                            <c:when test="#{cc.attrs.headingLevel == 1}">
-                                                                <h2>#{cc.attrs.removeDialogTitle}</h2>
-                                                            </c:when>
-                                                            <c:when test="#{cc.attrs.headingLevel == 2}">
-                                                                <h3>#{cc.attrs.removeDialogTitle}</h3>
-                                                            </c:when>
-                                                            <c:when test="#{cc.attrs.headingLevel == 3}">
-                                                                <h4>#{cc.attrs.removeDialogTitle}</h4>
-                                                            </c:when>
-                                                            <c:when test="#{cc.attrs.headingLevel == 4}">
-                                                                <h5>#{cc.attrs.removeDialogTitle}</h5>
-                                                            </c:when>
-                                                            <c:when test="#{cc.attrs.headingLevel == 5}">
-                                                                <h6>#{cc.attrs.removeDialogTitle}</h6>
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <div>#{cc.attrs.removeDialogTitle}</div>
-                                                            </c:otherwise>
-                                                        </c:choose>
-                                                        <button aria-label="#{cc.attrs.removeDialogCancelLabel}"
-                                                                class="close" 
-                                                                data-dismiss="modal" 
-                                                                type="button"   >
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>
-                                                            #{cc.attrs.removeDialogText}
-                                                        </p>
-                                                        <pre>#{entry.key}: #{entry.value}</pre>
-                                                        <input name="confirmed"
-                                                               type="hidden"
-                                                               value="true" />
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button class="btn btn-secondary" 
-                                                                data-dismiss="modal"
-                                                                type="button" >
-                                                            #{cc.attrs.removeDialogCancelLabel}
-                                                        </button>
-                                                        <button type="submit" class="btn btn-danger">
-                                                            #{cc.attrs.removeDialogSubmitLabel}
-                                                        </button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
+                                        </c:if>
                                     </td>
                                 </tr>
                             </c:forEach>

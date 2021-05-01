@@ -26,12 +26,12 @@ import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.ui.contentsections.ContentSectionModel;
 import org.librecms.ui.contentsections.ContentSectionsUi;
+import org.librecms.ui.contentsections.ItemPermissionChecker;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.mvc.Models;
 import javax.servlet.http.HttpServletRequest;
@@ -51,6 +51,9 @@ public abstract class AbstractMvcAuthoringStep implements MvcAuthoringStep {
 
     @Inject
     private ContentItemManager itemManager;
+
+    @Inject
+    private ItemPermissionChecker itemPermissionChecker;
 
     @Inject
     private ContentItemRepository itemRepo;
@@ -108,7 +111,7 @@ public abstract class AbstractMvcAuthoringStep implements MvcAuthoringStep {
                 )
             );
         sectionModel.setSection(contentSection);
-        
+
         document = itemRepo
             .findByPath(contentSection, documentPathParam)
             .orElseThrow(
@@ -178,6 +181,20 @@ public abstract class AbstractMvcAuthoringStep implements MvcAuthoringStep {
     }
 
     @Override
+    public boolean getCanEdit() {
+        if (!itemPermissionChecker.canEditItem(document)) {
+            return false;
+        }
+
+        if (documentModel.getCurrentTask() == null) {
+            return false;
+        }
+
+        return documentModel.getCurrentTask().isAssignedToCurrentUser()
+                   || itemPermissionChecker.canAdministerItems(document);
+    }
+
+    @Override
     public String getLabel() {
         return Optional
             .ofNullable(
@@ -211,6 +228,55 @@ public abstract class AbstractMvcAuthoringStep implements MvcAuthoringStep {
     }
 
     @Override
+    public String getStepPath() {
+        final ContentSection section = Optional
+            .ofNullable(contentSection)
+            .orElseThrow(
+                () -> new WebApplicationException(
+                    String.format(
+                        "Authoring Step %s was not initalized properly. "
+                            + "Did you forget to call %s#init()?",
+                        getStepClass().getName(),
+                        AbstractMvcAuthoringStep.class.getName()
+                    )
+                )
+            );
+        final String docPath = Optional
+            .ofNullable(documentPath)
+            .orElseThrow(
+                () -> new WebApplicationException(
+                    String.format(
+                        "Authoring Step %s was not initalized properly. "
+                            + "Did you forget to call %s#init()?",
+                        getStepClass().getName(),
+                        AbstractMvcAuthoringStep.class.getName()
+                    )
+                )
+            );
+
+        final Map<String, String> values = new HashMap<>();
+        values.put(
+            MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM,
+            section.getLabel()
+        );
+        values.put(
+            MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME,
+            docPath
+        );
+
+        return Optional
+            .ofNullable(getStepClass().getAnnotation(Path.class))
+            .map(Path::value)
+            .map(
+                path -> UriBuilder
+                    .fromPath(path)
+                    .buildFromMap(values)
+                    .toString()
+            )
+            .orElse("");
+    }
+
+    @Override
     public String buildRedirectPathForStep() {
         final ContentSection section = Optional
             .ofNullable(contentSection)
@@ -236,7 +302,7 @@ public abstract class AbstractMvcAuthoringStep implements MvcAuthoringStep {
                     )
                 )
             );
-        
+
         final Map<String, String> values = new HashMap<>();
         values.put(
             MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM,
@@ -254,6 +320,7 @@ public abstract class AbstractMvcAuthoringStep implements MvcAuthoringStep {
                 path -> UriBuilder
                     .fromPath(path)
                     .buildFromMap(values)
+                    .toString()
             )
             .map(path -> String.format("redirect:%s", path))
             .orElse("");
@@ -304,6 +371,7 @@ public abstract class AbstractMvcAuthoringStep implements MvcAuthoringStep {
                     .fromPath(path)
                     .path(subPath)
                     .buildFromMap(values)
+                    .toString()
             )
             .map(path -> String.format("redirect:%s", path))
             .orElse("");

@@ -22,8 +22,13 @@ import org.libreccm.api.Identifier;
 import org.libreccm.api.IdentifierParser;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.security.Role;
+import org.libreccm.workflow.AssignableTask;
+import org.libreccm.workflow.AssignableTaskManager;
+import org.libreccm.workflow.AssignableTaskRepository;
 import org.libreccm.workflow.CircularTaskDependencyException;
 import org.libreccm.workflow.Task;
+import org.libreccm.workflow.TaskAssignment;
 import org.libreccm.workflow.TaskManager;
 import org.libreccm.workflow.TaskRepository;
 import org.libreccm.workflow.Workflow;
@@ -32,6 +37,7 @@ import org.libreccm.workflow.WorkflowRepository;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.ContentSectionManager;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -65,6 +71,12 @@ public class ConfigurationWorkflowController {
      */
     @Inject
     private AdminPermissionsChecker adminPermissionsChecker;
+
+    @Inject
+    private AssignableTaskManager assignableTaskManager;
+
+    @Inject
+    private AssignableTaskRepository assignableTaskRepo;
 
     /**
      * Used for actions involving content sections.
@@ -834,19 +846,60 @@ public class ConfigurationWorkflowController {
                 )
         );
 
+        if (task instanceof AssignableTask) {
+            final AssignableTask assignableTask = (AssignableTask) task;
+            final List<Role> assignedRoles = assignableTask
+                .getAssignments()
+                .stream()
+                .map(TaskAssignment::getRole)
+                .collect(Collectors.toList());
+
+            selectedWorkflowTaskTemplateModel.setAssignedRoles(
+                assignedRoles
+                    .stream()
+                    .map(Role::getName)
+                    .collect(Collectors.toList())
+            );
+
+            selectedWorkflowTaskTemplateModel.setAvailableRoles(
+                section
+                    .getRoles()
+                    .stream()
+                    .collect(Collectors.toMap(Role::getUuid, Role::getName))
+            );
+
+            selectedWorkflowTaskTemplateModel.setAssignedRoleKeys(
+                assignedRoles
+                    .stream()
+                    .map(Role::getUuid)
+                    .collect(Collectors.toList())
+            );
+        } else {
+            selectedWorkflowTaskTemplateModel.setAssignedRoles(
+                Collections.emptyList()
+            );
+            selectedWorkflowTaskTemplateModel.setAvailableRoles(
+                Collections.emptyMap()
+            );
+        }
+
         return "org/librecms/ui/contentsection/configuration/workflow-task.xhtml";
     }
 
     /**
-     * Adds a task to a workflow template.
+     * Adds a assignable task to a workflow template.
      *
      * @param sectionIdentifierParam The identifier of the current content
      *                               section.
      * @param workflowIdentiferParam The identifier of the current workflow
      *                               template.
      * @param label                  The label of the new task.
+     * @param assignments            UUIDs of the roles to which the task is
+     *                               assigned.
      *
      * @return A redirect to the details view of the workflow.
+     *
+     * @see AssignableTask
      */
     @POST
     @Path("/{workflowIdentifier}/tasks/@add")
@@ -855,7 +908,8 @@ public class ConfigurationWorkflowController {
     public String addTask(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @PathParam("workflowIdentifier") final String workflowIdentiferParam,
-        @FormParam("label") final String label
+        @FormParam("label") final String label,
+        @FormParam("assignments") final List<String> assignments
     ) {
         final Optional<ContentSection> sectionResult = sectionsUi
             .findContentSection(sectionIdentifierParam);
@@ -877,12 +931,23 @@ public class ConfigurationWorkflowController {
             return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
         }
         final Workflow workflow = workflowResult.get();
-        final Task task = new Task();
+        final AssignableTask task = new AssignableTask();
         task.getLabel().addValue(
             globalizationHelper.getNegotiatedLocale(), label
         );
 
-        taskRepo.save(task);
+        final List<Role> roles = section
+            .getRoles()
+            .stream()
+            .filter(role -> assignments.contains(role.getUuid()))
+            .collect(Collectors.toList());
+
+        assignableTaskRepo.save(task);
+
+        for (final Role role : roles) {
+            assignableTaskManager.assignTask(task, role);
+        }
+
         taskManager.addTask(workflow, task);
 
         return String.format(
@@ -1470,6 +1535,84 @@ public class ConfigurationWorkflowController {
         final Task task = taskResult.get();
         final Task blockingTask = blockingTaskResult.get();
         taskManager.removeDependentTask(blockingTask, task);
+
+        return String.format(
+            "redirect:/%s/configuration/workflows/%s/tasks/%s",
+            sectionIdentifierParam,
+            workflowIdentiferParam,
+            taskIdentifierParam
+        );
+    }
+
+    @POST
+    @Path("/{workflowIdentifier}/tasks/{taskIdentifier}/@assignments")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String updateAssignments(
+        @PathParam("sectionIdentifier") final String sectionIdentifierParam,
+        @PathParam("workflowIdentifier") final String workflowIdentiferParam,
+        @PathParam("taskIdentifier") final String taskIdentifierParam,
+        @FormParam("assignments") final List<String> assignments
+    ) {
+        final Optional<ContentSection> sectionResult = sectionsUi
+            .findContentSection(sectionIdentifierParam);
+        if (!sectionResult.isPresent()) {
+            sectionsUi.showContentSectionNotFound(sectionIdentifierParam);
+        }
+        final ContentSection section = sectionResult.get();
+        sectionModel.setSection(section);
+        if (!adminPermissionsChecker.canAdministerWorkflows(section)) {
+            return sectionsUi.showAccessDenied(
+                "sectionIdentifier", sectionIdentifierParam
+            );
+        }
+
+        final Optional<Workflow> workflowResult = findWorkflowTemplate(
+            section, workflowIdentiferParam
+        );
+        if (!workflowResult.isPresent()) {
+            return showWorkflowTemplateNotFound(section, workflowIdentiferParam);
+        }
+        final Workflow workflow = workflowResult.get();
+        final Optional<Task> taskResult = findTaskTemplate(
+            workflow, taskIdentifierParam
+        );
+        if (!taskResult.isPresent()) {
+            return showWorkflowTaskTemplateNotFound(
+                section, workflowIdentiferParam, taskIdentifierParam
+            );
+        }
+
+        final Task task = taskResult.get();
+        if (task instanceof AssignableTask) {
+            final AssignableTask assignableTask = (AssignableTask) task;
+
+            final List<Role> assignedRoles = assignableTask
+                .getAssignments()
+                .stream()
+                .map(TaskAssignment::getRole)
+                .collect(Collectors.toList());
+
+            final List<Role> newAssignements = section
+                .getRoles()
+                .stream()
+                .filter(role -> assignments.contains(role.getUuid()))
+                .filter(role -> !assignedRoles.contains(role))
+                .collect(Collectors.toList());
+
+            final List<Role> removedAssignments = assignedRoles
+                .stream()
+                .filter(role -> !assignments.contains(role.getUuid()))
+                .collect(Collectors.toList());
+
+            for (final Role role : newAssignements) {
+                assignableTaskManager.assignTask(assignableTask, role);
+            }
+
+            for (final Role role : removedAssignments) {
+                assignableTaskManager.retractTask(assignableTask, role);
+            }
+        }
 
         return String.format(
             "redirect:/%s/configuration/workflows/%s/tasks/%s",

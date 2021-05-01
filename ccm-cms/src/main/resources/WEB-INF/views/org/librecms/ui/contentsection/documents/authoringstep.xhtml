@@ -9,13 +9,13 @@
             <ul class="nav nav-tabs">
                 <li class="nav-item">
                     <a class="nav-link #{activeDocumentTab == 'editTab' ? 'active' : ''}"
-                       href="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}">
+                       href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}">
                         #{CmsAdminMessages['contentsection.document.tabs.edit.title']}
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link #{activeDocumentTab == 'history' ? 'active' : ''}"
-                       href="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@history">
+                       href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@history">
                         #{CmsAdminMessages['contentsection.document.tabs.history.title']}
                     </a>
                 </li>
@@ -35,33 +35,44 @@
                         </button>
                     </p>
                     <p>
-                        #{CmsAdminMessages['contentsection.document.authoring.workflow.active_task']}
                         <c:choose>
                             <c:when test="#{CmsSelectedDocumentModel.currentTask != null}">
+                                #{CmsAdminMessages['contentsection.document.authoring.workflow.active_task']}
                                 #{CmsSelectedDocumentModel.currentTask.label}
                             </c:when>
                             <c:otherwise>
                                 #{CmsAdminMessages['contentsection.document.authoring.workflow.active_task.none']}
+                                <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@workflow/@start"
+                                      method="post">
+                                    <input name="returnUrl"
+                                               type="hidden"
+                                               value="#{CmsArticlePropertiesStep.stepPath}" />
+                                    
+                                    <button class="btn btn-primary" 
+                                                type="submit">
+                                            #{CmsAdminMessages['contentsection.document.authoring.workflow.start']}
+                                        </button>
+                                </form>
                             </c:otherwise>
                         </c:choose>
                         <c:if test="#{CmsSelectedDocumentModel.currentTask != null}">
                             <c:choose>
                                 <c:when test="#{CmsSelectedDocumentModel.currentTask.assignedToCurrentUser and CmsSelectedDocumentModel.currentTask.locked}">
-                                    <form action="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@workflow/tasks/UUID-#{CmsSelectedDocumentModel.currentTask.taskUuid}/@unlock"
+                                    <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@workflow/tasks/UUID-#{CmsSelectedDocumentModel.currentTask.taskUuid}/@unlock"
                                           method="post">
                                         <input name="returnUrl"
                                                type="hidden"
-                                               value="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/#{authoringStep}" />
+                                               value="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/#{authoringStep}" />
                                         <button class="btn btn-secondary btn-sm" 
                                                 type="submit">
                                             #{CmsAdminMessages['contentsection.document.authoring.workflow.active_task.release']}
                                         </button>
                                     </form>
-                                    <form action="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@workflow/tasks/UUID-#{CmsSelectedDocumentModel.currentTask.taskUuid}/@finish"
+                                    <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@workflow/tasks/UUID-#{CmsSelectedDocumentModel.currentTask.taskUuid}/@finish"
                                           method="post">
                                         <input name="returnUrl"
                                                type="hidden"
-                                               value="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/#{authoringStep}" />
+                                               value="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/#{authoringStep}" />
                                         <button class="btn btn-secondary btn-sm" 
                                                 type="submit">
                                             #{CmsAdminMessages['contentsection.document.authoring.workflow.active_task.finish']}
@@ -69,11 +80,11 @@
                                     </form>
                                 </c:when>
                                 <c:when test="#{CmsSelectedDocumentModel.currentTask.locked and CmsSelectedDocumentModel.canChangeWorkflow}">
-                                    <form action="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@workflow/tasks/UUID-#{CmsSelectedDocumentModel.currentTask.taskUuid}/@lock"
+                                    <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@workflow/tasks/UUID-#{CmsSelectedDocumentModel.currentTask.taskUuid}/@lock"
                                           method="post">
                                         <input name="returnUrl"
                                                type="hidden"
-                                               value="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/#{authoringStep}" />
+                                               value="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/#{authoringStep}" />
                                         <button class="btn btn-secondary btn-sm"
                                                 type="submit">
                                             #{CmsAdminMessages['contentsection.document.authoring.workflow.active_task.takeover']}
@@ -81,10 +92,10 @@
                                     </form>
                                 </c:when>
                                 <c:when test="#{CmsSelectedDocumentModel.currentTask.assignedToCurrentUser or CmsSelectedDocumentModel.canChangeWorkflow}">
-                                    <form action="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@workflow/tasks/UUID-#{CmsSelectedDocumentModel.currentTask.taskUuid}/@lock">
+                                    <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@workflow/tasks/UUID-#{CmsSelectedDocumentModel.currentTask.taskUuid}/@lock">
                                         <input name="returnUrl"
                                                type="hidden"
-                                               value="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/#{authoringStep}" />
+                                               value="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringsteps/#{authoringStep}" />
                                         <button class="btn btn-secondary btn-sm" 
                                                 type="button">
                                             #{CmsAdminMessages['contentsection.document.authoring.workflow.active_task.lock']}
@@ -113,14 +124,14 @@
                             <li aria-current="#{'categorize' == authoringStep ? 'true' : ''}"
                                 class="list-group-item #{'categorize' == authoringStep ? 'active' : ''}">
                                 <a class="list-group-item-action"
-                                   href="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@categorization">
+                                   href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@categorization">
                                     #{CmsAdminMessages['contentsection.document.authoring.steps.categorize.label']}
                                 </a>
                             </li>
                             <li aria-current="#{'relatedInfo' == authoringStep ? 'true' : ''}"
                                 class="list-group-item #{'relatedInfo' == authoringStep ? 'active' : ''}">
                                 <a class="list-group-item-action"
-                                   href="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo">
+                                   href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo">
                                     #{CmsAdminMessages['contentsection.document.authoring.steps.relatedInfo.label']}
                                 </a>
                             </li>
@@ -129,7 +140,7 @@
                         <li aria-current="#{'publish' == authoringStep ? 'true' : ''}"
                             class="list-group-item #{'publish' == authoringStep ? 'active' : ''}">
                             <a class="list-group-item-action"
-                               href="#{mvc.basePath}/documents/#{CmsSelectedDocumentModel.itemPath}/@publish">
+                               href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@publish">
                                 #{CmsAdminMessages['contentsection.document.authoring.steps.publish.label']}
                             </a>
                         </li>

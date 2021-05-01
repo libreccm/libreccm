@@ -132,7 +132,7 @@ public class DocumentWorkflowController {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String lockTask(
-        @PathParam("sectionIdentifider") final String sectionIdentifier,
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("documentPath") final String documentPath,
         @PathParam("taskIdentifier") final String taskIdentifier,
         @FormParam("returnUrl") final String returnUrl
@@ -189,7 +189,7 @@ public class DocumentWorkflowController {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String unlockTask(
-        @PathParam("sectionIdentifider") final String sectionIdentifier,
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("documentPath") final String documentPath,
         @PathParam("taskIdentifier") final String taskIdentifier,
         @FormParam("returnUrl") final String returnUrl
@@ -247,7 +247,7 @@ public class DocumentWorkflowController {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String finishTask(
-        @PathParam("sectionIdentifider") final String sectionIdentifier,
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("documentPath") final String documentPath,
         @PathParam("taskIdentifier") final String taskIdentifier,
         @FormParam("comment") @DefaultValue("") final String comment,
@@ -310,7 +310,7 @@ public class DocumentWorkflowController {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String applyAlternateWorkflow(
-        @PathParam("sectionIdentifider") final String sectionIdentifier,
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("documentPath") final String documentPath,
         @FormParam("newWorkflowUuid") final String newWorkflowUuid,
         @FormParam("returnUrl") final String returnUrl
@@ -363,6 +363,27 @@ public class DocumentWorkflowController {
     }
 
     /**
+     * Starts the workflow assigned to an content item.
+     *
+     * @param sectionIdentifier The identifier of the current content section.
+     * @param documentPath      The path of the current document.
+     * @param returnUrl         The URL to return to.
+     *
+     * @return A redirect to the {@code returnUrl}.
+     */
+    @POST
+    @Path("/@start")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String startWorkflow(
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
+        @PathParam("documentPath") final String documentPath,
+        @FormParam("returnUrl") final String returnUrl
+    ) {
+        return restartWorkflow(sectionIdentifier, documentPath, returnUrl);
+    }
+    
+    /**
      * Restarts the workflow assigned to an content item.
      *
      * @param sectionIdentifier The identifier of the current content section.
@@ -376,7 +397,7 @@ public class DocumentWorkflowController {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String restartWorkflow(
-        @PathParam("sectionIdentifider") final String sectionIdentifier,
+        @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("documentPath") final String documentPath,
         @FormParam("returnUrl") final String returnUrl
     ) {

@@ -162,6 +162,10 @@ public class WorkflowManager implements Serializable {
                                     tasks);
             });
 
+        for(final Map.Entry<Long, Task> task : tasks.entrySet()) {
+            task.getValue().setTaskState(TaskState.DISABLED);
+        }
+        
         workflow.setObject(object);
         workflow.setState(WorkflowState.INIT);
 
