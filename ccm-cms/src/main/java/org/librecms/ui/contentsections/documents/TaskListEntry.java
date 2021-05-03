@@ -69,6 +69,11 @@ public class TaskListEntry {
      * Is the task locked?
      */
     private boolean locked;
+    
+    /**
+     * Is the task locked by the current user?
+     */
+    private boolean lockedByCurrentUser;
 
     public String getTaskUuid() {
         return taskUuid;
@@ -126,4 +131,14 @@ public class TaskListEntry {
         this.locked = locked;
     }
 
+    public boolean isLockedByCurrentUser() {
+        return lockedByCurrentUser;
+    }
+
+    public void setLockedByCurrentUser(final boolean lockedByCurrentUser) {
+        this.lockedByCurrentUser = lockedByCurrentUser;
+    }
+
+    
+    
 }

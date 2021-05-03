@@ -128,7 +128,7 @@ public class DocumentWorkflowController {
      * @return A redirect to the {@code returnUrl}.
      */
     @POST
-    @Path("/tasks/${taskIdentifier}/@lock")
+    @Path("/tasks/{taskIdentifier}/@lock")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String lockTask(
@@ -185,7 +185,7 @@ public class DocumentWorkflowController {
      * @return A redirect to the {@code returnUrl}.
      */
     @POST
-    @Path("/tasks/${taskIdentifier}/@unlock")
+    @Path("/tasks/{taskIdentifier}/@unlock")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String unlockTask(
@@ -243,7 +243,7 @@ public class DocumentWorkflowController {
      * @return A redirect to the {@code returnUrl}.
      */
     @POST
-    @Path("/tasks/${taskIdentifier}/@finish")
+    @Path("/tasks/{taskIdentifier}/@finish")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String finishTask(

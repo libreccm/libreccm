@@ -220,7 +220,7 @@ public class AssignableTaskManager implements Serializable {
 
         return query.getResultList();
     }
-
+ 
     /**
      * Finishes a {@link AssignableTask}.
      *

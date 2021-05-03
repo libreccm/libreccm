@@ -243,6 +243,7 @@ public abstract class AbstractMvcAuthoringStep implements MvcAuthoringStep {
             );
         final String docPath = Optional
             .ofNullable(documentPath)
+            .map(this::withoutLeadingSlash)
             .orElseThrow(
                 () -> new WebApplicationException(
                     String.format(
@@ -377,4 +378,11 @@ public abstract class AbstractMvcAuthoringStep implements MvcAuthoringStep {
             .orElse("");
     }
 
+    private String withoutLeadingSlash(final String path) {
+        if (path.startsWith("/")) {
+            return path.substring(1);
+        } else {
+            return path;
+        }
+    }
 }

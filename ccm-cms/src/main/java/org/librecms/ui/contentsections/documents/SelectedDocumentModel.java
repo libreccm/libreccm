@@ -298,6 +298,12 @@ public class SelectedDocumentModel {
                 .orElse(false)
         );
         entry.setLocked(task.isLocked());
+        entry.setLockedByCurrentUser(
+            shiro
+            .getUser()
+            .map(user -> Objects.equals(user, task.getLockingUser()))
+            .orElse(false)
+        );
 
         return entry;
     }
