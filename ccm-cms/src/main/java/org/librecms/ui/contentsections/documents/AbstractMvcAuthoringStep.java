@@ -87,6 +87,8 @@ public abstract class AbstractMvcAuthoringStep implements MvcAuthoringStep {
     private ContentItem document;
 
     private String documentPath;
+    
+    private String stepPath;
 
     /**
      * Inits the step. This method MUST be called by all resource methods (all
@@ -128,8 +130,29 @@ public abstract class AbstractMvcAuthoringStep implements MvcAuthoringStep {
         documentModel.setContentItem(document);
 
         this.documentPath = itemManager.getItemPath(document);
+         final Map<String, String> values = new HashMap<>();
+        values.put(
+            MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM,
+            contentSection.getLabel()
+        );
+        values.put(
+            MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME,
+            documentPath
+        );
+
+        stepPath = Optional
+            .ofNullable(getStepClass().getAnnotation(Path.class))
+            .map(Path::value)
+            .map(
+                path -> UriBuilder
+                    .fromPath(path)
+                    .buildFromMap(values)
+                    .toString()
+            )
+            .orElse("");
 
         models.put("activeDocumentTab", "editTab");
+        models.put("stepPath", stepPath);
     }
 
     @Override
@@ -229,52 +252,7 @@ public abstract class AbstractMvcAuthoringStep implements MvcAuthoringStep {
 
     @Override
     public String getStepPath() {
-        final ContentSection section = Optional
-            .ofNullable(contentSection)
-            .orElseThrow(
-                () -> new WebApplicationException(
-                    String.format(
-                        "Authoring Step %s was not initalized properly. "
-                            + "Did you forget to call %s#init()?",
-                        getStepClass().getName(),
-                        AbstractMvcAuthoringStep.class.getName()
-                    )
-                )
-            );
-        final String docPath = Optional
-            .ofNullable(documentPath)
-            .map(this::withoutLeadingSlash)
-            .orElseThrow(
-                () -> new WebApplicationException(
-                    String.format(
-                        "Authoring Step %s was not initalized properly. "
-                            + "Did you forget to call %s#init()?",
-                        getStepClass().getName(),
-                        AbstractMvcAuthoringStep.class.getName()
-                    )
-                )
-            );
-
-        final Map<String, String> values = new HashMap<>();
-        values.put(
-            MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM,
-            section.getLabel()
-        );
-        values.put(
-            MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME,
-            docPath
-        );
-
-        return Optional
-            .ofNullable(getStepClass().getAnnotation(Path.class))
-            .map(Path::value)
-            .map(
-                path -> UriBuilder
-                    .fromPath(path)
-                    .buildFromMap(values)
-                    .toString()
-            )
-            .orElse("");
+        return stepPath;
     }
 
     @Override

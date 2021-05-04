@@ -50,13 +50,15 @@ import javax.ws.rs.PathParam;
 
 import org.librecms.ui.contentsections.documents.MvcAuthoringStepDef;
 
+import java.util.Collections;
+
 /**
  * Authoring step for editing the main text of an {@link Article}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Path(MvcAuthoringSteps.PATH_PREFIX + "text")
+@Path(MvcAuthoringSteps.PATH_PREFIX + "article-text")
 @Controller
 @Named("CmsArticleTextBodyStep")
 @MvcAuthoringStepDef(
@@ -88,11 +90,15 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
     @Inject
     private ItemPermissionChecker itemPermissionChecker;
 
+    private Map<String, String> textValues;
+
+    private List<String> unusedLocales;
+
     @Override
     public Class<MvcArticleTextBodyStep> getStepClass() {
         return MvcArticleTextBodyStep.class;
     }
-    
+
     @GET
     @Path("/")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -111,6 +117,28 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
         }
 
         if (itemPermissionChecker.canEditItem(getArticle())) {
+            textValues = getArticle()
+                .getText()
+                .getValues()
+                .entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> entry.getValue()
+                    )
+                );
+
+            final Set<Locale> locales = getArticle()
+                .getText()
+                .getAvailableLocales();
+            unusedLocales = globalizationHelper
+                .getAvailableLocales()
+                .stream()
+                .filter(locale -> !locales.contains(locale))
+                .map(Locale::toString)
+                .collect(Collectors.toList());
+
             return "org/librecms/ui/contenttypes/article/article-text.xhtml";
         } else {
             return documentUi.showAccessDenied(
@@ -127,17 +155,7 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
      * @return The localized values of the main text.
      */
     public Map<String, String> getTextValues() {
-        return getArticle()
-            .getText()
-            .getValues()
-            .entrySet()
-            .stream()
-            .collect(
-                Collectors.toMap(
-                    entry -> entry.getKey().toString(),
-                    entry -> entry.getValue()
-                )
-            );
+        return Collections.unmodifiableMap(textValues);
     }
 
     /**
@@ -146,15 +164,7 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
      * @return The locales for which the main text has not been defined yet.
      */
     public List<String> getUnusedLocales() {
-        final Set<Locale> locales = getArticle()
-            .getText()
-            .getAvailableLocales();
-        return globalizationHelper
-            .getAvailableLocales()
-            .stream()
-            .filter(locale -> !locales.contains(locale))
-            .map(Locale::toString)
-            .collect(Collectors.toList());
+        return Collections.unmodifiableList(unusedLocales);
     }
 
     /**
@@ -257,7 +267,7 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
     @POST
     @Path("/@remove/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String remvoeTextValue(
+    public String removeTextValue(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
         @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
