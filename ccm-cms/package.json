@@ -5,21 +5,28 @@
     "main": "index.js",
     "scripts": {
         "build": "npm-run-all build:*:*",
-        "build:ccm-admin:js": "parcel build --out-dir target/generated-resources/assets/@content-sections src/main/typescript/content-sections/cms-admin.ts",
-        "build:ccm-admin:css": "sass src/main/scss/content-sections/cms-admin.scss target/generated-resources/assets/@content-sections/cms-admin.css"
+        "build:ccm-admin:js": "parcel build --target --dist-dir target/generated-resources/assets/@content-sections src/main/typescript/content-sections/cms-admin.ts",
+        "build:ccm-admin:css": "sass src/main/scss/content-sections/cms-admin.scss target/generated-resources/assets/@content-sections/cms-admin.css",
+        "build:cms-editor:js": "parcel build --target --dist-dir target/generated-resources/assets/@content-sections src/main/typescript/content-sections/cms-editor.ts"
     },
     "author": "Jens Pelzetter",
     "license": "LGPL-3.0-or-later",
     "devDependencies": {
+        "@parcel/transformer-typescript-tsc": "^2.0.0-beta.1",
         "npm-run-all": "^4.1.5",
-        "parcel-bundler": "^1.12.4",
+        "parcel": "^2.0.0-beta.2",
         "sass": "^1.32.12",
         "typescript": "^4.2.4"
     },
     "dependencies": {
+        "@tiptap/core": "^2.0.0-beta.46",
+        "@tiptap/starter-kit": "^2.0.0-beta.43",
         "bootstrap": "^4.6.0",
         "bootstrap-icons": "^1.4.1",
         "jquery": "^3.6.0",
         "popper.js": "^1.16.1"
+    },
+    "targets": {
+        "main": false
     }
 }

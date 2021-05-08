@@ -18,6 +18,9 @@
  */
 package org.librecms.ui.contenttypes;
 
+import com.arsdigita.kernel.KernelConfig;
+
+import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.l10n.LocalizedString;
 import org.librecms.contentsection.ContentItemRepository;
@@ -72,6 +75,9 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
     @Inject
     private ArticleMessageBundle articleMessageBundle;
 
+    @Inject
+    private ConfigurationManager confManager;
+
     /**
      * Used for retrieving and saving the article.
      */
@@ -93,6 +99,8 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
     private Map<String, String> textValues;
 
     private List<String> unusedLocales;
+    
+    private String selectedLocale;
 
     @Override
     public Class<MvcArticleTextBodyStep> getStepClass() {
@@ -117,29 +125,8 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
         }
 
         if (itemPermissionChecker.canEditItem(getArticle())) {
-            textValues = getArticle()
-                .getText()
-                .getValues()
-                .entrySet()
-                .stream()
-                .collect(
-                    Collectors.toMap(
-                        entry -> entry.getKey().toString(),
-                        entry -> entry.getValue()
-                    )
-                );
-
-            final Set<Locale> locales = getArticle()
-                .getText()
-                .getAvailableLocales();
-            unusedLocales = globalizationHelper
-                .getAvailableLocales()
-                .stream()
-                .filter(locale -> !locales.contains(locale))
-                .map(Locale::toString)
-                .collect(Collectors.toList());
-
-            return "org/librecms/ui/contenttypes/article/article-text.xhtml";
+//            return "org/librecms/ui/contenttypes/article/article-text.xhtml";
+            return "org/librecms/ui/contenttypes/article/article-text/available-languages.xhtml";
         } else {
             return documentUi.showAccessDenied(
                 getContentSection(),
@@ -167,13 +154,16 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
         return Collections.unmodifiableList(unusedLocales);
     }
 
+    public String getSelectedLocale() {
+        return selectedLocale;
+    }
+    
     /**
      * Adds a localized main text.
      *
      * @param sectionIdentifier
      * @param documentPath
      * @param localeParam       The locale of the text.
-     * @param value             The text.
      *
      * @return A redirect to this authoring step.
      */
@@ -185,8 +175,7 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
         final String sectionIdentifier,
         @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
-        @FormParam("locale") final String localeParam,
-        @FormParam("value") final String value
+        @FormParam("locale") final String localeParam
     ) {
         try {
             init();
@@ -196,17 +185,95 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
             return ex.showErrorMessage();
         }
 
+        final KernelConfig kernelConfig = confManager.findConfiguration(
+            KernelConfig.class
+        );
+        final Locale defaultLocale = kernelConfig.getDefaultLocale();
+
         if (itemPermissionChecker.canEditItem(getArticle())) {
+            final String value;
+            if (getArticle().getText().getAvailableLocales().isEmpty()) {
+                value = "Lorem ipsum";
+            } else {
+                value = getArticle().getText().getValue(defaultLocale);
+            }
             final Locale locale = new Locale(localeParam);
             getArticle().getText().addValue(locale, value);
             itemRepo.save(getArticle());
 
-            return buildRedirectPathForStep();
+            return String.format(
+                "%s/%s/@edit",
+                buildRedirectPathForStep(),
+                locale.toString()
+            );
         } else {
             return documentUi.showAccessDenied(
                 getContentSection(),
                 getArticle(),
                 getLabel()
+            );
+        }
+    }
+    
+    @GET
+    @Path("/{locale}/@view")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String viewTextValue(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
+        final String documentPath,
+        @PathParam("locale") final String localeParam
+    ) {
+          try {
+            init();
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
+
+        if (itemPermissionChecker.canEditItem(getArticle())) {
+            selectedLocale = new Locale(localeParam).toString();
+            
+            return "org/librecms/ui/contenttypes/article/article-text/view.xhtml";
+        } else {
+            return documentUi.showAccessDenied(
+                getContentSection(),
+                getArticle(),
+                articleMessageBundle.getMessage("article.edit.denied")
+            );
+        }
+    }
+
+
+    @GET
+    @Path("/{locale}/@edit")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String editTextValue(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
+        final String documentPath,
+        @PathParam("locale") final String localeParam
+    ) {
+          try {
+            init();
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
+
+        if (itemPermissionChecker.canEditItem(getArticle())) {
+            selectedLocale = new Locale(localeParam).toString();
+            
+            return "org/librecms/ui/contenttypes/article/article-text/edit.xhtml";
+        } else {
+            return documentUi.showAccessDenied(
+                getContentSection(),
+                getArticle(),
+                articleMessageBundle.getMessage("article.edit.denied")
             );
         }
     }
@@ -222,7 +289,7 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
      * @return A redirect to this authoring step.
      */
     @POST
-    @Path("/@edit/{locale}")
+    @Path("/{locale}/@edit")
     @Transactional(Transactional.TxType.REQUIRED)
     public String editTextValue(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
@@ -265,7 +332,7 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
      * @return A redirect to this authoring step.
      */
     @POST
-    @Path("/@remove/{locale}")
+    @Path("/{locale}/@remove")
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeTextValue(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
@@ -294,6 +361,36 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
                 getArticle(),
                 getLabel()
             );
+        }
+    }
+
+    @Override
+    protected void init() throws ContentSectionNotFoundException,
+                                 DocumentNotFoundException {
+        super.init();
+
+        if (itemPermissionChecker.canEditItem(getArticle())) {
+            textValues = getArticle()
+                .getText()
+                .getValues()
+                .entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> entry.getValue()
+                    )
+                );
+
+            final Set<Locale> locales = getArticle()
+                .getText()
+                .getAvailableLocales();
+            unusedLocales = globalizationHelper
+                .getAvailableLocales()
+                .stream()
+                .filter(locale -> !locales.contains(locale))
+                .map(Locale::toString)
+                .collect(Collectors.toList());
         }
     }
 

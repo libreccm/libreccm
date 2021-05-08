@@ -16,6 +16,11 @@
                       required="true"
                       shortDescription="Text of the button toggling the modal form."
                       type="String" />
+        <cc:attribute name="buttonLabelClass"
+                      default=""
+                      required="false"
+                      shortDescription="Class(es) for the button text."
+                      type="String" />
         <cc:attribute name="buttonTextClass"
                       default=""
                       required="false"
@@ -57,7 +62,7 @@
                 <c:if test="#{!cc.attrs.buttonIcon.isEmpty()}">
                     <bootstrap:svgIcon icon="x-circle" />
                 </c:if>
-                <span>#{cc.attrs.buttonText}</span>
+                <span class="#{cc.attrs.buttonLabelClass}">#{cc.attrs.buttonText}</span>
             </button>
         </div>
         <div aria-labelledby="#{cc.attrs.dialogId}-title}"

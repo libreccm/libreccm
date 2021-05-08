@@ -1,0 +1,132 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/authoringstep.xhtml">
+
+        <ui:define name="authoringStep">
+            <h2>#{CmsArticleMessageBundle['textstep.header.languages']}</h2>
+
+            <c:if test="#{CmsArticleTextBodyStep.canEdit and !CmsArticleTextBodyStep.unusedLocales.isEmpty()}">
+                <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@article-text/@add"
+                      method="post">
+                    <div class="d-flex justify-content-start">
+                        <div class="form-group mr-2">
+                            <label for="add-locale">#{CmsArticleMessageBundle['textstep.languages.add_language.label']}</label>
+                            <select aria-describedby="add-locale-help" 
+                                    name="locale"
+                                    size="1">
+                                <c:forEach items="#{CmsArticleTextBodyStep.unusedLocales}"
+                                           var="locale">
+                                    <option value="#{locale}">#{locale}</option>
+                                </c:forEach>
+                            </select>
+                            <small id="add-locale-help"
+                                   class="form-text text-muted">
+                                #{CmsArticleMessageBundle['textstep.languages.add_language.help']}
+                            </small>
+                        </div>
+                        <button class="btn btn-secondary align-self-start"
+                                type="submit">
+                            <bootstrap:svgIcon icon="plus-circle" />
+                            <span>
+                                #{CmsArticleMessageBundle['textstep.languages.add_language.submit']}
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </c:if>
+            <c:choose>
+                <c:when test="#{CmsArticleTextBodyStep.textValues.isEmpty()}">
+                    #{CmsArticleMessageBundle['textstep.languages.none']}
+                </c:when>
+                <c:otherwise>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#{CmsArticleMessageBundle['textstep.languages.th.language']}</th>
+                                <th>#{CmsArticleMessageBundle['textstep.languages.th.actions']}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach items="#{CmsArticleTextBodyStep.textValues}" 
+                                       var="entry">
+                                <tr>
+                                    <td>#{entry.key}</td>
+                                    <td>
+                                        <a class="btn btn-secondary"
+                                           href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@article-text/#{entry.key}/@view">
+                                            <bootstrap:svgIcon icon="eye" />
+                                            <span class="sr-only">#{CmsArticleMessageBundle['textstep.languages.view']}</span>
+                                        </a>
+                                        <c:if test="#{CmsArticleTextBodyStep.canEdit}">
+                                            <a class="btn btn-secondary"
+                                               href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@article-text/#{entry.key}/@edit">
+                                                <bootstrap:svgIcon icon="pen" />
+                                                <span class="sr-only">#{CmsArticleMessageBundle['textstep.languages.edit']}</span>
+                                            </a>
+                                            <button class="btn btn-danger"
+                                                    data-target="#remove-locale-#{entry.key}-dialog"
+                                                    data-toggle="modal"
+                                                    type="button">
+                                                <bootstrap:svgIcon icon="x-circle" />
+                                                <span class="sr-only">#{CmsArticleMessageBundle['textstep.languages.remove']}</span>
+                                            </button>
+                                            <div aria-labelledby="remove-locale-#{entry.key}-dialog-title"
+                                                 aria-hidden="true"
+                                                 class="modal fade"
+                                                 data-backdrop="static"
+                                                 id="remove-locale-#{entry.key}-dialog"
+                                                 tabindex="-1">
+                                                <div class="modal-dialog">
+                                                    <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@article-text/#{entry.key}/@remove"
+                                                          class="modal-content"
+                                                          method="post">
+                                                        <div class="modal-header">
+                                                            <div class="modal-title">
+                                                                <h3 class="remove-locale-#{entry.key}-dialog-title">#{CmsArticleMessageBundle.getMessage('textstep.languages.remove.title', [entry.key])}</h3>
+                                                                <button aria-label="#{CmsArticleMessageBundle['textstep.languages.remove.cancel']}"
+                                                                        class="close"
+                                                                        data-dismiss="modal"
+                                                                        type="button">
+                                                                    <bootstrap:svgIcon icon="x" />
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <input name="confirmed" type="hidden" value="true" />
+                                                            <p>
+                                                                #{CmsArticleMessageBundle.getMessage('textstep.languages.remove.message', [entry.key])}
+                                                            </p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button class="btn btn-secondary" 
+                                                                    data-dismiss="modal"
+                                                                    type="button" >
+                                                                #{CmsArticleMessageBundle['textstep.languages.remove.cancel']}
+                                                            </button>
+                                                            <button type="submit" class="btn btn-danger">
+                                                                #{CmsArticleMessageBundle['textstep.languages.remove.confirm']}
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <!--                                    <button class="btn btn-secondary"
+                                                                                        href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@article-text/#{entry.key}/@delete">
+                                                                                    <bootstrap:svgIcon icon="eye" />
+                                                                                    <span>{CmsArticleMessageBundle['textstep.languages.view']}</span>
+                                                                                </button>-->
+                                        </c:if>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </c:otherwise>
+            </c:choose>
+        </ui:define>
+    </ui:composition>
+</html>

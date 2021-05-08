@@ -1,0 +1,32 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/authoringstep.xhtml">
+
+        <ui:define name="authoringStep">
+            <div class="d-flex">
+                <a  class="btn btn-secondary btn-sm mr-2"
+                    href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@article-text">
+                    <bootstrap:svgIcon icon="caret-left-fill" />
+                    <span class="sr-only">#{CmsArticleMessageBundle['textstep.back']}</span>
+                </a>
+                <h2>#{CmsArticleMessageBundle.getMessage('textstep.header.edit',[CmsArticleTextBodyStep.selectedLocale])}</h2>
+            </div>
+
+
+
+            <pre>selected locale: #{CmsArticleTextBodyStep.selectedLocale}</pre>
+
+            <c:if test="#{CmsArticleTextBodyStep.canEdit}">
+                <div class="cms-editor">
+                    #{CmsArticleTextBodyStep.textValues.get(CmsArticleTextBodyStep.selectedLocale)}
+                </div>
+            </c:if>
+
+        </ui:define>
+    </ui:composition>
+</html>
+
