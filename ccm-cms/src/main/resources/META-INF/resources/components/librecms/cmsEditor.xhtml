@@ -1,0 +1,560 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <cc:interface shortDescription="A editor component for HTML texts using the TipTap editor. To use this component you have also to include the cms-editor.js file into the page.">
+        <cc:attribute name="addMethod"
+                      required="true"
+                      shortDescription="URL of teh endpoint for adding localized values."
+                      type="String" />
+        <cc:attribute name="addButtonLabel"
+                      default="Add"
+                      required="false"
+                      shortDescription="Label for the add button"
+                      type="String" />
+        <cc:attribute name="addDialogCancelLabel" 
+                      default="Cancel" 
+                      required="false"
+                      shortDescription="Label for the cancel and close buttons." 
+                      type="String" />
+        <cc:attribute name="addDialogLocaleSelectHelp" 
+                      default="The locale of the value of add" 
+                      required="false" 
+                      shortDescription="Help text for the locale select field"
+                      type="String" />
+        <cc:attribute name="addDialogLocaleSelectLabel" 
+                      default="Locale" 
+                      required="false" 
+                      shortDescription="Label for the locale select field"
+                      type="String" />
+        <cc:attribute name="addDialogSubmitLabel"
+                      default="Add"
+                      required="false"
+                      shortDescription="Label for the submit button"
+                      type="String" />
+        <cc:attribute name="addDialogTitle" 
+                      default="Add localization" 
+                      required="false" 
+                      shortDescription="Title for the dialog." 
+                      type="String" />
+        <cc:attribute name="canEdit" 
+                      default="true"
+                      required="false"
+                      shortDescription="Can the current user edit the text?"
+                      type="boolean" />
+        <cc:attribute name="editButtonLabel" 
+                      default="Edit" 
+                      required="false" 
+                      shortDescription="Label for the edit button" 
+                      type="String" />
+        <cc:attribute name="editDialogCancelLabel"
+                      default="Cancel"
+                      required="false"
+                      shortDescription="Label for the cancel and close button of the edit dialog"
+                      type="String" />
+        <cc:attribute name="editDialogSubmitLabel"
+                      default="save"
+                      required="false"
+                      shortDescription="Label for the submit button of the edit dialog"
+                      type="String" />
+        <cc:attribute name="editDialogValueHelp"
+                      default="Value to update"
+                      required="false"
+                      shortDescription="Help text for the value field"
+                      type="String" />
+        <cc:attribute name="editDialogValueLabel"
+                      default="Value"
+                      required="false"
+                      shortDescription="Label for the value field"
+                      type="String" />
+        <cc:attribute name="editDialogTitle"
+                      default="Edit localized value"
+                      required="false"
+                      shortDescription="Title for the edit dialog"
+                      type="String" />
+        <cc:attribute name="editMethod"
+                      required="true"
+                      shortDescription="URL of the endpoint for editing/updating a value. The value of the locale to update is added after the provided URL, eg. /de for updating the german value."
+                      type="String" />
+        <cc:attribute name="hasUnusedLocales" 
+                      required="true" 
+                      shortDescription="Are there unused locales? This will usually be an expression pointing to some method. The result must resolve to boolean." 
+                      type="boolean" />
+        <cc:attribute name="headingLevel" 
+                      default="2" 
+                      required="false" 
+                      shortDescription="Level of the heading used for the component. Also determines the heading levels used for other parts of the component." 
+                      type="int" />
+        <cc:attribute name="editorId" 
+                      required="true" 
+                      shortDescription="ID for the editor. Also used as prefix to generate IDs for some subcomponents" 
+                      type="String" />
+        <cc:attribute name="emptyText"
+                      default="No localized values"
+                      required="false"
+                      shortDescription="Text shown if the localized has no values yet."
+                      type="String" />
+        <cc:attribute name="messageSaveFailed"
+                      default="Failed to save."
+                      required="false"
+                      type="String" />
+        <cc:attribute name="messageSaveSuccessful"
+                      default="Saved sucessfully."
+                      required="false"
+                      type="String" />
+        <cc:attribute name="messageVariantLoadFailed"
+                      default="Failed to load variant."
+                      required="false"
+                      type="String" />
+        <cc:attribute name="objectIdentifier"
+                      required="true"
+                      shortDescription="Identifier of the object to which the localized string belongs"
+                      type="String" />
+        <cc:attribute name="removeButtonLabel" 
+                      default="Remove" 
+                      required="false" 
+                      shortDescription="Label for the remove button" 
+                      type="String" />
+        <cc:attribute name="removeDialogCancelLabel" 
+                      default="Cancel" 
+                      required="false" 
+                      shortDescription="Label for the cancel and close buttons of the remove dialog" 
+                      type="String" />
+        <cc:attribute name="removeDialogSubmitLabel" 
+                      default="Remove localized value" 
+                      required="false" 
+                      shortDescription="Label for the submit button of the remove dialog (removes the localized value)" 
+                      type="String" />
+        <cc:attribute name="removeDialogText" 
+                      default="Are you sure to remove the following localized value?" 
+                      required="false" 
+                      shortDescription="Text for the remove dialog" 
+                      type="String" />
+        <cc:attribute name="removeDialogTitle" 
+                      default="Remove localized value" 
+                      required="false" 
+                      shortDescription="The title of the remove dialog" 
+                      type="String" />
+        <cc:attribute name="removeMethod"
+                      required="true"
+                      shortDescription="URL of the endpoint for remvoving a value. The locale of the value to remove is added to the end of the URL. Eg. /de for removing the value for the locale de."
+                      type="String" />
+        <cc:attribute name="tableActionsHeading"
+                      default="Actions"
+                      required="false"
+                      shortDescription="Heading for the action columns"
+                      type="String" />
+        <cc:attribute name="tableLocaleHeading"
+                      default="Locale"
+                      required="false"
+                      shortDescription="Heading for the locale column"
+                      type="String" />
+        <cc:attribute name="tableWordCountHeading"
+                      default="Words"
+                      required="false"
+                      shortDescription="Heading for the word count column"
+                      type="String" />
+        <cc:attribute name="title" 
+                      required="true" 
+                      shortDescription="Title/Heading of the editor widget" 
+                      type="String" />
+        <cc:attribute name="unusedLocales"
+                      required="true"
+                      shortDescription="A collection of the unused locales of the edited localized string"
+                      type="java.util.Collection" />
+        <cc:attribute name="variants"
+                      required="true"
+                      shortDescription="Info about the available variants. Must be a List of CmsEditorLocaleVariantRow objects."
+                      type="java.util.List" />
+        <cc:attribute name="variantUrl"
+                      required="true"
+                      shortDescription="URL of the endpoint for retrieving a variant. The locale of the variant to retrieve is appended as last token."
+                      type="String" />
+        <cc:attribute name="viewButtonLabel"
+                      default="View"
+                      type="String" />
+        <cc:attribute name="viewDialogTitle"
+                      default="View"
+                      type="String" />
+        <cc:attribute name="viewDialogEditButtonLabel"
+                      default="Edit"
+                      type="String" />
+        <cc:attribute name="viewDialogCloseButtonLabel"
+                      default="Close"
+                      type="String" />
+    </cc:interface>
+    <cc:implementation>
+        <div class="cms-editor"
+             id="#{cc.attrs.editorId}">
+            <c:choose>
+                <c:when test="#{cc.attrs.headingLevel == 1}">
+                    <h1>#{cc.attrs.title}</h1>
+                </c:when>
+                <c:when test="#{cc.attrs.headingLevel == 2}">
+                    <h2>#{cc.attrs.title}</h2>
+                </c:when>
+                <c:when test="#{cc.attrs.headingLevel == 3}">
+                    <h3>#{cc.attrs.title}</h3>
+                </c:when>
+                <c:when test="#{cc.attrs.headingLevel == 4}">
+                    <h4>#{cc.attrs.title}</h4>
+                </c:when>
+                <c:when test="#{cc.attrs.headingLevel == 5}">
+                    <h5>#{cc.attrs.title}</h5>
+                </c:when>
+                <c:when test="#{cc.attrs.headingLevel == 6}">
+                    <h6>#{cc.attrs.title}</h6>
+                </c:when>
+                <c:otherwise>
+                    <div>#{cc.attrs.title}</div>
+                </c:otherwise>
+            </c:choose>
+            <div class="cms-editor-messages">
+                <template id="cms-editor-msg-save-failed">
+                    <div class="alert alert alert-danger" role="alert">
+                        #{cc.attrs.messageSaveFailed}
+                    </div>
+                </template>
+                <template id="cms-editor-msg-save-successful">
+                    <div class="alert alert-danger" role="alert">
+                        #{cc.attrs.messageSaveSuccessful}
+                    </div>
+                </template>
+                <template id="cms-editor-msg-variant-load-failed">
+                    <div class="alert alert-warning" role="alert">
+                        #{cc.attrs.messageVariantLoadFailed}
+                    </div>
+                </template>
+            </div>
+            <c:if test="#{cc.attrs.hasUnusedLocales}">
+                <div class="mb-2">
+                    <div class="text-right">
+                        <button class="btn btn-secondary"
+                                data-target="##{cc.attrs.editorId}-dialog"
+                                data-toggle="modal"
+                                type="button">
+                            <bootstrap:svgIcon icon="plus-circle" />
+                            <span>
+                                #{cc.attrs.addButtonLabel}
+                            </span>
+                        </button>
+                    </div>
+                    <div aria-labelledby="#{cc.attrs.editorId}-dialog-title"
+                         aria-hidden="true" 
+                         class="modal fade"
+                         id="#{cc.attrs.editorId}-dialog"
+                         tabindex="-1">
+                        <div class="modal-dialog">
+                            <form action="#{cc.attrs.addMethod}"
+                                  class="modal-content"
+                                  method="post">
+                                <div class="modal-header">
+                                    <c:choose>
+                                        <c:when test="#{cc.attrs.headingLevel == 1}">
+                                            <h2 class="modal-title"
+                                                id="#{cc.attrs.editorId}-dialog-title">#{cc.attrs.addDialogTitle}</h2>
+                                        </c:when>
+                                        <c:when test="#{cc.attrs.headingLevel == 2}">
+                                            <h3 class="modal-title"
+                                                id="#{cc.attrs.editorId}-dialog-title">#{cc.attrs.addDialogTitle}</h3>
+                                        </c:when>
+                                        <c:when test="#{cc.attrs.headingLevel == 3}">
+                                            <h4 class="modal-title"
+                                                id="#{cc.attrs.editorId}-dialog-title">#{cc.attrs.addDialogTitle}</h4>
+                                        </c:when>
+                                        <c:when test="#{cc.attrs.headingLevel == 4}">
+                                            <h5 class="modal-title"
+                                                id="#{cc.attrs.editorId}-dialog-title">#{cc.attrs.addDialogTitle}</h5>
+                                        </c:when>
+                                        <c:when test="#{cc.attrs.headingLevel == 5}">
+                                            <h6 class="modal-title"
+                                                id="#{cc.attrs.editorId}-dialog-title">#{cc.attrs.addDialogTitle}</h6>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <div>#{cc.attrs.addDialogTitle}</div>
+                                        </c:otherwise>
+                                    </c:choose>
+                                    <button aria-label="#{cc.attrs.addDialogCancelLabel}"
+                                            class="close" 
+                                            data-dismiss="modal" 
+                                            type="button" >
+                                        <span aria-hidden="true">
+                                            <bootstrap:svgIcon icon="x" />
+                                        </span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="#{cc.attrs.editorId}-form-locale-select">
+                                            #{cc.attrs.addDialogLocaleSelectLabel}
+                                        </label>
+                                        <select aria-describedby="#{cc.attrs.editorId}-form-locale-select-help"
+                                                id="#{cc.attrs.editorId}-form-locale-select"
+                                                name="locale"
+                                                required="true">
+                                            <c:forEach items="#{cc.attrs.unusedLocales}" 
+                                                       var="locale">
+                                                <option value="#{locale}">#{locale}</option>
+                                            </c:forEach>
+                                        </select>
+                                        <small class="form-text text-muted"
+                                               id="#{cc.attrs.editorId}-form-locale-select-help">
+                                            #{cc.attrs.addDialogLocaleSelectHelp}
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-secondary" 
+                                            data-dismiss="modal"
+                                            type="button" >
+                                        #{cc.attrs.addDialogCancelLabel}
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        #{cc.attrs.addDialogSubmitLabel}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </c:if>
+            <c:choose>
+                <c:when test="#{cc.attrs.values.isEmpty()}">
+                    <p>
+                        #{cc.attrs.emptyText}
+                    </p>
+                </c:when>
+                <c:otherwise>
+                    <table class="cms-editor-variants table table-hover">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">#{cc.attrs.tableLocaleHeading}</th>
+                                <th scope="col">#{cc.attrs.tableWordCountHeading}</th>
+                                <th scope="col">#{cc.attrs.tableActionsHeading}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach items="#{cc.attrs.variants}" 
+                                       var="variant">
+                                <tr>
+                                    <td>#{variant.locale}</td>
+                                    <td>#{CmsAdminMessages.getMessage('cms_editor.variants.wordcount', [variant.wordCount])}</td>
+                                    <td>
+                                        <button class="btn btn-primary cms-editor-view-button"
+                                                data-view-dialog="#{cc.attrs.editorId}-view-dialog"
+                                                data-variant-url="#{cc.attrs.variantUrl}/#{variant.locale}"
+                                                type="button">
+                                            <bootstrap:svgIcon icon="eye" />
+                                            <span class="sr-only">
+                                                #{cc.attrs.viewButtonLabel}
+                                            </span>
+                                        </button>
+                                        <c:if test="#{cc.attrs.canEdit}">
+                                            <button class="btn btn-primary cms-editor-edit-button"
+                                                    data-edit-dialog="#{cc.attrs.editorId}-edit-dialog"
+                                                    data-variant-url="#{cc.attrs.variantUrl}/#{variant.locale}"
+                                                    type="button">
+                                                <bootstrap:svgIcon icon="pen" />
+                                                <span class="sr-only">
+                                                    #{cc.attrs.editButtonLabel}
+                                                </span>
+                                            </button>
+                                            <button class="btn btn-danger"
+                                                    data-target="##{cc.attrs.editorId}-#{entry.key}-remove-dialog"
+                                                    data-toggle="modal"
+                                                    type="button">
+                                                <bootstrap:svgIcon icon="x-circle" />
+                                                <span class="sr-only">
+                                                    #{cc.attrs.removeButtonLabel}
+                                                </span>
+                                            </button>
+                                            <div aria-describedby="#{cc.attrs.editorId}-#{entry.key}-remove-dialog-title"
+                                                 aria-hidden="true"
+                                                 class="modal fade"
+                                                 data-backdrop="static"
+                                                 id="#{cc.attrs.editorId}-#{entry.key}-remove-dialog"
+                                                 tabindex="-1">
+                                                <div class="modal-dialog">
+                                                    <form action="#{cc.attrs.removeMethod}/#{entry.key}"
+                                                          class="modal-content"
+                                                          method="post">
+                                                        <div class="modal-header">
+                                                            <c:choose>
+                                                                <c:when test="#{cc.attrs.headingLevel == 1}">
+                                                                    <h2>#{cc.attrs.removeDialogTitle}</h2>
+                                                                </c:when>
+                                                                <c:when test="#{cc.attrs.headingLevel == 2}">
+                                                                    <h3>#{cc.attrs.removeDialogTitle}</h3>
+                                                                </c:when>
+                                                                <c:when test="#{cc.attrs.headingLevel == 3}">
+                                                                    <h4>#{cc.attrs.removeDialogTitle}</h4>
+                                                                </c:when>
+                                                                <c:when test="#{cc.attrs.headingLevel == 4}">
+                                                                    <h5>#{cc.attrs.removeDialogTitle}</h5>
+                                                                </c:when>
+                                                                <c:when test="#{cc.attrs.headingLevel == 5}">
+                                                                    <h6>#{cc.attrs.removeDialogTitle}</h6>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <div>#{cc.attrs.removeDialogTitle}</div>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                            <button aria-label="#{cc.attrs.removeDialogCancelLabel}"
+                                                                    class="close" 
+                                                                    data-dismiss="modal" 
+                                                                    type="button"   >
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>
+                                                                #{cc.attrs.removeDialogText}
+                                                            </p>
+                                                            <pre>#{entry.key}: #{entry.value}</pre>
+                                                            <input name="confirmed"
+                                                                   type="hidden"
+                                                                   value="true" />
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button class="btn btn-secondary" 
+                                                                    data-dismiss="modal"
+                                                                    type="button" >
+                                                                #{cc.attrs.removeDialogCancelLabel}
+                                                            </button>
+                                                            <button type="submit" class="btn btn-danger">
+                                                                #{cc.attrs.removeDialogSubmitLabel}
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </c:if>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </c:otherwise>
+            </c:choose>
+        </div>
+        <div aria-describedby="#{cc.attrs.editorId}-view-dialog-title"
+             aria-hidden="true"
+             class="modal modal-xl fade"
+             data-backdrop="static"
+             id="#{cc.attrs.editorId}-view-dialog"
+             tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <c:choose>
+                            <c:when test="#{cc.attrs.headingLevel == 1}">
+                                <h2 id="#{cc.attrs.editorId}-view-dialog-title">#{cc.attrs.removeDialogTitle}</h2>
+                            </c:when>
+                            <c:when test="#{cc.attrs.headingLevel == 2}">
+                                <h3 id="#{cc.attrs.editorId}-view-dialog-title">#{cc.attrs.removeDialogTitle}</h3>
+                            </c:when>
+                            <c:when test="#{cc.attrs.headingLevel == 3}">
+                                <h4 id="#{cc.attrs.editorId}-view-dialog-title">#{cc.attrs.removeDialogTitle}</h4>
+                            </c:when>
+                            <c:when test="#{cc.attrs.headingLevel == 4}">
+                                <h5 id="#{cc.attrs.editorId}-view-dialog-title">#{cc.attrs.removeDialogTitle}</h5>
+                            </c:when>
+                            <c:when test="#{cc.attrs.headingLevel == 5}">
+                                <h6 id="#{cc.attrs.editorId}-view-dialog-title">#{cc.attrs.removeDialogTitle}</h6>
+                            </c:when>
+                            <c:otherwise>
+                                <div id="#{cc.attrs.editorId}-view-dialog-title">#{cc.attrs.removeDialogTitle}</div>
+                            </c:otherwise>
+                        </c:choose>
+                        <button aria-label="#{cc.attrs.removeDialogCancelLabel}"
+                                class="close" 
+                                data-dismiss="modal" 
+                                type="button" >
+                            <bootstrap:svgIcon icon="x" />
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" 
+                                data-dismiss="modal"
+                                type="button" >
+                            #{cc.attrs.viewDialogCloseButtonLabel}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div aria-describedby="#{cc.attrs.editorId}-edit-dialog-title"
+             aria-hidden="true"
+             class="modal modal-xl fade"
+             data-backdrop="static"
+             id="#{cc.attrs.editorId}-edit-dialog"
+             tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <c:choose>
+                            <c:when test="#{cc.attrs.headingLevel == 1}">
+                                <h2 id="#{cc.attrs.editorId}-edit-dialog-title">#{cc.attrs.removeDialogTitle}</h2>
+                            </c:when>
+                            <c:when test="#{cc.attrs.headingLevel == 2}">
+                                <h3 id="#{cc.attrs.editorId}-edit-dialog-title">#{cc.attrs.removeDialogTitle}</h3>
+                            </c:when>
+                            <c:when test="#{cc.attrs.headingLevel == 3}">
+                                <h4 id="#{cc.attrs.editorId}-edit-dialog-title">#{cc.attrs.removeDialogTitle}</h4>
+                            </c:when>
+                            <c:when test="#{cc.attrs.headingLevel == 4}">
+                                <h5 id="#{cc.attrs.editorId}-edit-dialog-title">#{cc.attrs.removeDialogTitle}</h5>
+                            </c:when>
+                            <c:when test="#{cc.attrs.headingLevel == 5}">
+                                <h6 id="#{cc.attrs.editorId}-edit-dialog-title">#{cc.attrs.removeDialogTitle}</h6>
+                            </c:when>
+                            <c:otherwise>
+                                <div id="#{cc.attrs.editorId}-edit-dialog-title">#{cc.attrs.removeDialogTitle}</div>
+                            </c:otherwise>
+                        </c:choose>
+                        <button aria-label="#{cc.attrs.removeDialogCancelLabel}"
+                                class="close" 
+                                data-dismiss="modal" 
+                                type="button" >
+                            <bootstrap:svgIcon icon="x" />
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="cms-tiptap-editor-buttons">
+                            <button class="btn btn-outline-dark tiptap-emph"
+                                type="button">
+                                <bootstrap:svgIcon icon="type-italic" />
+                                <span class="sr-only">
+                                    #{CmsAdminMessages['cms_editor.buttons.emph']}
+                                </span>
+                            </button>
+                            <button class="btn btn-outline-dark tiptap-strong-emph"
+                                type="button">
+                                <bootstrap:svgIcon icon="type-bold" />
+                                <span class="sr-only">
+                                    #{CmsAdminMessages['cms_editor.buttons.strong_emph']}
+                                </span>
+                            </button>
+                        </div>
+                        <div class="cms-tiptap-editor">
+                            
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-warning" 
+                                data-dismiss="modal"
+                                type="button" >
+                            #{cc.attrs.editDialogCancelLabel}
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            #{cc.attrs.editDialogSubmitLabel}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </cc:implementation>
+</html>

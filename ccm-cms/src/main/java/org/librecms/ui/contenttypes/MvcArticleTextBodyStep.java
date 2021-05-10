@@ -20,6 +20,8 @@ package org.librecms.ui.contenttypes;
 
 import com.arsdigita.kernel.KernelConfig;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.l10n.LocalizedString;
@@ -27,6 +29,7 @@ import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contenttypes.Article;
 import org.librecms.ui.contentsections.ItemPermissionChecker;
 import org.librecms.ui.contentsections.documents.AbstractMvcAuthoringStep;
+import org.librecms.ui.contentsections.documents.CmsEditorLocaleVariantRow;
 import org.librecms.ui.contentsections.documents.ContentSectionNotFoundException;
 import org.librecms.ui.contentsections.documents.DocumentNotFoundException;
 import org.librecms.ui.contentsections.documents.DocumentUi;
@@ -54,6 +57,7 @@ import javax.ws.rs.PathParam;
 import org.librecms.ui.contentsections.documents.MvcAuthoringStepDef;
 
 import java.util.Collections;
+import java.util.StringTokenizer;
 
 /**
  * Authoring step for editing the main text of an {@link Article}.
@@ -97,6 +101,8 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
     private ItemPermissionChecker itemPermissionChecker;
 
     private Map<String, String> textValues;
+    
+    private List<CmsEditorLocaleVariantRow> variants;
 
     private List<String> unusedLocales;
     
@@ -125,8 +131,8 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
         }
 
         if (itemPermissionChecker.canEditItem(getArticle())) {
-//            return "org/librecms/ui/contenttypes/article/article-text.xhtml";
-            return "org/librecms/ui/contenttypes/article/article-text/available-languages.xhtml";
+            return "org/librecms/ui/contenttypes/article/article-text.xhtml";
+//            return "org/librecms/ui/contenttypes/article/article-text/available-languages.xhtml";
         } else {
             return documentUi.showAccessDenied(
                 getContentSection(),
@@ -143,6 +149,10 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
      */
     public Map<String, String> getTextValues() {
         return Collections.unmodifiableMap(textValues);
+    }
+    
+    public List<CmsEditorLocaleVariantRow> getVariants() {
+        return variants;
     }
 
     /**
@@ -168,7 +178,8 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
      * @return A redirect to this authoring step.
      */
     @POST
-    @Path("/@add")
+//    @Path("/@add")
+    @Path("/add")
     @Transactional(Transactional.TxType.REQUIRED)
     public String addTextValue(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
@@ -216,7 +227,8 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
     }
     
     @GET
-    @Path("/{locale}/@view")
+//    @Path("/{locale}/@view")
+    @Path("/variants/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String viewTextValue(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
@@ -236,7 +248,8 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
         if (itemPermissionChecker.canEditItem(getArticle())) {
             selectedLocale = new Locale(localeParam).toString();
             
-            return "org/librecms/ui/contenttypes/article/article-text/view.xhtml";
+//            return "org/librecms/ui/contenttypes/article/article-text/view.xhtml";
+            return getTextValues().get(localeParam);
         } else {
             return documentUi.showAccessDenied(
                 getContentSection(),
@@ -248,7 +261,8 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
 
 
     @GET
-    @Path("/{locale}/@edit")
+//    @Path("/{locale}/@edit")
+    @Path("/edit/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String editTextValue(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
@@ -289,7 +303,8 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
      * @return A redirect to this authoring step.
      */
     @POST
-    @Path("/{locale}/@edit")
+//    @Path("/{locale}/@edit")
+    @Path("/edit/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String editTextValue(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
@@ -332,7 +347,8 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
      * @return A redirect to this authoring step.
      */
     @POST
-    @Path("/{locale}/@remove")
+//    @Path("/{locale}/@remove")
+    @Path("/remove/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeTextValue(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
@@ -381,6 +397,14 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
                         entry -> entry.getValue()
                     )
                 );
+            
+            variants = getArticle()
+                .getText()
+                .getValues()
+                .entrySet()
+                .stream()
+                .map(this::buildVariantRow)
+                .collect(Collectors.toList());
 
             final Set<Locale> locales = getArticle()
                 .getText()
@@ -396,6 +420,20 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
 
     private Article getArticle() {
         return (Article) getDocument();
+    }
+    
+    private CmsEditorLocaleVariantRow buildVariantRow(
+        final Map.Entry<Locale, String> entry
+    ) {
+        final CmsEditorLocaleVariantRow variant = new CmsEditorLocaleVariantRow();
+        variant.setLocale(entry.getKey().toString());
+        final Document document = Jsoup.parseBodyFragment(entry.getValue());
+        document.body().text();
+        variant.setWordCount(
+            new StringTokenizer(document.body().text()).countTokens()
+        );
+        
+        return variant;
     }
 
 }
