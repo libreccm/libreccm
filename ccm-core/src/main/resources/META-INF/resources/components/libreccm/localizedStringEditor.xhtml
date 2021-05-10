@@ -360,22 +360,22 @@
                                                         <div class="modal-header">
                                                             <c:choose>
                                                                 <c:when test="#{cc.attrs.headingLevel == 1}">
-                                                                    <h2>#{cc.attrs.editDialogTitle}</h2>
+                                                                    <h2 id="#{cc.attrs.editorId}-#{entry.key}-edit-dialog-title">#{cc.attrs.editDialogTitle}</h2>
                                                                 </c:when>
                                                                 <c:when test="#{cc.attrs.headingLevel == 2}">
-                                                                    <h3>#{cc.attrs.editDialogTitle}</h3>
+                                                                    <h3 id="#{cc.attrs.editorId}-#{entry.key}-edit-dialog-title">#{cc.attrs.editDialogTitle}</h3>
                                                                 </c:when>
                                                                 <c:when test="#{cc.attrs.headingLevel == 3}">
-                                                                    <h4>#{cc.attrs.editDialogTitle}</h4>
+                                                                    <h4 id="#{cc.attrs.editorId}-#{entry.key}-edit-dialog-title">#{cc.attrs.editDialogTitle}</h4>
                                                                 </c:when>
                                                                 <c:when test="#{cc.attrs.headingLevel == 4}">
-                                                                    <h5>#{cc.attrs.editDialogTitle}</h5>
+                                                                    <h5 id="#{cc.attrs.editorId}-#{entry.key}-edit-dialog-title">#{cc.attrs.editDialogTitle}</h5>
                                                                 </c:when>
                                                                 <c:when test="#{cc.attrs.headingLevel == 5}">
-                                                                    <h6>#{cc.attrs.editDialogTitle}</h6>
+                                                                    <h6 id="#{cc.attrs.editorId}-#{entry.key}-edit-dialog-title">#{cc.attrs.editDialogTitle}</h6>
                                                                 </c:when>
                                                                 <c:otherwise>
-                                                                    <div>#{cc.attrs.editDialogTitle}</div>
+                                                                    <div id="#{cc.attrs.editorId}-#{entry.key}-edit-dialog-title">#{cc.attrs.editDialogTitle}</div>
                                                                 </c:otherwise>
                                                             </c:choose>
                                                             <button aria-label="#{cc.attrs.editDialogCancelLabel}"
@@ -460,22 +460,22 @@
                                                         <div class="modal-header">
                                                             <c:choose>
                                                                 <c:when test="#{cc.attrs.headingLevel == 1}">
-                                                                    <h2>#{cc.attrs.removeDialogTitle}</h2>
+                                                                    <h2 id="#{cc.attrs.editorId}-#{entry.key}-remove-dialog-title">#{cc.attrs.removeDialogTitle}</h2>
                                                                 </c:when>
                                                                 <c:when test="#{cc.attrs.headingLevel == 2}">
-                                                                    <h3>#{cc.attrs.removeDialogTitle}</h3>
+                                                                    <h3 id="#{cc.attrs.editorId}-#{entry.key}-remove-dialog-title">#{cc.attrs.removeDialogTitle}</h3>
                                                                 </c:when>
                                                                 <c:when test="#{cc.attrs.headingLevel == 3}">
-                                                                    <h4>#{cc.attrs.removeDialogTitle}</h4>
+                                                                    <h4 id="#{cc.attrs.editorId}-#{entry.key}-remove-dialog-title">#{cc.attrs.removeDialogTitle}</h4>
                                                                 </c:when>
                                                                 <c:when test="#{cc.attrs.headingLevel == 4}">
-                                                                    <h5>#{cc.attrs.removeDialogTitle}</h5>
+                                                                    <h5 id="#{cc.attrs.editorId}-#{entry.key}-remove-dialog-title">#{cc.attrs.removeDialogTitle}</h5>
                                                                 </c:when>
                                                                 <c:when test="#{cc.attrs.headingLevel == 5}">
-                                                                    <h6>#{cc.attrs.removeDialogTitle}</h6>
+                                                                    <h6 id="#{cc.attrs.editorId}-#{entry.key}-remove-dialog-title">#{cc.attrs.removeDialogTitle}</h6>
                                                                 </c:when>
                                                                 <c:otherwise>
-                                                                    <div>#{cc.attrs.removeDialogTitle}</div>
+                                                                    <div id="#{cc.attrs.editorId}-#{entry.key}-remove-dialog-title">#{cc.attrs.removeDialogTitle}</div>
                                                                 </c:otherwise>
                                                             </c:choose>
                                                             <button aria-label="#{cc.attrs.removeDialogCancelLabel}"
