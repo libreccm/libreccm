@@ -226,38 +226,38 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
         }
     }
     
-    @GET
-//    @Path("/{locale}/@view")
-    @Path("/variants/{locale}")
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String viewTextValue(
-        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
-        final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
-        final String documentPath,
-        @PathParam("locale") final String localeParam
-    ) {
-          try {
-            init();
-        } catch (ContentSectionNotFoundException ex) {
-            return ex.showErrorMessage();
-        } catch (DocumentNotFoundException ex) {
-            return ex.showErrorMessage();
-        }
-
-        if (itemPermissionChecker.canEditItem(getArticle())) {
-            selectedLocale = new Locale(localeParam).toString();
-            
-//            return "org/librecms/ui/contenttypes/article/article-text/view.xhtml";
-            return getTextValues().get(localeParam);
-        } else {
-            return documentUi.showAccessDenied(
-                getContentSection(),
-                getArticle(),
-                articleMessageBundle.getMessage("article.edit.denied")
-            );
-        }
-    }
+//    @GET
+////    @Path("/{locale}/@view")
+//    @Path("/variants/{locale}")
+//    @Transactional(Transactional.TxType.REQUIRED)
+//    public String viewTextValue(
+//        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+//        final String sectionIdentifier,
+//        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
+//        final String documentPath,
+//        @PathParam("locale") final String localeParam
+//    ) {
+//          try {
+//            init();
+//        } catch (ContentSectionNotFoundException ex) {
+//            return ex.showErrorMessage();
+//        } catch (DocumentNotFoundException ex) {
+//            return ex.showErrorMessage();
+//        }
+//
+//        if (itemPermissionChecker.canEditItem(getArticle())) {
+//            selectedLocale = new Locale(localeParam).toString();
+//            
+////            return "org/librecms/ui/contenttypes/article/article-text/view.xhtml";
+//            return getTextValues().get(localeParam);
+//        } else {
+//            return documentUi.showAccessDenied(
+//                getContentSection(),
+//                getArticle(),
+//                articleMessageBundle.getMessage("article.edit.denied")
+//            );
+//        }
+//    }
 
 
     @GET

@@ -18,6 +18,7 @@
  */
 package org.librecms.ui.contentsections.documents;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -33,9 +34,14 @@ public interface MvcAuthoringSteps {
         = "sectionIdentifier";
 
     public static final String DOCUMENT_PATH_PATH_PARAM_NAME = "documentPath";
-    
-    public static final String DOCUMENT_PATH_PATH_PARAM = DOCUMENT_PATH_PATH_PARAM_NAME + ":(.+)?";
+
+    public static final String DOCUMENT_PATH_PATH_PARAM
+        = DOCUMENT_PATH_PATH_PARAM_NAME + ":(.+)?";
 
     Set<Class<?>> getClasses();
+
+    default Set<Class<?>> getResourceClasses() {
+        return Collections.emptySet();
+    }
 
 }

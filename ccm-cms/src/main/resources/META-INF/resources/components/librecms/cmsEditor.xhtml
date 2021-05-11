@@ -217,7 +217,7 @@
                     </div>
                 </template>
                 <template id="cms-editor-msg-save-successful">
-                    <div class="alert alert-danger" role="alert">
+                    <div class="alert alert-success" role="alert">
                         #{cc.attrs.messageSaveSuccessful}
                     </div>
                 </template>
@@ -354,6 +354,7 @@
                                             <button class="btn btn-primary cms-editor-edit-button"
                                                     data-edit-dialog="#{cc.attrs.editorId}-edit-dialog"
                                                     data-variant-url="#{cc.attrs.variantUrl}/#{variant.locale}"
+                                                    data-save-url="#{cc.attrs.editMethod}/#{variant.locale}"
                                                     type="button">
                                                 <bootstrap:svgIcon icon="pen" />
                                                 <span class="sr-only">
@@ -440,34 +441,34 @@
         </div>
         <div aria-describedby="#{cc.attrs.editorId}-view-dialog-title"
              aria-hidden="true"
-             class="modal modal-xl fade"
+             class="modal fade"
              data-backdrop="static"
              id="#{cc.attrs.editorId}-view-dialog"
              tabindex="-1">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
                         <c:choose>
                             <c:when test="#{cc.attrs.headingLevel == 1}">
-                                <h2 id="#{cc.attrs.editorId}-view-dialog-title">#{cc.attrs.removeDialogTitle}</h2>
+                                <h2 id="#{cc.attrs.editorId}-view-dialog-title">#{cc.attrs.viewDialogTitle}</h2>
                             </c:when>
                             <c:when test="#{cc.attrs.headingLevel == 2}">
-                                <h3 id="#{cc.attrs.editorId}-view-dialog-title">#{cc.attrs.removeDialogTitle}</h3>
+                                <h3 id="#{cc.attrs.editorId}-view-dialog-title">#{cc.attrs.viewDialogTitle}</h3>
                             </c:when>
                             <c:when test="#{cc.attrs.headingLevel == 3}">
-                                <h4 id="#{cc.attrs.editorId}-view-dialog-title">#{cc.attrs.removeDialogTitle}</h4>
+                                <h4 id="#{cc.attrs.editorId}-view-dialog-title">#{cc.attrs.viewDialogTitle}</h4>
                             </c:when>
                             <c:when test="#{cc.attrs.headingLevel == 4}">
-                                <h5 id="#{cc.attrs.editorId}-view-dialog-title">#{cc.attrs.removeDialogTitle}</h5>
+                                <h5 id="#{cc.attrs.editorId}-view-dialog-title">#{cc.attrs.viewDialogTitle}</h5>
                             </c:when>
                             <c:when test="#{cc.attrs.headingLevel == 5}">
-                                <h6 id="#{cc.attrs.editorId}-view-dialog-title">#{cc.attrs.removeDialogTitle}</h6>
+                                <h6 id="#{cc.attrs.editorId}-view-dialog-title">#{cc.attrs.viewDialogTitle}</h6>
                             </c:when>
                             <c:otherwise>
-                                <div id="#{cc.attrs.editorId}-view-dialog-title">#{cc.attrs.removeDialogTitle}</div>
+                                <div id="#{cc.attrs.editorId}-view-dialog-title">#{cc.attrs.viewDialogTitle}</div>
                             </c:otherwise>
                         </c:choose>
-                        <button aria-label="#{cc.attrs.removeDialogCancelLabel}"
+                        <button aria-label="#{cc.attrs.viewDialogCancelLabel}"
                                 class="close" 
                                 data-dismiss="modal" 
                                 type="button" >
@@ -488,42 +489,41 @@
         </div>
         <div aria-describedby="#{cc.attrs.editorId}-edit-dialog-title"
              aria-hidden="true"
-             class="modal modal-xl fade"
+             class="modal fade"
              data-backdrop="static"
              id="#{cc.attrs.editorId}-edit-dialog"
              tabindex="-1">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
                         <c:choose>
                             <c:when test="#{cc.attrs.headingLevel == 1}">
-                                <h2 id="#{cc.attrs.editorId}-edit-dialog-title">#{cc.attrs.removeDialogTitle}</h2>
+                                <h2 id="#{cc.attrs.editorId}-edit-dialog-title">#{cc.attrs.editDialogTitle}</h2>
                             </c:when>
                             <c:when test="#{cc.attrs.headingLevel == 2}">
-                                <h3 id="#{cc.attrs.editorId}-edit-dialog-title">#{cc.attrs.removeDialogTitle}</h3>
+                                <h3 id="#{cc.attrs.editorId}-edit-dialog-title">#{cc.attrs.editDialogTitle}</h3>
                             </c:when>
                             <c:when test="#{cc.attrs.headingLevel == 3}">
-                                <h4 id="#{cc.attrs.editorId}-edit-dialog-title">#{cc.attrs.removeDialogTitle}</h4>
+                                <h4 id="#{cc.attrs.editorId}-edit-dialog-title">#{cc.attrs.editDialogTitle}</h4>
                             </c:when>
                             <c:when test="#{cc.attrs.headingLevel == 4}">
-                                <h5 id="#{cc.attrs.editorId}-edit-dialog-title">#{cc.attrs.removeDialogTitle}</h5>
+                                <h5 id="#{cc.attrs.editorId}-edit-dialog-title">#{cc.attrs.editDialogTitle}</h5>
                             </c:when>
                             <c:when test="#{cc.attrs.headingLevel == 5}">
-                                <h6 id="#{cc.attrs.editorId}-edit-dialog-title">#{cc.attrs.removeDialogTitle}</h6>
+                                <h6 id="#{cc.attrs.editorId}-edit-dialog-title">#{cc.attrs.editDialogTitle}</h6>
                             </c:when>
                             <c:otherwise>
-                                <div id="#{cc.attrs.editorId}-edit-dialog-title">#{cc.attrs.removeDialogTitle}</div>
+                                <div id="#{cc.attrs.editorId}-edit-dialog-title">#{cc.attrs.editDialogTitle}</div>
                             </c:otherwise>
                         </c:choose>
-                        <button aria-label="#{cc.attrs.removeDialogCancelLabel}"
+                        <button aria-label="#{cc.attrs.editDialogCancelLabel}"
                                 class="close" 
-                                data-dismiss="modal" 
                                 type="button" >
                             <bootstrap:svgIcon icon="x" />
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="cms-tiptap-editor-buttons">
+                        <div class="cms-tiptap-editor-buttons mb-1">
                             <button class="btn btn-outline-dark tiptap-emph"
                                 type="button">
                                 <bootstrap:svgIcon icon="type-italic" />
@@ -539,17 +539,17 @@
                                 </span>
                             </button>
                         </div>
-                        <div class="cms-tiptap-editor">
+                        <div class="cms-tiptap-editor border">
                             
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-warning" 
-                                data-dismiss="modal"
+                        <button class="btn btn-warning cms-editor-cancel-button" 
                                 type="button" >
                             #{cc.attrs.editDialogCancelLabel}
                         </button>
-                        <button type="submit" class="btn btn-success">
+                        <button class="btn btn-success cms-editor-save-button"
+                                type="button" >
                             #{cc.attrs.editDialogSubmitLabel}
                         </button>
                     </div>

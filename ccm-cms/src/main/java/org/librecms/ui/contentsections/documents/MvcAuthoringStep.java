@@ -32,6 +32,12 @@ import javax.ws.rs.Path;
  */
 public interface MvcAuthoringStep {
 
+    /**
+     * Returns the class implementing the step. This method is used by CCM is to
+     * get the correct class instead of a CDI proxy.
+     *
+     * @return The class implementing the step.
+     */
     Class<? extends MvcAuthoringStep> getStepClass();
 
     ContentSection getContentSection() throws ContentSectionNotFoundException;
@@ -52,7 +58,9 @@ public interface MvcAuthoringStep {
      * admin priviliges for the content section of the item.</li>
      * </ul>
      *
-     * @return {@code true} if the current user can edit the document/item, {@false} otherwise.
+     * @return {@code true} if the current user can edit the document/item, {
+     *
+     * @false} otherwise.
      */
     boolean getCanEdit();
 
@@ -88,7 +96,7 @@ public interface MvcAuthoringStep {
                                      DocumentNotFoundException;
 
     String getStepPath();
-    
+
     /**
      * Builds the redirect path of the authoring step.This path is most often
      * used to implement the redirect after post pattern.

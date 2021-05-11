@@ -74,6 +74,7 @@ public class ContentSectionApplication extends Application {
         classes.add(DocumentWorkflowController.class);
 
         classes.addAll(getAuthoringSteps());
+        classes.addAll(getAuthoringStepResources());
         
         classes.add(IsAuthenticatedFilter.class);
 
@@ -86,6 +87,14 @@ public class ContentSectionApplication extends Application {
             .map(MvcAuthoringSteps::getClasses)
             .flatMap(Set::stream)
             .filter(stepsValidator::validateAuthoringStep)
+            .collect(Collectors.toSet());
+    }
+    
+    private Set<Class<?>> getAuthoringStepResources() {
+        return authoringSteps
+            .stream()
+            .map(MvcAuthoringSteps::getResourceClasses)
+            .flatMap(Set::stream)
             .collect(Collectors.toSet());
     }
 
