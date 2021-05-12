@@ -14,7 +14,7 @@
                       shortDescription="Label for the add button"
                       type="String" />
         <cc:attribute name="addDialogCancelLabel" 
-                      default="Cancel" 
+                      default="#{CmsAdminMessages['cancel_button.label']}" 
                       required="false"
                       shortDescription="Label for the cancel and close buttons." 
                       type="String" />
@@ -24,17 +24,17 @@
                       shortDescription="Help text for the locale select field"
                       type="String" />
         <cc:attribute name="addDialogLocaleSelectLabel" 
-                      default="Locale" 
+                      default="#{CmsAdminMessages['locale_select.label']}" 
                       required="false" 
                       shortDescription="Label for the locale select field"
                       type="String" />
         <cc:attribute name="addDialogSubmitLabel"
-                      default="Add"
+                      default="#{CmsAdminMessages['locale_add.label']}"
                       required="false"
                       shortDescription="Label for the submit button"
                       type="String" />
         <cc:attribute name="addDialogTitle" 
-                      default="Add localization" 
+                      default="#{CmsAdminMessages['locale_add.dialog.title']}" 
                       required="false" 
                       shortDescription="Title for the dialog." 
                       type="String" />
@@ -44,17 +44,17 @@
                       shortDescription="Can the current user edit the text?"
                       type="boolean" />
         <cc:attribute name="editButtonLabel" 
-                      default="Edit" 
+                      default="#{CmsAdminMessages['edit_button.label']}" 
                       required="false" 
                       shortDescription="Label for the edit button" 
                       type="String" />
         <cc:attribute name="editDialogCancelLabel"
-                      default="Cancel"
+                      default="#{CmsAdminMessages['cancel_button.label']}"
                       required="false"
                       shortDescription="Label for the cancel and close button of the edit dialog"
                       type="String" />
         <cc:attribute name="editDialogSubmitLabel"
-                      default="save"
+                      default="#{CmsAdminMessages['save_button.label']}"
                       required="false"
                       shortDescription="Label for the submit button of the edit dialog"
                       type="String" />
@@ -69,7 +69,7 @@
                       shortDescription="Label for the value field"
                       type="String" />
         <cc:attribute name="editDialogTitle"
-                      default="Edit localized value"
+                      default="#{CmsAdminMessages['text.edit.dialog.title']}"
                       required="false"
                       shortDescription="Title for the edit dialog"
                       type="String" />
@@ -91,7 +91,7 @@
                       shortDescription="ID for the editor. Also used as prefix to generate IDs for some subcomponents" 
                       type="String" />
         <cc:attribute name="emptyText"
-                      default="No localized values"
+                      default="#{text.editor.no_localized_values}"
                       required="false"
                       shortDescription="Text shown if the localized has no values yet."
                       type="String" />
@@ -337,9 +337,11 @@
                         <tbody>
                             <c:forEach items="#{cc.attrs.variants}" 
                                        var="variant">
-                                <tr>
+                                <tr id="variant-#{variant.locale}">
                                     <td>#{variant.locale}</td>
-                                    <td>#{CmsAdminMessages.getMessage('cms_editor.variants.wordcount', [variant.wordCount])}</td>
+                                    <td>
+                                        <span class="wordcount">#{variant.wordCount}</span> #{CmsAdminMessages['cms_editor.variants.wordcount']}
+                                    </td>
                                     <td>
                                         <button class="btn btn-primary cms-editor-view-button"
                                                 data-view-dialog="#{cc.attrs.editorId}-view-dialog"
@@ -353,6 +355,7 @@
                                         <c:if test="#{cc.attrs.canEdit}">
                                             <button class="btn btn-primary cms-editor-edit-button"
                                                     data-edit-dialog="#{cc.attrs.editorId}-edit-dialog"
+                                                    data-locale="#{variant.locale}"
                                                     data-variant-url="#{cc.attrs.variantUrl}/#{variant.locale}"
                                                     data-save-url="#{cc.attrs.editMethod}/#{variant.locale}"
                                                     type="button">
@@ -445,7 +448,7 @@
              data-backdrop="static"
              id="#{cc.attrs.editorId}-view-dialog"
              tabindex="-1">
-            <div class="modal-dialog modal-xl">
+            <div class="modal-dialog modal-xl modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
                         <c:choose>
@@ -493,7 +496,7 @@
              data-backdrop="static"
              id="#{cc.attrs.editorId}-edit-dialog"
              tabindex="-1">
-            <div class="modal-dialog modal-xl">
+            <div class="modal-dialog modal-xl modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
                         <c:choose>

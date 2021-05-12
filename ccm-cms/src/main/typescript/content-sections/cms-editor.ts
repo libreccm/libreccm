@@ -63,6 +63,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
             event.preventDefault();
 
             const target = event.currentTarget as Element;
+            const locale = target.getAttribute("data-locale");
             const variantUrl = target.getAttribute("data-variant-url");
             const editDialogId = target.getAttribute("data-edit-dialog");
             const saveUrl = target.getAttribute("data-save-url");
@@ -154,21 +155,22 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
                                 saveButton.addEventListener("click", event => {
                                     const html = editor.getHTML();
-                                    const formData = new FormData();
-                                    formData.append("value", html);
+                                    const params = new URLSearchParams();
+                                    params.append("value", html);
                                     fetch(saveUrl, {
                                         method: "POST",
                                         credentials: "include",
                                         headers: {
                                             "Content-Type": "application/x-www-form-urlencoded"
                                         },
-                                        body: formData
+                                        body: params
                                     })
                                         .then(saveResponse => {
                                             if (saveResponse.ok) {
                                                 showMessage(
                                                     "#cms-editor-msg-save-successful"
                                                 );
+                                                window.location.reload();
                                             } else {
                                                 showMessage(
                                                     "#cms-editor-msg-save-failed"

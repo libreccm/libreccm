@@ -152,7 +152,7 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
     }
     
     public List<CmsEditorLocaleVariantRow> getVariants() {
-        return variants;
+        return Collections.unmodifiableList(variants);
     }
 
     /**
@@ -178,7 +178,6 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
      * @return A redirect to this authoring step.
      */
     @POST
-//    @Path("/@add")
     @Path("/add")
     @Transactional(Transactional.TxType.REQUIRED)
     public String addTextValue(
@@ -212,11 +211,7 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
             getArticle().getText().addValue(locale, value);
             itemRepo.save(getArticle());
 
-            return String.format(
-                "%s/%s/@edit",
-                buildRedirectPathForStep(),
-                locale.toString()
-            );
+            return buildRedirectPathForStep();
         } else {
             return documentUi.showAccessDenied(
                 getContentSection(),
@@ -261,7 +256,6 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
 
 
     @GET
-//    @Path("/{locale}/@edit")
     @Path("/edit/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String editTextValue(
@@ -303,7 +297,6 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
      * @return A redirect to this authoring step.
      */
     @POST
-//    @Path("/{locale}/@edit")
     @Path("/edit/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String editTextValue(
@@ -428,7 +421,6 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
         final CmsEditorLocaleVariantRow variant = new CmsEditorLocaleVariantRow();
         variant.setLocale(entry.getKey().toString());
         final Document document = Jsoup.parseBodyFragment(entry.getValue());
-        document.body().text();
         variant.setWordCount(
             new StringTokenizer(document.body().text()).countTokens()
         );

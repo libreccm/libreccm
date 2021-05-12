@@ -18,6 +18,8 @@
  */
 package org.librecms.ui.contenttypes;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
@@ -27,6 +29,7 @@ import org.librecms.ui.contentsections.ItemPermissionChecker;
 import org.librecms.ui.contentsections.documents.MvcAuthoringSteps;
 
 import java.util.Locale;
+import java.util.StringTokenizer;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -36,6 +39,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 /**
  *
@@ -58,8 +63,47 @@ public class MvcArticleTextBodyStepResources {
     private ItemPermissionChecker itemPermissionChecker;
 
     @GET
-//    @Path("/{locale}/@view")
+    @Path("/variants/{locale}/wordcount")
+    @Produces(MediaType.TEXT_HTML)
+    @Transactional(Transactional.TxType.REQUIRED)
+    public long getWordCount(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
+        final String documentPathParam,
+        @PathParam("locale") final String localeParam
+    ) {
+         final ContentSection contentSection = sectionsUi
+            .findContentSection(sectionIdentifier)
+            .orElseThrow(
+                () -> new NotFoundException()
+            );
+
+        final ContentItem document = itemRepo
+            .findByPath(contentSection, documentPathParam)
+            .orElseThrow(
+                () -> new NotFoundException()
+            );
+
+        if (!(document instanceof Article)) {
+            throw new NotFoundException();
+        }
+
+        final Article article = (Article) document;
+        if (itemPermissionChecker.canEditItem(article)) {
+            final String text = article
+                .getText()
+                .getValue(new Locale(localeParam));
+            final Document jsoupDoc = Jsoup.parseBodyFragment(text);
+            return new StringTokenizer(jsoupDoc.body().text()).countTokens();
+        } else {
+            throw new ForbiddenException();
+        }
+    }
+    
+    @GET
     @Path("/variants/{locale}")
+    @Produces(MediaType.TEXT_HTML)
     @Transactional(Transactional.TxType.REQUIRED)
     public String viewTextValue(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
@@ -68,14 +112,6 @@ public class MvcArticleTextBodyStepResources {
         final String documentPathParam,
         @PathParam("locale") final String localeParam
     ) {
-//        try {
-//            init();
-//        } catch (ContentSectionNotFoundException ex) {
-//            return ex.showErrorMessage();
-//        } catch (DocumentNotFoundException ex) {
-//            return ex.showErrorMessage();
-//        }
-
         final ContentSection contentSection = sectionsUi
             .findContentSection(sectionIdentifier)
             .orElseThrow(
