@@ -49,7 +49,6 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
-import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.mvc.Controller;
 import javax.mvc.Models;
@@ -114,18 +113,11 @@ public class DocumentController {
     private ContentItemRepository itemRepo;
 
     /**
-     * All available {@link MvcAuthoringStepDef}s.
-     */
-    @Inject
-    @Any
-    private Instance<MvcAuthoringStepDef> authoringSteps;
-
-    /**
      * All available {@link MvcDocumentCreateStep}s.
      */
     @Inject
     @Any
-    private Instance<MvcDocumentCreateStep<?>> createSteps;
+    private Instance<MvcDocumentCreateStep<?>> documentCreateSteps;
 
     /**
      * Messages for default steps
@@ -161,7 +153,7 @@ public class DocumentController {
     private PublishStepModel publishStepModel;
 
     /**
-     * Named beans providing access to the properties of the selected document
+     * Named bean providing access to the properties of the selected document
      * (content item} from the view.
      */
     @Inject
@@ -188,15 +180,15 @@ public class DocumentController {
 //        return "org/librecms/ui/contentsection/documents/pathTest.xhtml";
 //    }
     /**
-     * Redirect requests to the root path of this controller to the
-     * {@link DocumentFolderController}. The root path of this controller has no
-     * function. We assume that somebody who access the root folders wants to
-     * browse all documents in the content section. Therefore we redirect these
-     * requests to the {@link DocumentFolderController}.
+     * Redirect requests to the root path of this controller to the path for
+     * displaying the content of the root document folder. The root path of this
+     * controller has no function. We assume that somebody who access the root
+     * folders wants to browse all documents in the content section. Therefore
+     * we redirect these requests to the root folder.
      *
      * @param sectionIdentifier The identififer of the current content section.
      *
-     * @return A redirect to the {@link DocumentFolderController}.
+     * @return A redirect to the root documents folder.
      */
     @GET
     @Path("/")
@@ -284,7 +276,6 @@ public class DocumentController {
     @Path("/{folderPath:(.+)?}/@create/{documentType}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    @SuppressWarnings("unchecked")
     public String showCreateStepPost(
         @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("folderPath") final String folderPath,
@@ -320,7 +311,6 @@ public class DocumentController {
     @AuthorizationRequired
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Transactional(Transactional.TxType.REQUIRED)
-    @SuppressWarnings({"unchecked", "unchecked"})
     public String createDocument(
         @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("folderPath") final String folderPath,
@@ -823,8 +813,9 @@ public class DocumentController {
                 item.getContentType().getContentSection().getLabel()
             )
             .replace(
-                String.format("/{%s}",
-                    MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM
+                String.format(
+                    "/{%s}",
+                              MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM
                 ),
                 itemManager.getItemPath(item)
             );
@@ -895,7 +886,7 @@ public class DocumentController {
 
     /**
      * Helper method for showing the "document folder not found" page if there
-     * is not folder for the provided path.
+     * is no folder for the provided path.
      *
      * @param section    The content section.
      * @param folderPath The folder path.
@@ -912,13 +903,13 @@ public class DocumentController {
     }
 
     /**
-     * Helper method for showing the "documenttype not available" page if the
+     * Helper method for showing the "document type not available" page if the
      * requested document type is not available for the current content section.
      *
      * @param section    The content section.
-     * @param folderPath The folder path.
+     * @param documentType The folder path.
      *
-     * @return The template of the "document folder not found" page.
+     * @return The template of the "document type not found" page.
      */
     private String showDocumentTypeNotFound(
         final ContentSection section, final String documentType
@@ -1021,7 +1012,7 @@ public class DocumentController {
 //        final Instance<MvcDocumentCreateStep<?>> instance = createSteps
 //            .select(new CreateDocumentOfTypeLiteral(documentClass));
         final Instance<? extends MvcDocumentCreateStep<?>> instance
-            = createSteps.select(createStepClass);
+            = documentCreateSteps.select(createStepClass);
         if (instance.isUnsatisfied() || instance.isAmbiguous()) {
             return new CreateStepResult(
                 showCreateStepNotAvailable(section, folderPath, documentType)

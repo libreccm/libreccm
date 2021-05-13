@@ -28,13 +28,13 @@ import java.util.ResourceBundle;
 
 
 /**
- * A create step for a document/content item. Implementing classes are MUST be
+ * A create step for a document/content item. Implementing classes MUST be
  * CDI beans (request scope is recommended). They are retrieved by the
  * {@link DocumentController} using CDI. The {@link DocumentController} will
  * first call
  * {@link #setContentSection(org.librecms.contentsection.ContentSection)} and {@link #setFolder(org.librecms.contentsection.Folder)
  * } to provide the current current content section and folder. After that,
- * depending on the request method, either {@link #showCreateStep} or {@link #createItem(javax.ws.rs.core.Form)]
+ * depending on the request method, either {@link #showCreateStep} or {@link #createItem(java.util.Map) 
  * will be called.
  *
  * In most cases, {@link AbstractMvcDocumentCreateStep} should be used as

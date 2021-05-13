@@ -48,7 +48,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.UriBuilder;
 
-import static javax.transaction.Transactional.TxType.values;
 
 /**
  * Model/named bean providing data about the currently selected document for

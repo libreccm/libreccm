@@ -25,18 +25,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.inject.Named;
-
 /**
  * Metadata of an authoring step for documents (content items).
- *
- * An authoring step for a document (content item). Implementing classes are
- * used as subresources by {@link DocumentController#editDocument(java.lang.String, java.lang.String, java.lang.String)
- * }. An implementation must be a named CDI bean (annotated with {@link Named},
- * annotated with the {@link AuthoringStepPathFragment} qualifier annotation.
- *
- * An implementation may contain multiple subresource paths for for displaying
- * forms and apply changes from these forms.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */

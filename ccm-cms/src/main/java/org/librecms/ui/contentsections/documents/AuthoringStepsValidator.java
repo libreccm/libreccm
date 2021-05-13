@@ -32,21 +32,22 @@ import javax.ws.rs.Path;
  */
 @Dependent
 public class AuthoringStepsValidator {
-    
+
     private static final Logger LOGGER = LogManager.getLogger(
         AuthoringStepsValidator.class
     );
-    
+
     public boolean validateAuthoringStep(final Class<?> stepClass) {
         if (stepClass.getAnnotation(Controller.class) == null) {
             LOGGER.warn(
                 "Class {} is part of a set of authoringsteps, but is not"
                     + " annotated with {}. The class will be ignored.",
                 stepClass.getName(),
-                Controller.class.getName());
+                Controller.class.getName()
+            );
             return false;
         }
-        
+
         final Path pathAnnotation = stepClass.getAnnotation(Path.class);
         if (pathAnnotation == null) {
             LOGGER.warn(
@@ -70,7 +71,7 @@ public class AuthoringStepsValidator {
                 MvcAuthoringSteps.PATH_PREFIX
             );
         }
-        
+
         if (stepClass.getAnnotation(MvcAuthoringStepDef.class) == null) {
             LOGGER.warn(
                 "Class {} is part of a set of authoring steps, but is not "
@@ -82,11 +83,12 @@ public class AuthoringStepsValidator {
 
         return true;
     }
-    
+
     public boolean supportsItem(
         final Class<?> stepClass, final ContentItem item
     ) {
-        final MvcAuthoringStepDef stepAnnotation = stepClass.getAnnotation(MvcAuthoringStepDef.class
+        final MvcAuthoringStepDef stepAnnotation = stepClass.getAnnotation(
+            MvcAuthoringStepDef.class
         );
 
         if (stepAnnotation == null) {
@@ -97,4 +99,5 @@ public class AuthoringStepsValidator {
             stepAnnotation.supportedDocumentType()
         );
     }
+
 }

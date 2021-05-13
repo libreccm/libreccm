@@ -20,11 +20,13 @@ package org.librecms.ui.contentsections.documents;
 
 import org.librecms.contentsection.ContentItem;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Provides the steps for creating and viewing and editing a document (content
+ * Provides the steps for creating, viewing, and editing a document (content
  * item). The classes provided for {@link #createStep()} and 
  * {@link #authoringSteps() } provide information about the steps.
  *
@@ -33,6 +35,7 @@ import java.lang.annotation.RetentionPolicy;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MvcAuthoringKit {
 

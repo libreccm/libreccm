@@ -26,7 +26,7 @@ package org.librecms.ui.contentsections.documents;
 public final class DefaultAuthoringStepConstants {
 
     private DefaultAuthoringStepConstants() {
-
+        // Nothing
     }
 
     /**

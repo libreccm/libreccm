@@ -21,6 +21,8 @@ package org.librecms.ui.contentsections;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.ui.IsAuthenticatedFilter;
+import org.librecms.ui.contentsections.assets.AssetEditStepsValidator;
+import org.librecms.ui.contentsections.assets.MvcAssetEditSteps;
 import org.librecms.ui.contentsections.documents.AuthoringStepsValidator;
 import org.librecms.ui.contentsections.documents.DocumentController;
 import org.librecms.ui.contentsections.documents.DocumentLifecyclesController;
@@ -50,7 +52,14 @@ public class ContentSectionApplication extends Application {
     );
 
     @Inject
-    private AuthoringStepsValidator stepsValidator;
+    private AuthoringStepsValidator authoringStepsValidator;
+    
+    @Inject
+    private AssetEditStepsValidator editStepsValidator;
+    
+    @Inject
+    @Any
+    private Instance<MvcAssetEditSteps> assetEditSteps;
     
     @Inject
     @Any
@@ -76,6 +85,9 @@ public class ContentSectionApplication extends Application {
         classes.addAll(getAuthoringSteps());
         classes.addAll(getAuthoringStepResources());
         
+        classes.addAll(getAssetEditSteps());
+        classes.addAll(getAssetEditStepResources());
+        
         classes.add(IsAuthenticatedFilter.class);
 
         return classes;
@@ -86,7 +98,7 @@ public class ContentSectionApplication extends Application {
             .stream()
             .map(MvcAuthoringSteps::getClasses)
             .flatMap(Set::stream)
-            .filter(stepsValidator::validateAuthoringStep)
+            .filter(authoringStepsValidator::validateAuthoringStep)
             .collect(Collectors.toSet());
     }
     
@@ -98,4 +110,21 @@ public class ContentSectionApplication extends Application {
             .collect(Collectors.toSet());
     }
 
+    private Set<Class<?>> getAssetEditSteps() {
+        return assetEditSteps
+            .stream()
+            .map(MvcAssetEditSteps::getClasses)
+            .flatMap(Set::stream)
+            .filter(editStepsValidator::validateEditStep)
+            .collect(Collectors.toSet());
+    }
+    
+    private Set<Class<?>> getAssetEditStepResources() {
+        return assetEditSteps
+            .stream()
+            .map(MvcAssetEditSteps::getResourceClasses)
+            .flatMap(Set::stream)
+            .collect(Collectors.toSet());
+    }
+    
 }
