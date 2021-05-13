@@ -63,10 +63,10 @@ public class MvcArticleTextBodyStepResources {
     private ItemPermissionChecker itemPermissionChecker;
 
     @GET
-    @Path("/variants/{locale}/wordcount")
+    @Path("/variants/wordcount/{locale}")
     @Produces(MediaType.TEXT_HTML)
     @Transactional(Transactional.TxType.REQUIRED)
-    public long getWordCount(
+    public String getWordCount(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
         @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
@@ -95,7 +95,8 @@ public class MvcArticleTextBodyStepResources {
                 .getText()
                 .getValue(new Locale(localeParam));
             final Document jsoupDoc = Jsoup.parseBodyFragment(text);
-            return new StringTokenizer(jsoupDoc.body().text()).countTokens();
+            long result = new StringTokenizer(jsoupDoc.body().text()).countTokens();
+            return Long.toString(result);
         } else {
             throw new ForbiddenException();
         }

@@ -183,6 +183,10 @@
         <cc:attribute name="viewDialogCloseButtonLabel"
                       default="Close"
                       type="String" />
+        <cc:attribute name="wordCountUrl"
+                      required="true"
+                      shortDescription="URL of the endpoint for retrieving the wordcount of a variant. The locale of the variant to retrieve is appended as last token."
+                      type="String" />
     </cc:interface>
     <cc:implementation>
         <div class="cms-editor"
@@ -358,6 +362,7 @@
                                                     data-locale="#{variant.locale}"
                                                     data-variant-url="#{cc.attrs.variantUrl}/#{variant.locale}"
                                                     data-save-url="#{cc.attrs.editMethod}/#{variant.locale}"
+                                                    data-wordcount-url="#{cc.attrs.wordCountUrl}/#{variant.locale}"
                                                     type="button">
                                                 <bootstrap:svgIcon icon="pen" />
                                                 <span class="sr-only">

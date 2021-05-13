@@ -101,11 +101,11 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
     private ItemPermissionChecker itemPermissionChecker;
 
     private Map<String, String> textValues;
-    
+
     private List<CmsEditorLocaleVariantRow> variants;
 
     private List<String> unusedLocales;
-    
+
     private String selectedLocale;
 
     @Override
@@ -150,7 +150,7 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
     public Map<String, String> getTextValues() {
         return Collections.unmodifiableMap(textValues);
     }
-    
+
     public List<CmsEditorLocaleVariantRow> getVariants() {
         return Collections.unmodifiableList(variants);
     }
@@ -167,7 +167,7 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
     public String getSelectedLocale() {
         return selectedLocale;
     }
-    
+
     /**
      * Adds a localized main text.
      *
@@ -203,9 +203,11 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
         if (itemPermissionChecker.canEditItem(getArticle())) {
             final String value;
             if (getArticle().getText().getAvailableLocales().isEmpty()) {
-                value = "Lorem ipsum";
+                value = "";
             } else {
-                value = getArticle().getText().getValue(defaultLocale);
+                value = globalizationHelper.getValueFromLocalizedString(
+                    getArticle().getText()
+                );
             }
             final Locale locale = new Locale(localeParam);
             getArticle().getText().addValue(locale, value);
@@ -220,7 +222,7 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
             );
         }
     }
-    
+
 //    @GET
 ////    @Path("/{locale}/@view")
 //    @Path("/variants/{locale}")
@@ -253,8 +255,6 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
 //            );
 //        }
 //    }
-
-
     @GET
     @Path("/edit/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -265,7 +265,7 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
         final String documentPath,
         @PathParam("locale") final String localeParam
     ) {
-          try {
+        try {
             init();
         } catch (ContentSectionNotFoundException ex) {
             return ex.showErrorMessage();
@@ -275,7 +275,7 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
 
         if (itemPermissionChecker.canEditItem(getArticle())) {
             selectedLocale = new Locale(localeParam).toString();
-            
+
             return "org/librecms/ui/contenttypes/article/article-text/edit.xhtml";
         } else {
             return documentUi.showAccessDenied(
@@ -390,7 +390,7 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
                         entry -> entry.getValue()
                     )
                 );
-            
+
             variants = getArticle()
                 .getText()
                 .getValues()
@@ -414,17 +414,18 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
     private Article getArticle() {
         return (Article) getDocument();
     }
-    
+
     private CmsEditorLocaleVariantRow buildVariantRow(
         final Map.Entry<Locale, String> entry
     ) {
-        final CmsEditorLocaleVariantRow variant = new CmsEditorLocaleVariantRow();
+        final CmsEditorLocaleVariantRow variant
+            = new CmsEditorLocaleVariantRow();
         variant.setLocale(entry.getKey().toString());
         final Document document = Jsoup.parseBodyFragment(entry.getValue());
         variant.setWordCount(
             new StringTokenizer(document.body().text()).countTokens()
         );
-        
+
         return variant;
     }
 

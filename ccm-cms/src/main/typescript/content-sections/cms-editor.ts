@@ -3,211 +3,223 @@ import * as $ from "jquery";
 import { Editor } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 
-function showMessage(messageId: string) {
-    const template = document.querySelector(messageId) as HTMLTemplateElement;
-    const msg = template.content.cloneNode(true);
-    document.querySelector(".cms-editor-messages").append(msg);
-}
-
 document.addEventListener("DOMContentLoaded", function (event) {
-    document
-        .querySelector(
-            ".cms-editor .cms-editor-variants .cms-editor-view-button"
-        )
-        .addEventListener("click", function (event) {
-            event.preventDefault();
+    const viewButtons = document.querySelectorAll(
+        ".cms-editor .cms-editor-variants .cms-editor-view-button"
+    );
+    for (let i = 0; i < viewButtons.length; i++) {
+        viewButtons[i].addEventListener("click", event =>
+            showViewDialog(event)
+        );
+    }
 
-            const target = event.currentTarget as Element;
-            const variantUrl = target.getAttribute("data-variant-url");
-            const viewDialogId = target.getAttribute("data-view-dialog");
+    const editButtons = document.querySelectorAll(
+        ".cms-editor .cms-editor-variants .cms-editor-edit-button"
+    );
+    for (let i = 0; i < editButtons.length; i++) {
+        editButtons[i].addEventListener("click", event =>
+            showEditDialog(event)
+        );
+    }
 
-            fetch(variantUrl, {
-                method: "GET",
-                credentials: "include"
-            })
-                .then(response => {
-                    if (response.ok) {
-                        response
-                            .text()
-                            .then(text => {
-                                const viewDialog = document.querySelector(
-                                    `#${viewDialogId}`
-                                );
-                                const viewDialogBody = viewDialog.querySelector(
-                                    ".modal-body"
-                                );
+    // document
+    //     .querySelector(
+    //         ".cms-editor .cms-editor-variants .cms-editor-view-button"
+    //     )
+    //     .addEventListener("click", function (event) {
+    //         event.preventDefault();
 
-                                viewDialogBody.textContent = text;
+    //         const target = event.currentTarget as Element;
+    //         const variantUrl = target.getAttribute("data-variant-url");
+    //         const viewDialogId = target.getAttribute("data-view-dialog");
 
-                                $(`#${viewDialogId}`).modal("toggle");
-                            })
-                            .catch(err => {
-                                showMessage(
-                                    "#cms-editor-msg-variant-load-failed"
-                                );
-                            });
-                    } else {
-                        showMessage("#cms-editor-msg-variant-load-failed");
-                    }
-                })
-                .catch(err => {
-                    showMessage("#cms-editor-msg-variant-load-failed");
-                });
-        });
+    //         fetch(variantUrl, {
+    //             method: "GET",
+    //             credentials: "include"
+    //         })
+    //             .then(response => {
+    //                 if (response.ok) {
+    //                     response
+    //                         .text()
+    //                         .then(text => {
+    //                             const viewDialog = document.querySelector(
+    //                                 `#${viewDialogId}`
+    //                             );
+    //                             const viewDialogBody =
+    //                                 viewDialog.querySelector(".modal-body");
 
-    document
-        .querySelector(
-            ".cms-editor .cms-editor-variants .cms-editor-edit-button"
-        )
-        .addEventListener("click", function (event) {
-            event.preventDefault();
+    //                             viewDialogBody.textContent = text;
 
-            const target = event.currentTarget as Element;
-            const locale = target.getAttribute("data-locale");
-            const variantUrl = target.getAttribute("data-variant-url");
-            const editDialogId = target.getAttribute("data-edit-dialog");
-            const saveUrl = target.getAttribute("data-save-url");
+    //                             $(`#${viewDialogId}`).modal("toggle");
+    //                         })
+    //                         .catch(err => {
+    //                             showMessage(
+    //                                 "#cms-editor-msg-variant-load-failed"
+    //                             );
+    //                         });
+    //                 } else {
+    //                     showMessage("#cms-editor-msg-variant-load-failed");
+    //                 }
+    //             })
+    //             .catch(err => {
+    //                 showMessage("#cms-editor-msg-variant-load-failed");
+    //             });
+    //     });
 
-            fetch(variantUrl, {
-                method: "GET",
-                credentials: "include"
-            })
-                .then(response => {
-                    if (response.ok) {
-                        response
-                            .text()
-                            .then(text => {
-                                const editDialog = document.querySelector(
-                                    `#${editDialogId}`
-                                );
-                                const tiptapDiv = editDialog.querySelector(
-                                    ".modal-body .cms-tiptap-editor"
-                                );
-                                if (!tiptapDiv) {
-                                    console.warn("tiptapDiv is null");
-                                }
+    // document
+    //     .querySelector(
+    //         ".cms-editor .cms-editor-variants .cms-editor-edit-button"
+    //     )
+    //     .addEventListener("click", function (event) {
+    //         event.preventDefault();
 
-                                const editor = new Editor({
-                                    element: tiptapDiv,
-                                    extensions: [StarterKit],
-                                    content: text
-                                });
+    //         const target = event.currentTarget as Element;
+    //         const locale = target.getAttribute("data-locale");
+    //         const variantUrl = target.getAttribute("data-variant-url");
+    //         const editDialogId = target.getAttribute("data-edit-dialog");
+    //         const saveUrl = target.getAttribute("data-save-url");
 
-                                const buttonsDiv = editDialog.querySelector(
-                                    ".cms-tiptap-editor-buttons"
-                                );
-                                if (!buttonsDiv) {
-                                    console.warn("buttonsDiv is null.");
-                                }
-                                const emphButton = buttonsDiv.querySelector(
-                                    ".tiptap-emph"
-                                );
-                                if (!emphButton) {
-                                    console.warn("emphButton not found.");
-                                }
-                                emphButton.addEventListener("click", event => {
-                                    event.preventDefault();
-                                    editor.chain().focus().toggleItalic().run();
-                                });
+    //         fetch(variantUrl, {
+    //             method: "GET",
+    //             credentials: "include"
+    //         })
+    //             .then(response => {
+    //                 if (response.ok) {
+    //                     response
+    //                         .text()
+    //                         .then(text => {
+    //                             const editDialog = document.querySelector(
+    //                                 `#${editDialogId}`
+    //                             );
+    //                             const tiptapDiv = editDialog.querySelector(
+    //                                 ".modal-body .cms-tiptap-editor"
+    //                             );
+    //                             if (!tiptapDiv) {
+    //                                 console.warn("tiptapDiv is null");
+    //                             }
 
-                                const strongEmphButton = buttonsDiv.querySelector(
-                                    ".tiptap-strong-emph"
-                                );
-                                if (!strongEmphButton) {
-                                    console.warn("strongEmphButton not found.");
-                                }
-                                strongEmphButton.addEventListener(
-                                    "click",
-                                    event => {
-                                        event.preventDefault();
-                                        editor
-                                            .chain()
-                                            .focus()
-                                            .toggleBold()
-                                            .run();
-                                    }
-                                );
+    //                             const editor = new Editor({
+    //                                 element: tiptapDiv,
+    //                                 extensions: [StarterKit],
+    //                                 content: text
+    //                             });
 
-                                const closeButton = editDialog.querySelector(
-                                    ".modal-header .close"
-                                );
-                                const cancelButton = editDialog.querySelector(
-                                    ".modal-footer .cms-editor-cancel-button"
-                                );
-                                const saveButton = editDialog.querySelector(
-                                    ".modal-footer .cms-editor-save-button"
-                                );
+    //                             const buttonsDiv = editDialog.querySelector(
+    //                                 ".cms-tiptap-editor-buttons"
+    //                             );
+    //                             if (!buttonsDiv) {
+    //                                 console.warn("buttonsDiv is null.");
+    //                             }
+    //                             const emphButton =
+    //                                 buttonsDiv.querySelector(".tiptap-emph");
+    //                             if (!emphButton) {
+    //                                 console.warn("emphButton not found.");
+    //                             }
+    //                             emphButton.addEventListener("click", event => {
+    //                                 event.preventDefault();
+    //                                 editor.chain().focus().toggleItalic().run();
+    //                             });
 
-                                closeButton.addEventListener("click", event => {
-                                    editor.chain().clearContent();
-                                    editor.destroy();
-                                    $(`#${editDialogId}`).modal("toggle");
-                                });
+    //                             const strongEmphButton =
+    //                                 buttonsDiv.querySelector(
+    //                                     ".tiptap-strong-emph"
+    //                                 );
+    //                             if (!strongEmphButton) {
+    //                                 console.warn("strongEmphButton not found.");
+    //                             }
+    //                             strongEmphButton.addEventListener(
+    //                                 "click",
+    //                                 event => {
+    //                                     event.preventDefault();
+    //                                     editor
+    //                                         .chain()
+    //                                         .focus()
+    //                                         .toggleBold()
+    //                                         .run();
+    //                                 }
+    //                             );
 
-                                cancelButton.addEventListener(
-                                    "click",
-                                    event => {
-                                        editor.chain().clearContent();
-                                        editor.destroy();
-                                        $(`#${editDialogId}`).modal("toggle");
-                                    }
-                                );
+    //                             const closeButton = editDialog.querySelector(
+    //                                 ".modal-header .close"
+    //                             );
+    //                             const cancelButton = editDialog.querySelector(
+    //                                 ".modal-footer .cms-editor-cancel-button"
+    //                             );
+    //                             const saveButton = editDialog.querySelector(
+    //                                 ".modal-footer .cms-editor-save-button"
+    //                             );
 
-                                saveButton.addEventListener("click", event => {
-                                    const html = editor.getHTML();
-                                    const params = new URLSearchParams();
-                                    params.append("value", html);
-                                    fetch(saveUrl, {
-                                        method: "POST",
-                                        credentials: "include",
-                                        headers: {
-                                            "Content-Type": "application/x-www-form-urlencoded"
-                                        },
-                                        body: params
-                                    })
-                                        .then(saveResponse => {
-                                            if (saveResponse.ok) {
-                                                showMessage(
-                                                    "#cms-editor-msg-save-successful"
-                                                );
-                                                window.location.reload();
-                                            } else {
-                                                showMessage(
-                                                    "#cms-editor-msg-save-failed"
-                                                );
-                                            }
-                                            $(`#${editDialogId}`).modal(
-                                                "toggle"
-                                            );
-                                        })
-                                        .catch(err => {
-                                            showMessage(
-                                                "#cms-editor-msg-save-failed"
-                                            );
-                                            console.error(err);
-                                            $(`#${editDialogId}`).modal(
-                                                "toggle"
-                                            );
-                                        });
-                                });
+    //                             closeButton.addEventListener("click", event => {
+    //                                 editor.chain().clearContent();
+    //                                 editor.destroy();
+    //                                 $(`#${editDialogId}`).modal("toggle");
+    //                             });
 
-                                $(`#${editDialogId}`).modal("toggle");
-                            })
-                            .catch(err => {
-                                showMessage(
-                                    "#cms-editor-msg-variant-load-failed"
-                                );
-                                console.error(err);
-                            });
-                    } else {
-                        showMessage("#cms-editor-msg-variant-load-failed");
-                    }
-                })
-                .catch(err => {
-                    showMessage("#cms-editor-msg-variant-load-failed");
-                    console.error(err);
-                });
-        });
+    //                             cancelButton.addEventListener(
+    //                                 "click",
+    //                                 event => {
+    //                                     editor.chain().clearContent();
+    //                                     editor.destroy();
+    //                                     $(`#${editDialogId}`).modal("toggle");
+    //                                 }
+    //                             );
+
+    //                             saveButton.addEventListener("click", event => {
+    //                                 const html = editor.getHTML();
+    //                                 const params = new URLSearchParams();
+    //                                 params.append("value", html);
+    //                                 fetch(saveUrl, {
+    //                                     method: "POST",
+    //                                     credentials: "include",
+    //                                     headers: {
+    //                                         "Content-Type":
+    //                                             "application/x-www-form-urlencoded"
+    //                                     },
+    //                                     body: params
+    //                                 })
+    //                                     .then(saveResponse => {
+    //                                         if (saveResponse.ok) {
+    //                                             showMessage(
+    //                                                 "#cms-editor-msg-save-successful"
+    //                                             );
+    //                                             window.location.reload();
+    //                                         } else {
+    //                                             showMessage(
+    //                                                 "#cms-editor-msg-save-failed"
+    //                                             );
+    //                                         }
+    //                                         $(`#${editDialogId}`).modal(
+    //                                             "toggle"
+    //                                         );
+    //                                     })
+    //                                     .catch(err => {
+    //                                         showMessage(
+    //                                             "#cms-editor-msg-save-failed"
+    //                                         );
+    //                                         console.error(err);
+    //                                         $(`#${editDialogId}`).modal(
+    //                                             "toggle"
+    //                                         );
+    //                                     });
+    //                             });
+
+    //                             $(`#${editDialogId}`).modal("toggle");
+    //                         })
+    //                         .catch(err => {
+    //                             showMessage(
+    //                                 "#cms-editor-msg-variant-load-failed"
+    //                             );
+    //                             console.error(err);
+    //                         });
+    //                 } else {
+    //                     showMessage("#cms-editor-msg-variant-load-failed");
+    //                 }
+    //             })
+    //             .catch(err => {
+    //                 showMessage("#cms-editor-msg-variant-load-failed");
+    //                 console.error(err);
+    //             });
+    //     });
 
     // console.log("Starting editor");
     // new Editor({
@@ -218,3 +230,209 @@ document.addEventListener("DOMContentLoaded", function (event) {
     //     content: '<h1>Hello World</h1>'
     // })
 });
+
+function closeEditor(event: Event, editor: Editor, editDialogId: string) {
+    event.preventDefault();
+
+    editor.chain().clearContent();
+    editor.destroy();
+    $(`#${editDialogId}`).modal("toggle");
+}
+
+async function fetchVariant(fromUrl: string) {
+    try {
+        const response = await fetch(fromUrl, {
+            method: "GET",
+            credentials: "include"
+        });
+
+        if (response.ok) {
+            return await response.text();
+        } else {
+            showLoadVariantFailedMessage(response.status, response.statusText);
+        }
+    } catch (err) {
+        showLoadVariantFailedErrMessage(err);
+    }
+}
+
+async function fetchWordCount(fromUrl: string) {
+    try {
+        const response = await fetch(fromUrl, {
+            method: "GET",
+            credentials: "include"
+        });
+
+        if (response.ok) {
+            return await response.text();
+        } else {
+            return "?";
+        }
+    } catch (err) {
+        return "?";
+    }
+}
+
+function initEditorButtons(editor: Editor, buttonsElem: Element) {
+    // const emphButton: HTMLButtonElement | null = buttonsElem.querySelector(
+    //     ".tiptap-emph"
+    // );
+    // if(emphButton) {
+    //     emphButton.addEventListener("click", event => {
+    //         event.preventDefault();
+    //         editor.chain().focus().toggleItalic().run();
+    //     });
+    // }
+    buttonsElem
+        .querySelector(".tiptap-emph")
+        ?.addEventListener("click", event => {
+            event.preventDefault();
+            editor.chain().focus().toggleItalic().run();
+        });
+
+    buttonsElem
+        .querySelector(".tiptap-strong-emph")
+        ?.addEventListener("click", event => {
+            event.preventDefault();
+            editor.chain().focus().toggleBold().run();
+        });
+}
+
+async function showEditDialog(event: Event) {
+    event.preventDefault();
+
+    const target = event.currentTarget as Element;
+    const locale = target.getAttribute("data-locale");
+    const variantUrl = target.getAttribute("data-variant-url");
+    const editDialogId = target.getAttribute("data-edit-dialog");
+    const saveUrl = target.getAttribute("data-save-url");
+    const wordCountUrl = target.getAttribute("data-wordcount-url");
+
+    const variant = await fetchVariant(variantUrl);
+
+    const editDialog = document.querySelector(`#${editDialogId}`);
+    const tiptapDiv = editDialog.querySelector(
+        ".modal-body .cms-tiptap-editor"
+    );
+    if (!tiptapDiv) {
+        console.warn("tiptapDiv is null");
+        return;
+    }
+
+    const editor = new Editor({
+        element: tiptapDiv,
+        extensions: [StarterKit],
+        content: variant
+    });
+
+    initEditorButtons(
+        editor,
+        document.querySelector(".cms-tiptap-editor-buttons")
+    );
+
+    editDialog
+        .querySelector(".modal-header .close")
+        .addEventListener("click", event =>
+            closeEditor(event, editor, editDialogId)
+        );
+    editDialog
+        .querySelector(".modal-footer .cms-editor-cancel-button")
+        .addEventListener("click", event =>
+            closeEditor(event, editor, editDialogId)
+        );
+    editDialog
+        .querySelector(".modal-footer .cms-editor-save-button")
+        .addEventListener("click", event =>
+            save(event, editor, editDialogId, saveUrl, locale, wordCountUrl)
+        );
+
+    $(`#${editDialogId}`).modal("toggle");
+}
+
+async function save(
+    event: Event,
+    editor: Editor,
+    editDialogId: string,
+    saveUrl: string,
+    locale: string,
+    wordCountUrl: string
+) {
+    event.preventDefault();
+
+    const params = new URLSearchParams();
+    params.append("value", editor.getHTML());
+
+    try {
+        const response = await fetch(saveUrl, {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: params
+        });
+        if (response.ok) {
+            showSaveSuccessfulMessage();
+        } else {
+            showSaveFailedMessage(response.status, response.statusText);
+        }
+    } catch (err) {
+        showSaveFailedErrMessage(err);
+    }
+
+    $(`#${editDialogId}`).modal("toggle");
+
+    const wordCount = await fetchWordCount(wordCountUrl);
+    const wordCountSpan = document.querySelector(
+        `tr#variant-${locale} .wordcount`
+    );
+    wordCountSpan.textContent = wordCount;
+}
+
+function showLoadVariantFailedErrMessage(err) {
+    showMessage("#cms-editor-msg-variant-load-failed");
+    console.error(err);
+}
+
+function showLoadVariantFailedMessage(status: number, statusText: string) {
+    showMessage("#cms-editor-msg-variant-load-failed");
+    console.error(`HTTP Status: ${status}, statusText: ${statusText}`);
+}
+
+function showMessage(messageId: string) {
+    const template = document.querySelector(messageId) as HTMLTemplateElement;
+    const msg = template.content.cloneNode(true);
+    document.querySelector(".cms-editor-messages").append(msg);
+}
+
+function showSaveFailedErrMessage(err) {
+    showMessage("#cms-editor-msg-save-failed");
+    console.error(err);
+}
+
+function showSaveFailedMessage(status: number, statusText: string) {
+    showMessage("#cms-editor-msg-save-failed");
+    console.error(`HTTP Status: ${status}, statusText: ${statusText}`);
+}
+
+function showSaveSuccessfulMessage() {
+    showMessage("#cms-editor-msg-save-successful");
+}
+
+async function showViewDialog(event: Event) {
+    event.preventDefault();
+
+    const target = event.currentTarget as Element;
+    const variantUrl = target.getAttribute("data-variant-url");
+    const viewDialogId = target.getAttribute("data-view-dialog");
+
+    const variant = await fetchVariant(variantUrl);
+
+    const viewDialog = document.querySelector(`#${viewDialogId}`);
+
+    const viewDialogBody = viewDialog.querySelector(".modal-body");
+
+    viewDialogBody.innerHTML = variant;
+
+    $(`#${viewDialogId}`).modal("toggle");
+}
