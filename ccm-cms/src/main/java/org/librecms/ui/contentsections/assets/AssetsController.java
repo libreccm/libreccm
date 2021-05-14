@@ -370,7 +370,7 @@ public class AssetsController {
         models.put("contentSection", section.getLabel());
         models.put("assetType", assetType);
         
-        return "org/librecms/ui/contentsection/assetfolder/asset-type-not-found.xhtml";
+        return "org/librecms/ui/contentsection/assets/asset-type-not-found.xhtml";
     }
     
     private String showCreateStepNotAvailable(
@@ -382,7 +382,7 @@ public class AssetsController {
         models.put("folderPath", folderPath);
           models.put("assetType", assetType);
         
-        return "org/librecms/ui/contentsection/assetfolder/create-step-not-available.xhtml";
+        return "org/librecms/ui/contentsection/assets/create-step-not-available.xhtml";
     }
     
     

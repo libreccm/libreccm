@@ -1,0 +1,57 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/contentsection.xhtml">
+
+        <ui:param name="activePage" value="assetFolders" />
+        <ui:param 
+            name="title" 
+            value="#{CmsAdminMessages['contentsection.assetfolders.title']}" />
+        <ui:define name="breadcrumb">
+            <c:choose>
+                <c:when test="#{AssetFolderModel.breadcrumbs.isEmpty()}">
+                    <li aria-current="page" class="breadcrumb-item">
+                       #{CmsAdminMessages['contentsection.assetfolders.title']}
+                    </li>
+                </c:when>
+                <c:otherwise>
+                    <li class="breadcrumb-item">
+                        <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assetsfolders">
+                            #{CmsAdminMessages['contentsection.assetfolders.title']}
+                        </a>
+                    </li>
+                </c:otherwise>
+            </c:choose>
+            <c:forEach items="#{AssetFolderModel.breadcrumbs}"
+                       var="breadcrumb">
+                <c:choose>
+                    <c:when test="#{breadcrumb.currentFolder}">
+                        <li class="breadcrumb-item #{breadcrumb.currentFolder ? 'active' : ''}">
+                            #{breadcrumb.pathToken}
+                        </li>
+                    </c:when>
+                    <c:otherwise>
+                        <li class="breadcrumb-item">
+                            <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assetfolders/#{breadcrumb.path}">
+                                #{breadcrumb.pathToken}
+                            </a>
+                        </li>
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
+        </ui:define>
+        
+        <ui:define name="main">
+            <div class="container-fluid">
+                <h1>#{CmsAdminMessages.getMessage("contentsection.asset.heading", [ContentSectionModel.sectionName, CmsSelectedAssetModel.assetTitle])}</h1>
+                
+                <ui:insert name="assetMain" />
+                
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

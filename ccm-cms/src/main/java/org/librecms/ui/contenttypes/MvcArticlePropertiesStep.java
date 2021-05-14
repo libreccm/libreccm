@@ -20,6 +20,7 @@ package org.librecms.ui.contenttypes;
 
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.l10n.LocalizedString;
+import org.libreccm.security.AuthorizationRequired;
 import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.FolderManager;
@@ -122,6 +123,7 @@ public class MvcArticlePropertiesStep extends AbstractMvcAuthoringStep {
 
     @GET
     @Path("/")
+    @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String showStep(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
@@ -215,6 +217,7 @@ public class MvcArticlePropertiesStep extends AbstractMvcAuthoringStep {
      */
     @POST
     @Path("/name")
+    @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String updateName(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
@@ -283,6 +286,7 @@ public class MvcArticlePropertiesStep extends AbstractMvcAuthoringStep {
      */
     @POST
     @Path("/title/@add")
+    @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String addTitle(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
@@ -327,6 +331,7 @@ public class MvcArticlePropertiesStep extends AbstractMvcAuthoringStep {
      */
     @POST
     @Path("/title/@edit/{locale}")
+    @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String editTitle(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
@@ -370,6 +375,7 @@ public class MvcArticlePropertiesStep extends AbstractMvcAuthoringStep {
      */
     @POST
     @Path("/title/@remove/{locale}")
+    @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeTitle(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
