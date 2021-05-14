@@ -1,1 +1,103 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/contentsection.xhtml">
 
+        <ui:define name="main">
+            <div class="container">
+                <h1>#{CmsAssetsStepsDefaultMessagesBundle["postaladdress.createform.title"]}</h1>
+
+                <c:forEach items="#{CmsPostalAddressCreateStep.messages.entrySet()}"
+                           var="message">
+                    <div class="alert alert-#{message.key}" role="alert">
+                        #{message.value}
+                    </div>
+                </c:forEach>
+
+                <form action="#{mvc.basePath}/#{CmsPostalAddressCreateStep.contentSectionLabel}/assets/#{CmsPostalAddressCreateStep.folderPath}@create/#{CmsPostalAddressCreateStep.assetType}"
+                      method="post">
+                    <bootstrap:formGroupText
+                        help="#{CmsAssetsStepsDefaultMessagesBundle['createform.name.help']}"
+                        inputId="name"
+                        label="#{CmsAssetsStepsDefaultMessagesBundle['createform.name.label']}"
+                        name="name"
+                        pattern="^([a-zA-Z0-9_-]*)$"
+                        required="true"
+                        value="#{CmsPostalAddressCreateStep.name}"
+                        />
+
+                    <bootstrap:formGroupSelect
+                        help="#{CmsAssetsStepsDefaultMessagesBundle['createform.initial_locale.help']}"
+                        inputId="locale"
+                        label="#{CmsAssetsStepsDefaultMessagesBundle['createform.initial_locale.label']}"
+                        name="locale"
+                        options="#{CmsPostalAddressCreateStep.availableLocales}"
+                        required="true"
+                        selectedOptions="#{[CmsPostalAddressCreate.initialLocale]}"
+                        />
+
+                    <bootstrap:formGroupText
+                        help="#{CmsAssetsStepsDefaultMessagesBundle['createform.title.help']}"
+                        inputId="title"
+                        label="#{CmsAssetsStepsDefaultMessagesBundle['createform.title.label']}"
+                        name="title"
+                        required="true"
+                        />
+
+                    <bootstrap:formGroupTextarea 
+                        cols="80"
+                        help="#{CmsAssetsStepsDefaultMessagesBundle['createform.postaladdress.address.help']}"
+                        inputId="address"
+                        label="#{CmsAssetsStepsDefaultMessagesBundle['createform.postaladdress.address.label']}"
+                        name="address" 
+                        rows="10"
+                        />
+
+                    <bootstrap:formGroupText 
+                        help="#{CmsAssetsStepsDefaultMessagesBundle['createform.postaladdress.postalcode.help']}"
+                        inputId="postalCode"
+                        label="#{CmsAssetsStepsDefaultMessagesBundle['createform.postaladdress.postalcode.label']}"
+                        name="postalCode"
+                        />
+
+                    <bootstrap:formGroupText 
+                        help="#{CmsAssetsStepsDefaultMessagesBundle['createform.postaladdress.city.help']}"
+                        inputId="city"
+                        label="#{CmsAssetsStepsDefaultMessagesBundle['createform.postaladdress.city.label']}"
+                        name="city"
+                        />
+
+                    <bootstrap:formGroupText 
+                        help="#{CmsAssetsStepsDefaultMessagesBundle['createform.postaladdress.state.help']}"
+                        inputId="state"
+                        label="#{CmsAssetsStepsDefaultMessagesBundle['createform.postaladdress.state.label']}"
+                        name="state"
+                        />
+
+                    <bootstrap:formGroupSelect
+                        help="#{CmsAssetsStepsDefaultMessagesBundle['createform.postaladdress.country.help']}"
+                        inputId="isoCountryCode"
+                        label="#{CmsAssetsStepsDefaultMessagesBundle['createform.postaladdress.country.label']}"
+                        name="isoCountryCode"
+                        options="#{CmsPostalAddressCreateStep.countries}"
+                        />
+
+                    <a class="btn btn-warning"
+                       href="#{mvc.basePath}/#{CmsPostalAddressCreateStep.contentSectionLabel}/assetsfolders/#{CmsPostalAddressCreateStep.folderPath}">
+                        #{CmsAssetsStepsDefaultMessagesBundle['createform.cancel']}
+                    </a>
+                    <button class="btn btn-success"
+                            type="submit">
+                        #{CmsAssetsStepsDefaultMessagesBundle['createform.submit']}
+                    </button>
+
+                </form>
+
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

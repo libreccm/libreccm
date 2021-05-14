@@ -324,6 +324,12 @@ public class PostalAddressEditStep extends AbstractMvcAssetEditStep {
     public String getIsoCountryCode() {
         return getPostalAddress().getIsoCountryCode();
     }
+    
+    public String getCountry() {
+        return new Locale(getPostalAddress()
+            .getIsoCountryCode())
+            .getDisplayCountry(globalizationHelper.getNegotiatedLocale());
+    }
 
     @POST
     @Path("/properties")
@@ -374,8 +380,9 @@ public class PostalAddressEditStep extends AbstractMvcAssetEditStep {
             .collect(
                 Collectors.toMap(
                     Locale::toString,
-                    locale -> locale.getDisplayCountry(globalizationHelper
-                        .getNegotiatedLocale())
+                    locale -> locale.getDisplayCountry(
+                        globalizationHelper.getNegotiatedLocale()
+                    )
                 )
             );
     }
