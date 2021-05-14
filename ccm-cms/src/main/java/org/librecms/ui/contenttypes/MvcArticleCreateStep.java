@@ -179,9 +179,9 @@ public class MvcArticleCreateStep
                 || formParams.get(FORM_PARAM_NAME).length == 0) {
             addMessage(
                 "danger",
-                globalizationHelper.getLocalizedTextsUtil(
-                    getBundle()
-                ).getText("createstep.name.error.missing")
+                globalizationHelper
+                    .getLocalizedTextsUtil(getBundle())
+                    .getText("createstep.name.error.missing")
             );
             return showCreateStep();
         }
@@ -190,9 +190,9 @@ public class MvcArticleCreateStep
         if (!name.matches("^([a-zA-Z0-9_-]*)$")) {
             addMessage(
                 "danger",
-                globalizationHelper.getLocalizedTextsUtil(
-                    getBundle()
-                ).getText("createstep.name.error.invalid")
+                globalizationHelper
+                    .getLocalizedTextsUtil(getBundle())
+                    .getText("createstep.name.error.invalid")
             );
             return showCreateStep();
         }
@@ -202,9 +202,9 @@ public class MvcArticleCreateStep
                 || formParams.get(FORM_PARAM_TITLE).length == 0) {
             addMessage(
                 "danger",
-                globalizationHelper.getLocalizedTextsUtil(
-                    getBundle()
-                ).getText("createstep.title.error.missing")
+                globalizationHelper
+                    .getLocalizedTextsUtil(getBundle())
+                    .getText("createstep.title.error.missing")
             );
             return showCreateStep();
         }
@@ -215,9 +215,9 @@ public class MvcArticleCreateStep
                 || formParams.get(FORM_PARAM_SUMMARY).length == 0) {
             addMessage(
                 "danger",
-                globalizationHelper.getLocalizedTextsUtil(
-                    getBundle()
-                ).getText("createstep.summary.error.missing")
+                globalizationHelper
+                    .getLocalizedTextsUtil(getBundle())
+                    .getText("createstep.summary.error.missing")
             );
             return showCreateStep();
         }
@@ -291,7 +291,5 @@ public class MvcArticleCreateStep
             name
         );
     }
-
-    
 
 }

@@ -70,6 +70,8 @@ public class ContentSectionModel {
     private List<DocumentFolderTreeNode> documentFolders;
 
     private Map<String, String> availableDocumentTypes;
+    
+    private Map<String, String> availableAssetTypes;
 
     /**
      *
@@ -127,6 +129,16 @@ public class ContentSectionModel {
     ) {
         this.availableDocumentTypes
             = new LinkedHashMap<>(availableDocumentTypes);
+    }
+    
+    public Map<String, String> getAvailableAssetTypes() {
+        return Collections.unmodifiableMap(availableAssetTypes);
+    }
+    
+    protected void setAvailableAssetTypes(
+        final Map<String, String> availableAssetTypes
+    ) {
+        this.availableAssetTypes = new LinkedHashMap<>(availableAssetTypes);
     }
 
     /**

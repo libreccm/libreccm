@@ -19,50 +19,51 @@
 package org.librecms.ui.contentsections.assets;
 
 import org.librecms.contentsection.Asset;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.librecms.contentsection.ContentSection;
+import org.librecms.ui.contentsections.ContentSectionNotFoundException;
 
 /**
- * Metadata of an edit step for assets.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface MvcAssetEditStep {
+public interface MvcAssetEditStep {
+
+    Class<? extends MvcAssetEditStep> getStepClass();
+
+    ContentSection getContentSection() throws ContentSectionNotFoundException;
+
+    Asset getAsset() throws ContentSectionNotFoundException,
+                            AssetNotFoundException;
+
+    String getAssetPath() throws ContentSectionNotFoundException,
+                                 AssetNotFoundException;
 
     /**
-     * The name of the resource bundle providing the localized values for
-     * {@link #labelKey} and {@link descriptionKey}.
+     * Can the current user edit the asset. This method MUST only return
      *
-     * @return The resource bundle providing the localized labelKey and
-     *         descriptionKey.
+     * @return {@code true} if the current user can edit the asset, {
+     *
+     * @false} otherwise.
      */
-    String bundle();
+    boolean getCanEdit();
 
     /**
-     * The key for the localized description of the step.
+     * If an edit step alters the name of the asset and therefore the path of
+     * the asset, the step MUST call this method to update the asset path used
+     * by the step.
      *
-     * @return The key for the localized description of the step.
+     * @throws ContentSectionNotFoundException
+     * @throws AssetNotFoundException
      */
-    String descriptionKey();
+    void updateAssetPath() throws ContentSectionNotFoundException,
+                                  AssetNotFoundException;
 
-    /**
-     * The key for the localized label of the authoring step..
-     *
-     * @return The key for the localized label of the authoring step...
-     */
-    String labelKey();
+    String getStepPath();
 
-    /**
-     * Edit steps only support a specific type, and all subtypes.
-     *
-     * @return The asset type supported by the edit step.
-     */
+    String buildRedirectPathForStep() throws ContentSectionNotFoundException,
+                                         AssetNotFoundException;
 
-    Class<? extends Asset> supportedAssetType();
+    String buildRedirectPathForStep(final String subPath)
+        throws ContentSectionNotFoundException, AssetNotFoundException;
 
 }

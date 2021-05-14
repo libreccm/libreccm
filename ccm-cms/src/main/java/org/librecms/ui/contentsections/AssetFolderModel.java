@@ -26,9 +26,9 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 /**
- * Model for the current asset folder. Provides data about the folder for the 
+ * Model for the current asset folder. Provides data about the folder for the
  * view template.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
@@ -143,6 +143,14 @@ public class AssetFolderModel {
 
     public void setPath(final String path) {
         this.path = path;
+    }
+
+    public String getPathWithTrailingSlash() {
+        if (path.isEmpty()) {
+            return "";
+        } else {
+            return String.format("%s/", path);
+        }
     }
 
     public boolean isCanCreateSubFolders() {

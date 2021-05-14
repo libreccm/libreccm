@@ -16,50 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.ui.contentsections.documents;
+
+package org.librecms.ui.contentsections.assets;
 
 /**
- * Used by the {@link MvcAuthoringStepService} to indicate that the requested
- * content section could not be found. The {@link MvcAuthoringStepService} has
- * already populated {@link Models} with all necessary information. To show the
- * error message the controller can simply return the string returned by
- * {@link #showErrorMessage()}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class ContentSectionNotFoundException extends Exception {
+public class AssetNotFoundException extends Exception {
 
     private static final long serialVersionUID = 1L;
-
+    
     private final String errorMessageTemplate;
 
-    /**
-     * Creates a new instance of <code>ContentSectionNotFound</code> without
-     * detail message.
-     *
-     * @param errorMessageTemplate Template for the error message.
-     */
-    ContentSectionNotFoundException(final String errorMessageTemplate) {
+    public AssetNotFoundException(final String errorMessageTemplate) {
         super();
         this.errorMessageTemplate = errorMessageTemplate;
     }
-
-    /**
-     * Constructs an instance of <code>ContentSectionNotFound</code> with the
-     * specified detail message.
-     *
-     * @param msg                  The detail message.
-     * @param errorMessageTemplate Template for the error message.
-     */
-    ContentSectionNotFoundException(
+    
+    public AssetNotFoundException(
         final String errorMessageTemplate, final String msg
     ) {
         super(msg);
         this.errorMessageTemplate = errorMessageTemplate;
     }
-
+    
     public String showErrorMessage() {
         return errorMessageTemplate;
     }
-
+   
+    
 }

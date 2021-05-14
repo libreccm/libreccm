@@ -68,6 +68,15 @@ public interface MvcAssetCreateStep<T extends Asset> {
     String getAssetType();
 
     /**
+     * Localized label of the asset type. The current locale as returned by
+     * {@link GlobalizationHelper#getNegotiatedLocale()} should be used to
+     * select the language variant to return.
+     *
+     * @return The localized label of the asset type.
+     */
+    String getLabel();
+
+    /**
      * Localized description of the create step. The current locale as returned
      * by {@link GlobalizationHelper#getNegotiatedLocale()} should be used to
      * select the language variant to return.

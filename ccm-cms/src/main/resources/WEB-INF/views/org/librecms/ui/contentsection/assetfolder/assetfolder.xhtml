@@ -188,10 +188,55 @@
                                 </c:choose>
                                 <c:choose>
                                     <c:when test="#{AssetFolderModel.canCreateAssets}">
-                                        <button class="btn btn-primary" title="#{CmsAdminMessages['contentsection.assetfolder.add_asset']}">
+                                        <button class="btn btn-primary" 
+                                                data-toggle="modal"
+                                                data-target="#new-asset-dialog"
+                                                title="#{CmsAdminMessages['contentsection.assetfolder.add_asset']}">
                                             <bootstrap:svgIcon icon="file-earmark-plus" />
                                             <span class="sr-only">#{CmsAdminMessages['contentsection.assetfolder.add_asset']}</span>
                                         </button>
+                                        <div aria-hidden="true"
+                                             aria-labelledby="new-asset-dialog-title"
+                                             class="modal fade"
+                                             id="new-asset-dialog">
+                                            <div class="modal-dialog">
+                                                <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{AssetFolderModel.pathWithTrailingSlash}@create"
+                                                      class="modal-content"
+                                                      method="post">
+                                                    <div class="modal-header">
+                                                        <h2 class="modal-title"
+                                                            id="new-asset-dialog-title">
+                                                            #{CmsAdminMessages['contentsection.assetfolder.new_asset_dialog.title']}
+                                                        </h2>
+                                                        <button aria-label="#{CmsAdminMessages['contentsection.assetfolder.new_asset_dialog.close']}"
+                                                                class="close"
+                                                                data-dismiss="modal"
+                                                                type="button">
+                                                            <bootstrap:svgIcon icon="x" />
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <bootstrap:formGroupSelect
+                                                            help="#{CmsAdminMessages['contentsection.assetfolder.new_asset_dialog.assettype.help']}"
+                                                            inputId="assetType"
+                                                            label="#{CmsAdminMessages['contentsection.assetfolder.new_asset_dialog.assettype.label']}"
+                                                            name="assetType"
+                                                            options="#{ContentSectionModel.availableAssetTypes}" />
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btn btn-warning"
+                                                                data-dismiss="modal"
+                                                                type="button">
+                                                            #{CmsAdminMessages['contentsection.assetfolder.new_asset_dialog.close']}
+                                                        </button>
+                                                        <button class="btn btn-success"
+                                                                type="submit">
+                                                            #{CmsAdminMessages['contentsection.assetfolder.new_asset_dialog.submit']}
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </c:when>
                                     <c:otherwise>
                                         <button class="btn btn-primary"
@@ -263,7 +308,7 @@
                                                                     id="rename-folder-#{row.name}-dialog-title">
                                                                     #{CmsAdminMessages.getMessage('contentsection.assetfolder.rename_folder_dialog.title', [row.folderPath])}
                                                                 </h2>
-                                                                <button aria-label="#{CmsMessages['contentsection.assetfolder.rename_folder_dialog.close']}" 
+                                                                <button aria-label="#{CmsAdminMessages['contentsection.assetfolder.rename_folder_dialog.close']}" 
                                                                         class="close" 
                                                                         data-dismiss="modal" 
                                                                         type="button" >

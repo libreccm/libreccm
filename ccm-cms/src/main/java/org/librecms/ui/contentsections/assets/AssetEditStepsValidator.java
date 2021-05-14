@@ -75,12 +75,12 @@ public class AssetEditStepsValidator {
             return false;
         }
 
-        if (stepClass.getAnnotation(MvcAssetEditStep.class) == null) {
+        if (stepClass.getAnnotation(MvcAssetEditStepDef.class) == null) {
             LOGGER.warn(
                 "Class {} is part of a set of asset edit steps, but is not "
                     + "annotated with {}. The class will be ignored.",
                 stepClass.getName(),
-                MvcAssetEditStep.class
+                MvcAssetEditStepDef.class
             );
         }
 
@@ -89,7 +89,7 @@ public class AssetEditStepsValidator {
 
     public boolean supportsAsset(final Class<?> stepClass, final Asset asset) {
         return Optional
-            .ofNullable(stepClass.getAnnotation(MvcAssetEditStep.class))
+            .ofNullable(stepClass.getAnnotation(MvcAssetEditStepDef.class))
             .map(
                 stepAnnotation -> asset.getClass().isAssignableFrom(
                     stepAnnotation.supportedAssetType()
@@ -97,8 +97,8 @@ public class AssetEditStepsValidator {
             )
             .orElse(false);
 
-//        final MvcAssetEditStep stepAnnotation = stepClass.getAnnotation(
-//            MvcAssetEditStep.class
+//        final MvcAssetEditStepDef stepAnnotation = stepClass.getAnnotation(
+//            MvcAssetEditStepDef.class
 //        );
 //        
 //        if (stepAnnotation == null) {

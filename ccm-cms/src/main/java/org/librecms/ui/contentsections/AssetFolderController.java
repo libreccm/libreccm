@@ -34,6 +34,7 @@ import org.librecms.contentsection.FolderManager;
 import org.librecms.contentsection.FolderRepository;
 import org.librecms.contentsection.FolderType;
 import org.librecms.contentsection.privileges.AssetPrivileges;
+import org.librecms.ui.contentsections.assets.MvcAssetCreateStep;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +45,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.mvc.Controller;
 import javax.mvc.Models;
@@ -153,6 +156,10 @@ public class AssetFolderController {
      */
     @Inject
     private Models models;
+
+    @Inject
+    @Any
+    private Instance<MvcAssetCreateStep<?>> assetCreateSteps;
 
     /**
      * Performs operations on permissions.
@@ -265,6 +272,17 @@ public class AssetFolderController {
 
         contentSectionModel.setAssetFolders(
             assetFolderTree.buildFolderTree(section, folder)
+        );
+
+        contentSectionModel.setAvailableAssetTypes(
+            assetCreateSteps
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        step -> step.getAssetType(),
+                        step -> step.getLabel()
+                    )
+                )
         );
 
         assetFolderModel.setRows(

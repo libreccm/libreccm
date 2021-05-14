@@ -202,7 +202,7 @@ public class AssetPermissionsChecker {
      *         {@link AssetPrivileges#EDIT} privilege for the provided
      *         {@link Asset} to the current user, {@code false} otherwise.
      */
-    public boolean canEditAssets(final Asset asset) {
+    public boolean canEditAsset(final Asset asset) {
         return permissionChecker.isPermitted(
             AssetPrivileges.EDIT, asset
         );

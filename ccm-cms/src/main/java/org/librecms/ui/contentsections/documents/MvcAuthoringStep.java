@@ -18,6 +18,7 @@
  */
 package org.librecms.ui.contentsections.documents;
 
+import org.librecms.ui.contentsections.ContentSectionNotFoundException;
 import org.librecms.contentsection.ContentItem;
 import org.librecms.contentsection.ContentSection;
 

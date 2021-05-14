@@ -18,6 +18,7 @@
  */
 package org.librecms.ui.contentsections.documents;
 
+import org.librecms.ui.contentsections.ContentSectionNotFoundException;
 import org.libreccm.api.Identifier;
 import org.libreccm.api.IdentifierParser;
 import org.libreccm.categorization.Category;

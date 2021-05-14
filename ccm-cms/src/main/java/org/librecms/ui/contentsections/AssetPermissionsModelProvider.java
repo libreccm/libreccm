@@ -91,7 +91,7 @@ public class AssetPermissionsModelProvider {
             permissionChecker.canDeleteAssets(asset)
         );
         model.setGrantedEdit(
-            permissionChecker.canEditAssets(asset)
+            permissionChecker.canEditAsset(asset)
         );
         model.setGrantedUse(
             permissionChecker.canUseAssets(asset)
