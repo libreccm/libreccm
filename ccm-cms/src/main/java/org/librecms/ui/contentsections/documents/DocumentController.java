@@ -34,7 +34,6 @@ import org.librecms.lifecycle.LifecycleDefinition;
 import org.librecms.lifecycle.Phase;
 import org.librecms.ui.contentsections.ContentSectionModel;
 import org.librecms.ui.contentsections.ContentSectionsUi;
-import org.librecms.ui.contentsections.DocumentFolderController;
 import org.librecms.ui.contentsections.ItemPermissionChecker;
 
 import java.time.ZoneId;
@@ -257,7 +256,7 @@ public class DocumentController {
     public String showCreateStep(
         @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("folderPath") final String folderPath,
-        @FormParam("documentType") final String documentType
+        @PathParam("documentType") final String documentType
     ) {
         final CreateStepResult result = findCreateStep(
             sectionIdentifier,
@@ -273,7 +272,7 @@ public class DocumentController {
     }
 
     @POST
-    @Path("/{folderPath:(.+)?}/@create/{documentType}")
+    @Path("/{folderPath:(.+)?}/@create")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String showCreateStepPost(

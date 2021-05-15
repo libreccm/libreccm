@@ -665,11 +665,11 @@ public class AssetFolderController {
             row.setFolderPath(
                 folderManager
                     .getFolderPath(folder)
-                    .substring(
-                        folderManager
-                            .getFolderPath(section.getRootAssetsFolder())
-                            .length()
-                    )
+//                    .substring(
+//                        folderManager
+//                            .getFolderPath(section.getRootAssetsFolder())
+//                            .length()
+//                    )
             );
             row.setName(entry.getDisplayName());
             row.setTitle(

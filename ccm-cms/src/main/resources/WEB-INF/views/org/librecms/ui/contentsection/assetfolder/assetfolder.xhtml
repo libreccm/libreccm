@@ -275,8 +275,8 @@
                                                 <c:when test="#{row.folder and (row.permissions.grantedEdit or row.permissions.grantedPreview)}">
                                                     <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assetfolders/#{row.folderPath}">#{row.name}</a>
                                                 </c:when>
-                                                <c:when test="#{row.permissions.grantedApprove or row.permissions.grantedCategorize or row.permissions.grantedEdit or row.permissions.grantedPreview or row.permissions.grantedPublish}">
-                                                    <a href="#">#{row.name}</a>
+                                                <c:when test="#{row.permissions.grantedEdit or row.permissions.grantedUse or row.permissions.grantedView}">
+                                                    <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{AssetFolderModel.pathWithTrailingSlash}#{row.name}">#{row.name}</a>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <span>#{row.name}</span>

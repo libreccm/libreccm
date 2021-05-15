@@ -206,7 +206,7 @@ public abstract class AbstractMvcDocumentCreateStep<T extends ContentItem>
         if (folder.getParentFolder() == null) {
             return "";
         } else {
-            return folderManager.getFolderPath(folder);
+            return folderManager.getFolderPath(folder).substring(1);
         }
     }
 

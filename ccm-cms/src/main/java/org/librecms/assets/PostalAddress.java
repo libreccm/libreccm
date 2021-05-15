@@ -22,6 +22,9 @@ import com.arsdigita.cms.ui.assets.forms.PostalAddressForm;
 
 import org.hibernate.envers.Audited;
 import org.librecms.contentsection.Asset;
+import org.librecms.ui.contentsections.assets.MvcAssetEditKit;
+import org.librecms.ui.contentsections.assets.PostalAddressCreateStep;
+import org.librecms.ui.contentsections.assets.PostalAddressEditStep;
 
 import java.util.Objects;
 
@@ -29,8 +32,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import static org.librecms.CmsConstants.*;
-import static org.librecms.assets.AssetConstants.*;
+import static org.librecms.CmsConstants.DB_SCHEMA;
+import static org.librecms.assets.AssetConstants.ASSETS_BUNDLE;
+
 
 /**
  * A reuable postal address.
@@ -40,11 +44,17 @@ import static org.librecms.assets.AssetConstants.*;
 @Entity
 @Audited
 @Table(name = "POSTAL_ADDRESSES", schema = DB_SCHEMA)
-@AssetType(assetForm = PostalAddressForm.class,
+@AssetType(
+    assetForm = PostalAddressForm.class,
            labelBundle = ASSETS_BUNDLE,
            labelKey = "postaladdress.label",
            descriptionBundle = ASSETS_BUNDLE,
-           descriptionKey = "postaladdress.description")
+           descriptionKey = "postaladdress.description"
+)
+@MvcAssetEditKit(
+    createStep = PostalAddressCreateStep.class,
+    editStep = PostalAddressEditStep.class
+)
 public class PostalAddress extends Asset {
 
     private static final long serialVersionUID = 1L;

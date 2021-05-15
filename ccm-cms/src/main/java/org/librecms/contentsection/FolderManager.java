@@ -501,7 +501,9 @@ public class FolderManager {
         Folder current = folder;
         while (getParentFolder(current).isPresent()) {
             current = getParentFolder(current).get();
-            tokens.add(current.getName());
+            if (getParentFolder(current).isPresent()) {
+                tokens.add(current.getName());
+            }
         }
 
         Collections.reverse(tokens);

@@ -25,8 +25,11 @@ import org.librecms.contentsection.AssetManager;
 import org.librecms.contentsection.AssetRepository;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -76,7 +79,7 @@ public class PostalAddressCreateStep
 
     @Override
     public String showCreateStep() {
-        return "/org/librecms/ui/assets/postaladdress/create-postaladdress.xhtml";
+        return "org/librecms/ui/contentsection/assets/postaladdress/create-postaladdress.xhtml";
     }
 
     @AuthorizationRequired
@@ -220,17 +223,29 @@ public class PostalAddressCreateStep
     }
 
     public Map<String, String> getCountries() {
-        return Arrays
+        final Set<Locale> countries = Arrays
             .stream(Locale.getISOCountries())
-            .map(country -> new Locale(country))
+            .map(country -> new Locale("", country))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        final Map<String, String> countriesMap = countries
+            .stream()
             .collect(
                 Collectors.toMap(
-                    Locale::toString,
+                    Locale::getCountry,
                     locale -> locale.getDisplayCountry(
                         globalizationHelper.getNegotiatedLocale()
-                    )
+                    ),
+                    (value1, value2) -> value1,
+                    LinkedHashMap::new
                 )
             );
+        
+        final Map<String, String> values = new LinkedHashMap<>();
+        values.put("", "");
+        values.putAll(countriesMap);
+        
+        return values;
     }
 
 }

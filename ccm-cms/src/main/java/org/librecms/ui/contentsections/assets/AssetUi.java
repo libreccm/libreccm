@@ -58,7 +58,7 @@ public class AssetUi {
         models.put("section", section.getLabel());
         models.put("assetPath", assetPath);
         models.put(step, step);
-        return "org/librecms/ui/contentsections/assets/access-denied.xhtml";
+        return "org/librecms/ui/contentsection/assets/access-denied.xhtml";
     }
 
     public String showAssetNotFound(
@@ -66,7 +66,7 @@ public class AssetUi {
     ) {
         models.put("section", section.getLabel());
         models.put("assetPath", assetPath);
-        return "/org/librecms/ui/contentsections/assets/asset-not-found.xhtml";
+        return "/org/librecms/ui/contentsection/assets/asset-not-found.xhtml";
     }
 
 }

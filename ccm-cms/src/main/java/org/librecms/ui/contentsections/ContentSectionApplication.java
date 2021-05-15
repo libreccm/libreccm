@@ -22,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.libreccm.ui.IsAuthenticatedFilter;
 import org.librecms.ui.contentsections.assets.AssetEditStepsValidator;
+import org.librecms.ui.contentsections.assets.AssetController;
 import org.librecms.ui.contentsections.assets.MvcAssetEditSteps;
 import org.librecms.ui.contentsections.documents.AuthoringStepsValidator;
 import org.librecms.ui.contentsections.documents.DocumentController;
@@ -69,6 +70,7 @@ public class ContentSectionApplication extends Application {
     public Set<Class<?>> getClasses() {
         final Set<Class<?>> classes = new HashSet<>();
 
+        classes.add(AssetController.class);
         classes.add(AssetFolderController.class);
         classes.add(CategoriesController.class);
         classes.add(ConfigurationController.class);

@@ -83,10 +83,11 @@
                         label="#{CmsAssetsStepsDefaultMessagesBundle['createform.postaladdress.country.label']}"
                         name="isoCountryCode"
                         options="#{CmsPostalAddressCreateStep.countries}"
+                        required="false"
                         />
 
                     <a class="btn btn-warning"
-                       href="#{mvc.basePath}/#{CmsPostalAddressCreateStep.contentSectionLabel}/assetsfolders/#{CmsPostalAddressCreateStep.folderPath}">
+                       href="#{mvc.basePath}/#{CmsPostalAddressCreateStep.contentSectionLabel}/assetfolders/#{CmsPostalAddressCreateStep.folderPath}">
                         #{CmsAssetsStepsDefaultMessagesBundle['createform.cancel']}
                     </a>
                     <button class="btn btn-success"

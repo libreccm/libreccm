@@ -137,7 +137,7 @@ public abstract class AbstractMvcAssetCreateStep<T extends Asset>
         if (folder.getParentFolder() == null) {
             return "";
         } else {
-            return folderManager.getFolderPath(folder);
+            return folderManager.getFolderPath(folder).substring(1);
         }
     }
 

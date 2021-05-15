@@ -60,7 +60,7 @@ import javax.ws.rs.core.MediaType;
 @RequestScoped
 @Path("/{sectionIdentifier}/assets")
 @Controller
-public class AssetsController {
+public class AssetController {
 
     @Inject
     private AssetEditStepsValidator stepsValidator;
@@ -183,7 +183,7 @@ public class AssetsController {
     @Transactional(Transactional.TxType.REQUIRED)
     public String showCreateStepPost(
         @PathParam("sectionIdentifier") final String sectionIdentifier,
-        @FormParam("documentType") final String assetType
+        @FormParam("assetType") final String assetType
     ) {
         return String.format(
             "redirect:/%s/assets/@create/%s",
@@ -199,7 +199,7 @@ public class AssetsController {
     public String showCreateStep(
         @PathParam("sectionIdentifier") final String sectionIdentifier,
         @PathParam("folderPath") final String folderPath,
-        @FormParam("assetType") final String assetType
+        @PathParam("assetType") final String assetType
     ) {
         final CreateStepResult result = findCreateStep(
             sectionIdentifier,
@@ -224,7 +224,7 @@ public class AssetsController {
         @FormParam("assetType") final String assetType
     ) {
         return String.format(
-            "redirect:/%s/documents/%s/@create/%s",
+            "redirect:/%s/assets/%s/@create/%s",
             sectionIdentifier,
             folderPath,
             assetType
@@ -275,7 +275,7 @@ public class AssetsController {
     }
 
     @GET
-    @Path("/{assetPath:(.+)?")
+    @Path("/{assetPath:(.+)?}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String editAsset(
@@ -345,7 +345,7 @@ public class AssetsController {
      * @param section    The content section.
      * @param folderPath The folder path.
      *
-     * @return The template of the "document folder not found" page.
+     * @return The template of the "asset folder not found" page.
      */
     private String showAssetFolderNotFound(
         final ContentSection section, final String folderPath

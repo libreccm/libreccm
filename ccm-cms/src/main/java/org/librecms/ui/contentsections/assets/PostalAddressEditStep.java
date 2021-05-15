@@ -29,6 +29,8 @@ import org.librecms.ui.contentsections.ContentSectionNotFoundException;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -92,9 +94,39 @@ public class PostalAddressEditStep extends AbstractMvcAssetEditStep {
 
     private List<String> unusedTitleLocales;
 
+    private Map<String, String> countries;
+
     @Override
     public Class<? extends MvcAssetEditStep> getStepClass() {
         return PostalAddressEditStep.class;
+    }
+
+    @Override
+    protected void init() throws ContentSectionNotFoundException, 
+                                 AssetNotFoundException {
+        super.init();
+
+        final Set<Locale> countryLocales = Arrays
+            .stream(Locale.getISOCountries())
+            .map(country -> new Locale("", country))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        final Map<String, String> countriesMap = countryLocales
+            .stream()
+            .collect(
+                Collectors.toMap(
+                    Locale::getCountry,
+                    locale -> locale.getDisplayCountry(
+                        globalizationHelper.getNegotiatedLocale()
+                    ),
+                    (value1, value2) -> value1,
+                    LinkedHashMap::new
+                )
+            );
+
+        countries = new LinkedHashMap<>();
+        countries.put("", "");
+        countries.putAll(countriesMap);
     }
 
     @GET
@@ -139,7 +171,7 @@ public class PostalAddressEditStep extends AbstractMvcAssetEditStep {
                 .map(Locale::toString)
                 .collect(Collectors.toList());
 
-            return "org/librecms/ui/assets/postaladdress/edit-postaladdress.xhtml";
+            return "org/librecms/ui/contentsection/assets/postaladdress/edit-postaladdress.xhtml";
         } else {
             return assetUi.showAccessDenied(
                 getContentSection(),
@@ -324,10 +356,9 @@ public class PostalAddressEditStep extends AbstractMvcAssetEditStep {
     public String getIsoCountryCode() {
         return getPostalAddress().getIsoCountryCode();
     }
-    
+
     public String getCountry() {
-        return new Locale(getPostalAddress()
-            .getIsoCountryCode())
+        return new Locale("", getPostalAddress().getIsoCountryCode())
             .getDisplayCountry(globalizationHelper.getNegotiatedLocale());
     }
 
@@ -374,17 +405,7 @@ public class PostalAddressEditStep extends AbstractMvcAssetEditStep {
     }
 
     public Map<String, String> getCountries() {
-        return Arrays
-            .stream(Locale.getISOCountries())
-            .map(country -> new Locale(country))
-            .collect(
-                Collectors.toMap(
-                    Locale::toString,
-                    locale -> locale.getDisplayCountry(
-                        globalizationHelper.getNegotiatedLocale()
-                    )
-                )
-            );
+        return countries;
     }
 
 }

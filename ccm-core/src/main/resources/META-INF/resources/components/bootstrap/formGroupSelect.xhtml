@@ -52,7 +52,7 @@
                     id="#{cc.attrs.inputId}" 
                     multiple="#{cc.attrs.multiple ? 'multiple' : null}"
                     name="#{cc.attrs.name}"
-                    required="#{cc.attrs.required}"
+                    required="#{cc.attrs.required ? 'required' : ''}"
                     size="#{not empty cc.attrs.size ? cc.attrs.size : null}">
                 <c:forEach items="#{cc.attrs.options.entrySet()}" var="option">
                     <option selected="#{cc.attrs.selectedOptions.contains(option.key) ? 'selected' : null}"

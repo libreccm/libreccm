@@ -799,11 +799,11 @@ public class DocumentFolderController {
             row.setFolderPath(
                 folderManager
                     .getFolderPath(folder)
-                    .substring(
-                        folderManager
-                            .getFolderPath(section.getRootDocumentsFolder())
-                            .length()
-                    )
+//                    .substring(
+//                        folderManager
+//                            .getFolderPath(section.getRootDocumentsFolder())
+//                            .length()
+//                    )
             );
             row.setLanguages(Collections.emptySortedSet());
             row.setLastEditPublished(false);

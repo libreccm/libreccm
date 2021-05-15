@@ -19,7 +19,6 @@
 package org.librecms.ui.contentsections.assets;
 
 import org.libreccm.l10n.GlobalizationHelper;
-import org.libreccm.security.AuthorizationRequired;
 import org.librecms.contentsection.Asset;
 import org.librecms.contentsection.AssetManager;
 import org.librecms.contentsection.AssetRepository;
@@ -28,7 +27,6 @@ import org.librecms.ui.contentsections.AssetPermissionsChecker;
 import org.librecms.ui.contentsections.ContentSectionModel;
 import org.librecms.ui.contentsections.ContentSectionsUi;
 import org.librecms.ui.contentsections.ContentSectionNotFoundException;
-import org.librecms.ui.contentsections.documents.MvcAuthoringSteps;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,10 +35,6 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.mvc.Models;
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.WebApplicationException;
@@ -82,10 +76,10 @@ public abstract class AbstractMvcAssetEditStep implements MvcAssetEditStep {
     @Inject
     private SelectedAssetModel assetModel;
 
-    @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+    @PathParam(MvcAssetEditSteps.SECTION_IDENTIFIER_PATH_PARAM)
     private String sectionIdentifier;
 
-    @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
+    @PathParam(MvcAssetEditSteps.ASSET_PATH_PATH_PARAM_NAME)
     private String assetPathParam;
 
     private ContentSection contentSection;
