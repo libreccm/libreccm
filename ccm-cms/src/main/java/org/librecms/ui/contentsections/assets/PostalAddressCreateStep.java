@@ -21,7 +21,6 @@ package org.librecms.ui.contentsections.assets;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.AuthorizationRequired;
 import org.librecms.assets.PostalAddress;
-import org.librecms.contentsection.AssetManager;
 import org.librecms.contentsection.AssetRepository;
 
 import java.util.Arrays;
@@ -46,26 +45,11 @@ import javax.transaction.Transactional;
 public class PostalAddressCreateStep
     extends AbstractMvcAssetCreateStep<PostalAddress> {
 
-    private static final String FORM_PARAMS_NAME = "name";
-
-    private static final String FORM_PARAMS_TITLE = "title";
-
-    private static final String FORM_PARAM_INITIAL_LOCALE = "locale";
-
-    @Inject
-    private AssetManager assetManager;
-
     @Inject
     private AssetRepository assetRepo;
 
     @Inject
     private GlobalizationHelper globalizationHelper;
-
-    private String name;
-
-    private String title;
-
-    private String initialLocale;
 
     private String address;
 
@@ -82,74 +66,15 @@ public class PostalAddressCreateStep
         return "org/librecms/ui/contentsection/assets/postaladdress/create-postaladdress.xhtml";
     }
 
+    @Override
+    protected Class<PostalAddress> getAssetClass() {
+        return PostalAddress.class;
+    }
+
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
-    public String createAsset(final Map<String, String[]> formParams) {
-        if (!formParams.containsKey(FORM_PARAMS_NAME)
-                || formParams.get(FORM_PARAMS_NAME) == null
-                || formParams.get(FORM_PARAMS_NAME).length == 0) {
-            addMessage(
-                "danger",
-                globalizationHelper
-                    .getLocalizedTextsUtil(getBundle())
-                    .getText("postaladdress.createstep.name.error.missing")
-            );
-            return showCreateStep();
-        }
-
-        name = formParams.get(FORM_PARAMS_NAME)[0];
-        if (!name.matches("^([a-zA-Z0-9_-]*)$")) {
-            addMessage(
-                "danger",
-                globalizationHelper
-                    .getLocalizedTextsUtil(getBundle())
-                    .getText("postaladdress.createstep.name.error.invalid")
-            );
-            return showCreateStep();
-        }
-
-        if (!formParams.containsKey(FORM_PARAMS_TITLE)
-                || formParams.get(FORM_PARAMS_TITLE) == null
-                || formParams.get(FORM_PARAMS_TITLE).length == 0) {
-            addMessage(
-                "danger",
-                globalizationHelper
-                    .getLocalizedTextsUtil(getBundle())
-                    .getText("postaladdress.createstep.title.error.missing")
-            );
-            return showCreateStep();
-        }
-        title = formParams.get(FORM_PARAMS_TITLE)[0];
-
-        if (!formParams.containsKey(FORM_PARAM_INITIAL_LOCALE)
-                || formParams.get(FORM_PARAM_INITIAL_LOCALE) == null
-                || formParams.get(FORM_PARAM_INITIAL_LOCALE).length == 0) {
-            addMessage(
-                "danger",
-                globalizationHelper.getLocalizedTextsUtil(
-                    getBundle()
-                ).getText("createstep.initial_locale.error.missing")
-            );
-            return showCreateStep();
-        }
-        initialLocale = formParams.get(FORM_PARAM_INITIAL_LOCALE)[0];
-        final Locale locale = new Locale(initialLocale);
-
-        address = formParams.get("address")[0];
-        postalCode = formParams.get("postalCode")[0];
-        city = formParams.get("city")[0];
-        state = formParams.get("state")[0];
-        isoCountryCode = formParams.get("isoCountryCode")[0];
-
-        final PostalAddress postalAddress = assetManager.createAsset(
-            name,
-            title,
-            locale,
-            getFolder(),
-            PostalAddress.class
-        );
-
+    protected String setAssetProperties(final PostalAddress postalAddress) {
         postalAddress.setAddress(address);
         postalAddress.setPostalCode(postalCode);
         postalAddress.setCity(city);
@@ -162,7 +87,7 @@ public class PostalAddressCreateStep
             "redirect:/%s/assets/%s/%s/@postaladdress-edit",
             getContentSectionLabel(),
             getFolderPath(),
-            name
+            getName()
         );
     }
 
@@ -188,18 +113,6 @@ public class PostalAddressCreateStep
     @Override
     public String getBundle() {
         return MvcAssetStepsConstants.BUNDLE;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getInitialLocale() {
-        return initialLocale;
     }
 
     public String getAddress() {
@@ -230,6 +143,7 @@ public class PostalAddressCreateStep
 
         final Map<String, String> countriesMap = countries
             .stream()
+            .sorted(this::sortCountries)
             .collect(
                 Collectors.toMap(
                     Locale::getCountry,
@@ -240,12 +154,20 @@ public class PostalAddressCreateStep
                     LinkedHashMap::new
                 )
             );
-        
+
         final Map<String, String> values = new LinkedHashMap<>();
         values.put("", "");
         values.putAll(countriesMap);
-        
+
         return values;
+    }
+
+    private int sortCountries(final Locale locale1, final Locale locale2) {
+        final Locale negotiated = globalizationHelper.getNegotiatedLocale();
+        final String country1 = locale1.getDisplayCountry(negotiated);
+        final String country2 = locale2.getDisplayCountry(negotiated);
+
+        return country1.compareTo(country2);
     }
 
 }

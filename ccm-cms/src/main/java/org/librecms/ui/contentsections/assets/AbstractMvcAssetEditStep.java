@@ -19,6 +19,7 @@
 package org.librecms.ui.contentsections.assets;
 
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.security.AuthorizationRequired;
 import org.librecms.contentsection.Asset;
 import org.librecms.contentsection.AssetManager;
 import org.librecms.contentsection.AssetRepository;
@@ -28,13 +29,23 @@ import org.librecms.ui.contentsections.ContentSectionModel;
 import org.librecms.ui.contentsections.ContentSectionsUi;
 import org.librecms.ui.contentsections.ContentSectionNotFoundException;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.WebApplicationException;
@@ -44,7 +55,11 @@ import javax.ws.rs.core.UriBuilder;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+@Controller
 public abstract class AbstractMvcAssetEditStep implements MvcAssetEditStep {
+
+    @Inject
+    private AssetStepsDefaultMessagesBundle messageBundle;
 
     @Inject
     private AssetUi assetUi;
@@ -89,6 +104,10 @@ public abstract class AbstractMvcAssetEditStep implements MvcAssetEditStep {
     private String assetPath;
 
     private String stepPath;
+
+    private Map<String, String> titleValues;
+
+    private List<String> unusedTitleLocales;
 
     protected void init() throws ContentSectionNotFoundException,
                                  AssetNotFoundException {
@@ -142,6 +161,29 @@ public abstract class AbstractMvcAssetEditStep implements MvcAssetEditStep {
                     .toString()
             )
             .orElse("");
+
+        titleValues = getAsset()
+            .getTitle()
+            .getValues()
+            .entrySet()
+            .stream()
+            .collect(
+                Collectors.toMap(
+                    entry -> entry.getKey().toString(),
+                    entry -> entry.getValue()
+                )
+            );
+
+        final Set<Locale> titleLocales = getAsset()
+            .getTitle()
+            .getAvailableLocales();
+
+        unusedTitleLocales = globalizationHelper
+            .getAvailableLocales()
+            .stream()
+            .filter(locale -> !titleLocales.contains(locale))
+            .map(Locale::toString)
+            .collect(Collectors.toList());
 
         models.put("activeAssetTab", "editTab");
         models.put("stepPath", stepPath);
@@ -236,30 +278,30 @@ public abstract class AbstractMvcAssetEditStep implements MvcAssetEditStep {
                     )
                 )
             );
-        
+
         final Map<String, String> values = new HashMap<>();
         values.put(
             MvcAssetEditSteps.SECTION_IDENTIFIER_PATH_PARAM,
             section.getLabel()
         );
         values.put(
-            MvcAssetEditSteps.ASSET_PATH_PATH_PARAM_NAME, 
+            MvcAssetEditSteps.ASSET_PATH_PATH_PARAM_NAME,
             assetPathNonNull
         );
-        
+
         return Optional
             .ofNullable(getStepClass().getAnnotation(Path.class))
             .map(Path::value)
             .map(
                 path -> UriBuilder
-                .fromPath(path)
-                .buildFromMap(values)
-                .toString()
+                    .fromPath(path)
+                    .buildFromMap(values)
+                    .toString()
             )
             .map(path -> String.format("redirect:%s", path))
             .orElse("");
     }
-    
+
     @Override
     public String buildRedirectPathForStep(final String subPath) {
         final ContentSection section = Optional
@@ -286,31 +328,182 @@ public abstract class AbstractMvcAssetEditStep implements MvcAssetEditStep {
                     )
                 )
             );
-        
+
         final Map<String, String> values = new HashMap<>();
         values.put(
             MvcAssetEditSteps.SECTION_IDENTIFIER_PATH_PARAM,
             section.getLabel()
         );
         values.put(
-            MvcAssetEditSteps.ASSET_PATH_PATH_PARAM_NAME, 
+            MvcAssetEditSteps.ASSET_PATH_PATH_PARAM_NAME,
             assetPathNonNull
         );
-        
+
         return Optional
             .ofNullable(getStepClass().getAnnotation(Path.class))
             .map(Path::value)
             .map(
                 path -> UriBuilder
-                .fromPath(path)
-                .path(subPath)
-                .buildFromMap(values)
-                .toString()
+                    .fromPath(path)
+                    .path(subPath)
+                    .buildFromMap(values)
+                    .toString()
             )
             .map(path -> String.format("redirect:%s", path))
             .orElse("");
     }
 
-   
-    
+    public String getName() {
+        return getAsset().getDisplayName();
+    }
+
+    @POST
+    @Path("/name")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String updateName(
+        @PathParam(MvcAssetEditSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAssetEditSteps.ASSET_PATH_PATH_PARAM_NAME)
+        final String assetPath,
+        @FormParam("name") @DefaultValue("") final String name
+    ) {
+        try {
+            init();
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (AssetNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
+
+        if (assetPermissionsChecker.canEditAsset(getAsset())) {
+            if (name.isEmpty() || name.matches("\\s*")) {
+                models.put("nameMissing", true);
+
+                return showStep(sectionIdentifier, assetPath);
+            }
+
+            getAsset().setDisplayName(name);
+            assetRepo.save(getAsset());
+
+            updateAssetPath();
+
+            return buildRedirectPathForStep();
+        } else {
+            return assetUi.showAccessDenied(
+                getContentSection(),
+                getAsset(),
+                messageBundle.get("asset.edit.denied"));
+        }
+    }
+
+    public Map<String, String> getTitleValues() {
+        return Collections.unmodifiableMap(titleValues);
+    }
+
+    public List<String> getUnusedTitleLocales() {
+        return Collections.unmodifiableList(unusedTitleLocales);
+    }
+
+    @POST
+    @Path("/title/@add")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String addTitle(
+        @PathParam(MvcAssetEditSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAssetEditSteps.ASSET_PATH_PATH_PARAM_NAME)
+        final String assetPath,
+        @FormParam("locale") final String localeParam,
+        @FormParam("value") final String value
+    ) {
+        try {
+            init();
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (AssetNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
+
+        if (assetPermissionsChecker.canEditAsset(getAsset())) {
+            final Locale locale = new Locale(localeParam);
+            getAsset().getTitle().addValue(locale, value);
+            assetRepo.save(getAsset());
+
+            return buildRedirectPathForStep();
+        } else {
+            return assetUi.showAccessDenied(
+                getContentSection(),
+                getAsset(),
+                messageBundle.get("asset.edit.denied"));
+        }
+    }
+
+    @POST
+    @Path("/title/@edit/{locale}")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String editTitle(
+        @PathParam(MvcAssetEditSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAssetEditSteps.ASSET_PATH_PATH_PARAM_NAME)
+        final String assetPath,
+        @PathParam("locale") final String localeParam,
+        @FormParam("value") final String value
+    ) {
+        try {
+            init();
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (AssetNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
+
+        if (assetPermissionsChecker.canEditAsset(getAsset())) {
+            final Locale locale = new Locale(localeParam);
+            getAsset().getTitle().addValue(locale, value);
+            assetRepo.save(getAsset());
+
+            return buildRedirectPathForStep();
+        } else {
+            return assetUi.showAccessDenied(
+                getContentSection(),
+                getAsset(),
+                messageBundle.get("asset.edit.denied"));
+        }
+    }
+
+    @POST
+    @Path("/title/@remove/{locale}")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String removeTitle(
+        @PathParam(MvcAssetEditSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAssetEditSteps.ASSET_PATH_PATH_PARAM_NAME)
+        final String assetPath,
+        @PathParam("locale") final String localeParam
+    ) {
+        try {
+            init();
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (AssetNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
+
+        if (assetPermissionsChecker.canEditAsset(getAsset())) {
+            final Locale locale = new Locale(localeParam);
+            getAsset().getTitle().removeValue(locale);
+            assetRepo.save(getAsset());
+
+            return buildRedirectPathForStep();
+        } else {
+            return assetUi.showAccessDenied(
+                getContentSection(),
+                getAsset(),
+                messageBundle.get("asset.edit.denied"));
+        }
+    }
+
 }

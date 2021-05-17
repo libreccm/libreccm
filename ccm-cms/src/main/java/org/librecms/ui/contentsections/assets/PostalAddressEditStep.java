@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -43,7 +42,6 @@ import javax.inject.Named;
 import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.transaction.Transactional;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -70,16 +68,10 @@ public class PostalAddressEditStep extends AbstractMvcAssetEditStep {
     private AssetStepsDefaultMessagesBundle messageBundle;
 
     @Inject
-    private AssetManager assetManager;
-
-    @Inject
     private AssetUi assetUi;
 
     @Inject
     private AssetRepository assetRepo;
-
-    @Inject
-    private FolderManager folderManager;
 
     @Inject
     private GlobalizationHelper globalizationHelper;
@@ -90,10 +82,6 @@ public class PostalAddressEditStep extends AbstractMvcAssetEditStep {
     @Inject
     private Models models;
 
-    private Map<String, String> titleValues;
-
-    private List<String> unusedTitleLocales;
-
     private Map<String, String> countries;
 
     @Override
@@ -101,8 +89,16 @@ public class PostalAddressEditStep extends AbstractMvcAssetEditStep {
         return PostalAddressEditStep.class;
     }
 
+    private int sortCountries(final Locale locale1, final Locale locale2) {
+        final Locale negotiated = globalizationHelper.getNegotiatedLocale();
+        final String country1 = locale1.getDisplayCountry(negotiated);
+        final String country2 = locale2.getDisplayCountry(negotiated);
+
+        return country1.compareTo(country2);
+    }
+
     @Override
-    protected void init() throws ContentSectionNotFoundException, 
+    protected void init() throws ContentSectionNotFoundException,
                                  AssetNotFoundException {
         super.init();
 
@@ -113,6 +109,7 @@ public class PostalAddressEditStep extends AbstractMvcAssetEditStep {
 
         final Map<String, String> countriesMap = countryLocales
             .stream()
+            .sorted(this::sortCountries)
             .collect(
                 Collectors.toMap(
                     Locale::getCountry,
@@ -133,6 +130,7 @@ public class PostalAddressEditStep extends AbstractMvcAssetEditStep {
     @Path("/")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
+    @Override
     public String showStep(
         @PathParam(MvcAssetEditSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
@@ -148,29 +146,6 @@ public class PostalAddressEditStep extends AbstractMvcAssetEditStep {
         }
 
         if (assetPermissionsChecker.canEditAsset(getAsset())) {
-            titleValues = getAsset()
-                .getTitle()
-                .getValues()
-                .entrySet()
-                .stream()
-                .collect(
-                    Collectors.toMap(
-                        entry -> entry.getKey().toString(),
-                        entry -> entry.getValue()
-                    )
-                );
-
-            final Set<Locale> titleLocales = getAsset()
-                .getTitle()
-                .getAvailableLocales();
-
-            unusedTitleLocales = globalizationHelper
-                .getAvailableLocales()
-                .stream()
-                .filter(locale -> !titleLocales.contains(locale))
-                .map(Locale::toString)
-                .collect(Collectors.toList());
-
             return "org/librecms/ui/contentsection/assets/postaladdress/edit-postaladdress.xhtml";
         } else {
             return assetUi.showAccessDenied(
@@ -179,162 +154,13 @@ public class PostalAddressEditStep extends AbstractMvcAssetEditStep {
                 messageBundle.get("asset.edit.denied"));
         }
     }
-
-    public String getName() {
-        return getAsset().getDisplayName();
-    }
+//
+//    public String getName() {
+//        return getAsset().getDisplayName();
+//    }
 
     public PostalAddress getPostalAddress() {
         return (PostalAddress) getAsset();
-    }
-
-    @POST
-    @Path("/name")
-    @AuthorizationRequired
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String updateName(
-        @PathParam(MvcAssetEditSteps.SECTION_IDENTIFIER_PATH_PARAM)
-        final String sectionIdentifier,
-        @PathParam(MvcAssetEditSteps.ASSET_PATH_PATH_PARAM_NAME)
-        final String assetPath,
-        @FormParam("name") @DefaultValue("") final String name
-    ) {
-        try {
-            init();
-        } catch (ContentSectionNotFoundException ex) {
-            return ex.showErrorMessage();
-        } catch (AssetNotFoundException ex) {
-            return ex.showErrorMessage();
-        }
-
-        if (assetPermissionsChecker.canEditAsset(getAsset())) {
-            if (name.isEmpty() || name.matches("\\s*")) {
-                models.put("nameMissing", true);
-
-                return showStep(sectionIdentifier, assetPath);
-            }
-
-            getAsset().setDisplayName(name);
-            assetRepo.save(getAsset());
-
-            updateAssetPath();
-
-            return buildRedirectPathForStep();
-        } else {
-            return assetUi.showAccessDenied(
-                getContentSection(),
-                getAsset(),
-                messageBundle.get("asset.edit.denied"));
-        }
-    }
-
-    public Map<String, String> getTitleValues() {
-        return Collections.unmodifiableMap(titleValues);
-    }
-
-    public List<String> getUnusedTitleLocales() {
-        return Collections.unmodifiableList(unusedTitleLocales);
-    }
-
-    @POST
-    @Path("/title/@add")
-    @AuthorizationRequired
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String addTitle(
-        @PathParam(MvcAssetEditSteps.SECTION_IDENTIFIER_PATH_PARAM)
-        final String sectionIdentifier,
-        @PathParam(MvcAssetEditSteps.ASSET_PATH_PATH_PARAM_NAME)
-        final String assetPath,
-        @FormParam("locale") final String localeParam,
-        @FormParam("value") final String value
-    ) {
-        try {
-            init();
-        } catch (ContentSectionNotFoundException ex) {
-            return ex.showErrorMessage();
-        } catch (AssetNotFoundException ex) {
-            return ex.showErrorMessage();
-        }
-
-        if (assetPermissionsChecker.canEditAsset(getAsset())) {
-            final Locale locale = new Locale(localeParam);
-            getAsset().getTitle().addValue(locale, value);
-            assetRepo.save(getAsset());
-
-            return buildRedirectPathForStep();
-        } else {
-            return assetUi.showAccessDenied(
-                getContentSection(),
-                getAsset(),
-                messageBundle.get("asset.edit.denied"));
-        }
-    }
-
-    @POST
-    @Path("/title/@edit/{locale}")
-    @AuthorizationRequired
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String editTitle(
-        @PathParam(MvcAssetEditSteps.SECTION_IDENTIFIER_PATH_PARAM)
-        final String sectionIdentifier,
-        @PathParam(MvcAssetEditSteps.ASSET_PATH_PATH_PARAM_NAME)
-        final String assetPath,
-        @PathParam("locale") final String localeParam,
-        @PathParam("value") final String value
-    ) {
-        try {
-            init();
-        } catch (ContentSectionNotFoundException ex) {
-            return ex.showErrorMessage();
-        } catch (AssetNotFoundException ex) {
-            return ex.showErrorMessage();
-        }
-
-        if (assetPermissionsChecker.canEditAsset(getAsset())) {
-            final Locale locale = new Locale(localeParam);
-            getAsset().getTitle().addValue(locale, value);
-            assetRepo.save(getAsset());
-
-            return buildRedirectPathForStep();
-        } else {
-            return assetUi.showAccessDenied(
-                getContentSection(),
-                getAsset(),
-                messageBundle.get("asset.edit.denied"));
-        }
-    }
-
-    @POST
-    @Path("/title/@remove/{locale}")
-    @AuthorizationRequired
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String removeTitle(
-        @PathParam(MvcAssetEditSteps.SECTION_IDENTIFIER_PATH_PARAM)
-        final String sectionIdentifier,
-        @PathParam(MvcAssetEditSteps.ASSET_PATH_PATH_PARAM_NAME)
-        final String assetPath,
-        @PathParam("locale") final String localeParam
-    ) {
-        try {
-            init();
-        } catch (ContentSectionNotFoundException ex) {
-            return ex.showErrorMessage();
-        } catch (AssetNotFoundException ex) {
-            return ex.showErrorMessage();
-        }
-
-        if (assetPermissionsChecker.canEditAsset(getAsset())) {
-            final Locale locale = new Locale(localeParam);
-            getAsset().getTitle().removeValue(locale);
-            assetRepo.save(getAsset());
-
-            return buildRedirectPathForStep();
-        } else {
-            return assetUi.showAccessDenied(
-                getContentSection(),
-                getAsset(),
-                messageBundle.get("asset.edit.denied"));
-        }
     }
 
     public String getAddress() {
@@ -358,8 +184,12 @@ public class PostalAddressEditStep extends AbstractMvcAssetEditStep {
     }
 
     public String getCountry() {
-        return new Locale("", getPostalAddress().getIsoCountryCode())
-            .getDisplayCountry(globalizationHelper.getNegotiatedLocale());
+        if (getPostalAddress().getIsoCountryCode() == null) {
+            return "";
+        } else {
+            return new Locale("", getPostalAddress().getIsoCountryCode())
+                .getDisplayCountry(globalizationHelper.getNegotiatedLocale());
+        }
     }
 
     @POST
@@ -405,7 +235,9 @@ public class PostalAddressEditStep extends AbstractMvcAssetEditStep {
     }
 
     public Map<String, String> getCountries() {
-        return countries;
+        final LinkedHashMap<String, String> result = new LinkedHashMap<>();
+        result.putAll(countries);
+        return result;
     }
 
 }

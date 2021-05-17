@@ -19,9 +19,13 @@
 package org.librecms.assets;
 
 import com.arsdigita.cms.ui.assets.forms.SideNoteForm;
+
 import org.librecms.contentsection.Asset;
 import org.hibernate.envers.Audited;
 import org.libreccm.l10n.LocalizedString;
+import org.librecms.ui.contentsections.assets.MvcAssetEditKit;
+import org.librecms.ui.contentsections.assets.SideNoteCreateStep;
+import org.librecms.ui.contentsections.assets.SideNoteEditStep;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -38,21 +42,27 @@ import static org.librecms.assets.AssetConstants.*;
 
 /**
  * Assets for side notes (additional informations) for a content item.
- * 
+ *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @Entity
 @Table(name = "SIDE_NOTES", schema = DB_SCHEMA)
 @Audited
-@AssetType(assetForm = SideNoteForm.class,
-           labelBundle= ASSETS_BUNDLE,
-           labelKey = "sidenote.label",
-           descriptionBundle = ASSETS_BUNDLE,
-           descriptionKey = "sidenote.description")
+@AssetType(
+    assetForm = SideNoteForm.class,
+    labelBundle = ASSETS_BUNDLE,
+    labelKey = "sidenote.label",
+    descriptionBundle = ASSETS_BUNDLE,
+    descriptionKey = "sidenote.description"
+)
+@MvcAssetEditKit(
+    createStep = SideNoteCreateStep.class,
+    editStep = SideNoteEditStep.class
+)
 public class SideNote extends Asset implements Serializable {
 
     private static final long serialVersionUID = -4566222634780521726L;
-  
+
     @Embedded
     @AssociationOverride(
         name = "values",

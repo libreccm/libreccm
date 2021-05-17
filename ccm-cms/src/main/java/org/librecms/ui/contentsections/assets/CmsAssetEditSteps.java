@@ -18,6 +18,7 @@
  */
 package org.librecms.ui.contentsections.assets;
 
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,6 +33,7 @@ public class CmsAssetEditSteps implements  MvcAssetEditSteps {
         final Set<Class<?>> classes = new HashSet<>();
         
         classes.add(PostalAddressEditStep.class);
+        classes.add(SideNoteEditStep.class);
         
         return classes;
     }

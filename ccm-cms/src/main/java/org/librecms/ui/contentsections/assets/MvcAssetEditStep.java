@@ -18,9 +18,15 @@
  */
 package org.librecms.ui.contentsections.assets;
 
+import org.libreccm.security.AuthorizationRequired;
 import org.librecms.contentsection.Asset;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.ui.contentsections.ContentSectionNotFoundException;
+
+import javax.transaction.Transactional;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 /**
  *
@@ -61,9 +67,20 @@ public interface MvcAssetEditStep {
     String getStepPath();
 
     String buildRedirectPathForStep() throws ContentSectionNotFoundException,
-                                         AssetNotFoundException;
+                                             AssetNotFoundException;
 
     String buildRedirectPathForStep(final String subPath)
         throws ContentSectionNotFoundException, AssetNotFoundException;
+
+    @GET
+    @Path("/")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    String showStep(
+        @PathParam(MvcAssetEditSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAssetEditSteps.ASSET_PATH_PATH_PARAM_NAME)
+        final String assetPath
+    );
 
 }

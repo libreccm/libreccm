@@ -19,13 +19,17 @@
 package org.librecms.ui.contentsections.assets;
 
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.security.AuthorizationRequired;
+import org.librecms.assets.PostalAddress;
 import org.librecms.contentsection.Asset;
+import org.librecms.contentsection.AssetManager;
 import org.librecms.contentsection.ContentSection;
 import org.librecms.contentsection.Folder;
 import org.librecms.contentsection.FolderManager;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -42,6 +46,15 @@ import javax.transaction.Transactional;
 public abstract class AbstractMvcAssetCreateStep<T extends Asset>
     implements MvcAssetCreateStep<T> {
 
+    private static final String FORM_PARAMS_NAME = "name";
+
+    private static final String FORM_PARAMS_TITLE = "title";
+
+    private static final String FORM_PARAM_INITIAL_LOCALE = "locale";
+
+    @Inject
+    private AssetManager assetManager;
+    
     /**
      * Provides operations for folders.
      */
@@ -70,6 +83,12 @@ public abstract class AbstractMvcAssetCreateStep<T extends Asset>
      * Messages to be shown to the user.
      */
     private SortedMap<String, String> messages;
+
+    private String name;
+
+    private String title;
+
+    private String initialLocale;
 
     public AbstractMvcAssetCreateStep() {
         messages = new TreeMap<>();
@@ -153,5 +172,93 @@ public abstract class AbstractMvcAssetCreateStep<T extends Asset>
     public void setMessages(final SortedMap<String, String> messages) {
         this.messages = new TreeMap<>(messages);
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getInitialLocale() {
+        return initialLocale;
+    }
+
+    @Override
+    public String getAssetType() {
+        return getAssetClass().getName();
+    }
+    
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    @Override
+    public String createAsset(final Map<String, String[]> formParams) {
+        if (!formParams.containsKey(FORM_PARAMS_NAME)
+                || formParams.get(FORM_PARAMS_NAME) == null
+                || formParams.get(FORM_PARAMS_NAME).length == 0) {
+            addMessage(
+                "danger",
+                globalizationHelper
+                    .getLocalizedTextsUtil(getBundle())
+                    .getText("postaladdress.createstep.name.error.missing")
+            );
+            return showCreateStep();
+        }
+
+        name = formParams.get(FORM_PARAMS_NAME)[0];
+        if (!name.matches("^([a-zA-Z0-9_-]*)$")) {
+            addMessage(
+                "danger",
+                globalizationHelper
+                    .getLocalizedTextsUtil(getBundle())
+                    .getText("postaladdress.createstep.name.error.invalid")
+            );
+            return showCreateStep();
+        }
+
+        if (!formParams.containsKey(FORM_PARAMS_TITLE)
+                || formParams.get(FORM_PARAMS_TITLE) == null
+                || formParams.get(FORM_PARAMS_TITLE).length == 0) {
+            addMessage(
+                "danger",
+                globalizationHelper
+                    .getLocalizedTextsUtil(getBundle())
+                    .getText("postaladdress.createstep.title.error.missing")
+            );
+            return showCreateStep();
+        }
+        title = formParams.get(FORM_PARAMS_TITLE)[0];
+
+        if (!formParams.containsKey(FORM_PARAM_INITIAL_LOCALE)
+                || formParams.get(FORM_PARAM_INITIAL_LOCALE) == null
+                || formParams.get(FORM_PARAM_INITIAL_LOCALE).length == 0) {
+            addMessage(
+                "danger",
+                globalizationHelper.getLocalizedTextsUtil(
+                    getBundle()
+                ).getText("createstep.initial_locale.error.missing")
+            );
+            return showCreateStep();
+        }
+        initialLocale = formParams.get(FORM_PARAM_INITIAL_LOCALE)[0];
+        final Locale locale = new Locale(initialLocale);
+
+//        final T asset = createAsset(name, title, locale, folder);
+
+        final T asset = assetManager.createAsset(
+            name,
+            title,
+            locale,
+            folder,
+            getAssetClass()
+        );
+
+        return setAssetProperties(asset);
+    }
+
+    protected abstract Class<T> getAssetClass();
+
+    protected abstract String setAssetProperties(final T asset);
 
 }
