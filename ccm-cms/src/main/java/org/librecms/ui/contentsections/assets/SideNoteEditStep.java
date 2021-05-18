@@ -173,8 +173,7 @@ public class SideNoteEditStep extends AbstractMvcAssetEditStep {
         final String sectionIdentifier,
         @PathParam(MvcAssetEditSteps.ASSET_PATH_PATH_PARAM_NAME)
         final String assetPath,
-        @FormParam("locale") final String localeParam,
-        @FormParam("value") final String value
+        @FormParam("locale") final String localeParam
     ) {
         try {
             init();
@@ -186,7 +185,7 @@ public class SideNoteEditStep extends AbstractMvcAssetEditStep {
 
         if (assetPermissionsChecker.canEditAsset(getAsset())) {
             final Locale locale = new Locale(localeParam);
-            getSideNote().getText().addValue(locale, value);
+            getSideNote().getText().addValue(locale, "");
             assetRepo.save(getSideNote());
 
             return buildRedirectPathForStep();

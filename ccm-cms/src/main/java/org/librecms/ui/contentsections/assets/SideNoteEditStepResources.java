@@ -16,17 +16,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.ui.contenttypes;
+package org.librecms.ui.contentsections.assets;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.librecms.contentsection.ContentItem;
-import org.librecms.contentsection.ContentItemRepository;
+import org.librecms.assets.SideNote;
+import org.librecms.contentsection.Asset;
+import org.librecms.contentsection.AssetRepository;
 import org.librecms.contentsection.ContentSection;
-import org.librecms.contenttypes.Article;
+import org.librecms.ui.contentsections.AssetPermissionsChecker;
 import org.librecms.ui.contentsections.ContentSectionsUi;
-import org.librecms.ui.contentsections.ItemPermissionChecker;
-import org.librecms.ui.contentsections.documents.MvcAuthoringSteps;
 
 import java.util.Locale;
 import java.util.StringTokenizer;
@@ -47,51 +46,46 @@ import javax.ws.rs.core.MediaType;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Path(MvcAuthoringSteps.PATH_PREFIX + "article-text-resources")
-public class MvcArticleTextBodyStepResources {
+@Path(MvcAssetEditSteps.PATH_PREFIX + "sidenote-edit-resources")
+public class SideNoteEditStepResources {
 
-    /**
-     * Used for retrieving and saving the article.
-     */
     @Inject
-    private ContentItemRepository itemRepo;
+    private AssetRepository assetRepo;
 
     @Inject
     private ContentSectionsUi sectionsUi;
 
     @Inject
-    private ItemPermissionChecker itemPermissionChecker;
+    private AssetPermissionsChecker assetPermissionsChecker;
 
     @GET
     @Path("/variants/wordcount/{locale}")
     @Produces(MediaType.TEXT_HTML)
     @Transactional(Transactional.TxType.REQUIRED)
     public String getWordCount(
-        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        @PathParam(MvcAssetEditSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
-        final String documentPathParam,
+        @PathParam(MvcAssetEditSteps.ASSET_PATH_PATH_PARAM_NAME)
+        final String assetPathParam,
         @PathParam("locale") final String localeParam
     ) {
-         final ContentSection contentSection = sectionsUi
+        final ContentSection contentSection = sectionsUi
             .findContentSection(sectionIdentifier)
             .orElseThrow(
                 () -> new NotFoundException()
             );
 
-        final ContentItem document = itemRepo
-            .findByPath(contentSection, documentPathParam)
-            .orElseThrow(
-                () -> new NotFoundException()
-            );
+        final Asset asset = assetRepo
+            .findByPath(contentSection, assetPathParam)
+            .orElseThrow(() -> new NotFoundException());
 
-        if (!(document instanceof Article)) {
+        if (!(asset instanceof SideNote)) {
             throw new NotFoundException();
         }
 
-        final Article article = (Article) document;
-        if (itemPermissionChecker.canEditItem(article)) {
-            final String text = article
+        final SideNote sideNote = (SideNote) asset;
+        if (assetPermissionsChecker.canEditAsset(asset)) {
+            final String text = sideNote
                 .getText()
                 .getValue(new Locale(localeParam));
             final Document jsoupDoc = Jsoup.parseBodyFragment(text);
@@ -103,16 +97,16 @@ public class MvcArticleTextBodyStepResources {
             throw new ForbiddenException();
         }
     }
-    
+
     @GET
     @Path("/variants/{locale}")
     @Produces(MediaType.TEXT_HTML)
     @Transactional(Transactional.TxType.REQUIRED)
     public String viewTextValue(
-        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        @PathParam(MvcAssetEditSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
-        final String documentPathParam,
+        @PathParam(MvcAssetEditSteps.ASSET_PATH_PATH_PARAM_NAME)
+        final String assetPathParam,
         @PathParam("locale") final String localeParam
     ) {
         final ContentSection contentSection = sectionsUi
@@ -121,22 +115,19 @@ public class MvcArticleTextBodyStepResources {
                 () -> new NotFoundException()
             );
 
-        final ContentItem document = itemRepo
-            .findByPath(contentSection, documentPathParam)
-            .orElseThrow(
-                () -> new NotFoundException()
-            );
+        final Asset asset = assetRepo
+            .findByPath(contentSection, assetPathParam)
+            .orElseThrow(() -> new NotFoundException());
 
-        if (!(document instanceof Article)) {
+        if (!(asset instanceof SideNote)) {
             throw new NotFoundException();
         }
 
-        final Article article = (Article) document;
-        if (itemPermissionChecker.canEditItem(article)) {
-            return article.getText().getValue(new Locale(localeParam));
+        final SideNote sideNote = (SideNote) asset;
+        if (assetPermissionsChecker.canEditAsset(asset)) {
+            return sideNote.getText().getValue(new Locale(localeParam));
         } else {
             throw new ForbiddenException();
         }
     }
-
 }
