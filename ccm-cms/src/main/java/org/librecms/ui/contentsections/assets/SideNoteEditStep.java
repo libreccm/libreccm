@@ -207,7 +207,7 @@ public class SideNoteEditStep extends AbstractMvcAssetEditStep {
         @PathParam(MvcAssetEditSteps.ASSET_PATH_PATH_PARAM_NAME)
         final String assetPath,
         @PathParam("locale") final String localeParam,
-        @PathParam("value") final String value
+        @FormParam("value") final String value
     ) {
         try {
             init();

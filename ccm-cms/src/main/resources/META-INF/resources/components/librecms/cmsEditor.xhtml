@@ -375,7 +375,7 @@
                                                 </span>
                                             </button>
                                             <button class="btn btn-danger"
-                                                    data-target="##{cc.attrs.editorId}-#{entry.key}-remove-dialog"
+                                                    data-target="##{cc.attrs.editorId}-#{variant.locale}-remove-dialog"
                                                     data-toggle="modal"
                                                     type="button">
                                                 <bootstrap:svgIcon icon="x-circle" />
@@ -383,14 +383,14 @@
                                                     #{cc.attrs.removeButtonLabel}
                                                 </span>
                                             </button>
-                                            <div aria-describedby="#{cc.attrs.editorId}-#{entry.key}-remove-dialog-title"
+                                            <div aria-describedby="#{cc.attrs.editorId}-#{variant.locale}-remove-dialog-title"
                                                  aria-hidden="true"
                                                  class="modal fade"
                                                  data-backdrop="static"
-                                                 id="#{cc.attrs.editorId}-#{entry.key}-remove-dialog"
+                                                 id="#{cc.attrs.editorId}-#{variant.locale}-remove-dialog"
                                                  tabindex="-1">
                                                 <div class="modal-dialog">
-                                                    <form action="#{cc.attrs.removeMethod}/#{entry.key}"
+                                                    <form action="#{cc.attrs.removeMethod}/#{variant.locale}"
                                                           class="modal-content"
                                                           method="post">
                                                         <div class="modal-header">
@@ -425,7 +425,7 @@
                                                             <p>
                                                                 #{cc.attrs.removeDialogText}
                                                             </p>
-                                                            <pre>#{entry.key}: #{entry.value}</pre>
+                                                            <pre>#{variant.locale}</pre>
                                                             <input name="confirmed"
                                                                    type="hidden"
                                                                    value="true" />

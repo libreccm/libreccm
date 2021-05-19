@@ -59,7 +59,7 @@ public class SideNoteEditStepResources {
     private AssetPermissionsChecker assetPermissionsChecker;
 
     @GET
-    @Path("/variants/wordcount/{locale}")
+    @Path("/text/variants/wordcount/{locale}")
     @Produces(MediaType.TEXT_HTML)
     @Transactional(Transactional.TxType.REQUIRED)
     public String getWordCount(
@@ -99,7 +99,7 @@ public class SideNoteEditStepResources {
     }
 
     @GET
-    @Path("/variants/{locale}")
+    @Path("/text/variants/{locale}")
     @Produces(MediaType.TEXT_HTML)
     @Transactional(Transactional.TxType.REQUIRED)
     public String viewTextValue(
