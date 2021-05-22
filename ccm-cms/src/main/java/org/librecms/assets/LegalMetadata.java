@@ -23,6 +23,9 @@ import com.arsdigita.cms.ui.assets.forms.LegalMetadataForm;
 import org.librecms.contentsection.Asset;
 import org.hibernate.envers.Audited;
 import org.libreccm.l10n.LocalizedString;
+import org.librecms.ui.contentsections.assets.LegalMetadataCreateStep;
+import org.librecms.ui.contentsections.assets.LegalMetadataEditStep;
+import org.librecms.ui.contentsections.assets.MvcAssetEditKit;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -49,14 +52,20 @@ import static org.librecms.assets.AssetConstants.*;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@AssetType(assetForm = LegalMetadataForm.class,
-           labelKey = "legal_metadata.label",
-           labelBundle = ASSETS_BUNDLE,
-           descriptionKey = "legal_metadata.description",
-           descriptionBundle = ASSETS_BUNDLE)
 @Entity
 @Table(name = "LEGAL_METADATA", schema = DB_SCHEMA)
 @Audited
+@AssetType(
+    assetForm = LegalMetadataForm.class,
+    labelKey = "legal_metadata.label",
+    labelBundle = ASSETS_BUNDLE,
+    descriptionKey = "legal_metadata.description",
+    descriptionBundle = ASSETS_BUNDLE
+)
+@MvcAssetEditKit(
+    createStep = LegalMetadataCreateStep.class,
+    editStep = LegalMetadataEditStep.class
+)
 public class LegalMetadata extends Asset implements Serializable {
 
     private static final long serialVersionUID = -5766376031105842907L;
@@ -73,11 +82,12 @@ public class LegalMetadata extends Asset implements Serializable {
     @Embedded
     @AssociationOverride(
         name = "values",
-        joinTable = @JoinTable(name = "LEGAL_METADATA_RIGHTS",
-                               schema = DB_SCHEMA,
-                               joinColumns = {
-                                   @JoinColumn(name = "ASSET_ID")
-                               }
+        joinTable = @JoinTable(
+            name = "LEGAL_METADATA_RIGHTS",
+            schema = DB_SCHEMA,
+            joinColumns = {
+                @JoinColumn(name = "ASSET_ID")
+            }
         )
     )
     private LocalizedString rights;
@@ -89,11 +99,13 @@ public class LegalMetadata extends Asset implements Serializable {
     private String creator;
 
     @ElementCollection
-    @CollectionTable(name = "LEGAL_METADATA_CONTRIBUTORS",
-                     schema = DB_SCHEMA,
-                     joinColumns = {
-                         @JoinColumn(name = "LEGAL_METADATA_ID")
-                     })
+    @CollectionTable(
+        name = "LEGAL_METADATA_CONTRIBUTORS",
+        schema = DB_SCHEMA,
+        joinColumns = {
+            @JoinColumn(name = "LEGAL_METADATA_ID")
+        }
+    )
     @Column(name = "CONTRIBUTORS")
     private List<String> contributors;
 
@@ -138,6 +150,14 @@ public class LegalMetadata extends Asset implements Serializable {
 
     public List<String> getContributors() {
         return Collections.unmodifiableList(contributors);
+    }
+
+    public void addContributor(final String contributor) {
+        contributors.add(contributor);
+    }
+
+    public void removeContributor(final String contributor) {
+        contributors.remove(contributor);
     }
 
     public void setContributors(final List<String> contributors) {

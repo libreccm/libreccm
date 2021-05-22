@@ -19,8 +19,8 @@
 package org.librecms.ui.contentsections.assets;
 
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.l10n.LocalizedString;
 import org.libreccm.security.AuthorizationRequired;
-import org.librecms.assets.PostalAddress;
 import org.librecms.contentsection.Asset;
 import org.librecms.contentsection.AssetManager;
 import org.librecms.contentsection.ContentSection;
@@ -54,7 +54,7 @@ public abstract class AbstractMvcAssetCreateStep<T extends Asset>
 
     @Inject
     private AssetManager assetManager;
-    
+
     /**
      * Provides operations for folders.
      */
@@ -189,7 +189,7 @@ public abstract class AbstractMvcAssetCreateStep<T extends Asset>
     public String getAssetType() {
         return getAssetClass().getName();
     }
-    
+
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
@@ -245,7 +245,6 @@ public abstract class AbstractMvcAssetCreateStep<T extends Asset>
         final Locale locale = new Locale(initialLocale);
 
 //        final T asset = createAsset(name, title, locale, folder);
-
         final T asset = assetManager.createAsset(
             name,
             title,
@@ -254,11 +253,13 @@ public abstract class AbstractMvcAssetCreateStep<T extends Asset>
             getAssetClass()
         );
 
-        return setAssetProperties(asset);
+        return setAssetProperties(asset, formParams);
     }
 
     protected abstract Class<T> getAssetClass();
 
-    protected abstract String setAssetProperties(final T asset);
+    protected abstract String setAssetProperties(
+        final T asset, final Map<String, String[]> formParams
+    );
 
 }

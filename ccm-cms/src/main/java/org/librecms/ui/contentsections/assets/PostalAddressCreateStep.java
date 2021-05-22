@@ -28,6 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -74,7 +75,36 @@ public class PostalAddressCreateStep
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
-    protected String setAssetProperties(final PostalAddress postalAddress) {
+    protected String setAssetProperties(
+        final PostalAddress postalAddress,
+        final Map<String, String[]> formParams
+    ) {
+        address = Optional
+            .ofNullable(formParams.get("address"))
+            .filter(value -> value.length > 0)
+            .map(value -> value[0])
+            .orElse(null);
+        postalCode = Optional
+            .ofNullable(formParams.get("postalCode"))
+            .filter(value -> value.length > 0)
+            .map(value -> value[0])
+            .orElse(null);
+        city = Optional
+            .ofNullable(formParams.get("city"))
+            .filter(value -> value.length > 0)
+            .map(value -> value[0])
+            .orElse(null);
+        state = Optional
+            .ofNullable(formParams.get("state"))
+            .filter(value -> value.length > 0)
+            .map(value -> value[0])
+            .orElse(null);
+        isoCountryCode = Optional
+            .ofNullable(formParams.get("isoCountryCode"))
+            .filter(value -> value.length > 0)
+            .map(value -> value[0])
+            .orElse(null);
+
         postalAddress.setAddress(address);
         postalAddress.setPostalCode(postalCode);
         postalAddress.setCity(city);

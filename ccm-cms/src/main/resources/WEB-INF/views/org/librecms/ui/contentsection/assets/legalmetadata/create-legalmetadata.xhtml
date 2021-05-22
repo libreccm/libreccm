@@ -8,16 +8,16 @@
 
         <ui:define name="main">
             <div class="container">
-                <h1>#{CmsAssetsStepsDefaultMessagesBundle["postaladdress.createform.title"]}</h1>
+                <h1>#{CmsAssetsStepsDefaultMessagesBundle["legalmetadata.createform.title"]}</h1>
 
-                <c:forEach items="#{CmsPostalAddressCreateStep.messages.entrySet()}"
+                <c:forEach items="#{CmsLegalMetadataCreateStep.messages.entrySet()}"
                            var="message">
                     <div class="alert alert-#{message.key}" role="alert">
                         #{message.value}
                     </div>
                 </c:forEach>
 
-                <form action="#{mvc.basePath}/#{CmsPostalAddressCreateStep.contentSectionLabel}/assets/#{CmsPostalAddressCreateStep.folderPath}@create/#{CmsPostalAddressCreateStep.assetType}"
+                <form action="#{mvc.basePath}/#{CmsLegalMetadataCreateStep.contentSectionLabel}/assets/#{CmsLegalMetadataCreateStep.folderPath}@create/#{CmsLegalMetadataCreateStep.assetType}"
                       method="post">
                     <bootstrap:formGroupText
                         help="#{CmsAssetsStepsDefaultMessagesBundle['createform.name.help']}"
@@ -26,7 +26,7 @@
                         name="name"
                         pattern="^([a-zA-Z0-9_-]*)$"
                         required="true"
-                        value="#{CmsPostalAddressCreateStep.name}"
+                        value="#{CmsLegalMetadataCreateStep.name}"
                         />
 
                     <bootstrap:formGroupSelect
@@ -34,9 +34,9 @@
                         inputId="locale"
                         label="#{CmsAssetsStepsDefaultMessagesBundle['createform.initial_locale.label']}"
                         name="locale"
-                        options="#{CmsPostalAddressCreateStep.availableLocales}"
+                        options="#{CmsLegalMetadataCreateStep.availableLocales}"
                         required="true"
-                        selectedOptions="#{[CmsPostalAddressCreateStep.initialLocale]}"
+                        selectedOptions="#{[CmsLegalMetadataCreateStep.initialLocale]}"
                         />
 
                     <bootstrap:formGroupText
@@ -47,47 +47,41 @@
                         required="true"
                         />
 
-                    <bootstrap:formGroupTextarea 
+                    <bootstrap:formGroupText 
+                        help="#{CmsAssetsStepsDefaultMessagesBundle['createform.legalmetadata.rightsholder.help']}"
+                        inputId="rightsHolder"
+                        label="#{CmsAssetsStepsDefaultMessagesBundle['createform.legalmetadata.rightsholder.label']}"
+                        name="rightsHolder"
+                        required="false"
+                        />
+
+                    <bootstrap:formGroupTextarea
                         cols="80"
-                        help="#{CmsAssetsStepsDefaultMessagesBundle['createform.postaladdress.address.help']}"
-                        inputId="address"
-                        label="#{CmsAssetsStepsDefaultMessagesBundle['createform.postaladdress.address.label']}"
-                        name="address" 
-                        rows="10"
+                        help="#{CmsAssetsStepsDefaultMessagesBundle['createform.legalmetadata.rights.help']}"
+                        inputId="rights"
+                        label="#{CmsAssetsStepsDefaultMessagesBundle['createform.legalmetadata.rights.label']}"
+                        name="rights"
+                        rows="20"
                         />
 
                     <bootstrap:formGroupText 
-                        help="#{CmsAssetsStepsDefaultMessagesBundle['createform.postaladdress.postalcode.help']}"
-                        inputId="postalCode"
-                        label="#{CmsAssetsStepsDefaultMessagesBundle['createform.postaladdress.postalcode.label']}"
-                        name="postalCode"
+                        help="#{CmsAssetsStepsDefaultMessagesBundle['createform.legalmetadata.publisher.help']}"
+                        inputId="rightsHolder"
+                        label="#{CmsAssetsStepsDefaultMessagesBundle['createform.legalmetadata.publisher.label']}"
+                        name="rightsHolder"
+                        required="false"
                         />
 
                     <bootstrap:formGroupText 
-                        help="#{CmsAssetsStepsDefaultMessagesBundle['createform.postaladdress.city.help']}"
-                        inputId="city"
-                        label="#{CmsAssetsStepsDefaultMessagesBundle['createform.postaladdress.city.label']}"
-                        name="city"
-                        />
-
-                    <bootstrap:formGroupText 
-                        help="#{CmsAssetsStepsDefaultMessagesBundle['createform.postaladdress.state.help']}"
-                        inputId="state"
-                        label="#{CmsAssetsStepsDefaultMessagesBundle['createform.postaladdress.state.label']}"
-                        name="state"
-                        />
-
-                    <bootstrap:formGroupSelect
-                        help="#{CmsAssetsStepsDefaultMessagesBundle['createform.postaladdress.country.help']}"
-                        inputId="isoCountryCode"
-                        label="#{CmsAssetsStepsDefaultMessagesBundle['createform.postaladdress.country.label']}"
-                        name="isoCountryCode"
-                        options="#{CmsPostalAddressCreateStep.countries}"
+                        help="#{CmsAssetsStepsDefaultMessagesBundle['createform.legalmetadata.creator.help']}"
+                        inputId="rightsHolder"
+                        label="#{CmsAssetsStepsDefaultMessagesBundle['createform.legalmetadata.creator.label']}"
+                        name="rightsHolder"
                         required="false"
                         />
 
                     <a class="btn btn-warning"
-                       href="#{mvc.basePath}/#{CmsPostalAddressCreateStep.contentSectionLabel}/assetfolders/#{CmsPostalAddressCreateStep.folderPath}">
+                       href="#{mvc.basePath}/#{CmsLegalMetadataCreateStep.contentSectionLabel}/assetfolders/#{CmsLegalMetadataCreateStep.folderPath}">
                         #{CmsAssetsStepsDefaultMessagesBundle['createform.cancel']}
                     </a>
                     <button class="btn btn-success"
@@ -98,6 +92,7 @@
                 </form>
 
             </div>
+
         </ui:define>
 
     </ui:composition>

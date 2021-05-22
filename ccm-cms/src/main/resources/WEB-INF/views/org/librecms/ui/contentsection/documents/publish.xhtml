@@ -18,13 +18,13 @@
 
         <ui:define name="main">
             <c:choose>
-                <c:when test="#{CmsPublishStep.live}">
+                <c:when test="#{CmsDocumentPublishStepModel.live}">
                     <h2>
                         ${CmsDefaultStepsMessageBundle['publishstep.lifecycle.assigned']}: 
-                        ${CmsPublishStep.assignedLifecycleLabel}
+                        ${CmsDocumentPublishStepModel.assignedLifecycleLabel}
                     </h2>
                     <p>
-                        ${CmsPublishStep.assignedLifecycleDecription}
+                        ${CmsDocumentPublishStepModel.assignedLifecycleDecription}
                     </p>
 
                     <div class="d-flex">

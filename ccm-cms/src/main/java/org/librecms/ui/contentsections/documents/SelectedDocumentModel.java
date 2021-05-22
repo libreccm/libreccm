@@ -48,7 +48,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.UriBuilder;
 
-
 /**
  * Model/named bean providing data about the currently selected document for
  * several views.
@@ -229,24 +228,26 @@ public class SelectedDocumentModel {
             .excludeDefaultAuthoringSteps();
         authoringStepsList = buildAuthoringStepsList(item);
         workflow = item.getWorkflow();
-        workflowName = globalizationHelper.getValueFromLocalizedString(
-            workflow.getName()
-        );
-        allTasks = workflow
-            .getTasks()
-            .stream()
-            .filter(task -> task instanceof AssignableTask)
-            .map(task -> (AssignableTask) task)
-            .map(this::buildTaskListEntry)
-            .collect(Collectors.toList());
+        if (workflow != null) {
+            workflowName = globalizationHelper.getValueFromLocalizedString(
+                workflow.getName()
+            );
+            allTasks = workflow
+                .getTasks()
+                .stream()
+                .filter(task -> task instanceof AssignableTask)
+                .map(task -> (AssignableTask) task)
+                .map(this::buildTaskListEntry)
+                .collect(Collectors.toList());
 
-        currentTask = allTasks
-            .stream()
-            .filter(task -> task.getTaskState() == TaskState.ENABLED)
-            .findFirst()
-            .orElse(null);
-        if (currentTask != null) {
-            currentTask.setCurrentTask(true);
+            currentTask = allTasks
+                .stream()
+                .filter(task -> task.getTaskState() == TaskState.ENABLED)
+                .findFirst()
+                .orElse(null);
+            if (currentTask != null) {
+                currentTask.setCurrentTask(true);
+            }
         }
     }
 
@@ -299,9 +300,9 @@ public class SelectedDocumentModel {
         entry.setLocked(task.isLocked());
         entry.setLockedByCurrentUser(
             shiro
-            .getUser()
-            .map(user -> Objects.equals(user, task.getLockingUser()))
-            .orElse(false)
+                .getUser()
+                .map(user -> Objects.equals(user, task.getLockingUser()))
+                .orElse(false)
         );
 
         return entry;

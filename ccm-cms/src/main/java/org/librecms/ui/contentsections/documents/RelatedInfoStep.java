@@ -102,7 +102,6 @@ import javax.ws.rs.core.MediaType;
 @RequestScoped
 @Path(MvcAuthoringSteps.PATH_PREFIX + "relatedinfo")
 @Controller
-@Named("CmsRelatedInfoStep")
 @MvcAuthoringStepDef(
     bundle = DefaultAuthoringStepConstants.BUNDLE,
     descriptionKey = "authoringsteps.relatedinfo.description",
@@ -248,11 +247,29 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
     @Inject
     private PermissionChecker permissionChecker;
 
+    @Inject
+    private RelatedInfoStepModel relatedInfoStepModel;
+
     @Override
     public Class<RelatedInfoStep> getStepClass() {
         return RelatedInfoStep.class;
     }
-    
+
+    @Override
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void init() throws ContentSectionNotFoundException,
+                                 DocumentNotFoundException {
+        super.init();
+        relatedInfoStepModel.setAttachmentLists(
+            getDocument()
+                .getAttachments()
+                .stream()
+                .filter(list -> !list.getName().startsWith("."))
+                .map(this::buildAttachmentListDto)
+                .collect(Collectors.toList())
+        );
+    }
+
     @GET
     @Path("/")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -281,23 +298,6 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
                 getLabel()
             );
         }
-    }
-
-    /**
-     * Gets the {@link AttachmentList}s of the current content item and converts
-     * them to {@link AttachmentListDto}s to make data about the lists available
-     * in the views.
-     *
-     * @return A list of the {@link AttachmentList} of the current content item.
-     */
-    @Transactional(Transactional.TxType.REQUIRED)
-    public List<AttachmentListDto> getAttachmentLists() {
-        return getDocument()
-            .getAttachments()
-            .stream()
-            .filter(list -> !list.getName().startsWith("."))
-            .map(this::buildAttachmentListDto)
-            .collect(Collectors.toList());
     }
 
     /**
@@ -676,8 +676,8 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             );
             listRepo.save(list);
             return buildRedirectPathForStep(
-                    String.format("/attachmentlists/%s", list.getName())
-                );
+                String.format("/attachmentlists/%s", list.getName())
+            );
         } else {
             return documentUi.showAccessDenied(
                 getContentSection(),

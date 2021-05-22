@@ -24,6 +24,7 @@ import org.librecms.assets.SideNote;
 import org.librecms.contentsection.AssetRepository;
 
 import java.util.Locale;
+import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -43,8 +44,6 @@ public class SideNoteCreateStep extends AbstractMvcAssetCreateStep<SideNote> {
 
     @Inject
     private GlobalizationHelper globalizationHelper;
-
-    private String name;
 
     private String text;
 
@@ -84,7 +83,9 @@ public class SideNoteCreateStep extends AbstractMvcAssetCreateStep<SideNote> {
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     @Override
-    public String setAssetProperties(final SideNote sideNote) {
+    public String setAssetProperties(
+        final SideNote sideNote, final Map<String, String[]> formParams
+        ) {
         sideNote.getText().addValue(new Locale(getInitialLocale()), text);
         assetRepo.save(sideNote);
 
@@ -92,7 +93,7 @@ public class SideNoteCreateStep extends AbstractMvcAssetCreateStep<SideNote> {
             "redirect:/%s/assets/%s/%s/@sidenote-edit",
             getContentSectionLabel(),
             getFolderPath(),
-            name
+            getName()
         );
     }
 

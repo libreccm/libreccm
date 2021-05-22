@@ -18,7 +18,6 @@
  */
 package org.librecms.ui.contentsections.assets;
 
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,27 +25,26 @@ import java.util.Set;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class CmsAssetEditSteps implements  MvcAssetEditSteps {
+public class CmsAssetEditSteps implements MvcAssetEditSteps {
 
     @Override
     public Set<Class<?>> getClasses() {
         final Set<Class<?>> classes = new HashSet<>();
-        
+
+        classes.add(LegalMetadataEditStep.class);
         classes.add(PostalAddressEditStep.class);
         classes.add(SideNoteEditStep.class);
-        
+
         return classes;
     }
 
     @Override
     public Set<Class<?>> getResourceClasses() {
         final Set<Class<?>> classes = new HashSet<>();
-        
+
         classes.add(SideNoteEditStepResources.class);
-        
+
         return classes;
     }
-    
-    
-    
+
 }

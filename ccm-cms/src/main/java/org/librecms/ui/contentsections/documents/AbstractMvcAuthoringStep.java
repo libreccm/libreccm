@@ -36,6 +36,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.mvc.Models;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.WebApplicationException;
@@ -101,6 +102,7 @@ public abstract class AbstractMvcAuthoringStep implements MvcAuthoringStep {
      * @throws ContentSectionNotFoundException
      * @throws DocumentNotFoundException
      */
+    @Transactional(Transactional.TxType.REQUIRED)
     protected void init()
         throws ContentSectionNotFoundException, DocumentNotFoundException {
         contentSection = sectionsUi

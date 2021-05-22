@@ -60,7 +60,6 @@ import javax.ws.rs.PathParam;
 @RequestScoped
 @Path(MvcAuthoringSteps.PATH_PREFIX + "publish")
 @Controller
-@Named("CmsPublishStep")
 @MvcAuthoringStepDef(
     bundle = DefaultAuthoringStepConstants.BUNDLE,
     descriptionKey = "authoringsteps.publish.description",
@@ -97,10 +96,39 @@ public class PublishStep extends AbstractMvcAuthoringStep {
 
     @Inject
     private Models models;
-    
+
+    @Inject
+    private PublishStepModel publishStepModel;
+
     @Override
     public Class<PublishStep> getStepClass() {
         return PublishStep.class;
+    }
+
+    @Override
+    protected void init() throws ContentSectionNotFoundException,
+                                 DocumentNotFoundException {
+        super.init();
+
+        publishStepModel.setAssignedLifecycleLabel(
+            Optional
+                .ofNullable(getDocument().getLifecycle())
+                .map(Lifecycle::getDefinition)
+                .map(LifecycleDefinition::getLabel)
+                .map(globalizationHelper::getValueFromLocalizedString)
+                .orElse("")
+        );
+
+        publishStepModel.setAssignedLifecycleDescription(
+            Optional
+                .ofNullable(getDocument().getLifecycle())
+                .map(Lifecycle::getDefinition)
+                .map(LifecycleDefinition::getDescription)
+                .map(globalizationHelper::getValueFromLocalizedString)
+                .orElse("")
+        );
+        
+        publishStepModel.setLive(itemManager.isLive(getDocument()));
     }
 
     @GET
@@ -146,45 +174,6 @@ public class PublishStep extends AbstractMvcAuthoringStep {
                 )
             );
         }
-    }
-
-    /**
-     * Get the label of the lifecycle assigned to the current content item. The
-     * value is determined from the label of the definition of the lifecycle
-     * using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
-     * }.
-     *
-     * @return The label of the lifecycle assigned to the current content item,
-     *         or an empty string if no lifecycle is assigned to the item.
-     */
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String getAssignedLifecycleLabel() {
-        return Optional
-            .ofNullable(getDocument().getLifecycle())
-            .map(Lifecycle::getDefinition)
-            .map(LifecycleDefinition::getLabel)
-            .map(globalizationHelper::getValueFromLocalizedString)
-            .orElse("");
-
-    }
-
-    /**
-     * Get the description of the lifecycle assigned to the current content
-     * item. The value is determined from the description of the definition of
-     * the lifecycle using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
-     * }.
-     *
-     * @return The description of the lifecycle assigned to the current content
-     *         item, or an empty string if no lifecycle is assigned to the item.
-     */
-    @Transactional(Transactional.TxType.REQUIRED)
-    public String getAssignedLifecycleDecription() {
-        return Optional
-            .ofNullable(getDocument().getLifecycle())
-            .map(Lifecycle::getDefinition)
-            .map(LifecycleDefinition::getDescription)
-            .map(globalizationHelper::getValueFromLocalizedString)
-            .orElse("");
     }
 
     /**

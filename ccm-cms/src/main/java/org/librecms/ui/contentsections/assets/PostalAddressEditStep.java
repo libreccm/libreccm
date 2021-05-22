@@ -21,14 +21,11 @@ package org.librecms.ui.contentsections.assets;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.AuthorizationRequired;
 import org.librecms.assets.PostalAddress;
-import org.librecms.contentsection.AssetManager;
 import org.librecms.contentsection.AssetRepository;
-import org.librecms.contentsection.FolderManager;
 import org.librecms.ui.contentsections.AssetPermissionsChecker;
 import org.librecms.ui.contentsections.ContentSectionNotFoundException;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Locale;

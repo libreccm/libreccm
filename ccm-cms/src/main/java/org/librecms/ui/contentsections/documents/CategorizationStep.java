@@ -40,7 +40,6 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.transaction.Transactional;
@@ -58,7 +57,6 @@ import javax.ws.rs.PathParam;
 @RequestScoped
 @Path(MvcAuthoringSteps.PATH_PREFIX + "categorization")
 @Controller
-@Named("CmsCategorizationStep")
 @MvcAuthoringStepDef(
     bundle = DefaultAuthoringStepConstants.BUNDLE,
     descriptionKey = "authoringsteps.categorization.description",
@@ -69,6 +67,9 @@ public class CategorizationStep extends AbstractMvcAuthoringStep {
 
     @Inject
     private CategoryManager categoryManager;
+
+    @Inject
+    private CategorizationStepModel categorizationStepModel;
 
     @Inject
     private DocumentUi documentUi;
@@ -85,10 +86,27 @@ public class CategorizationStep extends AbstractMvcAuthoringStep {
     @Inject
     private PermissionChecker permissionChecker;
 
+    @Override
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void init() throws ContentSectionNotFoundException,
+                                 DocumentNotFoundException {
+        super.init();
+
+        categorizationStepModel.setCategorizationTrees(
+            getContentSection()
+                .getDomains()
+                .stream()
+                .map(DomainOwnership::getDomain)
+                .map(this::buildCategorizationTree)
+                .collect(Collectors.toList())
+        );
+    }
+
+    @Override
     public Class<CategorizationStep> getStepClass() {
         return CategorizationStep.class;
     }
-    
+
     @GET
     @Path("/")
     @Transactional(Transactional.TxType.REQUIRED)
@@ -109,7 +127,7 @@ public class CategorizationStep extends AbstractMvcAuthoringStep {
         if (permissionChecker.isPermitted(
             ItemPrivileges.CATEGORIZE, getDocument()
         )) {
-            return "org/librecms/ui/documents/categorization.xhtml";
+            return "org/librecms/ui/contentsection/documents/categorization.xhtml";
         } else {
             return documentUi.showAccessDenied(
                 getContentSection(),
@@ -120,31 +138,13 @@ public class CategorizationStep extends AbstractMvcAuthoringStep {
     }
 
     /**
-     * Provides a tree view of the category system assigned to the current
-     * content section in an format which can be processed in MVC templates.
-     *
-     * The categories assigned to the current item as marked.
-     *
-     * @return Tree view of the category systems assigned to the current content
-     *         section.
-     */
-    @Transactional(Transactional.TxType.REQUIRED)
-    public List<CategorizationTree> getCategorizationTrees() {
-        return getContentSection()
-            .getDomains()
-            .stream()
-            .map(DomainOwnership::getDomain)
-            .map(this::buildCategorizationTree)
-            .collect(Collectors.toList());
-    }
-
-    /**
      * Update the categorization of the current item.
-   
+     *
      *
      *
      * @param domainParam
      * @param assignedCategoriesParam
+     *
      * @return A redirect to the categorization step.
      */
     @MvcAuthoringAction(
@@ -156,7 +156,7 @@ public class CategorizationStep extends AbstractMvcAuthoringStep {
     public String updateCategorization(
         @PathParam("domain")
         final String domainParam,
-        @FormParam("assignedCategories") 
+        @FormParam("assignedCategories")
         final Set<String> assignedCategoriesParam
     ) {
         try {
@@ -166,7 +166,7 @@ public class CategorizationStep extends AbstractMvcAuthoringStep {
         } catch (DocumentNotFoundException ex) {
             return ex.showErrorMessage();
         }
-        
+
         final Identifier domainIdentifier = identifierParser.parseIdentifier(
             domainParam
         );
@@ -214,7 +214,7 @@ public class CategorizationStep extends AbstractMvcAuthoringStep {
         updateAssignedCategories(
             domainResult.get().getRoot(), assignedCategoriesParam
         );
-        
+
         return buildRedirectPathForStep();
     }
 
