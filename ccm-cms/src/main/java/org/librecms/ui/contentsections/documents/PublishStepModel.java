@@ -92,7 +92,7 @@ public class PublishStepModel {
         return assignedLifecycleDescription;
     }
 
-    protected void setAssignedLifecylceDescription(
+    protected void setAssignedLifecycleDescription(
         final String assignedLifecycleDescription
     ) {
         this.assignedLifecycleDescription = assignedLifecycleDescription;

@@ -39,7 +39,6 @@ import javax.ws.rs.Path;
 
 import org.librecms.ui.contentsections.documents.MvcAuthoringSteps;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +46,6 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.transaction.Transactional;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -56,7 +54,6 @@ import javax.ws.rs.PathParam;
 
 import org.librecms.ui.contentsections.documents.MvcAuthoringStepDef;
 
-import java.util.Collections;
 import java.util.StringTokenizer;
 
 /**
@@ -67,7 +64,6 @@ import java.util.StringTokenizer;
 @RequestScoped
 @Path(MvcAuthoringSteps.PATH_PREFIX + "article-text")
 @Controller
-@Named("CmsArticleTextBodyStep")
 @MvcAuthoringStepDef(
     bundle = ArticleStepsConstants.BUNDLE,
     descriptionKey = "authoringsteps.text.description",
@@ -100,14 +96,16 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
     @Inject
     private ItemPermissionChecker itemPermissionChecker;
 
-    private Map<String, String> textValues;
+    @Inject
+    private MvcArticleTextBodyStepModel articleTextBodyStepModel;
 
-    private List<CmsEditorLocaleVariantRow> variants;
-
-    private List<String> unusedLocales;
-
-    private String selectedLocale;
-
+//    private Map<String, String> textValues;
+//
+//    private List<CmsEditorLocaleVariantRow> variants;
+//
+//    private List<String> unusedLocales;
+//
+//    private String selectedLocale;
     @Override
     public Class<MvcArticleTextBodyStep> getStepClass() {
         return MvcArticleTextBodyStep.class;
@@ -142,31 +140,31 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
         }
     }
 
-    /**
-     * Get all localized values of the main text.
-     *
-     * @return The localized values of the main text.
-     */
-    public Map<String, String> getTextValues() {
-        return Collections.unmodifiableMap(textValues);
-    }
-
-    public List<CmsEditorLocaleVariantRow> getVariants() {
-        return Collections.unmodifiableList(variants);
-    }
-
-    /**
-     * Gets the locales for which the main text has not been defined yet.
-     *
-     * @return The locales for which the main text has not been defined yet.
-     */
-    public List<String> getUnusedLocales() {
-        return Collections.unmodifiableList(unusedLocales);
-    }
-
-    public String getSelectedLocale() {
-        return selectedLocale;
-    }
+//    /**
+//     * Get all localized values of the main text.
+//     *
+//     * @return The localized values of the main text.
+//     */
+//    public Map<String, String> getTextValues() {
+//        return Collections.unmodifiableMap(textValues);
+//    }
+//
+//    public List<CmsEditorLocaleVariantRow> getVariants() {
+//        return Collections.unmodifiableList(variants);
+//    }
+//
+//    /**
+//     * Gets the locales for which the main text has not been defined yet.
+//     *
+//     * @return The locales for which the main text has not been defined yet.
+//     */
+//    public List<String> getUnusedLocales() {
+//        return Collections.unmodifiableList(unusedLocales);
+//    }
+//
+//    public String getSelectedLocale() {
+//        return selectedLocale;
+//    }
 
     /**
      * Adds a localized main text.
@@ -274,7 +272,9 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
         }
 
         if (itemPermissionChecker.canEditItem(getArticle())) {
-            selectedLocale = new Locale(localeParam).toString();
+            articleTextBodyStepModel.setSelectedLocale(
+                new Locale(localeParam).toString()
+            );
 
             return "org/librecms/ui/contenttypes/article/article-text/edit.xhtml";
         } else {
@@ -379,35 +379,44 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
         super.init();
 
         if (itemPermissionChecker.canEditItem(getArticle())) {
-            textValues = getArticle()
-                .getText()
-                .getValues()
-                .entrySet()
-                .stream()
-                .collect(
-                    Collectors.toMap(
-                        entry -> entry.getKey().toString(),
-                        entry -> entry.getValue()
+            articleTextBodyStepModel.setCanEdit(
+                itemPermissionChecker.canEditItem(getArticle())
+            );
+            articleTextBodyStepModel.setTextValues(
+                getArticle()
+                    .getText()
+                    .getValues()
+                    .entrySet()
+                    .stream()
+                    .collect(
+                        Collectors.toMap(
+                            entry -> entry.getKey().toString(),
+                            entry -> entry.getValue()
+                        )
                     )
-                );
+            );
 
-            variants = getArticle()
-                .getText()
-                .getValues()
-                .entrySet()
-                .stream()
-                .map(this::buildVariantRow)
-                .collect(Collectors.toList());
+            articleTextBodyStepModel.setVariants(
+                getArticle()
+                    .getText()
+                    .getValues()
+                    .entrySet()
+                    .stream()
+                    .map(this::buildVariantRow)
+                    .collect(Collectors.toList())
+            );
 
             final Set<Locale> locales = getArticle()
                 .getText()
                 .getAvailableLocales();
-            unusedLocales = globalizationHelper
-                .getAvailableLocales()
-                .stream()
-                .filter(locale -> !locales.contains(locale))
-                .map(Locale::toString)
-                .collect(Collectors.toList());
+            articleTextBodyStepModel.setUnusedLocales(
+                globalizationHelper
+                    .getAvailableLocales()
+                    .stream()
+                    .filter(locale -> !locales.contains(locale))
+                    .map(Locale::toString)
+                    .collect(Collectors.toList())
+            );
         }
     }
 

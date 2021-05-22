@@ -9,12 +9,12 @@
 
         <ui:define name="editStep">
             <div class="container">
-                <h2>#{CmsAssetsStepsDefaultMessagesBundle.getMessage('postaladdress.editstep.header', [CmsPostalAddressEditStep.name])}</h2>
+                <h2>#{CmsAssetsStepsDefaultMessagesBundle.getMessage('postaladdress.editstep.header', [MvcAssetEditStepModel.name])}</h2>
 
                 <h3>#{CmsAssetsStepsDefaultMessagesBundle['editstep.name.header']}</h3>
                 <div class="d-flex">
-                    <pre class="mr-2">#{CmsPostalAddressEditStep.name}</pre>
-                    <c:if test="#{CmsPostalAddressEditStep.canEdit}">
+                    <pre class="mr-2">#{MvcAssetEditStepModel.name}</pre>
+                    <c:if test="#{MvcAssetEditStepModel.canEdit}">
                         <button class="btn btn-primary btn-sm"
                                 data-toggle="modal"
                                 data-target="#name-edit-dialog"
@@ -27,7 +27,7 @@
                     </c:if>
                 </div>
 
-                <c:if test="#{CmsPostalAddressEditStep.canEdit}">
+                <c:if test="#{MvcAssetEditStepModel.canEdit}">
                     <div aria-hidden="true"
                          aria-labelledby="name-edit-dialog-title"
                          class="modal fade"
@@ -57,7 +57,7 @@
                                         name="name"
                                         pattern="^([a-zA-Z0-9_-]*)$"
                                         required="true" 
-                                        value="#{CmsPostalAddressEditStep.name}"
+                                        value="#{MvcAssetEditStepModel.name}"
                                         />
                                 </div>
                                 <div class="modal-footer">
@@ -94,10 +94,10 @@
                     editDialogValueLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.edit.value.label']}"
                     editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@postaladdress-edit/title/@edit"
                     editorId="title-editor"
-                    hasUnusedLocales="#{!CmsPostalAddressEditStep.unusedTitleLocales.isEmpty()}"
+                    hasUnusedLocales="#{!MvcAssetEditStepModel.unusedTitleLocales.isEmpty()}"
                     headingLevel="3"
                     objectIdentifier="#{CmsSelectedAssetModel.assetPath}"
-                    readOnly="#{!CmsPostalAddressEditStep.canEdit}"
+                    readOnly="#{!MvcAssetEditStepModel.canEdit}"
                     removeButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.remove']}"
                     removeDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.remove.cancel']}"
                     removeDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.remove.submit']}"
@@ -105,13 +105,13 @@
                     removeDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.remove.title']}"
                     removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@postaladdress-edit/title/@remove"
                     title="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.header']}"
-                    unusedLocales="#{CmsPostalAddressEditStep.unusedTitleLocales}"
-                    values="#{CmsPostalAddressEditStep.titleValues}"
+                    unusedLocales="#{MvcAssetEditStepModel.unusedTitleLocales}"
+                    values="#{MvcAssetEditStepModel.titleValues}"
                     />
 
                 <h3>#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.header']}</h3>
 
-                <c:if test="#{CmsPostalAddressEditStep.canEdit}">
+                <c:if test="#{MvcAssetEditStepModel.canEdit}">
                     <div class="text-right">
                         <button class="btn btn-primary"
                                 data-toggle="modal"

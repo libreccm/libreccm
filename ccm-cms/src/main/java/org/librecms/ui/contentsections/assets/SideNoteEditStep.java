@@ -38,7 +38,6 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.mvc.Controller;
 import javax.transaction.Transactional;
 import javax.ws.rs.FormParam;
@@ -54,7 +53,6 @@ import javax.ws.rs.PathParam;
 @RequestScoped
 @Path(MvcAssetEditSteps.PATH_PREFIX + "sidenote-edit")
 @Controller
-@Named("CmsSideNoteEditStep")
 @MvcAssetEditStepDef(
     bundle = MvcAssetStepsConstants.BUNDLE,
     descriptionKey = "postaladdress.editstep.description",
@@ -78,15 +76,59 @@ public class SideNoteEditStep extends AbstractMvcAssetEditStep {
     @Inject
     private AssetPermissionsChecker assetPermissionsChecker;
 
-    private Map<String, String> textValues;
+    @Inject
+    private SideNoteEditStepModel sideNoteEditStepModel;
 
-    private List<CmsEditorLocaleVariantRow> variants;
-
-    private List<String> unusedTextLocales;
-
+//    private Map<String, String> textValues;
+//
+//    private List<CmsEditorLocaleVariantRow> variants;
+//
+//    private List<String> unusedTextLocales;
     @Override
     public Class<? extends MvcAssetEditStep> getStepClass() {
         return SideNoteEditStep.class;
+    }
+
+    @Override
+    protected void init() throws ContentSectionNotFoundException,
+                                 AssetNotFoundException {
+        super.init();
+
+        sideNoteEditStepModel.setTextValues(
+            getSideNote()
+                .getText()
+                .getValues()
+                .entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> entry.getValue()
+                    )
+                )
+        );
+
+        final Set<Locale> textLocales = getSideNote()
+            .getText()
+            .getAvailableLocales();
+        sideNoteEditStepModel.setUnusedTextLocales(
+            globalizationHelper
+                .getAvailableLocales()
+                .stream()
+                .filter(locale -> !textLocales.contains(locale))
+                .map(Locale::toString)
+                .collect(Collectors.toList())
+        );
+
+        sideNoteEditStepModel.setVariants(
+            getSideNote()
+                .getText()
+                .getValues()
+                .entrySet()
+                .stream()
+                .map(this::buildVariantRow)
+                .collect(Collectors.toList())
+        );
     }
 
     @GET
@@ -109,35 +151,6 @@ public class SideNoteEditStep extends AbstractMvcAssetEditStep {
         }
 
         if (assetPermissionsChecker.canEditAsset(getAsset())) {
-            textValues = getSideNote()
-                .getText()
-                .getValues()
-                .entrySet()
-                .stream()
-                .collect(
-                    Collectors.toMap(
-                        entry -> entry.getKey().toString(),
-                        entry -> entry.getValue()
-                    )
-                );
-
-            final Set<Locale> textLocales = getSideNote()
-                .getText()
-                .getAvailableLocales();
-            unusedTextLocales = globalizationHelper
-                .getAvailableLocales()
-                .stream()
-                .filter(locale -> !textLocales.contains(locale))
-                .map(Locale::toString)
-                .collect(Collectors.toList());
-
-            variants = getSideNote()
-                .getText()
-                .getValues()
-                .entrySet()
-                .stream()
-                .map(this::buildVariantRow)
-                .collect(Collectors.toList());
 
             return "org/librecms/ui/contentsection/assets/sidenote/edit-sidenote.xhtml";
         } else {
@@ -151,18 +164,18 @@ public class SideNoteEditStep extends AbstractMvcAssetEditStep {
     public SideNote getSideNote() {
         return (SideNote) getAsset();
     }
-
-    public Map<String, String> getTextValues() {
-        return Collections.unmodifiableMap(textValues);
-    }
-
-    public List<CmsEditorLocaleVariantRow> getVariants() {
-        return Collections.unmodifiableList(variants);
-    }
-
-    public List<String> getUnusedTextLocales() {
-        return Collections.unmodifiableList(unusedTextLocales);
-    }
+//
+//    public Map<String, String> getTextValues() {
+//        return Collections.unmodifiableMap(textValues);
+//    }
+//
+//    public List<CmsEditorLocaleVariantRow> getVariants() {
+//        return Collections.unmodifiableList(variants);
+//    }
+//
+//    public List<String> getUnusedTextLocales() {
+//        return Collections.unmodifiableList(unusedTextLocales);
+//    }
 
     @POST
     @Path("/text/add")

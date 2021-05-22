@@ -30,12 +30,12 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.transaction.Transactional;
@@ -52,7 +52,6 @@ import javax.ws.rs.PathParam;
 @RequestScoped
 @Path(MvcAssetEditSteps.PATH_PREFIX + "postaladdress-edit")
 @Controller
-@Named("CmsPostalAddressEditStep")
 @MvcAssetEditStepDef(
     bundle = MvcAssetStepsConstants.BUNDLE,
     descriptionKey = "postaladdress.editstep.description",
@@ -77,10 +76,12 @@ public class PostalAddressEditStep extends AbstractMvcAssetEditStep {
     private AssetPermissionsChecker assetPermissionsChecker;
 
     @Inject
+    private PostalAddressEditStepModel postalAddressEditStepModel;
+
+    @Inject
     private Models models;
 
-    private Map<String, String> countries;
-
+//    private Map<String, String> countries;
     @Override
     public Class<? extends MvcAssetEditStep> getStepClass() {
         return PostalAddressEditStep.class;
@@ -118,9 +119,32 @@ public class PostalAddressEditStep extends AbstractMvcAssetEditStep {
                 )
             );
 
-        countries = new LinkedHashMap<>();
+        final Map<String, String> countries = new LinkedHashMap<>();
         countries.put("", "");
         countries.putAll(countriesMap);
+        postalAddressEditStepModel.setCountries(countries);
+
+        postalAddressEditStepModel.setAddress(getPostalAddress().getAddress());
+        postalAddressEditStepModel.setPostalCode(
+            getPostalAddress().getPostalCode()
+        );
+        postalAddressEditStepModel.setCity(getPostalAddress().getCity());
+        postalAddressEditStepModel.setState(postalAddressEditStepModel
+            .getState()
+        );
+        postalAddressEditStepModel.setIsoCountryCode(
+            getPostalAddress().getIsoCountryCode()
+        );
+        postalAddressEditStepModel.setCountry(
+            Optional
+                .ofNullable(getPostalAddress().getIsoCountryCode())
+                .map(code -> new Locale("", code))
+                .map(
+                    locale -> locale.getDisplayCountry(
+                        globalizationHelper.getNegotiatedLocale()
+                    )
+                ).orElse("")
+        );
     }
 
     @GET
@@ -160,34 +184,34 @@ public class PostalAddressEditStep extends AbstractMvcAssetEditStep {
         return (PostalAddress) getAsset();
     }
 
-    public String getAddress() {
-        return getPostalAddress().getAddress();
-    }
-
-    public String getPostalCode() {
-        return getPostalAddress().getPostalCode();
-    }
-
-    public String getCity() {
-        return getPostalAddress().getCity();
-    }
-
-    public String getState() {
-        return getPostalAddress().getState();
-    }
-
-    public String getIsoCountryCode() {
-        return getPostalAddress().getIsoCountryCode();
-    }
-
-    public String getCountry() {
-        if (getPostalAddress().getIsoCountryCode() == null) {
-            return "";
-        } else {
-            return new Locale("", getPostalAddress().getIsoCountryCode())
-                .getDisplayCountry(globalizationHelper.getNegotiatedLocale());
-        }
-    }
+//    public String getAddress() {
+//        return getPostalAddress().getAddress();
+//    }
+//
+//    public String getPostalCode() {
+//        return getPostalAddress().getPostalCode();
+//    }
+//
+//    public String getCity() {
+//        return getPostalAddress().getCity();
+//    }
+//
+//    public String getState() {
+//        return getPostalAddress().getState();
+//    }
+//
+//    public String getIsoCountryCode() {
+//        return getPostalAddress().getIsoCountryCode();
+//    }
+//
+//    public String getCountry() {
+//        if (getPostalAddress().getIsoCountryCode() == null) {
+//            return "";
+//        } else {
+//            return new Locale("", getPostalAddress().getIsoCountryCode())
+//                .getDisplayCountry(globalizationHelper.getNegotiatedLocale());
+//        }
+//    }
 
     @POST
     @Path("/properties")
@@ -231,10 +255,10 @@ public class PostalAddressEditStep extends AbstractMvcAssetEditStep {
         }
     }
 
-    public Map<String, String> getCountries() {
-        final LinkedHashMap<String, String> result = new LinkedHashMap<>();
-        result.putAll(countries);
-        return result;
-    }
+//    public Map<String, String> getCountries() {
+//        final LinkedHashMap<String, String> result = new LinkedHashMap<>();
+//        result.putAll(countries);
+//        return result;
+//    }
 
 }

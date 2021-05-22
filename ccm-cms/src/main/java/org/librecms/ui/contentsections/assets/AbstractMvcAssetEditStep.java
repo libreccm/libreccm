@@ -89,6 +89,9 @@ public abstract class AbstractMvcAssetEditStep implements MvcAssetEditStep {
     private Models models;
 
     @Inject
+    private MvcAssetEditStepModel mvcAssetEditStepModel;
+
+    @Inject
     private SelectedAssetModel assetModel;
 
     @PathParam(MvcAssetEditSteps.SECTION_IDENTIFIER_PATH_PARAM)
@@ -105,10 +108,9 @@ public abstract class AbstractMvcAssetEditStep implements MvcAssetEditStep {
 
     private String stepPath;
 
-    private Map<String, String> titleValues;
-
-    private List<String> unusedTitleLocales;
-
+//    private Map<String, String> titleValues;
+//
+//    private List<String> unusedTitleLocales;
     protected void init() throws ContentSectionNotFoundException,
                                  AssetNotFoundException {
         contentSection = sectionsUi
@@ -162,28 +164,35 @@ public abstract class AbstractMvcAssetEditStep implements MvcAssetEditStep {
             )
             .orElse("");
 
-        titleValues = getAsset()
-            .getTitle()
-            .getValues()
-            .entrySet()
-            .stream()
-            .collect(
-                Collectors.toMap(
-                    entry -> entry.getKey().toString(),
-                    entry -> entry.getValue()
+        mvcAssetEditStepModel.setName(getName());
+        mvcAssetEditStepModel.setCanEdit(getCanEdit());
+
+        mvcAssetEditStepModel.setTitleValues(
+            getAsset()
+                .getTitle()
+                .getValues()
+                .entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> entry.getValue()
+                    )
                 )
-            );
+        );
 
         final Set<Locale> titleLocales = getAsset()
             .getTitle()
             .getAvailableLocales();
 
-        unusedTitleLocales = globalizationHelper
-            .getAvailableLocales()
-            .stream()
-            .filter(locale -> !titleLocales.contains(locale))
-            .map(Locale::toString)
-            .collect(Collectors.toList());
+        mvcAssetEditStepModel.setUnusedTitleLocales(
+            globalizationHelper
+                .getAvailableLocales()
+                .stream()
+                .filter(locale -> !titleLocales.contains(locale))
+                .map(Locale::toString)
+                .collect(Collectors.toList())
+        );
 
         models.put("activeAssetTab", "editTab");
         models.put("stepPath", stepPath);
@@ -397,14 +406,13 @@ public abstract class AbstractMvcAssetEditStep implements MvcAssetEditStep {
         }
     }
 
-    public Map<String, String> getTitleValues() {
-        return Collections.unmodifiableMap(titleValues);
-    }
-
-    public List<String> getUnusedTitleLocales() {
-        return Collections.unmodifiableList(unusedTitleLocales);
-    }
-
+//    public Map<String, String> getTitleValues() {
+//        return Collections.unmodifiableMap(titleValues);
+//    }
+//
+//    public List<String> getUnusedTitleLocales() {
+//        return Collections.unmodifiableList(unusedTitleLocales);
+//    }
     @POST
     @Path("/title/@add")
     @AuthorizationRequired

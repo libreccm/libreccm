@@ -10,13 +10,13 @@
 
         <ui:define name="editStep">
             <div class="container">
-                <h2>#{CmsAssetsStepsDefaultMessagesBundle.getMessage('sidenote.editstep.header', [CmsSideNoteEditStep.name])}</h2>
+                <h2>#{CmsAssetsStepsDefaultMessagesBundle.getMessage('sidenote.editstep.header', [MvcAssetEditStepModel.name])}</h2>
 
 
                 <h3>#{CmsAssetsStepsDefaultMessagesBundle['editstep.name.header']}</h3>
                 <div class="d-flex">
-                    <pre class="mr-2">#{CmsSideNoteEditStep.name}</pre>
-                    <c:if test="#{CmsSideNoteEditStep.canEdit}">
+                    <pre class="mr-2">#{MvcAssetEditStepModel.name}</pre>
+                    <c:if test="#{MvcAssetEditStepModel.canEdit}">
                         <button class="btn btn-primary btn-sm"
                                 data-toggle="modal"
                                 data-target="#name-edit-dialog"
@@ -29,7 +29,7 @@
                     </c:if>
                 </div>
 
-                <c:if test="#{CmsSideNoteEditStep.canEdit}">
+                <c:if test="#{MvcAssetEditStepModel.canEdit}">
                     <div aria-hidden="true"
                          aria-labelledby="name-edit-dialog-title"
                          class="modal fade"
@@ -59,7 +59,7 @@
                                         name="name"
                                         pattern="^([a-zA-Z0-9_-]*)$"
                                         required="true" 
-                                        value="#{CmsSideNoteEditStep.name}"
+                                        value="#{MvcAssetEditStepModel.name}"
                                         />
                                 </div>
                                 <div class="modal-footer">
@@ -96,10 +96,10 @@
                     editDialogValueLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.edit.value.label']}"
                     editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@sidenote-edit/title/@edit"
                     editorId="title-editor"
-                    hasUnusedLocales="#{!CmsSideNoteEditStep.unusedTitleLocales.isEmpty()}"
+                    hasUnusedLocales="#{!MvcAssetEditStepModel.unusedTitleLocales.isEmpty()}"
                     headingLevel="3"
                     objectIdentifier="#{CmsSelectedAssetModel.assetPath}"
-                    readOnly="#{!CmsSideNoteEditStep.canEdit}"
+                    readOnly="#{!MvcAssetEditStepModel.canEdit}"
                     removeButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.remove']}"
                     removeDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.remove.cancel']}"
                     removeDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.remove.submit']}"
@@ -107,29 +107,29 @@
                     removeDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.remove.title']}"
                     removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@sidenote-edit/title/@remove"
                     title="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.header']}"
-                    unusedLocales="#{CmsSideNoteEditStep.unusedTitleLocales}"
-                    values="#{CmsSideNoteEditStep.titleValues}"
+                    unusedLocales="#{MvcAssetEditStepModel.unusedTitleLocales}"
+                    values="#{MvcAssetEditStepModel.titleValues}"
                     />
 
-                <c:if test="#{CmsSideNoteEditStep.canEdit}">
+                <c:if test="#{MvcAssetEditStepModel.canEdit}">
                     <librecms:cmsEditor 
                         addButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['sidenote.sidenote.text.editor.add_variant']}"
                         addDialogLocaleSelectHelp="#{CmsAssetsStepsDefaultMessagesBundle['sidenote.text.editor.add.locale.help']}"
                         addDialogLocaleSelectLabel="#{CmsAssetsStepsDefaultMessagesBundle['sidenote.text.editor.add.locale.label']}"
-                        addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSideNoteEditStep.assetPath}/@sidenote-edit/text/add"
+                        addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@sidenote-edit/text/add"
                         editDialogValueHelp="#{CmsAssetsStepsDefaultMessagesBundle['sidenote.text.editor.edit.value.help']}"
                         editDialogValueLabel="#{CmsAssetsStepsDefaultMessagesBundle['sidenote.text.editor.edit.value.label']}"
-                        editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSideNoteEditStep.assetPath}/@sidenote-edit/text/edit"
+                        editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@sidenote-edit/text/edit"
                         editorId="sidenote-text-editor"
                         hasUnusedLocales="#{!CmsSideNoteEditStep.unusedTextLocales.isEmpty()}"
                         headingLevel="3"
                         objectIdentifier="#{CmsSelectedDocumentModel.itemPath}"
-                        removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSideNoteEditStep.assetPath}/@sidenote-edit/text/remove"
+                        removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@sidenote-edit/text/remove"
                         title="#{CmsAssetsStepsDefaultMessagesBundle['sidenote.editstep.text.header']}"
                         unusedLocales="#{CmsSideNoteEditStep.unusedTextLocales}"
-                        variantUrl="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSideNoteEditStep.assetPath}/@sidenote-edit-resources/text/variants"
+                        variantUrl="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@sidenote-edit-resources/text/variants"
                         variants="#{CmsSideNoteEditStep.variants}"
-                        wordCountUrl="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSideNoteEditStep.assetPath}/@sidenote-edit-resources/text/variants/wordcount"
+                        wordCountUrl="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@sidenote-edit-resources/text/variants/wordcount"
                         />
                 </c:if>
             </div>

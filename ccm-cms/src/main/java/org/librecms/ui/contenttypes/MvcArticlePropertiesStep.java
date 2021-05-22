@@ -33,15 +33,11 @@ import org.librecms.ui.contentsections.documents.DocumentUi;
 import org.librecms.ui.contentsections.documents.MvcAuthoringStepDef;
 import org.librecms.ui.contentsections.documents.MvcAuthoringSteps;
 
-import java.util.Collections;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Path;
 
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -63,7 +59,6 @@ import javax.ws.rs.PathParam;
 @RequestScoped
 @Path(MvcAuthoringSteps.PATH_PREFIX + "article-basicproperties")
 @Controller
-@Named("CmsArticlePropertiesStep")
 @MvcAuthoringStepDef(
     bundle = ArticleStepsConstants.BUNDLE,
     descriptionKey = "authoringsteps.basicproperties.description",
@@ -106,19 +101,87 @@ public class MvcArticlePropertiesStep extends AbstractMvcAuthoringStep {
     private ItemPermissionChecker itemPermissionChecker;
 
     @Inject
+    private MvcArticlePropertiesStepModel articlePropertiesStepModel;
+
+    @Inject
     private Models models;
 
-    private Map<String, String> titleValues;
-
-    private List<String> unusedTitleLocales;
-
-    private Map<String, String> descriptionValues;
-
-    private List<String> unusedDescriptionLocales;
+//    private Map<String, String> titleValues;
+//
+//    private List<String> unusedTitleLocales;
+//
+//    private Map<String, String> descriptionValues;
+//
+//    private List<String> unusedDescriptionLocales;
 
     @Override
     public Class<MvcArticlePropertiesStep> getStepClass() {
         return MvcArticlePropertiesStep.class;
+    }
+
+    @Override
+    @Transactional(Transactional.TxType.REQUIRED)
+    protected void init() throws ContentSectionNotFoundException,
+                                 DocumentNotFoundException {
+        super.init();
+
+        articlePropertiesStepModel.setName(getDocument().getDisplayName());
+        
+        articlePropertiesStepModel.setCanEdit(getCanEdit());
+        
+        final Set<Locale> titleLocales = getDocument()
+            .getTitle()
+            .getAvailableLocales();
+
+        articlePropertiesStepModel.setTitleValues(
+            getDocument()
+                .getTitle()
+                .getValues()
+                .entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> entry.getValue()
+                    )
+                )
+        );
+
+        articlePropertiesStepModel.setUnusedTitleLocales(
+            globalizationHelper
+                .getAvailableLocales()
+                .stream()
+                .filter(locale -> !titleLocales.contains(locale))
+                .map(Locale::toString)
+                .collect(Collectors.toList())
+        );
+
+        articlePropertiesStepModel.setDescriptionValues(
+            getDocument()
+                .getDescription()
+                .getValues()
+                .entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> entry.getValue()
+                    )
+                )
+        );
+
+        final Set<Locale> descriptionLocales = getDocument()
+            .getDescription()
+            .getAvailableLocales();
+
+        articlePropertiesStepModel.setUnusedDescriptionLocales(
+            globalizationHelper
+                .getAvailableLocales()
+                .stream()
+                .filter(locale -> !descriptionLocales.contains(locale))
+                .map(Locale::toString)
+                .collect(Collectors.toList())
+        );
     }
 
     @GET
@@ -140,52 +203,51 @@ public class MvcArticlePropertiesStep extends AbstractMvcAuthoringStep {
         }
 
         if (itemPermissionChecker.canEditItem(getDocument())) {
-            titleValues = getDocument()
-                .getTitle()
-                .getValues()
-                .entrySet()
-                .stream()
-                .collect(
-                    Collectors.toMap(
-                        entry -> entry.getKey().toString(),
-                        entry -> entry.getValue()
-                    )
-                );
+//            titleValues = getDocument()
+//                .getTitle()
+//                .getValues()
+//                .entrySet()
+//                .stream()
+//                .collect(
+//                    Collectors.toMap(
+//                        entry -> entry.getKey().toString(),
+//                        entry -> entry.getValue()
+//                    )
+//                );
 
-            final Set<Locale> titleLocales = getDocument()
-                .getTitle()
-                .getAvailableLocales();
-
-            unusedTitleLocales = globalizationHelper
-                .getAvailableLocales()
-                .stream()
-                .filter(locale -> !titleLocales.contains(locale))
-                .map(Locale::toString)
-                .collect(Collectors.toList());
-
-            descriptionValues = getDocument()
-                .getDescription()
-                .getValues()
-                .entrySet()
-                .stream()
-                .collect(
-                    Collectors.toMap(
-                        entry -> entry.getKey().toString(),
-                        entry -> entry.getValue()
-                    )
-                );
-
-            final Set<Locale> descriptionLocales = getDocument()
-                .getDescription()
-                .getAvailableLocales();
-
-            unusedDescriptionLocales = globalizationHelper
-                .getAvailableLocales()
-                .stream()
-                .filter(locale -> !descriptionLocales.contains(locale))
-                .map(Locale::toString)
-                .collect(Collectors.toList());
-
+//            final Set<Locale> titleLocales = getDocument()
+//                .getTitle()
+//                .getAvailableLocales();
+//
+//            unusedTitleLocales = globalizationHelper
+//                .getAvailableLocales()
+//                .stream()
+//                .filter(locale -> !titleLocales.contains(locale))
+//                .map(Locale::toString)
+//                .collect(Collectors.toList());
+//
+//            descriptionValues = getDocument()
+//                .getDescription()
+//                .getValues()
+//                .entrySet()
+//                .stream()
+//                .collect(
+//                    Collectors.toMap(
+//                        entry -> entry.getKey().toString(),
+//                        entry -> entry.getValue()
+//                    )
+//                );
+//
+//            final Set<Locale> descriptionLocales = getDocument()
+//                .getDescription()
+//                .getAvailableLocales();
+//
+//            unusedDescriptionLocales = globalizationHelper
+//                .getAvailableLocales()
+//                .stream()
+//                .filter(locale -> !descriptionLocales.contains(locale))
+//                .map(Locale::toString)
+//                .collect(Collectors.toList());
             return "org/librecms/ui/contenttypes/article/article-basic-properties.xhtml";
         } else {
             return documentUi.showAccessDenied(
@@ -197,14 +259,14 @@ public class MvcArticlePropertiesStep extends AbstractMvcAuthoringStep {
 
     }
 
-    /**
-     * Gets the display name of the current article.
-     *
-     * @return The display name of the current article.
-     */
-    public String getName() {
-        return getDocument().getDisplayName();
-    }
+//    /**
+//     * Gets the display name of the current article.
+//     *
+//     * @return The display name of the current article.
+//     */
+//    public String getName() {
+//        return getDocument().getDisplayName();
+//    }
 
     /**
      * Updates the name of the current article.
@@ -256,23 +318,7 @@ public class MvcArticlePropertiesStep extends AbstractMvcAuthoringStep {
         }
     }
 
-    /**
-     * Get the values of the localized title of the article.
-     *
-     * @return The values of the localized title of the article.
-     */
-    public Map<String, String> getTitleValues() {
-        return Collections.unmodifiableMap(titleValues);
-    }
-
-    /**
-     * Get the locales for which no localized title has been defined yet.
-     *
-     * @return The locales for which no localized title has been defined yet.
-     */
-    public List<String> getUnusedTitleLocales() {
-        return Collections.unmodifiableList(unusedTitleLocales);
-    }
+    
 
     /**
      * Updates a localized title of the article.
@@ -407,24 +453,7 @@ public class MvcArticlePropertiesStep extends AbstractMvcAuthoringStep {
         }
     }
 
-    /**
-     * Get the locales for which no localized description has been defined yet.
-     *
-     * @return The locales for which no localized description has been defined
-     *         yet.
-     */
-    public List<String> getUnusedDescriptionLocales() {
-        return Collections.unmodifiableList(unusedDescriptionLocales);
-    }
-
-    /**
-     * Get the values of the localized decrription of the article.
-     *
-     * @return The values of the localized description of the article.
-     */
-    public Map<String, String> getDescriptionValues() {
-        return Collections.unmodifiableMap(descriptionValues);
-    }
+   
 
     /**
      * Adds a localized description to the article.
