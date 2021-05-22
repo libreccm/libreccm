@@ -7,220 +7,125 @@
 
     <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/assets/editstep.xhtml">
 
+        <ui:param name="stepControllerUrl"
+                  value="@postaladdress-edit"
+                  />
+        <ui:param name="title" 
+                  value="#{CmsAssetsStepsDefaultMessagesBundle.getMessage('postaladdress.editstep.header', [MvcAssetEditStepModel.name])}" 
+                  />
+
         <ui:define name="editStep">
-            <div class="container">
-                <h2>#{CmsAssetsStepsDefaultMessagesBundle.getMessage('postaladdress.editstep.header', [MvcAssetEditStepModel.name])}</h2>
+            <h3>#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.header']}</h3>
 
-                <h3>#{CmsAssetsStepsDefaultMessagesBundle['editstep.name.header']}</h3>
-                <div class="d-flex">
-                    <pre class="mr-2">#{MvcAssetEditStepModel.name}</pre>
-                    <c:if test="#{MvcAssetEditStepModel.canEdit}">
-                        <button class="btn btn-primary btn-sm"
-                                data-toggle="modal"
-                                data-target="#name-edit-dialog"
-                                type="button">
-                            <bootstrap:svgIcon icon="pen" />
-                            <span class="sr-only">
-                                #{CmsAssetsStepsDefaultMessagesBundle['editstep.name.edit']}
-                            </span>
-                        </button>
-                    </c:if>
+            <c:if test="#{MvcAssetEditStepModel.canEdit}">
+                <div class="text-right">
+                    <button class="btn btn-primary"
+                            data-toggle="modal"
+                            data-target="#properties-edit-dialog"
+                            type="button">
+                        <bootstrap:svgIcon icon="pen" />
+                        <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.edit']}</span>
+                    </button>
                 </div>
-
-                <c:if test="#{MvcAssetEditStepModel.canEdit}">
-                    <div aria-hidden="true"
-                         aria-labelledby="name-edit-dialog-title"
-                         class="modal fade"
-                         id="name-edit-dialog"
-                         tabindex="-1">
-                        <div class="modal-dialog">
-                            <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@postaladdress-edit/name"
-                                  class="modal-content"
-                                  method="post">
-                                <div class="modal-header">
-                                    <h4 class="modal-title"
-                                        id="name-edit-dialog-title">
-                                        #{CmsAssetsStepsDefaultMessagesBundle['editstep.name.edit.title']}
-                                    </h4>
-                                    <button aria-label="#{CmsAssetsStepsDefaultMessagesBundle['editstep.name.edit.close']}"
-                                            class="close"
-                                            data-dismiss="modal"
-                                            type="button">
-                                        <bootstrap:svgIcon icon="x" />
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <bootstrap:formGroupText
-                                        help="#{CmsAssetsStepsDefaultMessagesBundle['editstep.name.help']}"
-                                        inputId="name"
-                                        label="#{CmsAssetsStepsDefaultMessagesBundle['editstep.name.label']}"
-                                        name="name"
-                                        pattern="^([a-zA-Z0-9_-]*)$"
-                                        required="true" 
-                                        value="#{MvcAssetEditStepModel.name}"
-                                        />
-                                </div>
-                                <div class="modal-footer">
-                                    <button class="btn btn-warning"
-                                            data-dismiss="modal"
-                                            type="button">
-                                        #{CmsAssetsStepsDefaultMessagesBundle['editstep.name.close']}
-                                    </button>
-                                    <button class="btn btn-success"
-                                            type="submit">
-                                        #{CmsAssetsStepsDefaultMessagesBundle['editstep.name.submit']}
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </c:if>
-
-                <libreccm:localizedStringEditor 
-                    addButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.add_button.label']}"
-                    addDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.add.cancel']}"
-                    addDialogLocaleSelectHelp="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.add.locale.help']}"
-                    addDialogLocaleSelectLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.add.locale.label']}"
-                    addDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.add.submit']}"
-                    addDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.add.header']}"
-                    addDialogValueHelp="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.add.value.help']}"
-                    addDialogValueLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.add.value.label']}"
-                    addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@postaladdress-edit/title/@add"
-                    editButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.edit']}"
-                    editDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.edit.cancel']}"
-                    editDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.edit.submit']}"
-                    editDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.edit.header']}"
-                    editDialogValueHelp="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.edit.value.help']}"
-                    editDialogValueLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.edit.value.label']}"
-                    editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@postaladdress-edit/title/@edit"
-                    editorId="title-editor"
-                    hasUnusedLocales="#{!MvcAssetEditStepModel.unusedTitleLocales.isEmpty()}"
-                    headingLevel="3"
-                    objectIdentifier="#{CmsSelectedAssetModel.assetPath}"
-                    readOnly="#{!MvcAssetEditStepModel.canEdit}"
-                    removeButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.remove']}"
-                    removeDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.remove.cancel']}"
-                    removeDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.remove.submit']}"
-                    removeDialogText="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.remove.text']}"
-                    removeDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.remove.title']}"
-                    removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@postaladdress-edit/title/@remove"
-                    title="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.header']}"
-                    unusedLocales="#{MvcAssetEditStepModel.unusedTitleLocales}"
-                    values="#{MvcAssetEditStepModel.titleValues}"
-                    />
-
-                <h3>#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.header']}</h3>
-
-                <c:if test="#{MvcAssetEditStepModel.canEdit}">
-                    <div class="text-right">
-                        <button class="btn btn-primary"
-                                data-toggle="modal"
-                                data-target="#properties-edit-dialog"
-                                type="button">
-                            <bootstrap:svgIcon icon="pen" />
-                            <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.edit']}</span>
-                        </button>
-                    </div>
-                    <div aria-hidden="true"
-                         aria-labelledby="properties-edit-dialog-title"
-                         class="modal fade"
-                         id="properties-edit-dialog"
-                         tabindex="-1">
-                        <div class="modal-dialog">
-                            <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@postaladdress-edit/properties"
-                                  class="modal-content"
-                                  method="post">
-                                <div class="modal-header">
-                                    <h4 class="modal-title" 
-                                        id="properties-edit-dialog-title">
-                                        #{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.edit.title']}
-                                    </h4>
-                                    <button 
-                                        aria-label="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.edit.close']}"
-                                        class="close"
+                <div aria-hidden="true"
+                     aria-labelledby="properties-edit-dialog-title"
+                     class="modal fade"
+                     id="properties-edit-dialog"
+                     tabindex="-1">
+                    <div class="modal-dialog">
+                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@postaladdress-edit/properties"
+                              class="modal-content"
+                              method="post">
+                            <div class="modal-header">
+                                <h4 class="modal-title" 
+                                    id="properties-edit-dialog-title">
+                                    #{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.edit.title']}
+                                </h4>
+                                <button 
+                                    aria-label="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.edit.close']}"
+                                    class="close"
+                                    data-dismiss="modal"
+                                    type="button">
+                                    <bootstrap:svgIcon icon="x" />
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <bootstrap:formGroupTextarea 
+                                    cols="80"
+                                    help="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.edit.address.help']}"
+                                    inputId="address"
+                                    label="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.address.label']}"
+                                    name="address"
+                                    rows="10"
+                                    value="#{CmsPostalAddressEditStep.address}"
+                                    />
+                                <bootstrap:formGroupText 
+                                    help="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.edit.postal_code.help']}"
+                                    inputId="postalCode"
+                                    label="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.postal_code.label']}"
+                                    name="postalCode"
+                                    value="#{CmsPostalAddressEditStep.postalCode}"
+                                    />
+                                <bootstrap:formGroupText 
+                                    help="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.edit.city.help']}"
+                                    inputId="city"
+                                    label="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.city.label']}"
+                                    name="city"
+                                    value="#{CmsPostalAddressEditStep.city}"
+                                    />
+                                <bootstrap:formGroupText 
+                                    help="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.edit.state.help']}"
+                                    inputId="state"
+                                    label="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.state.label']}"
+                                    name="state"
+                                    value="#{CmsPostalAddressEditStep.state}"
+                                    />
+                                <bootstrap:formGroupSelect
+                                    help="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.edit.country.help']}"
+                                    inputId="isoCountryCode"
+                                    label="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.country.label']}"
+                                    name="isoCountryCode"
+                                    options="#{CmsPostalAddressEditStep.countries}"
+                                    selectedOptions="#{[CmsPostalAddressEditStep.isoCountryCode]}"
+                                    />
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-warning"
                                         data-dismiss="modal"
                                         type="button">
-                                        <bootstrap:svgIcon icon="x" />
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <bootstrap:formGroupTextarea 
-                                        cols="80"
-                                        help="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.edit.address.help']}"
-                                        inputId="address"
-                                        label="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.address.label']}"
-                                        name="address"
-                                        rows="10"
-                                        value="#{CmsPostalAddressEditStep.address}"
-                                        />
-                                    <bootstrap:formGroupText 
-                                        help="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.edit.postal_code.help']}"
-                                        inputId="postalCode"
-                                        label="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.postal_code.label']}"
-                                        name="postalCode"
-                                        value="#{CmsPostalAddressEditStep.postalCode}"
-                                        />
-                                    <bootstrap:formGroupText 
-                                        help="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.edit.city.help']}"
-                                        inputId="city"
-                                        label="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.city.label']}"
-                                        name="city"
-                                        value="#{CmsPostalAddressEditStep.city}"
-                                        />
-                                    <bootstrap:formGroupText 
-                                        help="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.edit.state.help']}"
-                                        inputId="state"
-                                        label="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.state.label']}"
-                                        name="state"
-                                        value="#{CmsPostalAddressEditStep.state}"
-                                        />
-                                    <bootstrap:formGroupSelect
-                                        help="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.edit.country.help']}"
-                                        inputId="isoCountryCode"
-                                        label="#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.country.label']}"
-                                        name="isoCountryCode"
-                                        options="#{CmsPostalAddressEditStep.countries}"
-                                        selectedOptions="#{[CmsPostalAddressEditStep.isoCountryCode]}"
-                                        />
-                                </div>
-                                <div class="modal-footer">
-                                    <button class="btn btn-warning"
-                                            data-dismiss="modal"
-                                            type="button">
-                                        #{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.edit.close']}
-                                    </button>
-                                    <button class="btn btn-success"
-                                            type="submit">
-                                        #{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.edit.submit']}
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
+                                    #{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.edit.close']}
+                                </button>
+                                <button class="btn btn-success"
+                                        type="submit">
+                                    #{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.edit.submit']}
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                </c:if>
-                <dl>
-                    <div>
-                        <dt>#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.address.label']}</dt>
-                        <dd><pre>#{CmsPostalAddressEditStep.address}</pre></dd>
-                    </div>
-                    <div>
-                        <dt>#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.postal_code.label']}</dt>
-                        <dd>#{CmsPostalAddressEditStep.postalCode}</dd>
-                    </div>
-                    <div>
-                        <dt>#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.city.label']}</dt>
-                        <dd>#{CmsPostalAddressEditStep.city}</dd>
-                    </div>
-                    <div>
-                        <dt>#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.state.label']}</dt>
-                        <dd>#{CmsPostalAddressEditStep.state}</dd>
-                    </div>
-                    <div>
-                        <dt>#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.country.label']}</dt>
-                        <dd>#{CmsPostalAddressEditStep.country}</dd>
-                    </div>
-                </dl>
-            </div>
+                </div>
+            </c:if>
+            <dl>
+                <div>
+                    <dt>#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.address.label']}</dt>
+                    <dd><pre>#{CmsPostalAddressEditStep.address}</pre></dd>
+                </div>
+                <div>
+                    <dt>#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.postal_code.label']}</dt>
+                    <dd>#{CmsPostalAddressEditStep.postalCode}</dd>
+                </div>
+                <div>
+                    <dt>#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.city.label']}</dt>
+                    <dd>#{CmsPostalAddressEditStep.city}</dd>
+                </div>
+                <div>
+                    <dt>#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.state.label']}</dt>
+                    <dd>#{CmsPostalAddressEditStep.state}</dd>
+                </div>
+                <div>
+                    <dt>#{CmsAssetsStepsDefaultMessagesBundle['postaladdress.editstep.properties.country.label']}</dt>
+                    <dd>#{CmsPostalAddressEditStep.country}</dd>
+                </div>
+            </dl>
         </ui:define>
 
     </ui:composition>

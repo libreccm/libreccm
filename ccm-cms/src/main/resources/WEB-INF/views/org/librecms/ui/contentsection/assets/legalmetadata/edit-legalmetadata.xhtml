@@ -7,107 +7,12 @@
 
     <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/assets/editstep.xhtml">
 
+         <ui:param name="stepControllerUrl"
+                  value="@legalmetadata-edit"/>
+        <ui:param name="title"
+                  value="#{CmsAssetsStepsDefaultMessagesBundle.getMessage('legalmetadata.editstep.header', [CmsLegalMetadataEditStep.name])}" />
+        
         <ui:define name="editStep">
-            <div class="container">
-                <h2>#{CmsAssetsStepsDefaultMessagesBundle.getMessage('legalmetadata.editstep.header', [CmsLegalMetadataEditStep.name])}</h2>
-
-                <h3>#{CmsAssetsStepsDefaultMessagesBundle['editstep.name.header']}</h3>
-                <div class="d-flex">
-                    <pre class="mr-2">#{CmsLegalMetadataEditStep.name}</pre>
-                    <c:if test="#{CmsLegalMetadataEditStep.canEdit}">
-                        <button class="btn btn-primary btn-sm"
-                                data-toggle="modal"
-                                data-target="#name-edit-dialog"
-                                type="button">
-                            <bootstrap:svgIcon icon="pen" />
-                            <span class="sr-only">
-                                #{CmsAssetsStepsDefaultMessagesBundle['editstep.name.edit']}
-                            </span>
-                        </button>
-                    </c:if>
-                </div>
-
-                <c:if test="#{CmsLegalMetadataEditStep.canEdit}">
-                    <div aria-hidden="true"
-                         aria-labelledby="name-edit-dialog-title"
-                         class="modal fade"
-                         id="name-edit-dialog"
-                         tabindex="-1">
-                        <div class="modal-dialog">
-                            <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@legalmetadata-edit/name"
-                                  class="modal-content"
-                                  method="post">
-                                <div class="modal-header">
-                                    <h4 class="modal-title"
-                                        id="name-edit-dialog-title">
-                                        #{CmsAssetsStepsDefaultMessagesBundle['editstep.name.edit.title']}
-                                    </h4>
-                                    <button aria-label="#{CmsAssetsStepsDefaultMessagesBundle['editstep.name.edit.close']}"
-                                            class="close"
-                                            data-dismiss="modal"
-                                            type="button">
-                                        <bootstrap:svgIcon icon="x" />
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <bootstrap:formGroupText
-                                        help="#{CmsAssetsStepsDefaultMessagesBundle['editstep.name.help']}"
-                                        inputId="name"
-                                        label="#{CmsAssetsStepsDefaultMessagesBundle['editstep.name.label']}"
-                                        name="name"
-                                        pattern="^([a-zA-Z0-9_-]*)$"
-                                        required="true" 
-                                        value="#{CmsLegalMetadataEditStep.name}"
-                                        />
-                                </div>
-                                <div class="modal-footer">
-                                    <button class="btn btn-warning"
-                                            data-dismiss="modal"
-                                            type="button">
-                                        #{CmsAssetsStepsDefaultMessagesBundle['editstep.name.close']}
-                                    </button>
-                                    <button class="btn btn-success"
-                                            type="submit">
-                                        #{CmsAssetsStepsDefaultMessagesBundle['editstep.name.submit']}
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </c:if>
-
-                <libreccm:localizedStringEditor 
-                    addButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.add_button.label']}"
-                    addDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.add.cancel']}"
-                    addDialogLocaleSelectHelp="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.add.locale.help']}"
-                    addDialogLocaleSelectLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.add.locale.label']}"
-                    addDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.add.submit']}"
-                    addDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.add.header']}"
-                    addDialogValueHelp="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.add.value.help']}"
-                    addDialogValueLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.add.value.label']}"
-                    addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@legalmetadata-edit/title/@add"
-                    editButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.edit']}"
-                    editDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.edit.cancel']}"
-                    editDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.edit.submit']}"
-                    editDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.edit.header']}"
-                    editDialogValueHelp="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.edit.value.help']}"
-                    editDialogValueLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.edit.value.label']}"
-                    editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@legalmetadata-edit/title/@edit"
-                    editorId="title-editor"
-                    hasUnusedLocales="#{!CmsLegalMetadataEditStep.unusedTitleLocales.isEmpty()}"
-                    headingLevel="3"
-                    objectIdentifier="#{CmsSelectedAssetModel.assetPath}"
-                    readOnly="#{!CmsLegalMetadataEditStep.canEdit}"
-                    removeButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.remove']}"
-                    removeDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.remove.cancel']}"
-                    removeDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.remove.submit']}"
-                    removeDialogText="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.remove.text']}"
-                    removeDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.remove.title']}"
-                    removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@legalmetadata-edit/title/@remove"
-                    title="#{CmsAssetsStepsDefaultMessagesBundle['editstep.title.header']}"
-                    unusedLocales="#{CmsLegalMetadataEditStep.unusedTitleLocales}"
-                    values="#{CmsLegalMetadataEditStep.titleValues}"
-                    />
 
                 <h3>#{CmsAssetsStepsDefaultMessagesBundle['editstep.legalmetadata.properties.header']}</h3>
 
@@ -320,14 +225,6 @@
                     </tbody>
                 </table>
 
-                <!--
-                
-
-                
-                private List<String> contributors;
-                -->
-
-            </div>
         </ui:define>
 
     </ui:composition>
