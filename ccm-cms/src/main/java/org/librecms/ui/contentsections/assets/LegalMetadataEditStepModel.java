@@ -39,6 +39,8 @@ public class LegalMetadataEditStepModel {
     
     private Map<String, String> rights;
     
+    private List<String> unusedRightsLocales;
+    
     private String publisher;
     
     private String creator;
@@ -49,9 +51,19 @@ public class LegalMetadataEditStepModel {
         return rightsHolder;
     }
 
+
     protected void setRightsHolder(final String rightsHolder) {
         this.rightsHolder = rightsHolder;
     }
+    
+        public List<String> getUnusedRightsLocales() {
+        return Collections.unmodifiableList(unusedRightsLocales);
+    }
+
+    public void setUnusedRightsLocales(final List<String> unusedRightsLocales) {
+        this.unusedRightsLocales = new ArrayList<>(unusedRightsLocales);
+    }
+
 
     public Map<String, String> getRights() {
         return Collections.unmodifiableMap(rights);

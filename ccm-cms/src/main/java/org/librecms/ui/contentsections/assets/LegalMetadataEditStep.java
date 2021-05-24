@@ -26,6 +26,7 @@ import org.librecms.ui.contentsections.AssetPermissionsChecker;
 import org.librecms.ui.contentsections.ContentSectionNotFoundException;
 
 import java.util.Locale;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -103,6 +104,17 @@ public class LegalMetadataEditStep extends AbstractMvcAssetEditStep {
                             entry -> entry.getValue()
                         )
                     )
+            );
+            final Set<Locale> rightsLocales = legalMetadata
+                .getRights()
+                .getAvailableLocales();
+            editStepModel.setUnusedRightsLocales(
+                globalizationHelper
+                    .getAvailableLocales()
+                    .stream()
+                    .filter(locale -> !rightsLocales.contains(locale))
+                    .map(Locale::toString)
+                    .collect(Collectors.toList())
             );
             editStepModel.setRightsHolder(legalMetadata.getRightsHolder());
         } else {
