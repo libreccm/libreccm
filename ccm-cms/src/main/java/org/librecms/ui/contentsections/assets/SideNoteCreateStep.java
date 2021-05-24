@@ -25,6 +25,7 @@ import org.librecms.contentsection.AssetRepository;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -85,7 +86,12 @@ public class SideNoteCreateStep extends AbstractMvcAssetCreateStep<SideNote> {
     @Override
     public String setAssetProperties(
         final SideNote sideNote, final Map<String, String[]> formParams
-        ) {
+    ) {
+        text = Optional
+            .ofNullable(formParams.get("text"))
+            .filter(value -> value.length > 0)
+            .map(value -> value[0])
+            .orElse("");
         sideNote.getText().addValue(new Locale(getInitialLocale()), text);
         assetRepo.save(sideNote);
 

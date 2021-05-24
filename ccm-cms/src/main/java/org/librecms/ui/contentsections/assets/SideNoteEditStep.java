@@ -28,8 +28,6 @@ import org.librecms.ui.contentsections.AssetPermissionsChecker;
 import org.librecms.ui.contentsections.ContentSectionNotFoundException;
 import org.librecms.ui.contentsections.documents.CmsEditorLocaleVariantRow;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -151,7 +149,6 @@ public class SideNoteEditStep extends AbstractMvcAssetEditStep {
         }
 
         if (assetPermissionsChecker.canEditAsset(getAsset())) {
-
             return "org/librecms/ui/contentsection/assets/sidenote/edit-sidenote.xhtml";
         } else {
             return assetUi.showAccessDenied(
