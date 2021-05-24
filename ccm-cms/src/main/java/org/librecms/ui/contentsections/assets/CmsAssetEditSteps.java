@@ -31,6 +31,7 @@ public class CmsAssetEditSteps implements MvcAssetEditSteps {
     public Set<Class<?>> getClasses() {
         final Set<Class<?>> classes = new HashSet<>();
 
+        classes.add(BookmarkEditStep.class);
         classes.add(LegalMetadataEditStep.class);
         classes.add(PostalAddressEditStep.class);
         classes.add(SideNoteEditStep.class);

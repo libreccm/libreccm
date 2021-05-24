@@ -1,0 +1,116 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/assets/editstep.xhtml">
+
+        <ui:param name="stepControllerUrl"
+                  value="@bookmark-edit"
+                  />
+        <ui:param name="title" 
+                  value="#{CmsAssetsStepsDefaultMessagesBundle.getMessage('bookmark.editstep.header', [MvcAssetEditStepModel.name])}" 
+                  />
+
+        <ui:define name="editStep">
+            <h3>#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.url.header']}</h3>
+
+            <c:if test="#{MvcAssetEditStepModel.canEdit}">
+                <div class="text-right">
+                    <button class="btn btn-primary"
+                            data-toggle="modal"
+                            data-target="#url-edit-dialog"
+                            type="button">
+                        <bootstrap:svgIcon icon="pen" />
+                        <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.url.edit']}</span>
+                    </button>
+                </div>
+                <div aria-hidden="true"
+                     aria-labelledby="url-edit-dialog-title"
+                     class="modal fade"
+                     id="url-edit-dialog"
+                     tabindex="-1">
+                    <div class="modal-dialog">
+                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@bookmark-edit/properties"
+                              class="modal-content"
+                              method="post">
+                            <div class="modal-header">
+                                <h4 class="modal-title"
+                                    id="url-edit-dialog-title">
+                                    #{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.url.edit.title']}
+                                </h4>
+                                <button 
+                                    aria-label="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.url.edit.close']}"
+                                    class="close"
+                                    data-dismiss="modal"
+                                    type="button">
+                                    <bootstrap:svgIcon icon="x" />
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <bootstrap:formGroupUrl
+                                    help="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.url.edit.help']}"
+                                    inputId="url"
+                                    label="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.url.edit.label']}"
+                                    name="url"
+                                    required="true" 
+                                    value="#{CmsBookmarkEditStep.url}"/>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-warning"
+                                        data-dismiss="modal"
+                                        type="button">
+                                    #{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.url.edit.close']}
+                                </button>
+                                <button class="btn btn-success"
+                                        type="submit">
+                                    #{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.url.edit.submit']}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </c:if>
+            <pre>#{CmsBookmarkEditStep.url}</pre>
+            
+            <libreccm:localizedStringEditor 
+                addButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.description.add_button.label']}"
+                addDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.description.add.cancel']}"
+                addDialogLocaleSelectHelp="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.description.add.locale.help']}"
+                addDialogLocaleSelectLabel="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.description.add.locale.label']}"
+                addDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.description.add.submit']}"
+                addDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.description.add.title']}"
+                addDialogValueHelp="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.description.add.value.help']}"
+                addDialogValueLabel="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.description.add.value.label']}"
+                addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@bookmark-edit/description/add"
+                editButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.description.edit_button.label']}"
+                editDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.description.edit.cancel']}"
+                editDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.description.edit.submit']}"
+                editDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.description.edit.title']}"
+                editDialogValueHelp="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.description.edit.value.help']}"
+                editDialogValueLabel="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.description.edit.value.label']}"
+                editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@bookmark-edit/description/edit"
+                editorId="description-editor"
+                hasUnusedLocales="#{!CmsBookmarkEditStep.unusedDescriptionLocales.isEmpty()}"
+                headingLevel="3"
+                objectIdentifier="#{CmsSelectedAssetModel.assetPath}"
+                readOnly="#{!MvcAssetEditStepModel.canEdit}"
+                removeButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.description.remove_button.label']}"
+                removeDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.description.remove.cancel']}"
+                removeDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.description.remove.submit']}"
+                removeDialogText="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.description.remove.text']}"
+                removeDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.description.remove.title']}"
+                removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@bookmark-edit/description/remove"
+                title="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.description.title']}"
+                unusedLocales="#{CmsBookmarkEditStep.unusedDescriptionLocales}"
+                useTextarea="true"
+                values="#{CmsBookmarkEditStep.descriptionValues}"
+                />
+            
+        </ui:define>
+
+    </ui:composition>
+
+</html>

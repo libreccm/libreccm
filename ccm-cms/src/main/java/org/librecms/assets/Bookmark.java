@@ -34,8 +34,12 @@ import javax.persistence.JoinTable;
 import javax.persistence.Table;
 
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.libreccm.l10n.LocalizedString;
+import org.librecms.ui.contentsections.assets.BookmarkCreateStep;
+import org.librecms.ui.contentsections.assets.BookmarkEditStep;
+import org.librecms.ui.contentsections.assets.MvcAssetEditKit;
+
+import javax.validation.constraints.NotEmpty;
 
 import static org.librecms.CmsConstants.*;
 import static org.librecms.assets.AssetConstants.*;
@@ -54,6 +58,10 @@ import static org.librecms.assets.AssetConstants.*;
 @Entity
 @Table(name = "BOOKMARKS", schema = DB_SCHEMA)
 @Audited
+@MvcAssetEditKit(
+    createStep = BookmarkCreateStep.class,
+    editStep = BookmarkEditStep.class
+)
 public class Bookmark extends Asset implements Serializable {
 
     private static final long serialVersionUID = -2077380735104791483L;
