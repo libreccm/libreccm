@@ -57,11 +57,12 @@ public class BinaryAsset extends Asset implements Serializable {
     @Embedded
     @AssociationOverride(
         name = "values",
-        joinTable = @JoinTable(name = "BINARY_ASSET_DESCRIPTIONS",
-                               schema = DB_SCHEMA,
-                               joinColumns = {
-                                   @JoinColumn(name = "ASSET_ID")
-                               }
+        joinTable = @JoinTable(
+            name = "BINARY_ASSET_DESCRIPTIONS",
+            schema = DB_SCHEMA,
+            joinColumns = {
+                @JoinColumn(name = "ASSET_ID")
+            }
         )
     )
     private LocalizedString description;
