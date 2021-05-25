@@ -58,6 +58,7 @@
         <div class="form-group">
             <label for="#{cc.attrs.inputId}">${cc.attrs.label}</label>
             <input aria-describedby="#{cc.attrs.inputId}-help"
+                   class="form-control"
                    id="#{cc.attrs.inputId}"
                    maxlength="#{(not empty cc.attrs.maxlength) ? cc.attrs.maxlength : null}"
                    minlength="#{(not empty cc.attrs.minlength) ? cc.attrs.minlength : null}"
