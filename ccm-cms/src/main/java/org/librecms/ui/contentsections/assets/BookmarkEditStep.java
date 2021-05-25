@@ -144,7 +144,7 @@ public class BookmarkEditStep extends AbstractMvcAssetEditStep {
         }
 
         if (assetPermissionsChecker.canEditAsset(getAsset())) {
-            return "org/librecms/ui/contentsection/bookmark/bookmark/edit-bookmark.xhtml";
+            return "org/librecms/ui/contentsection/assets/bookmark/edit-bookmark.xhtml";
         } else {
             return assetUi.showAccessDenied(
                 getContentSection(),
