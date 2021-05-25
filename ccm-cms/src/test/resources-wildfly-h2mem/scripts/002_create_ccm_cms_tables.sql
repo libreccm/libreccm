@@ -198,7 +198,7 @@
     );
 
     create table CCM_CMS.BOOKMARKS (
-       URL varchar(2048) not null,
+       URL varchar(2048),
         OBJECT_ID bigint not null,
         primary key (OBJECT_ID)
     );
