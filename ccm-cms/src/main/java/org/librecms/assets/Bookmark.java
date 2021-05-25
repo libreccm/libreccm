@@ -39,8 +39,6 @@ import org.librecms.ui.contentsections.assets.BookmarkCreateStep;
 import org.librecms.ui.contentsections.assets.BookmarkEditStep;
 import org.librecms.ui.contentsections.assets.MvcAssetEditKit;
 
-import javax.validation.constraints.NotEmpty;
-
 import static org.librecms.CmsConstants.*;
 import static org.librecms.assets.AssetConstants.*;
 
@@ -78,8 +76,7 @@ public class Bookmark extends Asset implements Serializable {
     )
     private LocalizedString description;
 
-    @Column(name = "URL", length = 2048, nullable = false)
-    @NotEmpty
+    @Column(name = "URL", length = 2048)
     private String url;
 
     public Bookmark() {
