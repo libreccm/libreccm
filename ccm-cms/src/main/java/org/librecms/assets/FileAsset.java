@@ -18,10 +18,16 @@
  */package org.librecms.assets;
 
 import com.arsdigita.cms.ui.assets.forms.FileAssetForm;
+
 import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
+
 import org.hibernate.envers.Audited;
+import org.librecms.ui.contentsections.assets.FileAssetCreateStep;
+import org.librecms.ui.contentsections.assets.FileAssetEditStep;
+import org.librecms.ui.contentsections.assets.MvcAssetEditKit;
 
 import static org.librecms.CmsConstants.*;
 import static org.librecms.assets.AssetConstants.*;
@@ -39,6 +45,10 @@ import static org.librecms.assets.AssetConstants.*;
            labelBundle = ASSETS_BUNDLE,
            descriptionKey = "fileasset.description",
            descriptionBundle = ASSETS_BUNDLE)
+@MvcAssetEditKit(
+    createStep = FileAssetCreateStep.class,
+    editStep = FileAssetEditStep.class
+)
 public class FileAsset extends BinaryAsset implements Serializable {
 
     private static final long serialVersionUID = -8195062456502964401L;

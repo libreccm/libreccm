@@ -534,6 +534,23 @@
                 <version>2.4.0-b180830.0438</version>
             </dependency>
             
+            <!-- 
+                RESTeasy is used in Wildfly (primary target runtime) as 
+                implementation of JAX-RS. Unfortunetly, multipart uploads are
+                not standardized in the JAX-RS, therefore we have to use 
+                a vendor specific solution...
+            -->
+            <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-core</artifactId>
+                <version>4.6.0.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-multipart-provider</artifactId>
+                <version>3.14.0.Final</version>
+            </dependency>
+            
             <!--
                 Jakarta MVC is a thin layer ontop of JAX-RS providing a
                 MVC framework for Jakarta EE: https://www.mvc-spec.org

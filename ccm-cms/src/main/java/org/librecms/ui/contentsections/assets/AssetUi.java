@@ -66,7 +66,7 @@ public class AssetUi {
     ) {
         models.put("section", section.getLabel());
         models.put("assetPath", assetPath);
-        return "/org/librecms/ui/contentsection/assets/asset-not-found.xhtml";
+        return "org/librecms/ui/contentsection/assets/asset-not-found.xhtml";
     }
 
 }

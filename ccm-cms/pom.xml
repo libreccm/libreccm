@@ -72,6 +72,12 @@
         </dependency>
         
         <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-multipart-provider</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
             <groupId>javax.mvc</groupId>
             <artifactId>javax.mvc-api</artifactId>
             <scope>provided</scope>

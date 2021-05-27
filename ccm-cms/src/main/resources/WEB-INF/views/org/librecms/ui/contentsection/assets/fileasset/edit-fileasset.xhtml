@@ -34,7 +34,7 @@
                 editDialogValueLabel="#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.description.edit.value.label']}"
                 editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@fileasset-edit/description/edit"
                 editorId="description-editor"
-                hasUnusedLocales="#{!CmsFileAssetEditStep.unusedDescriptionLocales.isEmpty()}"
+                hasUnusedLocales="#{!CmsFileAssetEditStepModel.unusedDescriptionLocales.isEmpty()}"
                 headingLevel="3"
                 objectIdentifier="#{CmsSelectedAssetModel.assetPath}"
                 readOnly="#{!MvcAssetEditStepModel.canEdit}"
@@ -45,83 +45,85 @@
                 removeDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.description.remove.title']}"
                 removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@fileasset-edit/description/remove"
                 title="#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.description.title']}"
-                unusedLocales="#{CmsFileAssetEditStep.unusedDescriptionLocales}"
+                unusedLocales="#{CmsFileAssetEditStepModel.unusedDescriptionLocales}"
                 useTextarea="true"
-                values="#{CmsFileAssetEditStep.descriptionValues}"
+                values="#{CmsFileAssetEditStepModel.descriptionValues}"
                 />
 
-        </ui:define>
-
-        <h3>#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.title']}</h3>
-        <c:if test="#{MvcAssetEditStepModel.canEdit}">
-            <div class="text-right">
-                <button class="btn btn-primary"
-                        data-toggle="modal"
-                        data-target="#file-upload-dialog"
-                        type="button">
-                    <bootstrap:svgIcon icon="upload" />
-                    <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.upload.button.label']}</span>
-                </button>
-            </div>
-            <div aria-hidden="true"
-                 aria-labelledby="file-upload-dialog-title"
-                 class="modal fade"
-                 id="file-upload-dialog"
-                 tabindex="-1">
-                <div class="modal-dialog">
-                    <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@fileasset-edit/upload"
-                          enctype="multipart/formdata"
-                          method="post">
-                        <div class="modal-header">
-                            <h4 class="modal-title"
-                                id="file-upload-dialog-title">
-                                #{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.upload.title']}
-                            </h4>
-                            <button 
-                                aria-label="#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.upload.close']}"
-                                class="close"
-                                data-dismiss="modal"
-                                type="button">
-                                <bootstrap:svgIcon icon="x" />
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <bootstrap:formGroupFile
-                                help="#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.upload.help']}"
-                                inputId="fileData"
-                                label="#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.upload.label']}"
-                                name="fileData"
-                                />
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-warning"
+            <h3>#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.title']}</h3>
+            <c:if test="#{MvcAssetEditStepModel.canEdit}">
+                <div class="text-right">
+                    <button class="btn btn-primary"
+                            data-toggle="modal"
+                            data-target="#file-upload-dialog"
+                            type="button">
+                        <bootstrap:svgIcon icon="upload" />
+                        <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.upload.button.label']}</span>
+                    </button>
+                </div>
+                <div aria-hidden="true"
+                     aria-labelledby="file-upload-dialog-title"
+                     class="modal fade"
+                     id="file-upload-dialog"
+                     tabindex="-1">
+                    <div class="modal-dialog">
+                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@fileasset-edit/upload"
+                              class="modal-content"
+                              enctype="multipart/form-data"
+                              method="post">
+                            <div class="modal-header">
+                                <h4 class="modal-title"
+                                    id="file-upload-dialog-title">
+                                    #{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.upload.title']}
+                                </h4>
+                                <button 
+                                    aria-label="#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.upload.close']}"
+                                    class="close"
                                     data-dismiss="modal"
                                     type="button">
-                                #{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.upload.close']}
-                            </button>
-                            <button class="btn btn-success"
-                                    type="submit">
-                                #{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.upload.submit']}
-                            </button>
-                        </div>
-                    </form>
+                                    <bootstrap:svgIcon icon="x" />
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <bootstrap:formGroupFile
+                                    help="#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.upload.help']}"
+                                    inputId="fileData"
+                                    label="#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.upload.label']}"
+                                    name="fileData"
+                                    required="true"
+                                    />
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-warning"
+                                        data-dismiss="modal"
+                                        type="button">
+                                    #{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.upload.close']}
+                                </button>
+                                <button class="btn btn-success"
+                                        type="submit">
+                                    #{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.upload.submit']}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </div>
-        </c:if>
-        <dl>
-            <div>
-                <dt>#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.name']}</dt>
-                <dd>#{CmsFileAssetEditStepModel.fileName}</dd>
-            </div>
-            <div>
-                <dt>#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.type']}</dt>
-                <dd>#{CmsFileAssetEditStepModel.mimeType}</dd>
-            </div>
-            <div>
-                <dt>#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.size']}</dt>
-                <dd>#{CmsFileAssetEditStepModel.sizeLabel}</dd>
-            </div>
-        </dl>
+            </c:if>
+            <dl>
+                <div>
+                    <dt>#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.name']}</dt>
+                    <dd>#{CmsFileAssetEditStepModel.fileName}</dd>
+                </div>
+                <div>
+                    <dt>#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.type']}</dt>
+                    <dd>#{CmsFileAssetEditStepModel.mimeType}</dd>
+                </div>
+                <div>
+                    <dt>#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.size']}</dt>
+                    <dd>#{CmsFileAssetEditStepModel.sizeLabel}</dd>
+                </div>
+            </dl>
+
+        </ui:define>
 
     </ui:composition>
 

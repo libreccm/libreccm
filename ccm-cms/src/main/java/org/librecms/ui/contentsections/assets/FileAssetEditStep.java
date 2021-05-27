@@ -20,6 +20,8 @@ package org.librecms.ui.contentsections.assets;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.AuthorizationRequired;
 import org.librecms.assets.FileAsset;
@@ -33,9 +35,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import javax.activation.MimeType;
@@ -44,8 +49,6 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.mvc.Controller;
 import javax.mvc.Models;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
@@ -54,8 +57,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 
 /**
  *
@@ -135,17 +138,22 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
             );
 
             editStepModel.setFileName(getFileAsset().getFileName());
-            editStepModel.setMimeType(getFileAsset().getMimeType().toString());
+            editStepModel.setMimeType(
+                Optional
+                    .ofNullable(getFileAsset().getMimeType())
+                    .map(MimeType::toString)
+                    .orElse("")
+            );
             editStepModel.setSize(getFileAsset().getSize());
-            
+
             final long size = getFileAsset().getSize();
             if (size < 2048) {
                 editStepModel.setSizeLabel(String.format("%d Bytes", size));
-            } else if(size < 1024 * 1024) {
+            } else if (size < 1024 * 1024) {
                 editStepModel.setSizeLabel(
                     String.format("%d kB", size / 1024)
                 );
-            } else if (size < 1024 * 1024 * 1024){
+            } else if (size < 1024 * 1024 * 1024) {
                 editStepModel.setSizeLabel(
                     String.format("%d MB", size / (1024 * 1024))
                 );
@@ -313,12 +321,12 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
-    public String removeDescription(
+    public String uploadFile(
         @PathParam(MvcAssetEditSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
         @PathParam(MvcAssetEditSteps.ASSET_PATH_PATH_PARAM_NAME)
         final String assetPath,
-        @Context final HttpServletRequest request
+        final MultipartFormDataInput input
     ) {
         try {
             init();
@@ -331,61 +339,54 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
         if (assetPermissionsChecker.canEditAsset(getAsset())) {
             final FileAsset fileAsset = getFileAsset();
 
+            final Map<String, List<InputPart>> uploadForm = input
+                .getFormDataMap();
+            final List<InputPart> inputParts = uploadForm.get("fileData");
+
             final Part part;
-            final String fileName;
-            try {
-                part = request.getPart("file");
-                final String contentDisposition = part.getHeader(
-                    "content-disposition"
-                );
-                fileName = Arrays
-                    .stream(contentDisposition.split(";"))
-                    .filter(field -> field.startsWith("filename"))
-                    .findAny()
-                    .map(
-                        field -> field
-                            .substring(field.indexOf('=') + 1)
-                            .trim().replace("\"", "")
-                    ).orElse("");
-            } catch (IOException | ServletException ex) {
-                LOGGER.error(
-                    "Failed to upload file for FileAsset {}:", assetPath
-                );
-                LOGGER.error(ex);
-                models.put("uploadFailed", true);
-                return buildRedirectPathForStep();
-            }
+            String fileName = "";
+            String contentType = "";
+            for (final InputPart inputPart : inputParts) {
+                try {
+                    final MultivaluedMap<String, String> headers = inputPart
+                        .getHeaders();
+                    fileName = getFileName(headers);
+                    contentType = getContentType(headers);
+                    final byte[] bytes = new byte[1024];
+                    try (InputStream inputStream = inputPart.getBody(
+                        InputStream.class, null
+                    );
+                         ByteArrayOutputStream fileDataOutputStream
+                         = new ByteArrayOutputStream()) {
+                        while (inputStream.read(bytes) != -1) {
+                            fileDataOutputStream.writeBytes(bytes);
+                        }
 
-            final byte[] bytes = new byte[1024];
-            try (InputStream fileInputStream = part.getInputStream();
-                 ByteArrayOutputStream fileDataOutputStream
-                 = new ByteArrayOutputStream()) {
-                while (fileInputStream.read(bytes) != -1) {
-                    fileDataOutputStream.writeBytes(bytes);
+                        fileAsset.setData(fileDataOutputStream.toByteArray());
+                    }
+
+                } catch (IOException ex) {
+                    LOGGER.error(
+                        "Failed to upload file for FileAsset {}:", assetPath
+                    );
+                    LOGGER.error(ex);
+
+                    models.put("uploadFailed", true);
+                    return buildRedirectPathForStep();
                 }
-
-                fileAsset.setData(fileDataOutputStream.toByteArray());
-            } catch (IOException ex) {
-                LOGGER.error(
-                    "Failed to upload file for FileAsset {}:", assetPath
-                );
-                LOGGER.error(ex);
-
-                models.put("uploadFailed", true);
-                return buildRedirectPathForStep();
             }
 
             fileAsset.setFileName(fileName);
             fileAsset.setSize(fileAsset.getData().length);
-            try (BufferedInputStream stream = new BufferedInputStream(
-                new ByteArrayInputStream(fileAsset.getData()))) {
-                fileAsset.setMimeType(
-                    new MimeType(URLConnection
-                        .guessContentTypeFromStream(stream))
+            try {
+                fileAsset.setMimeType(new MimeType(contentType));
+            } catch (MimeTypeParseException ex) {
+                LOGGER.error(
+                    "Failed to upload file for FileAsset {}:", assetPath
                 );
-            } catch (IOException | MimeTypeParseException ex) {
-                LOGGER.error("Failed to get file type.", ex);
-                models.put("failedToGetType", true);
+                LOGGER.error(ex);
+
+                models.put("uploadFailed", true);
                 return buildRedirectPathForStep();
             }
 
@@ -398,6 +399,28 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
                 getAsset(),
                 messageBundle.get("asset.edit.denied"));
         }
+    }
+
+    private String getFileName(final MultivaluedMap<String, String> headers) {
+        final String[] contentDisposition = headers
+            .getFirst("Content-Disposition")
+            .split(";");
+
+        for (final String fileName : contentDisposition) {
+            if (fileName.trim().startsWith("filename")) {
+                final String[] name = fileName.split("=");
+
+                return name[1].trim().replaceAll("\"", "");
+            }
+        }
+
+        return "";
+    }
+
+    private String getContentType(
+        final MultivaluedMap<String, String> headers
+    ) {
+        return headers.getFirst("Content-Type");
     }
 
 }

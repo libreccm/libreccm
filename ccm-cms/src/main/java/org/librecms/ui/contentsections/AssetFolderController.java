@@ -39,6 +39,7 @@ import org.librecms.ui.contentsections.assets.MvcAssetCreateStep;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -274,15 +275,21 @@ public class AssetFolderController {
             assetFolderTree.buildFolderTree(section, folder)
         );
 
-        contentSectionModel.setAvailableAssetTypes(
-            assetCreateSteps
-                .stream()
-                .collect(
-                    Collectors.toMap(
-                        step -> step.getAssetType(),
-                        step -> step.getLabel()
-                    )
+        contentSectionModel.setAvailableAssetTypes(assetCreateSteps
+            .stream()
+            .sorted(
+                (step1, step2) -> step1.getLabel().compareTo(
+                    step2.getLabel()
                 )
+            )
+            .collect(
+                Collectors.toMap(
+                    step -> step.getAssetType(),
+                    step -> step.getLabel(),
+                    (value1, value2) -> value1,
+                    () -> new LinkedHashMap<>()
+                )
+            )
         );
 
         assetFolderModel.setRows(
@@ -665,11 +672,11 @@ public class AssetFolderController {
             row.setFolderPath(
                 folderManager
                     .getFolderPath(folder)
-//                    .substring(
-//                        folderManager
-//                            .getFolderPath(section.getRootAssetsFolder())
-//                            .length()
-//                    )
+            //                    .substring(
+            //                        folderManager
+            //                            .getFolderPath(section.getRootAssetsFolder())
+            //                            .length()
+            //                    )
             );
             row.setName(entry.getDisplayName());
             row.setTitle(

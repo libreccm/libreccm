@@ -37,7 +37,7 @@ public class FileAssetEditStepModel {
 
     private Map<String, String> descriptionValues;
 
-    private List<String> descriptionLocales;
+    private List<String> unusedDescriptionLocales;
 
     private String fileName;
 
@@ -57,14 +57,14 @@ public class FileAssetEditStepModel {
         this.descriptionValues = new HashMap<>(descriptionValues);
     }
 
-    public List<String> getDescriptionLocales() {
-        return Collections.unmodifiableList(descriptionLocales);
+    public List<String> getUnusedDescriptionLocales() {
+        return Collections.unmodifiableList(unusedDescriptionLocales);
     }
 
     protected void setUnusedDescriptionLocales(
         final List<String> descriptionLocales
     ) {
-        this.descriptionLocales = new ArrayList<>(descriptionLocales);
+        this.unusedDescriptionLocales = new ArrayList<>(descriptionLocales);
     }
 
     public String getFileName() {
