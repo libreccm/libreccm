@@ -15,7 +15,7 @@
         "tslint": "tslint --project ."
     },
     "dependencies": {
-        "tinymce": "^4.8.2"
+        "tinymce": "^5.7.1"
     },
     "devDependencies": {
         "@types/tinymce": "^4.5.16",
