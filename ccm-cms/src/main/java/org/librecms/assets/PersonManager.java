@@ -18,7 +18,6 @@
  */
 package org.librecms.assets;
 
-import java.util.Objects;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -35,17 +34,19 @@ public class PersonManager {
     private PersonRepository personRepository;
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public void addPersonName(final Person toPerson) {
-
-        final PersonName current = Objects
-            .requireNonNull(toPerson, "Can't add a name to Person null.")
-            .getPersonName();
-
-        if (current == null) {
-            toPerson.addPersonName(new PersonName());
-        } else {
-            toPerson.addPersonName(current);
-        }
+    public void addPersonName(
+        final Person toPerson, final PersonName personName
+    ) {
+//        final PersonName current = Objects
+//            .requireNonNull(toPerson, "Can't add a name to Person null.")
+//            .getPersonName();
+//
+//        if (current == null) {
+//            toPerson.addPersonName(new PersonName());
+//        } else {
+//            toPerson.addPersonName(current);
+//        }
+        toPerson.addPersonName(personName);
 
         personRepository.save(toPerson);
     }

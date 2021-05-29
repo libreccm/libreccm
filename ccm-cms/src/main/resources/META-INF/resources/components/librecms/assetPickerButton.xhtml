@@ -1,0 +1,21 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <cc:interface shortDescription="An component for selecting assets.">
+
+        <cc:attribute name="assetPickerId"
+                      required="true"
+                      shortDescription="ID of the asset picker"
+                      type="String" />
+    </cc:interface>
+    <cc:implementation>
+        <button class="btn btn-primary"
+                data-toggle="modal"
+                data-target="##{cc.attrs.assetPickerId}-dialog"
+                type="button" />
+    </cc:implementation>
+</html>
+

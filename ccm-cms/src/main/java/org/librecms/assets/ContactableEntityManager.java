@@ -65,6 +65,7 @@ public class ContactableEntityManager {
 
         contactableEntity.setPostalAddress(postalAddress);
         assetRepository.save(postalAddress);
+        assetRepository.save(contactableEntity);
     }
 
     public void removePostalAddressFromContactableEntity(
@@ -73,6 +74,7 @@ public class ContactableEntityManager {
 
         contactableEntity.setPostalAddress(null);
         assetRepository.save(postalAddress);
+        assetRepository.save(contactableEntity);
     }
 
 }

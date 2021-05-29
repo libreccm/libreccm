@@ -21,6 +21,9 @@ package org.librecms.assets;
 import com.arsdigita.cms.ui.assets.forms.PersonForm;
 
 import org.hibernate.envers.Audited;
+import org.librecms.ui.contentsections.assets.MvcAssetEditKit;
+import org.librecms.ui.contentsections.assets.PersonCreateStep;
+import org.librecms.ui.contentsections.assets.PersonEditStep;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -46,11 +49,17 @@ import static org.librecms.assets.AssetConstants.*;
 @Entity
 @Table(name = "PERSONS", schema = DB_SCHEMA)
 @Audited
-@AssetType(assetForm = PersonForm.class,
+@AssetType(
+    assetForm = PersonForm.class,
            labelBundle = ASSETS_BUNDLE,
            labelKey = "person.label",
            descriptionBundle = ASSETS_BUNDLE,
-           descriptionKey = "person.description")
+           descriptionKey = "person.description"
+)
+@MvcAssetEditKit(
+    createStep = PersonCreateStep.class,
+    editStep = PersonEditStep.class
+)
 public class Person extends ContactableEntity {
 
     private static final long serialVersionUID = 1L;

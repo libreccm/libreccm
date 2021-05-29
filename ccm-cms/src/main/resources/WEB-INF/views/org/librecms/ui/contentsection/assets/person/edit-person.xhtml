@@ -1,0 +1,255 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/assets/editstep.xhtml">
+
+        <ui:param name="stepControllerUrl"
+                  value="@person-edit"
+                  />
+        <ui:param name="title" 
+                  value="#{CmsAssetsStepsDefaultMessagesBundle.getMessage('person.editstep.header', [MvcAssetEditStepModel.name])}" 
+                  />
+
+        <ui:define name="editStep">
+
+            <h3>#{CmsAssetsStepsDefaultMessagesBundle['person.personnames']}</h3>
+            <div class="text-right">
+                <button class="btn btn-primary" 
+                        data-toggle="modal"
+                        data-target="#add-personname-dialog"
+                        type="button">
+                    <bootstrap:svgIcon icon="plus-circle" />
+                    <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['person.personname.add']}</span>
+                </button>
+            </div>
+            <div aria-hidden="true"
+                 aria-labelledby="add-personname-dialog-title"
+                 class="modal fade"
+                 id="add-personname-dialog"
+                 tab accesskey="-1"
+                 >
+                <div class="modal-dialog">
+                    <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/asset/#{CmsSelectedAssetModel.assetPath}/@person-edit/personnames/@add"
+                          class="modal-content"
+                          method="post">
+                        <div class="modal-header">
+                            <h4 id="add-personname-dialog-title">
+                                #{CmsAssetsStepsDefaultMessagesBundle['person.personname.add.dialog.title']}
+                            </h4>
+                            <button 
+                                aria-label="#{CmsAssetsStepsDefaultMessagesBundle['person.personname.add.dialog.close']}"
+                                class="close"
+                                data-dismiss="modal"
+                                type="button">
+                                <bootstrap:svgIcon icon="x" />
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <bootstrap:formGroupText 
+                                help="#{CmsAssetsStepsDefaultMessagesBundle['person.personname.prefix.help']}"
+                                inputId="prefix"
+                                label="#{CmsAssetsStepsDefaultMessagesBundle['person.personname.prefix.label']}"
+                                name="prefix" />
+                            <bootstrap:formGroupText 
+                                help="#{CmsAssetsStepsDefaultMessagesBundle['person.personname.surname.help']}"
+                                inputId="surname"
+                                label="#{CmsAssetsStepsDefaultMessagesBundle['person.personname.surname.label']}"
+                                name="surname" />
+                            <bootstrap:formGroupText 
+                                help="#{CmsAssetsStepsDefaultMessagesBundle['person.personname.givenname.help']}"
+                                inputId="givenName"
+                                label="#{CmsAssetsStepsDefaultMessagesBundle['person.personname.givenname.label']}"
+                                name="givenName" />
+                            <bootstrap:formGroupText 
+                                help="#{CmsAssetsStepsDefaultMessagesBundle['person.personname.suffix.help']}"
+                                inputId="suffix"
+                                label="#{CmsAssetsStepsDefaultMessagesBundle['person.personname.suffix.label']}"
+                                name="suffix" />
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-warning"
+                                    data-dismiss="modal"
+                                    type="button">
+                                #{CmsAssetsStepsDefaultMessagesBundle['person.personname.add.dialog.close']}
+                            </button>
+                            <button class="btn btn-success"
+                                    type="submit">
+                                #{CmsAssetsStepsDefaultMessagesBundle['person.personname.add.dialog.submit']}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#{CmsAssetsStepsDefaultMessagesBundle['person.personnames.col.prefix']}</th>
+                        <th>#{CmsAssetsStepsDefaultMessagesBundle['person.personnames.col.surname']}</th>
+                        <th>#{CmsAssetsStepsDefaultMessagesBundle['person.personnames.col.givenname']}</th>
+                        <th>#{CmsAssetsStepsDefaultMessagesBundle['person.personnames.col.suffix']}</th>
+                        <th>#{CmsAssetsStepsDefaultMessagesBundle['person.personnames.col.actions']}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach items="#{CmsPersonEditStepModel.personNames}"
+                               var="personName">
+                        <tr>
+                            <td>#{personName.prefix}</td>
+                            <td>#{personName.surname}</td>
+                            <td>#{personName.givenName}</td>
+                            <td>#{personName.suffix}</td>
+                            <td>
+                                <button class="btn btn-primary"
+                                        data-toggle="modal"
+                                        data-target="#personname-edit-dialog-#{personName.hashCode()}"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="pen" />
+                                    <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['person.personname.edit']}</span>
+                                </button>
+                                <div aria-hidden="true"
+                                     aria-lablledby="personname-edit-dialog-#{personName.hashCode()}-title"
+                                     class="modal fade"
+                                     id="personname-edit-dialog-#{personName.hashCode()}"
+                                     tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/asset/#{CmsSelectedAssetModel.assetPath}/@person-edit/personnames/@edit"
+                                              class="modal-content"
+                                              method="post">
+                                            <div class="modal-header">
+                                                <h4 id="personname-edit-dialog-#{personName.hashCode()}-title">
+                                                    #{CmsAssetsStepsDefaultMessagesBundle['person.personname.edit.dialog.title']}
+                                                </h4>
+                                                <button 
+                                                    aria-label="#{CmsAssetsStepsDefaultMessagesBundle['person.personname.edit.dialog.close']}"
+                                                    class="close"
+                                                    data-dismiss="modal"
+                                                    type="button">
+                                                    <bootstrap:svgIcon icon="x" />
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <bootstrap:formGroupText 
+                                                    help="#{CmsAssetsStepsDefaultMessagesBundle['person.personname.prefix.help']}"
+                                                    inputId="prefix"
+                                                    label="#{CmsAssetsStepsDefaultMessagesBundle['person.personname.prefix.label']}"
+                                                    name="prefix" 
+                                                    value="#{personName.prefix}" />
+                                                <bootstrap:formGroupText 
+                                                    help="#{CmsAssetsStepsDefaultMessagesBundle['person.personname.surname.help']}"
+                                                    inputId="surname"
+                                                    label="#{CmsAssetsStepsDefaultMessagesBundle['person.personname.surname.label']}"
+                                                    name="surname" 
+                                                    value="#{personName.surname}" />
+                                                <bootstrap:formGroupText 
+                                                    help="#{CmsAssetsStepsDefaultMessagesBundle['person.personname.givenname.help']}"
+                                                    inputId="givenName"
+                                                    label="#{CmsAssetsStepsDefaultMessagesBundle['person.personname.givenname.label']}"
+                                                    name="givenName"
+                                                    value="#{personName.givenName}" />
+                                                <bootstrap:formGroupText 
+                                                    help="#{CmsAssetsStepsDefaultMessagesBundle['person.personname.suffix.help']}"
+                                                    inputId="suffix"
+                                                    label="#{CmsAssetsStepsDefaultMessagesBundle['person.personname.suffix.label']}"
+                                                    name="suffix" 
+                                                    value="#{personName.suffix}" />
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-warning"
+                                                        data-dismiss="modal"
+                                                        type="button">
+                                                    #{CmsAssetsStepsDefaultMessagesBundle['person.personname.edit.dialog.close']}
+                                                </button>
+                                                <button class="btn btn-success"
+                                                        type="submit">
+                                                    #{CmsAssetsStepsDefaultMessagesBundle['person.personname.edit.dialog.submit']}
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <button class="btn btn-danger"
+                                        data-toggle="modal"
+                                        data-target="#personname-remove-dialog-#{personName.hashCode()}"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="x-circle" />
+                                    <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['person.personname.remove']}</span>
+                                </button>
+                                <div aria-hidden="true"
+                                     aria-lablledby="personname-remove-dialog-#{personName.hashCode()}-title"
+                                     class="modal fade"
+                                     id="personname-remove-dialog-#{personName.hashCode()}"
+                                     tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/asset/#{CmsSelectedAssetModel.assetPath}/@person-edit/personnames/@remove"
+                                              class="modal-content"
+                                              method="post">
+                                            <div class="modal-header">
+                                                <h4 id="personname-edit-dialog-#{personName.hashCode()}-title">
+                                                    #{CmsAssetsStepsDefaultMessagesBundle['person.personname.remove.dialog.title']}
+                                                </h4>
+                                                <button 
+                                                    aria-label="#{CmsAssetsStepsDefaultMessagesBundle['person.personname.remove.dialog.close']}"
+                                                    class="close"
+                                                    data-dismiss="modal"
+                                                    type="button">
+                                                    <bootstrap:svgIcon icon="x" />
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <input name="confirmed"
+                                                       type="hidden" 
+                                                       value="true"/>
+                                                
+                                                <p>
+                                                    #{CmsAssetsStepsDefaultMessagesBundle['person.personname.remove.dialog.message']}
+                                                </p>
+                                                <dl>
+                                                    <div>
+                                                        <dt>person.personname.prefix.label</dt>
+                                                        <dd>#{personName.prefix}</dd>
+                                                    </div>
+                                                    <div>
+                                                        <dt>person.personname.surname.label</dt>
+                                                        <dd>#{personName.surname}</dd>
+                                                    </div>
+                                                    <div>
+                                                        <dt>person.personname.givename.label</dt>
+                                                        <dd>#{personName.givenName}</dd>
+                                                    </div>
+                                                    <div>
+                                                        <dt>person.personname.suffix.label</dt>
+                                                        <dd>#{personName.suffix}</dd>
+                                                    </div>
+                                                </dl>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-warning"
+                                                        data-dismiss="modal"
+                                                        type="button">
+                                                    #{CmsAssetsStepsDefaultMessagesBundle['person.personname.remove.dialog.close']}
+                                                </button>
+                                                <button class="btn btn-success"
+                                                        type="submit">
+                                                    #{CmsAssetsStepsDefaultMessagesBundle['person.personname.remove.dialog.submit']}
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+
+            <ui:include src="../edit-contactable.xhtml" />
+            
+        </ui:define>
+
+    </ui:composition>
+
+</html>

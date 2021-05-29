@@ -161,25 +161,23 @@ public class PersonFormController
         final String suffix = (String) data.get(SUFFIX);
 
         if (asset.getPersonName() == null) {
-            personManager.addPersonName(asset);
+            final PersonName personName = new PersonName();
+            personName.setGivenName(givenName);
+            personName.setSuffix(suffix);
+            personName.setPrefix(prefix);
+            personName.setSurname(surname);
+            personManager.addPersonName(asset, personName);
         }
-
-        asset.getPersonName().setSurname(surname);
-        asset.getPersonName().setGivenName(givenName);
-        asset.getPersonName().setPrefix(prefix);
-        asset.getPersonName().setSuffix(suffix);
-
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
     public void addPersonName(final long personId) {
-
         final Person person = personRepository
             .findById(personId)
             .orElseThrow(() -> new IllegalArgumentException(String.format(
             "No Person with ID %d found.", personId)));
 
-        personManager.addPersonName(person);
+        personManager.addPersonName(person, new PersonName());
     }
 
 }

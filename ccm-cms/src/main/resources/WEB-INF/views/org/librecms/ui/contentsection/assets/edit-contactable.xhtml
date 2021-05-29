@@ -1,0 +1,43 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition>
+        
+        <h3>#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.title']}</h3>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.cols.key']}</th>
+                    <th>#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.cols.value']}</th>
+                    <th>#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.cols.actions']}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <c:forEach items="#{CmsContactableEditStepModel.contactEntries}"
+                           var="entry">
+                    <tr data-entrykey="#{entry.entryKey}">
+                        <td>#{entry.entryKeyLabel}</td>
+                        <td>#{entry.value}</td>
+                        <td>
+                            <button class="btn btn-primary"
+                                    type="button">
+                                <bootstrap:svgIcon icon="pen" />
+                                <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.edit']}</span>
+                            </button>
+                            <button class="btn btn-danger"
+                                    type="button">
+                                <bootstrap:svgIcon icon="x-circle" />
+                                <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.remove']}</span>
+                            </button>
+                        </td>
+                    </tr>
+                </c:forEach>
+            </tbody>
+        </table>
+        
+    </ui:composition>
+</html>

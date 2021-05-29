@@ -65,11 +65,12 @@ public class ContactEntryKey
     @Embedded
     @AssociationOverride(
         name = "values",
-        joinTable = @JoinTable(name = "CONTACT_ENTRY_KEY_LABELS",
-                               schema = DB_SCHEMA,
-                               joinColumns = {
-                                   @JoinColumn(name = "KEY_ID")
-                               }
+        joinTable = @JoinTable(
+            name = "CONTACT_ENTRY_KEY_LABELS",
+            schema = DB_SCHEMA,
+            joinColumns = {
+                @JoinColumn(name = "KEY_ID")
+            }
         )
     )
     private LocalizedString label;
@@ -104,10 +105,10 @@ public class ContactEntryKey
 
         this.label = Objects.requireNonNull(label);
     }
-    
+
     @Override
     public int compareTo(final ContactEntryKey other) {
-        
+
         return entryKey.compareTo(other.getEntryKey());
     }
 

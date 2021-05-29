@@ -8,7 +8,7 @@
 
         <ui:define name="main">
             <div class="container">
-                <h1>#{CmsAssetsStepsDefaultMessagesBundle["bookmark.createform.title"]}</h1>
+                <h1>#{CmsAssetsStepsDefaultMessagesBundle["person.createform.title"]}</h1>
 
                 <c:forEach items="#{CmsBookmarkCreateStep.messages.entrySet()}"
                            var="message">
@@ -17,7 +17,7 @@
                     </div>
                 </c:forEach>
 
-                <form action="#{mvc.basePath}/#{CmsBookmarkCreateStep.contentSectionLabel}/assets/#{CmsBookmarkCreateStep.folderPath}@create/#{CmsBookmarkCreateStep.assetType}"
+                <form action="#{mvc.basePath}/#{CmsPersonCreateStep.contentSectionLabel}/assets/#{CmsPersonCreateStep.folderPath}@create/#{CmsPersonCreateStep.assetType}"
                       method="post">
                     <bootstrap:formGroupText
                         help="#{CmsAssetsStepsDefaultMessagesBundle['createform.name.help']}"
@@ -47,21 +47,6 @@
                         required="true"
                         />
 
-                    <bootstrap:formGroupUrl 
-                        help="#{CmsAssetsStepsDefaultMessagesBundle['createform.bookmark.url.help']}"
-                        inputId="url"
-                        label="#{CmsAssetsStepsDefaultMessagesBundle['createform.bookmark.url.label']}"
-                        name="url"
-                        required="true"
-                        />
-
-                    <bootstrap:formGroupTextarea
-                        help="#{CmsAssetsStepsDefaultMessagesBundle['createform.bookmark.description.help']}"
-                        inputId="description"
-                        label="#{CmsAssetsStepsDefaultMessagesBundle['createform.bookmark.description.label']}"
-                        name="description"
-                        />
-
                     <a class="btn btn-warning"
                        href="#{mvc.basePath}/#{CmsBookmarkCreateStep.contentSectionLabel}/assetfolders/#{CmsBookmarkCreateStep.folderPath}">
                         #{CmsAssetsStepsDefaultMessagesBundle['createform.cancel']}
@@ -75,6 +60,6 @@
 
             </div>
         </ui:define>
-
     </ui:composition>
 </html>
+

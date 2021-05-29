@@ -76,21 +76,11 @@ public class Images {
         @DefaultValue("-1")
         final String heightParam) {
 
-        final Optional<Asset> asset = assetRepo
+        final Optional<Image> asset = assetRepo
             .findByUuidAndType(uuid, Image.class);
 
         if (asset.isPresent()) {
-            if (asset.get() instanceof Image) {
-                return loadImage((Image) asset.get(), widthParam, heightParam);
-            } else {
-                return Response
-                    .status(Response.Status.NOT_FOUND)
-                    .entity(String
-                        .format("The asset with the requested UUID \"%s\" "
-                                    + "is not an image.",
-                                uuid))
-                    .build();
-            }
+            return loadImage(asset.get(), widthParam, heightParam);
         } else {
             return Response
                 .status(Response.Status.NOT_FOUND)
@@ -107,21 +97,12 @@ public class Images {
         @PathParam("content-section") final String sectionName,
         @PathParam("uuid") final String uuid) {
 
-        final Optional<Asset> asset = assetRepo.findByUuidAndType(uuid,
-                                                                  Image.class);
+        final Optional<Image> asset = assetRepo.findByUuidAndType(
+            uuid, Image.class
+        );
 
         if (asset.isPresent()) {
-            if (asset.get() instanceof Image) {
-                return readImageProperties((Image) asset.get());
-            } else {
-                return Response
-                    .status(Response.Status.NOT_FOUND)
-                    .entity(String
-                        .format("The asset with the requested UUID \"%s\" "
-                                    + "is not an image.",
-                                uuid))
-                    .build();
-            }
+            return readImageProperties(asset.get());
         } else {
             return Response
                 .status(Response.Status.NOT_FOUND)
@@ -319,7 +300,7 @@ public class Images {
                                                       height);
 
         final ByteArrayOutputStream outputStream
-                                        = new ByteArrayOutputStream();
+            = new ByteArrayOutputStream();
         final BufferedImage bufferedScaledImage = new BufferedImage(
             scaledImage.getWidth(null),
             scaledImage.getHeight(null),

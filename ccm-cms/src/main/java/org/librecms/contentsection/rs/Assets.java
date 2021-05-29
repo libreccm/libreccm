@@ -53,6 +53,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonWriter;
 import javax.transaction.Transactional;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
@@ -115,7 +116,7 @@ public class Assets {
     @Transactional(Transactional.TxType.REQUIRED)
     public String findAssets(
         @PathParam("content-section") final String section,
-        @QueryParam("query") final String query,
+        @QueryParam("query") @DefaultValue("") final String query,
         @QueryParam("type") final String type) {
 
         final ContentSection contentSection = sectionRepo

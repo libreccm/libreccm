@@ -262,9 +262,10 @@ public class AssetRepository
     }
 
     /**
-     * Finds an {@link Asset} by its UUID <strong>and</strong> type. This method
-     * does not distinguish between shared and non shared assets.
+     * Finds an {@link Asset} by its UUID <strong>and</strong> type.This method
+ does not distinguish between shared and non shared assets.
      *
+     * @param <T> Type of the asset
      * @param uuid The UUID of the asset to retrieve.
      * @param type The type of the asset to retrieve.
      *
@@ -274,8 +275,9 @@ public class AssetRepository
      *         {@link Optional} is returned.
      */
     @Transactional(Transactional.TxType.REQUIRED)
-    public Optional<Asset> findByUuidAndType(
-        final String uuid, final Class<? extends Asset> type) {
+    @SuppressWarnings("unchecked")
+    public <T extends Asset> Optional<T> findByUuidAndType(
+        final String uuid, final Class<T> type) {
 
         final TypedQuery<Asset> query = entityManager.createNamedQuery(
             "Asset.findByUuidAndType", Asset.class);
@@ -284,7 +286,11 @@ public class AssetRepository
         setAuthorizationParameters(query);
 
         try {
-            return Optional.of(query.getSingleResult());
+            final Asset result = query.getSingleResult();
+            if (result.getClass().isAssignableFrom(type)) {
+                return Optional.of((T) result);
+            }
+                return Optional.empty();
         } catch (NoResultException ex) {
             return Optional.empty();
         }
