@@ -196,12 +196,13 @@ public abstract class AbstractContactableEntityEditStep
 
         return buildRedirectPathForStep();
     }
-
+    
     @POST
     @Path("/postaladdress")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String setPostalAddress(
+        @FormParam("postalAddressIdentifier") 
         final String postalAddressIdentifier
     ) {
         final Identifier identifier = identifierParser

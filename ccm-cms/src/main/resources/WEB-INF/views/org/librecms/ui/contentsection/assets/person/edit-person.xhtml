@@ -30,14 +30,15 @@
                  aria-labelledby="add-personname-dialog-title"
                  class="modal fade"
                  id="add-personname-dialog"
-                 tab accesskey="-1"
+                 tabindex="-1"
                  >
                 <div class="modal-dialog">
                     <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/asset/#{CmsSelectedAssetModel.assetPath}/@person-edit/personnames/@add"
                           class="modal-content"
                           method="post">
                         <div class="modal-header">
-                            <h4 id="add-personname-dialog-title">
+                            <h4 class="modal-title"
+                                id="add-personname-dialog-title">
                                 #{CmsAssetsStepsDefaultMessagesBundle['person.personname.add.dialog.title']}
                             </h4>
                             <button 
@@ -205,7 +206,7 @@
                                                        value="true"/>
                                                 
                                                 <p>
-                                                    #{CmsAssetsStepsDefaultMessagesBundle['person.personname.remove.dialog.message']}
+                                                    #{CmsAssetsStepsDefaultMessagesBundle.getMessage('person.personname.remove.dialog.message', [personName.prefix, personName.surname, personName.givenName, personName.suffix])}
                                                 </p>
                                                 <dl>
                                                     <div>
@@ -246,7 +247,14 @@
                 </tbody>
             </table>
 
-            <ui:include src="../edit-contactable.xhtml" />
+            <ui:include src="../edit-contactable.xhtml">
+                <ui:param name="actionBaseUrl"
+                          value="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@person-edit" />
+                <ui:param name="contactEntryAction"
+                          value="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@person-edit/contactentries" />
+                <ui:param name="postalAddressAction" 
+                          value="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@person-edit/postaladdress" />
+            </ui:include>
             
         </ui:define>
 
