@@ -10,14 +10,14 @@
             <div class="container">
                 <h1>#{CmsAssetsStepsDefaultMessagesBundle["person.createform.title"]}</h1>
 
-                <c:forEach items="#{CmsBookmarkCreateStep.messages.entrySet()}"
+                <c:forEach items="#{CmsPersonCreateStep.messages.entrySet()}"
                            var="message">
                     <div class="alert alert-#{message.key}" role="alert">
                         #{message.value}
                     </div>
                 </c:forEach>
 
-                <form action="#{mvc.basePath}/#{CmsPersonCreateStep.contentSectionLabel}/assets/#{CmsPersonCreateStep.folderPath}@create/#{CmsPersonCreateStep.assetType}"
+                <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsPersonCreateStep.folderPath}@create/#{CmsPersonCreateStep.assetType}"
                       method="post">
                     <bootstrap:formGroupText
                         help="#{CmsAssetsStepsDefaultMessagesBundle['createform.name.help']}"
@@ -26,7 +26,7 @@
                         name="name"
                         pattern="^([a-zA-Z0-9_-]*)$"
                         required="true"
-                        value="#{CmsBookmarkCreateStep.name}"
+                        value="#{CmsPersonCreateStep.name}"
                         />
 
                     <bootstrap:formGroupSelect
@@ -34,9 +34,9 @@
                         inputId="locale"
                         label="#{CmsAssetsStepsDefaultMessagesBundle['createform.initial_locale.label']}"
                         name="locale"
-                        options="#{CmsBookmarkCreateStep.availableLocales}"
+                        options="#{CmsPersonCreateStep.availableLocales}"
                         required="true"
-                        selectedOptions="#{[CmsBookmarkCreateStep.initialLocale]}"
+                        selectedOptions="#{[CmsPersonCreateStep.initialLocale]}"
                         />
 
                     <bootstrap:formGroupText
@@ -48,7 +48,7 @@
                         />
 
                     <a class="btn btn-warning"
-                       href="#{mvc.basePath}/#{CmsBookmarkCreateStep.contentSectionLabel}/assetfolders/#{CmsBookmarkCreateStep.folderPath}">
+                       href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assetfolders/#{CmPersonCreateStep.folderPath}">
                         #{CmsAssetsStepsDefaultMessagesBundle['createform.cancel']}
                     </a>
                     <button class="btn btn-success"

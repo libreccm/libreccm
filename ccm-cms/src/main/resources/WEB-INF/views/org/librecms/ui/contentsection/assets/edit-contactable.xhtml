@@ -70,6 +70,7 @@
                 </form>
             </div>
         </div>
+        
         <table>
             <thead>
                 <tr>
@@ -198,7 +199,7 @@
                 </c:forEach>
             </tbody>
         </table>
-
+        
         <h3>#{CmsAssetsStepsDefaultMessagesBundle['contactable.postaladdress.title']}</h3>
 
         <librecms:assetPicker 
@@ -210,15 +211,15 @@
             />
         <c:choose>
             <c:when test="#{CmsContactableEditStepModel.postalAddress == null}">
-                <div class="text-right">
+<!--                <div class="text-right">
                     <librecms:assetPickerButton 
                         assetPickerId="postaladdress-picker"
                         />
                 </div>
-                <p>#{CmsAssetsStepsDefaultMessagesBundle['contactable.postaladdress.none']}</p>
+                <p>#{CmsAssetsStepsDefaultMessagesBundle['contactable.postaladdress.none']}</p>-->
             </c:when>
             <c:otherwise>
-                <div class="text-right">
+<!--                <div class="text-right">
                     <librecms:assetPickerButton 
                         assetPickerId="postaladdress-picker"
                         />
@@ -295,7 +296,7 @@
                         <dd>#{CmsContactableEditStepModel.postalAddressCountry}) (#{CmsContactableEditStepModel.postalAddress.isoCountryCode})</dd>
                     </div>
 
-                </dl>
+                </dl>-->
             </c:otherwise>
         </c:choose>
 

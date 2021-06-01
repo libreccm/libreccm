@@ -64,7 +64,6 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-
 /**
  * Tests for the {@link AssetRepository}.
  *
@@ -277,19 +276,25 @@ public class AssetRepositoryIT {
         "datasets/org/librecms/contentsection/AssetRepositoryTest/data.xml")
     public void findAssetByUuidAndType() {
 
-        final Optional<Asset> asset = shiro
+        final Optional<? extends Asset> asset = shiro
             .getSystemUser()
-            .execute(() -> {
+            .execute(
+                () -> {
                 return assetRepo
-                    .findByUuidAndType("4635589f-b87a-46d9-979e-6af14af063e5",
-                                       Image.class);
+                    .findByUuidAndType(
+                        "4635589f-b87a-46d9-979e-6af14af063e5",
+                        Image.class
+                    );
             });
-        final Optional<Asset> none = shiro
+        final Optional<? extends Asset> none = shiro
             .getSystemUser()
-            .execute(() -> {
+            .execute(
+                () -> {
                 return assetRepo
-                    .findByUuidAndType("4635589f-b87a-46d9-979e-6af14af063e5",
-                                       FileAsset.class);
+                    .findByUuidAndType(
+                        "4635589f-b87a-46d9-979e-6af14af063e5",
+                        FileAsset.class
+                    );
             });
 
         assertThat(asset.isPresent(), is(true));

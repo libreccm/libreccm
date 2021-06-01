@@ -27,8 +27,10 @@ import org.librecms.contentsection.AssetRepository;
 import org.librecms.ui.contentsections.AssetPermissionsChecker;
 import org.librecms.ui.contentsections.ContentSectionNotFoundException;
 
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -92,10 +94,17 @@ public class PersonEditStep extends AbstractContactableEntityEditStep {
 
         if (getAsset() instanceof Person) {
             editStepModel.setBirthdate(
-                DateTimeFormatter
-                    .ofLocalizedDate(FormatStyle.SHORT)
-                    .withLocale(globalizationHelper.getNegotiatedLocale())
-                    .format(getPerson().getBirthdate())
+                Optional
+                .ofNullable(getPerson().getBirthdate())
+                .map(
+                    birthdate -> birthdate.format(
+                        DateTimeFormatter
+                            .ofLocalizedDate(FormatStyle.SHORT)
+                            .withLocale(
+                                globalizationHelper.getNegotiatedLocale()
+                            )
+                            .withZone(ZoneId.systemDefault())))
+                .orElse("")
             );
             editStepModel.setPersonNames(getPerson().getPersonNames());
         } else {
