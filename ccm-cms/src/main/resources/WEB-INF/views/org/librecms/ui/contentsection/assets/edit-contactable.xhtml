@@ -70,158 +70,168 @@
                 </form>
             </div>
         </div>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th>#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.cols.key']}</th>
-                    <th>#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.cols.value']}</th>
-                    <th>#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.cols.actions']}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <c:forEach items="#{CmsContactableEditStepModel.contactEntries}"
-                           var="entry">
-                    <tr data-entrykey="#{entry.entryKey}"
-                        id="#{entry.contactEntryId}">
-                        <td>#{entry.entryKeyLabel}</td>
-                        <td>#{entry.value}</td>
-                        <td>
-                            <button class="btn btn-primary"
-                                    data-toggle="modal"
-                                    data-target="#edit-contactntry-dialog-#{entry.contactEntryId}"
-                                    type="button">
-                                <bootstrap:svgIcon icon="pen" />
-                                <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.edit']}</span>
-                            </button>
-                            <div aria-hidden="true"
-                                 aria-labelledby="edit-contactntry-dialog-#{entry.contactEntryId}-title"
-                                 class="modal fade"
-                                 tabindex="-1">
-                                <div class="modal-content">
-                                    <form action="#{actionBaseUrl}/contactentries/#{entry.order}"
-                                          class="modal-content"
-                                          method="post">
-                                        <div class="modal-header">
-                                            <h4 class="modal-title"
-                                                id="edit-contactntry-dialog-#{entry.contactEntryId}-title">
-                                                #{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.edit.title']}
-                                            </h4>
-                                            <button 
-                                                aria-label="#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.edit.close']}"
-                                                class="close"
-                                                data-dismiss="modal"
-                                                type="button">
-                                                <bootstrap:svgIcon icon="x" />
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <bootstrap:formGroupSelect 
-                                                help="#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentry.edit.entrykey.help']}"
-                                                inputId="entryKey"
-                                                label="#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentry.edit.entrykey.label']}"
-                                                name="entryKey"
-                                                options="#{CmsContactableEditStepModel.availableContactEntryKeys}"
-                                                selectedOptions="#{[entry.entryKey]}"
-                                                />
 
-                                            <bootstrap:formGroupText 
-                                                help="#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentry.edit.entryvalue.help']}"
-                                                inputId="entryValue"
-                                                label="#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentry.edit.entryvalue.label']}"
-                                                name="entryValue"
-                                                value="#{entry.value}"
-                                                />
+        <c:choose>
+            <c:when test="#{CmsContactableEditStepModel.contactEntries.isEmpty()}">
+                <p>#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.none']}</p>
+            </c:when>
+            <c:otherwise>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.cols.key']}</th>
+                            <th>#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.cols.value']}</th>
+                            <th>#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.cols.actions']}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="#{CmsContactableEditStepModel.contactEntries}"
+                                   var="entry">
+                            <tr data-entrykey="#{entry.entryKey}"
+                                id="#{entry.contactEntryId}">
+                                <td>#{entry.entryKeyLabel}</td>
+                                <td>#{entry.value}</td>
+                                <td>
+                                    <button class="btn btn-primary"
+                                            data-toggle="modal"
+                                            data-target="#edit-contactntry-dialog-#{entry.contactEntryId}"
+                                            type="button">
+                                        <bootstrap:svgIcon icon="pen" />
+                                        <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.edit']}</span>
+                                    </button>
+                                    <div aria-hidden="true"
+                                         aria-labelledby="edit-contactntry-dialog-#{entry.contactEntryId}-title"
+                                         class="modal fade"
+                                         tabindex="-1">
+                                        <div class="modal-content">
+                                            <form action="#{actionBaseUrl}/contactentries/#{entry.order}"
+                                                  class="modal-content"
+                                                  method="post">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title"
+                                                        id="edit-contactntry-dialog-#{entry.contactEntryId}-title">
+                                                        #{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.edit.title']}
+                                                    </h4>
+                                                    <button 
+                                                        aria-label="#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.edit.close']}"
+                                                        class="close"
+                                                        data-dismiss="modal"
+                                                        type="button">
+                                                        <bootstrap:svgIcon icon="x" />
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <bootstrap:formGroupSelect 
+                                                        help="#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentry.edit.entrykey.help']}"
+                                                        inputId="entryKey"
+                                                        label="#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentry.edit.entrykey.label']}"
+                                                        name="entryKey"
+                                                        options="#{CmsContactableEditStepModel.availableContactEntryKeys}"
+                                                        selectedOptions="#{[entry.entryKey]}"
+                                                        />
+
+                                                    <bootstrap:formGroupText 
+                                                        help="#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentry.edit.entryvalue.help']}"
+                                                        inputId="entryValue"
+                                                        label="#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentry.edit.entryvalue.label']}"
+                                                        name="entryValue"
+                                                        value="#{entry.value}"
+                                                        />
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-warning"
+                                                            data-dismiss="modal"
+                                                            type="button">
+                                                        #{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.edit.close']}
+                                                    </button>
+                                                    <button class="btn btn-success"
+                                                            type="submit">
+                                                        #{CmsAssetsStepsDefaultMessagesBundle['contactable.postaladdress.edit.submit']}
+                                                    </button>
+                                                </div>
+                                            </form>
                                         </div>
-                                        <div class="modal-footer">
-                                            <button class="btn btn-warning"
-                                                    data-dismiss="modal"
-                                                    type="button">
-                                                #{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.edit.close']}
-                                            </button>
-                                            <button class="btn btn-success"
-                                                    type="submit">
-                                                #{CmsAssetsStepsDefaultMessagesBundle['contactable.postaladdress.edit.submit']}
-                                            </button>
+                                    </div>
+                                    <button class="btn btn-danger"
+                                            data-toggle="modal"
+                                            data-target="#remove-contactentry-dialog-#{entry.contactEntryId}"
+                                            type="button">
+                                        <bootstrap:svgIcon icon="x-circle" />
+                                        <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.remove']}</span>
+                                    </button>
+                                    <div aria-hidden="true"
+                                         aria-labelledby="remove-contactentry-dialog-#{entry.contactEntryId}-title"
+                                         class="modal fade"
+                                         tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <form action="#{actionBaseUrl}/contactentries/#{entry.order}/@remove"
+                                                  class="modal-content"
+                                                  method="post">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title"
+                                                        id="remove-contactentry-dialog-#{entry.contactEntryId}-title">
+                                                        #{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.remove.title']}
+                                                    </h4>
+                                                    <button 
+                                                        aria-label="#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.remove.close']}"
+                                                        class="close"
+                                                        data-dismiss="modal"
+                                                        type="button">
+                                                        <bootstrap:svgIcon icon="x" />
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>
+                                                        #{CmsDefaultStepsMessageBundle.getMessage('contactable.contactentries.remove.message', [entry.entryKeyLabel, entry.value])}
+                                                    </p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-secondary"
+                                                            data-dismiss="modal"
+                                                            type="button">
+                                                        #{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.remove.close']}
+                                                    </button>
+                                                    <button class="btn btn-danger"
+                                                            type="submit">
+                                                        #{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.remove.submit']}
+                                                    </button>
+                                                </div>
+                                            </form>
                                         </div>
-                                    </form>
-                                </div>
-                            </div>
-                            <button class="btn btn-danger"
-                                    data-toggle="modal"
-                                    data-target="#remove-contactentry-dialog-#{entry.contactEntryId}"
-                                    type="button">
-                                <bootstrap:svgIcon icon="x-circle" />
-                                <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.remove']}</span>
-                            </button>
-                            <div aria-hidden="true"
-                                 aria-labelledby="remove-contactentry-dialog-#{entry.contactEntryId}-title"
-                                 class="modal fade"
-                                 tabindex="-1">
-                                <div class="modal-dialog">
-                                    <form action="#{actionBaseUrl}/contactentries/#{entry.order}/@remove"
-                                          class="modal-content"
-                                          method="post">
-                                        <div class="modal-header">
-                                            <h4 class="modal-title"
-                                                id="remove-contactentry-dialog-#{entry.contactEntryId}-title">
-                                                #{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.remove.title']}
-                                            </h4>
-                                            <button 
-                                                aria-label="#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.remove.close']}"
-                                                class="close"
-                                                data-dismiss="modal"
-                                                type="button">
-                                                <bootstrap:svgIcon icon="x" />
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p>
-                                                #{CmsDefaultStepsMessageBundle.getMessage('contactable.contactentries.remove.message', [entry.entryKeyLabel, entry.value])}
-                                            </p>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button class="btn btn-secondary"
-                                                    data-dismiss="modal"
-                                                    type="button">
-                                                #{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.remove.close']}
-                                            </button>
-                                            <button class="btn btn-danger"
-                                                    type="submit">
-                                                #{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.remove.submit']}
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                </c:forEach>
-            </tbody>
-        </table>
-        
+                                    </div>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </c:otherwise>
+        </c:choose>
+
         <h3>#{CmsAssetsStepsDefaultMessagesBundle['contactable.postaladdress.title']}</h3>
 
         <librecms:assetPicker 
-            action="#{actionBaseUrl}/postaladdress"
+            actionUrl="#{actionBaseUrl}/postaladdress"
             assetType="#{CmsContactableEditStepModel.postalAddressType}"
             assetPickerId="postaladdress-picker"
             contentSection="#{ContentSectionModel.sectionName}"
             formParamName="postalAddressIdentifier"
             />
+
         <c:choose>
             <c:when test="#{CmsContactableEditStepModel.postalAddress == null}">
-<!--                <div class="text-right">
+                <div class="text-right">
                     <librecms:assetPickerButton 
                         assetPickerId="postaladdress-picker"
+                        buttonText="#{CmsAssetsStepsDefaultMessagesBundle['contactable.postaladdress.set']}"
                         />
                 </div>
-                <p>#{CmsAssetsStepsDefaultMessagesBundle['contactable.postaladdress.none']}</p>-->
+                <p>#{CmsAssetsStepsDefaultMessagesBundle['contactable.postaladdress.none']}</p>
             </c:when>
             <c:otherwise>
-<!--                <div class="text-right">
+                <div class="text-right">
                     <librecms:assetPickerButton 
                         assetPickerId="postaladdress-picker"
+                        buttonText="#{CmsAssetsStepsDefaultMessagesBundle['contactable.postaladdress.set']}"
                         />
                     <button class="btn btn-danger"
                             data-toggle="modal"
@@ -295,8 +305,7 @@
                         <dt>#{CmsAssetsStepsDefaultMessagesBundle['contactable.postaladdress.country']}</dt>
                         <dd>#{CmsContactableEditStepModel.postalAddressCountry}) (#{CmsContactableEditStepModel.postalAddress.isoCountryCode})</dd>
                     </div>
-
-                </dl>-->
+                </dl>
             </c:otherwise>
         </c:choose>
 

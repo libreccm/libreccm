@@ -1,14 +1,14 @@
-<!DOCTYPE html [<!ENTITY times '&#215;'>]>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
     <cc:interface shortDescription="An component for selecting assets.">
-        <cc:attribute name="action"
+        <cc:attribute name="actionUrl"
                       required="true"
-                      shortDescription="Action to trigger when an asset has been selected."
+                      shortDescription="Base URL for the actions of the asset picker."
                       type="String" />
-        <cc:attribute name="assetType"
+         <cc:attribute name="assetType"
                       required="false"
                       shortDescription="Type of assets to show."
                       type="String"
@@ -38,12 +38,11 @@
                       default="3"
                       type="int" />
     </cc:interface>
-
     <cc:implementation>
-<!--        <div class="ccm-cms-asset-picker"
+               <div class="ccm-cms-asset-picker"
              data-assettype="#{cc.attrs.assetType}"
-             data-contentsection="#{cc.attrs.contentSection}">-->
-<!--            <div aria-hidden="true"
+             data-contentsection="#{cc.attrs.contentSection}">
+            <div aria-hidden="true"
                  aria-labelledby="#{cc.attrs.assetPickerId}-dialog-title"
                  class="modal fade"
                  id="#{cc.attrs.assetPickerId}-dialog"
@@ -88,7 +87,7 @@
                                 <bootstrap:svgIcon icon="x" />
                             </button>
                         </div>
-                        <form action="#{cc.attrs.action}"
+                        <form action="#{cc.attrs.actionUrl}"
                               class="modal-content"
                               method="post">
                             <input class="assetpicker-param" 
@@ -136,10 +135,9 @@
                         </div>
                     </div>
                 </div>
-            </div>-->
-        <!--</div>-->
+            </div>
+        </div>
 
     </cc:implementation>
-
 
 </html>

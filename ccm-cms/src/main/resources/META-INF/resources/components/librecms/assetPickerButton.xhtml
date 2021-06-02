@@ -10,12 +10,24 @@
                       required="true"
                       shortDescription="ID of the asset picker"
                       type="String" />
+        <cc:attribute name="buttonText"
+                      required="true"
+                      shortDescription="Text of the asset picker button"
+                      type="String" />
+        <cc:attribute name="buttonIcon"
+                      default="pen"
+                      required="false"
+                      shortDescription="Icon of the asset picker button"
+                      type="String" />
     </cc:interface>
     <cc:implementation>
         <button class="btn btn-primary"
                 data-toggle="modal"
                 data-target="##{cc.attrs.assetPickerId}-dialog"
-                type="button" />
+                type="button">
+            <bootstrap:svgIcon icon="#{cc.attrs.buttonIcon}" />
+            <span class="sr-only">#{buttonText}</span>
+        </button>
     </cc:implementation>
 </html>
 
