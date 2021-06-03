@@ -28,7 +28,7 @@
                       class="modal-content"
                       method="post">
                     <div class="modal-header">
-                        <h4 class="modal-header"
+                        <h4 class="modal-title"
                             id="add-contactentry-dialog-title">
                             #{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.add.title']}
                         </h4>
@@ -213,6 +213,7 @@
             actionUrl="#{actionBaseUrl}/postaladdress"
             assetType="#{CmsContactableEditStepModel.postalAddressType}"
             assetPickerId="postaladdress-picker"
+            contextPath="#{CmsContactableEditStepModel.contextPath}"
             contentSection="#{ContentSectionModel.sectionName}"
             formParamName="postalAddressIdentifier"
             />

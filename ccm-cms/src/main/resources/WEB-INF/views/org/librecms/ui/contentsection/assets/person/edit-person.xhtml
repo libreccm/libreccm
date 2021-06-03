@@ -105,7 +105,7 @@
                         <tbody>
                             <c:forEach items="#{CmsPersonEditStepModel.personNames}"
                                        var="personName">
-                                <tr>
+                                <tr data-index="#{personName.index}">
                                     <td>#{personName.prefix}</td>
                                     <td>#{personName.surname}</td>
                                     <td>#{personName.givenName}</td>
@@ -124,7 +124,7 @@
                                              id="personname-edit-dialog-#{personName.hashCode()}"
                                              tabindex="-1">
                                             <div class="modal-dialog">
-                                                <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/asset/#{CmsSelectedAssetModel.assetPath}/@person-edit/personnames/@edit"
+                                                <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@person-edit/personnames/#{personName.index}/@edit"
                                                       class="modal-content"
                                                       method="post">
                                                     <div class="modal-header">
@@ -192,7 +192,7 @@
                                              id="personname-remove-dialog-#{personName.hashCode()}"
                                              tabindex="-1">
                                             <div class="modal-dialog">
-                                                <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/asset/#{CmsSelectedAssetModel.assetPath}/@person-edit/personnames/@remove"
+                                                <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@person-edit/personnames/@remove"
                                                       class="modal-content"
                                                       method="post">
                                                     <div class="modal-header">

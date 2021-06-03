@@ -1,7 +1,7 @@
 import * as $ from "jquery";
 
 document.addEventListener("DOMContentLoaded", function (event) {
-    const assetPickers = document.querySelectorAll("ccm-cms-asset-picker");
+    const assetPickers = document.querySelectorAll(".ccm-cms-asset-picker");
 
     for (let i = 0; i < assetPickers.length; i++) {
         initAssetPicker(assetPickers[i]);
@@ -11,12 +11,15 @@ document.addEventListener("DOMContentLoaded", function (event) {
 async function initAssetPicker(assetPickerElem: Element) {
     const assetPickerId = assetPickerElem.getAttribute("id");
     const assetType = getAssetType(assetPickerElem);
+    const contextPath = assetPickerElem.getAttribute("data-contextpath");
     const contentSection = assetPickerElem.getAttribute("data-contentsection");
 
+    const fetchUrl = contextPath
+        ? `./${contextPath}/content-sections/${contentSection}/assets/?type=${assetType}`
+        : `./content-sections/${contentSection}/assets/?type=${assetType}`;
+
     try {
-        const response = await fetch(
-            `/content-sections/${contentSection}/assets/?type=${assetType}`
-        );
+        const response = await fetch(fetchUrl);
 
         if (response.ok) {
             const assets = (await response.json()) as [];

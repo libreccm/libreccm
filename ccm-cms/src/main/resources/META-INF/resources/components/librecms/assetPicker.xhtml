@@ -8,7 +8,7 @@
                       required="true"
                       shortDescription="Base URL for the actions of the asset picker."
                       type="String" />
-         <cc:attribute name="assetType"
+        <cc:attribute name="assetType"
                       required="false"
                       shortDescription="Type of assets to show."
                       type="String"
@@ -20,6 +20,10 @@
         <cc:attribute name="contentSection"
                       required="true"
                       shortDescription="The current content section."
+                      type="String" />
+        <cc:attribute name="contextPath"
+                      required="true"
+                      shortDescription="The context path of the CCM installation. May be empty."
                       type="String" />
         <cc:attribute name="dialogTitle"
                       required="false"
@@ -39,8 +43,9 @@
                       type="int" />
     </cc:interface>
     <cc:implementation>
-               <div class="ccm-cms-asset-picker"
+        <div class="ccm-cms-asset-picker"
              data-assettype="#{cc.attrs.assetType}"
+             data-contextpath="#{cc.attrs.contextPath}"
              data-contentsection="#{cc.attrs.contentSection}">
             <div aria-hidden="true"
                  aria-labelledby="#{cc.attrs.assetPickerId}-dialog-title"
@@ -88,7 +93,7 @@
                             </button>
                         </div>
                         <form action="#{cc.attrs.actionUrl}"
-                              class="modal-content"
+                              class="modal-body"
                               method="post">
                             <input class="assetpicker-param" 
                                    id="#{cc.attrs.assetPickerId}-param-input"

@@ -32,6 +32,7 @@ import java.util.Optional;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.ServletContext;
 
 /**
  *
@@ -44,11 +45,18 @@ public class ContactableEntityEditStepModel {
     @Inject
     private GlobalizationHelper globalizationHelper;
 
+    @Inject
+    private ServletContext servletContext;
+    
     private Map<String, String> availableContactEntryKeys;
 
     private List<ContactEntryListItemModel> contactEntries;
 
     private PostalAddress postalAddress;
+    
+    public String getContextPath() {
+        return servletContext.getContextPath();
+    }
 
     public Map<String, String> getAvailableContactEntryKeys() {
         return Collections.unmodifiableMap(availableContactEntryKeys);

@@ -30,6 +30,9 @@ import org.librecms.ui.contentsections.ContentSectionNotFoundException;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
@@ -95,18 +98,25 @@ public class PersonEditStep extends AbstractContactableEntityEditStep {
         if (getAsset() instanceof Person) {
             editStepModel.setBirthdate(
                 Optional
-                .ofNullable(getPerson().getBirthdate())
-                .map(
-                    birthdate -> birthdate.format(
-                        DateTimeFormatter
-                            .ofLocalizedDate(FormatStyle.SHORT)
-                            .withLocale(
-                                globalizationHelper.getNegotiatedLocale()
-                            )
-                            .withZone(ZoneId.systemDefault())))
-                .orElse("")
+                    .ofNullable(getPerson().getBirthdate())
+                    .map(
+                        birthdate -> birthdate.format(
+                            DateTimeFormatter
+                                .ofLocalizedDate(FormatStyle.SHORT)
+                                .withLocale(
+                                    globalizationHelper.getNegotiatedLocale()
+                                )
+                                .withZone(ZoneId.systemDefault())))
+                    .orElse("")
             );
-            editStepModel.setPersonNames(getPerson().getPersonNames());
+            final List<PersonNameRow> personNames = new ArrayList<>();
+            for (int i = 0; i < getPerson().getPersonNames().size(); i++) {
+                personNames.add(
+                    buildPersonNameRow(i, getPerson().getPersonNames().get(i))
+                );
+            }
+            Collections.reverse(personNames);
+            editStepModel.setPersonNames(personNames);
         } else {
             throw new AssetNotFoundException(
                 assetUi.showAssetNotFound(
@@ -269,6 +279,19 @@ public class PersonEditStep extends AbstractContactableEntityEditStep {
                 getAsset(),
                 messageBundle.get("asset.edit.denied"));
         }
+    }
+
+    private PersonNameRow buildPersonNameRow(
+        final int index, final PersonName personName
+    ) {
+        final PersonNameRow row = new PersonNameRow();
+        row.setIndex(index);
+        row.setSurname(personName.getSurname());
+        row.setPrefix(personName.getPrefix());
+        row.setSuffix(personName.getSuffix());
+        row.setGivenName(personName.getGivenName());
+        
+        return row;
     }
 
 }

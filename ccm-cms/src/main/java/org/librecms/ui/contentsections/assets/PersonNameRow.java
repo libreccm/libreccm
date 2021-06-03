@@ -18,41 +18,62 @@
  */
 package org.librecms.ui.contentsections.assets;
 
-import org.librecms.assets.PersonName;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Named;
-
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-@RequestScoped
-@Named("CmsPersonEditStepModel")
-public class PersonEditStepModel {
+public class PersonNameRow {
+    
+    private int index;
+    
+    private String prefix;
+    
+    private String surname;
+    
+    private String givenName;
+    
+    private String suffix;
 
-    private List<PersonNameRow> personName;
-
-    private String birthdate;
-
-    public List<PersonNameRow> getPersonNames() {
-        return Collections.unmodifiableList(personName);
+    public int getIndex() {
+        return index;
     }
 
-    protected void setPersonNames(final List<PersonNameRow> personNames) {
-        this.personName = new ArrayList<>(personNames);
+    public void setIndex(final int index) {
+        this.index = index;
     }
 
-    public String getBirthdate() {
-        return birthdate;
+    public String getPrefix() {
+        return prefix;
     }
 
-    protected void setBirthdate(final String birthdate) {
-        this.birthdate = birthdate;
+    public void setPrefix(final String prefix) {
+        this.prefix = prefix;
     }
 
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(final String surname) {
+        this.surname = surname;
+    }
+
+    public String getGivenName() {
+        return givenName;
+    }
+
+    public void setGivenName(final String givenName) {
+        this.givenName = givenName;
+    }
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(final String suffix) {
+        this.suffix = suffix;
+    }
+    
+    
+    
 }
