@@ -21,10 +21,6 @@
                       required="true"
                       shortDescription="The current content section."
                       type="String" />
-        <cc:attribute name="contextPath"
-                      required="true"
-                      shortDescription="The context path of the CCM installation. May be empty."
-                      type="String" />
         <cc:attribute name="dialogTitle"
                       required="false"
                       shortDescription="Title of the asset picker dialog"
@@ -41,12 +37,17 @@
                       shortDescription="The level of the heading used as title of the asset picker dialog."
                       default="3"
                       type="int" />
+        <cc:attribute name="baseUrl"
+                      required="true"
+                      shortDescription="Base URL for requests. Must include the scheme, the server name, the port (if no standard port is used) and the context path of the application."
+                      type="String" />
     </cc:interface>
     <cc:implementation>
         <div class="ccm-cms-asset-picker"
              data-assettype="#{cc.attrs.assetType}"
-             data-contextpath="#{cc.attrs.contextPath}"
-             data-contentsection="#{cc.attrs.contentSection}">
+             data-baseUrl="#{cc.attrs.baseUrl}"
+             data-contentsection="#{cc.attrs.contentSection}"
+             id="#{cc.attrs.assetPickerId}">
             <div aria-hidden="true"
                  aria-labelledby="#{cc.attrs.assetPickerId}-dialog-title"
                  class="modal fade"

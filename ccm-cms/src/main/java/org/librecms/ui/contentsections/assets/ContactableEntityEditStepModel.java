@@ -33,6 +33,8 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
 
 /**
  *
@@ -47,15 +49,25 @@ public class ContactableEntityEditStepModel {
 
     @Inject
     private ServletContext servletContext;
-    
+
     private Map<String, String> availableContactEntryKeys;
+
+    private String baseUrl;
 
     private List<ContactEntryListItemModel> contactEntries;
 
     private PostalAddress postalAddress;
-    
+
     public String getContextPath() {
         return servletContext.getContextPath();
+    }
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+    
+    protected void setBaseUrl(final String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 
     public Map<String, String> getAvailableContactEntryKeys() {
@@ -83,7 +95,7 @@ public class ContactableEntityEditStepModel {
     public PostalAddress getPostalAddress() {
         return postalAddress;
     }
-    
+
     public String getPostalAddressType() {
         return PostalAddress.class.getName();
     }

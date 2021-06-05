@@ -29,7 +29,6 @@ import org.librecms.assets.ContactEntryRepository;
 import org.librecms.assets.ContactableEntity;
 import org.librecms.assets.ContactableEntityManager;
 import org.librecms.assets.PostalAddress;
-import org.librecms.contentsection.Asset;
 import org.librecms.contentsection.AssetRepository;
 import org.librecms.ui.contentsections.ContentSectionNotFoundException;
 
@@ -39,11 +38,13 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.mvc.Models;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
 
 /**
  *
@@ -72,6 +73,9 @@ public abstract class AbstractContactableEntityEditStep
 
     @Inject
     private GlobalizationHelper globalizationHelper;
+
+    @Context
+    private HttpServletRequest request;
 
     @Inject
     private IdentifierParser identifierParser;
@@ -110,6 +114,18 @@ public abstract class AbstractContactableEntityEditStep
             editStepModel.setPostalAddress(
                 getContactableEntity().getPostalAddress()
             );
+
+            final StringBuilder baseUrlBuilder = new StringBuilder();
+            editStepModel.setBaseUrl(
+                baseUrlBuilder
+                    .append(request.getScheme())
+                    .append("://")
+                    .append(request.getServerName())
+                    .append(addServerPortToBaseUrl())
+                    .append(addContextPathToBaseUrl())
+                .toString()
+            );
+
         } else {
             throw new AssetNotFoundException(
                 assetUi.showAssetNotFound(
@@ -196,13 +212,13 @@ public abstract class AbstractContactableEntityEditStep
 
         return buildRedirectPathForStep();
     }
-    
+
     @POST
     @Path("/postaladdress")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String setPostalAddress(
-        @FormParam("postalAddressIdentifier") 
+        @FormParam("postalAddressIdentifier")
         final String postalAddressIdentifier
     ) {
         final Identifier identifier = identifierParser
@@ -301,6 +317,23 @@ public abstract class AbstractContactableEntityEditStep
         model.setValue(entry.getValue());
 
         return model;
+    }
+
+    private String addServerPortToBaseUrl() {
+        if (request.getServerPort() == 80 || request.getServerPort() == 443) {
+            return "";
+        } else {
+            return String.format(":%d", request.getServerPort());
+        }
+    }
+
+    private String addContextPathToBaseUrl() {
+        if (request.getServletContext().getContextPath() == null
+                || request.getServletContext().getContextPath().isEmpty()) {
+            return "/";
+        } else {
+            return request.getServletContext().getContextPath();
+        }
     }
 
 }
