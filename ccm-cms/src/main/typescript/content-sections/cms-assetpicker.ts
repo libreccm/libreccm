@@ -26,14 +26,14 @@ async function initAssetPicker(assetPickerElem: Element) {
 
             const rowTemplate = assetPickerElem.querySelector(
                 `#${assetPickerId}-row`
-            );
+            ) as HTMLTemplateElement;
             console.log(`rowTemplate = ${rowTemplate}`);
 
             const tbody = assetPickerElem.querySelector("tbody");
             console.log(`tbody = ${tbody}`);
 
             for (const asset of assets) {
-                const row = rowTemplate.cloneNode(true) as Element;
+                const row = rowTemplate?.content.cloneNode(true) as Element;
                 const colName = row.querySelector(".col-name");
                 const colType = row.querySelector(".col-type");
                 const selectButton = row.querySelector(".col-action button");
@@ -43,15 +43,19 @@ async function initAssetPicker(assetPickerElem: Element) {
                 console.log(`colType = ${colType}`);
                 console.log(`selectButton = ${selectButton}`);
 
-                colName.textContent = asset["name"];
-                colType.textContent = asset["type"];
-                selectButton.setAttribute("data-assetuuid", asset["uuid"]);
+                if (colName) {
+                    colName.textContent = asset["name"];
+                }
+                if (colType) {
+                    colType.textContent = asset["type"];
+                }
+                selectButton?.setAttribute("data-assetuuid", asset["uuid"]);
 
-                selectButton.addEventListener("click", event =>
+                selectButton?.addEventListener("click", event =>
                     selectAsset(event, assetPickerElem)
                 );
 
-                tbody.appendChild(row);
+                tbody?.appendChild(row);
             }
         } else {
             console.error(
@@ -74,6 +78,10 @@ function getAssetType(assetPickerElem: Element) {
 async function selectAsset(event: Event, assetPickerElem: Element) {
     const selectButton = event.currentTarget as Element;
     const assetUuid = selectButton.getAttribute("data-assetuuid");
+    if (!assetUuid) {
+        console.error("assetUuid is null");
+        return;
+    }
 
     console.log(`selectButton = ${selectButton}`);
     console.log(`assetUuid = ${assetUuid}`);
@@ -81,7 +89,10 @@ async function selectAsset(event: Event, assetPickerElem: Element) {
     const assetPickerParam = assetPickerElem.querySelector(
         ".assetpicker-param"
     ) as HTMLInputElement;
-    console.log(`assetPickerParam = ${assetPickerParam}`);
+    if (!assetPickerParam) {
+        console.error("assetPickerParam is null");
+        return;
+    }
     assetPickerParam.value = assetUuid;
 
     const form = assetPickerElem.querySelector("form") as HTMLFormElement;

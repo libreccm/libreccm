@@ -236,7 +236,8 @@ function closeEditor(event: Event, editor: Editor, editDialogId: string) {
 
     editor.chain().clearContent();
     editor.destroy();
-    $(`#${editDialogId}`).modal("toggle");
+    const editDialog = $(`#${editDialogId}`) as any;
+    editDialog.modal("toggle");
 }
 
 async function fetchVariant(fromUrl: string) {
@@ -303,14 +304,38 @@ async function showEditDialog(event: Event) {
 
     const target = event.currentTarget as Element;
     const locale = target.getAttribute("data-locale");
+    if (!locale) {
+        console.error("locale is null");
+        return;
+    }
     const variantUrl = target.getAttribute("data-variant-url");
+    if (variantUrl == null) {
+        console.error("variantUrl is null");
+        return;
+    }
     const editDialogId = target.getAttribute("data-edit-dialog");
+    if (!editDialogId) {
+        console.error("editDialogId is null");
+        return;
+    }
     const saveUrl = target.getAttribute("data-save-url");
+    if (!saveUrl) {
+        console.error("saveUrl is null");
+        return;
+    }
     const wordCountUrl = target.getAttribute("data-wordcount-url");
+    if (!wordCountUrl) {
+        console.error("wordCountUrl is null");
+        return;
+    }
 
     const variant = await fetchVariant(variantUrl);
 
     const editDialog = document.querySelector(`#${editDialogId}`);
+    if (!editDialog) {
+        console.error("editDialog is null");
+        return;
+    }
     const tiptapDiv = editDialog.querySelector(
         ".modal-body .cms-tiptap-editor"
     );
@@ -325,28 +350,42 @@ async function showEditDialog(event: Event) {
         content: variant
     });
 
-    initEditorButtons(
-        editor,
-        document.querySelector(".cms-tiptap-editor-buttons")
+    const editorButtons = document.querySelector(".cms-tiptap-editor-buttons");
+    if (!editorButtons) {
+        console.error("editorButtons are null");
+        return;
+    }
+    initEditorButtons(editor, editorButtons);
+
+    const editDialogHeader = editDialog.querySelector(".modal-header .close");
+    if (editDialogHeader) {
+        editDialogHeader.addEventListener("click", event =>
+            closeEditor(event, editor, editDialogId)
+        );
+    }
+    const cancelButton = editDialog.querySelector(
+        ".modal-footer .cms-editor-cancel-button"
+    );
+    if (!cancelButton) {
+        console.error("cancelButton is null");
+        return;
+    }
+    cancelButton.addEventListener("click", event =>
+        closeEditor(event, editor, editDialogId)
+    );
+    const editButton = editDialog.querySelector(
+        ".modal-footer .cms-editor-save-button"
+    );
+    if (!editButton) {
+        console.error("editButton is null");
+        return;
+    }
+    editButton.addEventListener("click", event =>
+        save(event, editor, editDialogId, saveUrl, locale, wordCountUrl)
     );
 
-    editDialog
-        .querySelector(".modal-header .close")
-        .addEventListener("click", event =>
-            closeEditor(event, editor, editDialogId)
-        );
-    editDialog
-        .querySelector(".modal-footer .cms-editor-cancel-button")
-        .addEventListener("click", event =>
-            closeEditor(event, editor, editDialogId)
-        );
-    editDialog
-        .querySelector(".modal-footer .cms-editor-save-button")
-        .addEventListener("click", event =>
-            save(event, editor, editDialogId, saveUrl, locale, wordCountUrl)
-        );
-
-    $(`#${editDialogId}`).modal("toggle");
+    const editDialogJquery = $(`#${editDialogId}`) as any;
+    editDialogJquery.modal("toggle");
 }
 
 async function save(
@@ -380,16 +419,19 @@ async function save(
         showSaveFailedErrMessage(err);
     }
 
-    $(`#${editDialogId}`).modal("toggle");
+    const editDialogJquery = $(`#${editDialogId}`) as any;
+    editDialogJquery.modal("toggle");
 
     const wordCount = await fetchWordCount(wordCountUrl);
     const wordCountSpan = document.querySelector(
         `tr#variant-${locale} .wordcount`
     );
-    wordCountSpan.textContent = wordCount;
+    if (wordCountSpan) {
+        wordCountSpan.textContent = wordCount;
+    }
 }
 
-function showLoadVariantFailedErrMessage(err) {
+function showLoadVariantFailedErrMessage(err: string) {
     showMessage("#cms-editor-msg-variant-load-failed");
     console.error(err);
 }
@@ -402,10 +444,10 @@ function showLoadVariantFailedMessage(status: number, statusText: string) {
 function showMessage(messageId: string) {
     const template = document.querySelector(messageId) as HTMLTemplateElement;
     const msg = template.content.cloneNode(true);
-    document.querySelector(".cms-editor-messages").append(msg);
+    document.querySelector(".cms-editor-messages")?.append(msg);
 }
 
-function showSaveFailedErrMessage(err) {
+function showSaveFailedErrMessage(err: string) {
     showMessage("#cms-editor-msg-save-failed");
     console.error(err);
 }
@@ -424,15 +466,33 @@ async function showViewDialog(event: Event) {
 
     const target = event.currentTarget as Element;
     const variantUrl = target.getAttribute("data-variant-url");
+    if (!variantUrl) {
+        console.error("variantUrl is null");
+        return;
+    }
     const viewDialogId = target.getAttribute("data-view-dialog");
 
     const variant = await fetchVariant(variantUrl);
+    if (!variant) {
+        console.error("variant is null");
+        return;
+    }
 
     const viewDialog = document.querySelector(`#${viewDialogId}`);
+    if (!viewDialog) {
+        console.error("viewDialog is null");
+        return;
+    }
 
     const viewDialogBody = viewDialog.querySelector(".modal-body");
+    if (!viewDialogBody) {
+        console.error("viewDialogBody is null");
+        return;
+    }
 
     viewDialogBody.innerHTML = variant;
 
-    $(`#${viewDialogId}`).modal("toggle");
+    
+    const viewDialogJquery = $(`#${viewDialogId}`) as any;
+    viewDialogJquery.modal("toggle");
 }

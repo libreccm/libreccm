@@ -1,8 +1,17 @@
 {
     "compilerOptions": {
+        "declaration": true,
         "lib": [
             "DOM",
             "ES2016"
-        ]
-    }   
+        ],
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "outDir": "target/generated-resources/assets/@content-sections",
+        "sourceMap": true,
+        "strict": true,
+    },
+    "include": [
+        "src/main/typescript/**/*"
+    ]
 }
