@@ -5,7 +5,7 @@
             "DOM",
             "ES2016"
         ],
-        "module": "commonjs",
+        "module": "umd",
         "moduleResolution": "node",
         "outDir": "target/generated-resources/assets/@content-sections",
         "sourceMap": true,
