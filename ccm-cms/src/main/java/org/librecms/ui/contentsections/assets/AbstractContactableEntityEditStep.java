@@ -37,6 +37,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -50,6 +51,7 @@ import javax.ws.rs.core.Context;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
+@Controller
 public abstract class AbstractContactableEntityEditStep
     extends AbstractMvcAssetEditStep {
 
@@ -123,7 +125,7 @@ public abstract class AbstractContactableEntityEditStep
                     .append(request.getServerName())
                     .append(addServerPortToBaseUrl())
                     .append(addContextPathToBaseUrl())
-                .toString()
+                    .toString()
             );
 
         } else {
@@ -152,6 +154,14 @@ public abstract class AbstractContactableEntityEditStep
         @FormParam("entryKey") final String entryKeyParam,
         @FormParam("entryValue") final String entryValue
     ) {
+        try {
+            init();
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (AssetNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
+
         final Optional<ContactEntryKey> entryKeyResult = entryKeyRepo
             .findByEntryKey(entryKeyParam);
         if (!entryKeyResult.isPresent()) {
@@ -178,6 +188,14 @@ public abstract class AbstractContactableEntityEditStep
         @PathParam("index") final int index,
         @FormParam("entryValue") final String entryValue
     ) {
+        try {
+            init();
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (AssetNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
+
         final List<ContactEntry> entries = getContactableEntity()
             .getContactEntries();
         if (index >= entries.size()) {
@@ -199,6 +217,14 @@ public abstract class AbstractContactableEntityEditStep
     public String removeContactEntry(
         @PathParam("index") final int index
     ) {
+        try {
+            init();
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (AssetNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
+
         final List<ContactEntry> entries = getContactableEntity()
             .getContactEntries();
         if (index >= entries.size()) {
@@ -221,6 +247,14 @@ public abstract class AbstractContactableEntityEditStep
         @FormParam("postalAddressIdentifier")
         final String postalAddressIdentifier
     ) {
+        try {
+            init();
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (AssetNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
+
         final Identifier identifier = identifierParser
             .parseIdentifier(postalAddressIdentifier);
         final Optional<PostalAddress> postalAddressResult;
@@ -260,6 +294,14 @@ public abstract class AbstractContactableEntityEditStep
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String removePostalAddress() {
+        try {
+            init();
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (AssetNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
+
         contactableManager.removePostalAddressFromContactableEntity(
             getContactableEntity().getPostalAddress(), getContactableEntity()
         );

@@ -93,7 +93,7 @@ async function selectAsset(event: Event, assetPickerElem: Element) {
         console.error("assetPickerParam is null");
         return;
     }
-    assetPickerParam.value = assetUuid;
+    assetPickerParam.value = `UUID-${assetUuid}`;
 
     const form = assetPickerElem.querySelector("form") as HTMLFormElement;
     form.submit();
