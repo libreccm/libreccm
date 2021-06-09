@@ -113,6 +113,29 @@
                             </p>
                         </div>
                     </div>
+                    <div class="col mb-4">
+                        <div aria-describedby="configuration-contactentrykeys-body"
+                             class="card pt-2"
+                             id="configuration-contactentrykeys">
+                            <svg aria-hidden="true"
+                                 class="card-img-top"
+                                 fill="currentColor">
+                                <use xlink:href="#{request.contextPath}/assets/bootstrap/bootstrap-icons.svg#collection" />
+                            </svg>
+                        </div>
+                        <div class="card-body"
+                             id="configuration-contactentrykeys-body">
+                            <h2 class="card-title">
+                                <a class="stretched-link"
+                                   href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/contactentrykeys">
+                                    #{CmsAdminMessages['contentsection.configuration.contactentrykeys.title']}
+                                </a>
+                            </h2>
+                            <p class="card-text">
+                                #{CmsAdminMessages['contentsection.configuration.contactentrykeys.description']}
+                            </p> 
+                        </div>
+                    </div>
                 </div>
             </div>
         </ui:define>

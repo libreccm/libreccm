@@ -6,9 +6,13 @@
         <cc:attribute name="icon" 
                       required="true" 
                       shortDescription="The name of the Icon to insert" />
+        <cc:attribute name="iconClass" 
+                      required="false" 
+                      default=""
+                      shortDescription="Additional classes to apply to the SVG icon." />
     </cc:interface>
     <cc:implementation>
-        <svg class="bi"
+        <svg class="bi #{cc.attrs.iconClass}"
              width="1em"
              height="1em"
              fill="currentColor">
