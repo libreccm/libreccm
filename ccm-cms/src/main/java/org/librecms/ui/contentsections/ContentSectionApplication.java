@@ -74,6 +74,7 @@ public class ContentSectionApplication extends Application {
         classes.add(AssetFolderController.class);
         classes.add(CategoriesController.class);
         classes.add(ConfigurationController.class);
+        classes.add(ConfigurationContactEntryKeysController.class);
         classes.add(ConfigurationDocumentTypesController.class);
         classes.add(ConfigurationLifecyclesController.class);
         classes.add(ConfigurationRolesController.class);

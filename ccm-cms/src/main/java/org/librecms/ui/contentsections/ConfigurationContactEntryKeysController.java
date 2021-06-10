@@ -320,7 +320,7 @@ public class ConfigurationContactEntryKeysController {
     }
 
     @POST
-    @Path("/{contactEntryKey}/label/@add/{locale}")
+    @Path("/{contactEntryKey}/label/@edit/{locale}")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
     public String editEntryLabel(
@@ -368,7 +368,7 @@ public class ConfigurationContactEntryKeysController {
     public String removeEntryLabel(
         @PathParam("sectionIdentifier") final String sectionIdentifierParam,
         @PathParam("contactEntryKey") final String entryKey,
-        @FormParam("locale") final String localeParam
+        @PathParam("locale") final String localeParam
     ) {
         final Optional<ContentSection> sectionResult = sectionsUi
             .findContentSection(sectionIdentifierParam);

@@ -66,6 +66,10 @@ public class SelectedContactEntryKeyModel {
     protected void setUnusedLabelLocales(final List<String> unusedLabelLocales) {
         this.unusedLabelLocales = new ArrayList<>(unusedLabelLocales);
     }
+    
+    public boolean getHasUnusedLabelLocales() {
+        return !unusedLabelLocales.isEmpty();
+    }
 
     public Map<String, String> getLabels() {
         return Collections.unmodifiableMap(labels);

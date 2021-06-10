@@ -1,0 +1,72 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/contentsection.xhtml">
+        
+        <ui:param name="activePage" value="configuration" />
+        <ui:param name="title" 
+                  value="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.title']}" />
+        
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration">
+                    #{CmsAdminMessages['contentsection.configuration.title']}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/contactentrykeys">
+                    #{CmsAdminMessages['contentsection.configuration.contactentrykeys.title']}
+                </a>
+            </li>
+            <li aria-current="page" class="breadcrumb-item">
+                #{CmsAdminMessages['contentsection.configuration.contactentrykeys.breadcrumbs']} #{CmsSelectedContactEntryKeyModel.key}
+            </li>
+        </ui:define>
+        
+        <ui:define name="main">
+            <div class="container">
+                <ui:include src="configuration-tabs.xhtml">
+                    <ui:param name="activeConfPage" value="contactentrykeys" />
+                </ui:include>
+                <h1>#{CmsAdminMessages.getMessage('contentsection.configuration.contactentrykeys.contactentrykey_details.title', [CmsSelectedContactEntryKeyModel.key])}</h1>
+                
+                <libreccm:localizedStringEditor
+                    addButtonLabel="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.contactentrykey_details.label.add.button']}"
+                    addDialogCancelLabel="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.contactentrykey_details.label.add.cancel']}"
+                    addDialogLocaleSelectHelp="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.contactentrykey_details.label.locale.help']}"
+                    addDialogLocaleSelectLabel="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.contactentrykey_details.label.locale.label']}"
+                    addDialogSubmitLabel="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.contactentrykey_details.label.add.submit']}"
+                    addDialogTitle="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.contactentrykey_details.label.add.title']}"
+                    addDialogValueHelp="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.contactentrykey_details.label.value.help']}"
+                    addDialogValueLabel="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.contactentrykey_details.label.value.label']}"
+                    addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/contactentrykeys/#{CmsSelectedContactEntryKeyModel.key}/label/@add"
+                    editButtonLabel="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.contactentrykey_details.label.edit.button']}"
+                    editDialogCancelLabel="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.contactentrykey_details.label.edit.cancel']}"
+                    editDialogSubmitLabel="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.contactentrykey_details.label.edit.submit']}"
+                    editDialogTitle="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.contactentrykey_details.label.edit.title']}"
+                    editDialogValueHelp="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.contactentrykey_details.label.edit.value.help']}"
+                    editDialogValueLabel="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.contactentrykey_details.label.edit.value.label']}"
+                    editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/contactentrykeys/#{CmsSelectedContactEntryKeyModel.key}/label/@edit"
+                    editorId="contactentrykey-label"
+                    hasUnusedLocales="#{CmsSelectedContactEntryKeyModel.hasUnusedLabelLocales}"
+                    headingLevel="2"
+                    objectIdentifier="#{CmsSelectedContactEntryKeyModel.key}"
+                    removeButtonLabel="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.contactentrykey_details.label.remove.button']}"
+                    removeDialogCancelLabel="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.contactentrykey_details.label.remove.cancel']}"
+                    removeDialogSubmitLabel="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.contactentrykey_details.label.remove.submit']}"
+                    removeDialogText="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.contactentrykey_details.label.remove.text']}"
+                    removeDialogTitle="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.contactentrykey_details.label.remove.title']}"
+                    removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/contactentrykeys/#{CmsSelectedContactEntryKeyModel.key}/label/@remove"
+                    title="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.contactentrykey_details.label.title']}"
+                    unusedLocales="#{CmsSelectedContactEntryKeyModel.unusedLabelLocales}"
+                    values="#{CmsSelectedContactEntryKeyModel.labels}"
+                    />
+                
+            </div>
+        </ui:define>
+        
+    </ui:composition>
+</html>

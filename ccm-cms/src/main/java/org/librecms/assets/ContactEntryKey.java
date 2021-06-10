@@ -28,6 +28,8 @@ import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -57,6 +59,7 @@ public class ContactEntryKey
 
     @Id
     @Column(name = "KEY_ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long keyId;
 
     @Column(name = "ENTRY_KEY", length = 255)

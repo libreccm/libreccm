@@ -39,31 +39,26 @@ public class ContactEntryKeyRepository
 
     @Override
     public Class<ContactEntryKey> getEntityClass() {
-
         return ContactEntryKey.class;
     }
 
     @Override
     public String getIdAttributeName() {
-
         return "keyId";
     }
 
     @Override
     public Long getIdOfEntity(final ContactEntryKey entity) {
-
         return entity.getKeyId();
     }
 
     @Override
     public boolean isNew(final ContactEntryKey entity) {
-
         return entity.getKeyId() == 0;
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
     public Optional<ContactEntryKey> findByEntryKey(final String entryKey) {
-
         try {
             return Optional.of(
                 getEntityManager()

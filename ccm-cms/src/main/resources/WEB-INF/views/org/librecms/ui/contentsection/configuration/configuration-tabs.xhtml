@@ -30,6 +30,12 @@
                     #{CmsAdminMessages['contentsection.configuration.workflows.title']}
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link #{activeConfPage == 'contactentrykeys' ? 'active' : ''}"
+                   href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/contactentrykeys">
+                    #{CmsAdminMessages['contentsection.configuration.contactentrykeys.title']}
+                </a>
+            </li>
         </ul>
     </ui:composition>
 </html>

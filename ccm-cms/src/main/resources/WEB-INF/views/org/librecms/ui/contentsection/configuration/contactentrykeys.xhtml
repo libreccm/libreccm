@@ -1,0 +1,132 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/contentsection.xhtml">
+
+        <ui:param name="activePage" value="configuration" />
+        <ui:param name="title" 
+                  value="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.title']}" />
+
+        <ui:define name="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration">
+                    #{CmsAdminMessages['contentsection.configuration.title']}
+                </a>
+            </li>
+            <li aria-current="page" class="breadcrumb-item">
+                #{CmsAdminMessages['contentsection.configuration.contactentrykeys.title']}
+            </li>
+        </ui:define>
+
+        <ui:define name="main">
+            <div class="container">
+                <ui:include src="configuration-tabs.xhtml">
+                    <ui:param name="activeConfPage" value="contactentrykeys" />
+                </ui:include>
+
+                <h1>#{CmsAdminMessages['contentsection.configuration.contactentrykeys.title']}</h1>
+
+                <c:if test="#{not empty errors}">
+                    <c:forEach items="#{errors}" var="error">
+                        <div class="alert alert-danger" role="alert">
+                            #{error}
+                        </div>
+                    </c:forEach>
+                </c:if>
+
+                <div class="mb-2">
+                    <div class="text-right">
+                        <button class="btn btn-primary"
+                                data-toggle="modal"
+                                data-target="#add-contactentrykey-dialog"
+                                type="button">
+                            <bootstrap:svgIcon icon="plus-circle" />
+                            <span>#{CmsAdminMessages['contentsection.configuration.contactentrykeys.add']}</span>
+                        </button>
+                    </div>
+
+                    <div aria-hidden="true"
+                         aria-labelledby="add-contacentrykey-dialog-title"
+                         class="modal fade"
+                         id="add-contactentrykey-dialog"
+                         tabindex="-1">
+                        <div class="modal-dialog">
+                            <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/contactentrykeys/@add"
+                                  class="modal-content"
+                                  method="post">
+                                <div class="modal-header">
+                                    <h2 class="modal-title"
+                                        id="add-contactentrykey-dialog-title">
+                                        #{CmsAdminMessages.getMessage('contentsection.configuration.contactentrykeys.add.dialog.title', [ContentSectionModel.sectionName])}
+                                    </h2>
+                                    <button aria-label="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.add.dialog.close']}"
+                                            class="close"
+                                            data-dismiss="modal"
+                                            type="button">
+                                        <bootstrap:svgIcon icon="x" />
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <bootstrap:formGroupText
+                                        help="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.add.dialog.entrykey.help']}"
+                                        inputId="add-contactentryke-dialog-entrykey"
+                                        label="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.add.dialog.entrykey.label']}"
+                                        name="contactEntryKey" />
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-warning" 
+                                            data-dismiss="modal"
+                                            type="button">
+                                        #{CmsAdminMessages['contentsection.configuration.contactentrykeys.add.dialog.close']}
+                                    </button>
+                                    <button class="btn btn-primary" 
+                                            type="submit" >
+                                        #{CmsAdminMessages['contentsection.configuration.contactentrykeys.add.dialog.submit']}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <table class="table table-hover contactentrykeys-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">
+                                #{CmsAdminMessages['contentsection.configuration.contactentrykeys.table.cols.entrykey']}
+                            </th>
+                            <th class="text-center" colspan="2">
+                                #{CmsAdminMessages['contentsection.configuration.contactentrykeys.table.cols.actions']}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="#{CmsContactEntryKeysTableModel.contactEntrykeys}"
+                                   var="entryKey">
+                            <tr>
+                                <td>
+                                    <a href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/contactentrykeys/#{entryKey.entryKey}">
+                                        #{entryKey.entryKey}
+                                    </a>
+                                </td>
+                                <td class="del-col">
+                                    <libreccm:deleteDialog
+                                        actionTarget="#{mvc.basePath}/#{ContentSectionModel.sectionName}/configuration/contactentrykeys/#{entryKey.entryKey}/@delete"
+                                        buttonText="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.delete_button.label']}"
+                                        cancelLabel="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.delete_dialog.cancel']}"
+                                        confirmLabel="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.delete_dialog.confirm']}"
+                                        dialogId="contactentrykeys-#{contactentrykey.uuid}-delete-dialog"
+                                        dialogTitle="#{CmsAdminMessages['contentsection.configuration.contactentrykeys.delete_dialog.title']}"
+                                        message="#{CmsAdminMessages.getMessage('contentsection.configuration.contactentrykeys.delete_dialog.message', [ContentSectionModel.sectionName, entryKey.entryKey])}"
+                                        />
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>
