@@ -34,6 +34,7 @@ import org.librecms.ui.contentsections.ContentSectionNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -337,7 +338,8 @@ public abstract class AbstractContactableEntityEditStep
         model.setEntryKey(entryKey.getEntryKey());
         model.setLabel(
             globalizationHelper.getValueFromLocalizedString(
-                entryKey.getLabel())
+                entryKey.getLabel(), entryKey::getEntryKey
+            )
         );
 
         return model;
@@ -352,7 +354,7 @@ public abstract class AbstractContactableEntityEditStep
         model.setEntryKeyId(entry.getKey().getKeyId());
         model.setEntryKeyLabel(
             globalizationHelper.getValueFromLocalizedString(
-                entry.getKey().getLabel()
+                entry.getKey().getLabel(), entry.getKey()::getEntryKey
             )
         );
         model.setOrder(entry.getOrder());

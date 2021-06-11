@@ -94,16 +94,17 @@
                                 <td>
                                     <button class="btn btn-primary"
                                             data-toggle="modal"
-                                            data-target="#edit-contactntry-dialog-#{entry.contactEntryId}"
+                                            data-target="#edit-contactentry-dialog-#{entry.contactEntryId}"
                                             type="button">
                                         <bootstrap:svgIcon icon="pen" />
                                         <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['contactable.contactentries.edit']}</span>
                                     </button>
                                     <div aria-hidden="true"
                                          aria-labelledby="edit-contactntry-dialog-#{entry.contactEntryId}-title"
+                                         id="edit-contactentry-dialog-#{entry.contactEntryId}"
                                          class="modal fade"
                                          tabindex="-1">
-                                        <div class="modal-content">
+                                        <div class="modal-dialog">
                                             <form action="#{actionBaseUrl}/contactentries/#{entry.order}"
                                                   class="modal-content"
                                                   method="post">
@@ -162,6 +163,7 @@
                                     <div aria-hidden="true"
                                          aria-labelledby="remove-contactentry-dialog-#{entry.contactEntryId}-title"
                                          class="modal fade"
+                                         id="remove-contactentry-dialog-#{entry.contactEntryId}"
                                          tabindex="-1">
                                         <div class="modal-dialog">
                                             <form action="#{actionBaseUrl}/contactentries/#{entry.order}/@remove"
@@ -182,7 +184,7 @@
                                                 </div>
                                                 <div class="modal-body">
                                                     <p>
-                                                        #{CmsDefaultStepsMessageBundle.getMessage('contactable.contactentries.remove.message', [entry.entryKeyLabel, entry.value])}
+                                                        #{CmsAssetsStepsDefaultMessagesBundle.getMessage('contactable.contactentries.remove.message', [entry.entryKeyLabel, entry.value])}
                                                     </p>
                                                 </div>
                                                 <div class="modal-footer">
@@ -216,7 +218,7 @@
             baseUrl="#{CmsContactableEditStepModel.baseUrl}"
             contentSection="#{ContentSectionModel.sectionName}"
             formParamName="postalAddressIdentifier"
-            
+
             />
 
         <c:choose>
