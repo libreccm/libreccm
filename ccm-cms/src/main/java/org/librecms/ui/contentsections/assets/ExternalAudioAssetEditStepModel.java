@@ -18,39 +18,41 @@
  */
 package org.librecms.ui.contentsections.assets;
 
-import java.util.HashSet;
-import java.util.Set;
+import org.librecms.assets.LegalMetadata;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Named;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class CmsAssetEditSteps implements MvcAssetEditSteps {
+@RequestScoped
+@Named("CmsExternalAudioAssetEditStepModel")
+public class ExternalAudioAssetEditStepModel {
 
-    @Override
-    public Set<Class<?>> getClasses() {
-        final Set<Class<?>> classes = new HashSet<>();
+    private String baseUrl;
 
-        classes.add(BookmarkEditStep.class);
-        classes.add(ExternalAudioAssetEditStep.class);
-        classes.add(ExternalVideoAssetEditStep.class);
-        classes.add(FileAssetEditStep.class);
-        classes.add(LegalMetadataEditStep.class);
-        classes.add(OrganizationEditStep.class);
-        classes.add(PersonEditStep.class);
-        classes.add(PostalAddressEditStep.class);
-        classes.add(SideNoteEditStep.class);
+    private LegalMetadata legalMetadata;
 
-        return classes;
+    public LegalMetadata getLegalMetadata() {
+        return legalMetadata;
     }
 
-    @Override
-    public Set<Class<?>> getResourceClasses() {
-        final Set<Class<?>> classes = new HashSet<>();
+    protected void setLegalMetadata(final LegalMetadata legalMetadata) {
+        this.legalMetadata = legalMetadata;
+    }
 
-        classes.add(SideNoteEditStepResources.class);
+    public String getLegalMetadataType() {
+        return LegalMetadata.class.getName();
+    }
 
-        return classes;
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    protected void setBaseUrl(final String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 
 }

@@ -19,7 +19,11 @@
 package org.librecms.assets;
 
 import com.arsdigita.cms.ui.assets.forms.ExternalAudioAssetForm;
+
 import org.hibernate.envers.Audited;
+import org.librecms.ui.contentsections.assets.ExternalAudioAssetCreateStep;
+import org.librecms.ui.contentsections.assets.ExternalAudioAssetEditStep;
+import org.librecms.ui.contentsections.assets.MvcAssetEditKit;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -48,6 +52,10 @@ import static org.librecms.assets.AssetConstants.*;
            labelBundle = ASSETS_BUNDLE,
            descriptionKey = "external_audio_asset.description",
            descriptionBundle = ASSETS_BUNDLE)
+@MvcAssetEditKit(
+    createStep = ExternalAudioAssetCreateStep.class,
+    editStep = ExternalAudioAssetEditStep.class
+)
 public class ExternalAudioAsset extends Bookmark implements Serializable {
 
     private static final long serialVersionUID = 1190735204910197490L;

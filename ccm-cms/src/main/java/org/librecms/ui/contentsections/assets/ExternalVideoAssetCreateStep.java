@@ -19,7 +19,7 @@
 package org.librecms.ui.contentsections.assets;
 
 import org.libreccm.l10n.GlobalizationHelper;
-import org.librecms.assets.Bookmark;
+import org.librecms.assets.ExternalVideoAsset;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -30,34 +30,35 @@ import javax.inject.Named;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Named("CmsBookmarkCreateStep")
-public class BookmarkCreateStep extends AbstractBookmarkCreateStep<Bookmark> {
-
+@Named("CmsExternalVideoAssetCreateStep")
+public class ExternalVideoAssetCreateStep
+    extends AbstractBookmarkCreateStep<ExternalVideoAsset> {
+    
     @Inject
     private GlobalizationHelper globalizationHelper;
 
     @Override
     public String showCreateStep() {
-        return "org/librecms/ui/contentsection/assets/bookmark/create-bookmark.xhtml";
+        return "org/librecms/ui/contentsection/assets/external-video-asset/create-external-video-asset.xhtml";
     }
 
     @Override
     public String getLabel() {
         return globalizationHelper
             .getLocalizedTextsUtil(getBundle())
-            .getText("bookmark.label");
+            .getText("externalvideoasset.label");
     }
 
     @Override
     public String getDescription() {
         return globalizationHelper
             .getLocalizedTextsUtil(getBundle())
-            .getText("bookmark.description");
+            .getText("externalvideoasset.description");
     }
 
     @Override
-    protected Class<Bookmark> getAssetClass() {
-        return Bookmark.class;
+    protected Class<ExternalVideoAsset> getAssetClass() {
+        return ExternalVideoAsset.class;
     }
 
 }

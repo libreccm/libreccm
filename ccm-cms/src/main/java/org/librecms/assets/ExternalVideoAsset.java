@@ -21,6 +21,9 @@ package org.librecms.assets;
 import com.arsdigita.cms.ui.assets.forms.ExternalVideoAssetForm;
 
 import org.hibernate.envers.Audited;
+import org.librecms.ui.contentsections.assets.ExternalVideoAssetCreateStep;
+import org.librecms.ui.contentsections.assets.ExternalVideoAssetEditStep;
+import org.librecms.ui.contentsections.assets.MvcAssetEditKit;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -46,6 +49,10 @@ import static org.librecms.assets.AssetConstants.*;
            labelBundle = ASSETS_BUNDLE,
            descriptionKey = "external_video_asset.description",
            descriptionBundle = ASSETS_BUNDLE)
+@MvcAssetEditKit(
+    createStep = ExternalVideoAssetCreateStep.class,
+    editStep = ExternalVideoAssetEditStep.class
+)
 public class ExternalVideoAsset extends Bookmark implements Serializable {
 
     private static final long serialVersionUID = -2927375812188779049L;

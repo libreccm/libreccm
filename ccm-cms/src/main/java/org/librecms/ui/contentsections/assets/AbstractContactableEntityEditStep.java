@@ -34,7 +34,6 @@ import org.librecms.ui.contentsections.ContentSectionNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;

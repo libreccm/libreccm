@@ -1,0 +1,207 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:librecms="http://xmlns.jcp.org/jsf/composite/components/librecms"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/assets/editstep.xhtml">
+
+        <ui:param name="stepControllerUrl"
+                  value="@external-audio-asset-edit"
+                  />
+        <ui:param name="title" 
+                  value="#{CmsAssetsStepsDefaultMessagesBundle.getMessage('externalaudioasset.editstep.header', [MvcAssetEditStepModel.name])}" 
+                  />
+
+        <ui:define name="editStep">
+            <h3>#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.url.header']}</h3>
+
+            <c:if test="#{MvcAssetEditStepModel.canEdit}">
+                <div class="text-right">
+                    <button class="btn btn-primary"
+                            data-toggle="modal"
+                            data-target="#url-edit-dialog"
+                            type="button">
+                        <bootstrap:svgIcon icon="pen" />
+                        <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.url.edit']}</span>
+                    </button>
+                </div>
+                <div aria-hidden="true"
+                     aria-labelledby="url-edit-dialog-title"
+                     class="modal fade"
+                     id="url-edit-dialog"
+                     tabindex="-1">
+                    <div class="modal-dialog">
+                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@external-audio-asset-edit/properties"
+                              class="modal-content"
+                              method="post">
+                            <div class="modal-header">
+                                <h4 class="modal-title"
+                                    id="url-edit-dialog-title">
+                                    #{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.url.edit.title']}
+                                </h4>
+                                <button 
+                                    aria-label="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.url.edit.close']}"
+                                    class="close"
+                                    data-dismiss="modal"
+                                    type="button">
+                                    <bootstrap:svgIcon icon="x" />
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <bootstrap:formGroupUrl
+                                    help="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.url.edit.help']}"
+                                    inputId="url"
+                                    label="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.url.edit.label']}"
+                                    name="url"
+                                    required="true" 
+                                    value="#{CmsExternalAudioAssetEditStep.url}"/>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-warning"
+                                        data-dismiss="modal"
+                                        type="button">
+                                    #{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.url.edit.close']}
+                                </button>
+                                <button class="btn btn-success"
+                                        type="submit">
+                                    #{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.url.edit.submit']}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </c:if>
+            <!--<pre>#{CmsExternalAudioAssetEditStep.url}</pre>-->
+
+            <libreccm:localizedStringEditor 
+                addButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.add_button.label']}"
+                addDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.add.cancel']}"
+                addDialogLocaleSelectHelp="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.add.locale.help']}"
+                addDialogLocaleSelectLabel="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.add.locale.label']}"
+                addDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.add.submit']}"
+                addDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.add.title']}"
+                addDialogValueHelp="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.add.value.help']}"
+                addDialogValueLabel="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.add.value.label']}"
+                addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@external-audio-asset-edit/description/add"
+                editButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.edit_button.label']}"
+                editDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.edit.cancel']}"
+                editDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.edit.submit']}"
+                editDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.edit.title']}"
+                editDialogValueHelp="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.edit.value.help']}"
+                editDialogValueLabel="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.edit.value.label']}"
+                editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@external-audio-asset-edit/description/edit"
+                editorId="description-editor"
+                hasUnusedLocales="#{!CmsExternalAudioAssetEditStep.unusedDescriptionLocales.isEmpty()}"
+                headingLevel="3"
+                objectIdentifier="#{CmsSelectedAssetModel.assetPath}"
+                readOnly="#{!MvcAssetEditStepModel.canEdit}"
+                removeButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.remove_button.label']}"
+                removeDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.remove.cancel']}"
+                removeDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.remove.submit']}"
+                removeDialogText="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.remove.text']}"
+                removeDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.remove.title']}"
+                removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@external-audio-asset-edit/description/remove"
+                title="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.title']}"
+                unusedLocales="#{CmsExternalAudioAssetEditStep.unusedDescriptionLocales}"
+                useTextarea="true"
+                values="#{CmsExternalAudioAssetEditStep.descriptionValues}"
+                />
+
+            <h3>#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.legalmetadata.title']}</h3>
+
+            <librecms:assetPicker
+                actionUrl="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@external-audio-asset-edit/legalmetadata"
+                assetType="#{CmsExternalAudioAssetEditStepModel.legalMetadataType}"
+                assetPickerId="legalmetadata-picker"
+                baseUrl="#{CmsExternalAudioAssetEditStepModel.baseUrl}"
+                contentSection="#{ContentSectionModel.sectionName}"
+                formParamName="legalMetadataIdentifier"
+                />
+
+            <c:choose>
+                <c:when test="#{CmsExternalAudioAssetEditStepModel.legalMetadata == null}">
+                    <div class="text-right">
+                        <librecms:assetPickerButton 
+                            assetPickerId="legalmetadata-picker"
+                            buttonText="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.legalmetadata.set']}"
+                            />
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div class="text-right">
+                        <librecms:assetPickerButton 
+                            assetPickerId="legalmetadata-picker"
+                            buttonText="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.legalmetadata.set']}"
+                            />
+                        <button class="btn btn-danger"
+                                data-toggle="modal"
+                                data-target="#remove-legalmetdata-dialog"
+                                type="button">
+                            <bootstrap:svgIcon icon="x-circle" />
+                            <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.legelmetadata.remove.close']}</span>
+                        </button>
+                    </div>
+                    <div aria-hidden="true"
+                         aria-labelledby="remove-legalmetadata-dialog-title"
+                         class="modal fade"
+                         id="remove-legalmetadata-dialog"
+                         tabindex="-1">
+                        <div class="modal-dialog">
+                            <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@external-audio-asset-edit/legalmetadata/@remove"
+                                  class="modal-content"
+                                  method="post">
+                                <div class="modal-header">
+                                    <h4 class="modal-title"
+                                        id="remove-legalmetadata-dialog-title">
+                                        #{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.legelmetadata.remove.title']}
+                                    </h4>
+                                    <button 
+                                        aria-label="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.legelmetadata.remove.close']}"
+                                        class="close"
+                                        data-dismiss="modal"
+                                        type="button">
+                                        <bootstrap:svgIcon icon="x" />
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        #{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.legelmetadata.remove.message']}
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-secondary"
+                                            data-dismiss="modal"
+                                            type="button">
+                                        #{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.legelmetadata.remove.close']}
+                                    </button>
+                                    <button class="btn btn-danger"
+                                            type="submit">
+                                        #{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.legelmetadata.remove.submit']}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <dl>
+                        <div>
+                            <dt> #{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.legelmetadata.rightsholder']}</dt>
+                            <dd>#{CmsExternalAudioAssetEditStepModel.legalMetadata.rightsHolder}</dd>
+                        </div>
+                        <div>
+                            <dt> #{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.legelmetadata.creator']}</dt>
+                            <dd>#{CmsExternalAudioAssetEditStepModel.legalMetadata.creator}</dd>
+                        </div>
+                    </dl>
+                </c:otherwise>
+            </c:choose>
+
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+
