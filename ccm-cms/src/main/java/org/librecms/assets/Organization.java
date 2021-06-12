@@ -21,6 +21,9 @@ package org.librecms.assets;
 import com.arsdigita.cms.ui.assets.forms.OrganizationForm;
 
 import org.hibernate.envers.Audited;
+import org.librecms.ui.contentsections.assets.MvcAssetEditKit;
+import org.librecms.ui.contentsections.assets.OrganizationCreateStep;
+import org.librecms.ui.contentsections.assets.OrganizationEditStep;
 
 import java.util.Objects;
 
@@ -41,6 +44,10 @@ import static org.librecms.assets.AssetConstants.*;
            labelKey = "organization.label",
            descriptionBundle = ASSETS_BUNDLE,
            descriptionKey = "organization.description")
+@MvcAssetEditKit(
+    createStep = OrganizationCreateStep.class,
+    editStep = OrganizationEditStep.class
+)
 @Entity
 @Audited
 @Table(name = "ORGANIZATIONS", schema = DB_SCHEMA)

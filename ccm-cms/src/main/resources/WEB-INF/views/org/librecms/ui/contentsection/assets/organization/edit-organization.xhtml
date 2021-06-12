@@ -1,0 +1,29 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/assets/editstep.xhtml">
+
+        <ui:param name="stepControllerUrl"
+                  value="@organization-edit"
+                  />
+        <ui:param name="title" 
+                  value="#{CmsAssetsStepsDefaultMessagesBundle.getMessage('organization.editstep.header', [MvcAssetEditStepModel.name])}" 
+                  />
+
+        <ui:define name="editStep">
+            <ui:include src="../edit-contactable.xhtml">
+                <ui:param name="actionBaseUrl"
+                          value="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@organization-edit" />
+                <ui:param name="contactEntryAction"
+                          value="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@organization-edit/contactentries" />
+                <ui:param name="postalAddressAction" 
+                          value="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@organization-edit/postaladdress" />
+            </ui:include>
+        </ui:define>
+        
+    </ui:composition>
+</html>

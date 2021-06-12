@@ -212,7 +212,7 @@ public abstract class AbstractMvcAssetCreateStep<T extends Asset>
                 "danger",
                 globalizationHelper
                     .getLocalizedTextsUtil(getBundle())
-                    .getText("postaladdress.createstep.name.error.invalid")
+                    .getText("createstep.name.error.invalid")
             );
             return showCreateStep();
         }
@@ -224,7 +224,7 @@ public abstract class AbstractMvcAssetCreateStep<T extends Asset>
                 "danger",
                 globalizationHelper
                     .getLocalizedTextsUtil(getBundle())
-                    .getText("postaladdress.createstep.title.error.missing")
+                    .getText("createstep.title.error.missing")
             );
             return showCreateStep();
         }

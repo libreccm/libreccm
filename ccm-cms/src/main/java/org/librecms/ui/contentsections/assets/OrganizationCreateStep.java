@@ -19,45 +19,42 @@
 package org.librecms.ui.contentsections.assets;
 
 import org.libreccm.l10n.GlobalizationHelper;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Named;
-
-import org.librecms.assets.Person;
-import org.librecms.contentsection.AssetRepository;
+import org.librecms.assets.Organization;
 
 import java.util.Map;
 
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Named("CmsPersonCreateStep")
-public class PersonCreateStep extends AbstractMvcAssetCreateStep<Person> {
+@Named("CmsOrganizationCreateStep")
+public class OrganizationCreateStep extends AbstractMvcAssetCreateStep<Organization> {
 
     @Inject
     private GlobalizationHelper globalizationHelper;
 
     @Override
     public String showCreateStep() {
-        return "org/librecms/ui/contentsection/assets/person/create-person.xhtml";
+        return "org/librecms/ui/contentsection/assets/organization/create-organization.xhtml";
     }
 
     @Override
     public String getLabel() {
         return globalizationHelper
             .getLocalizedTextsUtil(getBundle())
-            .getText("person.label");
+            .getText("organization.label");
     }
 
     @Override
     public String getDescription() {
         return globalizationHelper
             .getLocalizedTextsUtil(getBundle())
-            .getText("person.description");
+            .getText("organization.description");
     }
 
     @Override
@@ -66,16 +63,18 @@ public class PersonCreateStep extends AbstractMvcAssetCreateStep<Person> {
     }
 
     @Override
-    protected Class<Person> getAssetClass() {
-        return Person.class;
+    protected Class<Organization> getAssetClass() {
+        return Organization.class;
     }
 
     @Override
     protected String setAssetProperties(
-        final Person person, final Map<String, String[]> formParams
+        final Organization organization, final Map<String, String[]> formParams
     ) {
+        organization.setName(formParams.get("name")[0]);
+        
         return String.format(
-            "redirect:/%s/assets/%s/%s/@person-edit",
+            "redirect:/%s/assets/%s/%s/@organization-edit",
             getContentSectionLabel(),
             getFolderPath(),
             getName()
