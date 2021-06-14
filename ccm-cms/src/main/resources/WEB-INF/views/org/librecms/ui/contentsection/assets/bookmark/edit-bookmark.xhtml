@@ -73,7 +73,14 @@
                     </div>
                 </div>
             </c:if>
-            <!--<pre>#{CmsBookmarkEditStep.url}</pre>-->
+            <c:choose>
+                <c:when test="#{CmsBookmarkEditStep.url != null}">
+                    <pre>#{CmsBookmarkEditStep.url}</pre>
+                </c:when>
+                <c:otherwise>
+                    <p>#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.url.not_set']}</p>
+                </c:otherwise>
+            </c:choose>
             
             <libreccm:localizedStringEditor 
                 addButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['bookmark.editstep.description.add_button.label']}"

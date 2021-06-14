@@ -57,7 +57,7 @@
                                     label="#{CmsAssetsStepsDefaultMessagesBundle['externalvideoasset.editstep.url.edit.label']}"
                                     name="url"
                                     required="true" 
-                                    value="#{CmsExternalVideoAssetEditStep.url}"/>
+                                    value="#{CmsBookmarkEditStep.url}"/>
                             </div>
                             <div class="modal-footer">
                                 <button class="btn btn-warning"
@@ -74,7 +74,18 @@
                     </div>
                 </div>
             </c:if>
-            <!--<pre>#{CmsExternalVideoAssetEditStep.url}</pre>-->
+            <c:choose>
+                <c:when test="#{CmsBookmarkEditStep.url != null}">
+                    <pre>#{CmsBookmarkEditStep.url}</pre>
+                    <video controls="controls" 
+                           src="#{CmsBookmarkEditStep.url}"
+                           width="320">
+                    </video>
+                </c:when>
+                <c:otherwise>
+                    <p>#{CmsAssetsStepsDefaultMessagesBundle['externalvideoasset.editstep.url.not_set']}</p>
+                </c:otherwise>
+            </c:choose>
 
             <libreccm:localizedStringEditor 
                 addButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['externalvideoasset.editstep.description.add_button.label']}"
@@ -94,10 +105,10 @@
                 editDialogValueLabel="#{CmsAssetsStepsDefaultMessagesBundle['externalvideoasset.editstep.description.edit.value.label']}"
                 editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@external-video-asset-edit/description/edit"
                 editorId="description-editor"
-                hasUnusedLocales="#{!CmsExternalVideoAssetEditStep.unusedDescriptionLocales.isEmpty()}"
+                hasUnusedLocales="#{!CmsBookmarkEditStep.unusedDescriptionLocales.isEmpty()}"
                 headingLevel="3"
                 objectIdentifier="#{CmsSelectedAssetModel.assetPath}"
-                readOnly="#{!MvcAssetEditStepModel.canEdit}"
+                readOnly="#{!CmsBookmarkEditStep.canEdit}"
                 removeButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['externalvideoasset.editstep.description.remove_button.label']}"
                 removeDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['externalvideoasset.editstep.description.remove.cancel']}"
                 removeDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['externalvideoasset.editstep.description.remove.submit']}"
@@ -105,9 +116,9 @@
                 removeDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['externalvideoasset.editstep.description.remove.title']}"
                 removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@external-video-asset-edit/description/remove"
                 title="#{CmsAssetsStepsDefaultMessagesBundle['externalvideoasset.editstep.description.title']}"
-                unusedLocales="#{CmsExternalVideoAssetEditStep.unusedDescriptionLocales}"
+                unusedLocales="#{CmsBookmarkEditStep.unusedDescriptionLocales}"
                 useTextarea="true"
-                values="#{CmsExternalVideoAssetEditStep.descriptionValues}"
+                values="#{CmsBookmarkEditStep.descriptionValues}"
                 />
 
             <h3>#{CmsAssetsStepsDefaultMessagesBundle['externalvideoasset.editstep.legalmetadata.title']}</h3>
@@ -138,7 +149,7 @@
                             />
                         <button class="btn btn-danger"
                                 data-toggle="modal"
-                                data-target="#remove-legalmetdata-dialog"
+                                data-target="#remove-legalmetadata-dialog"
                                 type="button">
                             <bootstrap:svgIcon icon="x-circle" />
                             <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['externalvideoasset.editstep.legelmetadata.remove.close']}</span>

@@ -21,6 +21,8 @@ package org.librecms.ui.contentsections.assets;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.assets.ExternalAudioAsset;
 
+import java.util.Map;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -61,4 +63,18 @@ public class ExternalAudioAssetCreateStep
         return ExternalAudioAsset.class;
     }
 
+    @Override
+    protected String setAssetProperties(
+        final ExternalAudioAsset asset, 
+        final Map<String, String[]> formParams
+    ) {
+        super.setAssetProperties(asset, formParams);
+        
+         return String.format(
+            "redirect:/%s/assets/%s/%s/@external-audio-asset-edit",
+            getContentSectionLabel(),
+            getFolderPath(),
+            getName()
+        );
+    }
 }

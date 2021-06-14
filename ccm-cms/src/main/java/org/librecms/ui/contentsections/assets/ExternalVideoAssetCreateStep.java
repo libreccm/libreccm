@@ -21,6 +21,8 @@ package org.librecms.ui.contentsections.assets;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.assets.ExternalVideoAsset;
 
+import java.util.Map;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -61,4 +63,19 @@ public class ExternalVideoAssetCreateStep
         return ExternalVideoAsset.class;
     }
 
+    @Override
+    protected String setAssetProperties(
+        final ExternalVideoAsset asset, 
+        final Map<String, String[]> formParams
+    ) {
+        super.setAssetProperties(asset, formParams);
+        
+        return String.format(
+            "redirect:/%s/assets/%s/%s/@external-video-asset-edit",
+            getContentSectionLabel(),
+            getFolderPath(),
+            getName()
+        );
+    }
+    
 }

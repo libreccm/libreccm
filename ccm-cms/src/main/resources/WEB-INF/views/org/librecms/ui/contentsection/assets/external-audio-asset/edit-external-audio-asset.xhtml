@@ -57,7 +57,7 @@
                                     label="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.url.edit.label']}"
                                     name="url"
                                     required="true" 
-                                    value="#{CmsExternalAudioAssetEditStep.url}"/>
+                                    value="#{CmsBookmarkEditStep.url}"/>
                             </div>
                             <div class="modal-footer">
                                 <button class="btn btn-warning"
@@ -74,7 +74,19 @@
                     </div>
                 </div>
             </c:if>
-            <!--<pre>#{CmsExternalAudioAssetEditStep.url}</pre>-->
+            <c:choose>
+                <c:when test="#{CmsBookmarkEditStep.url != null}">
+                    <pre>#{CmsBookmarkEditStep.url}</pre>
+                    <div class="audioplayer">
+                        <audio controls="controls" 
+                               src="#{CmsBookmarkEditStep.url}">
+                        </audio>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <p>#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.url.not_set']}</p>
+                </c:otherwise>
+            </c:choose>
 
             <libreccm:localizedStringEditor 
                 addButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.add_button.label']}"
@@ -94,7 +106,7 @@
                 editDialogValueLabel="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.edit.value.label']}"
                 editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@external-audio-asset-edit/description/edit"
                 editorId="description-editor"
-                hasUnusedLocales="#{!CmsExternalAudioAssetEditStep.unusedDescriptionLocales.isEmpty()}"
+                hasUnusedLocales="#{!CmsBookmarkEditStep.unusedDescriptionLocales.isEmpty()}"
                 headingLevel="3"
                 objectIdentifier="#{CmsSelectedAssetModel.assetPath}"
                 readOnly="#{!MvcAssetEditStepModel.canEdit}"
@@ -105,9 +117,9 @@
                 removeDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.remove.title']}"
                 removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@external-audio-asset-edit/description/remove"
                 title="#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.description.title']}"
-                unusedLocales="#{CmsExternalAudioAssetEditStep.unusedDescriptionLocales}"
+                unusedLocales="#{CmsBookmarkEditStep.unusedDescriptionLocales}"
                 useTextarea="true"
-                values="#{CmsExternalAudioAssetEditStep.descriptionValues}"
+                values="#{CmsBookmarkEditStep.descriptionValues}"
                 />
 
             <h3>#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.legalmetadata.title']}</h3>
@@ -138,7 +150,7 @@
                             />
                         <button class="btn btn-danger"
                                 data-toggle="modal"
-                                data-target="#remove-legalmetdata-dialog"
+                                data-target="#remove-legalmetadata-dialog"
                                 type="button">
                             <bootstrap:svgIcon icon="x-circle" />
                             <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['externalaudioasset.editstep.legelmetadata.remove.close']}</span>

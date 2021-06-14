@@ -80,6 +80,11 @@ public class ExternalAudioAssetEditStep extends BookmarkEditStep {
 
     @Inject
     private Models models;
+    
+    @Override
+    public Class<? extends MvcAssetEditStep> getStepClass() {
+        return ExternalAudioAssetEditStep.class;
+    }
 
     @Override
     protected void init() throws ContentSectionNotFoundException,
