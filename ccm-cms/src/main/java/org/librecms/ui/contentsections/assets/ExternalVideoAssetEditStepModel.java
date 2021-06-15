@@ -43,6 +43,10 @@ public class ExternalVideoAssetEditStepModel {
         this.legalMetadata = legalMetadata;
     }
 
+    public String getLegalMetadataType() {
+        return LegalMetadata.class.getName();
+    }
+
     public String getBaseUrl() {
         return baseUrl;
     }

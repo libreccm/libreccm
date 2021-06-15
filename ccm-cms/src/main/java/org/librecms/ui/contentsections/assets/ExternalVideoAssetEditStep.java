@@ -83,7 +83,7 @@ public class ExternalVideoAssetEditStep extends BookmarkEditStep {
 
      @Override
     public Class<? extends MvcAssetEditStep> getStepClass() {
-        return ExternalAudioAssetEditStep.class;
+        return ExternalVideoAssetEditStep.class;
     }
     
     @Override
