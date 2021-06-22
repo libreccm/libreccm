@@ -319,7 +319,6 @@ public class Images {
             LOGGER.error(ex);
             return Response.serverError().build();
         }
-
         return Response
             .ok(outputStream.toByteArray(), mimeType)
             .build();

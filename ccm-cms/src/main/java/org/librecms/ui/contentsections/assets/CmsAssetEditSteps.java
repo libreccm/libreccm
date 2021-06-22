@@ -48,6 +48,7 @@ public class CmsAssetEditSteps implements MvcAssetEditSteps {
     public Set<Class<?>> getResourceClasses() {
         final Set<Class<?>> classes = new HashSet<>();
 
+        classes.add(FileAssetEditStepDownload.class);
         classes.add(SideNoteEditStepResources.class);
 
         return classes;

@@ -96,7 +96,8 @@ import java.util.Properties;
         )
     },
     configurations = {
-        org.librecms.CMSConfig.class
+        org.librecms.CMSConfig.class,
+        org.librecms.assets.BinaryAssetConfig.class
     },
     pageModelComponentModels = {
         @PageModelComponentModel(

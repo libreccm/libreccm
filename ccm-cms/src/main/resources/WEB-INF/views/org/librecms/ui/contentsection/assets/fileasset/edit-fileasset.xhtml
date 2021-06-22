@@ -52,14 +52,19 @@
 
             <h3>#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.title']}</h3>
             <c:if test="#{MvcAssetEditStepModel.canEdit}">
-                <div class="text-right">
+                <div class="text-left">
                     <button class="btn btn-primary"
                             data-toggle="modal"
                             data-target="#file-upload-dialog"
                             type="button">
                         <bootstrap:svgIcon icon="upload" />
-                        <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.upload.button.label']}</span>
+                        <span>#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.upload.button.label']}</span>
                     </button>
+                    <a class="btn btn-primary"
+                       href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@fileasset-edit-download">
+                        <bootstrap:svgIcon icon="download" />
+                        <span>#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.download.button.label']}</span>
+                    </a>
                 </div>
                 <div aria-hidden="true"
                      aria-labelledby="file-upload-dialog-title"

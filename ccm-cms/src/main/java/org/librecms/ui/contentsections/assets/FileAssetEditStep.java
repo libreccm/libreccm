@@ -24,12 +24,12 @@ import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.AuthorizationRequired;
+import org.librecms.assets.BinaryAssetDataService;
 import org.librecms.assets.FileAsset;
 import org.librecms.contentsection.AssetRepository;
 import org.librecms.ui.contentsections.AssetPermissionsChecker;
 import org.librecms.ui.contentsections.ContentSectionNotFoundException;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -55,6 +55,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -83,6 +84,9 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
 
     @Inject
     private AssetRepository assetRepo;
+
+    @Inject
+    private BinaryAssetDataService dataService;
 
     @Inject
     private GlobalizationHelper globalizationHelper;
@@ -312,6 +316,9 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
         }
     }
 
+  
+    
+    
     @POST
     @Path("/upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -348,19 +355,10 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
                         .getHeaders();
                     fileName = getFileName(headers);
                     contentType = getContentType(headers);
-                    final byte[] bytes = new byte[1024];
-                    try (InputStream inputStream = inputPart.getBody(
-                        InputStream.class, null
+                    dataService.saveData(
+                        fileAsset,
+                        inputPart.getBody(InputStream.class, null)
                     );
-                         ByteArrayOutputStream fileDataOutputStream
-                         = new ByteArrayOutputStream()) {
-                        while (inputStream.read(bytes) != -1) {
-                            fileDataOutputStream.writeBytes(bytes);
-                        }
-
-                        fileAsset.setData(fileDataOutputStream.toByteArray());
-                    }
-
                 } catch (IOException ex) {
                     LOGGER.error(
                         "Failed to upload file for FileAsset {}:", assetPath
@@ -370,6 +368,33 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
                     models.put("uploadFailed", true);
                     return buildRedirectPathForStep();
                 }
+
+//                    final MultivaluedMap<String, String> headers = inputPart
+//                        .getHeaders();
+//                    fileName = getFileName(headers);
+//                    contentType = getContentType(headers);
+//                    final byte[] bytes = new byte[1024];
+//                    try (InputStream inputStream = inputPart.getBody(
+//                        InputStream.class, null
+//                    );
+//                         ByteArrayOutputStream fileDataOutputStream
+//                         = new ByteArrayOutputStream()) {
+//                        while (inputStream.read(bytes) != -1) {
+//                            fileDataOutputStream.writeBytes(bytes);
+//                        }
+//
+//                        fileAsset.setData(fileDataOutputStream.toByteArray());
+//                    }
+//
+//                } catch (IOException ex) {
+//                    LOGGER.error(
+//                        "Failed to upload file for FileAsset {}:", assetPath
+//                    );
+//                    LOGGER.error(ex);
+//
+//                    models.put("uploadFailed", true);
+//                    return buildRedirectPathForStep();
+//                }
             }
 
             fileAsset.setFileName(fileName);
