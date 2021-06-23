@@ -20,6 +20,7 @@ package org.librecms.assets;
 
 import org.libreccm.core.UnexpectedErrorException;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Blob;
@@ -45,20 +46,30 @@ public class BinaryAssetBlobDataProvider implements BinaryAssetDataProvider {
     private DataSource dataSource;
 
     @Override
-    public InputStream retrieveData(final BinaryAsset asset) {
+    public void copyDataToOutputStream(
+        final BinaryAsset asset, final OutputStream outputStream
+    ) {
         Objects.requireNonNull(asset, "Can't retrieve data from null.");
         try ( Connection connection = dataSource.getConnection()) {
+            connection.setAutoCommit(false);
             final PreparedStatement stmt = connection
                 .prepareStatement(
-                    "SELECT data FROM binary_assets WHERE object_id  = ?"
+                    "SELECT asset_data FROM ccm_cms.binary_assets WHERE object_id  = ?"
                 );
             stmt.setLong(1, asset.getObjectId());
 
             try (ResultSet resultSet = stmt.executeQuery()) {
-                final Blob blob = resultSet.getBlob("data");
-                return blob.getBinaryStream();
+                resultSet.next();
+                final Blob blob = resultSet.getBlob("asset_data");
+                try(InputStream inputStream = blob.getBinaryStream()) {
+                    byte[] buffer = new byte[8192];
+                    int length;
+                    while((length = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, length);
+                    }
+                } 
             }
-        } catch (SQLException ex) {
+        } catch (SQLException |IOException ex) {
             throw new UnexpectedErrorException(ex);
         }
     }
@@ -69,10 +80,11 @@ public class BinaryAssetBlobDataProvider implements BinaryAssetDataProvider {
         try ( Connection connection = dataSource.getConnection()) {
             final PreparedStatement stmt = connection
                 .prepareStatement(
-                    "UPDATE binary_assets SET data = ? WHERE object_id = ?"
+                    "UPDATE ccm_cms.binary_assets SET asset_data = ? WHERE object_id = ?"
                 );
             stmt.setBlob(1, stream);
             stmt.setLong(2, asset.getObjectId());
+//            connection.commit();
         } catch (SQLException ex) {
             throw new UnexpectedErrorException(ex);
         }

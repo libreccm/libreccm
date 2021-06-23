@@ -122,50 +122,27 @@ public class FileAssetEditStepDownload {
             );
         }
         final FileAsset fileAsset = (FileAsset) asset;
-        try ( InputStream dataInputStream = dataService.retrieveData(fileAsset)) {
-
-            final StreamingOutput output = new StreamingOutput() {
+        return Response
+            .ok()
+            .entity(
+                new StreamingOutput() {
 
                 @Override
                 public void write(final OutputStream outputStream)
                     throws IOException, WebApplicationException {
-                    byte[] buffer = new byte[8192];
-                    int length;
-                    while ((length = dataInputStream.read(buffer)) != -1) {
-                        outputStream.write(buffer, 0, length);
-                    }
+                    dataService.copyDataToOutputStream(fileAsset, outputStream);
                 }
 
-            };
-
-            return Response
-                .ok()
-                .entity(output)
-                .header("Content-Type", fileAsset.getMimeType())
-                .header(
-                    "Content-Disposition",
-                    String.format(
-                        "attachment; filename=\"%s\"",
-                        fileAsset.getFileName()
-                    )
+            })
+            .header("Content-Type", fileAsset.getMimeType())
+            .header(
+                "Content-Disposition",
+                String.format(
+                    "attachment; filename=\"%s\"",
+                    fileAsset.getFileName()
                 )
-                .build();
-
-        } catch (IOException ex) {
-            throw new WebApplicationException(
-                ex,
-                Response.Status.INTERNAL_SERVER_ERROR
-            );
-        }
+            )
+            .build();
     }
 
-//    private class FileAssetOutput implements StreamingOutput {
-//
-//        @Override
-//        public void write(final OutputStream outputStream)
-//            throws IOException, WebApplicationException {
-//            
-//        }
-//
-//    }
 }

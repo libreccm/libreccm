@@ -22,6 +22,7 @@ import org.libreccm.configuration.ConfigurationManager;
 import org.libreccm.core.UnexpectedErrorException;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Objects;
 
 import javax.enterprise.context.RequestScoped;
@@ -43,12 +44,12 @@ public class BinaryAssetDataService {
     @Any
     private Instance<BinaryAssetDataProvider> dataProvider;
 
-    public InputStream retrieveData(final BinaryAsset asset) {
+    public void copyDataToOutputStream(
+        final BinaryAsset asset, final OutputStream outputStream
+    ) {
         Objects.requireNonNull(asset, "Can't retrieve data from null.");
-
-        final BinaryAssetDataProvider dataProvider = getDataProvider();
-
-        return dataProvider.retrieveData(asset);
+        Objects.requireNonNull(outputStream, "Can't copy data to null.");
+        getDataProvider().copyDataToOutputStream(asset, outputStream);
     }
 
     public void saveData(final BinaryAsset asset, final InputStream stream) {

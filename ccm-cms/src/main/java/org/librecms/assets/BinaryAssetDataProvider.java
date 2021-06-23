@@ -19,6 +19,7 @@
 package org.librecms.assets;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  *
@@ -26,7 +27,9 @@ import java.io.InputStream;
  */
 public interface BinaryAssetDataProvider {
     
-    InputStream retrieveData(BinaryAsset asset);
+    void copyDataToOutputStream(
+        BinaryAsset asset, OutputStream outputStream
+    );
     
     void saveData(BinaryAsset asset, InputStream stream);
     

@@ -316,9 +316,6 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
         }
     }
 
-  
-    
-    
     @POST
     @Path("/upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -346,7 +343,6 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
                 .getFormDataMap();
             final List<InputPart> inputParts = uploadForm.get("fileData");
 
-            final Part part;
             String fileName = "";
             String contentType = "";
             for (final InputPart inputPart : inputParts) {
@@ -355,10 +351,27 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
                         .getHeaders();
                     fileName = getFileName(headers);
                     contentType = getContentType(headers);
-                    dataService.saveData(
-                        fileAsset,
-                        inputPart.getBody(InputStream.class, null)
-                    );
+
+                    fileAsset.setFileName(fileName);
+                    fileAsset.setSize(fileAsset.getData().length);
+                    try {
+                        fileAsset.setMimeType(new MimeType(contentType));
+                    } catch (MimeTypeParseException ex) {
+                        LOGGER.error(
+                            "Failed to upload file for FileAsset {}:", assetPath
+                        );
+                        LOGGER.error(ex);
+
+                        models.put("uploadFailed", true);
+                        return buildRedirectPathForStep();
+                    }
+
+                    assetRepo.save(fileAsset);
+
+                    try ( InputStream inputStream = inputPart.getBody(
+                        InputStream.class, null)) {
+                        dataService.saveData(fileAsset, inputStream);
+                    }
                 } catch (IOException ex) {
                     LOGGER.error(
                         "Failed to upload file for FileAsset {}:", assetPath
@@ -368,50 +381,7 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
                     models.put("uploadFailed", true);
                     return buildRedirectPathForStep();
                 }
-
-//                    final MultivaluedMap<String, String> headers = inputPart
-//                        .getHeaders();
-//                    fileName = getFileName(headers);
-//                    contentType = getContentType(headers);
-//                    final byte[] bytes = new byte[1024];
-//                    try (InputStream inputStream = inputPart.getBody(
-//                        InputStream.class, null
-//                    );
-//                         ByteArrayOutputStream fileDataOutputStream
-//                         = new ByteArrayOutputStream()) {
-//                        while (inputStream.read(bytes) != -1) {
-//                            fileDataOutputStream.writeBytes(bytes);
-//                        }
-//
-//                        fileAsset.setData(fileDataOutputStream.toByteArray());
-//                    }
-//
-//                } catch (IOException ex) {
-//                    LOGGER.error(
-//                        "Failed to upload file for FileAsset {}:", assetPath
-//                    );
-//                    LOGGER.error(ex);
-//
-//                    models.put("uploadFailed", true);
-//                    return buildRedirectPathForStep();
-//                }
             }
-
-            fileAsset.setFileName(fileName);
-            fileAsset.setSize(fileAsset.getData().length);
-            try {
-                fileAsset.setMimeType(new MimeType(contentType));
-            } catch (MimeTypeParseException ex) {
-                LOGGER.error(
-                    "Failed to upload file for FileAsset {}:", assetPath
-                );
-                LOGGER.error(ex);
-
-                models.put("uploadFailed", true);
-                return buildRedirectPathForStep();
-            }
-
-            assetRepo.save(fileAsset);
 
             return buildRedirectPathForStep();
         } else {
