@@ -31,6 +31,12 @@ public interface BinaryAssetDataProvider {
         BinaryAsset asset, OutputStream outputStream
     );
     
-    void saveData(BinaryAsset asset, InputStream stream);
+    void saveData(
+        BinaryAsset asset, 
+        InputStream stream,
+        String fileName,
+        String contentType,
+        long fileSize
+    );
     
 }

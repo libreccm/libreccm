@@ -22,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.AuthorizationRequired;
 import org.librecms.assets.BinaryAssetDataService;
@@ -345,33 +346,41 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
 
             String fileName = "";
             String contentType = "";
+            long fileSize = 0;
             for (final InputPart inputPart : inputParts) {
                 try {
                     final MultivaluedMap<String, String> headers = inputPart
                         .getHeaders();
                     fileName = getFileName(headers);
                     contentType = getContentType(headers);
+                    fileSize = getFileSize(headers);
 
-                    fileAsset.setFileName(fileName);
-                    fileAsset.setSize(fileAsset.getData().length);
-                    try {
-                        fileAsset.setMimeType(new MimeType(contentType));
-                    } catch (MimeTypeParseException ex) {
-                        LOGGER.error(
-                            "Failed to upload file for FileAsset {}:", assetPath
-                        );
-                        LOGGER.error(ex);
-
-                        models.put("uploadFailed", true);
-                        return buildRedirectPathForStep();
-                    }
-
-                    assetRepo.save(fileAsset);
-
+//                    fileAsset.setFileName(fileName);
+//                    //fileAsset.setSize(fileAsset.getData().length);
+//                    try {
+//                        fileAsset.setMimeType(new MimeType(contentType));
+//                    } catch (MimeTypeParseException ex) {
+//                        LOGGER.error(
+//                            "Failed to upload file for FileAsset {}:", assetPath
+//                        );
+//                        LOGGER.error(ex);
+//
+//                        models.put("uploadFailed", true);
+//                        return buildRedirectPathForStep();
+//                    }
+//
+//                    assetRepo.save(fileAsset);
                     try ( InputStream inputStream = inputPart.getBody(
                         InputStream.class, null)) {
-                        dataService.saveData(fileAsset, inputStream);
+                        dataService.saveData(
+                            fileAsset,
+                            inputStream, 
+                            fileName, 
+                            contentType, 
+                            fileSize
+                        );
                     }
+
                 } catch (IOException ex) {
                     LOGGER.error(
                         "Failed to upload file for FileAsset {}:", assetPath
@@ -412,6 +421,20 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
         final MultivaluedMap<String, String> headers
     ) {
         return headers.getFirst("Content-Type");
+    }
+
+    private long getFileSize(final MultivaluedMap<String, String> headers) {
+        if (headers.containsKey("Content-Length")) {
+            try {
+                return Long.parseLong(
+                    headers.getFirst("Content-Length")
+                );
+            } catch (NumberFormatException ex) {
+                throw new UnexpectedErrorException(ex);
+            }
+        } else {
+            return 0;
+        }
     }
 
 }

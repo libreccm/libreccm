@@ -34,6 +34,7 @@ import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import javax.sql.DataSource;
+import javax.transaction.Transactional;
 
 /**
  *
@@ -58,33 +59,45 @@ public class BinaryAssetBlobDataProvider implements BinaryAssetDataProvider {
                 );
             stmt.setLong(1, asset.getObjectId());
 
-            try (ResultSet resultSet = stmt.executeQuery()) {
+            try ( ResultSet resultSet = stmt.executeQuery()) {
                 resultSet.next();
                 final Blob blob = resultSet.getBlob("asset_data");
-                try(InputStream inputStream = blob.getBinaryStream()) {
-                    byte[] buffer = new byte[8192];
-                    int length;
-                    while((length = inputStream.read(buffer)) != -1) {
-                        outputStream.write(buffer, 0, length);
-                    }
-                } 
+                blob.getBinaryStream().transferTo(outputStream);
+//                try ( InputStream inputStream = blob.getBinaryStream()) {
+//                    byte[] buffer = new byte[8192];
+//                    int length;
+//                    while ((length = inputStream.read(buffer)) != -1) {
+//                        outputStream.write(buffer, 0, length);
+//                    }
+//                }
             }
-        } catch (SQLException |IOException ex) {
+        } catch (SQLException | IOException ex) {
             throw new UnexpectedErrorException(ex);
         }
     }
 
     @Override
-    public void saveData(final BinaryAsset asset, final InputStream stream) {
+    public void saveData(
+        final BinaryAsset asset,
+        final InputStream stream,
+        final String fileName,
+        final String mimeType,
+        final long fileSize
+    ) {
         Objects.requireNonNull(asset, "Can't save data to null.");
         try ( Connection connection = dataSource.getConnection()) {
             final PreparedStatement stmt = connection
                 .prepareStatement(
-                    "UPDATE ccm_cms.binary_assets SET asset_data = ? WHERE object_id = ?"
+                    "UPDATE ccm_cms.binary_assets SET asset_data = ?, filename = ?, mime_type = ?, data_size = ? WHERE object_id = ?"
                 );
             stmt.setBlob(1, stream);
-            stmt.setLong(2, asset.getObjectId());
-//            connection.commit();
+            stmt.setString(2, fileName);
+            stmt.setString(3, mimeType);
+            stmt.setLong(4, fileSize);
+            stmt.setLong(5, asset.getObjectId());
+
+            stmt.execute();
+
         } catch (SQLException ex) {
             throw new UnexpectedErrorException(ex);
         }

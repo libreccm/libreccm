@@ -38,7 +38,9 @@ import org.hibernate.envers.Audited;
 import org.libreccm.jpa.utils.MimeTypeConverter;
 import org.libreccm.l10n.LocalizedString;
 
+import javax.persistence.Basic;
 import javax.persistence.Convert;
+import javax.persistence.FetchType;
 
 import static org.librecms.CmsConstants.*;
 
@@ -76,6 +78,7 @@ public class BinaryAsset extends Asset implements Serializable {
 
     @Column(name = "ASSET_DATA")
     @Lob
+    @Basic(fetch = FetchType.LAZY)
     private byte[] data;
 
     @Column(name = "DATA_SIZE")

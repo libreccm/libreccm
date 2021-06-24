@@ -45,18 +45,25 @@ public class BinaryAssetDataService {
     private Instance<BinaryAssetDataProvider> dataProvider;
 
     public void copyDataToOutputStream(
-        final BinaryAsset asset, final OutputStream outputStream
+        final BinaryAsset asset,
+        final OutputStream outputStream
     ) {
         Objects.requireNonNull(asset, "Can't retrieve data from null.");
         Objects.requireNonNull(outputStream, "Can't copy data to null.");
         getDataProvider().copyDataToOutputStream(asset, outputStream);
     }
 
-    public void saveData(final BinaryAsset asset, final InputStream stream) {
+    public void saveData(
+        final BinaryAsset asset,
+        final InputStream stream,
+        final String fileName,
+        final String mimeType,
+        final long fileSize
+    ) {
         Objects.requireNonNull(asset, "Can't save data to null.");
 
         final BinaryAssetDataProvider dataProvider = getDataProvider();
-        dataProvider.saveData(asset, stream);
+        dataProvider.saveData(asset, stream, fileName, mimeType, fileSize);
     }
 
     @SuppressWarnings("unchecked")
