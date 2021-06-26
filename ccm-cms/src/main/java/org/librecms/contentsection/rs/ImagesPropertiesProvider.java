@@ -55,8 +55,9 @@ public class ImagesPropertiesProvider implements AssetPropertiesProvider {
         }
         
         final Image image = (Image) asset;
-        final byte[] data = image.getData();
-        final InputStream inputStream = new ByteArrayInputStream(data);
+//        final byte[] data = image.getData();
+//        final InputStream inputStream = new ByteArrayInputStream(data);
+        final InputStream inputStream = image.getDataAsInputStream();
         final BufferedImage bufferedImage;
         try {
             bufferedImage = ImageIO.read(inputStream);
@@ -70,7 +71,8 @@ public class ImagesPropertiesProvider implements AssetPropertiesProvider {
             .add("mimetype", image.getMimeType().toString())
             .add("width", bufferedImage.getWidth())
             .add("height", bufferedImage.getHeight())
-            .add("size", data.length);
+            .add("size", image.getDataSize());
+//            .add("size", data.length);
     }
     
 }

@@ -257,10 +257,11 @@ public class Images {
                                final String widthParam,
                                final String heightParam) {
 
-        final byte[] data = image.getData();
+        //final byte[] data = image.getData();
         final String mimeType = image.getMimeType().toString();
 
-        final InputStream inputStream = new ByteArrayInputStream(data);
+        //final InputStream inputStream = new ByteArrayInputStream(data);
+        final InputStream inputStream = image.getDataAsInputStream();
         final BufferedImage bufferedImage;
         final String imageFormat;
         try {
@@ -334,10 +335,11 @@ public class Images {
      */
     private Response readImageProperties(final Image image) {
 
-        final byte[] data = image.getData();
+        //final byte[] data = image.getData();
         final String mimeType = image.getMimeType().toString();
 
-        final InputStream inputStream = new ByteArrayInputStream(data);
+        //final InputStream inputStream = new ByteArrayInputStream(data);
+        final InputStream inputStream = image.getDataAsInputStream();
         final BufferedImage bufferedImage;
         try {
             bufferedImage = ImageIO.read(inputStream);

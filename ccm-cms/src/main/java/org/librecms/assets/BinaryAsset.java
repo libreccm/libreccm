@@ -35,8 +35,15 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.jpa.utils.MimeTypeConverter;
 import org.libreccm.l10n.LocalizedString;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.Blob;
+import java.sql.SQLException;
 
 import javax.persistence.Basic;
 import javax.persistence.Convert;
@@ -79,7 +86,9 @@ public class BinaryAsset extends Asset implements Serializable {
     @Column(name = "ASSET_DATA")
     @Lob
     @Basic(fetch = FetchType.LAZY)
-    private byte[] data;
+    @NotAudited
+//    private byte[] data;
+    private Blob data;
 
     @Column(name = "DATA_SIZE")
     private long size;
@@ -87,7 +96,7 @@ public class BinaryAsset extends Asset implements Serializable {
     public BinaryAsset() {
         super();
         description = new LocalizedString();
-        data = new byte[]{};
+        //data = new byte[]{};
     }
 
     public LocalizedString getDescription() {
@@ -115,21 +124,52 @@ public class BinaryAsset extends Asset implements Serializable {
         this.mimeType = mimeType;
     }
 
-    public byte[] getData() {
-        if (data == null) {
-            return new byte[]{};
-        } else {
-            return Arrays.copyOf(data, data.length);
+//    public byte[] getData() {
+//        if (data == null) {
+//            return new byte[]{};
+//        } else {
+//            return Arrays.copyOf(data, data.length);
+//        }
+//    }
+//
+//    public void setData(final byte[] data) {
+//        if (data == null) {
+//            this.data = new byte[]{};
+//            size = this.data.length;
+//        } else {
+//            this.data = Arrays.copyOf(data, data.length);
+//            size = data.length;
+//        }
+//    }
+    public Blob getData() {
+        return data;
+    }
+    
+    public long getDataSize() {
+        try {
+        return data.length();
+        } catch(SQLException ex) {
+            throw new UnexpectedErrorException(ex);
         }
     }
 
-    public void setData(final byte[] data) {
-        if (data == null) {
-            this.data = new byte[]{};
-            size = this.data.length;
-        } else {
-            this.data = Arrays.copyOf(data, data.length);
-            size = data.length;
+    public InputStream getDataAsInputStream() {
+        try {
+            return data.getBinaryStream();
+        } catch (SQLException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
+    }
+
+    public void setData(final Blob data) {
+        this.data = data;
+    }
+
+    public OutputStream getDataOutputStream() {
+        try {
+            return data.setBinaryStream(0);
+        } catch (SQLException ex) {
+            throw new UnexpectedErrorException(ex);
         }
     }
 
@@ -147,7 +187,7 @@ public class BinaryAsset extends Asset implements Serializable {
         hash = 59 * hash + Objects.hashCode(description);
         hash = 59 * hash + Objects.hashCode(fileName);
         hash = 59 * hash + Objects.hashCode(mimeType);
-        hash = 59 * hash + Arrays.hashCode(data);
+        hash = 59 * hash + Objects.hashCode(data);
         hash = 59 * hash + (int) (size ^ (size >>> 32));
         return hash;
     }
@@ -183,7 +223,7 @@ public class BinaryAsset extends Asset implements Serializable {
         if (!Objects.equals(mimeType, other.getMimeType())) {
             return false;
         }
-        return Arrays.equals(data, other.getData());
+        return Objects.equals(data, other.getData());
     }
 
     @Override

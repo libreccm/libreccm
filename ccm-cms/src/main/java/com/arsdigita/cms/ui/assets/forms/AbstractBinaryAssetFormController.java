@@ -87,7 +87,7 @@ public abstract class AbstractBinaryAssetFormController<T extends BinaryAsset>
         }
 
         if (data.containsKey(DATA)) {
-            asset.setData((byte[]) data.get(DATA));
+            //asset.setData((byte[]) data.get(DATA));
         }
 
         if (data.containsKey(SIZE)) {
