@@ -32,6 +32,7 @@ import org.librecms.contentsection.AssetRepository;
 import org.librecms.ui.contentsections.AssetPermissionsChecker;
 import org.librecms.ui.contentsections.ContentSectionNotFoundException;
 
+import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -378,32 +379,28 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
                         }
                     }
 
-//                    try ( InputStream fileInputStream = Files.newInputStream(
-//                        tmpFilePath
-//                    )) {
-                        
-                        final Blob data = BlobProxy.generateProxy(
-                            Files.newInputStream(tmpFilePath), -1
-                        );
-                        fileAsset.setFileName(fileName);
-                        fileAsset.setData(data);
+                    final Blob data = BlobProxy.generateProxy(
+                        Files.newInputStream(tmpFilePath), -1
+                    );
+                    fileAsset.setFileName(fileName);
+                    fileAsset.setData(data);
 
-                        fileAsset.setSize(fileSize);
+                    fileAsset.setSize(fileSize);
 //                    fileAsset.setSize(fileAsset.getData().length);
-                        try {
-                            fileAsset.setMimeType(new MimeType(contentType));
-                        } catch (MimeTypeParseException ex) {
-                            LOGGER.error(
-                                "Failed to upload file for FileAsset {}:",
-                                assetPath
-                            );
-                            LOGGER.error(ex);
+                    try {
+                        fileAsset.setMimeType(new MimeType(contentType));
+                    } catch (MimeTypeParseException ex) {
+                        LOGGER.error(
+                            "Failed to upload file for FileAsset {}:",
+                            assetPath
+                        );
+                        LOGGER.error(ex);
 
-                            models.put("uploadFailed", true);
-                            return buildRedirectPathForStep();
-                        }
+                        models.put("uploadFailed", true);
+                        return buildRedirectPathForStep();
+                    }
 
-                        assetRepo.save(fileAsset);
+                    assetRepo.save(fileAsset);
 //                    }
 //                    try ( InputStream inputStream = inputPart.getBody(
 //                        InputStream.class, null)) {
