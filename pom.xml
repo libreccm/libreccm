@@ -340,7 +340,7 @@
                     <version>2.1.0.Beta1</version>
                     <configuration>
                         <skip>true</skip>
-                        <version>22.0.1.Final</version>
+                        <version>24.0.0.Final</version>
                     </configuration>
                 </plugin>
             </plugins>
@@ -456,7 +456,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>5.3.17.Final</version>
+                <version>5.3.20.Final</version>
             </dependency>
 
             <!--
@@ -466,7 +466,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-envers</artifactId>
-                <version>5.3.17.Final</version>
+                <version>5.3.20.Final</version>
             </dependency>
 
             <dependency>
