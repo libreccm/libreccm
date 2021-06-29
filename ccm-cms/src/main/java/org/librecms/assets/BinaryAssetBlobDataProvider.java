@@ -18,11 +18,17 @@
  */
 package org.librecms.assets;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.engine.jdbc.BlobProxy;
 import org.libreccm.core.UnexpectedErrorException;
+import org.librecms.contentsection.AssetRepository;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,9 +36,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
 
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
 import javax.annotation.Resource;
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 import javax.transaction.Transactional;
 
@@ -43,15 +52,24 @@ import javax.transaction.Transactional;
 @Dependent
 public class BinaryAssetBlobDataProvider implements BinaryAssetDataProvider {
 
+    private static final Logger LOGGER = LogManager.getLogger(
+        BinaryAssetBlobDataProvider.class
+    );
+
     @Resource(lookup = "java:/comp/env/jdbc/libreccm/db")
     private DataSource dataSource;
+
+    @Inject
+    private AssetRepository assetRepo;
+    
+    @Inject
+    private EntityManager entityManager;
 
     @Override
     public void copyDataToOutputStream(
         final BinaryAsset asset, final OutputStream outputStream
     ) {
-        Objects.requireNonNull(asset, "Can't retrieve data from null.");
-        try ( Connection connection = dataSource.getConnection()) {
+         try ( Connection connection = dataSource.getConnection()) {
             connection.setAutoCommit(false);
             final PreparedStatement stmt = connection
                 .prepareStatement(
@@ -62,43 +80,116 @@ public class BinaryAssetBlobDataProvider implements BinaryAssetDataProvider {
             try ( ResultSet resultSet = stmt.executeQuery()) {
                 resultSet.next();
                 final Blob blob = resultSet.getBlob("asset_data");
-                blob.getBinaryStream().transferTo(outputStream);
-//                try ( InputStream inputStream = blob.getBinaryStream()) {
-//                    byte[] buffer = new byte[8192];
-//                    int length;
-//                    while ((length = inputStream.read(buffer)) != -1) {
-//                        outputStream.write(buffer, 0, length);
-//                    }
-//                }
+//                blob.getBinaryStream().transferTo(outputStream);
+                try ( InputStream inputStream = blob.getBinaryStream()) {
+                    byte[] buffer = new byte[8192];
+                    int length;
+                    while ((length = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, length);
+                    }
+                }
             }
         } catch (SQLException | IOException ex) {
             throw new UnexpectedErrorException(ex);
         }
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
     @Override
     public void saveData(
         final BinaryAsset asset,
-        final InputStream stream,
+        final InputStream inputStream,
         final String fileName,
         final String mimeType,
-        final long fileSize
+        final long fileSizeParam
     ) {
         Objects.requireNonNull(asset, "Can't save data to null.");
-        try ( Connection connection = dataSource.getConnection()) {
-            final PreparedStatement stmt = connection
-                .prepareStatement(
-                    "UPDATE ccm_cms.binary_assets SET asset_data = ?, filename = ?, mime_type = ?, data_size = ? WHERE object_id = ?"
+        Objects.requireNonNull(inputStream, "Can't read data from null");
+        Objects.requireNonNull(fileName);
+        Objects.requireNonNull(mimeType);
+
+        try {
+            final Path tmpFilePath = Files.createTempFile("upload", fileName);
+            int fileSize = 0;
+            try ( OutputStream outputStream = Files.newOutputStream(tmpFilePath)) {
+                int length;
+                byte[] buffer = new byte[8192];
+                while ((length = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer);
+                    fileSize += length;
+                }
+                outputStream.flush();
+            }
+
+            final Blob data = BlobProxy.generateProxy(
+                Files.newInputStream(tmpFilePath), -1
+            );
+            asset.setFileName(fileName);
+            asset.setData(data);
+            asset.setSize(fileSize);
+            try {
+                asset.setMimeType(new MimeType(mimeType));
+            } catch (MimeTypeParseException ex) {
+                LOGGER.error(
+                    "Failed to upload file for FileAsset {}:",
+                    asset.getUuid()
                 );
-            stmt.setBlob(1, stream);
-            stmt.setString(2, fileName);
-            stmt.setString(3, mimeType);
-            stmt.setLong(4, fileSize);
-            stmt.setLong(5, asset.getObjectId());
+                LOGGER.error(ex);
 
-            stmt.execute();
+                throw new UnexpectedErrorException(ex);
+            }
+        } catch (IOException ex) {
+            throw new UnexpectedErrorException(ex);
+        }
 
-        } catch (SQLException ex) {
+        assetRepo.save(asset);
+        entityManager.flush();
+        
+        updateAudTable(asset.getObjectId());
+
+//        try ( Connection connection = dataSource.getConnection()) {
+//            final PreparedStatement stmt = connection
+//                .prepareStatement(
+//                    "UPDATE ccm_cms.binary_assets SET asset_data = ?, filename = ?, mime_type = ?, data_size = ? WHERE object_id = ?"
+//                );
+//            stmt.setBlob(1, stream);
+//            stmt.setString(2, fileName);
+//            stmt.setString(3, mimeType);
+//            stmt.setLong(4, fileSize);
+//            stmt.setLong(5, asset.getObjectId());
+//
+//            stmt.execute();
+//
+//        } catch (SQLException ex) {
+//            throw new UnexpectedErrorException(ex);
+//        }
+    }
+    
+    @Transactional(Transactional.TxType.REQUIRED)
+    private void updateAudTable(final long assetId) {
+        try (Connection connection = dataSource.getConnection()) {
+            final PreparedStatement findRevStmt = connection
+                .prepareStatement(
+                    "SELECT rev FROM ccm_cms.binary_assets_aud WHERE object_id = ? ORDER BY rev DESC LIMIT 1"
+                );
+            findRevStmt.setLong(1, assetId);
+            
+            final long rev;
+            try(ResultSet resultSet = findRevStmt.executeQuery()) {
+                resultSet.next();
+                rev = resultSet.getLong("rev");
+            }
+            
+            final PreparedStatement updateDataStmt = connection
+                .prepareStatement(
+                    "UPDATE ccm_cms.binary_assets_aud SET asset_data = (SELECT asset_data FROM ccm_cms.binary_assets WHERE object_id = ?) WHERE object_id = ? AND rev = ?"
+                );
+            updateDataStmt.setLong(1, assetId);
+            updateDataStmt.setLong(2, assetId);
+            updateDataStmt.setLong(3, rev);
+           
+            updateDataStmt.execute();
+        } catch(SQLException ex) {
             throw new UnexpectedErrorException(ex);
         }
     }

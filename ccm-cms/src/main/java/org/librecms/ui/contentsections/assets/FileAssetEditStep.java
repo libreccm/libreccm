@@ -32,8 +32,6 @@ import org.librecms.contentsection.AssetRepository;
 import org.librecms.ui.contentsections.AssetPermissionsChecker;
 import org.librecms.ui.contentsections.ContentSectionNotFoundException;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -355,65 +353,60 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
                 try {
                     final MultivaluedMap<String, String> headers = inputPart
                         .getHeaders();
+
                     fileName = getFileName(headers);
                     contentType = getContentType(headers);
-//                    fileSize = getFileSize(headers);
 
-                    final java.nio.file.Path tmpFilePath = Files
-                        .createTempFile(
-                            "upload", fileName
-                        );
-                    try ( InputStream inputStream = inputPart.getBody(
-                        InputStream.class, null
-                    )) {
-                        try ( OutputStream outputStream = Files.newOutputStream(
-                            tmpFilePath
-                        )) {
-                            int length;
-                            byte[] buffer = new byte[8192];
-                            while ((length = inputStream.read(buffer)) != -1) {
-                                outputStream.write(buffer);
-                                fileSize += length;
-                            }
-                            outputStream.flush();
-                        }
-                    }
-
-                    final Blob data = BlobProxy.generateProxy(
-                        Files.newInputStream(tmpFilePath), -1
+                    dataService.saveData(
+                        fileAsset,
+                        inputPart.getBody(InputStream.class, null),
+                        fileName,
+                        contentType,
+                        fileSize
                     );
-                    fileAsset.setFileName(fileName);
-                    fileAsset.setData(data);
-
-                    fileAsset.setSize(fileSize);
-//                    fileAsset.setSize(fileAsset.getData().length);
-                    try {
-                        fileAsset.setMimeType(new MimeType(contentType));
-                    } catch (MimeTypeParseException ex) {
-                        LOGGER.error(
-                            "Failed to upload file for FileAsset {}:",
-                            assetPath
-                        );
-                        LOGGER.error(ex);
-
-                        models.put("uploadFailed", true);
-                        return buildRedirectPathForStep();
-                    }
-
-                    assetRepo.save(fileAsset);
-//                    }
-//                    try ( InputStream inputStream = inputPart.getBody(
-//                        InputStream.class, null)) {
-//                        dataService.saveData(
-//                            fileAsset,
-//                            inputStream, 
-//                            fileName, 
-//                            contentType, 
-//                            fileSize
+//
+//                    final java.nio.file.Path tmpFilePath = Files
+//                        .createTempFile(
+//                            "upload", fileName
 //                        );
+//                    try ( InputStream inputStream = inputPart.getBody(
+//                        InputStream.class, null
+//                    )) {
+//                        try ( OutputStream outputStream = Files.newOutputStream(
+//                            tmpFilePath
+//                        )) {
+//                            int length;
+//                            byte[] buffer = new byte[8192];
+//                            while ((length = inputStream.read(buffer)) != -1) {
+//                                outputStream.write(buffer);
+//                                fileSize += length;
+//                            }
+//                            outputStream.flush();
+//                        }
 //                    }
-
-                } catch (IOException ex) {
+//
+//                    final Blob data = BlobProxy.generateProxy(
+//                        Files.newInputStream(tmpFilePath), -1
+//                    );
+//                    fileAsset.setFileName(fileName);
+//                    fileAsset.setData(data);
+//
+//                    fileAsset.setSize(fileSize);
+//                    try {
+//                        fileAsset.setMimeType(new MimeType(contentType));
+//                    } catch (MimeTypeParseException ex) {
+//                        LOGGER.error(
+//                            "Failed to upload file for FileAsset {}:",
+//                            assetPath
+//                        );
+//                        LOGGER.error(ex);
+//
+//                        models.put("uploadFailed", true);
+//                        return buildRedirectPathForStep();
+//                    }
+//
+//                    assetRepo.save(fileAsset);
+                } catch (IOException | UnexpectedErrorException ex) {
                     LOGGER.error(
                         "Failed to upload file for FileAsset {}:", assetPath
                     );

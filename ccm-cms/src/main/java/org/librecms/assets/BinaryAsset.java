@@ -21,7 +21,6 @@ package org.librecms.assets;
 import org.librecms.contentsection.Asset;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Objects;
 
 import javax.activation.MimeType;
@@ -48,6 +47,7 @@ import java.sql.SQLException;
 import javax.persistence.Basic;
 import javax.persistence.Convert;
 import javax.persistence.FetchType;
+import javax.transaction.Transactional;
 
 import static org.librecms.CmsConstants.*;
 

@@ -24,20 +24,13 @@ import org.librecms.assets.FileAsset;
 import org.librecms.contentsection.Asset;
 import org.librecms.contentsection.AssetRepository;
 import org.librecms.contentsection.ContentSection;
-import org.librecms.ui.contentsections.ContentSectionNotFoundException;
 import org.librecms.ui.contentsections.ContentSectionsUi;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.mail.internet.ContentDisposition;
 import javax.transaction.Transactional;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -67,14 +60,12 @@ public class FileAssetEditStepDownload {
     @GET
     @Path("/")
     @AuthorizationRequired
-    @Transactional(Transactional.TxType.REQUIRED)
     public Response downloadFile(
         @PathParam(MvcAssetEditSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
         @PathParam(MvcAssetEditSteps.ASSET_PATH_PATH_PARAM_NAME)
         final String assetPath
     ) {
-
         final ContentSection contentSection = sectionsUi
             .findContentSection(sectionIdentifier)
             .orElseThrow(
