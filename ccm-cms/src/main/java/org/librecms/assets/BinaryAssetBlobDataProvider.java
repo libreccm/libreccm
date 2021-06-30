@@ -80,7 +80,6 @@ public class BinaryAssetBlobDataProvider implements BinaryAssetDataProvider {
             try ( ResultSet resultSet = stmt.executeQuery()) {
                 resultSet.next();
                 final Blob blob = resultSet.getBlob("asset_data");
-//                blob.getBinaryStream().transferTo(outputStream);
                 try ( InputStream inputStream = blob.getBinaryStream()) {
                     byte[] buffer = new byte[8192];
                     int length;
@@ -143,26 +142,6 @@ public class BinaryAssetBlobDataProvider implements BinaryAssetDataProvider {
         }
 
         assetRepo.save(asset);
-//        entityManager.flush();
-//        
-//        updateAudTable(asset.getObjectId());
-
-//        try ( Connection connection = dataSource.getConnection()) {
-//            final PreparedStatement stmt = connection
-//                .prepareStatement(
-//                    "UPDATE ccm_cms.binary_assets SET asset_data = ?, filename = ?, mime_type = ?, data_size = ? WHERE object_id = ?"
-//                );
-//            stmt.setBlob(1, stream);
-//            stmt.setString(2, fileName);
-//            stmt.setString(3, mimeType);
-//            stmt.setLong(4, fileSize);
-//            stmt.setLong(5, asset.getObjectId());
-//
-//            stmt.execute();
-//
-//        } catch (SQLException ex) {
-//            throw new UnexpectedErrorException(ex);
-//        }
     }
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
