@@ -41,11 +41,13 @@ import javax.activation.MimeTypeParseException;
 import javax.annotation.Resource;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 import javax.transaction.Transactional;
 
 /**
+ * An implementation of {@link BinaryAssetDataProvider} using the
+ * {@link BinaryAsset#data} field and the {@link BlobProxy} from Hibernate for
+ * storing and retrieving binary data.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
@@ -61,9 +63,6 @@ public class BinaryAssetBlobDataProvider implements BinaryAssetDataProvider {
 
     @Inject
     private AssetRepository assetRepo;
-
-    @Inject
-    private EntityManager entityManager;
 
     @Override
     public void copyDataToOutputStream(
@@ -99,8 +98,7 @@ public class BinaryAssetBlobDataProvider implements BinaryAssetDataProvider {
         final BinaryAsset asset,
         final InputStream inputStream,
         final String fileName,
-        final String mimeType,
-        final long fileSizeParam
+        final String mimeType
     ) {
         Objects.requireNonNull(asset, "Can't save data to null.");
         Objects.requireNonNull(inputStream, "Can't read data from null");
@@ -142,35 +140,6 @@ public class BinaryAssetBlobDataProvider implements BinaryAssetDataProvider {
         }
 
         assetRepo.save(asset);
-    }
-
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
-    private void updateAudTable(final long assetId) {
-        try ( Connection connection = dataSource.getConnection()) {
-            final PreparedStatement findRevStmt = connection
-                .prepareStatement(
-                    "SELECT rev FROM ccm_cms.binary_assets_aud WHERE object_id = ? ORDER BY rev DESC LIMIT 1"
-                );
-            findRevStmt.setLong(1, assetId);
-
-            final long rev;
-            try ( ResultSet resultSet = findRevStmt.executeQuery()) {
-                resultSet.next();
-                rev = resultSet.getLong("rev");
-            }
-
-            final PreparedStatement updateDataStmt = connection
-                .prepareStatement(
-                    "UPDATE ccm_cms.binary_assets_aud SET asset_data = (SELECT asset_data FROM ccm_cms.binary_assets WHERE object_id = ?) WHERE object_id = ? AND rev = ?"
-                );
-            updateDataStmt.setLong(1, assetId);
-            updateDataStmt.setLong(2, assetId);
-            updateDataStmt.setLong(3, rev);
-
-            updateDataStmt.execute();
-        } catch (SQLException ex) {
-            throw new UnexpectedErrorException(ex);
-        }
     }
 
     private class UploadInputStream extends InputStream {

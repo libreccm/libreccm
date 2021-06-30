@@ -87,7 +87,6 @@ public class BinaryAsset extends Asset implements Serializable {
     @Lob
     @Basic(fetch = FetchType.LAZY)
 //    @NotAudited
-//    private byte[] data;
     private Blob data;
 
     @Column(name = "DATA_SIZE")
@@ -124,23 +123,6 @@ public class BinaryAsset extends Asset implements Serializable {
         this.mimeType = mimeType;
     }
 
-//    public byte[] getData() {
-//        if (data == null) {
-//            return new byte[]{};
-//        } else {
-//            return Arrays.copyOf(data, data.length);
-//        }
-//    }
-//
-//    public void setData(final byte[] data) {
-//        if (data == null) {
-//            this.data = new byte[]{};
-//            size = this.data.length;
-//        } else {
-//            this.data = Arrays.copyOf(data, data.length);
-//            size = data.length;
-//        }
-//    }
     public Blob getData() {
         return data;
     }

@@ -31,19 +31,41 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 /**
+ * A service class for working with the binary data of a {@link BinaryAsset}.
+ *
+ * This class acts as a frontend to the implementations of
+ * {@link BinaryAssetDataProvider}. The implementation to use is configured by
+ * {@link BinaryAssetConfig#binaryAssetDataProvider}.
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
 public class BinaryAssetDataService {
 
+    /**
+     * Used to retrrieve the {@link BinaryAssetConfig}.
+     */
     @Inject
     private ConfigurationManager confManager;
 
+    /**
+     * The available implementations of {@link BinaryAssetDataProvider}.
+     */
     @Inject
     @Any
     private Instance<BinaryAssetDataProvider> dataProvider;
 
+    /**
+     * Copy the data of the {@link BinaryAsset} to the provided
+     * {@link OutputStream}.
+     *
+     * @param asset        The asset providing the data.
+     * @param outputStream The output stream to use.
+     *
+     * @see
+     * BinaryAssetDataProvider#copyDataToOutputStream(org.librecms.assets.BinaryAsset,
+     * java.io.OutputStream)
+     */
     public void copyDataToOutputStream(
         final BinaryAsset asset,
         final OutputStream outputStream
@@ -53,19 +75,36 @@ public class BinaryAssetDataService {
         getDataProvider().copyDataToOutputStream(asset, outputStream);
     }
 
+    /**
+     *
+     * Saves binary data for the provided {@link BinaryAsset}.
+     *
+     * @param asset       The asset that will hold the data.
+     * @param stream      The {@link InputStream} providing the data.
+     * @param fileName    The file name of the data.
+     * @param contentType The content type of the data.
+     *
+     * @see BinaryAssetDataProvider#saveData(org.librecms.assets.BinaryAsset,
+     * java.io.InputStream, java.lang.String, java.lang.String)
+     */
     public void saveData(
         final BinaryAsset asset,
         final InputStream stream,
         final String fileName,
-        final String mimeType,
-        final long fileSize
+        final String mimeType
     ) {
         Objects.requireNonNull(asset, "Can't save data to null.");
 
         final BinaryAssetDataProvider dataProvider = getDataProvider();
-        dataProvider.saveData(asset, stream, fileName, mimeType, fileSize);
+        dataProvider.saveData(asset, stream, fileName, mimeType);
     }
 
+    /**
+     * Helper method for obtaining the implementation of
+     * {@link BinaryAssetDataProvider} to use.
+     *
+     * @return The implementation of {@link BinaryAssetDataProvider} to use.
+     */
     @SuppressWarnings("unchecked")
     private BinaryAssetDataProvider getDataProvider() {
         final BinaryAssetConfig config = confManager.findConfiguration(
