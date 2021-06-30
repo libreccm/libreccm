@@ -86,7 +86,7 @@ public class BinaryAsset extends Asset implements Serializable {
     @Column(name = "ASSET_DATA")
     @Lob
     @Basic(fetch = FetchType.LAZY)
-    @NotAudited
+//    @NotAudited
 //    private byte[] data;
     private Blob data;
 

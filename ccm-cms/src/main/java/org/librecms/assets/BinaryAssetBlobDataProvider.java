@@ -61,7 +61,7 @@ public class BinaryAssetBlobDataProvider implements BinaryAssetDataProvider {
 
     @Inject
     private AssetRepository assetRepo;
-    
+
     @Inject
     private EntityManager entityManager;
 
@@ -69,7 +69,7 @@ public class BinaryAssetBlobDataProvider implements BinaryAssetDataProvider {
     public void copyDataToOutputStream(
         final BinaryAsset asset, final OutputStream outputStream
     ) {
-         try ( Connection connection = dataSource.getConnection()) {
+        try ( Connection connection = dataSource.getConnection()) {
             connection.setAutoCommit(false);
             final PreparedStatement stmt = connection
                 .prepareStatement(
@@ -122,7 +122,7 @@ public class BinaryAssetBlobDataProvider implements BinaryAssetDataProvider {
             }
 
             final Blob data = BlobProxy.generateProxy(
-                Files.newInputStream(tmpFilePath), -1
+                new UploadInputStream(tmpFilePath), -1
             );
             asset.setFileName(fileName);
             asset.setData(data);
@@ -143,9 +143,9 @@ public class BinaryAssetBlobDataProvider implements BinaryAssetDataProvider {
         }
 
         assetRepo.save(asset);
-        entityManager.flush();
-        
-        updateAudTable(asset.getObjectId());
+//        entityManager.flush();
+//        
+//        updateAudTable(asset.getObjectId());
 
 //        try ( Connection connection = dataSource.getConnection()) {
 //            final PreparedStatement stmt = connection
@@ -164,22 +164,22 @@ public class BinaryAssetBlobDataProvider implements BinaryAssetDataProvider {
 //            throw new UnexpectedErrorException(ex);
 //        }
     }
-    
-    @Transactional(Transactional.TxType.REQUIRED)
+
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     private void updateAudTable(final long assetId) {
-        try (Connection connection = dataSource.getConnection()) {
+        try ( Connection connection = dataSource.getConnection()) {
             final PreparedStatement findRevStmt = connection
                 .prepareStatement(
                     "SELECT rev FROM ccm_cms.binary_assets_aud WHERE object_id = ? ORDER BY rev DESC LIMIT 1"
                 );
             findRevStmt.setLong(1, assetId);
-            
+
             final long rev;
-            try(ResultSet resultSet = findRevStmt.executeQuery()) {
+            try ( ResultSet resultSet = findRevStmt.executeQuery()) {
                 resultSet.next();
                 rev = resultSet.getLong("rev");
             }
-            
+
             final PreparedStatement updateDataStmt = connection
                 .prepareStatement(
                     "UPDATE ccm_cms.binary_assets_aud SET asset_data = (SELECT asset_data FROM ccm_cms.binary_assets WHERE object_id = ?) WHERE object_id = ? AND rev = ?"
@@ -187,11 +187,97 @@ public class BinaryAssetBlobDataProvider implements BinaryAssetDataProvider {
             updateDataStmt.setLong(1, assetId);
             updateDataStmt.setLong(2, assetId);
             updateDataStmt.setLong(3, rev);
-           
+
             updateDataStmt.execute();
-        } catch(SQLException ex) {
+        } catch (SQLException ex) {
             throw new UnexpectedErrorException(ex);
         }
+    }
+
+    private class UploadInputStream extends InputStream {
+
+        private final Path tmpFilePath;
+
+        private InputStream inputStream;
+
+        public UploadInputStream(final Path tmpFilePath) {
+            this.tmpFilePath = tmpFilePath;
+        }
+
+        @Override
+        public int available() throws IOException {
+            openNewInputStreamIfNecessary();
+            return inputStream.available();
+        }
+
+        @Override
+        public void close() throws IOException {
+            if (inputStream != null) {
+                inputStream.close();
+                inputStream = null;
+            }
+        }
+
+        @Override
+        public void mark(final int readLimit) {
+            try {
+                openNewInputStreamIfNecessary();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            inputStream.mark(readLimit);
+        }
+
+        @Override
+        public boolean markSupported() {
+            try {
+                openNewInputStreamIfNecessary();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            return inputStream.markSupported();
+        }
+
+        @Override
+        public int read() throws IOException {
+            openNewInputStreamIfNecessary();
+            return inputStream.read();
+        }
+
+        @Override
+        public int read(final byte[] data) throws IOException {
+            openNewInputStreamIfNecessary();
+            return inputStream.read(data);
+        }
+
+        @Override
+        public int read(final byte[] data, final int offset, final int length)
+            throws IOException {
+            openNewInputStreamIfNecessary();
+            return inputStream.read(data, offset, length);
+        }
+
+        @Override
+        public void reset() throws IOException {
+            if (inputStream == null) {
+                openNewInputStreamIfNecessary();
+            } else {
+                inputStream.reset();
+            }
+        }
+
+        @Override
+        public long skip(long nBytes) throws IOException {
+            openNewInputStreamIfNecessary();
+            return inputStream.skip(nBytes);
+        }
+
+        private void openNewInputStreamIfNecessary() throws IOException {
+            if (inputStream == null) {
+                inputStream = Files.newInputStream(tmpFilePath);
+            }
+        }
+
     }
 
 }
