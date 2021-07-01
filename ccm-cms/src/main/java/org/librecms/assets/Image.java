@@ -27,7 +27,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
 import com.arsdigita.cms.ui.assets.forms.ImageForm;
+
 import org.hibernate.envers.Audited;
+import org.librecms.ui.contentsections.assets.ImageCreateStep;
+import org.librecms.ui.contentsections.assets.ImageEditStep;
+import org.librecms.ui.contentsections.assets.MvcAssetEditKit;
 
 import javax.persistence.OneToOne;
 
@@ -48,6 +52,10 @@ import static org.librecms.assets.AssetConstants.*;
            labelBundle = ASSETS_BUNDLE,
            descriptionKey = "image.description",
            descriptionBundle = ASSETS_BUNDLE)
+@MvcAssetEditKit(
+    createStep = ImageCreateStep.class,
+    editStep = ImageEditStep.class
+)
 public class Image extends BinaryAsset implements Serializable {
 
     private static final long serialVersionUID = -8095106228017573785L;
