@@ -20,7 +20,8 @@ package org.librecms.ui.contentsections.assets;
 
 import org.libreccm.security.AuthorizationRequired;
 import org.librecms.assets.BinaryAssetDataService;
-import org.librecms.assets.FileAsset;
+import org.librecms.assets.Image;
+import org.librecms.assets.ImageService;
 import org.librecms.contentsection.Asset;
 import org.librecms.contentsection.AssetRepository;
 import org.librecms.contentsection.ContentSection;
@@ -31,9 +32,11 @@ import java.io.OutputStream;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
@@ -43,8 +46,8 @@ import javax.ws.rs.core.StreamingOutput;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Path(MvcAssetEditSteps.PATH_PREFIX + "fileasset-edit-download")
-public class FileAssetEditStepDownload {
+@Path(MvcAssetEditSteps.PATH_PREFIX + "image-edit-download")
+public class ImageEditStepDownload {
 
     @Inject
     private AssetRepository assetRepo;
@@ -55,6 +58,9 @@ public class FileAssetEditStepDownload {
     @Inject
     private ContentSectionsUi sectionsUi;
 
+    @Inject
+    private ImageService imageService;
+
     @GET
     @Path("/")
     @AuthorizationRequired
@@ -62,7 +68,11 @@ public class FileAssetEditStepDownload {
         @PathParam(MvcAssetEditSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
         @PathParam(MvcAssetEditSteps.ASSET_PATH_PATH_PARAM_NAME)
-        final String assetPath
+        final String assetPath,
+        @QueryParam("width") @DefaultValue("-1")
+        final int width,
+        @QueryParam("height") @DefaultValue("-1")
+        final int height
     ) {
         final ContentSection contentSection = sectionsUi
             .findContentSection(sectionIdentifier)
@@ -96,13 +106,13 @@ public class FileAssetEditStepDownload {
                 )
             );
 
-        if (!(asset instanceof FileAsset)) {
+        if (!(asset instanceof Image)) {
             throw new WebApplicationException(
                 Response
                     .status(Response.Status.NOT_FOUND)
                     .entity(
                         String.format(
-                            "No asset for path %s found in section %s.",
+                            "No image for path %s found in section %s.",
                             assetPath,
                             contentSection.getLabel()
                         )
@@ -110,28 +120,45 @@ public class FileAssetEditStepDownload {
                     .build()
             );
         }
-        final FileAsset fileAsset = (FileAsset) asset;
-        return Response
-            .ok()
-            .entity(
-                new StreamingOutput() {
+
+        final Image image = (Image) asset;
+        final StreamingOutput streamingOutput;
+        if (width == -1 && height == -1) {
+            streamingOutput = new StreamingOutput() {
 
                 @Override
                 public void write(final OutputStream outputStream)
                     throws IOException, WebApplicationException {
-                    dataService.copyDataToOutputStream(fileAsset, outputStream);
+                    dataService.copyDataToOutputStream(image, outputStream);
                 }
 
-            })
-            .header("Content-Type", fileAsset.getMimeType())
+            };
+        } else {
+            final byte[] scaled = imageService.scaleImage(image, width, height);
+            streamingOutput = new StreamingOutput() {
+
+                @Override
+                public void write(final OutputStream outputStream)
+                    throws IOException, WebApplicationException {
+                    outputStream.write(scaled);
+                }
+
+            };
+        }
+
+        return Response
+            .ok()
+            .entity(streamingOutput)
+            .header("Content-Type", image.getMimeType())
             .header(
                 "Content-Disposition",
                 String.format(
                     "attachment; filename=\"%s\"",
-                    fileAsset.getFileName()
+                    image.getFileName()
                 )
             )
             .build();
+
     }
 
 }

@@ -19,8 +19,8 @@
 package org.librecms.ui.contentsections.assets;
 
 import org.libreccm.security.AuthorizationRequired;
+import org.librecms.assets.AudioAsset;
 import org.librecms.assets.BinaryAssetDataService;
-import org.librecms.assets.FileAsset;
 import org.librecms.contentsection.Asset;
 import org.librecms.contentsection.AssetRepository;
 import org.librecms.contentsection.ContentSection;
@@ -43,9 +43,9 @@ import javax.ws.rs.core.StreamingOutput;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Path(MvcAssetEditSteps.PATH_PREFIX + "fileasset-edit-download")
-public class FileAssetEditStepDownload {
-
+@Path(MvcAssetEditSteps.PATH_PREFIX + "audioasset-edit-download")
+public class AudioAssetEditStepDownload {
+    
     @Inject
     private AssetRepository assetRepo;
 
@@ -54,8 +54,8 @@ public class FileAssetEditStepDownload {
 
     @Inject
     private ContentSectionsUi sectionsUi;
-
-    @GET
+    
+     @GET
     @Path("/")
     @AuthorizationRequired
     public Response downloadFile(
@@ -95,8 +95,8 @@ public class FileAssetEditStepDownload {
                         .build()
                 )
             );
-
-        if (!(asset instanceof FileAsset)) {
+        
+        if (!(asset instanceof AudioAsset)) {
             throw new WebApplicationException(
                 Response
                     .status(Response.Status.NOT_FOUND)
@@ -110,8 +110,9 @@ public class FileAssetEditStepDownload {
                     .build()
             );
         }
-        final FileAsset fileAsset = (FileAsset) asset;
-        return Response
+        
+        final AudioAsset audioAsset = (AudioAsset) asset;
+         return Response
             .ok()
             .entity(
                 new StreamingOutput() {
@@ -119,19 +120,20 @@ public class FileAssetEditStepDownload {
                 @Override
                 public void write(final OutputStream outputStream)
                     throws IOException, WebApplicationException {
-                    dataService.copyDataToOutputStream(fileAsset, outputStream);
+                    dataService.copyDataToOutputStream(
+                        audioAsset, outputStream
+                    );
                 }
 
             })
-            .header("Content-Type", fileAsset.getMimeType())
+            .header("Content-Type", audioAsset.getMimeType())
             .header(
                 "Content-Disposition",
                 String.format(
                     "attachment; filename=\"%s\"",
-                    fileAsset.getFileName()
+                    audioAsset.getFileName()
                 )
             )
             .build();
     }
-
 }

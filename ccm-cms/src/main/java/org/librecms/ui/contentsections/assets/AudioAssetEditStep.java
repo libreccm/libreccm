@@ -22,11 +22,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import org.libreccm.api.Identifier;
+import org.libreccm.api.IdentifierParser;
 import org.libreccm.core.UnexpectedErrorException;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.security.AuthorizationRequired;
 import org.librecms.assets.BinaryAssetDataService;
 import org.librecms.assets.FileAsset;
+import org.librecms.assets.AudioAsset;
+import org.librecms.assets.LegalMetadata;
 import org.librecms.contentsection.AssetRepository;
 import org.librecms.ui.contentsections.AssetPermissionsChecker;
 import org.librecms.ui.contentsections.ContentSectionNotFoundException;
@@ -60,18 +64,18 @@ import javax.ws.rs.core.MultivaluedMap;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Path(MvcAssetEditSteps.PATH_PREFIX + "fileasset-edit")
+@Path(MvcAssetEditSteps.PATH_PREFIX + "audioasset-edit")
 @Controller
 @MvcAssetEditStepDef(
     bundle = MvcAssetStepsConstants.BUNDLE,
-    descriptionKey = "fileasset.editstep.description",
-    labelKey = "fileasset.editstep.lable",
+    descriptionKey = "audioasset.editstep.description",
+    labelKey = "audioasset.editstep.label",
     supportedAssetType = FileAsset.class
 )
-public class FileAssetEditStep extends AbstractMvcAssetEditStep {
+public class AudioAssetEditStep extends AbstractMvcAssetEditStep {
 
     private static final Logger LOGGER = LogManager.getLogger(
-        FileAssetEditStep.class
+        AudioAssetEditStep.class
     );
 
     @Inject
@@ -90,27 +94,30 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
     private GlobalizationHelper globalizationHelper;
 
     @Inject
+    private IdentifierParser identifierParser;
+    
+    @Inject
     private AssetPermissionsChecker assetPermissionsChecker;
 
     @Inject
     private Models models;
 
     @Inject
-    private FileAssetEditStepModel editStepModel;
+    private AudioAssetEditStepModel editStepModel;
 
     @Override
     public Class<? extends MvcAssetEditStep> getStepClass() {
-        return FileAssetEditStep.class;
+        return AudioAssetEditStep.class;
     }
 
     @Override
     protected void init() throws ContentSectionNotFoundException,
                                  AssetNotFoundException {
         super.init();
-
-        if (getAsset() instanceof FileAsset) {
-            editStepModel.setDescriptionValues(
-                getFileAsset()
+        
+        if (getAsset() instanceof AudioAsset) {
+             editStepModel.setDescriptionValues(
+                getAudioAsset()
                     .getDescription()
                     .getValues()
                     .entrySet()
@@ -123,7 +130,7 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
                     )
             );
 
-            final Set<Locale> descriptionLocales = getFileAsset()
+            final Set<Locale> descriptionLocales = getAudioAsset()
                 .getDescription()
                 .getAvailableLocales();
             editStepModel.setUnusedDescriptionLocales(
@@ -135,16 +142,16 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
                     .collect(Collectors.toList())
             );
 
-            editStepModel.setFileName(getFileAsset().getFileName());
+            editStepModel.setFileName(getAudioAsset().getFileName());
             editStepModel.setMimeType(
                 Optional
-                    .ofNullable(getFileAsset().getMimeType())
+                    .ofNullable(getAudioAsset().getMimeType())
                     .map(MimeType::toString)
                     .orElse("")
             );
-            editStepModel.setSize(getFileAsset().getSize());
+            editStepModel.setSize(getAudioAsset().getSize());
 
-            final long size = getFileAsset().getSize();
+            final long size = getAudioAsset().getSize();
             if (size < 2048) {
                 editStepModel.setSizeLabel(String.format("%d Bytes", size));
             } else if (size < 1024 * 1024) {
@@ -160,6 +167,8 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
                     String.format("%d GB", size / (1024 * 1024 * 1024))
                 );
             }
+            
+            editStepModel.setLegalMetadata(getAudioAsset().getLegalMetadata());
         } else {
             throw new AssetNotFoundException(
                 assetUi.showAssetNotFound(
@@ -173,8 +182,8 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
             );
         }
     }
-
-    @GET
+    
+     @GET
     @Path("/")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
@@ -194,7 +203,7 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
         }
 
         if (assetPermissionsChecker.canEditAsset(getAsset())) {
-            return "org/librecms/ui/contentsection/assets/fileasset/edit-fileasset.xhtml";
+            return "org/librecms/ui/contentsection/assets/audioasset/edit-audioasset.xhtml";
         } else {
             return assetUi.showAccessDenied(
                 getContentSection(),
@@ -202,8 +211,8 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
                 messageBundle.get("asset.edit.denied"));
         }
     }
-
-    @POST
+    
+     @POST
     @Path("/description/add")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
@@ -225,10 +234,10 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
 
         if (assetPermissionsChecker.canEditAsset(getAsset())) {
             final Locale locale = new Locale(localeParam);
-            final FileAsset fileAsset = getFileAsset();
-            fileAsset.getDescription().addValue(locale, value);
+            final AudioAsset asset = getAudioAsset();
+            asset.getDescription().addValue(locale, value);
 
-            assetRepo.save(fileAsset);
+            assetRepo.save(asset);
 
             return buildRedirectPathForStep();
         } else {
@@ -261,10 +270,10 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
 
         if (assetPermissionsChecker.canEditAsset(getAsset())) {
             final Locale locale = new Locale(localeParam);
-            final FileAsset fileAsset = getFileAsset();
-            fileAsset.getDescription().addValue(locale, value);
+            final AudioAsset asset = getAudioAsset();
+            asset.getDescription().addValue(locale, value);
 
-            assetRepo.save(fileAsset);
+            assetRepo.save(asset);
 
             return buildRedirectPathForStep();
         } else {
@@ -296,10 +305,10 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
 
         if (assetPermissionsChecker.canEditAsset(getAsset())) {
             final Locale locale = new Locale(localeParam);
-            final FileAsset fileAsset = getFileAsset();
-            fileAsset.getDescription().removeValue(locale);
+            final AudioAsset asset = getAudioAsset();
+            asset.getDescription().removeValue(locale);
 
-            assetRepo.save(fileAsset);
+            assetRepo.save(asset);
 
             return buildRedirectPathForStep();
         } else {
@@ -308,6 +317,82 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
                 getAsset(),
                 messageBundle.get("asset.edit.denied"));
         }
+    }
+    
+      @POST
+    @Path("/legalmetadata")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String setLegalMetadata(
+        @FormParam("legalMetadataIdentifier")
+        final String legalMetadataIdentifier
+    ) {
+        try {
+            init();
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (AssetNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
+
+        final Identifier identifier = identifierParser
+            .parseIdentifier(legalMetadataIdentifier);
+        final Optional<LegalMetadata> legalMetadataResult;
+        switch (identifier.getType()) {
+            case ID:
+                legalMetadataResult = assetRepo.findById(
+                    Long.parseLong(identifier.getIdentifier()),
+                    LegalMetadata.class
+                );
+                break;
+            case UUID:
+                legalMetadataResult = assetRepo.findByUuidAndType(
+                    identifier.getIdentifier(),
+                    LegalMetadata.class
+                );
+                break;
+            default:
+                legalMetadataResult = assetRepo
+                    .findByPath(identifier.getIdentifier())
+                    .map(result -> (LegalMetadata) result);
+                break;
+        }
+        if (!legalMetadataResult.isPresent()) {
+            return showLegalMetadataNotFound(legalMetadataIdentifier);
+        }
+
+        final LegalMetadata legalMetadata = legalMetadataResult.get();
+
+        getAudioAsset().setLegalMetadata(legalMetadata);
+        assetRepo.save(getAudioAsset());
+
+        return buildRedirectPathForStep();
+    }
+
+    @POST
+    @Path("/legalmetadata/@remove")
+    @AuthorizationRequired
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String removeLegalMetadata() {
+        try {
+            init();
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (AssetNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
+
+        getAudioAsset().setLegalMetadata(null);
+        assetRepo.save(getAudioAsset());
+
+        return buildRedirectPathForStep();
+    }
+
+    private String showLegalMetadataNotFound(
+        final String legalMetadataIdentifer
+    ) {
+        models.put("legalMetadataIdentifier", legalMetadataIdentifer);
+        return "org/librecms/ui/contentsection/assets/external-video-asset/legal-metadata-not-found.xhtml";
     }
 
     @POST
@@ -331,7 +416,7 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
         }
 
         if (assetPermissionsChecker.canEditAsset(getAsset())) {
-            final FileAsset fileAsset = getFileAsset();
+            final AudioAsset asset = getAudioAsset();
 
             final Map<String, List<InputPart>> uploadForm = input
                 .getFormDataMap();
@@ -348,7 +433,7 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
                     contentType = getContentType(headers);
 
                     dataService.saveData(
-                        fileAsset,
+                        asset,
                         inputPart.getBody(InputStream.class, null),
                         fileName,
                         contentType
@@ -373,11 +458,12 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
         }
     }
 
-    public FileAsset getFileAsset() {
-        return (FileAsset) getAsset();
+    
+    public AudioAsset getAudioAsset() {
+        return (AudioAsset) getAsset();
     }
-
-    private String getFileName(final MultivaluedMap<String, String> headers) {
+    
+     private String getFileName(final MultivaluedMap<String, String> headers) {
         final String[] contentDisposition = headers
             .getFirst("Content-Disposition")
             .split(";");
@@ -398,5 +484,5 @@ public class FileAssetEditStep extends AbstractMvcAssetEditStep {
     ) {
         return headers.getFirst("Content-Type");
     }
-
+    
 }
