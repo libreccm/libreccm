@@ -36,8 +36,8 @@ import javax.inject.Named;
 @RequestScoped
 @Named("CmsVideoAssetEditStepModel")
 public class VideoAssetEditStepModel {
-    
-      private Map<String, String> descriptionValues;
+
+    private Map<String, String> descriptionValues;
 
     private List<String> unusedDescriptionLocales;
 
@@ -46,9 +46,9 @@ public class VideoAssetEditStepModel {
     private String mimeType;
 
     private long size;
-    
+
     private String sizeLabel;
-    
+
     private LegalMetadata legalMetadata;
 
     public Map<String, String> getDescriptionValues() {
@@ -94,11 +94,11 @@ public class VideoAssetEditStepModel {
     protected void setSize(final long size) {
         this.size = size;
     }
-    
+
     public String getSizeLabel() {
         return sizeLabel;
     }
-    
+
     protected void setSizeLabel(final String sizeLabel) {
         this.sizeLabel = sizeLabel;
     }
@@ -114,4 +114,9 @@ public class VideoAssetEditStepModel {
     public String getLegalMetadataType() {
         return LegalMetadata.class.getName();
     }
+
+    public boolean isDataAvailable() {
+        return fileName != null && size > 0;
+    }
+
 }

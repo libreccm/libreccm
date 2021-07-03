@@ -31,15 +31,18 @@ public class CmsAssetEditSteps implements MvcAssetEditSteps {
     public Set<Class<?>> getClasses() {
         final Set<Class<?>> classes = new HashSet<>();
 
+        classes.add(AudioAssetEditStep.class);
         classes.add(BookmarkEditStep.class);
         classes.add(ExternalAudioAssetEditStep.class);
         classes.add(ExternalVideoAssetEditStep.class);
         classes.add(FileAssetEditStep.class);
+        classes.add(ImageEditStep.class);
         classes.add(LegalMetadataEditStep.class);
         classes.add(OrganizationEditStep.class);
         classes.add(PersonEditStep.class);
         classes.add(PostalAddressEditStep.class);
         classes.add(SideNoteEditStep.class);
+        classes.add(VideoAssetEditStep.class);
 
         return classes;
     }
@@ -48,8 +51,11 @@ public class CmsAssetEditSteps implements MvcAssetEditSteps {
     public Set<Class<?>> getResourceClasses() {
         final Set<Class<?>> classes = new HashSet<>();
 
+        classes.add(AudioAssetEditStepDownload.class);
         classes.add(FileAssetEditStepDownload.class);
+        classes.add(ImageEditStepDownload.class);
         classes.add(SideNoteEditStepResources.class);
+        classes.add(VideoAssetEditStepDownload.class);
 
         return classes;
     }

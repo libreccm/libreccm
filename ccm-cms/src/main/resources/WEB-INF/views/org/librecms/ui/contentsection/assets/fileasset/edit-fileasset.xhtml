@@ -60,11 +60,13 @@
                         <bootstrap:svgIcon icon="upload" />
                         <span>#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.upload.button.label']}</span>
                     </button>
-                    <a class="btn btn-primary"
-                       href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@fileasset-edit-download">
-                        <bootstrap:svgIcon icon="download" />
-                        <span>#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.download.button.label']}</span>
-                    </a>
+                    <c:if test="#{CmsFileAssetEditStepModel.dataAvailable}">
+                        <a class="btn btn-primary"
+                           href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@fileasset-edit-download">
+                            <bootstrap:svgIcon icon="download" />
+                            <span>#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.download.button.label']}</span>
+                        </a>
+                    </c:if>
                 </div>
                 <div aria-hidden="true"
                      aria-labelledby="file-upload-dialog-title"
@@ -113,20 +115,27 @@
                     </div>
                 </div>
             </c:if>
-            <dl>
-                <div>
-                    <dt>#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.name']}</dt>
-                    <dd>#{CmsFileAssetEditStepModel.fileName}</dd>
-                </div>
-                <div>
-                    <dt>#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.type']}</dt>
-                    <dd>#{CmsFileAssetEditStepModel.mimeType}</dd>
-                </div>
-                <div>
-                    <dt>#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.size']}</dt>
-                    <dd>#{CmsFileAssetEditStepModel.sizeLabel}</dd>
-                </div>
-            </dl>
+            <c:choose>
+                <c:when test="#{CmsFileAssetEditStepModel.dataAvailable}">
+                    <dl>
+                        <div>
+                            <dt>#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.name']}</dt>
+                            <dd>#{CmsFileAssetEditStepModel.fileName}</dd>
+                        </div>
+                        <div>
+                            <dt>#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.type']}</dt>
+                            <dd>#{CmsFileAssetEditStepModel.mimeType}</dd>
+                        </div>
+                        <div>
+                            <dt>#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.size']}</dt>
+                            <dd>#{CmsFileAssetEditStepModel.sizeLabel}</dd>
+                        </div>
+                    </dl>
+                </c:when>
+                <c:otherwise>
+                    <p>#{CmsAssetsStepsDefaultMessagesBundle['fileasset.editstep.file.none']}</p>
+                </c:otherwise>
+            </c:choose>
 
         </ui:define>
 

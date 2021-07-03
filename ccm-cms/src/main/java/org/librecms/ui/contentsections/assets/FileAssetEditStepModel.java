@@ -44,7 +44,7 @@ public class FileAssetEditStepModel {
     private String mimeType;
 
     private long size;
-    
+
     private String sizeLabel;
 
     public Map<String, String> getDescriptionValues() {
@@ -90,13 +90,17 @@ public class FileAssetEditStepModel {
     protected void setSize(final long size) {
         this.size = size;
     }
-    
+
     public String getSizeLabel() {
         return sizeLabel;
     }
-    
+
     protected void setSizeLabel(final String sizeLabel) {
         this.sizeLabel = sizeLabel;
+    }
+
+    public boolean isDataAvailable() {
+        return fileName != null && size > 0;
     }
 
 }

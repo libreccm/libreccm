@@ -135,4 +135,8 @@ public class ImageEditStepModel {
         return LegalMetadata.class.getName();
     }
 
+    public boolean isDataAvailable() {
+        return fileName != null && size > 0;
+    }
+
 }

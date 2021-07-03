@@ -1,0 +1,222 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:librecms="http://xmlns.jcp.org/jsf/composite/components/librecms"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/assets/editstep.xhtml">
+
+        <ui:param name="stepControllerUrl"
+                  value="@image-edit"
+                  />
+        <ui:param name="title" 
+                  value="#{CmsAssetsStepsDefaultMessagesBundle.getMessage('image.editstep.header', [MvcAssetEditStepModel.name])}" 
+                  />
+
+        <ui:define name="editStep">
+
+            <libreccm:localizedStringEditor 
+                addButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.description.add_button.label']}"
+                addDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.description.add.cancel']}"
+                addDialogLocaleSelectHelp="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.description.add.locale.help']}"
+                addDialogLocaleSelectLabel="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.description.add.locale.label']}"
+                addDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.description.add.submit']}"
+                addDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.description.add.title']}"
+                addDialogValueHelp="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.description.add.value.help']}"
+                addDialogValueLabel="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.description.add.value.label']}"
+                addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@image-edit/description/add"
+                editButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.description.edit_button.label']}"
+                editDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.description.edit.cancel']}"
+                editDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.description.edit.submit']}"
+                editDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.description.edit.title']}"
+                editDialogValueHelp="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.description.edit.value.help']}"
+                editDialogValueLabel="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.description.edit.value.label']}"
+                editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@image-edit/description/edit"
+                editorId="description-editor"
+                hasUnusedLocales="#{!CmsImageEditStepModel.unusedDescriptionLocales.isEmpty()}"
+                headingLevel="3"
+                objectIdentifier="#{CmsSelectedAssetModel.assetPath}"
+                readOnly="#{!MvcAssetEditStepModel.canEdit}"
+                removeButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.description.remove_button.label']}"
+                removeDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.description.remove.cancel']}"
+                removeDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.description.remove.submit']}"
+                removeDialogText="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.description.remove.text']}"
+                removeDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.description.remove.title']}"
+                removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@image-edit/description/remove"
+                title="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.description.title']}"
+                unusedLocales="#{CmsImageEditStepModel.unusedDescriptionLocales}"
+                useTextarea="true"
+                values="#{CmsImageEditStepModel.descriptionValues}"
+                />
+
+            <h3>#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.file.title']}</h3>
+            <c:if test="#{MvcAssetEditStepModel.canEdit}">
+                <div class="text-left">
+                    <button class="btn btn-primary"
+                            data-toggle="modal"
+                            data-target="#file-upload-dialog"
+                            type="button">
+                        <bootstrap:svgIcon icon="upload" />
+                        <span>#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.file.upload.button.label']}</span>
+                    </button>
+                </div>
+                <div aria-hidden="true"
+                     aria-labelledby="file-upload-dialog-title"
+                     class="modal fade"
+                     id="file-upload-dialog"
+                     tabindex="-1">
+                    <div class="modal-dialog">
+                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@image-edit/upload"
+                              class="modal-content"
+                              enctype="multipart/form-data"
+                              method="post">
+                            <div class="modal-header">
+                                <h4 class="modal-title"
+                                    id="file-upload-dialog-title">
+                                    #{CmsAssetsStepsDefaultMessagesBundle['image.editstep.file.upload.title']}
+                                </h4>
+                                <button 
+                                    aria-label="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.file.upload.close']}"
+                                    class="close"
+                                    data-dismiss="modal"
+                                    type="button">
+                                    <bootstrap:svgIcon icon="x" />
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <bootstrap:formGroupFile
+                                    accept=".gif, .jpg, .jpeg, .png, .webp, image/gif, image/jpeg, image/png, image/webp"
+                                    help="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.file.upload.help']}"
+                                    inputId="fileData"
+                                    label="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.file.upload.label']}"
+                                    name="fileData"
+                                    required="true"
+                                    />
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-warning"
+                                        data-dismiss="modal"
+                                        type="button">
+                                    #{CmsAssetsStepsDefaultMessagesBundle['image.editstep.file.upload.close']}
+                                </button>
+                                <button class="btn btn-success"
+                                        type="submit">
+                                    #{CmsAssetsStepsDefaultMessagesBundle['image.editstep.file.upload.submit']}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </c:if>
+            <c:choose>
+                <c:when test="#{CmsImageEditStepModel.dataAvailable}">
+                    <figure>
+                        <img alt="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.preview.alt']}"
+                             src="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@image-edit-download?width=320"
+                             width="320" />
+                        <figcaption>#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.preview.caption']}</figcaption>
+                    </figure>
+                    <dl>
+                        <div>
+                            <dt>#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.file.name']}</dt>
+                            <dd>#{CmsImageEditStepModel.fileName}</dd>
+                        </div>
+                        <div>
+                            <dt>#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.file.type']}</dt>
+                            <dd>#{CmsImageEditStepModel.mimeType}</dd>
+                        </div>
+                        <div>
+                            <dt>#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.file.size']}</dt>
+                            <dd>#{CmsImageEditStepModel.sizeLabel}</dd>
+                        </div>
+                    </dl>
+                </c:when>
+                <c:otherwise>
+                    <p>#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.file.none']}</p>
+                </c:otherwise>
+            </c:choose>
+
+            <h3>#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.legalmetadata.title']}</h3>
+            <c:choose>
+                <c:when test="#{CmsImageEditStepModel.legalMetadata == null}">
+                    <div class="text-right">
+                        <librecms:assetPickerButton 
+                            assetPickerId="legalmetadata-picker"
+                            buttonText="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.legalmetadata.set']}"
+                            />
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div class="text-right">
+                        <librecms:assetPickerButton 
+                            assetPickerId="legalmetadata-picker"
+                            buttonText="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.legalmetadata.set']}"
+                            />
+                        <button class="btn btn-danger"
+                                data-toggle="modal"
+                                data-target="#remove-legalmetadata-dialog"
+                                type="button">
+                            <bootstrap:svgIcon icon="x-circle" />
+                            <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.legelmetadata.remove.close']}</span>
+                        </button>
+                    </div>
+                    <div aria-hidden="true"
+                         aria-labelledby="remove-legalmetadata-dialog-title"
+                         class="modal fade"
+                         id="remove-legalmetadata-dialog"
+                         tabindex="-1">
+                        <div class="modal-dialog">
+                            <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@image-edit/legalmetadata/@remove"
+                                  class="modal-content"
+                                  method="post">
+                                <div class="modal-header">
+                                    <h4 class="modal-title"
+                                        id="remove-legalmetadata-dialog-title">
+                                        #{CmsAssetsStepsDefaultMessagesBundle['image.editstep.legelmetadata.remove.title']}
+                                    </h4>
+                                    <button 
+                                        aria-label="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.legelmetadata.remove.close']}"
+                                        class="close"
+                                        data-dismiss="modal"
+                                        type="button">
+                                        <bootstrap:svgIcon icon="x" />
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        #{CmsAssetsStepsDefaultMessagesBundle['image.editstep.legelmetadata.remove.message']}
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-secondary"
+                                            data-dismiss="modal"
+                                            type="button">
+                                        #{CmsAssetsStepsDefaultMessagesBundle['image.editstep.legelmetadata.remove.close']}
+                                    </button>
+                                    <button class="btn btn-danger"
+                                            type="submit">
+                                        #{CmsAssetsStepsDefaultMessagesBundle['image.editstep.legelmetadata.remove.submit']}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <dl>
+                        <div>
+                            <dt> #{CmsAssetsStepsDefaultMessagesBundle['image.editstep.legelmetadata.rightsholder']}</dt>
+                            <dd>#{CmsImageEditStepModel.legalMetadata.rightsHolder}</dd>
+                        </div>
+                        <div>
+                            <dt> #{CmsAssetsStepsDefaultMessagesBundle['image.editstep.legelmetadata.creator']}</dt>
+                            <dd>#{CmsImageEditStepModel.legalMetadata.creator}</dd>
+                        </div>
+                    </dl>
+                </c:otherwise>
+            </c:choose>
+
+        </ui:define>
+
+    </ui:composition>
+</html>

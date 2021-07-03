@@ -21,6 +21,9 @@ package org.librecms.assets;
 import com.arsdigita.cms.ui.assets.forms.AudioForm;
 
 import org.hibernate.envers.Audited;
+import org.librecms.ui.contentsections.assets.MvcAssetEditKit;
+import org.librecms.ui.contentsections.assets.VideoAssetCreateStep;
+import org.librecms.ui.contentsections.assets.VideoAssetEditStep;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -47,6 +50,10 @@ import static org.librecms.assets.AssetConstants.ASSETS_BUNDLE;
         labelBundle = ASSETS_BUNDLE,
         descriptionKey = "video_asset.description",
         descriptionBundle = ASSETS_BUNDLE)
+@MvcAssetEditKit(
+    createStep = VideoAssetCreateStep.class,
+    editStep = VideoAssetEditStep.class
+)
 public class VideoAsset extends BinaryAsset implements Serializable {
 
     private static final long serialVersionUID = -4377789857099678289L;

@@ -1,0 +1,219 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:librecms="http://xmlns.jcp.org/jsf/composite/components/librecms"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/assets/editstep.xhtml">
+
+        <ui:param name="stepControllerUrl"
+                  value="@audioasset-edit"
+                  />
+        <ui:param name="title" 
+                  value="#{CmsAssetsStepsDefaultMessagesBundle.getMessage('audioasset.editstep.header', [MvcAssetEditStepModel.name])}" 
+                  />
+
+        <ui:define name="editStep">
+
+            <libreccm:localizedStringEditor 
+                addButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.description.add_button.label']}"
+                addDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.description.add.cancel']}"
+                addDialogLocaleSelectHelp="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.description.add.locale.help']}"
+                addDialogLocaleSelectLabel="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.description.add.locale.label']}"
+                addDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.description.add.submit']}"
+                addDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.description.add.title']}"
+                addDialogValueHelp="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.description.add.value.help']}"
+                addDialogValueLabel="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.description.add.value.label']}"
+                addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@audioasset-edit/description/add"
+                editButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.description.edit_button.label']}"
+                editDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.description.edit.cancel']}"
+                editDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.description.edit.submit']}"
+                editDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.description.edit.title']}"
+                editDialogValueHelp="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.description.edit.value.help']}"
+                editDialogValueLabel="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.description.edit.value.label']}"
+                editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@audioasset-edit/description/edit"
+                editorId="description-editor"
+                hasUnusedLocales="#{!CmsAudioAssetEditStepModel.unusedDescriptionLocales.isEmpty()}"
+                headingLevel="3"
+                objectIdentifier="#{CmsSelectedAssetModel.assetPath}"
+                readOnly="#{!MvcAssetEditStepModel.canEdit}"
+                removeButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.description.remove_button.label']}"
+                removeDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.description.remove.cancel']}"
+                removeDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.description.remove.submit']}"
+                removeDialogText="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.description.remove.text']}"
+                removeDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.description.remove.title']}"
+                removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@audioasset-edit/description/remove"
+                title="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.description.title']}"
+                unusedLocales="#{CmsAudioAssetEditStepModel.unusedDescriptionLocales}"
+                useTextarea="true"
+                values="#{CmsAudioAssetEditStepModel.descriptionValues}"
+                />
+
+            <h3>#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.file.title']}</h3>
+            <c:if test="#{MvcAssetEditStepModel.canEdit}">
+                <div class="text-left">
+                    <button class="btn btn-primary"
+                            data-toggle="modal"
+                            data-target="#file-upload-dialog"
+                            type="button">
+                        <bootstrap:svgIcon icon="upload" />
+                        <span>#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.file.upload.button.label']}</span>
+                    </button>
+                </div>
+                <div aria-hidden="true"
+                     aria-labelledby="file-upload-dialog-title"
+                     class="modal fade"
+                     id="file-upload-dialog"
+                     tabindex="-1">
+                    <div class="modal-dialog">
+                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@audioasset-edit/upload"
+                              class="modal-content"
+                              enctype="multipart/form-data"
+                              method="post">
+                            <div class="modal-header">
+                                <h4 class="modal-title"
+                                    id="file-upload-dialog-title">
+                                    #{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.file.upload.title']}
+                                </h4>
+                                <button 
+                                    aria-label="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.file.upload.close']}"
+                                    class="close"
+                                    data-dismiss="modal"
+                                    type="button">
+                                    <bootstrap:svgIcon icon="x" />
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <bootstrap:formGroupFile
+                                    accept=".flac, .mp3, .ogg, .wav, audio/flac, audio/mpeg, audio/MPA, audio/mpa-robust, audio/ogg, audio/wav"
+                                    help="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.file.upload.help']}"
+                                    inputId="fileData"
+                                    label="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.file.upload.label']}"
+                                    name="fileData"
+                                    required="true"
+                                    />
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-warning"
+                                        data-dismiss="modal"
+                                        type="button">
+                                    #{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.file.upload.close']}
+                                </button>
+                                <button class="btn btn-success"
+                                        type="submit">
+                                    #{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.file.upload.submit']}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </c:if>
+            <c:choose>
+                <c:when test="#{CmsAudioAssetEditStepModel.dataAvailable}">
+                    <audio controls="controls"
+                           src="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@audioasset-edit-download">
+                    </audio>
+                    <dl>
+                        <div>
+                            <dt>#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.file.name']}</dt>
+                            <dd>#{CmsAudioAssetEditStepModel.fileName}</dd>
+                        </div>
+                        <div>
+                            <dt>#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.file.type']}</dt>
+                            <dd>#{CmsAudioAssetEditStepModel.mimeType}</dd>
+                        </div>
+                        <div>
+                            <dt>#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.file.size']}</dt>
+                            <dd>#{CmsAudioAssetEditStepModel.sizeLabel}</dd>
+                        </div>
+                    </dl>
+                </c:when>
+                <c:otherwise>
+                    <p>#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.file.none']}</p>
+                </c:otherwise>
+            </c:choose>
+
+            <h3>#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.legalmetadata.title']}</h3>
+            <c:choose>
+                <c:when test="#{CmsAudioAssetEditStepModel.legalMetadata == null}">
+                    <div class="text-right">
+                        <librecms:assetPickerButton 
+                            assetPickerId="legalmetadata-picker"
+                            buttonText="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.legalmetadata.set']}"
+                            />
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div class="text-right">
+                        <librecms:assetPickerButton 
+                            assetPickerId="legalmetadata-picker"
+                            buttonText="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.legalmetadata.set']}"
+                            />
+                        <button class="btn btn-danger"
+                                data-toggle="modal"
+                                data-target="#remove-legalmetadata-dialog"
+                                type="button">
+                            <bootstrap:svgIcon icon="x-circle" />
+                            <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.legelmetadata.remove.close']}</span>
+                        </button>
+                    </div>
+                    <div aria-hidden="true"
+                         aria-labelledby="remove-legalmetadata-dialog-title"
+                         class="modal fade"
+                         id="remove-legalmetadata-dialog"
+                         tabindex="-1">
+                        <div class="modal-dialog">
+                            <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@audioasset-edit/legalmetadata/@remove"
+                                  class="modal-content"
+                                  method="post">
+                                <div class="modal-header">
+                                    <h4 class="modal-title"
+                                        id="remove-legalmetadata-dialog-title">
+                                        #{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.legelmetadata.remove.title']}
+                                    </h4>
+                                    <button 
+                                        aria-label="#{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.legelmetadata.remove.close']}"
+                                        class="close"
+                                        data-dismiss="modal"
+                                        type="button">
+                                        <bootstrap:svgIcon icon="x" />
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        #{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.legelmetadata.remove.message']}
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-secondary"
+                                            data-dismiss="modal"
+                                            type="button">
+                                        #{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.legelmetadata.remove.close']}
+                                    </button>
+                                    <button class="btn btn-danger"
+                                            type="submit">
+                                        #{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.legelmetadata.remove.submit']}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <dl>
+                        <div>
+                            <dt> #{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.legelmetadata.rightsholder']}</dt>
+                            <dd>#{CmsAudioAssetEditStepModel.legalMetadata.rightsHolder}</dd>
+                        </div>
+                        <div>
+                            <dt> #{CmsAssetsStepsDefaultMessagesBundle['audioasset.editstep.legelmetadata.creator']}</dt>
+                            <dd>#{CmsAudioAssetEditStepModel.legalMetadata.creator}</dd>
+                        </div>
+                    </dl>
+                </c:otherwise>
+            </c:choose>
+
+        </ui:define>
+
+    </ui:composition>
+</html>

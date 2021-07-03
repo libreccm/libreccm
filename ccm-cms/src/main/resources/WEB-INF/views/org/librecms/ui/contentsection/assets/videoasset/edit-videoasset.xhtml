@@ -1,0 +1,221 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:librecms="http://xmlns.jcp.org/jsf/composite/components/librecms"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/assets/editstep.xhtml">
+
+        <ui:param name="stepControllerUrl"
+                  value="@videoasset-edit"
+                  />
+        <ui:param name="title" 
+                  value="#{CmsAssetsStepsDefaultMessagesBundle.getMessage('videoasset.editstep.header', [MvcAssetEditStepModel.name])}" 
+                  />
+
+        <ui:define name="editStep">
+
+            <libreccm:localizedStringEditor 
+                addButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.description.add_button.label']}"
+                addDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.description.add.cancel']}"
+                addDialogLocaleSelectHelp="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.description.add.locale.help']}"
+                addDialogLocaleSelectLabel="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.description.add.locale.label']}"
+                addDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.description.add.submit']}"
+                addDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.description.add.title']}"
+                addDialogValueHelp="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.description.add.value.help']}"
+                addDialogValueLabel="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.description.add.value.label']}"
+                addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@videoasset-edit/description/add"
+                editButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.description.edit_button.label']}"
+                editDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.description.edit.cancel']}"
+                editDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.description.edit.submit']}"
+                editDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.description.edit.title']}"
+                editDialogValueHelp="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.description.edit.value.help']}"
+                editDialogValueLabel="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.description.edit.value.label']}"
+                editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@videoasset-edit/description/edit"
+                editorId="description-editor"
+                hasUnusedLocales="#{!CmsVideoAssetEditStepModel.unusedDescriptionLocales.isEmpty()}"
+                headingLevel="3"
+                objectIdentifier="#{CmsSelectedAssetModel.assetPath}"
+                readOnly="#{!MvcAssetEditStepModel.canEdit}"
+                removeButtonLabel="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.description.remove_button.label']}"
+                removeDialogCancelLabel="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.description.remove.cancel']}"
+                removeDialogSubmitLabel="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.description.remove.submit']}"
+                removeDialogText="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.description.remove.text']}"
+                removeDialogTitle="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.description.remove.title']}"
+                removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@videoasset-edit/description/remove"
+                title="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.description.title']}"
+                unusedLocales="#{CmsVideoAssetEditStepModel.unusedDescriptionLocales}"
+                useTextarea="true"
+                values="#{CmsVideoAssetEditStepModel.descriptionValues}"
+                />
+
+            <h3>#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.file.title']}</h3>
+            <c:if test="#{MvcAssetEditStepModel.canEdit}">
+                <div class="text-left">
+                    <button class="btn btn-primary"
+                            data-toggle="modal"
+                            data-target="#file-upload-dialog"
+                            type="button">
+                        <bootstrap:svgIcon icon="upload" />
+                        <span>#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.file.upload.button.label']}</span>
+                    </button>
+                </div>
+                <div aria-hidden="true"
+                     aria-labelledby="file-upload-dialog-title"
+                     class="modal fade"
+                     id="file-upload-dialog"
+                     tabindex="-1">
+                    <div class="modal-dialog">
+                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@videoasset-edit/upload"
+                              class="modal-content"
+                              enctype="multipart/form-data"
+                              method="post">
+                            <div class="modal-header">
+                                <h4 class="modal-title"
+                                    id="file-upload-dialog-title">
+                                    #{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.file.upload.title']}
+                                </h4>
+                                <button 
+                                    aria-label="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.file.upload.close']}"
+                                    class="close"
+                                    data-dismiss="modal"
+                                    type="button">
+                                    <bootstrap:svgIcon icon="x" />
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <bootstrap:formGroupFile
+                                    accept=".mp4, .webm, video/mp4, video/webm"
+                                    help="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.file.upload.help']}"
+                                    inputId="fileData"
+                                    label="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.file.upload.label']}"
+                                    name="fileData"
+                                    required="true"
+                                    />
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-warning"
+                                        data-dismiss="modal"
+                                        type="button">
+                                    #{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.file.upload.close']}
+                                </button>
+                                <button class="btn btn-success"
+                                        type="submit">
+                                    #{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.file.upload.submit']}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </c:if>
+             <c:choose>
+                <c:when test="#{CmsVideoAssetEditStepModel.dataAvailable}">
+                    <video controls="controls"
+                           src="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@videoasset-edit-download"
+                           width="320">
+                    </video>
+                    <dl>
+                        <div>
+                            <dt>#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.file.name']}</dt>
+                            <dd>#{CmsVideoAssetEditStepModel.fileName}</dd>
+                        </div>
+                        <div>
+                            <dt>#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.file.type']}</dt>
+                            <dd>#{CmsVideoAssetEditStepModel.mimeType}</dd>
+                        </div>
+                        <div>
+                            <dt>#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.file.size']}</dt>
+                            <dd>#{CmsVideoAssetEditStepModel.sizeLabel}</dd>
+                        </div>
+                    </dl>
+                </c:when>
+                <c:otherwise>
+                    <p>#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.file.none']}</p>
+                </c:otherwise>
+            </c:choose>
+            
+            <h3>#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.legalmetadata.title']}</h3>
+            <c:choose>
+                <c:when test="#{CmsVideoAssetEditStepModel.legalMetadata == null}">
+                    <div class="text-right">
+                        <librecms:assetPickerButton 
+                            assetPickerId="legalmetadata-picker"
+                            buttonText="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.legalmetadata.set']}"
+                            />
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div class="text-right">
+                        <librecms:assetPickerButton 
+                            assetPickerId="legalmetadata-picker"
+                            buttonText="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.legalmetadata.set']}"
+                            />
+                        <button class="btn btn-danger"
+                                data-toggle="modal"
+                                data-target="#remove-legalmetadata-dialog"
+                                type="button">
+                            <bootstrap:svgIcon icon="x-circle" />
+                            <span class="sr-only">#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.legelmetadata.remove.close']}</span>
+                        </button>
+                    </div>
+                    <div aria-hidden="true"
+                         aria-labelledby="remove-legalmetadata-dialog-title"
+                         class="modal fade"
+                         id="remove-legalmetadata-dialog"
+                         tabindex="-1">
+                        <div class="modal-dialog">
+                            <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@videoasset-edit/legalmetadata/@remove"
+                                  class="modal-content"
+                                  method="post">
+                                <div class="modal-header">
+                                    <h4 class="modal-title"
+                                        id="remove-legalmetadata-dialog-title">
+                                        #{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.legelmetadata.remove.title']}
+                                    </h4>
+                                    <button 
+                                        aria-label="#{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.legelmetadata.remove.close']}"
+                                        class="close"
+                                        data-dismiss="modal"
+                                        type="button">
+                                        <bootstrap:svgIcon icon="x" />
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        #{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.legelmetadata.remove.message']}
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-secondary"
+                                            data-dismiss="modal"
+                                            type="button">
+                                        #{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.legelmetadata.remove.close']}
+                                    </button>
+                                    <button class="btn btn-danger"
+                                            type="submit">
+                                        #{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.legelmetadata.remove.submit']}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <dl>
+                        <div>
+                            <dt> #{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.legelmetadata.rightsholder']}</dt>
+                            <dd>#{CmsVideoAssetEditStepModel.legalMetadata.rightsHolder}</dd>
+                        </div>
+                        <div>
+                            <dt> #{CmsAssetsStepsDefaultMessagesBundle['videoasset.editstep.legelmetadata.creator']}</dt>
+                            <dd>#{CmsVideoAssetEditStepModel.legalMetadata.creator}</dd>
+                        </div>
+                    </dl>
+                </c:otherwise>
+            </c:choose>
+
+        </ui:define>
+
+    </ui:composition>
+</html>
+
