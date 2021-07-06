@@ -49,6 +49,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.mvc.Controller;
 import javax.mvc.Models;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -56,6 +57,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -78,6 +80,9 @@ public class ImageEditStep extends AbstractMvcAssetEditStep {
         ImageEditStep.class
     );
 
+    @Context
+    private HttpServletRequest request;
+
     @Inject
     private AssetStepsDefaultMessagesBundle messageBundle;
 
@@ -95,7 +100,7 @@ public class ImageEditStep extends AbstractMvcAssetEditStep {
 
     @Inject
     private IdentifierParser identifierParser;
-    
+
     @Inject
     private AssetPermissionsChecker assetPermissionsChecker;
 
@@ -169,8 +174,19 @@ public class ImageEditStep extends AbstractMvcAssetEditStep {
 
             editStepModel.setHeight(getImage().getHeight());
             editStepModel.setWidth(getImage().getWidth());
-            
+
             editStepModel.setLegalMetadata(getImage().getLegalMetadata());
+
+            final StringBuilder baseUrlBuilder = new StringBuilder();
+            editStepModel.setBaseUrl(
+                baseUrlBuilder
+                    .append(request.getScheme())
+                    .append("://")
+                    .append(request.getServerName())
+                    .append(addServerPortToBaseUrl())
+                    .append(addContextPathToBaseUrl())
+                    .toString()
+            );
         } else {
             throw new AssetNotFoundException(
                 assetUi.showAssetNotFound(
@@ -320,8 +336,8 @@ public class ImageEditStep extends AbstractMvcAssetEditStep {
                 messageBundle.get("asset.edit.denied"));
         }
     }
-    
-      @POST
+
+    @POST
     @Path("/legalmetadata")
     @AuthorizationRequired
     @Transactional(Transactional.TxType.REQUIRED)
@@ -484,6 +500,23 @@ public class ImageEditStep extends AbstractMvcAssetEditStep {
         final MultivaluedMap<String, String> headers
     ) {
         return headers.getFirst("Content-Type");
+    }
+
+    private String addServerPortToBaseUrl() {
+        if (request.getServerPort() == 80 || request.getServerPort() == 443) {
+            return "";
+        } else {
+            return String.format(":%d", request.getServerPort());
+        }
+    }
+
+    private String addContextPathToBaseUrl() {
+        if (request.getServletContext().getContextPath() == null
+                || request.getServletContext().getContextPath().isEmpty()) {
+            return "/";
+        } else {
+            return request.getServletContext().getContextPath();
+        }
     }
 
 }

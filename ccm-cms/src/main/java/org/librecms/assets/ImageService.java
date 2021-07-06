@@ -89,11 +89,12 @@ public class ImageService {
                 imageReader = readers.next();
             } else {
                 LOGGER.error(
-                    "No image reader suitable image reader available");
+                    "No suitable image reader available"
+                );
                 throw new UnexpectedErrorException();
             }
             imageReader.setInput(imageInputStream);
-            bufferedImage = imageReader.read(0);
+            bufferedImage = imageReader.read(imageReader.getMinIndex());
             imageFormat = imageReader.getFormatName();
         } catch (IOException ex) {
             LOGGER.error("Failed to load image.");

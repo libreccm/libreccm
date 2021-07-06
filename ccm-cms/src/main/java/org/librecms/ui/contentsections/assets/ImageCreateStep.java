@@ -35,7 +35,7 @@ import javax.inject.Named;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Named("CmsImageCreatStep")
+@Named("CmsImageCreateStep")
 public class ImageCreateStep extends AbstractMvcAssetCreateStep<Image> {
 
     @Inject

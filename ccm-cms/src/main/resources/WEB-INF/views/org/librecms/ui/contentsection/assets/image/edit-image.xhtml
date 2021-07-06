@@ -139,6 +139,16 @@
             </c:choose>
 
             <h3>#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.legalmetadata.title']}</h3>
+            <librecms:assetPicker 
+                actionUrl="#{actionBaseUrl}/legalmetadata"
+                assetType="#{CmsImageEditStepModel.legalMetadataType}"
+                assetPickerId="legalmetadata-picker"
+                baseUrl="#{CmsImageEditStepModel.baseUrl}"
+                contentSection="#{ContentSectionModel.sectionName}"
+                formParamName="legalMetadataIdentifier"
+
+                />
+
             <c:choose>
                 <c:when test="#{CmsImageEditStepModel.legalMetadata == null}">
                     <div class="text-right">
