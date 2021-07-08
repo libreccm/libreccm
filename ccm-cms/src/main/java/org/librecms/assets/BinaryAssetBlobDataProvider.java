@@ -81,9 +81,10 @@ public class BinaryAssetBlobDataProvider implements BinaryAssetDataProvider {
                 final Blob blob = resultSet.getBlob("asset_data");
                 try ( InputStream inputStream = blob.getBinaryStream()) {
                     byte[] buffer = new byte[8192];
-                    int length;
-                    while ((length = inputStream.read(buffer)) != -1) {
+                    int length = inputStream.read(buffer);
+                    while (length != -1) {
                         outputStream.write(buffer, 0, length);
+                        length = inputStream.read(buffer);
                     }
                 }
             }
@@ -109,13 +110,24 @@ public class BinaryAssetBlobDataProvider implements BinaryAssetDataProvider {
             final Path tmpFilePath = Files.createTempFile("upload", fileName);
             int fileSize = 0;
             try ( OutputStream outputStream = Files.newOutputStream(tmpFilePath)) {
-                int length;
                 byte[] buffer = new byte[8192];
-                while ((length = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer);
+                int length = inputStream.read(buffer);
+                fileSize += length;
+                while(length != -1) {
+                    outputStream.write(buffer, 0, length);
+                    length = inputStream.read(buffer);
                     fileSize += length;
                 }
-                outputStream.flush();
+//                while ((length = inputStream.read(buffer)) != -1) {
+//                    outputStream.write(buffer);
+//                    fileSize += length;
+//                }
+//                int dataByte = inputStream.read();
+//                while (dataByte != -1) {
+//                    fileSize++;
+//                    outputStream.write(dataByte);
+//                    dataByte = inputStream.read();
+//                }
             }
 
             final Blob data = BlobProxy.generateProxy(

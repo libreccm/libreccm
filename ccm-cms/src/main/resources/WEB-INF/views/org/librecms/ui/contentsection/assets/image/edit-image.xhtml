@@ -112,7 +112,7 @@
             </c:if>
             <c:choose>
                 <c:when test="#{CmsImageEditStepModel.dataAvailable}">
-                    <figure>
+                    <figure class="mt-3">
                         <img alt="#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.preview.alt']}"
                              src="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@image-edit-download?width=320"
                              width="320" />

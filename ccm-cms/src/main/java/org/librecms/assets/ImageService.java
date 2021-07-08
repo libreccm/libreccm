@@ -26,6 +26,9 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Iterator;
 
 import javax.enterprise.context.Dependent;
@@ -126,12 +129,18 @@ public class ImageService {
             );
         }
 
-        return outputStream.toByteArray();
+        final byte[] result = outputStream.toByteArray();
+//        try {
+//            Files.delete(tmpFilePath);
+//        } catch (IOException ex) {
+//            LOGGER.warn("Failed to delete temporary file.", ex);
+//        }
 
+        return result;
     }
 
     private java.awt.Image scaleImage(
-        final BufferedImage image, 
+        final BufferedImage image,
         final float scaleToWidth,
         final float scaleToHeight
     ) {
