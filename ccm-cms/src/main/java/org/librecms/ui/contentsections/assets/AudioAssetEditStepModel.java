@@ -37,6 +37,8 @@ import javax.inject.Named;
 @Named("CmsAudioAssetEditStepModel")
 public class AudioAssetEditStepModel {
 
+    private String baseUrl;
+
     private Map<String, String> descriptionValues;
 
     private List<String> unusedDescriptionLocales;
@@ -50,6 +52,14 @@ public class AudioAssetEditStepModel {
     private String sizeLabel;
 
     private LegalMetadata legalMetadata;
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    protected void setBaseUrl(final String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
 
     public Map<String, String> getDescriptionValues() {
         return Collections.unmodifiableMap(descriptionValues);

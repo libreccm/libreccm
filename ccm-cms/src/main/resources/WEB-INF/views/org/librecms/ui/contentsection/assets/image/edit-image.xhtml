@@ -139,14 +139,14 @@
             </c:choose>
 
             <h3>#{CmsAssetsStepsDefaultMessagesBundle['image.editstep.legalmetadata.title']}</h3>
+            
             <librecms:assetPicker 
-                actionUrl="#{actionBaseUrl}/legalmetadata"
+                actionUrl="#{mvc.basePath}/#{ContentSectionModel.sectionName}/assets/#{CmsSelectedAssetModel.assetPath}/@image-edit/legalmetadata"
                 assetType="#{CmsImageEditStepModel.legalMetadataType}"
                 assetPickerId="legalmetadata-picker"
                 baseUrl="#{CmsImageEditStepModel.baseUrl}"
                 contentSection="#{ContentSectionModel.sectionName}"
                 formParamName="legalMetadataIdentifier"
-
                 />
 
             <c:choose>
