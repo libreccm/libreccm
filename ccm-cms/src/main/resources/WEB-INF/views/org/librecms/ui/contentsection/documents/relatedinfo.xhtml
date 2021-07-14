@@ -4,32 +4,30 @@
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/document.xhtml">
-
-        <ui:param name="activePage" value="document" />
-        <ui:param name="title" value="#{CmsDefaultStepsMessageBundle['contentsection.document.relatedinfo.title']}" />
-
-        <ui:define name="breadcrumb">
-            <ui:include src="document-breadcrumbs.xhtml" />
-            <li aria-current="page" class="breadcrumb-item">
-                #{CmsDefaultStepsMessageBundle['contentsection.document.relatedinfo.title']}
-            </li>
-        </ui:define>
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/authoringstep.xhtml">
 
         <ui:define name="authoringStep">
             <div class="text-right">
                 <button class="btn btn-primary"
                         data-toggle="modal"
-                        data-target="#add-attachment.ist-dialog"
+                        data-target="#add-attachment-list-dialog"
                         type="button">
                     <bootstrap:svgIcon icon="plus-circle" />
                     <span>#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.add.button.label']}</span>
                 </button>
+                <button class="btn btn-secondary"
+                        data-toggle="modal"
+                        data-target="#order-attachment-lists-dialog"
+                        type="button"
+                        >
+                    <bootstrap:svgIcon icon="arrows-move" />
+                    <span>#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.sort.button.label']}</span>
+                </button>
             </div>
             <div aria-hidden="true" 
-                 aria-labelledby="add-attachment.ist-dialog-title"
+                 aria-labelledby="add-attachment-list-dialog-title"
                  class="modal fade"
-                 id="add-attachmentlist-dialog"
+                 id="add-attachment-list-dialog"
                  tabindex="-1">
                 <div class="modal-dialog">
                     <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/@add"
@@ -83,218 +81,456 @@
                 </div>
             </div>
 
-            <div class="text-right">
-                <button class="btn btn-primary"
-                        data-target="#attachmentlist-#{list.name}-add-attachment-dialog"
-                        data-toggle="modal"
-                        type="button">
-                    <bootstrap:svgIcon icon="plus-circle" />
-                    <span>#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.attachment.add.label']}</span>
-                </button>
-                <button class="btn btn-primary"
-                        data-target="#attachmentlist-#{list.name}-add-internallink-dialog"
-                        data-toggle="modal"
-                        type="button">
-                    <bootstrap:svgIcon icon="link-45deg" />
-                    <span>#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.internal_link.add.label']}</span>
-                </button>
-            </div>
-            <div aria-hidden="true"
-                 aria-labelledby="attachmentlist-#{list.name}-add-attachment-dialog-title"
-                 class="modal fade"
-                 id="attachmentlist-#{list.name}-add-attachment-dialog"
-                 tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3 class="modal-title" 
-                                id="attachmentlist-#{list.name}-add-attachment-dialog-title">
-                                #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.attachment.add.dialog.title']}
-                            </h3>
-                            <button aria-label="#{CmsDefaultStepsMessageBundle['relatedinfo.attachment.add.dialog.close']}"
-                                    class="close" 
-                                    data-dismiss="modal"
+            <ul class="cms-attachment-lists">
+                <li class="cms-attachment-list mb-3">
+                    <div class="d-flex justify-content-between">
+                        <div class="cms-attachment-list-name">List 1</div>
+                        <div class="cms-attachmentlist-buttons">
+                            <button class="btn btn-secondary cms-sort-handle"
                                     type="button">
-                                <bootstrap:svgIcon icon="x-circle" />
+                                <bootstrap:svgIcon icon="arrows-move" />
+                                <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.move.button']}"</span>
                             </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="alert alert-info" role="alert">
-                                Not implemented yet
-                                <!-- Requires JavaScript to search for assets -->
-                            </div>
+                            <button class="btn btn-secondary"
+                                    type="button">
+                                <bootstrap:svgIcon icon="info-circle" />
+                                <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.info.button']}"</span>
+                            </button>
+                            <button class="btn btn-secondary"
+                                    type="button">
+                                <bootstrap:svgIcon icon="pen" />
+                                <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.edit.button']}"</span>
+                            </button>
+                            <button class="btn btn-danger"
+                                    type="button">
+                                <bootstrap:svgIcon icon="pen" />
+                                <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.delete.button']}"</span>
+                            </button>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <div aria-hidden="true" 
-                 aria-labelledby="attachmentlist-#{list.name}-add-internallink-dialog-title"
-                 class="modal fade"
-                 id="attachmentlist-#{list.name}-add-internallink-dialog"
-                 tabindex="-1">
-                <div class="modal-dialog">
-                    <form class="modal-content">
-                        <div class="modal-header">
-                            <h3 class="modal-title">
-                                #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.internallink.add.dialog.title']}
-                            </h3>
-                            <button aria-label="#{CmsDefaultStepsMessageBundle['relatedinfo.internallink.add.dialog.close']}"
-                                    class="close" 
-                                    data-dismiss="modal"
-                                    type="button">
-                                <bootstrap:svgIcon icon="x-circle" />
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="alert alert-info" role="alert">
-                                Not implemented yet, requires JavaScript for good user experience.
+                    <ul class="cms-attachments mt-3">
+                        <li class="cms-attachment mb-3 d-flex justify-content-between">
+                            <div class="cms-attachment-label">Attachment 1a</div>
+                            <div class="cms-attachment-buttons">
+                                <button class="btn btn-secondary cms-sort-handle"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="arrows-move" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.move.button']}"</span>
+                                </button>
+                                <button class="btn btn-secondary"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="info-circle" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.info.button']}"</span>
+                                </button>
+                                <button class="btn btn-secondary"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="pen" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.edit.button']}"</span>
+                                </button>
+                                <button class="btn btn-danger"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="pen" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.delete.button']}"</span>
+                                </button>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-warning"
-                                    data-dismiss="modal"
+                        </li>
+                        <li class="cms-attachment mb-3 d-flex justify-content-between">
+                            <div class="cms-attachment-label">Attachment 1b</div>
+                            <div class="cms-attachment-buttons">
+                                <button class="btn btn-secondary cms-sort-handle"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="arrows-move" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.move.button']}"</span>
+                                </button>
+                                <button class="btn btn-secondary"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="info-circle" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.info.button']}"</span>
+                                </button>
+                                <button class="btn btn-secondary"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="pen" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.edit.button']}"</span>
+                                </button>
+                                <button class="btn btn-danger"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="pen" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.delete.button']}"</span>
+                                </button>
+                            </div>
+                        </li>
+                        <li class="cms-attachment mb-3 d-flex justify-content-between">
+                            <div class="cms-attachment-label">Attachment 1c</div>
+                            <div class="cms-attachment-buttons">
+                                <button class="btn btn-secondary cms-sort-handle"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="arrows-move" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.move.button']}"</span>
+                                </button>
+                                <button class="btn btn-secondary"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="info-circle" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.info.button']}"</span>
+                                </button>
+                                <button class="btn btn-secondary"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="pen" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.edit.button']}"</span>
+                                </button>
+                                <button class="btn btn-danger"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="pen" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.delete.button']}"</span>
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                <li class="cms-attachment-list mb-3">
+                    <div class="d-flex justify-content-between">
+                        <div class="cms-attachment-list-name">List 2</div>
+                        <div class="cms-attachmentlist-buttons">
+                            <button class="btn btn-secondary cms-sort-handle"
                                     type="button">
-                                #{CmsDefaultStepsMessageBundle['relatedinfo.internallink.add.dialog.close']}
+                                <bootstrap:svgIcon icon="arrows-move" />
+                                <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.move.button']}"</span>
                             </button>
-                            <button class="btn btn-success">
-                                #{CmsDefaultStepsMessageBundle['relatedinfo.internallink.add.dialog.save']}
+                            <button class="btn btn-secondary"
+                                    type="button">
+                                <bootstrap:svgIcon icon="info-circle" />
+                                <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.info.button']}"</span>
+                            </button>
+                            <button class="btn btn-secondary"
+                                    type="button">
+                                <bootstrap:svgIcon icon="pen" />
+                                <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.edit.button']}"</span>
+                            </button>
+                            <button class="btn btn-danger"
+                                    type="button">
+                                <bootstrap:svgIcon icon="pen" />
+                                <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.delete.button']}"</span>
                             </button>
                         </div>
-                    </form>
-                </div>
-            </div>
+                    </div>
+                    <ul class="cms-attachments mt-3">
+                        <li class="cms-attachment mb-3 d-flex justify-content-between">
+                            <div class="cms-attachment-label">Attachment 2a</div>
+                            <div class="cms-attachment-buttons">
+                                <button class="btn btn-secondary cms-sort-handle"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="arrows-move" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.move.button']}"</span>
+                                </button>
+                                <button class="btn btn-secondary"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="info-circle" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.info.button']}"</span>
+                                </button>
+                                <button class="btn btn-secondary"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="pen" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.edit.button']}"</span>
+                                </button>
+                                <button class="btn btn-danger"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="pen" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.delete.button']}"</span>
+                                </button>
+                            </div>
+                        </li>
+                        <li class="cms-attachment mb-3 d-flex justify-content-between">
+                            <div class="cms-attachment-label">Attachment 2b</div>
+                            <div class="cms-attachment-buttons">
+                                <button class="btn btn-secondary cms-sort-handle"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="arrows-move" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.move.button']}"</span>
+                                </button>
+                                <button class="btn btn-secondary"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="info-circle" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.info.button']}"</span>
+                                </button>
+                                <button class="btn btn-secondary"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="pen" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.edit.button']}"</span>
+                                </button>
+                                <button class="btn btn-danger"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="pen" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.delete.button']}"</span>
+                                </button>
+                            </div>
+                        </li>
+                        <li class="cms-attachment mb-3 d-flex justify-content-between">
+                            <div class="cms-attachment-label">Attachment 2c</div>
+                            <div class="cms-attachment-buttons">
+                                <button class="btn btn-secondary cms-sort-handle"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="arrows-move" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.move.button']}"</span>
+                                </button>
+                                <button class="btn btn-secondary"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="info-circle" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.info.button']}"</span>
+                                </button>
+                                <button class="btn btn-secondary"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="pen" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.edit.button']}"</span>
+                                </button>
+                                <button class="btn btn-danger"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="pen" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.delete.button']}"</span>
+                                </button>
+                            </div>
+                        </li>
+                        <li class="cms-attachment mb-3 d-flex justify-content-between">
+                            <div class="cms-attachment-label">Attachment 2d</div>
+                            <div class="cms-attachment-buttons">
+                                <button class="btn btn-secondary cms-sort-handle"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="arrows-move" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.move.button']}"</span>
+                                </button>
+                                <button class="btn btn-secondary"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="info-circle" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.info.button']}"</span>
+                                </button>
+                                <button class="btn btn-secondary"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="pen" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.edit.button']}"</span>
+                                </button>
+                                <button class="btn btn-danger"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="pen" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.delete.button']}"</span>
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
 
             <ul>
                 <c:forEach items="#{CmsRelatedInfoStep.attachmentLists}"
                            var="list">
                     <li>
-                        <div class="d-flex">
-                            <span>#{list.name}</span>
-                            <button class="btn btn-info"
-                                    data-target="#attachmentlist-#{list.name}-info"
-                                    data-toggle="modal"
-                                    type="button">
-                                <bootstrap:svgIcon icon="info-circle" />
-                                <span class="sr-only">
-                                    #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.info_button.label']}"
-                                </span>
-                            </button>
-                            <div aria-hidden="true"
-                                 aria-labelledby="attachment-list-#{list.name}-info-title"
-                                 class="modal fade"
-                                 id="attachmentlist-#{list.name}-info"
-                                 tabindex="-1">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h3 class="model-title"
-                                                id="attachment-list-#{list.name}-info-title">
-                                                #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.info_dialog.title']}"
-                                            </h3>
-                                            <button aria-label="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.info_dialog.close']}"
-                                                    class="close"
-                                                    data-dismiss="modal"
-                                                    type="button">
-                                                <bootstrap:svgIcon icon="x-circle" />
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            #{list.description}
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button class="btn btn-secondary"
-                                                    data-dismiss="modal"
-                                                    type="button">
-                                                #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.info_dialog.close']}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a class="btn btn-primary" 
-                               href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/@details">
-                                <bootstrap:svgIcon icon="pen" />
-                                <span class="sr-only">
-                                    #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.edit.label']}
-                                </span>
-                            </a>
-                            <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/@moveDown"
-                                  method="post">
-                                <button class="btn btn-secondary"
-                                        type="submit">
-                                    <bootstrap:svgIcon icon="caret-down-fill" />
-                                    <span class="sr-only">
-                                        #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.move_down.label']}
-                                    </span>
-                                </button>
-                            </form>
-                            <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/@moveUp"
-                                  method="post">
-                                <button class="btn btn-secondary"
-                                        type="submit">
-                                    <bootstrap:svgIcon icon="caret-up-fill" />
-                                    <span class="sr-only">
-                                        #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.move_up.label']}
-                                    </span>
-                                </button>
-                            </form>
-                            <libreccm:deleteDialog 
-                                actionTarget="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/@remove" 
-                                buttonText="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.remove.label']}"
-                                cancelLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.remove.cancel']}"
-                                confirmLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.remove.confirm']}"
-                                dialogId="attachmentlist-#{list.name}-remove-dialog"
-                                dialogTitle="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.remove.title']}"
-                                message="#{CmsDefaultStepsMessageBundle.getMessage('relatedinfo.attachmentlists.row.remove.message', [list.name])}"
-                                />
-                        </div>
-                        <ul>
-                            <c:forEach items="#{list.attachments}"
-                                       var="attachment">
-                                <li class="d-flex">
-                                    <span>#{attachment.title}</span>
-                                    <c:if test="#{attachment.internalLink}">
-                                        <a class="btn btn-secondary" 
-                                           href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/internal-links/#{attachment.uuid}/@details">
-                                            <bootstrap:svgIcon icon="pen" />
-                                            <span class="sr-only">
-                                                #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.internal_link.edit.label']}
-                                            </span>
-                                        </a>
-                                    </c:if>
-                                    <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo//attachments/#{attachment.uuid}/@moveDown"
-                                          method="post">
-                                        <button class="btn btn-secondary"
-                                                type="submit">
-                                            <bootstrap:svgIcon icon="caret-down-fill" />
-                                            <span class="sr-only">
-                                                #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.attachment.move_down.label']}
-                                            </span>
-                                        </button>
-                                    </form>
-                                    <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/attachments/#{attachment.uuid}/@moveUp"
-                                          method="post">
-                                        <button class="btn btn-secondary"
-                                                type="submit">
-                                            <bootstrap:svgIcon icon="caret-up-fill" />
-                                            <span class="sr-only">
-                                                #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.attachment.row.move_up.label']}
-                                            </span>
-                                        </button>
-                                    </form>
-                                    <libreccm:deleteDialog 
-                                        actionTarget="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/attachments/#{attachment.uuid}/@remove"
-                                        buttonText="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.attachment.remove.label']}"
-                                        cancelLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.attachment.remove.cancel']}"
-                                        confirmLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.attachment.remove.confirm']}"
-                                        dialogId="remove-attachment-#{attachment.uuid}"
-                                        dialogTitle="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.attachment.remove.title']}"
-                                        message="#{CmsDefaultStepsMessageBundle.getMessage('relatedinfo.attachmentlists.attachment.remove.message', [attachment.title])}"
-                                        />
-                                </li>
-                            </c:forEach>
-                        </ul>
+                        <span>#{list.name}</span>
+                        <!--                        <div class="d-flex">
+                                                    <div class="text-right">
+                                                        <button class="btn btn-primary"
+                                                                data-target="#attachmentlist-#{list.name}-add-attachment-dialog"
+                                                                data-toggle="modal"
+                                                                type="button">
+                                                            <bootstrap:svgIcon icon="plus-circle" />
+                                                            <span>#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.attachment.add.label']}</span>
+                                                        </button>
+                                                        <button class="btn btn-primary"
+                                                                data-target="#attachmentlist-#{list.name}-add-internallink-dialog"
+                                                                data-toggle="modal"
+                                                                type="button">
+                                                            <bootstrap:svgIcon icon="link-45deg" />
+                                                            <span>#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.internal_link.add.label']}</span>
+                                                        </button>
+                                                    </div>
+                                                    <div aria-hidden="true"
+                                                         aria-labelledby="attachmentlist-#{list.name}-add-attachment-dialog-title"
+                                                         class="modal fade"
+                                                         id="attachmentlist-#{list.name}-add-attachment-dialog"
+                                                         tabindex="-1">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h3 class="modal-title" 
+                                                                        id="attachmentlist-#{list.name}-add-attachment-dialog-title">
+                        #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.attachment.add.dialog.title']}
+                    </h3>
+                    <button aria-label="#{CmsDefaultStepsMessageBundle['relatedinfo.attachment.add.dialog.close']}"
+                            class="close" 
+                            data-dismiss="modal"
+                            type="button">
+                        <bootstrap:svgIcon icon="x-circle" />
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info" role="alert">
+                        Not implemented yet
+                         Requires JavaScript to search for assets 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div aria-hidden="true" 
+         aria-labelledby="attachmentlist-#{list.name}-add-internallink-dialog-title"
+         class="modal fade"
+         id="attachmentlist-#{list.name}-add-internallink-dialog"
+         tabindex="-1">
+        <div class="modal-dialog">
+            <form class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">
+                        #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.internallink.add.dialog.title']}
+                    </h3>
+                    <button aria-label="#{CmsDefaultStepsMessageBundle['relatedinfo.internallink.add.dialog.close']}"
+                            class="close" 
+                            data-dismiss="modal"
+                            type="button">
+                        <bootstrap:svgIcon icon="x-circle" />
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info" role="alert">
+                        Not implemented yet, requires JavaScript for good user experience.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-warning"
+                            data-dismiss="modal"
+                            type="button">
+                        #{CmsDefaultStepsMessageBundle['relatedinfo.internallink.add.dialog.close']}
+                    </button>
+                    <button class="btn btn-success">
+                        #{CmsDefaultStepsMessageBundle['relatedinfo.internallink.add.dialog.save']}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <span>#{list.name}</span>
+    <button class="btn btn-info"
+            data-target="#attachmentlist-#{list.name}-info"
+            data-toggle="modal"
+            type="button">
+        <bootstrap:svgIcon icon="info-circle" />
+        <span class="sr-only">
+                        #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.info_button.label']}"
+                    </span>
+                </button>
+                <div aria-hidden="true"
+                     aria-labelledby="attachment-list-#{list.name}-info-title"
+                     class="modal fade"
+                     id="attachmentlist-#{list.name}-info"
+                     tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="model-title"
+                                    id="attachment-list-#{list.name}-info-title">
+                        #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.info_dialog.title']}"
+                    </h3>
+                    <button aria-label="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.info_dialog.close']}"
+                            class="close"
+                            data-dismiss="modal"
+                            type="button">
+                        <bootstrap:svgIcon icon="x-circle" />
+                    </button>
+                </div>
+                <div class="modal-body">
+                        #{list.description}
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary"
+                                data-dismiss="modal"
+                                type="button">
+                        #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.info_dialog.close']}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a class="btn btn-primary" 
+       href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/@details">
+        <bootstrap:svgIcon icon="pen" />
+        <span class="sr-only">
+                        #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.edit.label']}
+                    </span>
+                </a>
+                <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/@moveDown"
+                      method="post">
+                    <button class="btn btn-secondary"
+                            type="submit">
+                        <bootstrap:svgIcon icon="caret-down-fill" />
+                        <span class="sr-only">
+                        #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.move_down.label']}
+                    </span>
+                </button>
+            </form>
+            <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/@moveUp"
+                  method="post">
+                <button class="btn btn-secondary"
+                        type="submit">
+                    <bootstrap:svgIcon icon="caret-up-fill" />
+                    <span class="sr-only">
+                        #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.move_up.label']}
+                    </span>
+                </button>
+            </form>
+            <libreccm:deleteDialog 
+                actionTarget="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/@remove" 
+                buttonText="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.remove.label']}"
+                cancelLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.remove.cancel']}"
+                confirmLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.remove.confirm']}"
+                dialogId="attachmentlist-#{list.name}-remove-dialog"
+                dialogTitle="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.remove.title']}"
+                message="#{CmsDefaultStepsMessageBundle.getMessage('relatedinfo.attachmentlists.row.remove.message', [list.name])}"
+                />
+        </div>
+        <ul>
+            <c:forEach items="#{list.attachments}"
+                       var="attachment">
+                <li class="d-flex">
+                    <span>#{attachment.title}</span>
+                    <c:if test="#{attachment.internalLink}">
+                        <a class="btn btn-secondary" 
+                           href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/internal-links/#{attachment.uuid}/@details">
+                            <bootstrap:svgIcon icon="pen" />
+                            <span class="sr-only">
+                        #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.internal_link.edit.label']}
+                    </span>
+                </a>
+            </c:if>
+            <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo//attachments/#{attachment.uuid}/@moveDown"
+                  method="post">
+                <button class="btn btn-secondary"
+                        type="submit">
+                    <bootstrap:svgIcon icon="caret-down-fill" />
+                    <span class="sr-only">
+                        #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.row.attachment.move_down.label']}
+                    </span>
+                </button>
+            </form>
+            <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/attachments/#{attachment.uuid}/@moveUp"
+                  method="post">
+                <button class="btn btn-secondary"
+                        type="submit">
+                    <bootstrap:svgIcon icon="caret-up-fill" />
+                    <span class="sr-only">
+                        #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.attachment.row.move_up.label']}
+                    </span>
+                </button>
+            </form>
+            <libreccm:deleteDialog 
+                actionTarget="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/attachments/#{attachment.uuid}/@remove"
+                buttonText="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.attachment.remove.label']}"
+                cancelLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.attachment.remove.cancel']}"
+                confirmLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.attachment.remove.confirm']}"
+                dialogId="remove-attachment-#{attachment.uuid}"
+                dialogTitle="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.attachment.remove.title']}"
+                message="#{CmsDefaultStepsMessageBundle.getMessage('relatedinfo.attachmentlists.attachment.remove.message', [attachment.title])}"
+                />-->
+                        <!--                                </li>
+                                                    </c:forEach>
+                                                </ul>-->
                     </li>
                 </c:forEach>
             </ul>
