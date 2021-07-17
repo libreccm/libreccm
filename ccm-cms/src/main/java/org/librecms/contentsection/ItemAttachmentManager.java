@@ -65,6 +65,15 @@ public class ItemAttachmentManager {
             return Optional.empty();
         }
     }
+    
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void save(final ItemAttachment<?> attachment) {
+        if (attachment.getAttachmentId() == 0) {
+            entityManager.persist(attachment);
+        } else {
+            entityManager.merge(attachment);
+        }
+     }
 
     /**
      * Adds the provided {@link Asset} to the provided {@link AttachmentList}.

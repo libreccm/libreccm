@@ -15,14 +15,6 @@
                     <bootstrap:svgIcon icon="plus-circle" />
                     <span>#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.add.button.label']}</span>
                 </button>
-                <button class="btn btn-secondary"
-                        data-toggle="modal"
-                        data-target="#order-attachment-lists-dialog"
-                        type="button"
-                        >
-                    <bootstrap:svgIcon icon="arrows-move" />
-                    <span>#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.sort.button.label']}</span>
-                </button>
             </div>
             <div aria-hidden="true" 
                  aria-labelledby="add-attachment-list-dialog-title"
@@ -81,8 +73,17 @@
                 </div>
             </div>
 
-            <ul class="cms-attachment-lists">
-                <li class="cms-attachment-list mb-3">
+            <div>
+                <button class="btn btn-secondary save-order-button"
+                        disabled="disabled"
+                        type="button">
+                    <bootstrap:svgIcon icon="save" />
+                    <span>#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.order.save']}</span>
+                </button>
+            </div>
+            <ul class="cms-attachment-lists mt-3">
+                <li class="cms-attachment-list mb-3" 
+                    data-id="34aba2e6-a9b2-4b82-9889-c7ea591b6faf">
                     <div class="d-flex justify-content-between">
                         <div class="cms-attachment-list-name">List 1</div>
                         <div class="cms-attachmentlist-buttons">
@@ -108,8 +109,10 @@
                             </button>
                         </div>
                     </div>
-                    <ul class="cms-attachments mt-3">
-                        <li class="cms-attachment mb-3 d-flex justify-content-between">
+                    <ul class="cms-attachments mt-3"
+                        data-list-uuid="34aba2e6-a9b2-4b82-9889-c7ea591b6faf">
+                        <li class="cms-attachment mb-3 d-flex justify-content-between" 
+                            data-id="a871c22b-f533-49eb-be3e-3600f4e83180">
                             <div class="cms-attachment-label">Attachment 1a</div>
                             <div class="cms-attachment-buttons">
                                 <button class="btn btn-secondary cms-sort-handle"
@@ -134,7 +137,8 @@
                                 </button>
                             </div>
                         </li>
-                        <li class="cms-attachment mb-3 d-flex justify-content-between">
+                        <li class="cms-attachment mb-3 d-flex justify-content-between" 
+                            data-id="6ab14e1e-dc9a-4a39-9514-9bea68bcd357">
                             <div class="cms-attachment-label">Attachment 1b</div>
                             <div class="cms-attachment-buttons">
                                 <button class="btn btn-secondary cms-sort-handle"
@@ -159,7 +163,8 @@
                                 </button>
                             </div>
                         </li>
-                        <li class="cms-attachment mb-3 d-flex justify-content-between">
+                        <li class="cms-attachment mb-3 d-flex justify-content-between" 
+                            data-id="f3a1d656-fb4e-4ba8-9f5c-e605700e7c5f">
                             <div class="cms-attachment-label">Attachment 1c</div>
                             <div class="cms-attachment-buttons">
                                 <button class="btn btn-secondary cms-sort-handle"
@@ -186,7 +191,8 @@
                         </li>
                     </ul>
                 </li>
-                <li class="cms-attachment-list mb-3">
+                <li class="cms-attachment-list mb-3" 
+                    data-id="b962a838-e25e-4987-8058-6205692d2d92">
                     <div class="d-flex justify-content-between">
                         <div class="cms-attachment-list-name">List 2</div>
                         <div class="cms-attachmentlist-buttons">
@@ -212,8 +218,10 @@
                             </button>
                         </div>
                     </div>
-                    <ul class="cms-attachments mt-3">
-                        <li class="cms-attachment mb-3 d-flex justify-content-between">
+                    <ul class="cms-attachments mt-3"
+                        data-list-uuid="b962a838-e25e-4987-8058-6205692d2d92">
+                        <li class="cms-attachment mb-3 d-flex justify-content-between" 
+                            data-id="296495bd-fbf6-4956-a047-5fa3400df367">
                             <div class="cms-attachment-label">Attachment 2a</div>
                             <div class="cms-attachment-buttons">
                                 <button class="btn btn-secondary cms-sort-handle"
@@ -238,7 +246,8 @@
                                 </button>
                             </div>
                         </li>
-                        <li class="cms-attachment mb-3 d-flex justify-content-between">
+                        <li class="cms-attachment mb-3 d-flex justify-content-between"
+                            data-id="89d89ffd-a322-43a2-81b9-d127503bf52b">
                             <div class="cms-attachment-label">Attachment 2b</div>
                             <div class="cms-attachment-buttons">
                                 <button class="btn btn-secondary cms-sort-handle"
@@ -263,7 +272,8 @@
                                 </button>
                             </div>
                         </li>
-                        <li class="cms-attachment mb-3 d-flex justify-content-between">
+                        <li class="cms-attachment mb-3 d-flex justify-content-between" 
+                            data-id="f85193f2-38fc-4f34-b6fa-4ed6f4e30f69">
                             <div class="cms-attachment-label">Attachment 2c</div>
                             <div class="cms-attachment-buttons">
                                 <button class="btn btn-secondary cms-sort-handle"
@@ -288,7 +298,8 @@
                                 </button>
                             </div>
                         </li>
-                        <li class="cms-attachment mb-3 d-flex justify-content-between">
+                        <li class="cms-attachment mb-3 d-flex justify-content-between" 
+                            data-id="a063c64d-3da6-4948-837c-137bf3511579">
                             <div class="cms-attachment-label">Attachment 2d</div>
                             <div class="cms-attachment-buttons">
                                 <button class="btn btn-secondary cms-sort-handle"
@@ -316,7 +327,14 @@
                     </ul>
                 </li>
             </ul>
-
+            <div>
+                <button class="btn btn-secondary save-order-button"
+                        disabled="disabled"
+                        type="button">
+                    <bootstrap:svgIcon icon="save" />
+                    <span>#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.order.save']}</span>
+                </button>
+            </div>
 
             <ul>
                 <c:forEach items="#{CmsRelatedInfoStep.attachmentLists}"
