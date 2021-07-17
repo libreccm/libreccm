@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.ui.contentsections.documents;
+package org.librecms.ui.contentsections.documents.relatedinfo;
 
 import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.contentsection.AttachmentList;
@@ -25,6 +25,8 @@ import org.librecms.contentsection.ContentItem;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.librecms.ui.contentsections.documents.ItemAttachmentDto;
 
 /**
  * A data transfer object used by the template for the listing of the

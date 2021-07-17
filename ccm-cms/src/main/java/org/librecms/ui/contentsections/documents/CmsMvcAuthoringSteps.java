@@ -18,6 +18,8 @@
  */
 package org.librecms.ui.contentsections.documents;
 
+import org.librecms.ui.contentsections.documents.relatedinfo.RelatedInfoStep;
+import org.librecms.ui.contentsections.documents.relatedinfo.RelatedInfoStepService;
 import org.librecms.ui.contenttypes.MvcArticlePropertiesStep;
 import org.librecms.ui.contenttypes.MvcArticleTextBodyStep;
 import org.librecms.ui.contenttypes.MvcArticleTextBodyStepResources;
@@ -51,6 +53,7 @@ public class CmsMvcAuthoringSteps implements MvcAuthoringSteps {
     public Set<Class<?>> getResourceClasses() {
         final Set<Class<?>> classes = new HashSet<>();
         classes.add(MvcArticleTextBodyStepResources.class);
+        classes.add(RelatedInfoStepService.class);
 
         return classes;
     }

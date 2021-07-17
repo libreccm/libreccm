@@ -62,7 +62,8 @@ function initAttachments(attachments: HTMLElement): Sortable {
 
     const listUuid = attachments.getAttribute("data-list-uuid");
     if (listUuid === null) {
-        throw Error("attachments with data-list-uuid attribute found.");
+        showGeneralError();
+        throw Error("attachments without data-list-uuid attribute found.");
     }
 
     attachmentsSortables[listUuid] = sortable;
@@ -90,12 +91,14 @@ function moveAttachment(event: SortableEvent) {
 
     const fromListUuid = event.from.getAttribute("data-list-uuid");
     if (!fromListUuid) {
+        showGeneralError();
         throw Error(
             "An attachment was moved, but the list from which the attachment was removed has no data-id attribute."
         );
     }
     const toListUuid = event.to.getAttribute("data-list-uuid");
     if (!toListUuid) {
+        showGeneralError();
         throw Error(
             "An attachment was moved, but the list to which the attachment was removed has no data-id attribute."
         );
@@ -104,6 +107,7 @@ function moveAttachment(event: SortableEvent) {
     if (fromListUuid !== toListUuid) {
         const attachmentUuid = event.item.getAttribute("data-id");
         if (!attachmentUuid) {
+            showGeneralError();
             throw Error(
                 "An attachment was moved, but the attachment was removed has no dat-id attribute."
             );
@@ -133,12 +137,68 @@ function saveOrder() {
     }
 
     console.dir(attachmentOrder);
+    const cmsAttachments = document.querySelector(".cms-attachment-lists");
+    if (!cmsAttachments) {
+        showGeneralError();
+        throw Error("cms-attachment-lists container not found.");
+    }
+    const baseUrl = cmsAttachments.getAttribute("data-baseUrl");
+    if (!baseUrl) {
+        showGeneralError();
+        throw Error(
+            "data-baseUrl attribute on cms-attachment-lists container is missing or empty."
+        );
+    }
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    fetch(baseUrl, {
+        credentials: "include",
+        body: JSON.stringify(attachmentOrder),
+        headers,
+        method: "POST"
+    })
+        .then(response => {
+            if (response.ok) {
+                const saveOrderButtons =
+                    document.querySelectorAll("save-order-button");
+                for (let i = 0; i < saveOrderButtons.length; i++) {
+                    const saveOrderButton: HTMLButtonElement = saveOrderButtons[
+                        i
+                    ] as HTMLButtonElement;
+                    saveOrderButton.disabled = true;
+                }
+            } else {
+                throw Error(
+                    `Failed to save attachments order. Response status: ${response.status}, statusText: ${response.statusText}`
+                );
+            }
+        })
+        .catch(error => {
+            showSaveError();
+            throw new Error(`Failed to save attachments order: ${error}`);
+        });
+}
 
-    const saveOrderButtons = document.querySelectorAll("save-order-button");
-    for (let i = 0; i < saveOrderButtons.length; i++) {
-        const saveOrderButton: HTMLButtonElement = saveOrderButtons[
-            i
-        ] as HTMLButtonElement;
-        saveOrderButton.disabled = true;
+function showGeneralError(): void {
+    const alertTemplate = document.querySelector(
+        "#cms-sort-attachments-error-general"
+    ) as HTMLTemplateElement;
+    const alert = alertTemplate.content.cloneNode(true) as Element;
+
+    const container = document.querySelector("#messages");
+    if (container) {
+        container.appendChild(alert);
+    }
+}
+
+function showSaveError(): void {
+    const alertTemplate = document.querySelector(
+        "#cms-sort-attachments-error-save"
+    ) as HTMLTemplateElement;
+    const alert = alertTemplate.content.cloneNode(true) as Element;
+
+    const container = document.querySelector("#messages");
+    if (container) {
+        container.appendChild(alert);
     }
 }

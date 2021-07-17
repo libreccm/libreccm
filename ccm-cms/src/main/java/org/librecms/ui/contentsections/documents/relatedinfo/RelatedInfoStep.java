@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.ui.contentsections.documents;
+package org.librecms.ui.contentsections.documents.relatedinfo;
 
 import org.librecms.ui.contentsections.ContentSectionNotFoundException;
 import org.libreccm.api.Identifier;
@@ -87,6 +87,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+
+import org.librecms.ui.contentsections.documents.AbstractMvcAuthoringStep;
+import org.librecms.ui.contentsections.documents.DefaultAuthoringStepConstants;
+import org.librecms.ui.contentsections.documents.DocumentNotFoundException;
+import org.librecms.ui.contentsections.documents.DocumentUi;
+import org.librecms.ui.contentsections.documents.ItemAttachmentDto;
+import org.librecms.ui.contentsections.documents.MvcAuthoringStepDef;
+import org.librecms.ui.contentsections.documents.MvcAuthoringSteps;
 
 /**
  * Authoring step for managing the {@link AttachmentList} and
@@ -675,9 +683,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
                 globalizationHelper.getNegotiatedLocale(), description
             );
             listRepo.save(list);
-            return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s", list.getName())
-            );
+            return buildRedirectPathForStep();
         } else {
             return documentUi.showAccessDenied(
                 getContentSection(),

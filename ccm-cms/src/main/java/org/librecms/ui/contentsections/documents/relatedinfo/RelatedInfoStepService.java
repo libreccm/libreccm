@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.ui.contentsections.documents;
+package org.librecms.ui.contentsections.documents.relatedinfo;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,14 +24,16 @@ import org.librecms.contentsection.AttachmentListRepository;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ItemAttachmentManager;
 import org.librecms.ui.contentsections.ContentSectionsUi;
-import org.w3c.dom.events.Event;
-
-import java.util.Objects;
+import org.librecms.ui.contentsections.documents.MvcAuthoringSteps;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -39,7 +41,7 @@ import javax.ws.rs.core.Response;
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
 @RequestScoped
-@Path(MvcAuthoringSteps.PATH_PREFIX + "relatedinfo")
+@Path(MvcAuthoringSteps.PATH_PREFIX + "relatedinfo-service")
 public class RelatedInfoStepService {
     
     private static final Logger LOGGER = LogManager.getLogger(
@@ -58,6 +60,10 @@ public class RelatedInfoStepService {
     @Inject
     private ContentSectionsUi sectionsUi;
 
+    @POST
+    @Path("/save-order")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Transactional(Transactional.TxType.REQUIRED)
     public Response saveOrder(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,

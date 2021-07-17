@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.ui.contentsections.documents;
+package org.librecms.ui.contentsections.documents.relatedinfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,6 +34,8 @@ public class RelatedInfoStepAttachmentOrder {
     private List<String> attachmentListsOrder;
 
     private Map<String, List<String>> attachmentsOrder;
+
+    private List<MovedAttachment> movedAttachments;
 
     public List<String> getAttachmentListsOrder() {
         return Collections.unmodifiableList(attachmentListsOrder);
@@ -61,13 +63,23 @@ public class RelatedInfoStepAttachmentOrder {
             );
     }
 
+    public List<MovedAttachment> getMovedAttachments() {
+        return Collections.unmodifiableList(movedAttachments);
+    }
+
+    public void setMovedAttachments(final List<MovedAttachment> movedAttachments) {
+        this.movedAttachments = new ArrayList<>(movedAttachments);
+    }
+
     @Override
     public String toString() {
         return String.format(
             "attachmentListsOrder = %s, "
-                + "attachmentsOrder = %s",
+                + "attachmentsOrder = %s, "
+                + "movedAttachments = %s",
             Objects.toString(attachmentListsOrder),
-            Objects.toString(attachmentsOrder)
+            Objects.toString(attachmentsOrder),
+            Objects.toString(movedAttachments)
         );
     }
 
