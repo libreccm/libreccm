@@ -22,7 +22,9 @@ import org.libreccm.l10n.GlobalizationHelper;
 import org.libreccm.l10n.LocalizedString;
 import org.librecms.contentsection.AttachmentList;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -54,6 +56,8 @@ public class AttachmentListDetailsModel {
      */
     @Inject
     private GlobalizationHelper globalizationHelper;
+
+    private boolean canEdit;
 
     /**
      * UUID of the {@link AttachmentList} shown.
@@ -100,82 +104,59 @@ public class AttachmentListDetailsModel {
         return uuid;
     }
 
+    public void setUuid(final String uuid) {
+        this.uuid = uuid;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
     }
 
     public Map<String, String> getTitles() {
         return Collections.unmodifiableMap(titles);
     }
 
+    public void setTitles(final Map<String, String> titles) {
+        this.titles = new HashMap<>(titles);
+    }
+
     public Map<String, String> getDescriptions() {
         return Collections.unmodifiableMap(descriptions);
+    }
+
+    public void setDescriptions(final Map<String, String> descriptions) {
+        this.descriptions = new HashMap<>(descriptions);
     }
 
     public List<String> getUnusedTitleLocales() {
         return Collections.unmodifiableList(unusedTitleLocales);
     }
 
+    public void setUnusedTitleLocales(final List<String> unusedTitleLocales) {
+        this.unusedTitleLocales = new ArrayList<>(unusedTitleLocales);
+    }
+
     public List<String> getUnusedDescriptionLocales() {
         return Collections.unmodifiableList(unusedDescriptionLocales);
     }
 
-    /**
-     * Used by
-     * {@link RelatedInfoStep#showAttachmentListDetails(java.lang.String)} to
-     * provide the {@link AttachmentList} to show. This method takes care of
-     * process the relevant properties the {@link AttachmentList} to display for
-     * the view. The result of the processing is stored in the properties of
-     * this model.
-     *
-     * @param list The {@link AttachmentList} to show in the details view.
-     */
-    protected void setAttachmentList(final AttachmentList list) {
-        Objects.requireNonNull(list);
-        uuid = list.getUuid();
-        name = list.getName();
-        titles = list
-            .getTitle()
-            .getValues()
-            .entrySet()
-            .stream()
-            .collect(
-                Collectors.toMap(
-                    entry -> entry.getKey().toString(),
-                    entry -> entry.getValue()
-                )
-            );
-        descriptions = list
-            .getDescription()
-            .getValues()
-            .entrySet()
-            .stream()
-            .collect(
-                Collectors.toMap(
-                    entry -> entry.getKey().toString(),
-                    entry -> entry.getValue()
-                )
-            );
+    public void setUnusedDescriptionLocales(
+        final List<String> unusedDescriptionLocales
+    ) {
+        this.unusedDescriptionLocales
+            = new ArrayList<>(unusedDescriptionLocales);
+    }
 
-        final Set<Locale> titleLocales = list
-            .getTitle()
-            .getAvailableLocales();
-        unusedTitleLocales = globalizationHelper
-            .getAvailableLocales()
-            .stream()
-            .filter(locale -> !titleLocales.contains(locale))
-            .map(Locale::toString)
-            .collect(Collectors.toList());
+    public boolean getCanEdit() {
+        return canEdit;
+    }
 
-        final Set<Locale> descriptionLocales = list
-            .getDescription()
-            .getAvailableLocales();
-        unusedDescriptionLocales = globalizationHelper
-            .getAvailableLocales()
-            .stream()
-            .filter(locale -> !descriptionLocales.contains(locale))
-            .map(Locale::toString)
-            .collect(Collectors.toList());
+    public void setCanEdit(final boolean canEdit) {
+        this.canEdit = canEdit;
     }
 
 }

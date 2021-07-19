@@ -326,6 +326,7 @@ public abstract class AbstractMvcAuthoringStep implements MvcAuthoringStep {
             );
         final String docPath = Optional
             .ofNullable(documentPath)
+            .map(path -> path.substring(1))
             .orElseThrow(
                 () -> new WebApplicationException(
                     String.format(

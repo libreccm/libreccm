@@ -57,6 +57,7 @@ import org.librecms.ui.contentsections.DocumentFolderRowModel;
 import org.librecms.ui.contentsections.DocumentFolderTree;
 import org.librecms.ui.contentsections.DocumentFolderTreeNode;
 import org.librecms.ui.contentsections.DocumentPermissions;
+import org.librecms.ui.contentsections.ItemPermissionChecker;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -72,7 +73,6 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.transaction.Transactional;
@@ -95,6 +95,8 @@ import org.librecms.ui.contentsections.documents.DocumentUi;
 import org.librecms.ui.contentsections.documents.ItemAttachmentDto;
 import org.librecms.ui.contentsections.documents.MvcAuthoringStepDef;
 import org.librecms.ui.contentsections.documents.MvcAuthoringSteps;
+
+import java.util.Set;
 
 /**
  * Authoring step for managing the {@link AttachmentList} and
@@ -246,6 +248,9 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
     @Inject
     private ItemAttachmentManager attachmentManager;
 
+    @Inject
+    private ItemPermissionChecker itemPermissionChecker;
+    
     /**
      * Used to provide data for the views without a named bean.
      */
@@ -731,8 +736,64 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
                 return showAttachmentListNotFound(listIdentifierParam);
             }
 
-            listDetailsModel.setAttachmentList(listResult.get());
+            final AttachmentList list = listResult.get();
 
+            listDetailsModel.setUuid(list.getUuid());
+            listDetailsModel.setName(list.getName());
+            listDetailsModel.setTitles(
+                list
+                    .getTitle()
+                    .getValues()
+                    .entrySet()
+                    .stream()
+                    .collect(
+                        Collectors.toMap(
+                            entry -> entry.getKey().toString(),
+                            entry -> entry.getValue()
+                        )
+                    )
+            );
+            listDetailsModel.setDescriptions(
+                list
+                    .getDescription()
+                    .getValues()
+                    .entrySet()
+                    .stream()
+                    .collect(
+                        Collectors.toMap(
+                            entry -> entry.getKey().toString(),
+                            entry -> entry.getValue()
+                        )
+                    )
+            );
+
+            final Set<Locale> titleLocales = list
+                .getTitle()
+                .getAvailableLocales();
+            listDetailsModel.setUnusedTitleLocales(globalizationHelper
+                .getAvailableLocales()
+                .stream()
+                .filter(locale -> !titleLocales.contains(locale))
+                .map(Locale::toString)
+                .collect(Collectors.toList())
+            );
+
+            final Set<Locale> descriptionLocales = list
+                .getDescription()
+                .getAvailableLocales();
+            listDetailsModel.setUnusedDescriptionLocales(
+                globalizationHelper
+                    .getAvailableLocales()
+                    .stream()
+                    .filter(locale -> !descriptionLocales.contains(locale))
+                    .map(Locale::toString)
+                    .collect(Collectors.toList())
+            );
+
+            listDetailsModel.setCanEdit(
+                itemPermissionChecker.canEditItem(getDocument())
+            );
+            
             return "org/librecms/ui/contentsection/documents/relatedinfo-attachmentlist-details.xhtml";
         } else {
             return documentUi.showAccessDenied(
@@ -789,7 +850,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             listRepo.save(list);
 
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s", list.getName())
+                String.format("/attachmentlists/%s/@details", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
@@ -906,7 +967,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             listRepo.save(list);
 
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s", list.getName())
+                String.format("/attachmentlists/%s/@details", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
@@ -966,7 +1027,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             listRepo.save(list);
 
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s", list.getName())
+                String.format("/attachmentlists/%s/@details", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
@@ -1024,7 +1085,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             listRepo.save(list);
 
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s", list.getName())
+                String.format("/attachmentlists/%s/@details", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
@@ -1084,7 +1145,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             listRepo.save(list);
 
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s", list.getName())
+                String.format("/attachmentlists/%s/@details", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
@@ -1145,7 +1206,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             listRepo.save(list);
 
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s", list.getName())
+                String.format("/attachmentlists/%s/@details", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
@@ -1203,7 +1264,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             listRepo.save(list);
 
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s", list.getName())
+                String.format("/attachmentlists/%s/@details", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
@@ -1397,7 +1458,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
 
             attachmentManager.attachAsset(relatedLink, list);
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s", list.getName())
+                String.format("/attachmentlists/%s/@details", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
@@ -1561,7 +1622,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             assetRepo.save(link);
 
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s", list.getName())
+                String.format("/attachmentlists/%s/@details", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
@@ -1644,7 +1705,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             assetRepo.save(link);
 
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s", list.getName())
+                String.format("/attachmentlists/%s/@details", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
@@ -1727,7 +1788,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             assetRepo.save(link);
 
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s", list.getName())
+                String.format("/attachmentlists/%s/@details", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
@@ -1808,7 +1869,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             assetRepo.save(link);
 
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s", list.getName())
+                String.format("/attachmentlists/%s/@details", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
@@ -1886,7 +1947,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             }
 
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s", list.getName())
+                String.format("/attachmentlists/%s/@details", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
@@ -1940,7 +2001,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             listManager.moveUp(list);
 
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s", list.getName())
+                String.format("/attachmentlists/%s/@details", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
@@ -1993,7 +2054,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             listManager.moveDown(list);
 
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s", list.getName())
+                String.format("/attachmentlists/%s/@details", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
@@ -2061,7 +2122,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             }
 
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s", list.getName())
+                String.format("/attachmentlists/%s/@details", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(
@@ -2129,7 +2190,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             }
 
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s", list.getName())
+                String.format("/attachmentlists/%s/@details", list.getName())
             );
         } else {
             return documentUi.showAccessDenied(

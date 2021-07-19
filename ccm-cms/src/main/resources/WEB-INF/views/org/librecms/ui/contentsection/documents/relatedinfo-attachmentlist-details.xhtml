@@ -4,22 +4,29 @@
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/document.xhtml">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/authoringstep.xhtml">
 
-        <ui:param name="activePage" value="document" />
-        <ui:param name="title" value="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.attachmentlist.details.title']}" />
-
-        <ui:define name="breadcrumb">
-            <ui:include src="document-breadcrumbs.xhtml" />
-            <li aria-current="page" class="breadcrumb-item">
-                #{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.attachmentlist.details.title']}
-            </li>
-        </ui:define>
+        <!--        <ui:param name="activePage" value="document" />
+                <ui:param name="title" value="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.attachmentlist.details.title']}" />
+        
+                <ui:define name="breadcrumb">
+                    <ui:include src="document-breadcrumbs.xhtml" />
+                    <li aria-current="page" class="breadcrumb-item">
+        #{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.attachmentlist.details.title']}
+    </li>
+</ui:define>-->
 
         <ui:define name="authoringStep">
-            <h3>
-                #{CmsDefaultStepsMessageBundle.getMessage('relatedinfo.attachmentlist.details.title', [CmsAttachmentListDetailsModel.name])}
-            </h3>
+            <div class="d-flex mb-3">
+                <a class="btn btn-secondary mr-3"
+                   href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo">
+                    <bootstrap:svgIcon icon="arrow-left-circle" />
+                    <span>#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.attachmentlist.back']}</span>
+                </a>
+                <h3>
+                    #{CmsDefaultStepsMessageBundle.getMessage('relatedinfo.attachmentlist.details.title', [CmsAttachmentListDetailsModel.name])}
+                </h3>
+            </div> 
 
             <p>
                 <span>#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.name.label']}: </span>
@@ -28,7 +35,8 @@
                         data-toggle="modal"
                         data-target="#name-edit-dialog"
                         type="button">
-
+                    <bootstrap:svgIcon icon="pen" />
+                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.name.edit']}</span>
                 </button>
             </p>
             <div aria-hidden="true"
@@ -37,7 +45,7 @@
                  class="modal fade"
                  tabindex="-1">
                 <div class="modal-dialog">
-                    <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/@update"
+                    <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{CmsAttachmentListDetailsModel.name}/@update"
                           class="modal-content"
                           method="post">
                         <div class="modal-header">
@@ -57,46 +65,88 @@
                                 inputId="name"
                                 label="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.name_edit_dialog.name.label']}"
                                 name="listName"
-                                pattern="[A-Za-z0-9\-_]"
-                                required="true" />
+                                pattern="[A-Za-z0-9\-_]*"
+                                required="true" 
+                                value="#{CmsAttachmentListDetailsModel.name}" />
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-warning"
                                     data-dismiss="modal"
                                     type="button">
-                                #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.name_edit_dialog.close']}"
+                                #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.name_edit_dialog.close']}
                             </button>
                             <button class="btn btn-success"
                                     type="submit">
-                                #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.name_edit_dialog.save']}"
+                                #{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.name_edit_dialog.save']}
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
 
-            <libreccm:localizedStringEditor addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/title/@add"
-                                            editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/title/@edit"
-                                            editorId="list-title-editor"
-                                            hasUnusedLocales="#{!CmsAttachmentListDetailsModel.unusedDescriptionLocales.isEmpty()}"
-                                            objectIdentifier="#{CmsAttachmentListDetailsModel.name}"
-                                            removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/title/@remove"
-                                            title="CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title_editor.title']}"
-                                            unusedLocales="#{CmsAttachmentListDetailsModel.unusedDescriptionLocales}"
-                                            values="#{CmsAttachmentListDetailsModel.titles}"
-                                            />
+            <libreccm:localizedStringEditor 
+                addButtonLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title.add_button.label']}"
+                addDialogCancelLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title.add.cancel']}"
+                addDialogLocaleSelectHelp="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title.add.locale.help']}"
+                addDialogLocaleSelectLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title.add.locale.label']}"
+                addDialogSubmitLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title.add.submit']}"
+                addDialogTitle="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title.add.title']}"
+                addDialogValueHelp="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title.add.value.help']}"
+                addDialogValueLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title.add.value.label']}"
+                addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{CmsAttachmentListDetailsModel.name}/title/@add"
+                editButtonLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title.edit_button.label']}"
+                editDialogCancelLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title.edit.cancel']}"
+                editDialogSubmitLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title.edit.submit']}"
+                editDialogTitle="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title.edit.title']}"
+                editDialogValueHelp="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title.edit.value.help']}"
+                editDialogValueLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title.edit.value.label']}"
+                editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{CmsAttachmentListDetailsModel.name}/title/@edit"
+                editorId="list-title-editor"
+                hasUnusedLocales="#{!CmsAttachmentListDetailsModel.unusedTitleLocales.isEmpty()}"
+                objectIdentifier="#{CmsAttachmentListDetailsModel.name}"
+                readOnly="#{!CmsAttachmentListDetailsModel.canEdit}"
+                removeButtonLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title.remove_button.label']}"
+                removeDialogCancelLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title.remove.cancel']}"
+                removeDialogSubmitLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title.remove.submit']}"
+                removeDialogText="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title.remove.text']}"
+                removeDialogTitle="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title.remove.title']}"
+                removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{CmsAttachmentListDetailsModel.name}/title/@remove"
+                title="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.title_editor.title']}"
+                unusedLocales="#{CmsAttachmentListDetailsModel.unusedTitleLocales}"
+                values="#{CmsAttachmentListDetailsModel.titles}"
+                />
 
-            <libreccm:localizedStringEditor addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/description/@add"
-                                            editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/description/@edit"
-                                            editorId="list-description-editor"
-                                            hasUnusedLocales="#{!CmsAttachmentListDetailsModel.unusedD.isEmpty()}"
-                                            objectIdentifier="#{CmsAttachmentListDetailsModel.name}"
-                                            removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/description/@remove"
-                                            title="CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description_editor.title']}"
-                                            unusedLocales="#{CmsAttachmentListDetailsModel.unusedTitleLocales}"
-                                            useTextarea="true"
-                                            values="#{CmsAttachmentListDetailsModel.descriptions}"
-                                            />
+            <libreccm:localizedStringEditor 
+                addButtonLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description.add_button.label']}"
+                addDialogCancelLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description.add.cancel']}"
+                addDialogLocaleSelectHelp="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description.add.locale.help']}"
+                addDialogLocaleSelectLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description.add.locale.label']}"
+                addDialogSubmitLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description.add.submit']}"
+                addDialogTitle="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description.add.title']}"
+                addDialogValueHelp="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description.add.value.help']}"
+                addDialogValueLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description.add.value.label']}"
+                addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{CmsAttachmentListDetailsModel.name}/description/@add"
+                editButtonLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description.edit_button.label']}"
+                editDialogCancelLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description.edit.cancel']}"
+                editDialogSubmitLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description.edit.submit']}"
+                editDialogTitle="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description.edit.title']}"
+                editDialogValueHelp="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description.edit.value.help']}"
+                editDialogValueLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description.edit.value.label']}"
+                editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{CmsAttachmentListDetailsModel.name}/description/@edit"
+                editorId="list-description-editor"
+                hasUnusedLocales="#{!CmsAttachmentListDetailsModel.unusedDescriptionLocales.isEmpty()}"
+                objectIdentifier="#{CmsAttachmentListDetailsModel.name}"
+                removeButtonLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description.remove_button.label']}"
+                removeDialogCancelLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description.remove.cancel']}"
+                removeDialogSubmitLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description.remove.submit']}"
+                removeDialogText="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description.remove.text']}"
+                removeDialogTitle="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description.remove.title']}"
+                removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{CmsAttachmentListDetailsModel.name}/description/@remove"
+                title="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlist.details.description_editor.title']}"
+                unusedLocales="#{CmsAttachmentListDetailsModel.unusedDescriptionLocales}"
+                useTextarea="true"
+                values="#{CmsAttachmentListDetailsModel.descriptions}"
+                />
 
         </ui:define>
 
