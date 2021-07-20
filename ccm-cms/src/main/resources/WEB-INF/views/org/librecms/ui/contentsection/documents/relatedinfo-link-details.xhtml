@@ -1,0 +1,94 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:librecms="http://xmlns.jcp.org/jsf/composite/components/librecms"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/authoringstep.xhtml">
+
+        <ui:param name="activePage" value="document" />
+        <ui:param name="title" value="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.internallink.details.title']}" />
+
+        <ui:define name="authoringStep">
+            <h2>
+                #{CmsDefaultStepsMessageBundle['relatedinfo.link.details.title']}
+            </h2>
+
+            <libreccm:localizedStringEditor addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/internal-links/#{CmsInternalLinkDetailsModel.uuid}/title/@add"
+                                            editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}//internal-links/#{CmsInternalLinkDetailsModel.uuid}/title/@edit"
+                                            editorId="list-title-editor"
+                                            hasUnusedLocales="#{!CmsAttachmentListDetailsModel.unusedDescriptionLocales.isEmpty()}"
+                                            objectIdentifier="#{CmsAttachmentListDetailsModel.name}"
+                                            removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}//internal-links/#{CmsInternalLinkDetailsModel.uuid}/title/@remove"
+                                            title="CmsDefaultStepsMessageBundle['relatedinfo.internallink.details.title_editor.title']}"
+                                            unusedLocales="#{CmsAttachmentListDetailsModel.unusedDescriptionLocales}"
+                                            values="#{CmsAttachmentListDetailsModel.titles}"
+                                            />
+
+            <form>
+                <fieldset aria-describedby="linktype-help"
+                          class="form-group">
+                    <div class="row">
+                        <legend class="col-form-label col-sm-2 pt-0">#{CmsDefaultStepsMessageBundle['relatedinfo.links.type.label']}</legend>
+                        <div class="col-sm-10">
+                            <div class="from-check">
+                                <input 
+                                    checked="#{"internal".equals(selectedType)}" 
+                                    class="form-check-input link-type-select"
+                                    id="linktype-internal"
+                                    name="linkType"
+                                    type="radio" 
+                                    value="internal"
+                                    />
+                                <label for="linktype-internal">#{CmsDefaultStepsMessageBundle['relatedinfo.links.type.internal']}</label>
+                                <input 
+                                    checked="#{"external".equals(selectedType)}" 
+                                    class="form-check-input link-type-select"
+                                    id="linktype-internal"
+                                    name="linkType"
+                                    type="external"
+                                    value="external"
+                                    />
+                                <label for="linktype-internal">#{CmsDefaultStepsMessageBundle['relatedinfo.links.type.external']}</label>
+                            </div>
+                        </div>
+                        <small class="form-text text-muted"
+                               id="linktype-help">
+                            #{CmsDefaultStepsMessageBundle['relatedinfo.links.type.help']}
+                        </small>
+                    </div>
+                </fieldset>
+            </form>
+
+            <h3>#{CmsDefaultStepsMessageBundle['relatedinfo.link.details.title.target']}</h3>
+
+            <div class="d-none relatedlink-target"
+                 id="relatedlink-target-internal">
+                <p>ToDo: Content Item Picker</p>
+            </div>
+
+            <div class="d-none relatedlink-target"
+                 id="relatedlink-target-external">
+                <librecms:assetPickerButton 
+                    assetPickerId="bookmark-picker"
+                    buttonText="#{CmsDefaultStepsMessageBundle['relatedinfo.link.details.title.target.select_bookmark']}"
+                    />
+                <librecms:assetPicker
+                    actionUrl="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{CmsAttachmentListDetailsModel.name}/links/#{CmsLinkDetailsModel.uuid}/details/@set-target-bookmark"
+                    assetType="#{CmsLinkDetailsModel.bookmarkType}"
+                    assetPickerId="bookmark-picker"
+                    baseUrl="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo-service"
+                    contentSection="#{CmsLinkDetailsModel.sectionName}"
+                    formParamName="bookmarkIdentifier"
+                    />
+
+            </div>
+
+
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>

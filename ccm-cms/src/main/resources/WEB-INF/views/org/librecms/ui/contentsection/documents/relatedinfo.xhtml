@@ -427,13 +427,12 @@
                                     <bootstrap:svgIcon icon="plus-circle" />
                                     <span>#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.attachment.add.label']}</span>
                                 </button>
-                                <button class="btn btn-primary"
-                                        data-target="#attachmentlist-#{list.name}-add-internallink-dialog"
-                                        data-toggle="modal"
-                                        type="button">
+                                <a class="btn btn-primary"
+                                   href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{list.name}/links/@create"
+                                   type="button">
                                     <bootstrap:svgIcon icon="link-45deg" />
                                     <span>#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.link.add.label']}</span>
-                                </button>
+                                </a>
                                 <button class="btn btn-danger"
                                         type="button">
                                     <bootstrap:svgIcon icon="x-circle" />
@@ -459,14 +458,15 @@
                                             <bootstrap:svgIcon icon="info-circle" />
                                             <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.info.button']}"</span>
                                         </button>
-                                        <button class="btn btn-primary"
-                                                type="button">
+                                        <a class="btn btn-primary"
+                                           href="#"
+                                           type="button">
                                             <bootstrap:svgIcon icon="pen" />
                                             <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.edit.button']}"</span>
-                                        </button>
+                                        </a>
                                         <button class="btn btn-danger"
                                                 type="button">
-                                            <bootstrap:svgIcon icon="pen" />
+                                            <bootstrap:svgIcon icon="x-circle" />
                                             <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.delete.button']}"</span>
                                         </button>
                                     </div>

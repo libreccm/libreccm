@@ -27,48 +27,20 @@ import org.librecms.assets.AssetTypeInfo;
 import org.librecms.assets.AssetTypesManager;
 import org.librecms.assets.RelatedLink;
 import org.librecms.contentsection.Asset;
-import org.librecms.contentsection.AssetFolderEntry;
 import org.librecms.contentsection.AssetManager;
 import org.librecms.contentsection.AssetRepository;
 import org.librecms.contentsection.AttachmentList;
 import org.librecms.contentsection.AttachmentListManager;
 import org.librecms.contentsection.AttachmentListRepository;
 import org.librecms.contentsection.ContentItem;
-import org.librecms.contentsection.ContentItemL10NManager;
-import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
-import org.librecms.contentsection.ContentSection;
-import org.librecms.contentsection.ContentType;
-import org.librecms.contentsection.ContentTypeRepository;
-import org.librecms.contentsection.DocumentFolderEntry;
-import org.librecms.contentsection.Folder;
-import org.librecms.contentsection.FolderManager;
-import org.librecms.contentsection.FolderRepository;
-import org.librecms.contentsection.FolderType;
 import org.librecms.contentsection.ItemAttachment;
 import org.librecms.contentsection.ItemAttachmentManager;
 import org.librecms.contentsection.privileges.ItemPrivileges;
-import org.librecms.ui.contentsections.AssetFolderRowModel;
-import org.librecms.ui.contentsections.AssetFolderTree;
-import org.librecms.ui.contentsections.AssetFolderTreeNode;
-import org.librecms.ui.contentsections.AssetPermissionsModel;
-import org.librecms.ui.contentsections.AssetPermissionsModelProvider;
-import org.librecms.ui.contentsections.DocumentFolderRowModel;
-import org.librecms.ui.contentsections.DocumentFolderTree;
-import org.librecms.ui.contentsections.DocumentFolderTreeNode;
-import org.librecms.ui.contentsections.DocumentPermissions;
 import org.librecms.ui.contentsections.ItemPermissionChecker;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
@@ -76,17 +48,11 @@ import javax.inject.Inject;
 import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.transaction.Transactional;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 
 import org.librecms.ui.contentsections.documents.AbstractMvcAuthoringStep;
 import org.librecms.ui.contentsections.documents.DefaultAuthoringStepConstants;
@@ -96,6 +62,8 @@ import org.librecms.ui.contentsections.documents.ItemAttachmentDto;
 import org.librecms.ui.contentsections.documents.MvcAuthoringStepDef;
 import org.librecms.ui.contentsections.documents.MvcAuthoringSteps;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -124,18 +92,6 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      * The path fragment of the step.
      */
     static final String PATH_FRAGMENT = "relatedinfo";
-
-    /**
-     * The asset folder tree of the current content section.
-     */
-    @Inject
-    private AssetFolderTree assetFolderTree;
-
-    /**
-     * Used to build the {@link AssetPermissionsModel}.
-     */
-    @Inject
-    private AssetPermissionsModelProvider assetPermissions;
 
     /**
      * {@link AssetManager} instance of managing {@link Asset}s.
@@ -173,62 +129,20 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
     @Inject
     private AttachmentListRepository listRepo;
 
-    /**
-     * The document folder tree of the current content section.
-     */
-    @Inject
-    private DocumentFolderTree documentFolderTree;
-
-    /**
-     * Used to check permissions of the current content item.
-     */
-    @Inject
-    private DocumentPermissions documentPermissions;
-
     @Inject
     private DocumentUi documentUi;
-
-    /**
-     * Used to retrieve the path of folders.
-     */
-    @Inject
-    private FolderManager folderManager;
-
-    /**
-     * Used to retrieve folders.
-     */
-    @Inject
-    private FolderRepository folderRepo;
 
     /**
      * Model for the details view of an internal {@link RelatedLink}.
      */
     @Inject
-    private InternalLinkDetailsModel internalLinkDetailsModel;
-
-    /**
-     * Manages localization of {@link ContentItem}s.
-     */
-    @Inject
-    private ContentItemL10NManager itemL10NManager;
-
-    /**
-     * Manages {@link ContentItem}s.
-     */
-    @Inject
-    private ContentItemManager itemManager;
+    private LinkDetailsModel linkDetailsModel;
 
     /**
      * Used to retrieve the current content item.
      */
     @Inject
     private ContentItemRepository itemRepo;
-
-    /**
-     * Used to retrieve content types.
-     */
-    @Inject
-    private ContentTypeRepository contentTypeRepo;
 
     /**
      * Used for globalization stuff.
@@ -250,7 +164,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
 
     @Inject
     private ItemPermissionChecker itemPermissionChecker;
-    
+
     /**
      * Used to provide data for the views without a named bean.
      */
@@ -310,330 +224,6 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
                 getDocument(),
                 getLabel()
             );
-        }
-    }
-
-    /**
-     * Gets the asset folder tree of the current content section as JSON data.
-     *
-     * @param sectionIdentifier
-     * @param documentPath
-     *
-     * @return The assets folder tree of the current content section as JSON
-     *         data.
-     */
-    @GET
-    @Path("/asset-folders")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Transactional(Transactional.TxType.REQUIRED)
-    public List<AssetFolderTreeNode> getAssetFolderTree(
-        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
-        final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
-        final String documentPath
-    ) {
-        try {
-            init();
-        } catch (ContentSectionNotFoundException
-                 | DocumentNotFoundException ex) {
-            throw new NotFoundException(ex.getMessage());
-        }
-
-        if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, getDocument()
-        )) {
-            final ContentSection section = getContentSection();
-            return assetFolderTree.buildFolderTree(
-                section, section.getRootAssetsFolder()
-            );
-        } else {
-            throw new ForbiddenException();
-        }
-    }
-
-    /**
-     * Gets the assets in the folder as JSON data.
-     *
-     * @param folderPath        The path of the folder.
-     * @param firstResult       The index of the firset result to show.
-     * @param maxResults        The maximum number of results to show.
-     * @param filterTerm        An optional filter term for filtering the assets
-     *                          in the folder by their name.
-     * @param documentPath
-     * @param sectionIdentifier
-     *
-     * @return A list of the assets in the folder as JSON data.
-     */
-    @GET
-    @Path("/asset-folders/{folderPath}/assets")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Transactional(Transactional.TxType.REQUIRED)
-    public List<AssetFolderRowModel> getAssetsInFolder(
-        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
-        final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
-        final String documentPath,
-        @PathParam("folderPath")
-        final String folderPath,
-        @QueryParam("firstResult")
-        @DefaultValue("0")
-        final int firstResult,
-        @QueryParam("maxResults")
-        @DefaultValue("20")
-        final int maxResults,
-        @QueryParam("filterTerm")
-        @DefaultValue("")
-        final String filterTerm
-    ) {
-        try {
-            init();
-        } catch (ContentSectionNotFoundException
-                 | DocumentNotFoundException ex) {
-            throw new NotFoundException(ex.getMessage());
-        }
-
-        if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, getDocument()
-        )) {
-            final ContentSection section = getContentSection();
-            final Folder folder;
-            if (folderPath.isEmpty()) {
-                folder = section.getRootAssetsFolder();
-            } else {
-                final Optional<Folder> folderResult = folderRepo.findByPath(
-                    section, folderPath, FolderType.ASSETS_FOLDER
-                );
-                if (folderResult.isPresent()) {
-                    folder = folderResult.get();
-                } else {
-                    return Collections.emptyList();
-                }
-            }
-            return folderRepo
-                .getAssetFolderEntries(
-                    folder, firstResult, maxResults, filterTerm
-                )
-                .stream()
-                .map(entry -> buildAssetFolderRowModel(section, entry))
-                .collect(Collectors.toList());
-        } else {
-            throw new ForbiddenException();
-        }
-    }
-
-    /**
-     * Show all assets of a content section filtered by their name.
-     *
-     * @param sectionIdentifier
-     * @param documentPath
-     * @param firstResult       The index of the first result to show.
-     * @param maxResults        The maximum number of results to show.
-     * @param searchTerm        An optional search term applied to the names of
-     *                          the assets.
-     *
-     * @return A list of matching assets as JSON.
-     */
-    @GET
-    @Path("/search-assets")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Transactional(Transactional.TxType.REQUIRED)
-    public List<AssetFolderRowModel> findAssets(
-        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
-        final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
-        final String documentPath,
-        @QueryParam("firstResult")
-        @DefaultValue("0")
-        final int firstResult,
-        @QueryParam("maxResults")
-        @DefaultValue("20")
-        final int maxResults,
-        @QueryParam("searchTerm")
-        @DefaultValue("")
-        final String searchTerm
-    ) {
-        try {
-            init();
-        } catch (ContentSectionNotFoundException
-                 | DocumentNotFoundException ex) {
-            throw new NotFoundException(ex.getMessage());
-        }
-
-        final ContentSection section = getContentSection();
-
-        if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, getDocument()
-        )) {
-            return assetRepo.findByTitleAndContentSection(searchTerm, section)
-                .stream()
-                .map(asset -> buildAssetFolderRowModel(section, asset))
-                .collect(Collectors.toList());
-        } else {
-            throw new ForbiddenException();
-        }
-    }
-
-    /**
-     * Gets the document folder tree of the current content section as JSON
-     * data.
-     *
-     * @param sectionIdentifier
-     * @param documentPath
-     *
-     * @return The document folder tree of the current content section as JSON
-     *         data.
-     */
-    @GET
-    @Path("/document-folders")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Transactional(Transactional.TxType.REQUIRED)
-    public List<DocumentFolderTreeNode> getDocumentFolderTree(
-        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
-        final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
-        final String documentPath
-    ) {
-        try {
-            init();
-        } catch (ContentSectionNotFoundException
-                 | DocumentNotFoundException ex) {
-            throw new NotFoundException(ex.getMessage());
-        }
-
-        if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, getDocument()
-        )) {
-            final ContentSection section = getContentSection();
-            return documentFolderTree.buildFolderTree(
-                section, section.getRootDocumentsFolder()
-            );
-        } else {
-            throw new ForbiddenException();
-        }
-    }
-
-    /**
-     * Gets the documents in the folder as JSON data.
-     *
-     * @param sectionIdentifier
-     * @param documentPath
-     * @param folderPath        The path of the folder.
-     * @param firstResult       The index of the firset result to show.
-     * @param maxResults        The maximum number of results to show.
-     * @param filterTerm        An optional filter term for filtering the
-     *                          documents in the folder by their name.
-     *
-     * @return A list of the documents in the folder as JSON data.
-     */
-    @GET
-    @Path("/document-folders/{folderPath}/documents")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Transactional(Transactional.TxType.REQUIRED)
-    public List<DocumentFolderRowModel> getDocumentsInFolder(
-        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
-        final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
-        final String documentPath,
-        @PathParam("folderPath")
-        final String folderPath,
-        @QueryParam("firstResult")
-        @DefaultValue("0")
-        final int firstResult,
-        @QueryParam("maxResults")
-        @DefaultValue("20")
-        final int maxResults,
-        @QueryParam("filterTerm")
-        @DefaultValue("")
-        final String filterTerm
-    ) {
-        try {
-            init();
-        } catch (ContentSectionNotFoundException
-                 | DocumentNotFoundException ex) {
-            throw new NotFoundException(ex.getMessage());
-        }
-
-        if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, getDocument()
-        )) {
-            final ContentSection section = getContentSection();
-            final Folder folder;
-            if (folderPath.isEmpty()) {
-                folder = section.getRootDocumentsFolder();
-            } else {
-                final Optional<Folder> folderResult = folderRepo.findByPath(
-                    section, folderPath, FolderType.ASSETS_FOLDER
-                );
-                if (folderResult.isPresent()) {
-                    folder = folderResult.get();
-                } else {
-                    return Collections.emptyList();
-                }
-            }
-
-            return folderRepo
-                .getDocumentFolderEntries(
-                    folder,
-                    firstResult,
-                    maxResults,
-                    filterTerm
-                )
-                .stream()
-                .map(entry -> buildDocumentFolderRowModel(section, entry))
-                .collect(Collectors.toList());
-        } else {
-            throw new ForbiddenException();
-        }
-    }
-
-    /**
-     * Show all documents of a content section filtered by their name.
-     *
-     * @param sectionIdentifier
-     * @param documentPath
-     * @param firstResult       The index of the first result to show.
-     * @param maxResults        The maximum number of results to show.
-     * @param searchTerm        An optional search term applied to the names of
-     *                          the docuemnts.
-     *
-     * @return A list of matching documents/content items as JSON.
-     */
-    @GET
-    @Path("/search-documents")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Transactional(Transactional.TxType.REQUIRED)
-    public List<DocumentFolderRowModel> findDocuments(
-        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
-        final String sectionIdentifier,
-        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
-        final String documentPath,
-        @QueryParam("firstResult")
-        @DefaultValue("0")
-        final int firstResult,
-        @QueryParam("maxResults")
-        @DefaultValue("20")
-        final int maxResults,
-        @QueryParam("searchTerm")
-        @DefaultValue("")
-        final String searchTerm
-    ) {
-        try {
-            init();
-        } catch (ContentSectionNotFoundException
-                 | DocumentNotFoundException ex) {
-            throw new NotFoundException(ex.getMessage());
-        }
-
-        if (permissionChecker.isPermitted(
-            ItemPrivileges.EDIT, getDocument()
-        )) {
-            final ContentSection section = getContentSection();
-            return itemRepo.findByNameAndContentSection(searchTerm, section)
-                .stream()
-                .map(asset -> buildDocumentFolderRowModel(section, asset))
-                .collect(Collectors.toList());
-        } else {
-            throw new ForbiddenException();
         }
     }
 
@@ -793,7 +383,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             listDetailsModel.setCanEdit(
                 itemPermissionChecker.canEditItem(getDocument())
             );
-            
+
             return "org/librecms/ui/contentsection/documents/relatedinfo-attachmentlist-details.xhtml";
         } else {
             return documentUi.showAccessDenied(
@@ -1351,8 +941,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      * @return The template for the form for creating a new internal link.
      */
     @GET
-    @Path(
-        "/attachmentlists/{attachmentListIdentifier}/internal-links/@create")
+    @Path("/attachmentlists/{attachmentListIdentifier}/links/@create")
     @Transactional(Transactional.TxType.REQUIRED)
     public String createInternalLink(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
@@ -1381,8 +970,10 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             }
             final AttachmentList list = listResult.get();
             models.put("attachmentList", list.getName());
+            models.put("messages", Collections.emptyMap());
+            models.put("selectedType", "");
 
-            return "org/librecms/ui/contentsection/documents/relatedinfo-create-internallink.xhtml";
+            return "org/librecms/ui/contentsection/documents/relatedinfo-create-link.xhtml";
         } else {
             return documentUi.showAccessDenied(
                 getContentSection(),
@@ -1399,8 +990,8 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      * @param documentPath
      * @param listIdentifierParam The identifier of the list to which the
      *                            attachment is added.
-     * @param targetItemUuid      The UUID of the target item of the internal
-     *                            link.
+     * @param name
+     * @param locale
      * @param title               The title of the new internal link for the
      *                            language return by {@link GlobalizationHelper#getNegotiatedLocale()
      *                            }.
@@ -1409,7 +1000,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      */
     @POST
     @Path(
-        "/attachmentlists/{attachmentListIdentifier}/internal-links/@create")
+        "/attachmentlists/{attachmentListIdentifier}/links/@create")
     @Transactional(Transactional.TxType.REQUIRED)
     public String createInternalLink(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
@@ -1420,6 +1011,10 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
         final String listIdentifierParam,
         @FormParam("targetItemUuid")
         final String targetItemUuid,
+        @FormParam("name")
+        final String name,
+        @FormParam("locale")
+        final String locale,
         @FormParam("title")
         final String title
     ) {
@@ -1454,11 +1049,14 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             relatedLink.getTitle().addValue(
                 globalizationHelper.getNegotiatedLocale(), title
             );
-            relatedLink.setTargetItem(getDocument());
 
             attachmentManager.attachAsset(relatedLink, list);
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s/@details", list.getName())
+                String.format(
+                    "/attachmentlists/%s/links/%s/@details",
+                    list.getName(),
+                    relatedLink.getUuid()
+                )
             );
         } else {
             return documentUi.showAccessDenied(
@@ -1470,13 +1068,13 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
     }
 
     /**
-     * Show the details of an internal link.
+     * Show the details of a link..
      *
      * @param sectionIdentifier
      * @param documentPath
      * @param listIdentifierParam The identifier of the {@link AttachmentList}
      *                            to which the link belongs.
-     * @param internalLinkUuid    The UUID of the link.
+     * @param linkUuid            The UUID of the link.
      *
      * @return The template for the details view of the link, or the template
      *         for the link not found message if the link iwth the provided UUID
@@ -1484,17 +1082,18 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      */
     @GET
     @Path(
-        "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}/@details")
+        "/attachmentlists/{attachmentListIdentifier}/links/{linkUuid}/@details"
+    )
     @Transactional(Transactional.TxType.REQUIRED)
-    public String showInternalLinkDetails(
+    public String showLinkDetails(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
         @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
-        @PathParam("internalLinkUuid")
-        final String internalLinkUuid
+        @PathParam("linkUuid")
+        final String linkUuid
     ) {
         try {
             init();
@@ -1521,21 +1120,66 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
                 .map(ItemAttachment::getAsset)
                 .filter(asset -> asset instanceof RelatedLink)
                 .map(asset -> (RelatedLink) asset)
-                .filter(link -> link.getUuid().equals(internalLinkUuid))
+                .filter(link -> link.getUuid().equals(linkUuid))
                 .findAny();
 
             if (!linkResult.isPresent()) {
                 models.put("contentItem", getDocumentPath());
                 models.put("listIdentifier", listIdentifierParam);
-                models.put("internalLinkUuid", internalLinkUuid);
-                return "org/librecms/ui/contentsection/documents/internal-link-asset-not-found.xhtml";
+                models.put("internalLinkUuid", linkUuid);
+                return "org/librecms/ui/contentsection/documents/link-asset-not-found.xhtml";
             }
 
             final RelatedLink link = linkResult.get();
-            internalLinkDetailsModel.setListIdentifier(list.getName());
-            internalLinkDetailsModel.setInternalLink(link);
+            linkDetailsModel.setListIdentifier(list.getName());
 
-            return "org/librecms/ui/contentsection/documents/relatedinfo-internallink-details.xhtml";
+            if (link.getBookmark() != null) {
+                linkDetailsModel.setLinkType("external");
+                linkDetailsModel.setBookmarkName(
+                    link.getBookmark().getDisplayName()
+                );
+                linkDetailsModel.setBookmarkUuid(link.getBookmark().getUuid());
+            } else {
+                linkDetailsModel.setLinkType("internal");
+                linkDetailsModel.setTargetItemName(
+                    link.getTargetItem().getDisplayName()
+                );
+                linkDetailsModel.setTargetItemTitle(
+                    globalizationHelper.getValueFromLocalizedString(
+                        link.getTargetItem().getTitle()
+                    )
+                );
+                linkDetailsModel.setTargetItemUuid(
+                    link.getTargetItem().getUuid()
+                );
+            }
+            linkDetailsModel.setTitle(
+                link
+                    .getTitle()
+                    .getValues()
+                    .entrySet()
+                    .stream()
+                    .collect(
+                        Collectors.toMap(
+                            entry -> entry.getKey().toString(),
+                            entry -> entry.getValue()
+                        )
+                    )
+            );
+            final Set<Locale> titleLocales = link.getTitle()
+                .getAvailableLocales();
+            linkDetailsModel.setUnusedTitleLocales(
+                globalizationHelper
+                    .getAvailableLocales()
+                    .stream()
+                    .filter(locale -> !titleLocales.contains(locale))
+                    .map(Locale::toString)
+                    .collect(Collectors.toList())
+            );
+            linkDetailsModel.setUuid(link.getUuid());
+            linkDetailsModel.setSectionName(getContentSection().getLabel());
+
+            return "org/librecms/ui/contentsection/documents/relatedinfo-link-details.xhtml";
         } else {
             return documentUi.showAccessDenied(
                 getContentSection(),
@@ -1546,7 +1190,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
     }
 
     /**
-     * Updates the target of an internal link.
+     * Updates the target of a link..
      *
      * @param sectionIdentifier
      * @param documentPath
@@ -1559,7 +1203,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      */
     @POST
     @Path(
-        "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}"
+        "/attachmentlists/{attachmentListIdentifier}/links/{interalLinkUuid}"
     )
     @Transactional(Transactional.TxType.REQUIRED)
     public String updateInternalLinkTarget(
@@ -1634,7 +1278,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
     }
 
     /**
-     * Add a localized title value to an internal link.
+     * Add a localized title value to a link..
      *
      * @param sectionIdentifier
      * @param documentPath
@@ -1648,7 +1292,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      */
     @POST
     @Path(
-        "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}/title/@add")
+        "/attachmentlists/{attachmentListIdentifier}/links/{interalLinkUuid}/title/@add")
     @Transactional(Transactional.TxType.REQUIRED)
     public String addInternalLinkTitle(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
@@ -1717,7 +1361,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
     }
 
     /**
-     * Updates a localized title value of an internal link.
+     * Updates a localized title value of a link..
      *
      * @param sectionIdentifier
      * @param documentPath
@@ -1731,7 +1375,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      */
     @POST
     @Path(
-        "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}/title/@edit/{locale}")
+        "/attachmentlists/{attachmentListIdentifier}/links/{interalLinkUuid}/title/@edit/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String updateInternalLinkTitle(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
@@ -1800,7 +1444,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
     }
 
     /**
-     * Removes a localized title value from an internal link.
+     * Removes a localized title value from a link..
      *
      * @param sectionIdentifier
      * @param documentPath
@@ -1813,7 +1457,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      */
     @POST
     @Path(
-        "/attachmentlists/{attachmentListIdentifier}/internal-links/{interalLinkUuid}/title/@remove/{locale}"
+        "/attachmentlists/{attachmentListIdentifier}/links/{interalLinkUuid}/title/@remove/{locale}"
     )
     @Transactional(Transactional.TxType.REQUIRED)
     public String removeInternalLinkTitle(
@@ -2320,334 +1964,6 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
         );
         dto.setUuid(itemAttachment.getUuid());
         return dto;
-    }
-
-    /**
-     * Build the model for a row in the asset folder listing.
-     *
-     * @param section The content section.
-     * @param entry   The {@link AssetFolderEntry} from which the model is
-     *                build.
-     *
-     * @return The {@link AssetFolderRowModel} for the provided {@code entry}.
-     */
-    private AssetFolderRowModel buildAssetFolderRowModel(
-        final ContentSection section, final AssetFolderEntry entry
-    ) {
-        Objects.requireNonNull(section);
-        Objects.requireNonNull(entry);
-
-        final AssetFolderRowModel row = new AssetFolderRowModel();
-        if (entry.isFolder()) {
-            final Folder folder = folderRepo
-                .findById(entry.getEntryId())
-                .get();
-            row.setDeletable(false);
-            row.setFolder(true);
-            row.setFolderPath(
-                folderManager
-                    .getFolderPath(folder)
-                    .substring(
-                        folderManager
-                            .getFolderPath(section.getRootAssetsFolder())
-                            .length()
-                    )
-            );
-            row.setName(entry.getDisplayName());
-            row.setTitle(
-                globalizationHelper.getValueFromLocalizedString(
-                    folder.getTitle()
-                )
-            );
-            row.setType(
-                globalizationHelper.getLocalizedTextsUtil(
-                    "org.librecms.CmsAdminMessages"
-                ).getText("contentsection.assetfolder.types.folder")
-            );
-            row.setPermissions(
-                assetPermissions.buildAssetPermissionsModel(folder)
-            );
-        } else {
-            final Asset asset = assetRepo
-                .findById(entry.getEntryId())
-                .get();
-            row.setDeletable(!assetManager.isAssetInUse(asset));
-            row.setFolder(false);
-            row.setName(entry.getDisplayName());
-            row.setNoneCmsObject(false);
-            row.setTitle(
-                globalizationHelper.getValueFromLocalizedString(
-                    asset.getTitle()
-                )
-            );
-            row.setType(asset.getClass().getName());
-            row.setPermissions(
-                assetPermissions.buildAssetPermissionsModel(asset)
-            );
-        }
-
-        return row;
-    }
-
-    /**
-     * Build the model for a row in the asset folder listing.
-     *
-     * @param section The content section.
-     * @param asset   The {@link Asset} from which the model is build.
-     *
-     * @return The {@link AssetFolderRowModel} for the provided {@code asset}.
-     */
-    private AssetFolderRowModel buildAssetFolderRowModel(
-        final ContentSection section, final Asset asset
-    ) {
-        Objects.requireNonNull(section);
-        Objects.requireNonNull(asset);
-
-        final AssetFolderRowModel row = new AssetFolderRowModel();
-        row.setDeletable(false);
-        row.setFolder(false);
-        row.setName(asset.getDisplayName());
-        row.setNoneCmsObject(false);
-        row.setTitle(
-            globalizationHelper.getValueFromLocalizedString(
-                asset.getTitle()
-            )
-        );
-        row.setType(asset.getClass().getName());
-        row.setPermissions(
-            assetPermissions.buildAssetPermissionsModel(asset)
-        );
-
-        return row;
-    }
-
-    /**
-     * Build the model for a row in the document folder listing.
-     *
-     * @param section The content section.
-     * @param entry   The {@link DocumentFolderEntry} from which the model is
-     *                build.
-     *
-     * @return The {@link DocumentFolderRowModel} for the provided
-     *         {@code entry}.
-     */
-    private DocumentFolderRowModel buildDocumentFolderRowModel(
-        final ContentSection section, final DocumentFolderEntry entry
-    ) {
-        Objects.requireNonNull(section);
-        Objects.requireNonNull(entry);
-
-        final DocumentFolderRowModel row = new DocumentFolderRowModel();
-        if (entry.isFolder()) {
-            final Folder folder = folderRepo
-                .findById(entry.getEntryId())
-                .get();
-            row.setCreated("");
-            row.setDeletable(
-                folderManager
-                    .folderIsDeletable(folder)
-                    == FolderManager.FolderIsDeletable.YES
-            );
-            row.setFolder(true);
-            row.setFolderPath(
-                folderManager
-                    .getFolderPath(folder)
-                    .substring(
-                        folderManager
-                            .getFolderPath(section.getRootDocumentsFolder())
-                            .length()
-                    )
-            );
-            row.setLanguages(Collections.emptySortedSet());
-            row.setLastEditPublished(false);
-            row.setLastEdited("");
-            row.setName(entry.getDisplayName());
-            row.setTitle(
-                globalizationHelper.getValueFromLocalizedString(
-                    folder.getTitle()
-                )
-            );
-            row.setType(
-                globalizationHelper.getLocalizedTextsUtil(
-                    "org.librecms.CmsAdminMessages"
-                ).getText("contentsection.documentfolder.types.folder")
-            );
-            row.setPermissions(
-                documentPermissions.buildDocumentPermissionsModel(folder)
-            );
-        } else {
-            final ContentItem contentItem = itemRepo
-                .findById(entry.getEntryId())
-                .get();
-            row.setCreated(
-                DateTimeFormatter.ISO_DATE.format(
-                    LocalDate.ofInstant(
-                        contentItem.getCreationDate().toInstant(),
-                        ZoneId.systemDefault()
-                    )
-                )
-            );
-            row.setDeletable(!itemManager.isLive(contentItem));
-            row.setFolder(false);
-            row.setFolderPath(itemManager.getItemPath(contentItem));
-            row.setLanguages(
-                new TreeSet<>(
-                    itemL10NManager
-                        .availableLanguages(contentItem)
-                        .stream()
-                        .map(Locale::toString)
-                        .collect(Collectors.toSet())
-                )
-            );
-            if (itemManager.isLive(contentItem)) {
-                final LocalDate draftLastModified = LocalDate.ofInstant(
-                    contentItem.getLastModified().toInstant(),
-                    ZoneId.systemDefault()
-                );
-                final LocalDate liveLastModified = LocalDate.ofInstant(
-                    itemManager
-                        .getLiveVersion(contentItem, contentItem.getClass())
-                        .map(ContentItem::getLastModified)
-                        .map(Date::toInstant)
-                        .get(),
-                    ZoneId.systemDefault()
-                );
-                row.setLastEditPublished(
-                    liveLastModified.isBefore(draftLastModified)
-                );
-            } else {
-                row.setLastEditPublished(false);
-            }
-
-            row.setLastEdited(
-                DateTimeFormatter.ISO_DATE.format(
-                    LocalDate.ofInstant(
-                        contentItem.getLastModified().toInstant(),
-                        ZoneId.systemDefault()
-                    )
-                )
-            );
-            row.setName(entry.getDisplayName());
-            row.setNoneCmsObject(false);
-            row.setTitle(
-                globalizationHelper.getValueFromLocalizedString(
-                    contentItem.getTitle()
-                )
-            );
-            row.setType(
-                contentTypeRepo
-                    .findByContentSectionAndClass(
-                        section, contentItem.getClass()
-                    )
-                    .map(ContentType::getLabel)
-                    .map(
-                        label -> globalizationHelper
-                            .getValueFromLocalizedString(
-                                label
-                            )
-                    ).orElse("?")
-            );
-            row.setPermissions(
-                documentPermissions.buildDocumentPermissionsModel(
-                    contentItem
-                )
-            );
-        }
-
-        return row;
-    }
-
-    /**
-     * Build the model for a row in the document folder listing.
-     *
-     * @param section     The content section.
-     * @param contentItem The {@link Contentitem} from which the model is build.
-     *
-     * @return The {@link DocumentFolderRowModel} for the provided
-     *         {@code contentItem}.
-     */
-    private DocumentFolderRowModel buildDocumentFolderRowModel(
-        final ContentSection section, final ContentItem contentItem
-    ) {
-        Objects.requireNonNull(section);
-        Objects.requireNonNull(contentItem);
-
-        final DocumentFolderRowModel row = new DocumentFolderRowModel();
-        row.setCreated(
-            DateTimeFormatter.ISO_DATE.format(
-                LocalDate.ofInstant(
-                    contentItem.getCreationDate().toInstant(),
-                    ZoneId.systemDefault()
-                )
-            )
-        );
-        row.setDeletable(!itemManager.isLive(contentItem));
-        row.setFolder(false);
-        row.setFolderPath(itemManager.getItemPath(contentItem));
-        row.setLanguages(
-            new TreeSet<>(
-                itemL10NManager
-                    .availableLanguages(contentItem)
-                    .stream()
-                    .map(Locale::toString)
-                    .collect(Collectors.toSet())
-            )
-        );
-        if (itemManager.isLive(contentItem)) {
-            final LocalDate draftLastModified = LocalDate.ofInstant(
-                contentItem.getLastModified().toInstant(),
-                ZoneId.systemDefault()
-            );
-            final LocalDate liveLastModified = LocalDate.ofInstant(
-                itemManager
-                    .getLiveVersion(contentItem, contentItem.getClass())
-                    .map(ContentItem::getLastModified)
-                    .map(Date::toInstant)
-                    .get(),
-                ZoneId.systemDefault()
-            );
-            row.setLastEditPublished(
-                liveLastModified.isBefore(draftLastModified)
-            );
-        } else {
-            row.setLastEditPublished(false);
-        }
-
-        row.setLastEdited(
-            DateTimeFormatter.ISO_DATE.format(
-                LocalDate.ofInstant(
-                    contentItem.getLastModified().toInstant(),
-                    ZoneId.systemDefault()
-                )
-            )
-        );
-        row.setName(contentItem.getDisplayName());
-        row.setNoneCmsObject(false);
-        row.setTitle(
-            globalizationHelper.getValueFromLocalizedString(
-                contentItem.getTitle()
-            )
-        );
-        row.setType(
-            contentTypeRepo
-                .findByContentSectionAndClass(
-                    section, contentItem.getClass()
-                )
-                .map(ContentType::getLabel)
-                .map(
-                    label -> globalizationHelper
-                        .getValueFromLocalizedString(
-                            label
-                        )
-                ).orElse("?")
-        );
-        row.setPermissions(
-            documentPermissions.buildDocumentPermissionsModel(
-                contentItem
-            )
-        );
-
-        return row;
     }
 
 }
