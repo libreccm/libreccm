@@ -106,7 +106,7 @@ public class ItemAttachmentDto {
         return internalLink;
     }
 
-    public void setInternalLink(final boolean internalLink) {
+    public void setLink(final boolean internalLink) {
         this.internalLink = internalLink;
     }
 

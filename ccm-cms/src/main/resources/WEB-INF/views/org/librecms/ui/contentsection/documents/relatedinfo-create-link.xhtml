@@ -12,7 +12,7 @@
                 <a class="btn btn-secondary mr-3"
                    href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo">
                     <bootstrap:svgIcon icon="arrow-left-circle" />
-                    <span>#{CmsDefaultStepsMessageBundle['relatedinfo.links.create.back']}</span>
+                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.links.create.back']}</span>
                 </a>
                 <h3>
                     #{CmsDefaultStepsMessageBundle.getMessage('relatedinfo.links.create.title', [CmsAttachmentListDetailsModel.name])}
@@ -26,22 +26,22 @@
                 </div>
             </c:forEach>
 
-            <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{CmsAttachmentListDetailsModel.name}/links/@create"
+            <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{attachmentList}/links/@create"
                   method="post">
-                <bootstrap:formGroupText
-                    help="#{CmsAssetsStepsDefaultMessagesBundle['createform.name.help']}"
+<!--                <bootstrap:formGroupText
+                    help="#{CmsDefaultStepsMessageBundle['relatedinfo.links.name.help']}"
                     inputId="name"
-                    label="#{CmsAssetsStepsDefaultMessagesBundle['createform.name.label']}"
+                    label="#{CmsDefaultStepsMessageBundle['relatedinfo.links.name.label']}"
                     name="name"
                     pattern="^([a-zA-Z0-9_-]*)$"
                     required="true"
                     value="#{CmsBookmarkCreateStep.name}"
-                    />
+                    />-->
 
                 <bootstrap:formGroupSelect
-                    help="#{CmsAssetsStepsDefaultMessagesBundle['createform.initial_locale.help']}"
+                    help="#{CmsDefaultStepsMessageBundle['relatedinfo.links.initial_locale.help']}"
                     inputId="locale"
-                    label="#{CmsAssetsStepsDefaultMessagesBundle['createform.initial_locale.label']}"
+                    label="#{CmsDefaultStepsMessageBundle['relatedinfo.links.initial_locale.label']}"
                     name="locale"
                     options="#{CmsBookmarkCreateStep.availableLocales}"
                     required="true"
@@ -49,41 +49,53 @@
                     />
 
                 <bootstrap:formGroupText
-                    help="#{CmsAssetsStepsDefaultMessagesBundle['createform.title.help']}"
+                    help="#{CmsDefaultStepsMessageBundle['relatedinfo.links.title.help']}"
                     inputId="title"
-                    label="#{CmsAssetsStepsDefaultMessagesBundle['createform.title.label']}"
+                    label="#{CmsDefaultStepsMessageBundle['relatedinfo.links.title.label']}"
                     name="title"
                     required="true"
                     />
 
-<!--                <fieldset aria-describedby="linktype-help"
-                          class="form-group">
-                    <div class="row">
-                        <legend class="col-form-label col-sm-2 pt-0">#{CmsDefaultStepsMessageBundle['relatedinfo.links.type.label']}</legend>
-                        <div class="col-sm-10">
-                            <div class="from-check">
-                                <input 
-                                    checked="#{"internal".equals(selectedType)}" 
-                                    class="form-check-input"
-                                    id="linktype-internal"
-                                    name="linkType"
-                                    type="radio" 
-                                    />
-                                <input 
-                                    checked="#{"external".equals(selectedType)}" 
-                                    class="form-check-input"
-                                    id="linktype-internal"
-                                    name="linkType"
-                                    type="external" 
-                                    />
-                            </div>
-                        </div>
-                        <small class="form-text text-muted"
-                               id="linktype-help">
-                            #{CmsDefaultStepsMessageBundle['relatedinfo.links.type.help']}
-                        </small>
-                    </div>
-                </fieldset>-->
+                <!--                <fieldset aria-describedby="linktype-help"
+                                          class="form-group">
+                                    <div class="row">
+                                        <legend class="col-form-label col-sm-2 pt-0">#{CmsDefaultStepsMessageBundle['relatedinfo.links.type.label']}</legend>
+                                        <div class="col-sm-10">
+                                            <div class="from-check">
+                                                <input 
+                                                    checked="#{"internal".equals(selectedType)}" 
+                                                    class="form-check-input"
+                                                    id="linktype-internal"
+                                                    name="linkType"
+                                                    type="radio" 
+                                                    />
+                                                <input 
+                                                    checked="#{"external".equals(selectedType)}" 
+                                                    class="form-check-input"
+                                                    id="linktype-internal"
+                                                    name="linkType"
+                                                    type="external" 
+                                                    />
+                                            </div>
+                                        </div>
+                                        <small class="form-text text-muted"
+                                               id="linktype-help">
+                #{CmsDefaultStepsMessageBundle['relatedinfo.links.type.help']}
+            </small>
+        </div>
+    </fieldset>-->
+
+                <div class="buttons">
+                    <a class="btn btn-warning"
+                       href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo"
+                       type="button">
+                        #{CmsDefaultStepsMessageBundle['relatedinfo.links.create.cancel']}
+                    </a>
+                    <button class="btn btn-success"
+                            type="submit">
+                        #{CmsDefaultStepsMessageBundle['relatedinfo.links.create.submit']}
+                    </button>
+                </div>
 
             </form>
 

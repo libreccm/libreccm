@@ -943,7 +943,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
     @GET
     @Path("/attachmentlists/{attachmentListIdentifier}/links/@create")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String createInternalLink(
+    public String createLink(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
         @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
@@ -990,7 +990,6 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      * @param documentPath
      * @param listIdentifierParam The identifier of the list to which the
      *                            attachment is added.
-     * @param name
      * @param locale
      * @param title               The title of the new internal link for the
      *                            language return by {@link GlobalizationHelper#getNegotiatedLocale()
@@ -1002,17 +1001,15 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
     @Path(
         "/attachmentlists/{attachmentListIdentifier}/links/@create")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String createInternalLink(
+    public String createLink(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
         @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
-        @FormParam("targetItemUuid")
-        final String targetItemUuid,
-        @FormParam("name")
-        final String name,
+        //        @FormParam("name")
+        //        final String name,
         @FormParam("locale")
         final String locale,
         @FormParam("title")
@@ -1037,18 +1034,21 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             }
             final AttachmentList list = listResult.get();
 
-            final Optional<ContentItem> itemResult = itemRepo.findByUuid(
-                targetItemUuid
-            );
-            if (!itemResult.isPresent()) {
-                models.put("targetItemUuid", targetItemUuid);
-                return "org/librecms/ui/contentsection/documents/target-item-not-found.xhtml";
-            }
-
+//            final Optional<ContentItem> itemResult = itemRepo.findByUuid(
+//                targetItemUuid
+//            );
+//            if (!itemResult.isPresent()) {
+//                models.put("targetItemUuid", targetItemUuid);
+//                return "org/librecms/ui/contentsection/documents/target-item-not-found.xhtml";
+//            }
             final RelatedLink relatedLink = new RelatedLink();
             relatedLink.getTitle().addValue(
                 globalizationHelper.getNegotiatedLocale(), title
             );
+            relatedLink.setDisplayName(
+                title
+                    .toLowerCase(Locale.ROOT)
+                    .replaceAll("\\s*", "-"));
 
             attachmentManager.attachAsset(relatedLink, list);
             return buildRedirectPathForStep(
@@ -1126,7 +1126,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             if (!linkResult.isPresent()) {
                 models.put("contentItem", getDocumentPath());
                 models.put("listIdentifier", listIdentifierParam);
-                models.put("internalLinkUuid", linkUuid);
+                models.put("linkUuid", linkUuid);
                 return "org/librecms/ui/contentsection/documents/link-asset-not-found.xhtml";
             }
 
@@ -1139,7 +1139,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
                     link.getBookmark().getDisplayName()
                 );
                 linkDetailsModel.setBookmarkUuid(link.getBookmark().getUuid());
-            } else {
+            } else if (link.getTargetItem() != null){
                 linkDetailsModel.setLinkType("internal");
                 linkDetailsModel.setTargetItemName(
                     link.getTargetItem().getDisplayName()
@@ -1152,7 +1152,10 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
                 linkDetailsModel.setTargetItemUuid(
                     link.getTargetItem().getUuid()
                 );
+            } else {
+                linkDetailsModel.setLinkType("");
             }
+            
             linkDetailsModel.setTitle(
                 link
                     .getTitle()
@@ -1196,25 +1199,25 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      * @param documentPath
      * @param listIdentifierParam The identifier of the {@link AttachmentList}
      *                            to which the link belongs.
-     * @param internalLinkUuid    The UUID of the link.
+     * @param linkUuid            The UUID of the link.
      * @param targetItemUuid      The UUID of the new target item.
      *
      * @return A redirect to the details view of the link.
      */
     @POST
     @Path(
-        "/attachmentlists/{attachmentListIdentifier}/links/{interalLinkUuid}"
+        "/attachmentlists/{attachmentListIdentifier}/links/{linkUuid}"
     )
     @Transactional(Transactional.TxType.REQUIRED)
-    public String updateInternalLinkTarget(
+    public String updateLinkTarget(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
         @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
-        @PathParam("internalLinkUuid")
-        final String internalLinkUuid,
+        @PathParam("linkUuid")
+        final String linkUuid,
         @FormParam("targetItemUuid")
         final String targetItemUuid
     ) {
@@ -1251,13 +1254,13 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
                 .map(ItemAttachment::getAsset)
                 .filter(asset -> asset instanceof RelatedLink)
                 .map(asset -> (RelatedLink) asset)
-                .filter(link -> link.getUuid().equals(internalLinkUuid))
+                .filter(link -> link.getUuid().equals(linkUuid))
                 .findAny();
 
             if (!linkResult.isPresent()) {
                 models.put("contentItem", getDocumentPath());
                 models.put("listIdentifier", listIdentifierParam);
-                models.put("internalLinkUuid", internalLinkUuid);
+                models.put("linkUuid", linkUuid);
                 return "org/librecms/ui/contentsection/documents/internal-link-asset-not-found.xhtml";
             }
 
@@ -1284,7 +1287,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      * @param documentPath
      * @param listIdentifierParam The identifier of the {@link AttachmentList}
      *                            to which the link belongs.
-     * @param internalLinkUuid    The UUID of the link.
+     * @param linkUuid            The UUID of the link.
      * @param localeParam         The locale of the new title value.
      * @param value               The localized value.
      *
@@ -1292,17 +1295,17 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      */
     @POST
     @Path(
-        "/attachmentlists/{attachmentListIdentifier}/links/{interalLinkUuid}/title/@add")
+        "/attachmentlists/{attachmentListIdentifier}/links/{linkUuid}/title/@add")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String addInternalLinkTitle(
+    public String addLinkTitle(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
         @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
-        @PathParam("internalLinkUuid")
-        final String internalLinkUuid,
+        @PathParam("linkUuid")
+        final String linkUuid,
         @FormParam("locale")
         final String localeParam,
         @FormParam("value")
@@ -1333,13 +1336,13 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
                 .map(ItemAttachment::getAsset)
                 .filter(asset -> asset instanceof RelatedLink)
                 .map(asset -> (RelatedLink) asset)
-                .filter(link -> link.getUuid().equals(internalLinkUuid))
+                .filter(link -> link.getUuid().equals(linkUuid))
                 .findAny();
 
             if (!linkResult.isPresent()) {
                 models.put("contentItem", getDocumentPath());
                 models.put("listIdentifierParam", listIdentifierParam);
-                models.put("internalLinkUuid", internalLinkUuid);
+                models.put("linkUuid", linkUuid);
                 return "org/librecms/ui/contentsection/documents/internal-link-asset-not-found.xhtml";
             }
 
@@ -1367,7 +1370,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      * @param documentPath
      * @param listIdentifierParam The identifier of the {@link AttachmentList}
      *                            to which the link belongs.
-     * @param internalLinkUuid    The UUID of the link.
+     * @param linkUuid            The UUID of the link.
      * @param localeParam         The locale of the title value to update.
      * @param value               The localized value.
      *
@@ -1375,17 +1378,17 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      */
     @POST
     @Path(
-        "/attachmentlists/{attachmentListIdentifier}/links/{interalLinkUuid}/title/@edit/{locale}")
+        "/attachmentlists/{attachmentListIdentifier}/links/{linkUuid}/title/@edit/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String updateInternalLinkTitle(
+    public String updateLinkTitle(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
         @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
-        @PathParam("internalLinkUuid")
-        final String internalLinkUuid,
+        @PathParam("linkUuid")
+        final String linkUuid,
         @PathParam("locale")
         final String localeParam,
         @FormParam("value")
@@ -1416,13 +1419,13 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
                 .map(ItemAttachment::getAsset)
                 .filter(asset -> asset instanceof RelatedLink)
                 .map(asset -> (RelatedLink) asset)
-                .filter(link -> link.getUuid().equals(internalLinkUuid))
+                .filter(link -> link.getUuid().equals(linkUuid))
                 .findAny();
 
             if (!linkResult.isPresent()) {
                 models.put("contentItem", getDocumentPath());
                 models.put("listIdentifierParam", listIdentifierParam);
-                models.put("internalLinkUuid", internalLinkUuid);
+                models.put("linkUuid", linkUuid);
                 return "org/librecms/ui/contentsection/documents/internal-link-asset-not-found.xhtml";
             }
 
@@ -1450,25 +1453,25 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      * @param documentPath
      * @param listIdentifierParam The identifier of the {@link AttachmentList}
      *                            to which the link belongs.
-     * @param internalLinkUuid    The UUID of the link.
+     * @param linkUuid            The UUID of the link.
      * @param localeParam         The locale of the value to remove.
      *
      * @return A redirect to the details view of the link.
      */
     @POST
     @Path(
-        "/attachmentlists/{attachmentListIdentifier}/links/{interalLinkUuid}/title/@remove/{locale}"
+        "/attachmentlists/{attachmentListIdentifier}/links/{linkUuid}/title/@remove/{locale}"
     )
     @Transactional(Transactional.TxType.REQUIRED)
-    public String removeInternalLinkTitle(
+    public String removeLinkTitle(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
         @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
-        @PathParam("internalLinkUuid")
-        final String internalLinkUuid,
+        @PathParam("linkUuid")
+        final String linkUuid,
         @PathParam("locale")
         final String localeParam
     ) {
@@ -1497,13 +1500,13 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
                 .map(ItemAttachment::getAsset)
                 .filter(asset -> asset instanceof RelatedLink)
                 .map(asset -> (RelatedLink) asset)
-                .filter(link -> link.getUuid().equals(internalLinkUuid))
+                .filter(link -> link.getUuid().equals(linkUuid))
                 .findAny();
 
             if (!linkResult.isPresent()) {
                 models.put("contentItem", getDocumentPath());
                 models.put("listIdentifierParam", listIdentifierParam);
-                models.put("internalLinkUuid", internalLinkUuid);
+                models.put("linkUuid", linkUuid);
                 return "org/librecms/ui/contentsection/documents/internal-link-asset-not-found.xhtml";
             }
 
@@ -1950,7 +1953,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
                 .getText(assetTypeInfo.getLabelKey())
         );
         dto.setAttachmentId(itemAttachment.getAttachmentId());
-        dto.setInternalLink(
+        dto.setLink(
             itemAttachment.getAsset() instanceof RelatedLink
                 && ((RelatedLink) itemAttachment.getAsset()).getTargetItem()
                        != null

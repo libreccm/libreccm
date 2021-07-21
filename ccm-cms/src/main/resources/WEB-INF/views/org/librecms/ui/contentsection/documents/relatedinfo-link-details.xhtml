@@ -8,23 +8,44 @@
     <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/authoringstep.xhtml">
 
         <ui:param name="activePage" value="document" />
-        <ui:param name="title" value="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.internallink.details.title']}" />
+        <ui:param name="title" value="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.details.title']}" />
 
         <ui:define name="authoringStep">
             <h2>
                 #{CmsDefaultStepsMessageBundle['relatedinfo.link.details.title']}
             </h2>
 
-            <libreccm:localizedStringEditor addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}/internal-links/#{CmsInternalLinkDetailsModel.uuid}/title/@add"
-                                            editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}//internal-links/#{CmsInternalLinkDetailsModel.uuid}/title/@edit"
-                                            editorId="list-title-editor"
-                                            hasUnusedLocales="#{!CmsAttachmentListDetailsModel.unusedDescriptionLocales.isEmpty()}"
-                                            objectIdentifier="#{CmsAttachmentListDetailsModel.name}"
-                                            removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{list.name}//internal-links/#{CmsInternalLinkDetailsModel.uuid}/title/@remove"
-                                            title="CmsDefaultStepsMessageBundle['relatedinfo.internallink.details.title_editor.title']}"
-                                            unusedLocales="#{CmsAttachmentListDetailsModel.unusedDescriptionLocales}"
-                                            values="#{CmsAttachmentListDetailsModel.titles}"
-                                            />
+            <libreccm:localizedStringEditor 
+                addButtonLabel="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.add.button_label']}"
+                addDialogCancelLabel="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.add.cancel']}"
+                addDialogLocaleSelectHelp="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.add.locale.help']}"
+                addDialogLocaleSelectLabel="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.add.locale.label']}"
+                addDialogSubmitLabel="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.add.submit.label']}"
+                addDialogTitle="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.add_dialog.title']}"
+                addDialogValueHelp="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.add.value.help']}"
+                addDialogValueLabel="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.add.value.label']}"
+                addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{CmsLinkDetailsModel.listIdentifier}/links/#{CmsLinkDetailsModel.uuid}/title/@add"
+                editButtonLabel="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.edit.button_label']}"
+                editDialogCancelLabel="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.edit.cancel']}"
+                editDialogSubmitLabel="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.edit.submit']}"
+                editDialogTitle="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.edit_dialog.title']}"
+                editDialogValueHelp="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.edit.value.help']}"
+                editDialogValueLabel="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.edit.value.label']}"
+                editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{CmsLinkDetailsModel.listIdentifier}/links/#{CmsLinkDetailsModel.uuid}/title/@edit"
+                editorId="link-title-editor"
+                hasUnusedLocales="#{!CmsLinkDetailsModel.unusedTitleLocales.isEmpty()}"
+                headingLevel="3"
+                objectIdentifier="#{CmsLinkDetailsModel.uuid}"
+                removeButtonLabel="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.remove.button_label']}"
+                removeDialogCancelLabel="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.remove.cancel']}"
+                removeDialogSubmitLabel="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.remove.submit']}"
+                removeDialogText="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.remove.text']}"
+                removeDialogTitle="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.remove.title']}"
+                removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{CmsLinkDetailsModel.listIdentifier}/links/#{CmsLinkDetailsModel.uuid}/title/@remove"
+                title="#{CmsDefaultStepsMessageBundle['relatedinfo.link.details.title_editor.title']}"
+                unusedLocales="#{CmsLinkDetailsModel.unusedTitleLocales}"
+                values="#{CmsLinkDetailsModel.title}"
+                />
 
             <form>
                 <fieldset aria-describedby="linktype-help"
@@ -32,9 +53,9 @@
                     <div class="row">
                         <legend class="col-form-label col-sm-2 pt-0">#{CmsDefaultStepsMessageBundle['relatedinfo.links.type.label']}</legend>
                         <div class="col-sm-10">
-                            <div class="from-check">
+                            <div class="form-check">
                                 <input 
-                                    checked="#{"internal".equals(selectedType)}" 
+                                    checked="#{'internal'.equals(selectedType)}" 
                                     class="form-check-input link-type-select"
                                     id="linktype-internal"
                                     name="linkType"
@@ -42,12 +63,14 @@
                                     value="internal"
                                     />
                                 <label for="linktype-internal">#{CmsDefaultStepsMessageBundle['relatedinfo.links.type.internal']}</label>
+                            </div>
+                            <div class="form-check">
                                 <input 
-                                    checked="#{"external".equals(selectedType)}" 
+                                    checked="#{'external'.equals(selectedType)}" 
                                     class="form-check-input link-type-select"
                                     id="linktype-internal"
                                     name="linkType"
-                                    type="external"
+                                    type="radio"
                                     value="external"
                                     />
                                 <label for="linktype-internal">#{CmsDefaultStepsMessageBundle['relatedinfo.links.type.external']}</label>
@@ -75,17 +98,14 @@
                     buttonText="#{CmsDefaultStepsMessageBundle['relatedinfo.link.details.title.target.select_bookmark']}"
                     />
                 <librecms:assetPicker
-                    actionUrl="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{CmsAttachmentListDetailsModel.name}/links/#{CmsLinkDetailsModel.uuid}/details/@set-target-bookmark"
+                    actionUrl="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{CmsLinkDetailsModel.listIdentifier}/links/#{CmsLinkDetailsModel.uuid}/details/@set-target-bookmark"
                     assetType="#{CmsLinkDetailsModel.bookmarkType}"
                     assetPickerId="bookmark-picker"
                     baseUrl="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo-service"
                     contentSection="#{CmsLinkDetailsModel.sectionName}"
                     formParamName="bookmarkIdentifier"
                     />
-
             </div>
-
-
 
         </ui:define>
 
