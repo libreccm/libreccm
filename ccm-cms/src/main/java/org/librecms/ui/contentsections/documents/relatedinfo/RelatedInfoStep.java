@@ -22,8 +22,9 @@ import org.librecms.ui.contentsections.ContentSectionNotFoundException;
 import org.libreccm.api.Identifier;
 import org.libreccm.api.IdentifierParser;
 import org.libreccm.l10n.GlobalizationHelper;
+import org.libreccm.l10n.LocalizedTextsUtil;
 import org.libreccm.security.PermissionChecker;
-import org.librecms.assets.AssetTypeInfo;
+import org.libreccm.ui.BaseUrl;
 import org.librecms.assets.AssetTypesManager;
 import org.librecms.assets.RelatedLink;
 import org.librecms.contentsection.Asset;
@@ -58,13 +59,16 @@ import org.librecms.ui.contentsections.documents.AbstractMvcAuthoringStep;
 import org.librecms.ui.contentsections.documents.DefaultAuthoringStepConstants;
 import org.librecms.ui.contentsections.documents.DocumentNotFoundException;
 import org.librecms.ui.contentsections.documents.DocumentUi;
-import org.librecms.ui.contentsections.documents.ItemAttachmentDto;
 import org.librecms.ui.contentsections.documents.MvcAuthoringStepDef;
 import org.librecms.ui.contentsections.documents.MvcAuthoringSteps;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
 
 /**
  * Authoring step for managing the {@link AttachmentList} and
@@ -130,8 +134,14 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
     private AttachmentListRepository listRepo;
 
     @Inject
+    private BaseUrl baseUrl;
+    
+    @Inject
     private DocumentUi documentUi;
 
+    @Context
+    private HttpServletRequest request;
+    
     /**
      * Model for the details view of an internal {@link RelatedLink}.
      */
@@ -1139,7 +1149,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
                     link.getBookmark().getDisplayName()
                 );
                 linkDetailsModel.setBookmarkUuid(link.getBookmark().getUuid());
-            } else if (link.getTargetItem() != null){
+            } else if (link.getTargetItem() != null) {
                 linkDetailsModel.setLinkType("internal");
                 linkDetailsModel.setTargetItemName(
                     link.getTargetItem().getDisplayName()
@@ -1153,9 +1163,28 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
                     link.getTargetItem().getUuid()
                 );
             } else {
-                linkDetailsModel.setLinkType("");
+                linkDetailsModel.setLinkType("--none--");
             }
             
+            linkDetailsModel.setBaseUrl(baseUrl.getBaseUrl(request));
+
+            final LocalizedTextsUtil textsUtil = globalizationHelper
+                .getLocalizedTextsUtil(DefaultAuthoringStepConstants.BUNDLE);
+            final Map<String, String> linkTypes = new LinkedHashMap<>();
+            linkTypes.put(
+                "--none--",
+                textsUtil.getText("relatedinfo.links.type.none_selected")
+            );
+            linkTypes.put(
+                "external",
+                textsUtil.getText("relatedinfo.links.type.external")
+            );
+            linkTypes.put(
+                "internal",
+                textsUtil.getText("relatedinfo.links.type.internal")
+            );
+            linkDetailsModel.setLinkTypes(linkTypes);
+
             linkDetailsModel.setTitle(
                 link
                     .getTitle()
@@ -1352,7 +1381,11 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             assetRepo.save(link);
 
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s/@details", list.getName())
+                String.format(
+                    "/attachmentlists/%s/links/%s/@details",
+                    list.getName(),
+                    link.getUuid()
+                )
             );
         } else {
             return documentUi.showAccessDenied(
@@ -1435,7 +1468,11 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             assetRepo.save(link);
 
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s/@details", list.getName())
+                String.format(
+                    "/attachmentlists/%s/links/%s/@details",
+                    list.getName(),
+                    link.getUuid()
+                )
             );
         } else {
             return documentUi.showAccessDenied(
@@ -1516,7 +1553,11 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             assetRepo.save(link);
 
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s/@details", list.getName())
+                String.format(
+                    "/attachmentlists/%s/links/%s/@details",
+                    list.getName(),
+                    link.getUuid()
+                )
             );
         } else {
             return documentUi.showAccessDenied(
@@ -1945,25 +1986,39 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
         final ItemAttachment<?> itemAttachment
     ) {
         final ItemAttachmentDto dto = new ItemAttachmentDto();
-        final AssetTypeInfo assetTypeInfo = assetTypesManager
-            .getAssetTypeInfo(itemAttachment.getAsset().getClass());
         dto.setAssetType(
-            globalizationHelper
-                .getLocalizedTextsUtil(assetTypeInfo.getLabelBundle())
-                .getText(assetTypeInfo.getLabelKey())
+            Optional
+                .ofNullable(itemAttachment.getAsset())
+                .map(Asset::getClass)
+                .map(clazz -> assetTypesManager.getAssetTypeInfo(clazz))
+                .map(
+                    info -> globalizationHelper.getLocalizedTextsUtil(
+                        info.getLabelBundle()).getText(info.getLabelKey())
+                ).orElse("")
+        );
+        dto.setAssetUuid(
+            Optional
+                .ofNullable(itemAttachment.getAsset())
+                .map(Asset::getUuid)
+                .orElse(null)
         );
         dto.setAttachmentId(itemAttachment.getAttachmentId());
-        dto.setLink(
-            itemAttachment.getAsset() instanceof RelatedLink
+        dto.setInternalLink(
+            itemAttachment.getAsset() != null
+                && itemAttachment.getAsset() instanceof RelatedLink
                 && ((RelatedLink) itemAttachment.getAsset()).getTargetItem()
                        != null
         );
         dto.setSortKey(itemAttachment.getSortKey());
         dto.setTitle(
-            globalizationHelper
-                .getValueFromLocalizedString(
-                    itemAttachment.getAsset().getTitle()
+            Optional
+                .ofNullable(itemAttachment.getAsset())
+                .map(
+                    asset -> globalizationHelper.getValueFromLocalizedString(
+                        asset.getTitle()
+                    )
                 )
+                .orElse("")
         );
         dto.setUuid(itemAttachment.getUuid());
         return dto;

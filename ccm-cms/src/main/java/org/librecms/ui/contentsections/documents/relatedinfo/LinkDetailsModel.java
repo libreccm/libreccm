@@ -42,6 +42,8 @@ import javax.inject.Named;
 @Named("CmsLinkDetailsModel")
 public class LinkDetailsModel {
 
+    private String baseUrl;
+
     /**
      * The identifier of the {@link AttachmentList} of the link.
      */
@@ -63,6 +65,8 @@ public class LinkDetailsModel {
     private List<String> unusedTitleLocales;
 
     private String linkType;
+
+    private Map<String, String> linkTypes;
 
     /**
      * The UUID of the target item of the link.
@@ -86,6 +90,14 @@ public class LinkDetailsModel {
      * }.
      */
     private String targetItemTitle;
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public void setBaseUrl(final String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
 
     public String getListIdentifier() {
         return listIdentifier;
@@ -214,6 +226,14 @@ public class LinkDetailsModel {
 //    }
     public void setTargetItemTitle(String targetItemTitle) {
         this.targetItemTitle = targetItemTitle;
+    }
+
+    public Map<String, String> getLinkTypes() {
+        return Collections.unmodifiableMap(linkTypes);
+    }
+
+    public void setLinkTypes(final Map<String, String> linkTypes) {
+        this.linkTypes = new HashMap<>(linkTypes);
     }
 
 }

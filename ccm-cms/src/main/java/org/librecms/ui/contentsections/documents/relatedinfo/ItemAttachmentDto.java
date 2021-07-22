@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.librecms.ui.contentsections.documents;
+package org.librecms.ui.contentsections.documents.relatedinfo;
 
 import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.contentsection.ItemAttachment;
@@ -49,6 +49,11 @@ public class ItemAttachmentDto {
      */
     private String assetType;
 
+    /**
+     * The UUID of the attachment asset.
+     */
+    private String assetUuid;
+    
     /**
      * The title of the asset assigned to an content item. This value is
      * determined from the title of the asset using {@link GlobalizationHelper#getValueFromLocalizedString(org.libreccm.l10n.LocalizedString)
@@ -106,8 +111,16 @@ public class ItemAttachmentDto {
         return internalLink;
     }
 
-    public void setLink(final boolean internalLink) {
+    public void setInternalLink(final boolean internalLink) {
         this.internalLink = internalLink;
+    }
+
+    public String getAssetUuid() {
+        return assetUuid;
+    }
+
+    public void setAssetUuid(final String assetUuid) {
+        this.assetUuid = assetUuid;
     }
 
 }

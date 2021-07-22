@@ -21,6 +21,7 @@ package org.librecms.ui.contentsections.assets;
 import org.libreccm.api.Identifier;
 import org.libreccm.api.IdentifierParser;
 import org.libreccm.security.AuthorizationRequired;
+import org.libreccm.ui.BaseUrl;
 import org.librecms.assets.ExternalAudioAsset;
 import org.librecms.assets.LegalMetadata;
 import org.librecms.contentsection.AssetRepository;
@@ -70,6 +71,9 @@ public class ExternalAudioAssetEditStep extends BookmarkEditStep {
     private AssetUi assetUi;
 
     @Inject
+    private BaseUrl baseUrl;
+
+    @Inject
     private ExternalAudioAssetEditStepModel editStepModel;
 
     @Context
@@ -80,7 +84,7 @@ public class ExternalAudioAssetEditStep extends BookmarkEditStep {
 
     @Inject
     private Models models;
-    
+
     @Override
     public Class<? extends MvcAssetEditStep> getStepClass() {
         return ExternalAudioAssetEditStep.class;
@@ -96,16 +100,7 @@ public class ExternalAudioAssetEditStep extends BookmarkEditStep {
                 getExternalAudioAsset().getLegalMetadata()
             );
 
-            final StringBuilder baseUrlBuilder = new StringBuilder();
-            editStepModel.setBaseUrl(
-                baseUrlBuilder
-                    .append(request.getScheme())
-                    .append("://")
-                    .append(request.getServerName())
-                    .append(addServerPortToBaseUrl())
-                    .append(addContextPathToBaseUrl())
-                    .toString()
-            );
+            editStepModel.setBaseUrl(baseUrl.getBaseUrl(request));
         } else {
             throw new AssetNotFoundException(
                 assetUi.showAssetNotFound(
@@ -227,23 +222,6 @@ public class ExternalAudioAssetEditStep extends BookmarkEditStep {
     ) {
         models.put("legalMetadataIdentifier", legalMetadataIdentifer);
         return "org/librecms/ui/contentsection/assets/external-audio-asset/legal-metadata-not-found.xhtml";
-    }
-
-    private String addServerPortToBaseUrl() {
-        if (request.getServerPort() == 80 || request.getServerPort() == 443) {
-            return "";
-        } else {
-            return String.format(":%d", request.getServerPort());
-        }
-    }
-
-    private String addContextPathToBaseUrl() {
-        if (request.getServletContext().getContextPath() == null
-                || request.getServletContext().getContextPath().isEmpty()) {
-            return "/";
-        } else {
-            return request.getServletContext().getContextPath();
-        }
     }
 
 }

@@ -446,7 +446,7 @@
                                        var="attachment">
                                 <li class="cms-attachment list-group-item mb-3 d-flex justify-content-between"
                                     data-id="#{attachment.uuid}">
-                                    <div class="cms-attachment-label">#{attachment.name}</div>
+                                    <div class="cms-attachment-label">#{attachment.title}</div>
                                     <div class="cms-attachment-buttons">
                                         <button class="btn btn-secondary cms-sort-handle"
                                                 type="button">
@@ -459,7 +459,7 @@
                                             <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.info.button']}"</span>
                                         </button>
                                         <a class="btn btn-primary"
-                                           href="#"
+                                           href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{list.name}/links/#{attachment.assetUuid}/@details"
                                            type="button">
                                             <bootstrap:svgIcon icon="pen" />
                                             <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.edit.button']}"</span>

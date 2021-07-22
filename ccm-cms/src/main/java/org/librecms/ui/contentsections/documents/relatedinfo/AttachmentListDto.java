@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.librecms.ui.contentsections.documents.ItemAttachmentDto;
 
 /**
  * A data transfer object used by the template for the listing of the

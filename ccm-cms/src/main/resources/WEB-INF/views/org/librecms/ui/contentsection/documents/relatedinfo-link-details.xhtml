@@ -24,14 +24,14 @@
                 addDialogTitle="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.add_dialog.title']}"
                 addDialogValueHelp="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.add.value.help']}"
                 addDialogValueLabel="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.add.value.label']}"
-                addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{CmsLinkDetailsModel.listIdentifier}/links/#{CmsLinkDetailsModel.uuid}/title/@add"
+                addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{CmsLinkDetailsModel.listIdentifier}/links/#{CmsLinkDetailsModel.uuid}/title/@add"
                 editButtonLabel="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.edit.button_label']}"
                 editDialogCancelLabel="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.edit.cancel']}"
                 editDialogSubmitLabel="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.edit.submit']}"
                 editDialogTitle="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.edit_dialog.title']}"
                 editDialogValueHelp="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.edit.value.help']}"
                 editDialogValueLabel="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.edit.value.label']}"
-                editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{CmsLinkDetailsModel.listIdentifier}/links/#{CmsLinkDetailsModel.uuid}/title/@edit"
+                editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{CmsLinkDetailsModel.listIdentifier}/links/#{CmsLinkDetailsModel.uuid}/title/@edit"
                 editorId="link-title-editor"
                 hasUnusedLocales="#{!CmsLinkDetailsModel.unusedTitleLocales.isEmpty()}"
                 headingLevel="3"
@@ -41,49 +41,23 @@
                 removeDialogSubmitLabel="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.remove.submit']}"
                 removeDialogText="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.remove.text']}"
                 removeDialogTitle="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.remove.title']}"
-                removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/relatedinfo/attachmentlists/#{CmsLinkDetailsModel.listIdentifier}/links/#{CmsLinkDetailsModel.uuid}/title/@remove"
+                removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{CmsLinkDetailsModel.listIdentifier}/links/#{CmsLinkDetailsModel.uuid}/title/@remove"
                 title="#{CmsDefaultStepsMessageBundle['relatedinfo.link.details.title_editor.title']}"
                 unusedLocales="#{CmsLinkDetailsModel.unusedTitleLocales}"
                 values="#{CmsLinkDetailsModel.title}"
                 />
 
             <form>
-                <fieldset aria-describedby="linktype-help"
-                          class="form-group">
-                    <div class="row">
-                        <legend class="col-form-label col-sm-2 pt-0">#{CmsDefaultStepsMessageBundle['relatedinfo.links.type.label']}</legend>
-                        <div class="col-sm-10">
-                            <div class="form-check">
-                                <input 
-                                    checked="#{'internal'.equals(selectedType)}" 
-                                    class="form-check-input link-type-select"
-                                    id="linktype-internal"
-                                    name="linkType"
-                                    type="radio" 
-                                    value="internal"
-                                    />
-                                <label for="linktype-internal">#{CmsDefaultStepsMessageBundle['relatedinfo.links.type.internal']}</label>
-                            </div>
-                            <div class="form-check">
-                                <input 
-                                    checked="#{'external'.equals(selectedType)}" 
-                                    class="form-check-input link-type-select"
-                                    id="linktype-internal"
-                                    name="linkType"
-                                    type="radio"
-                                    value="external"
-                                    />
-                                <label for="linktype-internal">#{CmsDefaultStepsMessageBundle['relatedinfo.links.type.external']}</label>
-                            </div>
-                        </div>
-                        <small class="form-text text-muted"
-                               id="linktype-help">
-                            #{CmsDefaultStepsMessageBundle['relatedinfo.links.type.help']}
-                        </small>
-                    </div>
-                </fieldset>
+                <bootstrap:formGroupSelect
+                    help="#{CmsDefaultStepsMessageBundle['relatedinfo.links.type.help']}"
+                    inputId="link-type-select"
+                    label="#{CmsDefaultStepsMessageBundle['relatedinfo.links.type.label']}"
+                    name="linkType"
+                    options="#{CmsLinkDetailsModel.linkTypes}"
+                    selectedOptions="#{[CmsLinkDetailsModel.linkType]}"
+                    />
             </form>
-
+                
             <h3>#{CmsDefaultStepsMessageBundle['relatedinfo.link.details.title.target']}</h3>
 
             <div class="d-none relatedlink-target"
@@ -101,7 +75,7 @@
                     actionUrl="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{CmsLinkDetailsModel.listIdentifier}/links/#{CmsLinkDetailsModel.uuid}/details/@set-target-bookmark"
                     assetType="#{CmsLinkDetailsModel.bookmarkType}"
                     assetPickerId="bookmark-picker"
-                    baseUrl="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo-service"
+                    baseUrl="#{CmsLinkDetailsModel.baseUrl}"
                     contentSection="#{CmsLinkDetailsModel.sectionName}"
                     formParamName="bookmarkIdentifier"
                     />
