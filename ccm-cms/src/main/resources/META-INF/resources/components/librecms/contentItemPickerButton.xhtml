@@ -3,31 +3,30 @@
       xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
-
-    <cc:interface shortDescription="An component for selecting assets.">
-
-        <cc:attribute name="assetPickerId"
+    
+    <cc:interface shortDescription="An component for selecting content items">
+        <cc:attribute name="contentItemPickerId"
                       required="true"
-                      shortDescription="ID of the asset picker"
+                      shortDescription="ID of the content item picker"
                       type="String" />
         <cc:attribute name="buttonText"
                       required="true"
-                      shortDescription="Text of the asset picker button"
+                      shortDescription="Label of the button"
                       type="String" />
         <cc:attribute name="buttonIcon"
                       default="pen"
                       required="false"
-                      shortDescription="Icon of the asset picker button"
+                      shortDescription="Icon of the content item picker button"
                       type="String" />
     </cc:interface>
     <cc:implementation>
         <button class="btn btn-primary"
                 data-toggle="modal"
-                data-target="##{cc.attrs.assetPickerId}-dialog"
+                data-target="##{cc.attrs.contentItemPickerId}-dialog"
                 type="button">
             <bootstrap:svgIcon icon="#{cc.attrs.buttonIcon}" />
             <span class="sr-only">#{cc.attrs.buttonText}</span>
         </button>
     </cc:implementation>
+    
 </html>
-

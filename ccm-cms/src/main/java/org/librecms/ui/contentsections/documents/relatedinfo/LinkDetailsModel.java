@@ -187,43 +187,10 @@ public class LinkDetailsModel {
         return Bookmark.class.getName();
     }
 
-//    /**
-//     * Sets the properties of this model based on the properties on the provided
-//     * link.
-//     *
-//     * @param link The link to use.
-//     */
-//    protected void setInternalLink(final RelatedLink link) {
-//        Objects.requireNonNull(link);
-//
-//        uuid = link.getUuid();
-//        label = globalizationHelper.getValueFromLocalizedString(
-//            link.getTitle()
-//        );
-//        title = link
-//            .getTitle()
-//            .getValues()
-//            .entrySet()
-//            .stream()
-//            .collect(
-//                Collectors.toMap(
-//                    entry -> entry.getKey().toString(),
-//                    entry -> entry.getValue()
-//                )
-//            );
-//        final Set<Locale> titleLocales = link.getTitle().getAvailableLocales();
-//        unusedTitleLocales = globalizationHelper
-//            .getAvailableLocales()
-//            .stream()
-//            .filter(locale -> !titleLocales.contains(locale))
-//            .map(Locale::toString)
-//            .collect(Collectors.toList());
-//        targetItemUuid = link.getTargetItem().getItemUuid();
-//        targetItemName = link.getTargetItem().getDisplayName();
-//        targetItemTitle = globalizationHelper.getValueFromLocalizedString(
-//            link.getTargetItem().getTitle()
-//        );
-//    }
+    public boolean isTargetSet() {
+        return bookmarkUuid != null || targetItemUuid != null;
+    }
+
     public void setTargetItemTitle(String targetItemTitle) {
         this.targetItemTitle = targetItemTitle;
     }

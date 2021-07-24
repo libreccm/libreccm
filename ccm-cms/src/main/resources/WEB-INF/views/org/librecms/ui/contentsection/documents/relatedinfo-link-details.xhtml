@@ -57,16 +57,64 @@
                     selectedOptions="#{[CmsLinkDetailsModel.linkType]}"
                     />
             </form>
-                
+
             <h3>#{CmsDefaultStepsMessageBundle['relatedinfo.link.details.title.target']}</h3>
 
             <div class="d-none relatedlink-target"
                  id="relatedlink-target-internal">
-                <p>ToDo: Content Item Picker</p>
+                <c:choose>
+                    <c:when test="#{CmsLinkDetailsModel.targetSet}">
+                        <dl>
+                            <div>
+                                <dt>#{CmsDefaultStepsMessageBundle['relatedinfo.link.details.target.type']}</dt>
+                                <dd>#{CmsDefaultStepsMessageBundle['relatedinfo.links.type.internal']}</dd>
+                            </div>
+                            <div>
+                                <dt>#{CmsDefaultStepsMessageBundle['relatedinfo.link.details.target.item_name']}</dt>
+                                <dd>#{CmsLinkDetailsModel.targetItemName}</dd>
+                            </div>
+                        </dl>
+                    </c:when>
+                    <c:otherwise>
+                        <p>
+                            #{CmsDefaultStepsMessageBundle['relatedinfo.link.details.target.not_set']}
+                        </p>
+                    </c:otherwise>
+                </c:choose>
+                <librecms:contentItemPickerButton 
+                    contentItemPickerId="item-picker"
+                    buttonText="#{CmsDefaultStepsMessageBundle['relatedinfo.link.details.title.target.select_targetitem']}"
+                    />
+                <librecms:contentItemPicker 
+                    actionUrl="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{CmsLinkDetailsModel.listIdentifier}/links/#{CmsLinkDetailsModel.uuid}/details/@set-target-item"
+                    contentItemPickerId="item-picker"
+                    baseUrl="#{CmsLinkDetailsModel.baseUrl}"
+                    contentSection="#{CmsLinkDetailsModel.sectionName}"
+                    formParamName="itemIdentifier"
+                    />
             </div>
 
             <div class="d-none relatedlink-target"
                  id="relatedlink-target-external">
+                <c:choose>
+                    <c:when test="#{CmsLinkDetailsModel.targetSet}">
+                        <dl>
+                            <div>
+                                <dt>#{CmsDefaultStepsMessageBundle['relatedinfo.link.details.target.type']}</dt>
+                                <dd>#{CmsDefaultStepsMessageBundle['relatedinfo.links.type.external']}</dd>
+                            </div>
+                            <div>
+                                <dt>#{CmsDefaultStepsMessageBundle['relatedinfo.link.details.target.bookmark_name']}</dt>
+                                <dd>#{CmsLinkDetailsModel.bookmarkName}</dd>
+                            </div>
+                        </dl>
+                    </c:when>
+                    <c:otherwise>
+                        <p>
+                            #{CmsDefaultStepsMessageBundle['relatedinfo.link.details.target.not_set']}
+                        </p>
+                    </c:otherwise>
+                </c:choose>
                 <librecms:assetPickerButton 
                     assetPickerId="bookmark-picker"
                     buttonText="#{CmsDefaultStepsMessageBundle['relatedinfo.link.details.title.target.select_bookmark']}"

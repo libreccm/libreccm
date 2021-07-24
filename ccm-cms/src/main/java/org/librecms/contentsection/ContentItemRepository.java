@@ -339,7 +339,7 @@ public class ContentItemRepository
 
         final TypedQuery<ContentItem> query = getEntityManager()
             .createNamedQuery(
-                "ContentItem.findByNameAndContentSectionAndVersion",
+                "ContentItem.findByTypeAndContentSectionAndVersion",
                 ContentItem.class);
         query.setParameter("section", section);
         query.setParameter("type", type);
@@ -357,7 +357,7 @@ public class ContentItemRepository
         final ContentSection section) {
 
         final TypedQuery<ContentItem> query = getEntityManager()
-            .createNamedQuery("ContentItem.findByNameAndContentSection",
+            .createNamedQuery("ContentItem.findByNameAndTypeAndContentSection",
                               ContentItem.class);
         query.setParameter("section", section);
         query.setParameter("name", name);

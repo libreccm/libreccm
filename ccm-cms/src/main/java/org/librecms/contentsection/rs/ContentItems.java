@@ -96,7 +96,7 @@ public class ContentItems {
         if (ContentItem.class.isAssignableFrom(clazz)) {
             @SuppressWarnings("unchecked")
             final Class<? extends ContentItem> typeClass
-                                                   = (Class<? extends ContentItem>) clazz;
+                = (Class<? extends ContentItem>) clazz;
             return typeClass;
         } else {
             throw new IllegalArgumentException(String.format(
@@ -177,7 +177,7 @@ public class ContentItems {
         } else {
             itemVersion = ContentItemVersion.LIVE;
         }
-        
+
         final List<ContentItem> items;
         if ((query == null || query.trim().isEmpty())
                 && (type == null || type.trim().isEmpty())) {
@@ -187,25 +187,30 @@ public class ContentItems {
         } else if ((query != null && !query.trim().isEmpty())
                        && (type == null || type.trim().isEmpty())) {
 
-            items = itemRepo.findByNameAndContentSection(query,
-                                                         contentSection,
-                                                         itemVersion);
+            items = itemRepo.findByNameAndContentSection(
+                query,
+                contentSection,
+                itemVersion
+            );
         } else if ((query == null || query.trim().isEmpty())
                        && (type != null && !type.trim().isEmpty())) {
 
             final Class<? extends ContentItem> itemType
-                                                   = toContentItemTypeClass(type);
-            items = itemRepo.findByTypeAndContentSection(itemType,
-                                                         contentSection,
-                                                         itemVersion);
+                = toContentItemTypeClass(type);
+            items = itemRepo.findByTypeAndContentSection(
+                itemType,
+                contentSection,
+                itemVersion
+            );
         } else {
             final Class<? extends ContentItem> itemType
-                                                   = toContentItemTypeClass(type);
+                = toContentItemTypeClass(type);
             items = itemRepo.findByNameAndTypeAndContentSection(
                 query,
                 itemType,
                 contentSection,
-                itemVersion);
+                itemVersion
+            );
         }
 
         return items
@@ -279,11 +284,11 @@ public class ContentItems {
         } else if ((query == null || query.trim().isEmpty())
                        && (type != null && type.trim().isEmpty())) {
             final Class<? extends ContentItem> itemType
-                                                   = toContentItemTypeClass(type);
+                = toContentItemTypeClass(type);
             items = itemRepo.filterByFolderAndType(folder, itemType);
         } else {
             final Class<? extends ContentItem> itemType
-                                                   = toContentItemTypeClass(type);
+                = toContentItemTypeClass(type);
             items = itemRepo.filterByFolderAndTypeAndName(folder,
                                                           itemType,
                                                           query);

@@ -244,7 +244,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
                     + ")")
     ,
     @NamedQuery(
-        name = "ContentItem.findNameAndContentSectionAndVersion",
+        name = "ContentItem.findByNameAndContentSectionAndVersion",
         query = "SELECT DISTINCT i "
                     + "FROM ContentItem i "
                     + "JOIN i.contentType t "
@@ -310,7 +310,9 @@ import javax.xml.bind.annotation.XmlElementWrapper;
                     + "              )"
                     + "      )"
                     + "          OR true = :isSystemUser OR true = :isAdmin"
-                    + ")")
+                    + ")"
+    )
+    
     ,
     @NamedQuery(
         name = "ContentItem.findByNameAndTypeAndContentSection",
