@@ -152,6 +152,8 @@ public class ContentItems {
         } else {
             result.put("place", "");
         }
+        
+        result.put("uuid", item.getUuid());
 
         return result;
     }

@@ -104,6 +104,8 @@ async function selectItem(event: Event, itemPickerElem: Element) {
         return;
     }
 
+    console.log(`itemUuid = ${itemUuid}`);
+
     const itemPickerParam = itemPickerElem.querySelector(
         ".contentitempicker-param"
     ) as HTMLInputElement;

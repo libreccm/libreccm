@@ -82,7 +82,7 @@ import java.util.Properties;
             descBundle = CmsConstants.CONTENT_SECTION_DESC_BUNDLE,
             creator = ContentSectionCreator.class,
             servletPath = "/templates/servlet/content-section",
-            applicationController = ContentSectionApplicationController.class
+             applicationController = ContentSectionApplicationController.class
         ),
         @ApplicationType(
             name = "org.librecms.pages.Pages",

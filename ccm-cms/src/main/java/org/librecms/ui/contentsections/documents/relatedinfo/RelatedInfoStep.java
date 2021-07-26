@@ -26,6 +26,7 @@ import org.libreccm.l10n.LocalizedTextsUtil;
 import org.libreccm.security.PermissionChecker;
 import org.libreccm.ui.BaseUrl;
 import org.librecms.assets.AssetTypesManager;
+import org.librecms.assets.Bookmark;
 import org.librecms.assets.RelatedLink;
 import org.librecms.contentsection.Asset;
 import org.librecms.contentsection.AssetManager;
@@ -135,13 +136,13 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
 
     @Inject
     private BaseUrl baseUrl;
-    
+
     @Inject
     private DocumentUi documentUi;
 
     @Context
     private HttpServletRequest request;
-    
+
     /**
      * Model for the details view of an internal {@link RelatedLink}.
      */
@@ -1165,7 +1166,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             } else {
                 linkDetailsModel.setLinkType("--none--");
             }
-            
+
             linkDetailsModel.setBaseUrl(baseUrl.getBaseUrl(request));
 
             final LocalizedTextsUtil textsUtil = globalizationHelper
@@ -1222,23 +1223,23 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
     }
 
     /**
-     * Updates the target of a link..
+     * Updates to target of a related link and sets it to the provided target
+     * item, making the link an internal link.
      *
      * @param sectionIdentifier
      * @param documentPath
-     * @param listIdentifierParam The identifier of the {@link AttachmentList}
-     *                            to which the link belongs.
-     * @param linkUuid            The UUID of the link.
-     * @param targetItemUuid      The UUID of the new target item.
+     * @param listIdentifierParam  The identifier of the {@link AttachmentList}
+     *                             to which the link belongs.
+     * @param linkUuid             The UUID of the link.
+     * @param targetItemIdentifier The UUID of the new target item.
      *
-     * @return A redirect to the details view of the link.
+     * @return A redirect to the details page of the link.
      */
     @POST
     @Path(
-        "/attachmentlists/{attachmentListIdentifier}/links/{linkUuid}"
-    )
+        "/attachmentlists/{attachmentListIdentifier}/links/{linkUuid}/details/@set-target-item")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String updateLinkTarget(
+    public String setTargetItem(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
         @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
@@ -1247,8 +1248,8 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
         final String listIdentifierParam,
         @PathParam("linkUuid")
         final String linkUuid,
-        @FormParam("targetItemUuid")
-        final String targetItemUuid
+        @FormParam("targetItemIdentifier")
+        final String targetItemIdentifier
     ) {
         try {
             init();
@@ -1269,14 +1270,34 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             }
             final AttachmentList list = listResult.get();
 
-            final Optional<ContentItem> itemResult = itemRepo.findByUuid(
-                targetItemUuid
+            final Optional<ContentItem> itemResult;
+            final Identifier itemIdentifier = identifierParser.parseIdentifier(
+                targetItemIdentifier
             );
-            if (!itemResult.isPresent()) {
-                models.put("targetItemUuid", targetItemUuid);
-                return "org/librecms/ui/contentsection/documents/target-item-not-found.xhtml";
+            switch (itemIdentifier.getType()) {
+                case ID:
+                    itemResult = itemRepo.findById(
+                        Long.parseLong(itemIdentifier.getIdentifier())
+                    );
+                    break;
+                case UUID:
+                    itemResult = itemRepo.findByUuid(
+                        itemIdentifier.getIdentifier()
+                    );
+                    break;
+                default:
+                    itemResult = itemRepo.findByPath(
+                        getContentSection(),
+                        itemIdentifier.getIdentifier()
+                    );
+                    break;
+
             }
 
+            if (!itemResult.isPresent()) {
+                models.put("targetItemIdentifier", targetItemIdentifier);
+                return "org/librecms/ui/contentsection/documents/target-item-not-found.xhtml";
+            }
             final Optional<RelatedLink> linkResult = list
                 .getAttachments()
                 .stream()
@@ -1294,11 +1315,138 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             }
 
             final RelatedLink link = linkResult.get();
+            link.setBookmark(null);
             link.setTargetItem(itemResult.get());
             assetRepo.save(link);
 
             return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s/@details", list.getName())
+                String.format(
+                    "/attachmentlists/%s/links/%s/@details",
+                    list.getName(),
+                    link.getUuid()
+                )
+            );
+
+        } else {
+            return documentUi.showAccessDenied(
+                getContentSection(),
+                getDocument(),
+                getLabel()
+            );
+        }
+    }
+
+    /**
+     * Updates to target of a related link and sets it to the provided bookmark,
+     * making the link an external link.
+     *
+     * @param sectionIdentifier
+     * @param documentPath
+     * @param listIdentifierParam      The identifier of the
+     *                                 {@link AttachmentList} to which the link
+     *                                 belongs.
+     * @param linkUuid                 The UUID of the link.
+     * @param targetBookmarkIdentifier The UUID of the new target bookmark.
+     *
+     * @return A redirect to the details page of the link.
+     */
+    @POST
+    @Path(
+        "/attachmentlists/{attachmentListIdentifier}/links/{linkUuid}/details/@set-target-bookmark")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String setTargetBookmark(
+        @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
+        final String sectionIdentifier,
+        @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
+        final String documentPath,
+        @PathParam("attachmentListIdentifier")
+        final String listIdentifierParam,
+        @PathParam("linkUuid")
+        final String linkUuid,
+        @FormParam("targetBookmarkIdentifier")
+        final String targetBookmarkIdentifier
+    ) {
+        try {
+            init();
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
+
+        if (permissionChecker.isPermitted(
+            ItemPrivileges.EDIT, getDocument()
+        )) {
+            final Optional<AttachmentList> listResult = findAttachmentList(
+                listIdentifierParam
+            );
+            if (!listResult.isPresent()) {
+                return showAttachmentListNotFound(listIdentifierParam);
+            }
+            final AttachmentList list = listResult.get();
+
+            final Optional<Bookmark> bookmarkResult;
+            final Identifier bookmarkIdentifer = identifierParser
+                .parseIdentifier(targetBookmarkIdentifier);
+            switch (bookmarkIdentifer.getType()) {
+                case ID:
+                    bookmarkResult = assetRepo
+                        .findById(
+                            Long.parseLong(
+                                bookmarkIdentifer.getIdentifier()
+                            ),
+                            Bookmark.class
+                        );
+                    break;
+                case UUID:
+                    bookmarkResult = assetRepo
+                        .findByUuidAndType(
+                            bookmarkIdentifer.getIdentifier(),
+                            Bookmark.class
+                        );
+                    break;
+                default:
+                    bookmarkResult = assetRepo
+                        .findByPath(
+                            getContentSection(),
+                            bookmarkIdentifer.getIdentifier()
+                        )
+                        .filter(asset -> asset instanceof Bookmark)
+                        .map(asset -> (Bookmark) asset);
+            }
+
+            if (!bookmarkResult.isPresent()) {
+                models.put("targetBookmarkIdentifier", targetBookmarkIdentifier);
+                return "org/librecms/ui/contentsection/documents/target-bookmark-not-found.xhtml";
+            }
+
+            final Optional<RelatedLink> linkResult = list
+                .getAttachments()
+                .stream()
+                .map(ItemAttachment::getAsset)
+                .filter(asset -> asset instanceof RelatedLink)
+                .map(asset -> (RelatedLink) asset)
+                .filter(link -> link.getUuid().equals(linkUuid))
+                .findAny();
+
+            if (!linkResult.isPresent()) {
+                models.put("contentItem", getDocumentPath());
+                models.put("listIdentifier", listIdentifierParam);
+                models.put("linkUuid", linkUuid);
+                return "org/librecms/ui/contentsection/documents/link-asset-not-found.xhtml";
+            }
+
+            final RelatedLink link = linkResult.get();
+            link.setTargetItem(null);
+            link.setBookmark(bookmarkResult.get());
+            assetRepo.save(link);
+
+            return buildRedirectPathForStep(
+                 String.format(
+                    "/attachmentlists/%s/links/%s/@details",
+                    list.getName(),
+                    link.getUuid()
+                )
             );
         } else {
             return documentUi.showAccessDenied(

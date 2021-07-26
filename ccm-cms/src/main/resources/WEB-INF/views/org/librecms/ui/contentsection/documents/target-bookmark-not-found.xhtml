@@ -7,7 +7,7 @@
     <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/document.xhtml">
         
         <ui:param name="activePage" value="document" />
-        <ui:param name="title" value="#{CmsDefaultStepsMessageBundle['relatedinfo.target_item.not_found.title']}" />
+        <ui:param name="title" value="#{CmsDefaultStepsMessageBundle['relatedinfo.target_bookmark.not_found.title']}" />
         
         <ui:define name="breadcrumb">
             <ui:include src="document-breadcrumbs.xhtml" />
@@ -19,7 +19,7 @@
          <ui:define name="main">
             <div class="container">
                 <div class="alert alert-danger" role="alert">
-                    #{CmsDefaultStepsMessageBundle.getMessage('relatedinfo.target_item.not_found.message', [targetItemIdentifier])}
+                    #{CmsDefaultStepsMessageBundle.getMessage('relatedinfo.target_bookmark.not_found.message', [targetBookmarkIdentifier])}
                 </div>
             </div>
         </ui:define>
