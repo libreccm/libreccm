@@ -27,6 +27,7 @@ import org.libreccm.security.PermissionChecker;
 import org.libreccm.ui.BaseUrl;
 import org.librecms.assets.AssetTypesManager;
 import org.librecms.assets.Bookmark;
+import org.librecms.assets.FileAsset;
 import org.librecms.assets.RelatedLink;
 import org.librecms.contentsection.Asset;
 import org.librecms.contentsection.AssetManager;
@@ -116,6 +117,9 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
     @Inject
     private AssetTypesManager assetTypesManager;
 
+    @Inject
+    private BaseUrl baseUrl;
+
     /**
      * Model for the details view of an {@link AttachmentList}.
      */
@@ -142,6 +146,9 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
 
     @Context
     private HttpServletRequest request;
+
+    @Inject
+    private FileDetailsModel fileDetailsModel;
 
     /**
      * Model for the details view of an internal {@link RelatedLink}.
@@ -206,6 +213,11 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
                 .map(this::buildAttachmentListDto)
                 .collect(Collectors.toList())
         );
+        relatedInfoStepModel.setFileAssetPickerBaseUrl(
+            baseUrl.getBaseUrl(request)
+        );
+
+        relatedInfoStepModel.setSectionName(getContentSection().getLabel());
     }
 
     @GET
@@ -888,7 +900,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      * @return A redirect to the list of attachment lists and attachments.
      */
     @POST
-    @Path("/attachmentlists/{attachmentListIdentifier}/attachments")
+    @Path("/attachmentlists/{attachmentListIdentifier}/attachments/@create")
     @Transactional(Transactional.TxType.REQUIRED)
     public String createAttachment(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
@@ -1387,7 +1399,8 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
 
             final Optional<Bookmark> bookmarkResult;
             final Identifier bookmarkIdentifer = identifierParser
-                .parseIdentifier(targetBookmarkIdentifier);
+                .parseIdentifier(targetBookmarkIdentifier
+                );
             switch (bookmarkIdentifer.getType()) {
                 case ID:
                     bookmarkResult = assetRepo
@@ -1442,7 +1455,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             assetRepo.save(link);
 
             return buildRedirectPathForStep(
-                 String.format(
+                String.format(
                     "/attachmentlists/%s/links/%s/@details",
                     list.getName(),
                     link.getUuid()

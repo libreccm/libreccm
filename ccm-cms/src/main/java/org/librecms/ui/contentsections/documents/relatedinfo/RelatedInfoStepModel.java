@@ -18,6 +18,9 @@
  */
 package org.librecms.ui.contentsections.documents.relatedinfo;
 
+import org.librecms.assets.FileAsset;
+import org.librecms.contentsection.AttachmentList;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,10 +35,14 @@ import javax.inject.Named;
 @RequestScoped
 @Named("CmsRelatedInfoStep")
 public class RelatedInfoStepModel {
-    
-    private  List<AttachmentListDto> attachmentsLists;
-    
-     /**
+
+    private List<AttachmentListDto> attachmentsLists;
+
+    private String fileAssetPickerBaseUrl;
+
+    private String sectionName;
+
+    /**
      * Gets the {@link AttachmentList}s of the current content item and converts
      * them to {@link AttachmentListDto}s to make data about the lists available
      * in the views.
@@ -45,11 +52,39 @@ public class RelatedInfoStepModel {
     public List<AttachmentListDto> getAttachmentLists() {
         return Collections.unmodifiableList(attachmentsLists);
     }
-    
+
+    public List<AttachmentListDto> getAttachmentsLists() {
+        return attachmentsLists;
+    }
+
+    public void setAttachmentsLists(List<AttachmentListDto> attachmentsLists) {
+        this.attachmentsLists = attachmentsLists;
+    }
+
     protected void setAttachmentLists(
         final List<AttachmentListDto> attachmentLists
     ) {
         this.attachmentsLists = new ArrayList<>(attachmentLists);
     }
-    
+
+    public String getFileAssetType() {
+        return FileAsset.class.getName();
+    }
+
+    public String getFileAssetPickerBaseUrl() {
+        return fileAssetPickerBaseUrl;
+    }
+
+    public void setFileAssetPickerBaseUrl(final String fileAssetPickerBaseUrl) {
+        this.fileAssetPickerBaseUrl = fileAssetPickerBaseUrl;
+    }
+
+    public String getSectionName() {
+        return sectionName;
+    }
+
+    public void setSectionName(final String sectionName) {
+        this.sectionName = sectionName;
+    }
+
 }

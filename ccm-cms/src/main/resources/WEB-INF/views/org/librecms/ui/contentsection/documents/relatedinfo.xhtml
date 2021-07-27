@@ -1,6 +1,7 @@
 <!DOCTYPE html [<!ENTITY times '&#215;'>]>
 <html xmlns="http://www.w3.org/1999/xhtml" 
       xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:librecms="http://xmlns.jcp.org/jsf/composite/components/librecms"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/authoringstep.xhtml">
@@ -420,18 +421,31 @@
                                     <bootstrap:svgIcon icon="pen" />
                                     <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.edit.button']}"</span>
                                 </a>
-                                <button class="btn btn-primary"
-                                        data-target="#attachmentlist-#{list.name}-add-attachment-dialog"
-                                        data-toggle="modal"
-                                        type="button">
-                                    <bootstrap:svgIcon icon="file-earmark-plus" />
-                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.attachment.add.label']}</span>
-                                </button>
+                                <librecms:assetPickerButton 
+                                    assetPickerId="attach-file-picker" 
+                                    buttonIcon="file-earmark-plus"
+                                    buttonText="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.attachment.add.label']}"
+                                    />
+                                <librecms:assetPicker 
+                                    actionUrl="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{list.name}/attachments/@create"
+                                    assetType="#{CmsRelatedInfoStep.fileAssetType}"
+                                    assetPickerId="attach-file-picker"
+                                    baseUrl="#{CmsRelatedInfoStep.fileAssetPickerBaseUrl}"
+                                    contentSection="#{CmsRelatedInfoStep.sectionName}"
+                                    formParamName="assetUuid"
+                                    />
+                                <!--                                <button class="btn btn-primary"
+                                                                        data-target="#attachmentlist-#{list.name}-add-attachment-dialog"
+                                                                        data-toggle="modal"
+                                                                        type="button">
+                                                                    <bootstrap:svgIcon icon="file-earmark-plus" />
+                                                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.attachment.add.label']}</span>
+                                                                </button>-->
                                 <a class="btn btn-primary"
                                    href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{list.name}/links/@create"
                                    type="button">
                                     <bootstrap:svgIcon icon="bookmark-plus" />
-                                    <span>#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.link.add.label']}</span>
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.link.add.label']}</span>
                                 </a>
                                 <button class="btn btn-danger"
                                         type="button">
