@@ -86,7 +86,7 @@ public class BinaryAsset extends Asset implements Serializable {
     @Column(name = "ASSET_DATA")
     @Lob
     @Basic(fetch = FetchType.LAZY)
-//    @NotAudited
+    @NotAudited // Workaround until bug in Hibernate is resolved: https://hibernate.atlassian.net/browse/HHH-14725
     private Blob data;
 
     @Column(name = "DATA_SIZE")

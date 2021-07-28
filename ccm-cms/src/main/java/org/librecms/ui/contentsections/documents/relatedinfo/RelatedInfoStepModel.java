@@ -19,6 +19,7 @@
 package org.librecms.ui.contentsections.documents.relatedinfo;
 
 import org.librecms.assets.FileAsset;
+import org.librecms.assets.RelatedLink;
 import org.librecms.contentsection.AttachmentList;
 
 import java.util.ArrayList;
@@ -85,6 +86,10 @@ public class RelatedInfoStepModel {
 
     public void setSectionName(final String sectionName) {
         this.sectionName = sectionName;
+    }
+
+    public String getRelatedLinkType() {
+        return RelatedLink.class.getName();
     }
 
 }

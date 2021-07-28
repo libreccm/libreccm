@@ -45,9 +45,14 @@ public class ItemAttachmentDto {
     private long sortKey;
 
     /**
-     * The type of the asset of the attachment.
+     * The name of the asset type.
      */
     private String assetType;
+    
+    /**
+     * Label for the type of the asset of the attachment.
+     */
+    private String assetTypeLabel;
 
     /**
      * The UUID of the attachment asset.
@@ -91,12 +96,12 @@ public class ItemAttachmentDto {
         this.sortKey = sortKey;
     }
 
-    public String getAssetType() {
-        return assetType;
+    public String getAssetTypeLabel() {
+        return assetTypeLabel;
     }
 
-    public void setAssetType(final String assetType) {
-        this.assetType = assetType;
+    public void setAssetTypeLabel(final String assetTypeLabel) {
+        this.assetTypeLabel = assetTypeLabel;
     }
 
     public String getTitle() {
@@ -121,6 +126,14 @@ public class ItemAttachmentDto {
 
     public void setAssetUuid(final String assetUuid) {
         this.assetUuid = assetUuid;
+    }
+    
+    public String getAssetType() {
+        return assetType;
+    }
+    
+    public void setAssetType(final String assetType) {
+        this.assetType = assetType;
     }
 
 }

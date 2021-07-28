@@ -27,7 +27,6 @@ import org.libreccm.security.PermissionChecker;
 import org.libreccm.ui.BaseUrl;
 import org.librecms.assets.AssetTypesManager;
 import org.librecms.assets.Bookmark;
-import org.librecms.assets.FileAsset;
 import org.librecms.assets.RelatedLink;
 import org.librecms.contentsection.Asset;
 import org.librecms.contentsection.AssetManager;
@@ -137,9 +136,6 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      */
     @Inject
     private AttachmentListRepository listRepo;
-
-    @Inject
-    private BaseUrl baseUrl;
 
     @Inject
     private DocumentUi documentUi;
@@ -895,7 +891,8 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      * @param documentPath
      * @param listIdentifierParam The identifier of the list to which the
      *                            attachment is added.
-     * @param assetUuid           The asset to use for the attachment.
+     * @param assetIdentifier     The identifier of the asset to use for the
+     *                            attachment.
      *
      * @return A redirect to the list of attachment lists and attachments.
      */
@@ -909,8 +906,8 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
-        @FormParam("assetUuid")
-        final String assetUuid
+        @FormParam("assetIdentifier")
+        final String assetIdentifierParam
     ) {
         try {
             init();
@@ -931,11 +928,35 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
             }
             final AttachmentList list = listResult.get();
 
-            final Optional<Asset> assetResult = assetRepo.findByUuid(assetUuid);
+            final Optional<Asset> assetResult;
+            final Identifier assetIdentifier = identifierParser.parseIdentifier(
+                assetIdentifierParam
+            );
+            switch (assetIdentifier.getType()) {
+                case ID:
+                    assetResult = assetRepo.findById(
+                        Long.parseLong(
+                            assetIdentifier.getIdentifier()
+                        )
+                    );
+                    break;
+                case UUID:
+                    assetResult = assetRepo.findByUuid(
+                        assetIdentifier.getIdentifier()
+                    );
+                    break;
+                default:
+                    assetResult = assetRepo.findByPath(
+                        getContentSection(),
+                        assetIdentifier.getIdentifier()
+                    );
+                    break;
+            }
+
             if (!assetResult.isPresent()) {
                 models
                     .put("section", getContentSection().getLabel());
-                models.put("assetUuid", assetUuid);
+                models.put("assetUuid", assetIdentifierParam);
                 return "org/librecms/ui/contentsection/documents/asset-not-found.xhtml";
             }
 
@@ -2148,6 +2169,14 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
     ) {
         final ItemAttachmentDto dto = new ItemAttachmentDto();
         dto.setAssetType(
+            Optional
+                .ofNullable(itemAttachment.getAsset())
+                .map(Asset::getClass)
+                .map(clazz -> assetTypesManager.getAssetTypeInfo(clazz))
+                .map(info -> info.getAssetClass().getName())
+                .orElse("")
+        );
+        dto.setAssetTypeLabel(
             Optional
                 .ofNullable(itemAttachment.getAsset())
                 .map(Asset::getClass)
