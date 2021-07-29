@@ -1759,7 +1759,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      * @param listIdentifierParam The identifier of the {@link AttachmentList}
      *                            to which the attachment belongs.
      * @param attachmentUuid      The UUID of the attachment to remove.
-     * @param confirm             The value of the {@code confirm} parameter. If
+     * @param confirmed             The value of the {@code confirm} parameter. If
      *                            the value anything other than the string
      *                            {@code true} the method does nothing.
      *
@@ -1778,8 +1778,8 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
         final String listIdentifierParam,
         @PathParam("attachmentUuid")
         final String attachmentUuid,
-        @FormParam("confirm")
-        final String confirm
+        @FormParam("confirmed")
+        final String confirmed
     ) {
         try {
             init();
@@ -1807,18 +1807,15 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
                 .equals(attachmentUuid))
                 .findFirst();
 
-            if (result.isPresent() && "true".equalsIgnoreCase(confirm)) {
+            if (result.isPresent() && "true".equalsIgnoreCase(confirmed)) {
                 final Asset asset = result.get().getAsset();
                 attachmentManager.unattachAsset(asset, list);
-                if (asset instanceof RelatedLink
-                        && ((RelatedLink) asset).getTargetItem() != null) {
-                    assetRepo.delete(asset);
-                }
+//                if (asset instanceof RelatedLink) {
+//                    assetRepo.delete(asset);
+//                }
             }
 
-            return buildRedirectPathForStep(
-                String.format("/attachmentlists/%s/@details", list.getName())
-            );
+            return buildRedirectPathForStep();
         } else {
             return documentUi.showAccessDenied(
                 getContentSection(),

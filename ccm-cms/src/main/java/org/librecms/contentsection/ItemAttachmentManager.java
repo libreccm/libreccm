@@ -65,7 +65,7 @@ public class ItemAttachmentManager {
             return Optional.empty();
         }
     }
-    
+
     @Transactional(Transactional.TxType.REQUIRED)
     public void save(final ItemAttachment<?> attachment) {
         if (attachment.getAttachmentId() == 0) {
@@ -73,7 +73,7 @@ public class ItemAttachmentManager {
         } else {
             entityManager.merge(attachment);
         }
-     }
+    }
 
     /**
      * Adds the provided {@link Asset} to the provided {@link AttachmentList}.
@@ -173,9 +173,14 @@ public class ItemAttachmentManager {
 
         @SuppressWarnings("rawtypes")
         final List<ItemAttachment> attachments = query.getResultList();
+        attachments.forEach(
+            (attachment) -> asset.removeItemAttachment(attachment)
+        );
         attachments.forEach((attachment) -> entityManager.remove(attachment));
 
-        if (!assetManager.isShared(asset)) {
+        if (assetManager.isShared(asset)) {
+            assetRepo.save(asset);
+        } else {
             entityManager.remove(asset);
         }
     }

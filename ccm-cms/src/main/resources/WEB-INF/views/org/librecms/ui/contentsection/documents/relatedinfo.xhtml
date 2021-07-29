@@ -179,11 +179,6 @@
                                     dialogTitle="#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.remove.title']}"
                                     message="#{CmsDefaultStepsMessageBundle.getMessage('relatedinfo.attachmentlists.remove.message', [list.name])}"
                                     />
-<!--                                <button class="btn btn-danger"
-                                        type="button">
-                                    <bootstrap:svgIcon icon="x-circle" />
-                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.attachment.remove.label']}</span>
-                                </button>-->
                                 <librecms:assetPicker 
                                     actionUrl="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{list.name}/attachments/@create"
                                     assetType="#{CmsRelatedInfoStep.fileAssetType}"
@@ -214,7 +209,7 @@
                                         </c:choose>
                                         <span class="cms-attachment-label">#{attachment.title}</span>
                                     </div>
-                                    <div class="cms-attachment-buttons">
+                                    <div class="cms-attachment-buttons d-flex">
                                         <button class="btn btn-secondary cms-sort-handle mr-2"
                                                 type="button">
                                             <bootstrap:svgIcon icon="arrows-move" />
@@ -233,11 +228,17 @@
                                                 <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.edit.button']}"</span>
                                             </a>
                                         </c:if>
-                                        <button class="btn btn-danger ml-2"
-                                                type="button">
-                                            <bootstrap:svgIcon icon="x-circle" />
-                                            <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.delete.button']}"</span>
-                                        </button>
+                                        <libreccm:deleteDialog
+                                            actionTarget="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{list.name}/attachments/#{attachment.uuid}/@remove"
+                                            buttonLabelClass="sr-only"
+                                            buttonText="#{CmsDefaultStepsMessageBundle['relatedinfo.attachment.remove.label']}"
+                                            buttonTextClass="ml-2"
+                                            cancelLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachment.remove.cancel']}"
+                                            confirmLabel="#{CmsDefaultStepsMessageBundle['relatedinfo.attachment.remove.confirm']}"
+                                            dialogId="attachment-delete-#{attachment.uuid}"
+                                            dialogTitle="#{CmsDefaultStepsMessageBundle['relatedinfo.attachment.remove.title']}"
+                                            message="#{CmsDefaultStepsMessageBundle.getMessage('relatedinfo.attachment.remove.message', [list.name, attachment.title])}"
+                                            />
                                     </div>
                                 </li>
                             </c:forEach>
@@ -245,7 +246,7 @@
                     </li>
                 </c:forEach>
             </ul>
-            
+
             <div>
                 <button class="btn btn-secondary save-order-button"
                         disabled="disabled"

@@ -18,6 +18,9 @@
  */
 package org.librecms.assets;
 
+import com.arsdigita.cms.ui.assets.forms.RelatedLinkForm;
+import com.arsdigita.cms.ui.assets.forms.SideNoteForm;
+
 import org.librecms.contentsection.Asset;
 import org.hibernate.envers.Audited;
 import org.librecms.contentsection.ContentItem;
@@ -31,6 +34,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import static org.librecms.CmsConstants.*;
+import static org.librecms.assets.AssetConstants.ASSETS_BUNDLE;
 
 /**
  * An link to information related to a content item, either to an (external) URL
@@ -42,6 +46,13 @@ import static org.librecms.CmsConstants.*;
 @Entity
 @Table(name = "RELATED_LINKS", schema = DB_SCHEMA)
 @Audited
+@AssetType(
+    assetForm = RelatedLinkForm.class,
+    labelBundle = ASSETS_BUNDLE,
+    labelKey = "relatedlink.label",
+    descriptionBundle = ASSETS_BUNDLE,
+    descriptionKey = "relatededlink.description"
+)
 public class RelatedLink extends Asset implements Serializable {
 
     private static final long serialVersionUID = 6933875117588667160L;
