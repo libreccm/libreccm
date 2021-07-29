@@ -476,7 +476,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      * @param sectionIdentifier
      * @param documentPath
      * @param listIdentifierParam The identifier of the list to remove.
-     * @param confirm             The value of the confirm parameter. Must
+     * @param confirmed             The value of the confirm parameter. Must
      *                            contain {@code true} (as string not as
      *                            boolean), otherwise this method does nothing.
      *
@@ -492,8 +492,8 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
         final String documentPath,
         @PathParam("attachmentListIdentifier")
         final String listIdentifierParam,
-        @FormParam("confirm")
-        final String confirm
+        @FormParam("confirmed")
+        final String confirmed
     ) {
         try {
             init();
@@ -513,7 +513,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
                 return showAttachmentListNotFound(listIdentifierParam);
             }
 
-            if ("true".equalsIgnoreCase(confirm)) {
+            if ("true".equalsIgnoreCase(confirmed)) {
                 listManager.removeAttachmentList(listResult.get());
             }
 

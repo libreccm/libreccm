@@ -11,9 +11,16 @@
         <ui:param name="title" value="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.details.title']}" />
 
         <ui:define name="authoringStep">
+            <div class="d-flex mb-3">
+                 <a class="btn btn-secondary mr-3"
+                   href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo">
+                    <bootstrap:svgIcon icon="arrow-left-circle" />
+                    <span>#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.back']}</span>
+                </a>
             <h2>
                 #{CmsDefaultStepsMessageBundle['relatedinfo.link.details.title']}
             </h2>
+            </div>
 
             <libreccm:localizedStringEditor 
                 addButtonLabel="#{CmsDefaultStepsMessageBundle['contentsection.documents.relatedinfo.link.title.add.button_label']}"
