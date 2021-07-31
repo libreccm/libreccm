@@ -149,6 +149,17 @@ function saveOrder() {
             "data-baseUrl attribute on cms-attachment-lists container is missing or empty."
         );
     }
+
+    const saveOrderButtons = document.querySelectorAll(".save-order-button");
+    for (let i = 0; i < saveOrderButtons.length; i++) {
+        const saveOrderButton: HTMLButtonElement = saveOrderButtons[i] as HTMLButtonElement;
+        saveOrderButton.disabled = true;
+        const saveIcon = saveOrderButton.querySelector(".save-icon");
+        const spinner = saveOrderButton.querySelector(".save-spinner");
+        saveIcon?.classList.toggle("d-none");
+        spinner?.classList.toggle("d-none");
+    }
+
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
     fetch(baseUrl, {
@@ -159,15 +170,30 @@ function saveOrder() {
     })
         .then(response => {
             if (response.ok) {
-                const saveOrderButtons =
-                    document.querySelectorAll("save-order-button");
+                // const saveOrderButtons =
+                //     document.querySelectorAll(".save-order-button");
                 for (let i = 0; i < saveOrderButtons.length; i++) {
                     const saveOrderButton: HTMLButtonElement = saveOrderButtons[
                         i
                     ] as HTMLButtonElement;
-                    saveOrderButton.disabled = true;
+                    // saveOrderButton.disabled = true;
+                    const saveIcon = saveOrderButton.querySelector(".save-icon");
+                    const spinner = saveOrderButton.querySelector(".save-spinner");
+                    saveIcon?.classList.toggle("d-none");
+                    spinner?.classList.toggle("d-none");
                 }
             } else {
+                showSaveError();
+                for (let i = 0; i < saveOrderButtons.length; i++) {
+                    const saveOrderButton: HTMLButtonElement = saveOrderButtons[
+                        i
+                    ] as HTMLButtonElement;
+                    saveOrderButton.disabled = false;
+                    const saveIcon = saveOrderButton.querySelector(".save-icon");
+                    const spinner = saveOrderButton.querySelector(".save-spinner");
+                    saveIcon?.classList.toggle("d-none");
+                    spinner?.classList.toggle("d-none");
+                }
                 throw Error(
                     `Failed to save attachments order. Response status: ${response.status}, statusText: ${response.statusText}`
                 );
@@ -175,6 +201,16 @@ function saveOrder() {
         })
         .catch(error => {
             showSaveError();
+            for (let i = 0; i < saveOrderButtons.length; i++) {
+                const saveOrderButton: HTMLButtonElement = saveOrderButtons[
+                    i
+                ] as HTMLButtonElement;
+                saveOrderButton.disabled = false;
+                const saveIcon = saveOrderButton.querySelector(".save-icon");
+                const spinner = saveOrderButton.querySelector(".save-spinner");
+                saveIcon?.classList.toggle("d-none");
+                spinner?.classList.toggle("d-none");
+            }
             throw new Error(`Failed to save attachments order: ${error}`);
         });
 }

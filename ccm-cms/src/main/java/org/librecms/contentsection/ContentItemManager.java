@@ -680,7 +680,7 @@ public class ContentItemManager {
                             .getDescription());
         targetList.setItem(target);
         targetList.setName(sourceList.getName());
-        targetList.setOrder(sourceList.getOrder());
+        targetList.setListOrder(sourceList.getListOrder());
         copyLocalizedString(sourceList.getTitle(), targetList.getTitle());
         targetList.setUuid(UUID.randomUUID().toString());
 
@@ -1116,7 +1116,7 @@ public class ContentItemManager {
                 targetList.setName(sourceList.getName());
                 copyLocalizedString(sourceList.getTitle(),
                                     targetList.getTitle());
-                targetList.setOrder(sourceList.getOrder());
+                targetList.setListOrder(sourceList.getListOrder());
                 targetList.setUuid(UUID.randomUUID().toString());
             } else {
                 targetList = liveItem.getAttachments().get(i);

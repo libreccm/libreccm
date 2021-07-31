@@ -164,7 +164,7 @@ public abstract class AbstractContentItemRenderer implements Serializable {
      *      "listId": {@link AttachmentList#getListId()}
      *      "uuid": {@link AttachmentList#getUuid()}
      *      "name": {@link AttachmentList#getName()}
-     *      "order": {@link AttachmentList#getOrder()}
+     *      "order": {@link AttachmentList#getListOrder()}
      *      "title": {@link AttachmentList#getTitle()}
      *      "description": {@link AttachmentList#getDescription()}
      *      "attachments": {@link AttachmentList#getAttachments()}
@@ -189,7 +189,7 @@ public abstract class AbstractContentItemRenderer implements Serializable {
         result.put("listId", attachmentList.getListId());
         result.put("uuid", attachmentList.getUuid());
         result.put("name", attachmentList.getName());
-        result.put("order", attachmentList.getOrder());
+        result.put("order", attachmentList.getListOrder());
         result.put("title", attachmentList.getTitle().getValue(language));
         result.put("description",
                    attachmentList.getDescription().getValue(language));

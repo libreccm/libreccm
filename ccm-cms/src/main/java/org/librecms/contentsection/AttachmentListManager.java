@@ -70,7 +70,7 @@ public class AttachmentListManager {
      */
     private void normalizeOrder(final List<AttachmentList> lists) {
         for (int i = 0; i < lists.size(); i++) {
-            lists.get(i).setOrder(i);
+            lists.get(i).setListOrder(i);
             entityManager.merge(lists.get(i));
         }
     }
@@ -201,14 +201,14 @@ public class AttachmentListManager {
         if (lists.isEmpty()) {
             lastOrder = 0;
         } else {
-            lastOrder = lists.get(lists.size() - 1).getOrder();
+            lastOrder = lists.get(lists.size() - 1).getListOrder();
         }
 
         final AttachmentList list = new AttachmentList();
         list.setItem(draft);
         list.setName(name);
         list.setUuid(UUID.randomUUID().toString());
-        list.setOrder(lastOrder + 1);
+        list.setListOrder(lastOrder + 1);
 
         draft.addAttachmentList(list);
 
@@ -270,10 +270,10 @@ public class AttachmentListManager {
         list.setItem(draft);
         list.setName(name);
         list.setUuid(UUID.randomUUID().toString());
-        list.setOrder(listPos);
+        list.setListOrder(listPos);
 
         for (long i = listPos; i < lists.size(); i++) {
-            lists.get((int) i).setOrder(i + 1);
+            lists.get((int) i).setListOrder(i + 1);
             entityManager.merge(lists.get((int) i));
         }
 
@@ -336,21 +336,21 @@ public class AttachmentListManager {
             .getAttachments();
 
         final Optional<AttachmentList> list1 = lists.stream()
-            .filter(list -> list.getOrder() == attachmentList.getOrder())
+            .filter(list -> list.getListOrder() == attachmentList.getListOrder())
             .findFirst();
         final Optional<AttachmentList> list2 = lists.stream()
-            .filter(list -> list.getOrder() >= attachmentList.getOrder() + 1)
+            .filter(list -> list.getListOrder() >= attachmentList.getListOrder() + 1)
             .findFirst();
 
         if (!list2.isPresent()) {
             return;
         }
 
-        final long order1 = list1.get().getOrder();
-        final long order2 = list2.get().getOrder();
+        final long order1 = list1.get().getListOrder();
+        final long order2 = list2.get().getListOrder();
 
-        list1.get().setOrder(order2);
-        list2.get().setOrder(order1);
+        list1.get().setListOrder(order2);
+        list2.get().setListOrder(order1);
 
         entityManager.merge(list1.get());
         entityManager.merge(list2.get());
@@ -374,10 +374,10 @@ public class AttachmentListManager {
             .getAttachments();
 
         final Optional<AttachmentList> list1 = lists.stream()
-            .filter(list -> list.getOrder() == attachmentList.getOrder())
+            .filter(list -> list.getListOrder() == attachmentList.getListOrder())
             .findFirst();
         final List<AttachmentList> lower = lists.stream()
-            .filter(list -> list.getOrder() <= attachmentList.getOrder() - 1)
+            .filter(list -> list.getListOrder() <= attachmentList.getListOrder() - 1)
             .collect(Collectors.toList());
         Collections.sort(lower);
 
@@ -392,11 +392,11 @@ public class AttachmentListManager {
             return;
         }
 
-        final long order1 = list1.get().getOrder();
-        final long order2 = list2.get().getOrder();
+        final long order1 = list1.get().getListOrder();
+        final long order2 = list2.get().getListOrder();
 
-        list1.get().setOrder(order2);
-        list2.get().setOrder(order1);
+        list1.get().setListOrder(order2);
+        list2.get().setListOrder(order1);
 
         entityManager.merge(list1.get());
         entityManager.merge(list2.get());

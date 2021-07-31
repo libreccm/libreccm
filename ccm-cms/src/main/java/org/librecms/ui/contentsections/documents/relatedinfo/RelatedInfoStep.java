@@ -2141,7 +2141,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
         );
         dto.setListId(attachmentList.getListId());
         dto.setName(attachmentList.getName());
-        dto.setOrder(attachmentList.getOrder());
+        dto.setOrder(attachmentList.getListOrder());
         dto.setTitle(
             globalizationHelper
                 .getValueFromLocalizedString(

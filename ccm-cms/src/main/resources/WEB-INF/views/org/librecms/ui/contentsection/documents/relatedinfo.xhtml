@@ -88,7 +88,15 @@
                 <button class="btn btn-secondary save-order-button"
                         disabled="disabled"
                         type="button">
-                    <bootstrap:svgIcon icon="save" />
+                    <span class="save-icon">
+                        <bootstrap:svgIcon icon="save" />
+                    </span>
+                    <span class="save-spinner d-none">
+                        <span aria-hidden="true"
+                              class="spinner-border spinner-border-sm"
+                              role="status"></span>
+                        <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.order.save.inprogress']}</span>
+                    </span>
                     <span>#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.order.save']}</span>
                 </button>
             </div>
@@ -293,7 +301,15 @@
                 <button class="btn btn-secondary save-order-button"
                         disabled="disabled"
                         type="button">
-                    <bootstrap:svgIcon icon="save" />
+                    <span class="save-icon">
+                        <bootstrap:svgIcon icon="save" />
+                    </span>
+                    <span class="save-spinner d-none">
+                        <span aria-hidden="true"
+                              class="spinner-border spinner-border-sm"
+                              role="status"></span>
+                        <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.order.save.inprogress']}</span>
+                    </span>
                     <span>#{CmsDefaultStepsMessageBundle['relatedinfo.attachmentlists.order.save']}</span>
                 </button>
             </div>

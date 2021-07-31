@@ -55,7 +55,7 @@ public class RelatedInfoStepModel {
     }
 
     public List<AttachmentListDto> getAttachmentsLists() {
-        return attachmentsLists;
+        return Collections.unmodifiableList(attachmentsLists);
     }
 
     public void setAttachmentsLists(List<AttachmentListDto> attachmentsLists) {

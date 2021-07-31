@@ -114,11 +114,11 @@ class RelatedInfoStepController {
             .sorted((list1, list2) -> list1.compareTo(list2))
             .collect(Collectors.toList());
 
-        toMove.setOrder(0);
+        toMove.setListOrder(0);
         lists
             .stream()
             .filter(current -> !current.equals(toMove))
-            .forEach(current -> current.setOrder(current.getOrder() + 1));
+            .forEach(current -> current.setListOrder(current.getListOrder() + 1));
 
         lists.forEach(entityManager::merge);
     }
@@ -207,11 +207,11 @@ class RelatedInfoStepController {
         final int afterIndex = lists.indexOf(after);
         for (int i = afterIndex + 1; i < lists.size(); i++) {
             final AttachmentList current = lists.get(i);
-            current.setOrder(current.getOrder() + 1);
+            current.setListOrder(current.getListOrder() + 1);
             entityManager.merge(current);
         }
 
-        toMove.setOrder(afterIndex + 1);
+        toMove.setListOrder(afterIndex + 1);
         entityManager.merge(toMove);
     }
 

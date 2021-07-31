@@ -85,7 +85,7 @@ import static org.librecms.CmsConstants.DB_SCHEMA;
         query = "SELECT l FROM AttachmentList l "
                     + "WHERE l.name = :name "
                     + "AND l.item = :item "
-                    + "ORDER BY l.order")
+                    + "ORDER BY l.listOrder")
 })
 public class AttachmentList implements Comparable<AttachmentList>,
                                        Identifiable,
@@ -121,11 +121,11 @@ public class AttachmentList implements Comparable<AttachmentList>,
     private String name;
 
     /**
-     * A order index for ordering multiple attachment lists with the same
-     * {@link #name}.
+     * A listOrder index for ordering multiple attachment lists with the same
+ {@link #name}.
      */
     @Column(name = "LIST_ORDER")
-    private long order;
+    private long listOrder;
 
     /**
      * The localised title of the list.
@@ -201,12 +201,12 @@ public class AttachmentList implements Comparable<AttachmentList>,
         this.name = name;
     }
 
-    public long getOrder() {
-        return order;
+    public long getListOrder() {
+        return listOrder;
     }
 
-    public void setOrder(final long order) {
-        this.order = order;
+    public void setListOrder(final long listOrder) {
+        this.listOrder = listOrder;
     }
 
     public LocalizedString getTitle() {
@@ -254,7 +254,7 @@ public class AttachmentList implements Comparable<AttachmentList>,
 
         final int nameCompare = name.compareTo(other.getName());
         if (nameCompare == 0) {
-            return Long.compare(order, other.getOrder());
+            return Long.compare(listOrder, other.getListOrder());
         } else {
             return nameCompare;
         }
@@ -266,7 +266,7 @@ public class AttachmentList implements Comparable<AttachmentList>,
         hash = 29 * hash + (int) (listId ^ (listId >>> 32));
         hash = 29 * hash + Objects.hashCode(uuid);
         hash = 29 * hash + Objects.hashCode(name);
-        hash = 29 * hash + (int) (order ^ (order >>> 32));
+        hash = 29 * hash + (int) (listOrder ^ (listOrder >>> 32));
         hash = 29 * hash + Objects.hashCode(title);
         hash = 29 * hash + Objects.hashCode(description);
         hash = 29 * hash + Objects.hashCode(attachments);
@@ -299,7 +299,7 @@ public class AttachmentList implements Comparable<AttachmentList>,
             System.out.println("uuid is not equal");
             return false;
         }
-        if (order != other.getOrder()) {
+        if (listOrder != other.getListOrder()) {
             return false;
         }
         if (!Objects.equals(name, other.getName())) {
@@ -344,7 +344,7 @@ public class AttachmentList implements Comparable<AttachmentList>,
                              listId,
                              uuid,
                              name,
-                             order,
+                             listOrder,
                              Objects.toString(title),
                              Objects.toString(description),
                              Objects.toString(attachments),
