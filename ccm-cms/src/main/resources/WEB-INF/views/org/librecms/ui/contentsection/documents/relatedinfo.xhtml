@@ -216,10 +216,52 @@
                                             <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.move.button']}"</span>
                                         </button>
                                         <button class="btn btn-secondary mx-2"
+                                                data-toggle="modal"
+                                                data-target="#attachment-#{attachment.uuid}-info-dialog"
                                                 type="button">
                                             <bootstrap:svgIcon icon="info-circle" />
                                             <span class="sr-only">#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.info.button']}"</span>
                                         </button>
+                                        <div aria-hidden="true" 
+                                             aria-labelledby="attachment-#{attachment.uuid}-info-dialog-title"
+                                             class="modal fade"
+                                             id="attachment-#{attachment.uuid}-info-dialog"
+                                             tabindex="-1"
+                                             >
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h3 class="modal-title"
+                                                            id="attachment-#{attachment.uuid}-info-dialog-title">
+                                                            #{CmsDefaultStepsMessageBundle.getMessage('relatedinfo.attachments.info.dialog.title', [list.name, attachment.title])}
+
+                                                        </h3>
+                                                        <button 
+                                                            aria-label="#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.info.dialog.close']}"
+                                                            class="close"
+                                                            data-dismiss="modal"
+                                                            type="button">
+                                                            <bootstrap:svgIcon icon="x" />
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <dl>
+                                                            <dt>#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.info.dialog.title.label']}</dt>
+                                                            <dd>#{attachment.title}</dd>
+                                                            <dt>#{CmsDefaultStepsMessageBundle['relatedinfo.attachments.info.dialog.type.label']}</dt>
+                                                            <dd>#{attachment.assetTypeLabel}</dd>
+                                                        </dl>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btn btn-secondary"
+                                                                data-dismiss="modal"
+                                                                type="button">
+                                                            #{CmsDefaultStepsMessageBundle['relatedinfo.attachments.info.dialog.close']}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <c:if test="#{attachment.assetType.equals(CmsRelatedInfoStep.relatedLinkType)}">
                                             <a class="btn btn-primary mx-2"
                                                href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo/attachmentlists/#{list.name}/links/#{attachment.assetUuid}/@details"
