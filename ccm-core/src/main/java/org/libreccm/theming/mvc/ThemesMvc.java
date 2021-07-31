@@ -18,6 +18,7 @@
  */
 package org.libreccm.theming.mvc;
 
+import org.libreccm.core.CoreConstants;
 import org.libreccm.sites.Site;
 import org.libreccm.sites.SiteRepository;
 import org.libreccm.theming.ThemeInfo;
@@ -34,6 +35,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.mvc.Models;
 import javax.servlet.ServletContext;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -74,14 +76,28 @@ public class ThemesMvc {
         final String application,
         final String view
     ) {
-        final Site site = getSite(uriInfo);
+        final ThemeInfo themeInfo;
+        final ThemeVersion themeVersion;
+        if (siteRepo.findAll().isEmpty()) {
+            themeVersion = ThemeVersion.LIVE;
+            themeInfo = themes
+                .getTheme(CoreConstants.BUILDIN_DEFAULT_THEME, themeVersion)
+                .orElseThrow(
+                    () -> new InternalServerErrorException(
+                        "Build-in default theme not available."
+                    )
+                );
+        } else {
+            final Site site = getSite(uriInfo);
         final String theme = parseThemeParam(uriInfo);
-        final ThemeVersion themeVersion = parsePreviewParam(uriInfo);
-        final ThemeInfo themeInfo = getTheme(
+        themeVersion = parsePreviewParam(uriInfo);
+        themeInfo = getTheme(
             site,
             theme,
             themeVersion
         );
+        }
+        
         final ThemeManifest manifest = themeInfo.getManifest();
         final Map<String, String> views = manifest.getViewsOfApplication(
             application
@@ -163,8 +179,11 @@ public class ThemesMvc {
         } else {
             site = siteRepo
                 .findDefaultSite()
-                .orElseThrow(() -> new NotFoundException(
-                "No matching Site and no default Site."));
+                .orElseThrow(
+                    () -> new NotFoundException(
+                        "No matching Site and no default Site."
+                    )
+                );
         }
 
         return site;

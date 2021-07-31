@@ -25,6 +25,8 @@ package org.libreccm.core;
  */
 public final class CoreConstants {
 
+    public static final String BUILDIN_DEFAULT_THEME = "ccm-freemarker";
+    
     /**
      * XML namespace used for XML created by and from classes in the ccm-core
      * module.

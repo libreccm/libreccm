@@ -340,7 +340,7 @@
                     <version>2.1.0.Beta1</version>
                     <configuration>
                         <skip>true</skip>
-                        <version>24.0.0.Final</version>
+                        <version>24.0.1.Final</version>
                     </configuration>
                 </plugin>
             </plugins>
