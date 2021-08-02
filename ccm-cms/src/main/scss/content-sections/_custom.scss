@@ -35,6 +35,11 @@ $carousel-control-icon-width: 1.25rem;
 
 $pre-scrollable-max-height: 21.25rem;
 
+// Buttons used a sort handlers
+button.btn.cms-sort-handle:hover {
+    cursor: move;
+}
+
 // Navbar default colors have insufficient contrast
 $navbar-dark-color: #fff;
 
@@ -46,7 +51,7 @@ nav ul .list-group-item.active ul .list-group-item a {
     color: #007bff;
 }
 
-nav.foldertree,nav.categorytree {
+nav.foldertree,nav.categorytree, div.categorizationtree {
     & > ul.nav {
         margin-left: 1em;
         margin-right: 1em;
@@ -126,3 +131,4 @@ table.wor{
         width: 9em;
     }
 }
+

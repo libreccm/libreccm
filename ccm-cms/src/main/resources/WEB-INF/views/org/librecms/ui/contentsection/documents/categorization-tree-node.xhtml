@@ -10,27 +10,37 @@
             <div class="d-flex">
                 <c:if test="#{!node.subCategories.isEmpty()}">
                     <button aria-label="#{CmsDefaultStepsMessageBundle['categorization.tree.show_subcategories']}"
-                            class="btn btn-light p-0 subfolders-toggler"
+                            class="btn btn-light p-0 subcategories-toggler"
                             data-toggle="collapse"
-                            data-target="##{node.categoryUuid}-subcategories"
+                            data-target="#subcategories-#{node.categoryUuid}"
                             aria-expanded="#{node.subCategoryAssigned or isRoot ? 'true' : 'false'}"
-                            aria-controls="#{node.categoryUuid}-subcategories"
+                            aria-controls="subcategories-#{node.categoryUuid}"
                             type="button">
-
+                        <span class="sr-only">#{CmsAdminMessages['categorization.tree.expand']}
+                        </span>
                     </button>
                 </c:if>
                 <label class="form-check-label"
                        for="#{node.categoryUuid}">
-                    #{node.title}
+                    <c:choose>
+                        <c:when test="#{node.title != null and !node.title.isBlank()}">
+                            #{node.title}
+                        </c:when>
+                        <c:otherwise>
+                            #{node.categoryName}
+                        </c:otherwise>
+                    </c:choose>
+                    
                 </label>
                 <input class="form-check-input"
                        id="#{node.categoryUuid}"
+                       name="assigned-categories"
                        type="checkbox"
                        value="#{node.categoryUuid}" />
             </div>
             <c:if test="#{!node.subCategories.isEmpty()}">
-                <ul class="#{node.subCategoryAssigned or isRoot ? 'collapse' : 'collapse.show'} "
-                    id="#{node.categoryUuid}-subcategories">
+                <ul class="#{node.assigned or isRoot ? 'collapse.show' : 'collapse'} "
+                    id="subcategories-#{node.categoryUuid}">
                     <c:forEach items="#{node.subCategories}"
                                var="subCat">
                         <ui:include src="categorization-tree-node.xhtml">

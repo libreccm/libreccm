@@ -11,7 +11,7 @@
                        var="tree">
                 <h2>#{tree.domainTitle}</h2>
 
-                <div class="d-flex">
+                <div class="d-flex mb-3">
                     <span>#{CmsDefaultStepsMessageBundle['categorization.system.assigned.to']}</span>
                     <button class="btn btn-primary"
                             data-target="#edit-categorization-#{tree.domainKey}"
@@ -25,27 +25,28 @@
                 </div>
                 <div aria-labelledby="edit-categorization-#{tree.domainKey}-title" 
                      aria-hidden="true"
-                     class="modal fade"
+                     class="modal modal-xl fade"
                      id="edit-categorization-#{tree.domainKey}"
                      tabindex="-1">
                     <div class="modal-dialog">
-                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/categorization/#{tree.domainKey}"
+                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@categorization/domains/#{tree.domainKey}"
                               class="modal-content"
                               method="post">
                             <div class="modal-header">
                                 <h3 class="modal-title" 
                                     id="edit-categorization-#{tree.domainKey}-title">
                                     #{CmsDefaultStepsMessageBundle.getMessage('categorization.edit.title', [tree.domainKey, CmsSelectedDocumentModel.itemTitle])}
-                                    <button aria-label="#{CmsDefaultStepsMessageBundle['categorization.edit.cancel']}"
-                                            class="close"
-                                            data-dismiss="modal"
-                                            type="button">
-                                        <bootstrap:svgIcon icon="x-circle" />
-                                    </button>
+
                                 </h3>
+                                <button aria-label="#{CmsDefaultStepsMessageBundle['categorization.edit.cancel']}"
+                                        class="close"
+                                        data-dismiss="modal"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="x-circle" />
+                                </button>
                             </div>
-                            <div class="modal-body">
-                                <ul class="#{tree.root.subCategoryAssigned ? 'collapse' : 'collapse.show'} "
+                            <div class="modal-body categorizationtree">
+                                <ul class="#{tree.root.subCategoryAssigned ? 'collapse' : 'collapse.show'}"
                                     id="#{node.categoryUuid}-subcategories">
                                     <ui:include src="categorization-tree-node.xhtml">
                                         <ui:param name="node"

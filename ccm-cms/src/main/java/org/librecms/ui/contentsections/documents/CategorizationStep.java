@@ -45,6 +45,7 @@ import javax.mvc.Models;
 import javax.transaction.Transactional;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
@@ -147,16 +148,13 @@ public class CategorizationStep extends AbstractMvcAuthoringStep {
      *
      * @return A redirect to the categorization step.
      */
-    @MvcAuthoringAction(
-        method = MvcAuthoringActionMethod.POST,
-        path = "/domains/"
-    )
+    @POST
     @Path("/domains/{domain}")
     @Transactional(Transactional.TxType.REQUIRED)
     public String updateCategorization(
         @PathParam("domain")
         final String domainParam,
-        @FormParam("assignedCategories")
+        @FormParam("assigned-categories")
         final Set<String> assignedCategoriesParam
     ) {
         try {
@@ -248,6 +246,12 @@ public class CategorizationStep extends AbstractMvcAuthoringStep {
             }
         } catch (ObjectNotAssignedToCategoryException ex) {
             throw new UnexpectedErrorException(ex);
+        }
+        
+        if (!category.getSubCategories().isEmpty()) {
+            for(final Category subCategory : category.getSubCategories()) {
+                updateAssignedCategories(subCategory, assignedCategoriesParam);
+            }
         }
     }
 
