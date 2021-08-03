@@ -301,7 +301,7 @@ public class CategorizationStep extends AbstractMvcAuthoringStep {
     ) {
         final List<String> assigned = new ArrayList<>();
         if (node.isAssigned()) {
-            assigned.add(String.join("/", parentPath, node.getTitle()));
+            assigned.add(String.join("/", parentPath, getCategoryLabel(node)));
         }
 
         if (node.isSubCategoryAssigned()) {
@@ -311,7 +311,11 @@ public class CategorizationStep extends AbstractMvcAuthoringStep {
                     .stream()
                     .map(
                         subCat -> buildAssignedCategoriesList(
-                            subCat, String.join("/", node.getTitle()
+                            subCat, 
+                            String.join(
+                                "/", 
+                                parentPath,
+                                getCategoryLabel(node)
                             )
                         )
                     )
@@ -355,16 +359,17 @@ public class CategorizationStep extends AbstractMvcAuthoringStep {
                 .map(this::buildCategorizationTreeNode)
                 .collect(Collectors.toList())
         );
-        node.setSubCategoryAssigned(
-            category
-                .getSubCategories()
-                .stream()
-                .allMatch(
-                    subCat -> categoryManager.isAssignedToCategory(
-                        subCat, document
-                    )
-                )
-        );
+//        node.setSubCategoryAssigned(
+//            isSubCategoryAssigned(category)
+////            category
+////                .getSubCategories()
+////                .stream()
+////                .allMatch(
+////                    subCat -> categoryManager.isAssignedToCategory(
+////                        subCat, document
+////                    )
+////                )
+//        );
         node.setTitle(
             globalizationHelper.getValueFromLocalizedString(
                 category.getTitle()
@@ -375,4 +380,25 @@ public class CategorizationStep extends AbstractMvcAuthoringStep {
         return node;
     }
 
+//    private boolean isSubCategoryAssigned(final Category category) {
+//        boolean result = false;
+//        for (final Category subCategory : category.getSubCategories()) {
+//            result = result || categoryManager.isAssignedToCategory(subCategory, getDocument());
+//            
+//            if (!subCategory.getSubCategories().isEmpty()) {
+//                result = result || isSubCategoryAssigned(subCategory);
+//            }
+//        }
+//        
+//        return result;
+//    }
+    
+    private String getCategoryLabel(final CategorizationTreeNode node) {
+        if (node.getTitle() == null || node.getTitle().isBlank()) {
+            return node.getCategoryName();
+        } else {
+            return node.getTitle();
+        }
+    }
+    
 }

@@ -71,11 +71,11 @@ public class CategorizationTreeNode {
      */
     private boolean assigned;
 
-    /**
-     * Is any subcategory of the category represented by this node assigned to
-     * the current content item?
-     */
-    private boolean subCategoryAssigned;
+//    /**
+//     * Is any subcategory of the category represented by this node assigned to
+//     * the current content item?
+//     */
+//    private boolean subCategoryAssigned;
 
     /**
      * Nodes for the subcategories of the category represented by this node.
@@ -139,12 +139,16 @@ public class CategorizationTreeNode {
     }
 
     public boolean isSubCategoryAssigned() {
-        return subCategoryAssigned;
+//        return subCategoryAssigned;
+        return subCategories
+            .stream()
+            .map(CategorizationTreeNode::isAssigned)
+            .reduce(false, (value1, value2) -> value1 || value2);
     }
 
-    public void setSubCategoryAssigned(final boolean subCategoryAssigned) {
-        this.subCategoryAssigned = subCategoryAssigned;
-    }
+//    public void setSubCategoryAssigned(final boolean subCategoryAssigned) {
+//        this.subCategoryAssigned = subCategoryAssigned;
+//    }
 
     public List<CategorizationTreeNode> getSubCategories() {
         return Collections.unmodifiableList(subCategories);

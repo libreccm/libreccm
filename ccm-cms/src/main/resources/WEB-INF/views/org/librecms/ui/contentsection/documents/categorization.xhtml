@@ -7,12 +7,14 @@
     <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/authoringstep.xhtml">
 
         <ui:define name="authoringStep">
+            <h1>#{CmsDefaultStepsMessageBundle.getMessage('categorization.title', [CmsSelectedDocumentModel.itemTitle])}</h1>
+            
             <c:forEach items="#{CmsCategorizationStep.categorizationTrees}"
                        var="tree">
                 <h2>#{tree.domainTitle}</h2>
 
                 <div class="d-flex mb-3">
-                    <span>#{CmsDefaultStepsMessageBundle['categorization.system.assigned.to']}</span>
+                    <span class="mr-2">#{CmsDefaultStepsMessageBundle['categorization.system.assigned.to']}</span>
                     <button class="btn btn-primary"
                             data-target="#edit-categorization-#{tree.domainKey}"
                             data-toggle="modal"
@@ -25,10 +27,10 @@
                 </div>
                 <div aria-labelledby="edit-categorization-#{tree.domainKey}-title" 
                      aria-hidden="true"
-                     class="modal modal-xl fade"
+                     class="modal fade"
                      id="edit-categorization-#{tree.domainKey}"
                      tabindex="-1">
-                    <div class="modal-dialog">
+                    <div class="modal-dialog modal-xl">
                         <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@categorization/domains/#{tree.domainKey}"
                               class="modal-content"
                               method="post">
@@ -46,7 +48,7 @@
                                 </button>
                             </div>
                             <div class="modal-body categorizationtree">
-                                <ul class="#{tree.root.subCategoryAssigned ? 'collapse' : 'collapse.show'}"
+                                <ul class=""
                                     id="#{node.categoryUuid}-subcategories">
                                     <ui:include src="categorization-tree-node.xhtml">
                                         <ui:param name="node"
@@ -73,10 +75,12 @@
 
                 <c:choose>
                     <c:when test="#{tree.root.assigned or tree.root.subCategoryAssigned}">
+                        <ul>
                         <c:forEach items="#{tree.assignedCategories}"
                                    var="assigned">
-                            #{assigned}
+                            <li>#{assigned}</li>
                         </c:forEach>
+                        </ul>
                     </c:when>
                     <c:otherwise>
                         <div class="alert alert-info" role="alert">

@@ -34,12 +34,13 @@
                 </label>
                 <input class="form-check-input"
                        id="#{node.categoryUuid}"
+                       checked="#{node.assigned ? 'checked' : ''}"
                        name="assigned-categories"
                        type="checkbox"
                        value="#{node.categoryUuid}" />
             </div>
             <c:if test="#{!node.subCategories.isEmpty()}">
-                <ul class="#{node.assigned or isRoot ? 'collapse.show' : 'collapse'} "
+                <ul class="#{node.assigned or node.subCategoryAssigned or isRoot ? 'collapse.show' : 'collapse'} "
                     id="subcategories-#{node.categoryUuid}">
                     <c:forEach items="#{node.subCategories}"
                                var="subCat">
