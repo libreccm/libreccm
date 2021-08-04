@@ -18,13 +18,14 @@
  */
 package org.librecms.ui.contentsections.documents;
 
+import org.librecms.ui.contentsections.documents.media.MediaStep;
+import org.librecms.ui.contentsections.documents.media.MediaStepService;
 import org.librecms.ui.contentsections.documents.relatedinfo.RelatedInfoStep;
 import org.librecms.ui.contentsections.documents.relatedinfo.RelatedInfoStepService;
 import org.librecms.ui.contenttypes.MvcArticlePropertiesStep;
 import org.librecms.ui.contenttypes.MvcArticleTextBodyStep;
 import org.librecms.ui.contenttypes.MvcArticleTextBodyStepResources;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -38,24 +39,23 @@ public class CmsMvcAuthoringSteps implements MvcAuthoringSteps {
 
     @Override
     public Set<Class<?>> getClasses() {
-        final Set<Class<?>> classes = new HashSet<>();
-        classes.add(ExampleAuthoringStep.class);
-
-        classes.add(CategorizationStep.class);
-        classes.add(RelatedInfoStep.class);
-        classes.add(MvcArticlePropertiesStep.class);
-        classes.add(MvcArticleTextBodyStep.class);
-
-        return classes;
+        return Set.of(
+            ExampleAuthoringStep.class,
+            CategorizationStep.class,
+            MediaStep.class,
+            RelatedInfoStep.class,
+            MvcArticlePropertiesStep.class,
+            MvcArticleTextBodyStep.class
+        );
     }
 
     @Override
     public Set<Class<?>> getResourceClasses() {
-        final Set<Class<?>> classes = new HashSet<>();
-        classes.add(MvcArticleTextBodyStepResources.class);
-        classes.add(RelatedInfoStepService.class);
-
-        return classes;
+        return Set.of(
+            MediaStepService.class,
+            MvcArticleTextBodyStepResources.class,
+            RelatedInfoStepService.class
+        );
     }
 
 }
