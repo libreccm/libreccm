@@ -5,12 +5,12 @@
                              http://maven.apache.org/xsd/decoration-1.3.0.xsd">
     
     <body>
-        <menu name="Parent project">
-            <item name="LibreCCM" href="../index.html"/>
+        <menu name="LibreCCM Developer Guide">
+            <item name="... back" href="../index.html"/>
         </menu>
         
-        <menu name="Overview">
-            <item name="The Core module" href="index.html"/>
+        <menu name="LibreCCM Devel Bundle ">
+            <item name="Overview" href="index.html"/>
         </menu>
         
         <menu ref="reports"/>

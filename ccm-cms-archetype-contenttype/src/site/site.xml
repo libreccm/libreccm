@@ -5,15 +5,15 @@
                              http://maven.apache.org/xsd/decoration-1.3.0.xsd">
     
     <body>
-        <menu name="Parent project">
+        <menu name="LibreCCM Developer Guide">
             <item name="LibreCCM" href="../index.html"/>
         </menu>
         
-        <menu name="Overview">
-            <item name="Using the archetype" href="index.html"/>
+        <menu name="LibreCMS Archetype Contenttype">
+            <item name="Overview" href="index.html"/>
         </menu>
         
-        <!--<menu ref="reports"/>-->
+        <menu ref="reports"/>
     </body>
     <!--<skin>
         <groupId>org.apache.maven.skins</groupId>

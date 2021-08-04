@@ -1,0 +1,177 @@
+== Getting Started – Building LibreCCM
+
+LibreCCM uses Maven 3 for building. The project itself is a multi module
+project. Building LibreCCM is done using the standard Maven commands.
+
+To control some features Maven profiles are used. Especially for testing.
+These profiles are documented on the ./testing.html[Testing LibreCCM]
+page.
+
+=== Preparing the Application Development Server
+
+Currently, only Wildfly is supported.
+
+==== Start Postgres 
+
+Ensure that PostgreSQL is running:
+
+Linux:: Open a Terminal and execute:
+[…] # systemctl status postgresql 
+or on system V based system:
+[…] # service postgresql  status
+
+MacOS:: Klick on the Postgres.App Icon on the top bar and select “start” for the intended version of PostgreSQL.
+
+==== Check PostgreSQL Configuration 
+
+This step is only required if you are about to start a new project and use PostgreSQL for the first time, or you want to use a new database. 
+
+Linux:: 
+Keep the terminal from the previous stop  open and use PostgreSQL client to create a new role and a (empty) database to use later with the Wildfly development server. 
++
+[source,]
+----
+[…] # su – postgres 
+[…] $ createuser -S -R -D -P ccm
+Enter a password for the new role: ccm
+[…] $ createdb -E UNICODE -O ccm ccm-devel-beta
+[…] $ exit  
+----
+MacOS:: Open a terminal an execute:
++
+[source,]
+----
+[…] $ createuser -S -R -D -P ccm
+Enter a password for the new role: ccm
+[…] $ createdb -E UNICODE -O ccm ccm-devel-beta
+[…] $ exit  
+----
+
+==== Check Wildfly Datasource Configuration
+
+This step is again only required if no installation and configuration of the Wildfly has yet been performed for the project yet.
+
+1. Open the libreccm project in your Netbeans IDE and expand ccm-bundle-devel-Wildfly in the Files tab.
+
+2. Open the file datasource.properties, if it exists. Otherwise, copy the file datasource.example.properties to datasource.properties and open it. 
+
+3. Adjust connectionURL, username and password to the values you created the PostgreSQL database with.
+
+==== Check Wildfly Configuration
+
+This step is again only required if no installation and configuration of the Wildfly has yet been performed for the project yet.
+
+1. In your Netbeans IDE, stay in the directory `ccm-bundle-devel-wildfly` mentioned in the previous chapter or expand it in the __Files tab__. Check for a file `wildfly.properties`. If it doesn’t exist copy the file  `wildfly.example.properties`. 
+2. Open the file and check the port numbers. By default is uses the offical alternate HTTP port 8080 and the unofficial Tomcat SSL port 8443 for content as well as the officially not allocated ports 9990 and 9993 for administration. If you are running another instance of Wildfly or another application server on your development machine, you will have to adjust the values to avoid port conflicts. In case of issues check the ports used by installed software. You may use  `netstat -tulpn | grep LISTEN` to check.
+
+=== CheatSheet – Work on the Development Cycle
+
+1. Open a terminal window, switsch to your working directory and keep it open
+2. Ensure PostgreSQL is running:
++
+[source,]
+----
+[…]$ psql -l
+----
+3. Update the working area
++
+[source,]
+----
+[…]$ git pull
+----
+4. Open Netbeans IDE and a terminal window. In your terminal switch to your development base directory (`~/LibreCCM/libreccm` in this example).
+5. Work on a module
+6. Use the terminal window choosing one of the alternatives
+** Rebuild the project, just code modified since the last build, without documentation, but including unit tests.
++
+[source,]
+----
+[…]$ mvn package
+----
+** Rebuild the project, just code modified since the last build, skipping all unit tests, without documentation.
++
+[source,]
+----
+[…]$ mvn package  -Dskip-test-true
+----
+** Rebuild the project, including documentation and unit tests
++
+[source,]
+----
+[…]$ mvn package site site:stage
+----
+** Rebuild the project, including documentation but skipping unit tests
++
+[source,]
+----
+[…]$ mvn package site site:stage  -Dskip-test-true
+----
+
+** Perform a clean build of the complete project including documentation and unit tests.
++
+[source,]
+----
+[…]$ mvn clean package site site:stage
+----
+
+7. Smoke test of your work in Wildfly application server
++ 
+* If it is the first time you use Wildfly you have to install Wildfly using maven. This step must also repeated if you deleted the wildfly dir in the target directory, or if the Wildfly version used in the development environment is updated.
++
+[source,]
+----
+[…] $ cd ~/LibreCCM/libreccm
+[…] $ mvn package wildfly:run -pl ccm-bundle-devel-wildfly -am -Psetup-runtime
+----
+* Otherwise just install the generated WAR file into Wildfly and start the application server
++
+[source,]
+----
+[…] $ cd ~/LibreCCM/libreccm
+[…] $ mvn package wildfly:run -pl ccm-bundle-devel-wildfly -am 
+----
++
+It takes some time to finish.
++ 
+Access the
++ 
+** public content area at http://localhost:8080/libreccm
+** editorial panel at http://localhost:8080/libreccm/@contentsections
+** administration panel at http://localhost:8080/libreccm/@admin
++
+The devel environment installs a devel user _admin@libreccm.example_ with Password "__libreccm__" (w/o quotes).
++
+Stop the server using <ctrl>+<c>
+
+8. Perform integration Tests 
++
+Some of the modules provide integration tests which use Arquillian to run tests inside an application server. Those module curently provide at least four profiles for running them
++
+** __**run-its-with-wildfly-h2mem**__: This profile uses the wildfly-maven-plugin to start a Wildfly and run the integration tests. The H2 database which is integrated with Wildfly is used for running the tests. No configuration is necessary.
+** __**run-its-with-wildfly-pgsql**__: This profile uses the wildfly-maven-plugin to start a Wildfly and run the integration tests. A PostgreSQL database is used to run the tests. The connection parameters are configured using the it-pgsql-datasources.properties file in the project root. Make sure to create a database for all modules and configure them before using this profile.
+** __**run-its-in-remote-wildfly-h2mem**__: This profile uses a remote Wildfly and the H2 database for running the tests. The user is responsible for starting the Wildfly container and for creating the required databases.
+** __**run-its-in-remote-wildfly-pgsql**__: This profile uses a remote Wildfly and PostgreSQL databases for running the tests. The user it responsible for starting the Wildfly container and for creating the required databases.
++
+We recommend to use a profile working on a Wildfly application server. Execute 
++
+[source,]
+----
+[… libreccm] $ mvn verify site site:stage -P${profileName}
+----
++
+Or perform a clean test:
++
+[source,]
+----
+[… libreccm] $ mvn clean verify site site:stage -P${profileName}
+----
+
+9. Finally renew the procect documentation and save your work
++
+[source,]
+----
+[… libreccm] $ mvn site site:stage
+----
+
+
+

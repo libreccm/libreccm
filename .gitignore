@@ -12,3 +12,5 @@ target
 .tscache
 *.vscode
 /ccm-core/nbproject/
+.DS_Store
+**/.DS_Store

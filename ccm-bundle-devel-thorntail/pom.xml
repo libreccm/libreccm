@@ -16,6 +16,8 @@
     
     <name>LibreCCM Devel Bundle for Thorntail</name>
     <url>http://www.libreccm.org</url>
+<!--  causes maven to store the site files in base ~/staging/ overwriting the
+      main site index.html and other files.    
     <distributionManagement>
         <site>
             <id>libreccm-site</id>
@@ -23,7 +25,7 @@
             <url>http://www.libreccm.org/project-sites/</url>
         </site>
     </distributionManagement>
-
+-->
     <organization>
         <name>LibreCCM Foundation</name>
     </organization>
@@ -155,6 +157,8 @@
     </dependencies>
 
     <build>
+        <!-- Same Name es the ccm-bundle-devel-wildfly ?   -->
+        <!-- Should probably be ccm-bundle-deve-thorndale ?  -->
         <finalName>ccm-bundle-devel-wildfly</finalName>
         
         <plugins>

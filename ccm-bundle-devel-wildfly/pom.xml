@@ -59,7 +59,7 @@
             <groupId>org.librecms</groupId>
             <artifactId>ccm-cms-pagemodelseditor</artifactId>
             <version>${project.parent.version}</version>
-        </dependency>
+        </dependency> 
         <dependency>
             <groupId>org.librecms</groupId>
             <artifactId>ccm-cms-tinymce</artifactId>

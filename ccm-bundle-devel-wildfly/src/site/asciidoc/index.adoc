@@ -1,0 +1,3 @@
+== LibreCCM Devel Bundle for Wildfly
+
+This module provides the web application part of the the LibreCCM devel bundle for the Wildfly application server.

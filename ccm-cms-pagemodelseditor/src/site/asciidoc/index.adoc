@@ -1,0 +1,5 @@
+== LibreCMS PageModels Editor 
+
+Currently no information available.
+
+Module is deprecated and no longer under development.

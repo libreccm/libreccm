@@ -1,0 +1,240 @@
+== Equipping a LibreCCM developer
+
+A development workstation must basically meet the same pre-requisites as a standard LibreCCM installation.
+
+=== What is needed
+
+==== First of All: The Desktop
+
+Even if you use an IDE as Netbeans or Eclipse you will often use the command line. It is simply quicker and easier to do, and inevitable for some development steps. 
+
+However, most modern desktops – no matter if Linux, MacOS or Windows – tend to "hide" the terminal window. So it may be convenient to add the terminal startup icon to your desktop.
+
+==== Java Software Development Kit (SDK)
+
+A Java SDK is required, of course. As with LibreCCM version Java 11 is required. OpenJDK is the supported reference implementation. The Eclipse https://adoptium.net/[Adoptium] project pursues the goal of providing high-quality Java SE runtime implementation for numerous operating systems as well as associated technology for use within the Java ecosystem.
+
+==== GIT
+
+The LibreCCM source code is available both as GIT repository and as tar archive. The GIT repository is recommended. 
+For installation, it is easiest to use the version provided by the distribution you are using.
+
+==== Database
+
+PostgreSQL is the recommended DBMS for LibreCCM in production. The development process uses it to execute the tests. For testing purposes, the h2 in-memory DBMS, which is compatible with PostgreSQL, can be used as an alternative. 
+
+==== Integrated Development Environment 
+
+Due to the size and complexity of the source code, the use of an IDE is practically unavoidable. The current developers use Netbeans. This IDE can directly implement and work with a Maven Build System. But any other IDE can be used as well.
+
+The hints and instructions here refer to Netbeans only.
+
+=== Preparing the development system – Linux
+
+==== First of All: The Desktop
+
+Fedora / RHEL Gnome, a widely used desktop, is an excellent example of "hiding the terminal". Dragging the terminal icon to your favorites, It makes it easier to work 
+
+==== Java Software Development Kit (SDK) Installation
+
+==== Maven
+
+==== GIT
+
+==== Database
+
+==== Integrated Development Environment 
+
+=== Preparing the development system – MacOS
+
+This section outlines the process of installing a development environment on a MacOS system and provides a step by step guide. The steps differ slightly between versions of MAC OS because there are differences regarding the Mac provided utilities.
+
+The current guide refers to MAC OS X version 10.15 (Catalina). Some hints regarding previous versions are provided.
+
+==== First of All: The MacOS Desktop
+
+By default, the terminal window is hidden among the utility programs at the very bottom of the list of items. It may be convenient to add the terminal startup icon to your Dock.
+
+The project uses markdown files for documentation in many cases. These are easier to read in formatted form than in plain text format. The Firefox add-on "Markdown Viewer Webext" offers such functionality without any effort.
+
+==== Java SDK Installation
+
+Since Java version 1.6 Apple stopped to provide a MacOS Java version. It made an arrangement with Oracle to provide a MacOS version for free. In 2020 Oracle handed over the maintenance of a freely available Java JDK for MacOS to the OpenJDK project. Oracle itself now only offers a paid and certified version for MacOS.
+
+The Eclipse https://adoptium.net/[Adoptium] project mentioned above provides an excellent MacOS-adapted version of the Java SE SDK for free. Other elaborate alternatives perfectly adapted to MacOS are https://www.azul.com/downloads/[Zulu Open JDK] and https://bell-sw.com[Liberica] All of them come without those “funny” advertising ingrediences like Oracle, the latter is even TCK certified - at no cost.
+
+In any case, you will obtain a MacOS installation package (*.dmg). Install in the usual way. Ensure you choose the JDK version 11 (or newer).
+
+
+==== Maven Installation
+
+Since several MacOS versions Apple no longer provides a MacOS adapted Maven. If you have installed one of the addon package managers as Homebrew or Macport, you may use their Maven install. Otherwise,it is best to download the software directly from the manufacturer and install it yourself following the steps provided below.
+
+1. Download the binary from the Apache Maven downlod page. 
+2. Unpack the archiv in Download
+3. For system-wide installation (highly recommended) use a terminal window to move the archiv content into /opt/apache-maven (1)
++
+[source,bash]
+----
+[…] $ sudo su - 
+[…] # mkdir /opt/apache-maven 
+[…] # mv /Users/[ME]/Downloads/apache-maven-3.6.3/* /opt/apache-maven/
+----
++
+Otherwise, use any directory inside your home.
++
+[IMPORTANT]
+=====
+Don’t install into a MacOS managed application directory, e.g. `/Applications` or `/Library` unless you have an adopted installation package (dmg oder pkg). It may get overwritten by MacOS updates and is bad practice. Locally managed Non Unix Filesystem Hierarchie compliant software should install into `/opt`, not into `/usr/local`.
+=====
+
+4. Ensure that /usr/local/bin is part of the search path:
++
+[source,bash]
+----
+[…] # printenv  PATH
+/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/…
+----
+5. Create a symbolic link for the maven command (mvn) from `usr/local/bin` to your maven `bin` directory:
++
+[source,bash]
+----
+[…] # ln -s /opt/apache-maven/bin/mvn  /usr/local/bin/mvn
+Apache Maven 3.6.3 (cecedd3430026 … )
+Maven home: /opt/apache-maven
+Java version: 1.8.0_252, vendor: Azul Systems, Inc., runtime: … 
+Default locale: de_DE, platform encoding: UTF-8’
+OS name: "mac os x", version: "10.15.5", arch: "x86_64", family: "mac"
+----
+6. Check the installation:
++
+[source,bash]
+----
+[…] $  mvn -version
+----
+
+==== Node.js Installation
+
+You can skip this step if you don't want to work on javascript parts. For the web application itself, the frontend-maven-plugin loads a complete node.js as well as NPM, installs it in ${projectDir}/nodejs and uses the node.js installed there.
+
+Download from https://nodejs.org/en/ (choose the LTS version) and install the MacOS PKG in the usual way. The files install into `/usr/local/bin/node`, `/usr/local/bin/npm`, and `/usr/local/lib/node_modules/`.
+Take note of the paths, they are needed later for NetBeans.
+
+==== GIT Installation
+
+Mac OS 10.7 and older used to have a GIT command line client installed. Version 10.9 and later doesn't have. You may check whether GIT is already installed by issuing the git command in a terminal window.
+
+To get GIT as command line tool: Install “Command Line Developer Tools for OS X Mavericks”. Usually: Just type git on a terminal window and you will be asked whether to install the tools.
+Verify that you’ve successfully installed Xcode Command Line Tools:
+[source,bash]
+----
+[…] $ xcode-select -p
+
+/Library/Developer/CommandLineTools
+----
+
+You may use this command also to check whether the command line tools are installed.
+
+Fir more informaion see https://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/[How to Install Command Line Tools in Mac OS X (Without Xcode)] 
+
+==== PostgreSQL Installation
+Recent versions of Desktop MAC OSX happened to came without PostgreSQL preinstalled.  There are 3 alternatives to install:
+
+* https://postgresapp.com/Postgres.app[Postgres.app], a tiny installation meant for testing
+* Community repositories, specifically MacPort and Brew. Both install into their own file hierarchy besides the Mac filesystem hierarchy standard.
+*  Use third party PostgreSQL MacIntosh Installers. An example is
+https://help.theatremanager.com/macintosh-server[Macintosh PostgreSQL Server]. (See also this  https://help.theatremanager.com/book/export/html/1607[alternative guide]).
+
+We recommend Postgres.app which is specifically meant for test purposes. It is provided as a standard Mac installation package and installs nicely into the Mac file system. It is not started during system boot but just activated while used for testing.
+
+===== Postgres.app
+With Postgres.app you may either download and install the current version or a set of additional (older) releases for testing purpose. You can easily switch between different versions. Check the projects https://postgresapp.com/downloads.html[download page].
+
+The project provides a standard MacOS DMG file which gets installed in the usual way. After installation and start of the program you see a PostgreSQL icon in the top bar. In the side bar of the program window you can initialize different postgres versions.
+
+==== NetBeans Installation
+
+Gratefully the NetBeans project provides MacOS binary. Check the project http://netbeans.apache.org/download/index.html[download page]. 
+
+Install the dmg-archiv as usual.
+
+=== Preparing the Development Workspace
+
+As outlined above LibreCCM is a content management framework and at the same time the place for LibreCMS, a general Web CMS for organizations rsp. publishers of extensive web presences. For this project this chapter explains the setup of the development environment and the associated work steps.
+
+Other projects based on this framework, e.g. ScientificCMS tailored for scientific research institutions, use a separate working environment. It is structured very similarly and is dependent on libreccm frmwoek libraries. This is explained in detail in a separate chapter. 
+
+==== Create a base development directory 
+
+All LibreCCM development files should be stored in a directory tree beneath one base directory. We use `LibreCCM` throughout this manual.
+
+Netbeans creates a directory in your home directory as a default parent for all its development projects, usually named `~/NetBeansProjects/`.  It expects you to create your `LibreCCM` directory inside that directory.
+[source,bash]
+----
+[…] $  mkdir ~/NetBeansProject/LibreCCM
+----
+
+But be aware, LibreCCM is structured as a Maven MultiModule project. Netbeans lists all submodules at the same level along with the parent project and also with other projects under development at the same time. This may be a bit annoying. You may prefer to create a separate LibreCCM first level development directory in your home directory.
+
+==== Checkout from GIT repository
+
+The project repository is located at `https://git.libreccm.org/LibreCCM` for registered developers.
+
+A public miror is available at `https://github.com/libreccm`.
+
+Currently, there are 2 projects:
+
+libreccm:: is the project that this and the following chapter deal with. It contains all the basic libreccm framework libraries and a librecms instance, the generic content management system for organisations
+
+scientificcms:: is a specific installation of the libreccm framework as mentioned above, and is discussed in a subsequent chapter.
+
+Transfer the project to your workstation in the usual way:
+[source,bash]
+----
+[…]$ cd ~/NetBeansProjets/LibreCCM
+[…]$ git clone https://git.libreccm.org/LibreCCM/libreccm
+----
+rsp.
+[source,bash]
+----
+[…]$ cd ~/NetBeansProjets/LibreCCM
+[…]$ git clone https://github.com/libreccm/libreccm
+----
+
+==== Initialize the Project and Create its Maven Documentation
+
+The project requires several libraries that are not stored in the source code repository but downloaded as needed. Additionally, the Maven project documentation should get generated. To perform that task execute the following command in the project base directory (libreccm):
+[source,bash]
+----
+[…]$ mvn clean package site site:stage
+----
+
+All projects are built, with the necessary libraries downloaded, and JavadDc as well as additional information (cf. “Project Site”) compiled into a compact Maven project page. It takes some time to complete!
+
+The generated documentation is available at `./target/staging/index.html`. 
+
+
+Due to several security measurements introduced by Web Browsers in the last years, the project page might by displayed correctly when served directly from the file system. Unfortunately, the Maven Site plugin does not offer an option yet for starting a local web server for serving the site. If you have Python installed you can use 
+[source,bash]
+----
+[…]$ python -m http.server -d target/staging 
+----
+to serve the site.
+
+==== Configure Netbeans
+
+Start NetBeans and open Preferences
+
+1. Open the HTML/JS tab and therein the Node.js tab
+
+2. Check or complete the entries for “Node Path” and “npm Path”. It should be `/usr/local/bin/node` and  `/usr/local/bin/npm` rsp. if you followed the guidelines above.
+
+==== Create Project(s) in NetBeans
+
+In Netbeans select File → Open Project an navigate to the `~/LibreCCM/libreccm` development directory. NetBeans recognizes a Maven project and starts to work on the pom files. 
+
+LibreCCM is a multi module project. Unfortunately, NetBeans does not use the module structure but display each module as a root project in the project listing.
+
+Check the project list, in some cases you may have to manually resolve issues. In case of an error sign, right-click on the project and select “Resolve” from the context menu.
+
+*Done! You are ready to go on.*

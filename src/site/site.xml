@@ -12,24 +12,28 @@
     </bannerLeft>
     
     <body>
-        <menu name="Overview">
+        <menu name="LibreCCM Developer Guide">
             <item name="Overview" href="index.html"/>
-            <item name="Code conventions" href="code-conventions.html"/>
-            <item name="Building LibreCCM" href="building.html"/>
-            <item name="Testing LibreCCM" href="testing.html"/>
+            <item name="Equipping Developer" href="equipping-developer.html"/>
+            <item name="Getting Started – Building LibreCCM" href="getting-started-building.html"/>
+            <item name="Important Details of LibreCCM Development" 
+                  href="details-development.html"
+                  collapse="true">
+                <item name="Code Conventions" href="code-conventions.html"/>
+                <item name="Testing LibreCCM" href="testing.html"/>
+                <item name="How LibreCCM uses JPA" href="entities.html"/>
+                <item name="Authentication and Authorization" href="auth.html"/>
+            </item>
             <item name="The module system of LibreCCM" 
                   href="module-system.html"
                   collapse="true">
                 <item name="Anatomy of a LibreCCM module"
                       href="module-system/anatomy.html"/>
             </item>
-            <item name="How LibreCCM uses JPA" href="entities.html"/>
-            <item name="Authentication and Authorization" 
-                  href="auth.html"/>
         </menu>
-        
+       
         <menu ref="modules"/>
-        <menu ref="reports"/>
+ <!--    <menu ref="reports"/>    -->
     </body>
     <skin>
         <groupId>org.apache.maven.skins</groupId>

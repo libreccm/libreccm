@@ -5,11 +5,11 @@
                              http://maven.apache.org/xsd/decoration-1.3.0.xsd">
     
     <body>
-        <menu name="Parent project">
-            <item name="LibreCCM" href="../index.html"/>
+        <menu name="LibreCCM Developer Guide">
+            <item name="... Back" href="../index.html"/>
         </menu>
         
-        <menu name="Overview">
+        <menu name="XA Ffilesystem Adapter">
             <item name="Overview" href="index.html"/>
         </menu>
         <menu name="Configuration">
@@ -18,11 +18,6 @@
         
         <menu ref="reports"/>
     </body>
-    <!--<skin>
-        <groupId>org.apache.maven.skins</groupId>
-        <artifactId>maven-fluido-skin</artifactId>
-        <version>1.4</version>
-    </skin>-->
     
 </project>
 

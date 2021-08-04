@@ -1,0 +1,18 @@
+= LibreCCM Developer Guide
+
+== Introduction
+
+LibreCCM is a highly advanced (Web-) Content Management System based on Java EE. 
+
+This is the next generation variant of LibreCCM. In this version which currently developed in parallel with the current version, several custom APIs like the persistence layer have been replaced with standard APIs from the
+Java Community process. 
+
+Please note that this is a project in its early phase of development. Some aspects may change without warning.
+
+The most notable change is the move to JPA as persistence layer. We are using Hibernate as implementation because Hibernate currently provides one important feature which other JPA providers do not provide: Versioned or better audited entities. This extension is called Envers. Auditing is currently not part the JPA standard therefore we need to use a specific implementation.
+
+Another notable change is that the build system is now using http://maven.apache.org/[Apache Maven]. The project is a standard multi module project.
+
+For testing http://junit.org/[Unit 4] is used. For testing Java EE components like CDI beans the  http://arquillian.org/[Arquillian] testing platform is used. 
+
+Please note that this documentation is work in progress and currently incomplete.

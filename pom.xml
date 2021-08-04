@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -57,7 +60,7 @@
 
         <!-- Simple HTML editor for use in the backend -->
         <module>ccm-editor</module>
-        
+       
         <!-- React.js based editor for PageModels -->
         <module>ccm-pagemodelseditor</module>
 
@@ -86,17 +89,19 @@
         <module>ccm-theme-ftllibs-devel</module>
 
         <!-- Bundle modules -->
-        <module>ccm-bundle-devel</module>
+        <module>ccm-bundle-devel</module> 
         <module>ccm-bundle-devel-wildfly</module>
         <module>ccm-bundle-devel-thorntail</module>
 
         <!-- Archetypes -->
         <module>ccm-archetype-module</module>
         <module>ccm-cms-archetype-contenttype</module>
-        
+       
         <!--<module>ccm-cms-js</module>-->
-    <module>ccm-wildfly</module>
-  </modules>
+        <module>ccm-wildfly</module>  
+
+    </modules>
+
 
     <reporting>
         <excludeDefaults>true</excludeDefaults>
@@ -105,7 +110,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <!--                <version>2.9</version>-->
                 <reportSets>
                     <reportSet>
                         <reports>
@@ -118,10 +122,10 @@
                     </reportSet>
                 </reportSets>
             </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <!--<version>2.4</version>-->
                 <configuration>
                     <rulesUri>file:///${session.executionRootDirectory}/maven-version-rules.xml</rulesUri>
                 </configuration>
@@ -137,6 +141,7 @@
             </plugin>
         </plugins>
     </reporting>
+
 
     <build>
         <pluginManagement>
@@ -262,6 +267,30 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>3.9.0</version>
+                    <configuration>
+                        <asciidoc>
+                            <templateDirs>
+                                 <dir>src/site/asciidoc/templates</dir>
+                            </templateDirs>
+                            <requires>
+                                <require>asciidoctor-diagram</require>
+                            </requires>
+                            <attributes>
+                                <source-highlighter>coderay</source-highlighter>
+                                <coderay-css>style</coderay-css>
+                            </attributes>
+                        </asciidoc>
+                        <moduleExcludes>
+                            <asciidoc>**/_*.adoc</asciidoc>
+                        </moduleExcludes>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.asciidoctor</groupId>
+                            <artifactId>asciidoctor-maven-plugin</artifactId>
+                            <version>2.2.1</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
