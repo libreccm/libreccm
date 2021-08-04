@@ -471,12 +471,12 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
     }
 
     /**
-     * Removes an attachment list and all item attachment of the list.
+     * Removes an attachment list and all item attachments of the list.
      *
      * @param sectionIdentifier
      * @param documentPath
      * @param listIdentifierParam The identifier of the list to remove.
-     * @param confirmed             The value of the confirm parameter. Must
+     * @param confirmed           The value of the confirm parameter. Must
      *                            contain {@code true} (as string not as
      *                            boolean), otherwise this method does nothing.
      *
@@ -889,10 +889,10 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      *
      * @param sectionIdentifier
      * @param documentPath
-     * @param listIdentifierParam The identifier of the list to which the
-     *                            attachment is added.
-     * @param assetIdentifier     The identifier of the asset to use for the
-     *                            attachment.
+     * @param listIdentifierParam  The identifier of the list to which the
+     *                             attachment is added.
+     * @param assetIdentifierParam The identifier of the asset to use for the
+     *                             attachment.
      *
      * @return A redirect to the list of attachment lists and attachments.
      */
@@ -1759,7 +1759,7 @@ public class RelatedInfoStep extends AbstractMvcAuthoringStep {
      * @param listIdentifierParam The identifier of the {@link AttachmentList}
      *                            to which the attachment belongs.
      * @param attachmentUuid      The UUID of the attachment to remove.
-     * @param confirmed             The value of the {@code confirm} parameter. If
+     * @param confirmed           The value of the {@code confirm} parameter. If
      *                            the value anything other than the string
      *                            {@code true} the method does nothing.
      *
