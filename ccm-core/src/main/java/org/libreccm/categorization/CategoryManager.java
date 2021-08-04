@@ -126,8 +126,8 @@ public class CategoryManager implements Serializable {
         final CcmObject object,
         @RequiresPrivilege(PRIVILEGE_MANAGE_CATEGORY_OBJECTS)
         final Category category,
-        final String type) {
-
+        final String type
+    ) {
         Objects.requireNonNull(object, "Null can't be added to a category.");
         Objects.requireNonNull(category,
                                "Can't add an object to category 'null'.");
