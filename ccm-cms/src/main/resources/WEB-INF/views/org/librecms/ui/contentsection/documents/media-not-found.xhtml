@@ -1,0 +1,36 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/document.xhtml">
+        
+        <ui:param name="activePage" value="document" />
+        <ui:param name="title" value="#{CmsDefaultStepsMessageBundle['media.medialists.media.not_found.title']}" />
+        
+        <ui:define name="breadcrumb">
+            <ui:include src="document-breadcrumbs.xhtml" />
+            <li aria-current="page" class="breadcrumb-item">
+                #{CmsDefaultStepsMessageBundle['contentsection.document.media.breadcrumb']}
+            </li>
+        </ui:define>
+        
+         <ui:define name="main">
+            <div class="container">
+                <div class="alert alert-danger" role="alert">
+                    #{CmsDefaultStepsMessageBundle.getMessage('media.medialists.media.not_found.message', [section, assetUuid])}
+                </div>
+            </div>
+        </ui:define>
+        
+    </ui:composition>
+</html>
+
+
+
+
+
+
+
+

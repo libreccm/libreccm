@@ -72,7 +72,7 @@ public class MediaStepService {
         final String sectionIdentifier,
         @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
         final String documentPath,
-        final MediaStepAttachmentOrder order
+        final MediaStepMediaOrder order
     ) {
         final ContentSection contentSection = sectionsUi
             .findContentSection(sectionIdentifier)
@@ -99,7 +99,7 @@ public class MediaStepService {
 
         final List<AttachmentList> attachmentLists = document.getAttachments();
         final List<String> attachmentListsOrder = order
-            .getAttachmentListsOrder();
+            .getMediaListsOrder();
 
         if (attachmentListsOrder.size() != attachmentLists.size()) {
             throw new BadRequestException(
@@ -135,7 +135,7 @@ public class MediaStepService {
         }
 
         for (final Map.Entry<String, List<String>> attachmentsOrder : order
-            .getAttachmentsOrder().entrySet()) {
+            .getMediaOrder().entrySet()) {
             final AttachmentList attachmentList = document
                 .getAttachments()
                 .stream()

@@ -24,7 +24,7 @@ package org.librecms.ui.contentsections.documents.media;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class MediaAttachmentDto {
+public class MediaDto {
 
     /**
      * The ID of the attachment.

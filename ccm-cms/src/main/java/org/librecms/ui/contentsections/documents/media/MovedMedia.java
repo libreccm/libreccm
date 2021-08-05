@@ -22,20 +22,20 @@ package org.librecms.ui.contentsections.documents.media;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class MovedAttachment {
+public class MovedMedia {
 
-    private String attachmentUuid;
+    private String mediaUuid;
 
     private String fromListUuid;
 
     private String toListUuid;
 
-    public String getAttachmentUuid() {
-        return attachmentUuid;
+    public String getMediaUuid() {
+        return mediaUuid;
     }
 
-    public void setAttachmentUuid(final String attachmentUuid) {
-        this.attachmentUuid = attachmentUuid;
+    public void setMediaUuid(final String mediaUuid) {
+        this.mediaUuid = mediaUuid;
     }
 
     public String getFromListUuid() {

@@ -29,30 +29,30 @@ import java.util.stream.Collectors;
  *
  * @author <a href="mailto:jens.pelzetter@googlemail.com">Jens Pelzetter</a>
  */
-public class MediaStepAttachmentOrder {
+public class MediaStepMediaOrder {
 
-    private List<String> attachmentListsOrder;
+    private List<String> mediaListsOrder;
 
-    private Map<String, List<String>> attachmentsOrder;
+    private Map<String, List<String>> mediaOrder;
 
-    private List<MovedAttachment> movedAttachments;
+    private List<MovedMedia> movedMedia;
 
-    public List<String> getAttachmentListsOrder() {
-        return Collections.unmodifiableList(attachmentListsOrder);
+    public List<String> getMediaListsOrder() {
+        return Collections.unmodifiableList(mediaListsOrder);
     }
 
-    public void setAttachmentListsOrder(final List<String> attachmentListsOrder) {
-        this.attachmentListsOrder = new ArrayList<>(attachmentListsOrder);
+    public void setMediaListsOrder(final List<String> mediaListsOrder) {
+        this.mediaListsOrder = new ArrayList<>(mediaListsOrder);
     }
 
-    public Map<String, List<String>> getAttachmentsOrder() {
-        return Collections.unmodifiableMap(attachmentsOrder);
+    public Map<String, List<String>> getMediaOrder() {
+        return Collections.unmodifiableMap(mediaOrder);
     }
 
-    public void setAttachmentsOrder(
-        final Map<String, List<String>> attachmentsOrder
+    public void setMediaOrder(
+        final Map<String, List<String>> mediaOrder
     ) {
-        this.attachmentsOrder = attachmentsOrder
+        this.mediaOrder = mediaOrder
             .entrySet()
             .stream()
             .collect(
@@ -63,23 +63,22 @@ public class MediaStepAttachmentOrder {
             );
     }
 
-    public List<MovedAttachment> getMovedAttachments() {
-        return Collections.unmodifiableList(movedAttachments);
+    public List<MovedMedia> getMovedMedia() {
+        return Collections.unmodifiableList(movedMedia);
     }
 
-    public void setMovedAttachments(final List<MovedAttachment> movedAttachments) {
-        this.movedAttachments = new ArrayList<>(movedAttachments);
+    public void setMovedMedia(final List<MovedMedia> movedMedia) {
+        this.movedMedia = new ArrayList<>(movedMedia);
     }
 
     @Override
     public String toString() {
-        return String.format(
-            "attachmentListsOrder = %s, "
-                + "attachmentsOrder = %s, "
-                + "movedAttachments = %s",
-            Objects.toString(attachmentListsOrder),
-            Objects.toString(attachmentsOrder),
-            Objects.toString(movedAttachments)
+        return String.format("mediaListsOrder = %s, "
+                + "mediaOrder = %s, "
+                + "movedMedia = %s",
+            Objects.toString(mediaListsOrder),
+            Objects.toString(mediaOrder),
+            Objects.toString(movedMedia)
         );
     }
 

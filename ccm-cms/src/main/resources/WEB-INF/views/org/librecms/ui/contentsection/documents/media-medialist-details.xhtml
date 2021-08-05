@@ -1,0 +1,145 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/authoringstep.xhtml">
+
+        <ui:define name="authoringStep">
+
+            <div class="d-flex mb-3">
+                <a class="btn btn-secondary mr-3"
+                   href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@media">
+                    <bootstrap:svgIcon icon="arrow-left-circle" />
+                    <span>#{CmsDefaultStepsMessageBundle['contentsection.documents.media.medialist.back']}</span>
+                </a>
+                <h3>
+                    #{CmsDefaultStepsMessageBundle.getMessage('media.medialist.details.title', [CmsMediaListDetailsModel.name])}
+                </h3>
+            </div>
+
+            <p>
+                <span>#{CmsDefaultStepsMessageBundle['media.medialist.details.name.label']}: </span>
+                #{CmsMediaListDetailsModel.name}
+                <button class="btn btn-primary" 
+                        data-toggle="modal"
+                        data-target="#name-edit-dialog"
+                        type="button">
+                    <bootstrap:svgIcon icon="pen" />
+                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['media.medialist.details.name.edit']}</span>
+                </button>
+            </p>
+            <div aria-hidden="true"
+                 aria-labelledby="name-edit-dialog-title"
+                 id="name-edit-dialog"
+                 class="modal fade"
+                 tabindex="-1">
+                <div class="modal-dialog">
+                    <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@media/medialists/#{CmsMediaListDetailsModel.name}/@update"
+                          class="modal-content"
+                          method="post">
+                        <div class="modal-header">
+                            <h4 id="name-edit-dialog-title">
+                                #{CmsDefaultStepsMessageBundle.getMessage('media.medialist.details.name_edit_dialog.title', [CmsMediaListDetailsModel.name])}
+                            </h4>
+                            <button aria-label="#{CmsDefaultStepsMessageBundle['media.medialist.details.name_edit_dialog.close']}"
+                                    class="close"
+                                    data-dismiss="modal"
+                                    type="button">
+                                <bootstrap:svgIcon icon="x-circle" />
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <bootstrap:formGroupText 
+                                help="#{CmsDefaultStepsMessageBundle['media.medialist.details.name_edit_dialog.name.help']}"
+                                inputId="name"
+                                label="#{CmsDefaultStepsMessageBundle['media.medialist.details.name_edit_dialog.name.label']}"
+                                name="listName"
+                                pattern="[A-Za-z0-9\-_]*"
+                                required="true" 
+                                value="#{CmsMediaListDetailsModel.name}" />
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-warning"
+                                    data-dismiss="modal"
+                                    type="button">
+                                #{CmsDefaultStepsMessageBundle['media.medialist.details.name_edit_dialog.close']}
+                            </button>
+                            <button class="btn btn-success"
+                                    type="submit">
+                                #{CmsDefaultStepsMessageBundle['media.medialist.details.name_edit_dialog.save']}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <libreccm:localizedStringEditor 
+                addButtonLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.title.add_button.label']}"
+                addDialogCancelLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.title.add.cancel']}"
+                addDialogLocaleSelectHelp="#{CmsDefaultStepsMessageBundle['media.medialist.details.title.add.locale.help']}"
+                addDialogLocaleSelectLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.title.add.locale.label']}"
+                addDialogSubmitLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.title.add.submit']}"
+                addDialogTitle="#{CmsDefaultStepsMessageBundle['media.medialist.details.title.add.title']}"
+                addDialogValueHelp="#{CmsDefaultStepsMessageBundle['media.medialist.details.title.add.value.help']}"
+                addDialogValueLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.title.add.value.label']}"
+                addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@media/medialists/#{CmsMediaListDetailsModel.name}/title/@add"
+                editButtonLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.title.edit_button.label']}"
+                editDialogCancelLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.title.edit.cancel']}"
+                editDialogSubmitLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.title.edit.submit']}"
+                editDialogTitle="#{CmsDefaultStepsMessageBundle['media.medialist.details.title.edit.title']}"
+                editDialogValueHelp="#{CmsDefaultStepsMessageBundle['media.medialist.details.title.edit.value.help']}"
+                editDialogValueLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.title.edit.value.label']}"
+                editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@media/medialists/#{CmsMediaListDetailsModel.name}/title/@edit"
+                editorId="list-title-editor"
+                hasUnusedLocales="#{!CmsMediaListDetailsModel.unusedTitleLocales.isEmpty()}"
+                objectIdentifier="#{CmsMediaListDetailsModel.name}"
+                readOnly="#{!CmsMediaListDetailsModel.canEdit}"
+                removeButtonLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.title.remove_button.label']}"
+                removeDialogCancelLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.title.remove.cancel']}"
+                removeDialogSubmitLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.title.remove.submit']}"
+                removeDialogText="#{CmsDefaultStepsMessageBundle['media.medialist.details.title.remove.text']}"
+                removeDialogTitle="#{CmsDefaultStepsMessageBundle['media.medialist.details.title.remove.title']}"
+                removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@media/medialists/#{CmsMediaListDetailsModel.name}/title/@remove"
+                title="#{CmsDefaultStepsMessageBundle['media.medialist.details.title_editor.title']}"
+                unusedLocales="#{CmsMediaListDetailsModel.unusedTitleLocales}"
+                values="#{CmsMediaListDetailsModel.titles}"
+                />
+
+            <libreccm:localizedStringEditor 
+                addButtonLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.description.add_button.label']}"
+                addDialogCancelLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.description.add.cancel']}"
+                addDialogLocaleSelectHelp="#{CmsDefaultStepsMessageBundle['media.medialist.details.description.add.locale.help']}"
+                addDialogLocaleSelectLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.description.add.locale.label']}"
+                addDialogSubmitLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.description.add.submit']}"
+                addDialogTitle="#{CmsDefaultStepsMessageBundle['media.medialist.details.description.add.title']}"
+                addDialogValueHelp="#{CmsDefaultStepsMessageBundle['media.medialist.details.description.add.value.help']}"
+                addDialogValueLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.description.add.value.label']}"
+                addMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@media/medialists/#{CmsMediaListDetailsModel.name}/description/@add"
+                editButtonLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.description.edit_button.label']}"
+                editDialogCancelLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.description.edit.cancel']}"
+                editDialogSubmitLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.description.edit.submit']}"
+                editDialogTitle="#{CmsDefaultStepsMessageBundle['media.medialist.details.description.edit.title']}"
+                editDialogValueHelp="#{CmsDefaultStepsMessageBundle['media.medialist.details.description.edit.value.help']}"
+                editDialogValueLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.description.edit.value.label']}"
+                editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@media/medialists/#{CmsMediaListDetailsModel.name}/description/@edit"
+                editorId="list-description-editor"
+                hasUnusedLocales="#{!CmsMediaListDetailsModel.unusedDescriptionLocales.isEmpty()}"
+                objectIdentifier="#{CmsMediaListDetailsModel.name}"
+                removeButtonLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.description.remove_button.label']}"
+                removeDialogCancelLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.description.remove.cancel']}"
+                removeDialogSubmitLabel="#{CmsDefaultStepsMessageBundle['media.medialist.details.description.remove.submit']}"
+                removeDialogText="#{CmsDefaultStepsMessageBundle['media.medialist.details.description.remove.text']}"
+                removeDialogTitle="#{CmsDefaultStepsMessageBundle['media.medialist.details.description.remove.title']}"
+                removeMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@media/medialists/#{CmsMediaListDetailsModel.name}/description/@remove"
+                title="#{CmsDefaultStepsMessageBundle['media.medialist.details.description_editor.title']}"
+                unusedLocales="#{CmsMediaListDetailsModel.unusedDescriptionLocales}"
+                useTextarea="true"
+                values="#{CmsMediaListDetailsModel.descriptions}"
+                />
+
+        </ui:define>
+    </ui:composition>
+
+</html>

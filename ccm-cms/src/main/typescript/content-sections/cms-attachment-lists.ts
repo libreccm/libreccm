@@ -1,4 +1,3 @@
-// import Sortable = require("sortablejs")
 import Sortable, { SortableEvent } from "sortablejs";
 
 interface RelatedInfoStepAttachmentOrder {
@@ -37,7 +36,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
         initAttachments(attachments[i] as HTMLElement);
     }
 
-    const saveOrderButtons = document.querySelectorAll(".save-order-button");
+    const saveOrderButtons = document.querySelectorAll(
+        ".attachments-save-order-button"
+    );
     for (let i = 0; i < saveOrderButtons.length; i++) {
         saveOrderButtons[i].addEventListener("click", saveOrder);
     }
@@ -72,7 +73,9 @@ function initAttachments(attachments: HTMLElement): Sortable {
 }
 
 function enableSaveButton(event: SortableEvent) {
-    const saveOrderButtons = document.querySelectorAll(".save-order-button");
+    const saveOrderButtons = document.querySelectorAll(
+        ".attachments-save-order-button"
+    );
     for (let i = 0; i < saveOrderButtons.length; i++) {
         const saveOrderButton: HTMLButtonElement = saveOrderButtons[
             i
@@ -136,7 +139,7 @@ function saveOrder() {
             attachmentsSortables[key].toArray();
     }
 
-    console.dir(attachmentOrder);
+    // console.dir(attachmentOrder);
     const cmsAttachments = document.querySelector(".cms-attachment-lists");
     if (!cmsAttachments) {
         showGeneralError();
@@ -150,9 +153,11 @@ function saveOrder() {
         );
     }
 
-    const saveOrderButtons = document.querySelectorAll(".save-order-button");
+    const saveOrderButtons = document.querySelectorAll(".attachments-save-order-button");
     for (let i = 0; i < saveOrderButtons.length; i++) {
-        const saveOrderButton: HTMLButtonElement = saveOrderButtons[i] as HTMLButtonElement;
+        const saveOrderButton: HTMLButtonElement = saveOrderButtons[
+            i
+        ] as HTMLButtonElement;
         saveOrderButton.disabled = true;
         const saveIcon = saveOrderButton.querySelector(".save-icon");
         const spinner = saveOrderButton.querySelector(".save-spinner");
@@ -177,8 +182,10 @@ function saveOrder() {
                         i
                     ] as HTMLButtonElement;
                     // saveOrderButton.disabled = true;
-                    const saveIcon = saveOrderButton.querySelector(".save-icon");
-                    const spinner = saveOrderButton.querySelector(".save-spinner");
+                    const saveIcon =
+                        saveOrderButton.querySelector(".save-icon");
+                    const spinner =
+                        saveOrderButton.querySelector(".save-spinner");
                     saveIcon?.classList.toggle("d-none");
                     spinner?.classList.toggle("d-none");
                 }
@@ -189,8 +196,10 @@ function saveOrder() {
                         i
                     ] as HTMLButtonElement;
                     saveOrderButton.disabled = false;
-                    const saveIcon = saveOrderButton.querySelector(".save-icon");
-                    const spinner = saveOrderButton.querySelector(".save-spinner");
+                    const saveIcon =
+                        saveOrderButton.querySelector(".save-icon");
+                    const spinner =
+                        saveOrderButton.querySelector(".save-spinner");
                     saveIcon?.classList.toggle("d-none");
                     spinner?.classList.toggle("d-none");
                 }

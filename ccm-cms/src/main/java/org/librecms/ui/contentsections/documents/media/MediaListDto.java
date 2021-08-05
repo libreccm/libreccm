@@ -25,8 +25,8 @@ import java.util.List;
 
 /**
  * A data transfer object used by the template for the listing of the
- * {@link AttachmentList}s containing media attachments of a
- * {@link ContentItem}.
+ * {@link AttachmentList}s containing media media of a
+ {@link ContentItem}.
  *
  * @see MediaStep
  *
@@ -69,7 +69,7 @@ public class MediaListDto {
     /**
      * The @link{ItemAttachment}s associated with the {@link AttachmentList}.
      */
-    private List<MediaAttachmentDto> attachments;
+    private List<MediaDto> media;
 
     public long getListId() {
         return listId;
@@ -119,12 +119,12 @@ public class MediaListDto {
         this.description = description;
     }
 
-    public List<MediaAttachmentDto> getAttachments() {
-        return Collections.unmodifiableList(attachments);
+    public List<MediaDto> getMedia() {
+        return Collections.unmodifiableList(media);
     }
 
-    public void setAttachments(final List<MediaAttachmentDto> attachments) {
-        this.attachments = new ArrayList<>(attachments);
+    public void setMedia(final List<MediaDto> media) {
+        this.media = new ArrayList<>(media);
     }
 
 }

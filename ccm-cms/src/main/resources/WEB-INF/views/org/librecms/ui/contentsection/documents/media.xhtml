@@ -1,0 +1,324 @@
+<!DOCTYPE html [<!ENTITY times '&#215;'>]>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
+      xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:librecms="http://xmlns.jcp.org/jsf/composite/components/librecms"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/authoringstep.xhtml">
+
+        <ui:define name="authoringStep">
+            <template id="cms-sort-media-error-general">
+                <div class="alert alert-danger mt-3" role="alert">
+                    #{CmsDefaultStepsMessageBundle['media.sortmedia.errors.general']}
+                </div>
+            </template>
+            <template id="cms-sort-media-error-save">
+                <div class="alert alert-danger mt-3" role="alert">
+                    #{CmsDefaultStepsMessageBundle['media.sortmedia.errors.save']}
+                </div>
+            </template>
+            <div class="text-right">
+                <button class="btn btn-primary"
+                        data-toggle="modal"
+                        data-target="#add-media-list-dialog"
+                        type="button">
+                    <bootstrap:svgIcon icon="plus-circle" />
+                    <span>#{CmsDefaultStepsMessageBundle['media.medialists.add.button.label']}</span>
+                </button>
+            </div>
+            <div aria-hidden="true" 
+                 aria-labelledby="add-media-list-dialog-title"
+                 class="modal fade"
+                 id="add-media-list-dialog"
+                 tabindex="-1">
+                <div class="modal-dialog">
+                    <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@media/medialists/@add"
+                          class="modal-content"
+                          method="post">
+                        <div class="modal-header">
+                            <h3 class="modal-title"
+                                id="add-media-list-dialog-title">#{CmsDefaultStepsMessageBundle['media.medialists.add.dialog.title']}</h3>
+                            <button aria-label="#{CmsDefaultStepsMessageBundle['media.medialists.add.dialog.close']}"
+                                    class="close" 
+                                    data-dismiss="modal"
+                                    type="button">
+                                <bootstrap:svgIcon icon="x-circle" />
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <bootstrap:formGroupText 
+                                help="#{CmsDefaultStepsMessageBundle['media.medialists.add.dialog.name.help']}" 
+                                inputId="#add-media-list-name"
+                                label="#{CmsDefaultStepsMessageBundle['media.medialists.add.dialog.name.label']}"
+                                name="listName"
+                                pattern="[A-Za-z0-9\-_]*"
+                                required="true"
+                                />
+                            <bootstrap:formGroupText 
+                                help="#{CmsDefaultStepsMessageBundle['media.medialists.add.dialog.title.help']}" 
+                                inputId="#add-media-list-title"
+                                label="#{CmsDefaultStepsMessageBundle['media.medialists.add.dialog.title.label']}"
+                                name="listTitle"
+                                />
+
+                            <bootstrap:formGroupTextarea 
+                                help="#{CmsDefaultStepsMessageBundle['media.medialists.add.dialog.description.help']}" 
+                                inputId="#add-media-list-name"
+                                label="#{CmsDefaultStepsMessageBundle['media.medialists.add.dialog.description.label']}"
+                                name="listDescription"
+                                />
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-warning"
+                                    data-dismiss="modal"
+                                    type="button">
+                                #{CmsDefaultStepsMessageBundle['media.medialists.add.dialog.close']}
+                            </button>
+                            <button class="btn btn-success"
+                                    type="submit">
+                                #{CmsDefaultStepsMessageBundle['media.medialists.add.dialog.add_list']}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div>
+                <button class="btn btn-secondary media-save-order-button"
+                        disabled="disabled"
+                        type="button">
+                    <span class="save-icon">
+                        <bootstrap:svgIcon icon="save" />
+                    </span>
+                    <span class="save-spinner d-none">
+                        <span aria-hidden="true"
+                              class="spinner-border spinner-border-sm"
+                              role="status"></span>
+                        <span class="sr-only">#{CmsDefaultStepsMessageBundle['media.medialists.order.save.inprogress']}</span>
+                    </span>
+                    <span>#{CmsDefaultStepsMessageBundle['media.medialists.order.save']}</span>
+                </button>
+            </div>
+            <div id="messages"></div>
+            <ul class="cms-media-lists mt-3 list-group"
+                data-baseUrl="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@media-service/save-order">
+                <c:forEach items="#{CmsMediaStep.mediaLists}"
+                           var="list">
+                    <li class="cms-media-list mb-3 list-group-item list-group-item-primary"
+                        data-id="#{list.uuid}">
+                        <div class="d-flex justify-content-between">
+                            <div>#{list.name}</div>
+                            <div class="cms-medialist-buttons d-flex">
+                                <button class="btn btn-secondary cms-sort-handle mr-2"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="arrows-move" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['media.medialists.move.button']}"</span>
+                                </button>
+                                <button class="btn btn-secondary mx-2"
+                                        data-toggle="modal"
+                                        data-target="#media-list-#{list.name}-info"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="info-circle" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['media.medialists.info.button']}"</span>
+                                </button>
+                                <div aria-hidden="true"
+                                     aria-labelledby="medialist-#{list.name}-info-title"
+                                     class="modal fade"
+                                     id="media-list-#{list.name}-info"
+                                     tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h3 class="modal-title"
+                                                    id="medialist-#{list.name}-info-title">
+                                                    #{CmsDefaultStepsMessageBundle.getMessage('media.medialists.info.dialog.title', [list.name])}
+                                                </h3>
+                                                <button 
+                                                    aria-label="#{CmsDefaultStepsMessageBundle['media.medialists.info.dialog.close']}"
+                                                    class="close"
+                                                    data-dismiss="modal"
+                                                    type="button">
+                                                    <bootstrap:svgIcon icon="x" />
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <dl>
+                                                    <dt>#{CmsDefaultStepsMessageBundle['media.medialists.info.dialog.title.label']}</dt>
+                                                    <dd>#{list.title}</dd>
+                                                    <dt>#{CmsDefaultStepsMessageBundle['media.medialists.info.dialog.description.label']}</dt>
+                                                    <dd>#{list.description}</dd>
+                                                </dl>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-secondary"
+                                                        data-dismiss="modal"
+                                                        type="button">
+                                                    #{CmsDefaultStepsMessageBundle['media.medialists.info.dialog.close']}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a class="btn btn-primary  mx-2"
+                                   href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@media/medialists/#{list.name}/@details">
+                                    <bootstrap:svgIcon icon="pen" />
+                                    <span class="sr-only">#{CmsDefaultStepsMessageBundle['media.medialists.edit.button']}"</span>
+                                </a>
+                                <librecms:assetPickerButton 
+                                    assetPickerId="attach-media-picker-#{list.uuid}" 
+                                    buttonIcon="file-earmark-plus"
+                                    buttonText="#{CmsDefaultStepsMessageBundle['media.medialists.media.add.label']}"
+                                    />
+                                <libreccm:deleteDialog 
+                                    actionTarget="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@media/medialists/#{list.name}/@remove"
+                                    buttonLabelClass="sr-only"
+                                    buttonText="#{CmsDefaultStepsMessageBundle['media.medialists.remove.label']}"
+                                    buttonTextClass="ml-2"
+                                    cancelLabel="#{CmsDefaultStepsMessageBundle['media.medialists.remove.cancel']}"
+                                    confirmLabel="#{CmsDefaultStepsMessageBundle['media.medialists.remove.confirm']}"
+                                    dialogId="medialist-delete-#{list.uuid}"
+                                    dialogTitle="#{CmsDefaultStepsMessageBundle['media.medialists.remove.title']}"
+                                    message="#{CmsDefaultStepsMessageBundle.getMessage('media.medialists.remove.message', [list.name])}"
+                                    />
+                                <librecms:assetPicker 
+                                    actionUrl="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@media/medialists/#{list.name}/media/@create"
+                                    assetType="#{CmsMediaStep.audioAssetType},#{CmsMediaStep.externalAudioAssetType},#{CmsMediaStep.externalVideoAssetType},#{CmsMediaStep.imageType},#{CmsMediaStep.videoAssetType}"
+                                    assetPickerId="attach-media-picker-#{list.uuid}"
+                                    baseUrl="#{CmsMediaStep.mediaAssetPickerBaseUrl}"
+                                    contentSection="#{CmsMediaStep.sectionName}"
+                                    formParamName="assetIdentifier"
+                                    />
+                            </div>
+                        </div>
+                        <ul class="cms-medias mt-3 list-group"
+                            data-list-uuid="#{list.uuid}">
+                            <c:forEach items="#{list.media}"
+                                       var="media">
+                                <li class="cms-media list-group-item mb-3 d-flex justify-content-between"
+                                    data-id="#{media.uuid}">
+                                    <div>
+                                        <c:choose>
+                                            <c:when test="#{media.assetType.equals(CmsMediaStep.audioAssetType)}">
+                                                <bootstrap:svgIcon icon="file-music" />
+                                                <span class="sr-only">#{CmsDefaultStepsMessageBundle['media.medialists.mediatype.audioasset']}</span>
+
+                                            </c:when>
+                                            <c:when test="#{media.assetType.equals(CmsMediaStep.externalAudioAssetType)}">
+                                                <bootstrap:svgIcon icon="link-45deg" />
+                                                <bootstrap:svgIcon icon="file-music" />
+                                                <span class="sr-only">#{CmsDefaultStepsMessageBundle['media.medialists.mediatype.externalaudioasset']}</span>
+
+                                            </c:when>
+                                            <c:when test="#{media.assetType.equals(CmsMediaStep.externalVideoAssetType)}">
+                                                <bootstrap:svgIcon icon="link-45deg" />
+                                                <bootstrap:svgIcon icon="film" />
+                                                <span class="sr-only">#{CmsDefaultStepsMessageBundle['media.medialists.mediatype.externalvideoasset']}</span>
+
+                                            </c:when>
+                                            <c:when test="#{media.assetType.equals(CmsMediaStep.imageType)}">
+                                                <bootstrap:svgIcon icon="image" />
+                                                <span class="sr-only">#{CmsDefaultStepsMessageBundle['media.medialists.mediatype.image']}</span>
+
+                                            </c:when>
+                                            <c:when test="#{media.assetType.equals(CmsMediaStep.videoAssetType)}">
+                                                <bootstrap:svgIcon icon="film" />
+                                                <span class="sr-only">#{CmsDefaultStepsMessageBundle['media.medialists.mediatype.video']}</span>
+
+                                            </c:when>
+                                        </c:choose>
+                                        <span class="cms-media-label">#{media.title}</span>
+                                    </div>
+                                    <div class="cms-media-buttons d-flex">
+                                        <button class="btn btn-secondary cms-sort-handle mr-2"
+                                                type="button">
+                                            <bootstrap:svgIcon icon="arrows-move" />
+                                            <span class="sr-only">#{CmsDefaultStepsMessageBundle['media.medialists.media.move.button']}"</span>
+                                        </button>
+                                        <button class="btn btn-secondary mx-2"
+                                                data-toggle="modal"
+                                                data-target="#media-#{media.uuid}-info-dialog"
+                                                type="button">
+                                            <bootstrap:svgIcon icon="info-circle" />
+                                            <span class="sr-only">#{CmsDefaultStepsMessageBundle['media.medialists.media.info.button']}"</span>
+                                        </button>
+                                        <div aria-hidden="true" 
+                                             aria-labelledby="media-#{media.uuid}-info-dialog-title"
+                                             class="modal fade"
+                                             id="media-#{media.uuid}-info-dialog"
+                                             tabindex="-1"
+                                             >
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h3 class="modal-title"
+                                                            id="media-#{media.uuid}-info-dialog-title">
+                                                            #{CmsDefaultStepsMessageBundle.getMessage('media.medialists.media.info.dialog.title', [list.name, media.title])}
+
+                                                        </h3>
+                                                        <button 
+                                                            aria-label="#{CmsDefaultStepsMessageBundle['media.medialists.media.info.dialog.close']}"
+                                                            class="close"
+                                                            data-dismiss="modal"
+                                                            type="button">
+                                                            <bootstrap:svgIcon icon="x" />
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <dl>
+                                                            <dt>#{CmsDefaultStepsMessageBundle['media.medialists.media.info.dialog.title.label']}</dt>
+                                                            <dd>#{media.title}</dd>
+                                                            <dt>#{CmsDefaultStepsMessageBundle['media.medialists.media.info.dialog.type.label']}</dt>
+                                                            <dd>#{media.assetTypeLabel}</dd>
+                                                        </dl>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btn btn-secondary"
+                                                                data-dismiss="modal"
+                                                                type="button">
+                                                            #{CmsDefaultStepsMessageBundle['media.medialists.media.info.dialog.close']}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <libreccm:deleteDialog
+                                            actionTarget="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@media/medialists/#{list.name}/media/#{media.uuid}/@remove"
+                                            buttonLabelClass="sr-only"
+                                            buttonText="#{CmsDefaultStepsMessageBundle['media.medialists.media.remove.label']}"
+                                            buttonTextClass="ml-2"
+                                            cancelLabel="#{CmsDefaultStepsMessageBundle['media.medialists.media.remove.cancel']}"
+                                            confirmLabel="#{CmsDefaultStepsMessageBundle['media.medialists.media.remove.confirm']}"
+                                            dialogId="media-delete-#{media.uuid}"
+                                            dialogTitle="#{CmsDefaultStepsMessageBundle['media.medialists.media.remove.title']}"
+                                            message="#{CmsDefaultStepsMessageBundle.getMessage('media.medialists.media.remove.message', [list.name, media.title])}"
+                                            />
+                                    </div>
+                                </li>
+                            </c:forEach>
+                        </ul>
+                    </li>
+                </c:forEach>
+            </ul>
+
+            <div>
+                <button class="btn btn-secondary media-save-order-button"
+                        disabled="disabled"
+                        type="button">
+                    <span class="save-icon">
+                        <bootstrap:svgIcon icon="save" />
+                    </span>
+                    <span class="save-spinner d-none">
+                        <span aria-hidden="true"
+                              class="spinner-border spinner-border-sm"
+                              role="status"></span>
+                        <span class="sr-only">#{CmsDefaultStepsMessageBundle['media.medialists.order.save.inprogress']}</span>
+                    </span>
+                    <span>#{CmsDefaultStepsMessageBundle['media.medialists.order.save']}</span>
+                </button>
+            </div>
+
+        </ui:define>
+    </ui:composition>
+
+</html>

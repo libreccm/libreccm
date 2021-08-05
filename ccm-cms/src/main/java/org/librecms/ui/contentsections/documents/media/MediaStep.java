@@ -242,7 +242,7 @@ public class MediaStep extends AbstractMvcAuthoringStep {
     @POST
     @Path("/medialists/@add")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String addMedia(
+    public String addMediaList(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
         @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
@@ -450,7 +450,7 @@ public class MediaStep extends AbstractMvcAuthoringStep {
     }
 
     /**
-     * Removes an media list and all media attachments of the list.
+     * Removes an media list and all media of the list.
      *
      * @param sectionIdentifier
      * @param documentPath
@@ -520,7 +520,7 @@ public class MediaStep extends AbstractMvcAuthoringStep {
     @POST
     @Path("/medialists/{mediaListIdentifier}/title/@add")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String addAttachmentListTitle(
+    public String addMediaListTitle(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
         @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
@@ -640,7 +640,7 @@ public class MediaStep extends AbstractMvcAuthoringStep {
     @Path(
         "/medialists/{mediaListIdentifier}/title/@remove/{locale}")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String removeAttachmentListTitle(
+    public String removeMediaListTitle(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
         @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
@@ -698,7 +698,7 @@ public class MediaStep extends AbstractMvcAuthoringStep {
     @POST
     @Path("/medialists/{mediaListIdentifier}/description/@add")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String addAttachmentListDescription(
+    public String addMediaListDescription(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
         @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
@@ -873,12 +873,12 @@ public class MediaStep extends AbstractMvcAuthoringStep {
      * @param mediaIdentifierParam The identifier of the media asset to use for
      *                             the media attachment.
      *
-     * @return A redirect to the list of attachment lists and attachments.
+     * @return A redirect to the list of media lists and mediaa.
      */
     @POST
-    @Path("/medialists/{mediaListIdentifier}/attachments/@create")
+    @Path("/medialists/{mediaListIdentifier}/media/@create")
     @Transactional(Transactional.TxType.REQUIRED)
-    public String createAttachment(
+    public String linkMedia(
         @PathParam(MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM)
         final String sectionIdentifier,
         @PathParam(MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM_NAME)
@@ -936,7 +936,7 @@ public class MediaStep extends AbstractMvcAuthoringStep {
                 models
                     .put("section", getContentSection().getLabel());
                 models.put("assetUuid", mediaIdentifierParam);
-                return "org/librecms/ui/contentsection/documents/asset-not-found.xhtml";
+                return "org/librecms/ui/contentsection/documents/media-not-found.xhtml";
             }
 
             final Asset asset = assetResult.get();
@@ -1329,11 +1329,11 @@ public class MediaStep extends AbstractMvcAuthoringStep {
         final AttachmentList attachmentList
     ) {
         final MediaListDto dto = new MediaListDto();
-        dto.setAttachments(
+        dto.setMedia(
             attachmentList
                 .getAttachments()
                 .stream()
-                .map(this::buildMediaAttachmentDto)
+                .map(this::buildMediaDto)
                 .collect(Collectors.toList())
         );
         dto.setDescription(
@@ -1359,18 +1359,18 @@ public class MediaStep extends AbstractMvcAuthoringStep {
      * Helper function for building a {@link ItemAttachmentDto} for an
      * {@link ItemAttachment}.
      *
-     * @param itemAttachment The {@link ItemAttachment} from which the
+     * @param mediaAttachment The {@link ItemAttachment} from which the
      *                       {@link ItemAttachmentDto} is build.
      *
-     * @return The {@link ItemAttachmentDto}.
+     * @return The {@link MediaDto}.
      */
-    private MediaAttachmentDto buildMediaAttachmentDto(
-        final ItemAttachment<?> itemAttachment
+    private MediaDto buildMediaDto(
+        final ItemAttachment<?> mediaAttachment
     ) {
-        final MediaAttachmentDto dto = new MediaAttachmentDto();
+        final MediaDto dto = new MediaDto();
         dto.setAssetType(
             Optional
-                .ofNullable(itemAttachment.getAsset())
+                .ofNullable(mediaAttachment.getAsset())
                 .map(Asset::getClass)
                 .map(clazz -> assetTypesManager.getAssetTypeInfo(clazz))
                 .map(info -> info.getAssetClass().getName())
@@ -1378,7 +1378,7 @@ public class MediaStep extends AbstractMvcAuthoringStep {
         );
         dto.setAssetTypeLabel(
             Optional
-                .ofNullable(itemAttachment.getAsset())
+                .ofNullable(mediaAttachment.getAsset())
                 .map(Asset::getClass)
                 .map(clazz -> assetTypesManager.getAssetTypeInfo(clazz))
                 .map(
@@ -1388,15 +1388,15 @@ public class MediaStep extends AbstractMvcAuthoringStep {
         );
         dto.setAssetUuid(
             Optional
-                .ofNullable(itemAttachment.getAsset())
+                .ofNullable(mediaAttachment.getAsset())
                 .map(Asset::getUuid)
                 .orElse(null)
         );
-        dto.setAttachmentId(itemAttachment.getAttachmentId());
-        dto.setSortKey(itemAttachment.getSortKey());
+        dto.setAttachmentId(mediaAttachment.getAttachmentId());
+        dto.setSortKey(mediaAttachment.getSortKey());
         dto.setTitle(
             Optional
-                .ofNullable(itemAttachment.getAsset())
+                .ofNullable(mediaAttachment.getAsset())
                 .map(
                     asset -> globalizationHelper.getValueFromLocalizedString(
                         asset.getTitle()
@@ -1404,7 +1404,7 @@ public class MediaStep extends AbstractMvcAuthoringStep {
                 )
                 .orElse("")
         );
-        dto.setUuid(itemAttachment.getUuid());
+        dto.setUuid(mediaAttachment.getUuid());
         return dto;
     }
 
