@@ -36,6 +36,7 @@ import org.librecms.contentsection.FolderRepository;
 import org.librecms.contentsection.FolderType;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -117,7 +118,7 @@ public class Assets {
     public String findAssets(
         @PathParam("content-section") final String section,
         @QueryParam("query") @DefaultValue("") final String query,
-        @QueryParam("type") final String type) {
+        @QueryParam("type") final String typeParam) {
 
         final ContentSection contentSection = sectionRepo
             .findByLabel(section)
@@ -126,23 +127,36 @@ public class Assets {
 
         final List<Asset> assets;
         if ((query == null || query.trim().isEmpty())
-                && (type == null || type.trim().isEmpty())) {
+                && (typeParam == null || typeParam.trim().isEmpty())) {
             assets = assetRepo.findByContentSection(contentSection);
         } else if ((query != null && !query.trim().isEmpty())
-                       && (type == null || type.trim().isEmpty())) {
+                       && (typeParam == null || typeParam.trim().isEmpty())) {
             assets = assetRepo.findByTitleAndContentSection(query,
                                                             contentSection);
-        } else if ((query == null || query.trim().isEmpty())
-                       && (type != null && !type.trim().isEmpty())) {
-            final Class<? extends Asset> assetType = toAssetTypeClass(type);
-            assets = assetRepo.findByTypeAndContentSection(assetType,
-                                                           contentSection);
+        } else if ((query == null || query.isBlank())
+                       && (typeParam != null && !typeParam.isBlank())) {
+            final String[] types = typeParam.split(",");
+            assets = new ArrayList<>();
+            for (final String type : types) {
+                final Class<? extends Asset> assetType = toAssetTypeClass(
+                    type
+                );
+                final List<Asset> result = assetRepo
+                    .findByTypeAndContentSection(assetType, contentSection);
+                assets.addAll(result);
+            }
+            assets.sort(
+                (asset1, asset2) -> asset1.getDisplayName().compareTo(
+                    asset2.getDisplayName()
+                )
+            );
         } else {
-            final Class<? extends Asset> assetType = toAssetTypeClass(type);
+            final Class<? extends Asset> assetType = toAssetTypeClass(typeParam);
             assets = assetRepo.findByTitleAndTypeAndContentSection(
                 query,
                 assetType,
-                contentSection);
+                contentSection
+            );
         }
 
         final JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
@@ -259,7 +273,7 @@ public class Assets {
         if (Asset.class.isAssignableFrom(clazz)) {
             @SuppressWarnings("unchecked")
             final Class<? extends Asset> typeClass
-                                             = (Class<? extends Asset>) clazz;
+                = (Class<? extends Asset>) clazz;
             return typeClass;
         } else {
             throw new IllegalArgumentException(String.format(
@@ -312,11 +326,11 @@ public class Assets {
     private JsonObject getAssetProperties(final Asset asset) {
 
         final ProvidesPropertiesForAssetTypeLiteral literal
-                                                 = new ProvidesPropertiesForAssetTypeLiteral(
+            = new ProvidesPropertiesForAssetTypeLiteral(
                 asset.getClass());
 
         final Instance<AssetPropertiesProvider> instance
-                                                    = assetPropertiesProviders
+            = assetPropertiesProviders
                 .select(literal);
 
         final JsonObjectBuilder objBuilder = Json.createObjectBuilder();

@@ -18,34 +18,19 @@
  */
 package org.librecms.ui.contentsections.documents.relatedinfo;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.libreccm.l10n.GlobalizationHelper;
-import org.libreccm.security.PermissionChecker;
-import org.librecms.contentsection.AssetManager;
-import org.librecms.contentsection.AssetRepository;
 import org.librecms.contentsection.AttachmentList;
 import org.librecms.contentsection.AttachmentListRepository;
 import org.librecms.contentsection.ContentItem;
-import org.librecms.contentsection.ContentItemL10NManager;
-import org.librecms.contentsection.ContentItemManager;
 import org.librecms.contentsection.ContentItemRepository;
 import org.librecms.contentsection.ContentSection;
-import org.librecms.contentsection.ContentTypeRepository;
-import org.librecms.contentsection.FolderManager;
-import org.librecms.contentsection.FolderRepository;
 import org.librecms.contentsection.ItemAttachment;
 import org.librecms.contentsection.ItemAttachmentManager;
-import org.librecms.ui.contentsections.AssetFolderTree;
-import org.librecms.ui.contentsections.AssetPermissionsModel;
-import org.librecms.ui.contentsections.AssetPermissionsModelProvider;
 import org.librecms.ui.contentsections.ContentSectionsUi;
-import org.librecms.ui.contentsections.DocumentFolderTree;
-import org.librecms.ui.contentsections.DocumentPermissions;
 import org.librecms.ui.contentsections.documents.MvcAuthoringSteps;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -115,7 +100,11 @@ public class RelatedInfoStepService {
                 )
             );
 
-        final List<AttachmentList> attachmentLists = document.getAttachments();
+        final List<AttachmentList> attachmentLists = document
+            .getAttachments()
+            .stream()
+            .filter(list -> !list.getName().startsWith("."))
+            .collect(Collectors.toList());
         final List<String> attachmentListsOrder = order
             .getAttachmentListsOrder();
 
@@ -157,6 +146,7 @@ public class RelatedInfoStepService {
             final AttachmentList attachmentList = document
                 .getAttachments()
                 .stream()
+                .filter(list -> !list.getName().startsWith("."))
                 .filter(list -> attachmentsOrder.getKey().equals(list.getUuid()))
                 .findAny()
                 .orElseThrow(

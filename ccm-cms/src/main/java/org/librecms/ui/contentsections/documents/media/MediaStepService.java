@@ -30,6 +30,7 @@ import org.librecms.ui.contentsections.documents.MvcAuthoringSteps;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -97,7 +98,12 @@ public class MediaStepService {
                 )
             );
 
-        final List<AttachmentList> attachmentLists = document.getAttachments();
+        final List<AttachmentList> attachmentLists = document
+            .getAttachments()
+            .stream()
+            .filter(
+                list -> list.getName().startsWith(MediaStep.MEDIA_LIST_PREFIX))
+            .collect(Collectors.toList());
         final List<String> attachmentListsOrder = order
             .getMediaListsOrder();
 
@@ -139,6 +145,11 @@ public class MediaStepService {
             final AttachmentList attachmentList = document
                 .getAttachments()
                 .stream()
+                .filter(
+                    list -> list.getName().startsWith(
+                        MediaStep.MEDIA_LIST_PREFIX
+                    )
+                )
                 .filter(list -> attachmentsOrder.getKey().equals(list.getUuid()))
                 .findAny()
                 .orElseThrow(

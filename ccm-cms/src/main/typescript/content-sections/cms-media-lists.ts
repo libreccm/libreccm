@@ -22,7 +22,7 @@ let mediaSortables: {
 } = {};
 
 document.addEventListener("DOMContentLoaded", function (event) {
-    const mediaLists = document.querySelector(".cms.media-lists");
+    const mediaLists = document.querySelector(".cms-media-lists");
 
     if (mediaLists) {
         mediaListSortable = initMediaLists(mediaLists as HTMLElement);
@@ -71,6 +71,7 @@ function initMedias(medias: HTMLElement): Sortable {
 }
 
 function enableSaveButton(event: SortableEvent) {
+    console.log("Enabling save buttons...");
     const saveOrderButtons = document.querySelectorAll(
         ".media-save-order-button"
     );
@@ -120,18 +121,24 @@ function moveMedia(event: SortableEvent) {
 }
 
 function saveOrder() {
+    console.log("Creating mediaOrder object...");
+    console.dir(mediaListSortable);
+    console.dir(movedMedia);
+    console.dir(mediaSortables);
     const mediaOrder: MediaStepMediaOrder = {
         mediaListsOrder: mediaListSortable.toArray(),
         mediaOrder: {},
         movedMedia
     };
 
+    console.dir(mediaOrder.mediaOrder);
+
     for (let key in mediaSortables) {
         mediaOrder.mediaOrder[key] =
             mediaSortables[key].toArray();
     }
 
-    // console.dir(mediaOrder);
+    console.dir(mediaOrder);
     const cmsMedia = document.querySelector(".cms-media-lists");
     if (!cmsMedia) {
         showGeneralError();
@@ -145,6 +152,7 @@ function saveOrder() {
         );
     }
 
+    console.log("spinner on");
     const saveOrderButtons = document.querySelectorAll(".media-save-order-button");
     for (let i = 0; i < saveOrderButtons.length; i++) {
         const saveOrderButton: HTMLButtonElement = saveOrderButtons[
@@ -157,6 +165,7 @@ function saveOrder() {
         spinner?.classList.toggle("d-none");
     }
 
+    console.log("fetch POST");
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
     fetch(baseUrl, {

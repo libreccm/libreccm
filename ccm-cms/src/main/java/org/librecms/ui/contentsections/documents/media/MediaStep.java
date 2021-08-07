@@ -83,7 +83,7 @@ public class MediaStep extends AbstractMvcAuthoringStep {
      */
     static final String PATH_FRAGMENT = "media";
 
-    private static final String MEDIA_LIST_PREFIX = ".media-";
+    protected static final String MEDIA_LIST_PREFIX = ".media-";
 
     /**
      * {@link AssetManager} instance of managing {@link Asset}s.
@@ -186,7 +186,7 @@ public class MediaStep extends AbstractMvcAuthoringStep {
             getDocument()
                 .getAttachments()
                 .stream()
-                .filter(list -> !list.getName().startsWith(MEDIA_LIST_PREFIX))
+                .filter(list -> list.getName().startsWith(MEDIA_LIST_PREFIX))
                 .map(this::buildMediaListDto)
                 .collect(Collectors.toList())
         );
