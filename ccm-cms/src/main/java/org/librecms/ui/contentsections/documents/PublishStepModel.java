@@ -20,6 +20,10 @@ package org.librecms.ui.contentsections.documents;
 
 import org.libreccm.l10n.GlobalizationHelper;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,7 +54,7 @@ public class PublishStepModel {
     /**
      * A list of the available lifecycles.
      */
-    private List<LifecycleListEntry> availableListcycles;
+    private List<LifecycleListEntry> availableLivecycles;
 
     /**
      * Get the label of the lifecycle assigned to the current content item. The
@@ -99,18 +103,18 @@ public class PublishStepModel {
     }
 
     public PublishStepModel() {
-        availableListcycles = new ArrayList<>();
+        availableLivecycles = new ArrayList<>();
         phases = new ArrayList<>();
     }
 
     public List<LifecycleListEntry> getAvailableLifecycles() {
-        return Collections.unmodifiableList(availableListcycles);
+        return Collections.unmodifiableList(availableLivecycles);
     }
 
     public void setAvailableLifecycles(
         final List<LifecycleListEntry> availableListcycles
     ) {
-        this.availableListcycles = new ArrayList<>(availableListcycles);
+        this.availableLivecycles = new ArrayList<>(availableListcycles);
     }
 
     public List<PhaseListEntry> getPhases() {
@@ -119,6 +123,22 @@ public class PublishStepModel {
 
     public void setPhases(final List<PhaseListEntry> phases) {
         this.phases = new ArrayList<>(phases);
+    }
+
+    public String getToday() {
+        return LocalDateTime
+            .now()
+            .format(DateTimeFormatter.ISO_DATE.withZone(ZoneId.systemDefault()));
+    }
+    
+    public String getNow() {
+        return LocalTime
+            .now()
+            .format(
+                DateTimeFormatter
+                    .ofPattern("HH:mm")
+                    .withZone(ZoneId.systemDefault())
+            );
     }
 
 }

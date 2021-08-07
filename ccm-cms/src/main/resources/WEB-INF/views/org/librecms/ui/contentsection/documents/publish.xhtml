@@ -4,20 +4,29 @@
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/document.xhtml">
+    <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/authoringstep.xhtml">
 
-        <ui:param name="activePage" value="document" />
+        <!--<ui:param name="activePage" value="document" />-->
         <ui:param name="authoringStep" value="publish" />
-        <ui:param name="title" value="#{CmsAdminMessages['contentsection.documents.publishstep.title']}" />
+        <!--<ui:param name="title" value="#{CmsAdminMessages['contentsection.documents.publishstep.title']}" />-->
 
-        <ui:define name="breadcrumb">
+<!--        <ui:define name="breadcrumb">
             <ui:include src="document-breadcrumbs.xhtml" />
             <li aria-current="page" class="breadcrumb-item">
                 #{CmsAdminMessages['contentsection.document.publishstep.title']}
             </li>
-        </ui:define>
+        </ui:define>-->
 
-        <ui:define name="main">
+        <!--<ui:define name="main">-->
+        <ui:define name="authoringStep">
+            <h1>#{CmsDefaultStepsMessageBundle.getMessage('publish.title', [CmsSelectedDocumentModel.itemTitle])}</h1>
+            
+            <c:if test="#{missingLifecycleDefinitionUuid}">
+                <div class="alert alert-danger">
+                    #{CmsDefaultStepsMessageBundle['publish.no_lifecycle_selected']}
+                </div>
+            </c:if>
+                  
             <c:choose>
                 <c:when test="#{CmsDocumentPublishStepModel.live}">
                     <h2>
@@ -29,7 +38,8 @@
                     </p>
 
                     <div class="d-flex">
-                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/publish/@publish"
+                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@publish"
+                              class="mr-3"
                               method="post">
                             <button class="btn btn-primary"
                                     type="submit">
@@ -37,7 +47,7 @@
                             </button>
                         </form>
 
-                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/publish/@unpublish"
+                        <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@publish/unpublish"
                               method="post">
                             <button class="btn btn-warning"
                                     type="submit">
@@ -47,7 +57,7 @@
                     </div>
                 </c:when>
                 <c:otherwise>
-                    <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@authoringSteps/publish/@publish"
+                    <form action="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@publish"
                           method="post">
 
                         <div class="form-group">
@@ -83,7 +93,8 @@
                                        id="lifecycle-startdate"
                                        name="startDate"
                                        required="true"
-                                       type="date" />
+                                       type="date" 
+                                       value="#{CmsDocumentPublishStepModel.today}" />
 
                                 <label for="starttime">
                                     ${CmsDefaultStepsMessageBundle['publishstep.lifecycle_starttime.label']}
@@ -92,7 +103,8 @@
                                        id="lifecycle-starttime"
                                        name="startTime"
                                        required="true"
-                                       type="date" />
+                                       type="time" 
+                                       value="#{CmsDocumentPublishStepModel.now}" />
 
                             </div>
                             <small class="form-text text-muted"
@@ -110,7 +122,6 @@
                                 <input class="form-control"
                                        id="lifecycle-enddate"
                                        name="endDate"
-                                       required="true"
                                        type="date" />
 
                                 <label for="endtime">
@@ -119,8 +130,7 @@
                                 <input class="form-control"
                                        id="lifecycle-endtime"
                                        name="endTime"
-                                       required="true"
-                                       type="date" />
+                                       type="time" />
 
                             </div>
                             <small class="form-text text-muted"

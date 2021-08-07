@@ -18,6 +18,7 @@
  */
 package org.librecms.ui.contentsections.documents;
 
+import org.libreccm.core.UnexpectedErrorException;
 import org.librecms.ui.contentsections.ContentSectionNotFoundException;
 import org.libreccm.l10n.GlobalizationHelper;
 import org.librecms.contentsection.ContentItem;
@@ -36,6 +37,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -69,7 +71,7 @@ import javax.ws.rs.PathParam;
 public class PublishStep extends AbstractMvcAuthoringStep {
 
     private static final String TEMPLATE
-        = "org/librecms/ui/documenttypes/publish.xhtml";
+        = "org/librecms/ui/contentsection/documents/publish.xhtml";
 
     /**
      * The path fragment of the publish step.
@@ -110,24 +112,51 @@ public class PublishStep extends AbstractMvcAuthoringStep {
                                  DocumentNotFoundException {
         super.init();
 
-        publishStepModel.setAssignedLifecycleLabel(
-            Optional
-                .ofNullable(getDocument().getLifecycle())
-                .map(Lifecycle::getDefinition)
-                .map(LifecycleDefinition::getLabel)
-                .map(globalizationHelper::getValueFromLocalizedString)
-                .orElse("")
+        publishStepModel.setAvailableLifecycles(
+            getContentSection()
+                .getLifecycleDefinitions()
+                .stream()
+                .map(this::buildLifecycleListEntry)
+                .collect(Collectors.toList())
         );
 
-        publishStepModel.setAssignedLifecycleDescription(
-            Optional
-                .ofNullable(getDocument().getLifecycle())
-                .map(Lifecycle::getDefinition)
-                .map(LifecycleDefinition::getDescription)
-                .map(globalizationHelper::getValueFromLocalizedString)
-                .orElse("")
-        );
-        
+        final ContentItem document = getDocument();
+
+        if (itemManager.isLive(document)) {
+            final ContentItem live = itemManager
+                .getLiveVersion(document, document.getClass())
+                .orElseThrow(
+                    () -> new UnexpectedErrorException(
+                        String.format(
+                            "ContentItem %s is reported as live by "
+                                + "ContentItemManager#isLive"
+                                + "but has no live version.",
+                            document.getUuid()
+                        )
+                    )
+                );
+            publishStepModel.setAssignedLifecycleLabel(
+                Optional
+                    .ofNullable(live.getLifecycle())
+                    .map(Lifecycle::getDefinition)
+                    .map(LifecycleDefinition::getLabel)
+                    .map(globalizationHelper::getValueFromLocalizedString)
+                    .orElse("")
+            );
+
+            publishStepModel.setAssignedLifecycleDescription(
+                Optional
+                    .ofNullable(live.getLifecycle())
+                    .map(Lifecycle::getDefinition)
+                    .map(LifecycleDefinition::getDescription)
+                    .map(globalizationHelper::getValueFromLocalizedString)
+                    .orElse("")
+            );
+        } else {
+            publishStepModel.setAssignedLifecycleDescription("");
+            publishStepModel.setAssignedLifecycleLabel("");
+        }
+
         publishStepModel.setLive(itemManager.isLive(getDocument()));
     }
 
@@ -152,7 +181,18 @@ public class PublishStep extends AbstractMvcAuthoringStep {
         if (itemPermissionChecker.canPublishItems(getDocument())) {
             final String lifecycleDefUuid;
             if (itemManager.isLive(document)) {
-                lifecycleDefUuid = document
+                lifecycleDefUuid = itemManager
+                    .getLiveVersion(document, document.getClass())
+                    .orElseThrow(
+                        () -> new UnexpectedErrorException(
+                            String.format(
+                                "ContentItem %s is reported as live by "
+                                    + "ContentItemManager#isLive"
+                                    + "but has no live version.",
+                                document.getUuid()
+                            )
+                        )
+                    )
                     .getLifecycle()
                     .getDefinition()
                     .getUuid();
@@ -279,48 +319,53 @@ public class PublishStep extends AbstractMvcAuthoringStep {
         final LocalDateTime startLocalDateTime = LocalDateTime.of(
             localStartDate, localStartTime
         );
+
         final Date startDateTime = Date.from(
-            startLocalDateTime.toInstant(
-                ZoneOffset.from(startLocalDateTime)
-            )
+            startLocalDateTime.atZone(ZoneId.systemDefault())
+                .toInstant()
         );
 
-        final LocalDate localEndDate;
-        try {
-            localEndDate = LocalDate.parse(endDateParam, isoDateFormatter);
-        } catch (DateTimeParseException ex) {
-            models.put("invalidEndDate", true);
-            models.put("lifecycleDefinitionUuid", selectedLifecycleDefUuid);
-            models.put("startDate", startDateParam);
-            models.put("startTime", startTimeParam);
-            models.put("endDate", endDateParam);
-            models.put("endTime", endTimeParam);
+        final Date endDateTime;
+        if (endDateParam == null || endDateParam.isBlank()) {
+            endDateTime = null;
+        } else {
+            final LocalDate localEndDate;
+            try {
+                localEndDate = LocalDate.parse(endDateParam, isoDateFormatter);
+            } catch (DateTimeParseException ex) {
+                models.put("invalidEndDate", true);
+                models.put("lifecycleDefinitionUuid", selectedLifecycleDefUuid);
+                models.put("startDate", startDateParam);
+                models.put("startTime", startTimeParam);
+                models.put("endDate", endDateParam);
+                models.put("endTime", endTimeParam);
 
-            return TEMPLATE;
+                return TEMPLATE;
+            }
+
+            final LocalTime localEndTime;
+            try {
+                localEndTime = LocalTime.parse(endTimeParam, isoTimeFormatter);
+            } catch (DateTimeParseException ex) {
+                models.put("invalidEndTime", true);
+                models.put("lifecycleDefinitionUuid", selectedLifecycleDefUuid);
+                models.put("startDate", startDateParam);
+                models.put("startTime", startTimeParam);
+                models.put("endDate", endDateParam);
+                models.put("endTime", endTimeParam);
+
+                return TEMPLATE;
+            }
+
+            final LocalDateTime endLocalDateTime = LocalDateTime.of(
+                localEndDate, localEndTime
+            );
+            endDateTime = Date.from(
+                endLocalDateTime
+                    .atZone(ZoneId.systemDefault())
+                    .toInstant()
+            );
         }
-
-        final LocalTime localEndTime;
-        try {
-            localEndTime = LocalTime.parse(endTimeParam, isoTimeFormatter);
-        } catch (DateTimeParseException ex) {
-            models.put("invalidEndTime", true);
-            models.put("lifecycleDefinitionUuid", selectedLifecycleDefUuid);
-            models.put("startDate", startDateParam);
-            models.put("startTime", startTimeParam);
-            models.put("endDate", endDateParam);
-            models.put("endTime", endTimeParam);
-
-            return TEMPLATE;
-        }
-
-        final LocalDateTime endLocalDateTime = LocalDateTime.of(
-            localEndDate, localEndTime
-        );
-        final Date endDateTime = Date.from(
-            endLocalDateTime.toInstant(
-                ZoneOffset.from(endLocalDateTime)
-            )
-        );
 
         if (!itemPermissionChecker.canPublishItems(document)) {
             return documentUi.showAccessDenied(
@@ -333,7 +378,20 @@ public class PublishStep extends AbstractMvcAuthoringStep {
         if (selectedLifecycleDefUuid.isEmpty()) {
             if (itemManager.isLive(document)) {
                 final LifecycleDefinition definition;
-                definition = document.getLifecycle().getDefinition();
+                definition = itemManager
+                    .getLiveVersion(document, document.getClass())
+                    .orElseThrow(
+                        () -> new UnexpectedErrorException(
+                            String.format(
+                                "ContentItem %s is reported as live by "
+                                    + "ContentItemManager#isLive"
+                                    + "but has no live version.",
+                                document.getUuid()
+                            )
+                        )
+                    )
+                    .getLifecycle()
+                    .getDefinition();
                 itemManager.publish(
                     document, definition, startDateTime, endDateTime
                 );
@@ -366,10 +424,8 @@ public class PublishStep extends AbstractMvcAuthoringStep {
      *
      * @return A redirect to the publish step.
      */
-    @MvcAuthoringAction(
-        method = MvcAuthoringActionMethod.POST,
-        path = "/@unpublish"
-    )
+    @POST
+    @Path("/unpublish")
     @Transactional(Transactional.TxType.REQUIRED)
     public String unpublish() {
         final ContentItem document = getDocument();
@@ -384,6 +440,25 @@ public class PublishStep extends AbstractMvcAuthoringStep {
         itemManager.unpublish(document);
 
         return buildRedirectPathForStep();
+    }
+
+    private LifecycleListEntry buildLifecycleListEntry(
+        final LifecycleDefinition definition
+    ) {
+        final LifecycleListEntry entry = new LifecycleListEntry();
+        entry.setDescription(
+            globalizationHelper.getValueFromLocalizedString(
+                definition.getDescription()
+            )
+        );
+        entry.setLabel(
+            globalizationHelper.getValueFromLocalizedString(
+                definition.getLabel()
+            )
+        );
+        entry.setUuid(definition.getUuid());
+
+        return entry;
     }
 
 }

@@ -43,6 +43,7 @@ public class CmsMvcAuthoringSteps implements MvcAuthoringSteps {
             ExampleAuthoringStep.class,
             CategorizationStep.class,
             MediaStep.class,
+            PublishStep.class,
             RelatedInfoStep.class,
             MvcArticlePropertiesStep.class,
             MvcArticleTextBodyStep.class
