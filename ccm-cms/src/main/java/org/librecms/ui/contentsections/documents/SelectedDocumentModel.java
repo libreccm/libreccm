@@ -348,34 +348,13 @@ public class SelectedDocumentModel {
     ) {
         final MvcAuthoringStepDef stepAnnotation = authoringStepClass
             .getAnnotation(MvcAuthoringStepDef.class);
-        final Path pathAnnotation = authoringStepClass.getAnnotation(
-            Path.class
-        );
-        final LocalizedTextsUtil textsUtil = globalizationHelper
+               final LocalizedTextsUtil textsUtil = globalizationHelper
             .getLocalizedTextsUtil(stepAnnotation.bundle());
         final AuthoringStepListEntry entry = new AuthoringStepListEntry();
         entry.setDescription(textsUtil.getText(stepAnnotation.descriptionKey()));
         entry.setLabel(textsUtil.getText(stepAnnotation.labelKey()));
         entry.setPath(createStepPath(authoringStepClass));
         return entry;
-    }
-
-    private String createStepPath(final String path) {
-        return path
-            .replace(
-                String.format(
-                    "{%s}",
-                    MvcAuthoringSteps.SECTION_IDENTIFIER_PATH_PARAM
-                ),
-                item.getContentType().getContentSection().getLabel()
-            )
-            .replace(
-                String.format(
-                    "{%s}",
-                    MvcAuthoringSteps.DOCUMENT_PATH_PATH_PARAM
-                ),
-                itemPath
-            );
     }
 
     private String createStepPath(final Class<?> stepClass) {

@@ -39,7 +39,7 @@ public class AuthoringStepListEntry {
     private String description;
 
     /**
-     * The path fragment of the authoring step.
+     * The path of the step.
      */
     private String path;
 

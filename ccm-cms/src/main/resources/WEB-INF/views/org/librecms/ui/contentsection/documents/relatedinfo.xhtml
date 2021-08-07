@@ -7,7 +7,11 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/authoringstep.xhtml">
 
+        <ui:param name="authoringStep" value="relatedInfo" />
+        
         <ui:define name="authoringStep">
+            <h1>#{CmsDefaultStepsMessageBundle.getMessage("relatedinfo.title", [CmsSelectedDocumentModel.itemTitle])}</h1>
+            
             <template id="cms-sort-attachments-error-general">
                 <div class="alert alert-danger mt-3" role="alert">
                     #{CmsDefaultStepsMessageBundle['relatedinfo.sortattachments.errors.general']}

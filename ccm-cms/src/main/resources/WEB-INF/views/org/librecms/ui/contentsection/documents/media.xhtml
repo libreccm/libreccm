@@ -7,7 +7,11 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/authoringstep.xhtml">
 
+        <ui:param name="authoringStep" value="media" />
+        
         <ui:define name="authoringStep">
+            <h1>#{CmsDefaultStepsMessageBundle.getMessage("media.title", [CmsSelectedDocumentModel.itemTitle])}</h1>
+            
             <template id="cms-sort-media-error-general">
                 <div class="alert alert-danger mt-3" role="alert">
                     #{CmsDefaultStepsMessageBundle['media.sortmedia.errors.general']}
@@ -187,7 +191,7 @@
                                     assetPickerId="attach-media-picker-#{list.uuid}"
                                     baseUrl="#{CmsMediaStep.mediaAssetPickerBaseUrl}"
                                     contentSection="#{CmsMediaStep.sectionName}"
-                                    formParamName="assetIdentifier"
+                                    formParamName="mediaIdentifier"
                                     />
                             </div>
                         </div>

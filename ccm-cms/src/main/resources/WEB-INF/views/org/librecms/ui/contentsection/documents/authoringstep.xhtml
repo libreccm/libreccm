@@ -114,42 +114,98 @@
 
                     <!-- Authoring steps -->
                     <h2>#{CmsAdminMessages['contentsection.document.authoring.steps.title']}</h2>
+                    <!--<pre>authoringStep = #{authoringStep}</pre>-->
+                    
                     <ul class="list-group">
                         <c:forEach items="#{CmsSelectedDocumentModel.authoringStepsList}"
                                    var="step">
-                            <li aria-current="#{step.path == authoringStep ? 'true' : ''}"
-                                class="list-group-item #{step.path == authoringStep ? 'active' : ''}">
-                                <a class="list-group-item-action"
-                                   href="#{step.path}">
-                                    #{step.label}
-                                </a>
-                            </li>
+                            <!--<pre>step.path = #{step.path}</pre>-->
+                            <c:choose>
+                                <c:when test="#{authoringStep == step.path}">
+                                    <li aria-current="true"
+                                        class="list-group-item active">
+                                        #{step.label}
+                                    </li>
+                                </c:when>
+                                <c:otherwise>
+                                    <li class="list-group-item">
+                                        <a class="list-group-item-action"
+                                           href="#{step.path}">
+                                            #{step.label}
+                                        </a>
+                                    </li>
+                                </c:otherwise>
+                            </c:choose>
+
                         </c:forEach>
 
                         <c:if test="#{!CmsSelectedDocumentModel.excludeDefaultAuthoringSteps}">
-                            <li aria-current="#{'categorize' == authoringStep ? 'true' : ''}"
-                                class="list-group-item #{'categorize' == authoringStep ? 'active' : ''}">
-                                <a class="list-group-item-action"
-                                   href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@categorization">
-                                    #{CmsAdminMessages['contentsection.document.authoring.steps.categorize.label']}
-                                </a>
-                            </li>
-                            <li aria-current="#{'relatedInfo' == authoringStep ? 'true' : ''}"
-                                class="list-group-item #{'relatedInfo' == authoringStep ? 'active' : ''}">
-                                <a class="list-group-item-action"
-                                   href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo">
-                                    #{CmsAdminMessages['contentsection.document.authoring.steps.relatedInfo.label']}
-                                </a>
-                            </li>
+                            <c:choose>
+                                <c:when test="#{authoringStep == 'categorize'}">
+                                    <li aria-current="true"
+                                        class="list-group-item active">
+                                        #{CmsAdminMessages['contentsection.document.authoring.steps.categorize.label']}
+                                    </li>
+                                </c:when>
+                                <c:otherwise>
+                                    <li class="list-group-item ">
+                                        <a class="list-group-item-action"
+                                           href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@categorization">
+                                            #{CmsAdminMessages['contentsection.document.authoring.steps.categorize.label']}
+                                        </a>
+                                    </li>
+                                </c:otherwise>
+                            </c:choose>
+                            <c:choose>
+                                <c:when test="#{authoringStep == 'media'}">
+                                    <li aria-current="true"
+                                        class="list-group-item active">
+                                        #{CmsAdminMessages['contentsection.document.authoring.steps.media.label']}
+                                    </li>
+                                </c:when>
+                                <c:otherwise>
+                                    <li class="list-group-item">
+                                        <a class="list-group-item-action"
+                                           href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@media">
+                                            #{CmsAdminMessages['contentsection.document.authoring.steps.media.label']}
+                                        </a>
+                                    </li>   
+                                </c:otherwise>
+                            </c:choose>
+                            <c:choose>
+                                <c:when test="#{authoringStep == 'relatedInfo'}">
+                                    <li aria-current="true"
+                                        class="list-group-item active">
+                                        #{CmsAdminMessages['contentsection.document.authoring.steps.relatedInfo.label']}
+                                    </li>
+                                </c:when>
+                                <c:otherwise>
+                                    <li class="list-group-item">
+                                        <a class="list-group-item-action"
+                                           href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@relatedinfo">
+                                            #{CmsAdminMessages['contentsection.document.authoring.steps.relatedInfo.label']}
+                                        </a>
+                                    </li>
+                                </c:otherwise>
+                            </c:choose>
                         </c:if>
 
-                        <li aria-current="#{'publish' == authoringStep ? 'true' : ''}"
-                            class="list-group-item #{'publish' == authoringStep ? 'active' : ''}">
-                            <a class="list-group-item-action"
-                               href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@publish">
-                                #{CmsAdminMessages['contentsection.document.authoring.steps.publish.label']}
-                            </a>
-                        </li>
+                        <c:choose>
+                            <c:when test="#{authoringStep == 'publish'}">
+                                <li aria-current="true"
+                                    class="list-group-item active">
+                                    #{CmsAdminMessages['contentsection.document.authoring.steps.publish.label']}
+                                </li>
+                            </c:when>
+                            <c:otherwise>
+                                <li class="list-group-item">
+                                    <a class="list-group-item-action"
+                                       href="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@publish">
+                                        #{CmsAdminMessages['contentsection.document.authoring.steps.publish.label']}
+                                    </a>
+                                </li>
+                            </c:otherwise>
+                        </c:choose>
 
                     </ul>
 
