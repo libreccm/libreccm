@@ -32,7 +32,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
@@ -41,7 +40,6 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.mvc.Controller;
 import javax.mvc.Models;
 import javax.transaction.Transactional;
@@ -428,6 +426,14 @@ public class PublishStep extends AbstractMvcAuthoringStep {
     @Path("/unpublish")
     @Transactional(Transactional.TxType.REQUIRED)
     public String unpublish() {
+        try {
+            init();
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
+        
         final ContentItem document = getDocument();
         if (!itemPermissionChecker.canPublishItems(document)) {
             return documentUi.showAccessDenied(

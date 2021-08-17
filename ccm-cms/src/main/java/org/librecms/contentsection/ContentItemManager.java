@@ -841,15 +841,16 @@ public class ContentItemManager {
 
         return publish(item, lifecycleDefinition);
     }
-    
+
     /**
      * Creates a live version of content item or updates the live version of a
      * content item if there already a live version using the default lifecycle
      * for the content type of the provided item.
      *
-     * @param item The content item to publish.
-     * @param startDateTime Start date and time of the lifecycle. May not ben null.
-     * @param endDateTime End date/time of the lifecycle. May be null.
+     * @param item          The content item to publish.
+     * @param startDateTime Start date and time of the lifecycle. May not ben
+     *                      null.
+     * @param endDateTime   End date/time of the lifecycle. May be null.
      *
      * @return The published content item.
      */
@@ -905,8 +906,8 @@ public class ContentItemManager {
      * @param item                The content item to publish.
      * @param lifecycleDefinition The definition of the lifecycle to use for the
      *                            new item.
-     * @param startDateTime The begin of the lifecycle. May not be null.
-     * @param endDateTime The end of the lifecycle. May be null.
+     * @param startDateTime       The begin of the lifecycle. May not be null.
+     * @param endDateTime         The end of the lifecycle. May be null.
      *
      * @return The published content item.
      */
@@ -930,7 +931,7 @@ public class ContentItemManager {
                 "The lifecycle definition for the "
                     + "lifecycle of the item to publish can't be null.");
         }
-        
+
         if (startDateTime == null) {
             throw new IllegalArgumentException(
                 "The start date of the "
@@ -1209,7 +1210,8 @@ public class ContentItemManager {
     @Transactional(Transactional.TxType.REQUIRED)
     public void unpublish(
         @RequiresPrivilege(ItemPrivileges.PUBLISH)
-        final ContentItem item) {
+        final ContentItem item
+    ) {
         if (item == null) {
             throw new IllegalArgumentException(
                 "The item to unpublish can't be null");
@@ -1217,44 +1219,53 @@ public class ContentItemManager {
 
         LOGGER.debug("Unpublishing item {}...", item.getItemUuid());
 
-        final Optional<ContentItem> liveItem = getLiveVersion(
-            item, ContentItem.class);
+        final Optional<ContentItem> liveItemResult = getLiveVersion(
+            item, ContentItem.class
+        );
 
-        if (!liveItem.isPresent()) {
+        if (!liveItemResult.isPresent()) {
             LOGGER.info("ContentItem {} has no live version.",
                         item.getItemUuid());
             return;
         }
 
-        final List<AttachmentList> attachmentLists = liveItem.get()
-            .getAttachments();
+        final ContentItem liveItem = liveItemResult.get();
+
+        final List<AttachmentList> attachmentLists = new ArrayList<>(
+            liveItem.getAttachments()
+        );
         for (final AttachmentList attachmentList : attachmentLists) {
-            attachmentList.getAttachments().forEach(
-                attachment -> {
-                unpublishAttachment(attachment);
-            });
+            unpublishAttachmentList(attachmentList);
         }
 
         final List<Category> categories = liveItem
-            .get()
             .getCategories()
             .stream()
             .map(categorization -> categorization.getCategory())
             .collect(Collectors.toList());
 
-        categories.forEach(category -> {
+        for (final Category category : categories) {
             try {
-                categoryManager.removeObjectFromCategory(liveItem.get(),
-                                                         category);
+                categoryManager.removeObjectFromCategory(
+                    liveItem, category
+                );
             } catch (ObjectNotAssignedToCategoryException ex) {
                 throw new RuntimeException(ex);
             }
-        });
-
-        if (liveItem.isPresent()) {
-            entityManager.remove(liveItem.get());
         }
 
+        entityManager.remove(liveItem);
+    }
+    
+    private void unpublishAttachmentList(final AttachmentList attachmentList) {
+        for(final ItemAttachment<?> attachment : attachmentList.getAttachments()) {
+            unpublishAttachment(attachment);
+        }
+        
+        final ContentItem item = attachmentList.getItem();
+        attachmentList.setItem(null);
+        item.removeAttachmentList(attachmentList);
+        entityManager.remove(attachmentList);
     }
 
     private void unpublishAttachment(final ItemAttachment<?> itemAttachment) {
