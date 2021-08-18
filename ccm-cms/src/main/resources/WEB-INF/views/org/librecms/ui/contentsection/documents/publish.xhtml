@@ -6,24 +6,39 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/authoringstep.xhtml">
 
-        <!--<ui:param name="activePage" value="document" />-->
         <ui:param name="authoringStep" value="publish" />
-        <!--<ui:param name="title" value="#{CmsAdminMessages['contentsection.documents.publishstep.title']}" />-->
 
-<!--        <ui:define name="breadcrumb">
-            <ui:include src="document-breadcrumbs.xhtml" />
-            <li aria-current="page" class="breadcrumb-item">
-                #{CmsAdminMessages['contentsection.document.publishstep.title']}
-            </li>
-        </ui:define>-->
-
-        <!--<ui:define name="main">-->
         <ui:define name="authoringStep">
             <h1>#{CmsDefaultStepsMessageBundle.getMessage('publish.title', [CmsSelectedDocumentModel.itemTitle])}</h1>
             
             <c:if test="#{missingLifecycleDefinitionUuid}">
                 <div class="alert alert-danger">
                     #{CmsDefaultStepsMessageBundle['publish.no_lifecycle_selected']}
+                </div>
+            </c:if>
+            <c:if test="#{missingStartDateTime}">
+                <div class="alert alert-danger">
+                    #{CmsDefaultStepsMessageBundle['publish.no_start_date_time']}
+                </div>
+            </c:if>
+            <c:if test="#{invalidStartDate}">
+                <div class="alert alert-danger">
+                    #{CmsDefaultStepsMessageBundle.getMessage('publish.invalid_start_date', [startDate])}
+                </div>
+            </c:if>
+            <c:if test="#{invalidStartTime}">
+                <div class="alert alert-danger">
+                    #{CmsDefaultStepsMessageBundle.getMessage('publish.invalid_start_time', [startTime])}
+                </div>
+            </c:if>
+            <c:if test="#{invalidEndDate}">
+                <div class="alert alert-danger">
+                    #{CmsDefaultStepsMessageBundle.getMessage('publish.invalid_end_date', [endDate])}
+                </div>
+            </c:if>
+            <c:if test="#{invalidEndTime}">
+                <div class="alert alert-danger">
+                    #{CmsDefaultStepsMessageBundle.getMessage('publish.invalid_end_time', [endTime])}
                 </div>
             </c:if>
                   
