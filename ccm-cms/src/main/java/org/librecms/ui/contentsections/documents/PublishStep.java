@@ -417,6 +417,50 @@ public class PublishStep extends AbstractMvcAuthoringStep {
         return buildRedirectPathForStep();
     }
 
+    @POST
+    @Path("/republish")
+    @Transactional(Transactional.TxType.REQUIRED)
+    public String republish() {
+        try {
+            init();
+        } catch (ContentSectionNotFoundException ex) {
+            return ex.showErrorMessage();
+        } catch (DocumentNotFoundException ex) {
+            return ex.showErrorMessage();
+        }
+
+        final ContentItem document = getDocument();
+        if (!itemManager.isLive(document)) {
+            models.put("republishNoneLive", true);
+            models.put("document", itemManager.getItemPath(document));
+            return TEMPLATE;
+        }
+
+        final ContentItem live = itemManager
+            .getLiveVersion(document, document.getClass())
+            .orElseThrow(
+                () -> new UnexpectedErrorException(
+                    String.format(
+                        "ContentItem %s is reported as live by "
+                            + "ContentItemManager#isLive"
+                            + "but has no live version.",
+                        document.getUuid()
+                    )
+                )
+            );
+
+        final Lifecycle lifecycle = live.getLifecycle();
+        final LifecycleDefinition definition = lifecycle.getDefinition();
+        final Date startDateTime = lifecycle.getStartDateTime();
+        final Date endDateTime = lifecycle.getEndDateTime();
+
+        itemManager.publish(
+            document, definition, startDateTime, endDateTime
+        );
+
+        return buildRedirectPathForStep();
+    }
+
     /**
      * Unpublishes the current content item.
      *
@@ -433,7 +477,7 @@ public class PublishStep extends AbstractMvcAuthoringStep {
         } catch (DocumentNotFoundException ex) {
             return ex.showErrorMessage();
         }
-        
+
         final ContentItem document = getDocument();
         if (!itemPermissionChecker.canPublishItems(document)) {
             return documentUi.showAccessDenied(

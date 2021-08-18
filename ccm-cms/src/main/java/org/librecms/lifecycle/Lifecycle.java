@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -122,11 +123,17 @@ public class Lifecycle implements Identifiable, Serializable {
     }
 
     public Date getEndDateTime() {
-        return new Date(endDateTime.getTime());
+        return Optional
+            .ofNullable(endDateTime)
+            .map(date -> new Date(date.getTime()))
+            .orElse(null);
     }
 
     public void setEndDateTime(final Date endDateTime) {
-        this.endDateTime = new Date(endDateTime.getTime());
+        this.endDateTime = Optional
+            .ofNullable(endDateTime)
+            .map(date -> new Date(date.getTime()))
+            .orElse(null);
     }
 
     public String getListener() {
