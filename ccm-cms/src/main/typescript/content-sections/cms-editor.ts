@@ -2,6 +2,8 @@ import "bootstrap";
 import * as $ from "jquery";
 import { Editor } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
+import Subscript from "@tiptap/extension-subscript";
+import Superscript from "@tiptap/extension-superscript";
 
 document.addEventListener("DOMContentLoaded", function (event) {
     const viewButtons = document.querySelectorAll(
@@ -297,6 +299,39 @@ function initEditorButtons(editor: Editor, buttonsElem: Element) {
             event.preventDefault();
             editor.chain().focus().toggleBold().run();
         });
+    buttonsElem
+        .querySelector(".tiptap-code")
+        ?.addEventListener("click", event => {
+            event.preventDefault();
+            editor.chain().focus().toggleCode().run();
+        });
+    buttonsElem
+        .querySelector(".tiptap-strikethrough")
+        ?.addEventListener("click", event => {
+            event.preventDefault();
+            editor.chain().focus().toggleStrike().run();
+        });
+    buttonsElem
+        .querySelector(".tiptap-subscript")
+        ?.addEventListener("click", event => {
+            event.preventDefault();
+            editor.chain().focus().toggleSubscript().run();
+        });
+    buttonsElem
+        .querySelector(".tiptap-superscript")
+        ?.addEventListener("click", event => {
+            event.preventDefault();
+            editor.chain().focus().toggleSuperscript().run();
+        });
+
+    for(let i = 1; i <= 6; i++) {
+        buttonsElem
+            .querySelector(`.tiptap-h${i}`)
+            ?.addEventListener("click", event => {
+                event.preventDefault();
+                editor.chain().focus().toggleHeading({level: i}).run();
+            });
+    }
 }
 
 async function showEditDialog(event: Event) {
@@ -346,7 +381,7 @@ async function showEditDialog(event: Event) {
 
     const editor = new Editor({
         element: tiptapDiv,
-        extensions: [StarterKit],
+        extensions: [StarterKit, Subscript, Superscript],
         content: variant
     });
 
@@ -492,7 +527,6 @@ async function showViewDialog(event: Event) {
 
     viewDialogBody.innerHTML = variant;
 
-    
     const viewDialogJquery = $(`#${viewDialogId}`) as any;
     viewDialogJquery.modal("toggle");
 }

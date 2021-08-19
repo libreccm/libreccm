@@ -2,7 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <cc:interface shortDescription="A editor component for HTML texts using the TipTap editor. To use this component you have also to include the cms-editor.js file into the page.">
         <cc:attribute name="addMethod"
                       required="true"
@@ -537,20 +538,64 @@
                     </div>
                     <div class="modal-body">
                         <div class="cms-tiptap-editor-buttons mb-1">
-                            <button class="btn btn-outline-dark tiptap-emph"
-                                type="button">
-                                <bootstrap:svgIcon icon="type-italic" />
-                                <span class="sr-only">
-                                    #{CmsAdminMessages['cms_editor.buttons.emph']}
-                                </span>
-                            </button>
-                            <button class="btn btn-outline-dark tiptap-strong-emph"
-                                type="button">
-                                <bootstrap:svgIcon icon="type-bold" />
-                                <span class="sr-only">
-                                    #{CmsAdminMessages['cms_editor.buttons.strong_emph']}
-                                </span>
-                            </button>
+                            <div class="border-end border-dark cms-tiptap-editor-textformatting">
+                                <button class="btn btn-outline-dark tiptap-emph"
+                                    title="#{CmsAdminMessages['cms_editor.buttons.emph']}"
+                                    type="button">
+                                    <bootstrap:svgIcon icon="type-italic" />
+                                    <!-- <span class="sr-only">
+                                        #{CmsAdminMessages['cms_editor.buttons.emph']}
+                                    </span> -->
+                                </button>
+                                <button class="btn btn-outline-dark tiptap-strong-emph"
+                                        title="#{CmsAdminMessages['cms_editor.buttons.strong_emph']}"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="type-bold" />
+                                    <!-- <span class="sr-only">
+                                        #{CmsAdminMessages['cms_editor.buttons.strong_emph']}
+                                    </span> -->
+                                </button>
+                                <button class="btn btn-outline-dark tiptap-code"
+                                        title="#{CmsAdminMessages['cms_editor.buttons.code']}"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="code" />
+                                    <!-- <span class="sr-only">
+                                        #{CmsAdminMessages['cms_editor.buttons.code']}
+                                    </span> -->
+                                </button>
+                                <button class="btn btn-outline-dark tiptap-strikethrough"
+                                        title="#{CmsAdminMessages['cms_editor.buttons.strikethrough']}"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="type-strikethrough" />
+                                    <!-- <span class="sr-only">
+                                        #{CmsAdminMessages['cms_editor.buttons.strikethrough']}
+                                    </span> -->
+                                </button>
+                                <button class="btn btn-outline-dark tiptap-subscript"
+                                        title="#{CmsAdminMessages['cms_editor.buttons.subscript']}"
+                                        type="button">
+                                    <span aria-hidden="true">x<sub>n</sub></span>
+                                </button>
+                                <button class="btn btn-outline-dark tiptap-superscript"
+                                        title="#{CmsAdminMessages['cms_editor.buttons.superscript']}"
+                                        type="button">
+                                        <span aria-hidden="true">x<sup>n</sup></span>
+                                </button>
+                            </div>
+                            <div class="border-end border-dark cms-tiptap-editor-headings">
+                                <ui:repeat begin="1" end="6" var="level">
+                                    <button class="btn btn-outline-dark tiptap-h#{level}"
+                                            title="#{CmsAdminMessages['cms_editor.buttons.h'.concat(level)]}"
+                                            type="button">
+                                        <span aria-hidden="true">H#{level}</sup></span>
+                                    </button>
+                                </ui:repeat>
+                                <!-- <button class="btn btn-outline-dark tiptap-h2"
+                                        title="#{CmsAdminMessages['cms_editor.buttons.h2']}"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="type-h2" />
+                                </button> -->
+                            </div>
                         </div>
                         <div class="cms-tiptap-editor border">
                             
