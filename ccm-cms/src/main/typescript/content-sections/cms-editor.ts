@@ -324,14 +324,35 @@ function initEditorButtons(editor: Editor, buttonsElem: Element) {
             editor.chain().focus().toggleSuperscript().run();
         });
 
-    for(let i = 1; i <= 6; i++) {
+    for (let i = 1; i <= 6; i++) {
         buttonsElem
             .querySelector(`.tiptap-h${i}`)
             ?.addEventListener("click", event => {
                 event.preventDefault();
-                editor.chain().focus().toggleHeading({level: i}).run();
+                editor.chain().focus().toggleHeading({ level: i }).run();
             });
     }
+
+    buttonsElem
+        .querySelector(".tiptap-paragraph")
+        ?.addEventListener("click", event => {
+            event.preventDefault();
+            editor.chain().focus().clearNodes().run();
+        });
+    
+    buttonsElem
+        .querySelector(".tiptap-blockquote")
+        ?.addEventListener("click", event => {
+            event.preventDefault();
+            editor.chain().focus().toggleBlockquote().run();
+        });
+    
+    buttonsElem
+        .querySelector(".tiptap-codeblock")
+        ?.addEventListener("click", event => {
+            event.preventDefault();
+            editor.chain().focus().toggleCodeBlock().run();
+        });
 }
 
 async function showEditDialog(event: Event) {

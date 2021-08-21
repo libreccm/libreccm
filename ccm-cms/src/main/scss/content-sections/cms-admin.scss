@@ -1,4 +1,16 @@
 @import "custom";
 @import "../../../../node_modules/bootstrap/scss/bootstrap";
 
+.cms-tiptap-editor {
+    blockquote {
+        background-color: #eee;        
+        margin: 0.33em;
+        padding: 0.2em;
+    }
 
+    pre {
+        border: 1px solid #ccc;
+        margin: 0.33em;
+        padding: 0.2em;
+    }
+}

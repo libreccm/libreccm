@@ -537,7 +537,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="cms-tiptap-editor-buttons mb-1">
+                        <div class="cms-tiptap-editor-buttons d-flex mb-1">
                             <div class="border-end border-dark cms-tiptap-editor-textformatting">
                                 <button class="btn btn-outline-dark tiptap-emph"
                                     title="#{CmsAdminMessages['cms_editor.buttons.emph']}"
@@ -587,7 +587,7 @@
                                     <button class="btn btn-outline-dark tiptap-h#{level}"
                                             title="#{CmsAdminMessages['cms_editor.buttons.h'.concat(level)]}"
                                             type="button">
-                                        <span aria-hidden="true">H#{level}</sup></span>
+                                        <span aria-hidden="true">H#{level}</span>
                                     </button>
                                 </ui:repeat>
                                 <!-- <button class="btn btn-outline-dark tiptap-h2"
@@ -596,6 +596,23 @@
                                     <bootstrap:svgIcon icon="type-h2" />
                                 </button> -->
                             </div>
+                            <div class="border-end border-dark cms-tiptap-editor-paragraphs">
+                                <button class="btn btn-outline-dark tiptap-paragraph"
+                                        title="#{CmsAdminMessages['cms_editor.buttons.paragraph']}"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="type" />
+                                </button>
+                                <button class="btn btn-outline-dark tiptap-blockquote"
+                                        title="#{CmsAdminMessages['cms_editor.buttons.blockquote']}"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="blockquote-left" />
+                                </button>
+                                <button class="btn btn-outline-dark tiptap-codeblock"
+                                        title="#{CmsAdminMessages['cms_editor.buttons.codeblock']}"
+                                        type="button">
+                                    <bootstrap:svgIcon icon="code-square" />
+                                </button>
+                            </div>                            
                         </div>
                         <div class="cms-tiptap-editor border">
                             
