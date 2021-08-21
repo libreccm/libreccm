@@ -1,9 +1,14 @@
 import "bootstrap";
 import * as $ from "jquery";
 import { Editor } from "@tiptap/core";
+import Gapcursor from "@tiptap/extension-gapcursor";
 import StarterKit from "@tiptap/starter-kit";
 import Subscript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
+import Table from "@tiptap/extension-table";
+import TableRow from "@tiptap/extension-table-row";
+import TableCell from "@tiptap/extension-table-cell";
+import TableHeader from "@tiptap/extension-table-header";
 
 document.addEventListener("DOMContentLoaded", function (event) {
     const viewButtons = document.querySelectorAll(
@@ -339,19 +344,77 @@ function initEditorButtons(editor: Editor, buttonsElem: Element) {
             event.preventDefault();
             editor.chain().focus().clearNodes().run();
         });
-    
+
     buttonsElem
         .querySelector(".tiptap-blockquote")
         ?.addEventListener("click", event => {
             event.preventDefault();
             editor.chain().focus().toggleBlockquote().run();
         });
-    
+
     buttonsElem
         .querySelector(".tiptap-codeblock")
         ?.addEventListener("click", event => {
             event.preventDefault();
             editor.chain().focus().toggleCodeBlock().run();
+        });
+
+    buttonsElem
+        .querySelector(".tiptap-ul")
+        ?.addEventListener("click", event => {
+            event.preventDefault();
+            editor.chain().focus().toggleBulletList().run();
+        });
+
+    buttonsElem
+        .querySelector(".tiptap-ol")
+        ?.addEventListener("click", event => {
+            event.preventDefault();
+            editor.chain().focus().toggleOrderedList().run();
+        });
+
+    editor.on("selectionUpdate", ({ editor }) => {
+        console.log("Selection updated");
+        console.log(
+            `can insertRowBefore: ${editor
+                .can()
+                .chain()
+                .focus()
+                .addRowBefore()
+                .run()}`
+        );
+    });
+
+    buttonsElem
+        .querySelector(".cms-editor-insert-table-dialog .btn-success")
+        ?.addEventListener("click", event => {
+            event.preventDefault();
+            const dialog = buttonsElem.querySelector(
+                ".cms-editor-insert-table-dialog"
+            );
+            if (!dialog) {
+                return;
+            }
+            const rowsInput = dialog.querySelector(
+                "input#rows"
+            ) as HTMLInputElement;
+            const colsInput = dialog.querySelector(
+                "input#cols"
+            ) as HTMLInputElement;
+            const headerRowInput = dialog.querySelector(
+                "input#headerRow"
+            ) as HTMLInputElement;
+            console.log(`rowsInput = ${rowsInput}`);
+            console.log(`colsInput = ${colsInput}`);
+            console.log(`headerRowInput = ${headerRowInput}`);
+            const rows = rowsInput.value;
+            const cols = colsInput.value;
+            const headerRow = JSON.parse(headerRowInput.value) as Boolean;
+            editor
+                .chain()
+                .focus()
+                .insertTable({ cols: cols, rows: rows, headerRow: headerRow })
+                .run();
         });
 }
 
@@ -402,7 +465,16 @@ async function showEditDialog(event: Event) {
 
     const editor = new Editor({
         element: tiptapDiv,
-        extensions: [StarterKit, Subscript, Superscript],
+        extensions: [
+            Gapcursor,
+            StarterKit,
+            Subscript,
+            Superscript,
+            Table.configure({ resizable: true }),
+            TableRow,
+            TableHeader,
+            TableCell
+        ],
         content: variant
     });
 
