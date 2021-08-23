@@ -129,7 +129,7 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
         }
 
         if (itemPermissionChecker.canEditItem(getArticle())) {
-            return "org/librecms/ui/contenttypes/article/article-text.xhtml";
+            return "org/librecms/ui/contenttypes/article/article-text/available-languages.xhtml";
 //            return "org/librecms/ui/contenttypes/article/article-text/available-languages.xhtml";
         } else {
             return documentUi.showAccessDenied(
@@ -165,7 +165,6 @@ public class MvcArticleTextBodyStep extends AbstractMvcAuthoringStep {
 //    public String getSelectedLocale() {
 //        return selectedLocale;
 //    }
-
     /**
      * Adds a localized main text.
      *

@@ -3,6 +3,7 @@
       xmlns:bootstrap="http://xmlns.jcp.org/jsf/composite/components/bootstrap"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:libreccm="http://xmlns.jcp.org/jsf/composite/components/libreccm"
+      xmlns:librecms="http://xmlns.jcp.org/jsf/composite/components/librecms"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <ui:composition template="/WEB-INF/views/org/librecms/ui/contentsection/documents/authoringstep.xhtml">
 
@@ -16,16 +17,23 @@
                 <h2>#{CmsArticleMessageBundle.getMessage('textstep.header.edit',[CmsArticleTextBodyStep.selectedLocale])}</h2>
             </div>
 
-
-
-            <pre>selected locale: #{CmsArticleTextBodyStep.selectedLocale}</pre>
-
             <c:if test="#{CmsArticleTextBodyStep.canEdit}">
-                <div class="cms-editor">
-                    #{CmsArticleTextBodyStep.textValues.get(CmsArticleTextBodyStep.selectedLocale)}
-                </div>
+                <librecms:cmsEditor
+                    backUrl="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@article-text"
+                    canEdit="#{CmsArticleTextBodyStep.canEdit}"
+                    editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@article-text/edit"
+                    editorId="article-text-editor"
+                    objectIdentifier="#{CmsSelectedDocumentModel.itemPath}"
+                    selectedLocale="#{CmsArticleTextBodyStep.selectedLocale}"
+                    title="#{CmsArticleMessageBundle['text.editor.header']}"
+                    variantUrl="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@article-text-resources/variants"
+                    />
             </c:if>
 
+        </ui:define>
+        
+        <ui:define name="scripts">
+            <script src="#{request.contextPath}/assets/@content-sections/cms-editor.js"></script>
         </ui:define>
     </ui:composition>
 </html>
