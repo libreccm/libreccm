@@ -94,8 +94,14 @@ async function initEditor(editorElem: HTMLElement) {
     const variant = await fetchVariant(variantUrl);
     console.log("Got variant");
 
+    const canvasElem = editorElem.querySelector(".cms-tiptap-editor-canvas");
+    if (!canvasElem) {
+        console.error("canvasElem not found.");
+        return;
+    }
+
     const editor = new Editor({
-        element: editorElem,
+        element: canvasElem,
         extensions: [
             Gapcursor,
             StarterKit,
@@ -244,6 +250,7 @@ function initEditorButtons(editor: Editor, buttonsElem: Element) {
                 .focus()
                 .insertTable({ cols: cols, rows: rows, headerRow: headerRow })
                 .run();
+            $("#insert-table-dialog").modal("hide");
         });
 }
 
