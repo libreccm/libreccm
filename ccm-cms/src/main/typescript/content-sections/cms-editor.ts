@@ -1,6 +1,6 @@
 import "bootstrap";
 import * as $ from "jquery";
-import { Editor } from "@tiptap/core";
+import { ChainedCommands, Editor } from "@tiptap/core";
 import Gapcursor from "@tiptap/extension-gapcursor";
 import StarterKit from "@tiptap/starter-kit";
 import Subscript from "@tiptap/extension-subscript";
@@ -9,6 +9,18 @@ import Table from "@tiptap/extension-table";
 import TableRow from "@tiptap/extension-table-row";
 import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
+
+const BUTTONS: CmsEditorButton[] = [
+    {
+        selector: ".tiptap-emph",
+        command: editor => {
+            return editor.chain().focus().toggleItalic().run();
+        },
+        can: editor => {
+            return editor.can().chain().focus().toggleItalic().run();
+        }
+    }
+];
 
 document.addEventListener("DOMContentLoaded", function (event) {
     // const viewButtons = document.querySelectorAll(
@@ -119,19 +131,31 @@ async function initEditor(editorElem: HTMLElement) {
     const buttonsElem = editorElem.querySelector(".cms-tiptap-editor-buttons");
     if (buttonsElem) {
         initEditorButtons(editor, buttonsElem);
+        for (const button of BUTTONS) {
+            buttonsElem
+                .querySelector(button.selector)
+                ?.addEventListener("click", event => {
+                    event.preventDefault();
+                    button.command(editor);
+                });
+        }
     } else {
         console.error("editorButtons are null");
         return;
     }
+
+    editor.on("selectionUpdate", (editorParam: EditorParam) => {
+        // ToDo
+    });
 }
 
 function initEditorButtons(editor: Editor, buttonsElem: Element) {
-    buttonsElem
-        .querySelector(".tiptap-emph")
-        ?.addEventListener("click", event => {
-            event.preventDefault();
-            editor.chain().focus().toggleItalic().run();
-        });
+    // buttonsElem
+    //     .querySelector(".tiptap-emph")
+    //     ?.addEventListener("click", event => {
+    //         event.preventDefault();
+    //         editor.chain().focus().toggleItalic().run();
+    //     });
 
     buttonsElem
         .querySelector(".tiptap-strong-emph")
@@ -208,18 +232,6 @@ function initEditorButtons(editor: Editor, buttonsElem: Element) {
             editor.chain().focus().toggleOrderedList().run();
         });
 
-    editor.on("selectionUpdate", ({ editor }) => {
-        console.log("Selection updated");
-        console.log(
-            `can insertRowBefore: ${editor
-                .can()
-                .chain()
-                .focus()
-                .addRowBefore()
-                .run()}`
-        );
-    });
-
     buttonsElem
         .querySelector(".cms-editor-insert-table-dialog .btn-success")
         ?.addEventListener("click", event => {
@@ -252,6 +264,25 @@ function initEditorButtons(editor: Editor, buttonsElem: Element) {
                 .run();
             $("#insert-table-dialog").modal("hide");
         });
+
+    buttonsElem
+        .querySelector(".cms-editor-insert-table-row")
+        ?.addEventListener("click", event => {
+            event.preventDefault();
+            editor.chain().focus().addRowAfter().run();
+        });
+
+    editor.on("selectionUpdate", ({ editor }) => {
+        console.log("Selection updated");
+        console.log(
+            `can insertRowAfter: ${editor
+                .can()
+                .chain()
+                .focus()
+                .addRowAfter()
+                .run()}`
+        );
+    });
 }
 
 async function showEditDialog(event: Event) {
@@ -458,4 +489,14 @@ async function showViewDialog(event: Event) {
 
     const viewDialogJquery = $(`#${viewDialogId}`) as any;
     viewDialogJquery.modal("toggle");
+}
+
+interface CmsEditorButton {
+    selector: string;
+    command: (editor: Editor) => boolean;
+    can: (editor: Editor) => boolean;
+}
+
+interface EditorParam {
+    editor: Editor;
 }
