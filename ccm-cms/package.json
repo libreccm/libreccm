@@ -7,7 +7,7 @@
         "build": "npm-run-all build:*:*",
         "build:ccm-admin:js": "parcel build --target --dist-dir target/generated-resources/assets/@content-sections src/main/typescript/content-sections/cms-admin.ts",
         "build:ccm-admin:css": "sass src/main/scss/content-sections/cms-admin.scss target/generated-resources/assets/@content-sections/cms-admin.css",
-        "build:cms-editor:js": "parcel build --target --dist-dir target/generated-resources/assets/@content-sections src/main/typescript/content-sections/cms-editor.ts"
+        "build:cms-article-text:js": "parcel build --target --dist-dir target/generated-resources/assets/@content-sections src/main/typescript/content-sections/article-text-step.ts"
     },
     "author": "Jens Pelzetter",
     "license": "LGPL-3.0-or-later",

@@ -22,7 +22,7 @@
                     backUrl="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@article-text"
                     canEdit="#{CmsArticleTextBodyStep.canEdit}"
                     editMethod="#{mvc.basePath}/#{ContentSectionModel.sectionName}/documents/#{CmsSelectedDocumentModel.itemPath}/@article-text/edit"
-                    editorId="article-text-editor"
+                    editorId="cms-article-text-editor"
                     objectIdentifier="#{CmsSelectedDocumentModel.itemPath}"
                     selectedLocale="#{CmsArticleTextBodyStep.selectedLocale}"
                     title="#{CmsArticleMessageBundle['text.editor.header']}"
@@ -33,7 +33,7 @@
         </ui:define>
         
         <ui:define name="scripts">
-            <script src="#{request.contextPath}/assets/@content-sections/cms-editor.js"></script>
+            <script src="#{request.contextPath}/assets/@content-sections/article-text-step.js"></script>
         </ui:define>
     </ui:composition>
 </html>

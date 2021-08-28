@@ -13,234 +13,322 @@ import TableHeader from "@tiptap/extension-table-header";
 const BUTTONS: CmsEditorButton[] = [
     {
         selector: ".tiptap-emph",
-        command: editor => {
-            return editor.chain().focus().toggleItalic().run();
+        command: cmsEditor => {
+            return cmsEditor.getEditor().chain().focus().toggleItalic().run();
         },
-        can: editor => {
-            return editor.can().chain().focus().toggleItalic().run();
+        can: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .can()
+                .chain()
+                .focus()
+                .toggleItalic()
+                .run();
         }
-    }
-];
-
-document.addEventListener("DOMContentLoaded", function (event) {
-    // const viewButtons = document.querySelectorAll(
-    //     ".cms-editor .cms-editor-variants .cms-editor-view-button"
-    // );
-    // for (let i = 0; i < viewButtons.length; i++) {
-    //     viewButtons[i].addEventListener("click", event =>
-    //         showViewDialog(event)
-    //     );
-    // }
-
-    // const editButtons = document.querySelectorAll(
-    //     ".cms-editor .cms-editor-variants .cms-editor-edit-button"
-    // );
-    // for (let i = 0; i < editButtons.length; i++) {
-    //     editButtons[i].addEventListener("click", event =>
-    //         showEditDialog(event)
-    //     );
-    // }
-
-    console.log("Trying to init editor...");
-    const editor = document.querySelector(".cms-tiptap-editor");
-    if (editor) {
-        initEditor(editor as HTMLElement)
-            .then(() => console.log("editor initalized."))
-            .catch(error => console.log(`Failed to init editor ${error}`));
-    } else {
-        console.log("No editor found.");
-    }
-});
-
-// function closeEditor(event: Event, editor: Editor, editDialogId: string) {
-//     event.preventDefault();
-
-//     editor.chain().clearContent();
-//     editor.destroy();
-//     const editDialog = $(`#${editDialogId}`) as any;
-//     editDialog.modal("toggle");
-// }
-
-async function fetchVariant(fromUrl: string) {
-    try {
-        const response = await fetch(fromUrl, {
-            method: "GET",
-            credentials: "include"
-        });
-
-        if (response.ok) {
-            return await response.text();
-        } else {
-            showLoadVariantFailedMessage(response.status, response.statusText);
+    },
+    {
+        selector: ".tiptap-strong-emph",
+        command: cmsEditor => {
+            return cmsEditor.getEditor().chain().focus().toggleBold().run();
+        },
+        can: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .can()
+                .chain()
+                .focus()
+                .toggleBold()
+                .run();
         }
-    } catch (err) {
-        showLoadVariantFailedErrMessage(err);
-    }
-}
-
-async function fetchWordCount(fromUrl: string) {
-    try {
-        const response = await fetch(fromUrl, {
-            method: "GET",
-            credentials: "include"
-        });
-
-        if (response.ok) {
-            return await response.text();
-        } else {
-            return "?";
+    },
+    {
+        selector: ".tiptap-code",
+        command: cmsEditor => {
+            return cmsEditor.getEditor().chain().focus().toggleCode().run();
+        },
+        can: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .can()
+                .chain()
+                .focus()
+                .toggleCode()
+                .run();
         }
-    } catch (err) {
-        return "?";
-    }
-}
-
-async function initEditor(editorElem: HTMLElement) {
-    console.log("init editor");
-    const variantUrl = editorElem.getAttribute("data-variant-url");
-    if (variantUrl == null) {
-        console.error("variantUrl is null");
-        return;
-    }
-    console.log(`variantUrl = ${variantUrl}`);
-    const variant = await fetchVariant(variantUrl);
-    console.log("Got variant");
-
-    const canvasElem = editorElem.querySelector(".cms-tiptap-editor-canvas");
-    if (!canvasElem) {
-        console.error("canvasElem not found.");
-        return;
-    }
-
-    const editor = new Editor({
-        element: canvasElem,
-        extensions: [
-            Gapcursor,
-            StarterKit,
-            Subscript,
-            Superscript,
-            Table.configure({ resizable: true }),
-            TableRow,
-            TableHeader,
-            TableCell
-        ],
-        content: variant
-    });
-
-    console.log("initializing editor buttons");
-    const buttonsElem = editorElem.querySelector(".cms-tiptap-editor-buttons");
-    if (buttonsElem) {
-        initEditorButtons(editor, buttonsElem);
-        for (const button of BUTTONS) {
-            buttonsElem
-                .querySelector(button.selector)
-                ?.addEventListener("click", event => {
-                    event.preventDefault();
-                    button.command(editor);
-                });
+    },
+    {
+        selector: ".tiptap-strikethrough",
+        command: cmsEditor => {
+            return cmsEditor.getEditor().chain().focus().toggleStrike().run();
+        },
+        can: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .can()
+                .chain()
+                .focus()
+                .toggleStrike()
+                .run();
         }
-    } else {
-        console.error("editorButtons are null");
-        return;
-    }
-
-    editor.on("selectionUpdate", (editorParam: EditorParam) => {
-        // ToDo
-    });
-}
-
-function initEditorButtons(editor: Editor, buttonsElem: Element) {
-    // buttonsElem
-    //     .querySelector(".tiptap-emph")
-    //     ?.addEventListener("click", event => {
-    //         event.preventDefault();
-    //         editor.chain().focus().toggleItalic().run();
-    //     });
-
-    buttonsElem
-        .querySelector(".tiptap-strong-emph")
-        ?.addEventListener("click", event => {
-            event.preventDefault();
-            editor.chain().focus().toggleBold().run();
-        });
-    buttonsElem
-        .querySelector(".tiptap-code")
-        ?.addEventListener("click", event => {
-            event.preventDefault();
-            editor.chain().focus().toggleCode().run();
-        });
-    buttonsElem
-        .querySelector(".tiptap-strikethrough")
-        ?.addEventListener("click", event => {
-            event.preventDefault();
-            editor.chain().focus().toggleStrike().run();
-        });
-    buttonsElem
-        .querySelector(".tiptap-subscript")
-        ?.addEventListener("click", event => {
-            event.preventDefault();
-            editor.chain().focus().toggleSubscript().run();
-        });
-    buttonsElem
-        .querySelector(".tiptap-superscript")
-        ?.addEventListener("click", event => {
-            event.preventDefault();
-            editor.chain().focus().toggleSuperscript().run();
-        });
-
-    for (let i = 1; i <= 6; i++) {
-        buttonsElem
-            .querySelector(`.tiptap-h${i}`)
-            ?.addEventListener("click", event => {
-                event.preventDefault();
-                editor.chain().focus().toggleHeading({ level: i }).run();
-            });
-    }
-
-    buttonsElem
-        .querySelector(".tiptap-paragraph")
-        ?.addEventListener("click", event => {
-            event.preventDefault();
-            editor.chain().focus().clearNodes().run();
-        });
-
-    buttonsElem
-        .querySelector(".tiptap-blockquote")
-        ?.addEventListener("click", event => {
-            event.preventDefault();
-            editor.chain().focus().toggleBlockquote().run();
-        });
-
-    buttonsElem
-        .querySelector(".tiptap-codeblock")
-        ?.addEventListener("click", event => {
-            event.preventDefault();
-            editor.chain().focus().toggleCodeBlock().run();
-        });
-
-    buttonsElem
-        .querySelector(".tiptap-ul")
-        ?.addEventListener("click", event => {
-            event.preventDefault();
-            editor.chain().focus().toggleBulletList().run();
-        });
-
-    buttonsElem
-        .querySelector(".tiptap-ol")
-        ?.addEventListener("click", event => {
-            event.preventDefault();
-            editor.chain().focus().toggleOrderedList().run();
-        });
-
-    buttonsElem
-        .querySelector(".cms-editor-insert-table-dialog .btn-success")
-        ?.addEventListener("click", event => {
-            event.preventDefault();
-            const dialog = buttonsElem.querySelector(
-                ".cms-editor-insert-table-dialog"
-            );
+    },
+    {
+        selector: ".tiptap-subscript",
+        command: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .chain()
+                .focus()
+                .toggleSubscript()
+                .run();
+        },
+        can: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .can()
+                .chain()
+                .focus()
+                .toggleSubscript()
+                .run();
+        }
+    },
+    {
+        selector: ".tiptap-superscript",
+        command: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .chain()
+                .focus()
+                .toggleSuperscript()
+                .run();
+        },
+        can: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .can()
+                .chain()
+                .focus()
+                .toggleSuperscript()
+                .run();
+        }
+    },
+    {
+        selector: ".tiptap-h1",
+        command: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .chain()
+                .focus()
+                .toggleHeading({ level: 1 })
+                .run();
+        },
+        can: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .can()
+                .chain()
+                .focus()
+                .toggleHeading({ level: 1 })
+                .run();
+        }
+    },
+    {
+        selector: ".tiptap-h2",
+        command: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .chain()
+                .focus()
+                .toggleHeading({ level: 2 })
+                .run();
+        },
+        can: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .can()
+                .chain()
+                .focus()
+                .toggleHeading({ level: 2 })
+                .run();
+        }
+    },
+    {
+        selector: ".tiptap-h3",
+        command: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .chain()
+                .focus()
+                .toggleHeading({ level: 3 })
+                .run();
+        },
+        can: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .can()
+                .chain()
+                .focus()
+                .toggleHeading({ level: 3 })
+                .run();
+        }
+    },
+    {
+        selector: ".tiptap-h5",
+        command: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .chain()
+                .focus()
+                .toggleHeading({ level: 5 })
+                .run();
+        },
+        can: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .can()
+                .chain()
+                .focus()
+                .toggleHeading({ level: 5 })
+                .run();
+        }
+    },
+    {
+        selector: ".tiptap-h6",
+        command: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .chain()
+                .focus()
+                .toggleHeading({ level: 6 })
+                .run();
+        },
+        can: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .can()
+                .chain()
+                .focus()
+                .toggleHeading({ level: 6 })
+                .run();
+        }
+    },
+    {
+        selector: ".tiptap-paragraph",
+        command: cmsEditor => {
+            return cmsEditor.getEditor().chain().focus().clearNodes().run();
+        },
+        can: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .can()
+                .chain()
+                .focus()
+                .clearNodes()
+                .run();
+        }
+    },
+    {
+        selector: ".tiptap-blockquote",
+        command: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .chain()
+                .focus()
+                .toggleBlockquote()
+                .run();
+        },
+        can: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .can()
+                .chain()
+                .focus()
+                .toggleBlockquote()
+                .run();
+        }
+    },
+    {
+        selector: ".tiptap-codeblock",
+        command: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .chain()
+                .focus()
+                .toggleCodeBlock()
+                .run();
+        },
+        can: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .can()
+                .chain()
+                .focus()
+                .toggleCodeBlock()
+                .run();
+        }
+    },
+    {
+        selector: ".tiptap-ul",
+        command: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .chain()
+                .focus()
+                .toggleBulletList()
+                .run();
+        },
+        can: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .can()
+                .chain()
+                .focus()
+                .toggleBulletList()
+                .run();
+        }
+    },
+    {
+        selector: ".tiptap-ol",
+        command: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .chain()
+                .focus()
+                .toggleOrderedList()
+                .run();
+        },
+        can: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .can()
+                .chain()
+                .focus()
+                .toggleOrderedList()
+                .run();
+        }
+    },
+    {
+        selector: ".cms-editor-insert-table-dialog",
+        command: cmsEditor => {
+            return true;
+        },
+        can: cmsEditor => {
+            return cmsEditor
+                .getEditor()
+                .can()
+                .chain()
+                .focus()
+                .insertTable()
+                .run();
+        }
+    },
+    {
+        selector: ".cms-editor-insert-table-dialog .btn-success",
+        command: cmsEditor => {
+            const dialog = cmsEditor
+                .getEditorElem()
+                .querySelector(".cms-editor-insert-table-dialog");
             if (!dialog) {
-                return;
+                return false;
             }
             const rowsInput = dialog.querySelector(
                 "input#rows"
@@ -257,246 +345,294 @@ function initEditorButtons(editor: Editor, buttonsElem: Element) {
             const rows = rowsInput.value;
             const cols = colsInput.value;
             const headerRow = JSON.parse(headerRowInput.value) as Boolean;
-            editor
+            const insertTableDialog = $("#insert-table-dialog") as any;
+            insertTableDialog.modal("hide");
+            return cmsEditor
+                .getEditor()
                 .chain()
                 .focus()
                 .insertTable({ cols: cols, rows: rows, headerRow: headerRow })
                 .run();
-            $("#insert-table-dialog").modal("hide");
-        });
-
-    buttonsElem
-        .querySelector(".cms-editor-insert-table-row")
-        ?.addEventListener("click", event => {
-            event.preventDefault();
-            editor.chain().focus().addRowAfter().run();
-        });
-
-    editor.on("selectionUpdate", ({ editor }) => {
-        console.log("Selection updated");
-        console.log(
-            `can insertRowAfter: ${editor
+        },
+        can: cmsEditor => {
+            return true;
+        }
+    },
+    {
+        selector: ".tiptap-insert-table-row",
+        command: cmsEditor => {
+            return cmsEditor.getEditor().chain().focus().addRowAfter().run();
+        },
+        can: cmsEditor => {
+            return cmsEditor
+                .getEditor()
                 .can()
                 .chain()
                 .focus()
                 .addRowAfter()
-                .run()}`
-        );
-    });
-}
-
-async function showEditDialog(event: Event) {
-    event.preventDefault();
-
-    const target = event.currentTarget as Element;
-    const locale = target.getAttribute("data-locale");
-    if (!locale) {
-        console.error("locale is null");
-        return;
-    }
-    const variantUrl = target.getAttribute("data-variant-url");
-    if (variantUrl == null) {
-        console.error("variantUrl is null");
-        return;
-    }
-    const editDialogId = target.getAttribute("data-edit-dialog");
-    if (!editDialogId) {
-        console.error("editDialogId is null");
-        return;
-    }
-    const saveUrl = target.getAttribute("data-save-url");
-    if (!saveUrl) {
-        console.error("saveUrl is null");
-        return;
-    }
-    const wordCountUrl = target.getAttribute("data-wordcount-url");
-    if (!wordCountUrl) {
-        console.error("wordCountUrl is null");
-        return;
-    }
-
-    const variant = await fetchVariant(variantUrl);
-
-    const editDialog = document.querySelector(`#${editDialogId}`);
-    if (!editDialog) {
-        console.error("editDialog is null");
-        return;
-    }
-    const tiptapDiv = editDialog.querySelector(
-        ".modal-body .cms-tiptap-editor"
-    );
-    if (!tiptapDiv) {
-        console.warn("tiptapDiv is null");
-        return;
-    }
-
-    const editor = new Editor({
-        element: tiptapDiv,
-        extensions: [
-            Gapcursor,
-            StarterKit,
-            Subscript,
-            Superscript,
-            Table.configure({ resizable: true }),
-            TableRow,
-            TableHeader,
-            TableCell
-        ],
-        content: variant
-    });
-
-    const editorButtons = document.querySelector(".cms-tiptap-editor-buttons");
-    if (!editorButtons) {
-        console.error("editorButtons are null");
-        return;
-    }
-    initEditorButtons(editor, editorButtons);
-
-    // const editDialogHeader = editDialog.querySelector(".modal-header .close");
-    // if (editDialogHeader) {
-    //     editDialogHeader.addEventListener("click", event =>
-    //         closeEditor(event, editor, editDialogId)
-    //     );
-    // }
-    const cancelButton = editDialog.querySelector(
-        ".modal-footer .cms-editor-cancel-button"
-    );
-    if (!cancelButton) {
-        console.error("cancelButton is null");
-        return;
-    }
-    // cancelButton.addEventListener("click", event =>
-    //     closeEditor(event, editor, editDialogId)
-    // );
-    const editButton = editDialog.querySelector(
-        ".modal-footer .cms-editor-save-button"
-    );
-    if (!editButton) {
-        console.error("editButton is null");
-        return;
-    }
-    editButton.addEventListener("click", event =>
-        save(event, editor, editDialogId, saveUrl, locale, wordCountUrl)
-    );
-
-    const editDialogJquery = $(`#${editDialogId}`) as any;
-    editDialogJquery.modal("toggle");
-}
-
-async function save(
-    event: Event,
-    editor: Editor,
-    editDialogId: string,
-    saveUrl: string,
-    locale: string,
-    wordCountUrl: string
-) {
-    event.preventDefault();
-
-    const params = new URLSearchParams();
-    params.append("value", editor.getHTML());
-
-    try {
-        const response = await fetch(saveUrl, {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: params
-        });
-        if (response.ok) {
-            showSaveSuccessfulMessage();
-        } else {
-            showSaveFailedMessage(response.status, response.statusText);
+                .run();
         }
-    } catch (err) {
-        showSaveFailedErrMessage(err);
+    }
+    // ,
+    // {
+    //     selector: "",
+    //     command: cmsEditor => {},
+    //     can: cmsEditor => {}
+    // },
+    // {
+    //     selector: "",
+    //     command: cmsEditor => {},
+    //     can: cmsEditor => {}
+    // },
+    // {
+    //     selector: "",
+    //     command: cmsEditor => {},
+    //     can: cmsEditor => {}
+    // },
+    // {
+    //     selector: "",
+    //     command: cmsEditor => {},
+    //     can: cmsEditor => {}
+    // },
+    // {
+    //     selector: "",
+    //     command: cmsEditor => {},
+    //     can: cmsEditor => {}
+    // },
+    // {
+    //     selector: "",
+    //     command: cmsEditor => {},
+    //     can: cmsEditor => {}
+    // },
+    // {
+    //     selector: "",
+    //     command: cmsEditor => {},
+    //     can: cmsEditor => {}
+    // },
+    // {
+    //     selector: "",
+    //     command: cmsEditor => {},
+    //     can: cmsEditor => {}
+    // }
+];
+
+class CmsEditor {
+    private editor: Editor;
+    private editorElem: HTMLElement;
+    private saveUrl: string;
+
+    public constructor(
+        editor: Editor,
+        editorElem: HTMLElement,
+        saveUrl: string
+    ) {
+        this.editor = editor;
+        this.editorElem = editorElem;
+        this.saveUrl = saveUrl;
+
+        console.log("initializing editor buttons");
+        const buttonsElem = editorElem.querySelector(
+            ".cms-tiptap-editor-buttons"
+        );
+        if (buttonsElem) {
+            for (const button of BUTTONS) {
+                const buttonElem = buttonsElem.querySelector(button.selector);
+                if (buttonElem) {
+                    buttonElem.addEventListener("click", event => {
+                        event.preventDefault();
+                        button.command(this);
+                    });
+                } else {
+                    continue;
+                }
+            }
+        } else {
+            console.error("editorButtonsElem not found.");
+            return;
+        }
+
+        editor.on("selectionUpdate", ({ editor }: { editor: Editor }) => {
+            console.log(`checkButton - this.editorElem = ${this.editorElem}`);
+            const buttonsElem = editorElem.querySelector(
+                ".cms-tiptap-editor-buttons"
+            );
+            if (!buttonsElem) {
+                return;
+            }
+            for (const button of BUTTONS) {
+                const elem = buttonsElem.querySelector(button.selector);
+                if (elem) {
+                    const buttonElem = elem as HTMLButtonElement;
+                    if (button.can(this)) {
+                        buttonElem.removeAttribute("disabled");
+                    } else {
+                        buttonElem.setAttribute("disabled", "disabled");
+                    }
+                } else {
+                    continue;
+                }
+            }
+        });
+
+        console.log(`editorElem = ${editorElem}`);
+
+        const saveButton = editorElem.querySelector(".cms-editor-save-button");
+        saveButton?.addEventListener("click", event => this.save(event));
     }
 
-    const editDialogJquery = $(`#${editDialogId}`) as any;
-    editDialogJquery.modal("toggle");
+    protected async save(event: Event) {
+        event.preventDefault();
 
-    const wordCount = await fetchWordCount(wordCountUrl);
-    const wordCountSpan = document.querySelector(
-        `tr#variant-${locale} .wordcount`
-    );
-    if (wordCountSpan) {
-        wordCountSpan.textContent = wordCount;
+        const params = new URLSearchParams();
+        params.append("value", this.editor.getHTML());
+
+        try {
+            const response = await fetch(this.saveUrl, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: params
+            });
+            if (response.ok) {
+            } else {
+                this.showSaveFailedMessage(
+                    response.status,
+                    response.statusText
+                );
+            }
+        } catch (error) {
+            this.showSaveFailedErrMessage(error);
+        }
+    }
+
+    protected showSaveFailedMessage(status: number, statusText: string) {
+        this.showMessage("#cms-editor-msg-save-failed");
+        console.error(
+            `Failed to save text. Status: ${statusText}. Status Text: ${statusText}`
+        );
+    }
+
+    protected showSaveFailedErrMessage(error: string) {
+        this.showMessage("#cms-editor-msg-save-failed");
+        console.error(error);
+    }
+
+    protected showMessage(messageId: string) {
+        const template = this.editorElem.querySelector(
+            messageId
+        ) as HTMLTemplateElement;
+        const message = template.content.cloneNode(true);
+        this.editorElem.querySelector(".cms-editor-messages")?.append(message);
+    }
+
+    public getEditor(): Editor {
+        return this.editor;
+    }
+
+    public getEditorElem(): HTMLElement {
+        return this.editorElem;
     }
 }
 
-function showLoadVariantFailedErrMessage(err: string) {
-    showMessage("#cms-editor-msg-variant-load-failed");
-    console.error(err);
-}
+class CmsEditorBuilder {
+    private editorElem: HTMLElement;
+    private saveUrl: string;
+    private variantUrl: string;
 
-function showLoadVariantFailedMessage(status: number, statusText: string) {
-    showMessage("#cms-editor-msg-variant-load-failed");
-    console.error(`HTTP Status: ${status}, statusText: ${statusText}`);
-}
-
-function showMessage(messageId: string) {
-    const template = document.querySelector(messageId) as HTMLTemplateElement;
-    const msg = template.content.cloneNode(true);
-    document.querySelector(".cms-editor-messages")?.append(msg);
-}
-
-function showSaveFailedErrMessage(err: string) {
-    showMessage("#cms-editor-msg-save-failed");
-    console.error(err);
-}
-
-function showSaveFailedMessage(status: number, statusText: string) {
-    showMessage("#cms-editor-msg-save-failed");
-    console.error(`HTTP Status: ${status}, statusText: ${statusText}`);
-}
-
-function showSaveSuccessfulMessage() {
-    showMessage("#cms-editor-msg-save-successful");
-}
-
-async function showViewDialog(event: Event) {
-    event.preventDefault();
-
-    const target = event.currentTarget as Element;
-    const variantUrl = target.getAttribute("data-variant-url");
-    if (!variantUrl) {
-        console.error("variantUrl is null");
-        return;
-    }
-    const viewDialogId = target.getAttribute("data-view-dialog");
-
-    const variant = await fetchVariant(variantUrl);
-    if (!variant) {
-        console.error("variant is null");
-        return;
+    constructor(editorElem: HTMLElement, saveUrl: string, variantUrl: string) {
+        this.editorElem = editorElem;
+        this.saveUrl = saveUrl;
+        this.variantUrl = variantUrl;
     }
 
-    const viewDialog = document.querySelector(`#${viewDialogId}`);
-    if (!viewDialog) {
-        console.error("viewDialog is null");
-        return;
+    public async buildEditor(): Promise<CmsEditor> {
+        const canvasElement = this.editorElem.querySelector(
+            ".cms-tiptap-editor-canvas"
+        );
+        if (!canvasElement) {
+            this.showMessage("#cms-editor-msg-canvas-element-not-found");
+            console.error("canvasElem not found.");
+            throw "canvasElem not found.";
+        }
+
+        const variant = await this.fetchVariant(this.variantUrl);
+
+        const editor: Editor = new Editor({
+            element: canvasElement,
+            extensions: [
+                Gapcursor,
+                StarterKit,
+                Subscript,
+                Superscript,
+                Table.configure({ resizable: true }),
+                TableRow,
+                TableHeader,
+                TableCell
+            ],
+            content: variant
+        });
+
+        return new CmsEditor(editor, this.editorElem, this.saveUrl);
     }
 
-    const viewDialogBody = viewDialog.querySelector(".modal-body");
-    if (!viewDialogBody) {
-        console.error("viewDialogBody is null");
-        return;
+    protected async fetchVariant(variantUrl: string): Promise<string> {
+        try {
+            const response = await fetch(variantUrl, {
+                method: "GET",
+                credentials: "include"
+            });
+
+            if (response.ok) {
+                return await response.text();
+            } else {
+                this.showLoadVariantFailedMessage(
+                    response.status,
+                    response.statusText
+                );
+                throw `Failed to load variant. Status: ${response.status}, Status Text: ${response.statusText}`;
+            }
+        } catch (error) {
+            this.showLoadVariantFailedErrorMessage(error);
+            throw error;
+        }
     }
 
-    viewDialogBody.innerHTML = variant;
+    protected showLoadVariantFailedMessage(status: number, statusText: string) {
+        this.showMessage("#cms-editor-msg-variant-load-failed");
+        console.error(
+            `Failed to load variant: HTTP Status: ${status}, statusText: ${statusText}`
+        );
+    }
 
-    const viewDialogJquery = $(`#${viewDialogId}`) as any;
-    viewDialogJquery.modal("toggle");
+    protected showLoadVariantFailedErrorMessage(error: string) {
+        this.showMessage("#cms-editor-msg-variant-load-failed");
+        console.error(`Failed to load variant: ${error}`);
+    }
+
+    protected showMessage(messageId: string) {
+        const template = this.editorElem.querySelector(
+            messageId
+        ) as HTMLTemplateElement;
+        const message = template.content.cloneNode(true);
+        this.editorElem.querySelector(".cms-editor-messages")?.append(message);
+    }
+}
+
+interface CmsEditorParameters {
+    editorElem: HTMLElement;
+    variantUrl: string;
 }
 
 interface CmsEditorButton {
     selector: string;
-    command: (editor: Editor) => boolean;
-    can: (editor: Editor) => boolean;
+    command: (cmsEditor: CmsEditor) => boolean;
+    can: (cmsEditor: CmsEditor) => boolean;
 }
 
 interface EditorParam {
     editor: Editor;
 }
+
+export { CmsEditor, CmsEditorBuilder, CmsEditorParameters };
