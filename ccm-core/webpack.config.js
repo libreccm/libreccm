@@ -2,8 +2,7 @@ module.exports = {
     mode: "production",
     devtool: "source-map",
     entry: {
-        "cms-admin": "./src/main/typescript/content-sections/cms-admin.ts",
-        "article-text-step": "./src/main/typescript/content-sections/article-text-step.ts"
+        "ccm-admin": "./src/main/typescript/ccm-admin.ts",
     },
     output: {
         filename: "[name].js",

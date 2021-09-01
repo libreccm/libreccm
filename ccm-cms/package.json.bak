@@ -4,22 +4,20 @@
     "description": "JavaScript stuff for ccm-cms",
     "main": "index.js",
     "scripts": {
-        "build": "npm-run-all build:*",
-        "build:js": "webpack",
-        "build:css": "npm-run-all build:css:*",
-        "build:css:cms-admin": "sass src/main/scss/content-sections/cms-admin.scss target/generated-resources/assets/@content-sections/cms-admin.css"
+        "build": "npm-run-all build:*:*",
+        "build:ccm-admin:js": "parcel build --target --dist-dir target/generated-resources/assets/@content-sections src/main/typescript/content-sections/cms-admin.ts",
+        "build:ccm-admin:css": "sass src/main/scss/content-sections/cms-admin.scss target/generated-resources/assets/@content-sections/cms-admin.css",
+        "build:cms-article-text:js": "parcel build --target --dist-dir target/generated-resources/assets/@content-sections src/main/typescript/content-sections/article-text-step.ts"
     },
     "author": "Jens Pelzetter",
     "license": "LGPL-3.0-or-later",
     "devDependencies": {
-        "@types/jquery": "^3.5.6",
+        "@parcel/transformer-typescript-tsc": "^2.0.0-beta.1",
         "@types/sortablejs": "^1.10.7",
         "npm-run-all": "^4.1.5",
+        "parcel": "^2.0.0-beta.2",
         "sass": "^1.32.12",
-        "ts-loader": "^9.2.5",
-        "typescript": "^4.2.4",
-        "webpack": "^5.51.1",
-        "webpack-cli": "^4.8.0"
+        "typescript": "^4.2.4"
     },
     "dependencies": {
         "@tiptap/core": "^2.0.0-beta.46",
