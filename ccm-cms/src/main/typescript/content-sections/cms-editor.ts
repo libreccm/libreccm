@@ -13,10 +13,10 @@ import TableHeader from "@tiptap/extension-table-header";
 const BUTTONS: CmsEditorButton[] = [
     {
         selector: ".tiptap-emph",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor.getEditor().chain().focus().toggleItalic().run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -24,14 +24,14 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .toggleItalic()
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-strong-emph",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor.getEditor().chain().focus().toggleBold().run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -39,14 +39,14 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .toggleBold()
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-code",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor.getEditor().chain().focus().toggleCode().run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -54,14 +54,14 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .toggleCode()
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-strikethrough",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor.getEditor().chain().focus().toggleStrike().run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -69,11 +69,11 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .toggleStrike()
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-subscript",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .chain()
@@ -81,7 +81,7 @@ const BUTTONS: CmsEditorButton[] = [
                 .toggleSubscript()
                 .run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -89,11 +89,11 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .toggleSubscript()
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-superscript",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .chain()
@@ -101,7 +101,7 @@ const BUTTONS: CmsEditorButton[] = [
                 .toggleSuperscript()
                 .run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -109,11 +109,11 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .toggleSuperscript()
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-h1",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .chain()
@@ -121,7 +121,7 @@ const BUTTONS: CmsEditorButton[] = [
                 .toggleHeading({ level: 1 })
                 .run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -129,11 +129,11 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .toggleHeading({ level: 1 })
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-h2",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .chain()
@@ -141,7 +141,7 @@ const BUTTONS: CmsEditorButton[] = [
                 .toggleHeading({ level: 2 })
                 .run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -149,11 +149,11 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .toggleHeading({ level: 2 })
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-h3",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .chain()
@@ -161,7 +161,7 @@ const BUTTONS: CmsEditorButton[] = [
                 .toggleHeading({ level: 3 })
                 .run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -169,11 +169,11 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .toggleHeading({ level: 3 })
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-h5",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .chain()
@@ -181,7 +181,7 @@ const BUTTONS: CmsEditorButton[] = [
                 .toggleHeading({ level: 5 })
                 .run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -189,11 +189,11 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .toggleHeading({ level: 5 })
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-h6",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .chain()
@@ -201,7 +201,7 @@ const BUTTONS: CmsEditorButton[] = [
                 .toggleHeading({ level: 6 })
                 .run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -209,14 +209,14 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .toggleHeading({ level: 6 })
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-paragraph",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor.getEditor().chain().focus().clearNodes().run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -224,11 +224,11 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .clearNodes()
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-blockquote",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .chain()
@@ -236,7 +236,7 @@ const BUTTONS: CmsEditorButton[] = [
                 .toggleBlockquote()
                 .run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -244,11 +244,11 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .toggleBlockquote()
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-codeblock",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .chain()
@@ -256,7 +256,7 @@ const BUTTONS: CmsEditorButton[] = [
                 .toggleCodeBlock()
                 .run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -264,11 +264,11 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .toggleCodeBlock()
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-ul",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .chain()
@@ -276,7 +276,7 @@ const BUTTONS: CmsEditorButton[] = [
                 .toggleBulletList()
                 .run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -284,11 +284,11 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .toggleBulletList()
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-ol",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .chain()
@@ -296,7 +296,7 @@ const BUTTONS: CmsEditorButton[] = [
                 .toggleOrderedList()
                 .run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -304,14 +304,14 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .toggleOrderedList()
                 .run();
-        },
+        }
     },
     {
         selector: ".cms-editor-insert-table-dialog",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return true;
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -319,11 +319,11 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .insertTable()
                 .run();
-        },
+        }
     },
     {
         selector: ".cms-editor-insert-table-dialog .btn-success",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             const dialog = cmsEditor
                 .getEditorElem()
                 .querySelector(".cms-editor-insert-table-dialog");
@@ -342,8 +342,8 @@ const BUTTONS: CmsEditorButton[] = [
             console.log(`rowsInput = ${rowsInput}`);
             console.log(`colsInput = ${colsInput}`);
             console.log(`headerRowInput = ${headerRowInput}`);
-            const rows = rowsInput.value;
-            const cols = colsInput.value;
+            const rows = parseInt(rowsInput.value, 10);
+            const cols = parseInt(colsInput.value, 10);
             const headerRow = JSON.parse(headerRowInput.value) as Boolean;
             const insertTableDialog = $("#insert-table-dialog") as any;
             insertTableDialog.modal("hide");
@@ -352,25 +352,25 @@ const BUTTONS: CmsEditorButton[] = [
                 .chain()
                 .focus()
                 .insertTable({
-                    allowTableNodeSelection: true,
-                    cellMinWidth: 150,
+                    // allowTableNodeSelection: true,
+                    // cellMinWidth: 150,
                     cols: cols,
-                    headerRow: headerRow,
-                    resizable: true,
-                    rows: rows,
+                    // headerRow: headerRow,
+                    // resizable: true,
+                    rows: rows
                 })
                 .run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return true;
-        },
+        }
     },
     {
         selector: ".tiptap-insert-table-row-before",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor.getEditor().chain().focus().addRowBefore().run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -378,14 +378,14 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .addRowBefore()
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-insert-table-row-after",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor.getEditor().chain().focus().addRowAfter().run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -393,11 +393,11 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .addRowAfter()
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-insert-table-column-before",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .chain()
@@ -405,7 +405,7 @@ const BUTTONS: CmsEditorButton[] = [
                 .addColumnBefore()
                 .run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -413,14 +413,14 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .addColumnBefore()
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-insert-table-column-after",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor.getEditor().chain().focus().addColumnAfter().run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -428,14 +428,14 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .addColumnAfter()
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-remove-table-row",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor.getEditor().chain().focus().deleteRow().run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -443,14 +443,14 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .deleteRow()
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-remove-table-column",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor.getEditor().chain().focus().deleteColumn().run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -458,14 +458,14 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .deleteColumn()
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-remove-table",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor.getEditor().chain().focus().deleteTable().run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -473,11 +473,11 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .deleteTable()
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-toggle-table-header-row",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .chain()
@@ -485,7 +485,7 @@ const BUTTONS: CmsEditorButton[] = [
                 .toggleHeaderRow()
                 .run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -493,11 +493,11 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .toggleHeaderRow()
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-toggle-table-header-column",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .chain()
@@ -505,7 +505,7 @@ const BUTTONS: CmsEditorButton[] = [
                 .toggleHeaderColumn()
                 .run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -513,14 +513,14 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .toggleHeaderColumn()
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-merge-table-cells",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor.getEditor().chain().focus().mergeCells().run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -528,14 +528,14 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .mergeCells()
                 .run();
-        },
+        }
     },
     {
         selector: ".tiptap-split-table-cell",
-        command: (cmsEditor) => {
+        command: cmsEditor => {
             return cmsEditor.getEditor().chain().focus().splitCell().run();
         },
-        can: (cmsEditor) => {
+        can: cmsEditor => {
             return cmsEditor
                 .getEditor()
                 .can()
@@ -543,8 +543,8 @@ const BUTTONS: CmsEditorButton[] = [
                 .focus()
                 .splitCell()
                 .run();
-        },
-    },
+        }
+    }
     // {
     //     selector: "",
     //     command: cmsEditor => {},
@@ -589,7 +589,7 @@ class CmsEditor {
             for (const button of BUTTONS) {
                 const buttonElem = buttonsElem.querySelector(button.selector);
                 if (buttonElem) {
-                    buttonElem.addEventListener("click", (event) => {
+                    buttonElem.addEventListener("click", event => {
                         event.preventDefault();
                         button.command(this);
                     });
@@ -628,7 +628,7 @@ class CmsEditor {
         console.log(`editorElem = ${editorElem}`);
 
         const saveButton = editorElem.querySelector(".cms-editor-save-button");
-        saveButton?.addEventListener("click", (event) => this.save(event));
+        saveButton?.addEventListener("click", event => this.save(event));
     }
 
     protected async save(event: Event) {
@@ -642,9 +642,9 @@ class CmsEditor {
                 method: "POST",
                 credentials: "include",
                 headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Content-Type": "application/x-www-form-urlencoded"
                 },
-                body: params,
+                body: params
             });
             if (response.ok) {
             } else {
@@ -654,7 +654,7 @@ class CmsEditor {
                 );
             }
         } catch (error) {
-            this.showSaveFailedErrMessage(error);
+            this.showSaveFailedErrMessage(error as string);
         }
     }
 
@@ -717,12 +717,17 @@ class CmsEditorBuilder {
                 StarterKit,
                 Subscript,
                 Superscript,
-                Table.configure({ resizable: true }),
+                Table.configure({
+                    allowTableNodeSelection: true,
+                    cellMinWidth: 100,
+                    handleWidth: 25,
+                    resizable: true
+                }),
                 TableRow,
                 TableHeader,
-                TableCell,
+                TableCell
             ],
-            content: variant,
+            content: variant
         });
 
         return new CmsEditor(editor, this.editorElem, this.saveUrl);
@@ -732,7 +737,7 @@ class CmsEditorBuilder {
         try {
             const response = await fetch(variantUrl, {
                 method: "GET",
-                credentials: "include",
+                credentials: "include"
             });
 
             if (response.ok) {
@@ -745,7 +750,7 @@ class CmsEditorBuilder {
                 throw `Failed to load variant. Status: ${response.status}, Status Text: ${response.statusText}`;
             }
         } catch (error) {
-            this.showLoadVariantFailedErrorMessage(error);
+            this.showLoadVariantFailedErrorMessage(error as string);
             throw error;
         }
     }
