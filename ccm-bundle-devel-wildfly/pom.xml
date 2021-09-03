@@ -285,6 +285,27 @@
             </plugin>
             
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>read-runtime-properties</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>${project.basedir}/runtime.example.properties</file>
+                                <file>${project.basedir}/runtime.properties</file>
+                            </files>
+                            <quiet>true</quiet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
                 <configuration>
@@ -294,6 +315,58 @@
                         <java-opt>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8787</java-opt>
                     </java-opts>
                 </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-jar-maven-plugin</artifactId>
+                <configuration>
+                    <jvmArguments>
+                        <arg>-agentlib:jdwp=transport=dt_socket,server=y,suspend=${libreccm.debug.suspend},address=${libreccm.debug.port}</arg>
+                    </jvmArguments>
+                    <arguments>
+                        -Dorg.wildfly.datasources.postgresql.database=${libreccm.database.name} 
+                        -Dorg.wildfly.datasources.postgresql.host=${libreccm.database.host} 
+                        -Dorg.wildfly.datasources.postgresql.jndi-name=java:/comp/env/jdbc/libreccm/db
+                        -Dorg.wildfly.datasources.postgresql.password=${libreccm.database.password} 
+                        -Dorg.wildfly.datasources.postgresql.port=${libreccm.database.port} 
+                        -Dorg.wildfly.datasources.postgresql.user-name=${libreccm.database.user} 
+                    </arguments>
+                    <feature-packs>
+                        <feature-pack>
+                            <location>wildfly@maven(org.jboss.universe:community-universe)#24.0.1.Final</location>
+                        </feature-pack>
+                        <feature-pack>
+                            <groupId>org.wildfly</groupId>
+                            <artifactId>wildfly-datasources-galleon-pack</artifactId>
+                            <version>2.0.2.Final</version>
+                        </feature-pack>
+                    </feature-packs>
+                    <layers>
+                        <layer>cdi</layer>
+                        <layer>datasources</layer>
+                        <layer>ejb</layer>
+                        <layer>jaxrs</layer>
+                        <layer>jpa</layer>
+                        <layer>jsf</layer>
+                        <layer>jsonp</layer>
+                        <layer>logging</layer>
+                        <layer>mail</layer>
+                        <layer>management</layer>
+                        <layer>postgresql-datasource</layer>
+                    </layers>
+<!--                    <excluded-layers>
+                        <layer>deployment-scanner</layer>
+                    </excluded-layers>-->
+                    <skip>false</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>

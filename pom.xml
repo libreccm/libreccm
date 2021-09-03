@@ -88,15 +88,14 @@
         <!-- Bundle modules -->
         <module>ccm-bundle-devel</module>
         <module>ccm-bundle-devel-wildfly</module>
-        <module>ccm-bundle-devel-thorntail</module>
-
+        
         <!-- Archetypes -->
         <module>ccm-archetype-module</module>
         <module>ccm-cms-archetype-contenttype</module>
         
         <!--<module>ccm-cms-js</module>-->
-    <module>ccm-wildfly</module>
-  </modules>
+        <module>ccm-wildfly</module>
+    </modules>
 
     <reporting>
         <excludeDefaults>true</excludeDefaults>
@@ -341,6 +340,14 @@
                     <configuration>
                         <skip>true</skip>
                         <version>24.0.1.Final</version>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.wildfly.plugins</groupId>
+                    <artifactId>wildfly-jar-maven-plugin</artifactId>
+                    <version>3.0.2.Final</version>
+                    <configuration>
+                        <skip>true</skip>
                     </configuration>
                 </plugin>
             </plugins>
