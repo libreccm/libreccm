@@ -699,6 +699,7 @@ class CmsEditorBuilder {
     }
 
     public async buildEditor(): Promise<CmsEditor> {
+        console.log("Build CMS Editor.");
         const canvasElement = this.editorElem.querySelector(
             ".cms-tiptap-editor-canvas"
         );
