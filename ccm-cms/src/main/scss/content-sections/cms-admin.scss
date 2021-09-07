@@ -23,5 +23,13 @@
         td, th, tr {
             border: 1px solid #000;
         }
+
+        td, th {
+            min-width: 150px;
+        }
+    }
+
+    .cms-tiptap-editor-button-row {
+        display: inline-block;
     }
 }

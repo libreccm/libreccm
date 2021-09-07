@@ -376,8 +376,8 @@
                 data-locale="#{cc.attrs.selectedLocale}"
                 data-variant-url="#{cc.attrs.variantUrl}/#{cc.attrs.selectedLocale}"
             >
-                <div class="cms-tiptap-editor-buttons d-flex mb-1">
-                    <div class="px-2 cms-tiptap-editor-textformatting">
+                <div class="cms-tiptap-editor-buttons mb-1">
+                    <div class="px-2 cms-tiptap-editor-button-row cms-tiptap-editor-textformatting">
                         <button
                             class="btn btn-outline-dark tiptap-emph"
                             title="#{CmsAdminMessages['cms_editor.buttons.emph']}"
@@ -421,7 +421,7 @@
                             <span aria-hidden="true">x<sup>n</sup></span>
                         </button>
                     </div>
-                    <div class="px-2 cms-tiptap-editor-headings">
+                    <div class="px-2 cms-tiptap-editor-button-row cms-tiptap-editor-headings">
                         <ui:repeat begin="1" end="6" var="level">
                             <button
                                 class="btn btn-outline-dark tiptap-h#{level}"
@@ -432,7 +432,7 @@
                             </button>
                         </ui:repeat>
                     </div>
-                    <div class="px-2 cms-tiptap-editor-paragraphs">
+                    <div class="px-2 cms-tiptap-editor-button-row cms-tiptap-editor-paragraphs">
                         <button
                             class="btn btn-outline-dark tiptap-paragraph"
                             title="#{CmsAdminMessages['cms_editor.buttons.paragraph']}"
@@ -455,7 +455,7 @@
                             <bootstrap:svgIcon icon="code-square" />
                         </button>
                     </div>
-                    <div class="px-2 cms-tiptap-editor-lists">
+                    <div class="px-2 cms-tiptap-editor-button-row cms-tiptap-editor-lists">
                         <button
                             class="btn btn-outline-dark tiptap-ul"
                             title="#{CmsAdminMessages['cms_editor.buttons.ul']}"
@@ -471,7 +471,7 @@
                             <bootstrap:svgIcon icon="list-ol" />
                         </button>
                     </div>
-                    <div class="px-2 cms-tiptap-editor-table">
+                    <div class="px-2 cms-tiptap-editor-button-row cms-tiptap-editor-table">
                         <button
                             class="btn btn-outline-dark tiptap-insert-table"
                             data-target="#insert-table-dialog"
@@ -600,27 +600,27 @@
                         </button>
                         <button 
                             class="btn btn-outline-dark tiptap-toggle-table-header-row"
-                            title="#{CmsAdminMessage['cms_editor.buttons.toggle_header_rowy']}"
+                            title="#{CmsAdminMessage['cms_editor.buttons.toggle_header_row']}"
                             type="button">
-                            Toggle Header row
+                            <img src="#{request.contextPath}/icons/cms-editor/table-toggle-header-row.svg" />
                         </button>
                         <button 
                             class="btn btn-outline-dark tiptap-toggle-table-header-column"
                             title="#{CmsAdminMessage['cms_editor.buttons.toggle_header_column']}"
                             type="button">
-                            Toggle Header column
+                            <img src="#{request.contextPath}/icons/cms-editor/table-toggle-header-column.svg" />
                         </button>
                         <button 
                             class="btn btn-outline-dark tiptap-merge-table-cells"
                             title="#{CmsAdminMessage['cms_editor.buttons.merge-table-cells']}"
                             type="button">
-                            Merge cells
+                            <img src="#{request.contextPath}/icons/cms-editor/table-merge-cells.svg" />
                         </button>
                         <button 
                             class="btn btn-outline-dark tiptap-split-table-cell"
                             title="#{CmsAdminMessage['cms_editor.buttons.split-table-cell']}"
                             type="button">
-                            Split cell
+                            <img src="#{request.contextPath}/icons/cms-editor/table-split-cells.svg" />
                         </button>
                     </div>
                 </div>
